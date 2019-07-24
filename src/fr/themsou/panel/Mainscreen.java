@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -11,9 +12,7 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-
 import javax.swing.JPanel;
-
 import fr.themsou.main.Main;
 import fr.themsou.main.Render;
 
@@ -24,6 +23,8 @@ public class Mainscreen extends JPanel{
 	public static File current = null;
 	public static boolean loading = false;
 	public static Image[] rendered;
+	private int lastWidth = getWidth();
+	private int lastHeight = getHeight();
 	
 	public void paintComponent(Graphics go){
 		
@@ -48,15 +49,29 @@ public class Mainscreen extends JPanel{
 			
 		}else{
 
-			int minWidth = Main.sPaneMain.getHeight();
-			if(Main.sPaneMain.getHeight() > Main.sPaneMain.getWidth()) minWidth = Main.sPaneMain.getWidth();
-			int width = (int) (((double)((double) Main.zoom) / ((double) 100.0)) * ((double) minWidth) - minWidth / 30);
+			Image img = rendered[0];
 			
-			setPreferredSize(new Dimension(width + minWidth / 40, width + minWidth / 40));
+			int imgWidth = 0; int imgHeight = 0;
+			
+			if(Main.sPaneMain.getHeight() * Main.sPaneMain.getWidth() > img.getHeight(null) * img.getWidth(null)){
+				int maxSize = Main.sPaneMain.getWidth();
+				imgWidth = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) - 50);
+				imgHeight = (int) (((double) imgWidth) / ((double) img.getWidth(null)) * img.getHeight(null));
+			}else{
+				int maxSize = Main.sPaneMain.getHeight();
+				imgHeight = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) - 50);
+				imgWidth = (int) (((double) imgHeight) / ((double) img.getHeight(null)) * img.getWidth(null));
+			}
+			
+			g.drawImage(rendered[0], getWidth() / 2 - imgWidth / 2, getHeight() / 2 - imgHeight / 2, imgWidth, imgHeight, null);
+			
+			
+			setPreferredSize(new Dimension(imgWidth + 40, imgHeight + 40));
 			Main.sPaneMain.updateUI();
 			
-			Image img = rendered[0];
-			g.drawImage(rendered[0], getWidth() / 2 - width / 2, getHeight() / 2 - width / 2, width, (int) (((double) img.getHeight(null)) / ((double) img.getWidth(null)) * width), null);
+			
+			System.out.println(imgHeight + 200 + " - " + Main.sPaneMain.getHeight());
+			
 			
 			
 		}

@@ -1,5 +1,6 @@
 package fr.themsou.panel;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,6 +16,9 @@ public class Footerbar extends JPanel{
 		
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+		g.setColor(Color.white);
+		g.fillRect(0, 0, getWidth(), getHeight());
+		g.setColor(Color.BLACK);
 	
 		if(true){
 			fullCenterString(g, 0, getWidth(), 0, getHeight(), "Mode : note", new Font("FreeSans", 0, 15));

@@ -24,18 +24,9 @@ public class Main{
 	public static JFrame fenetre;
 	public static Devices devices = new Devices();
 
-
-	public static String mode = "PB";
-	public static boolean getFile = false;
-	public static String current = null;
-	public static int zoom = 100;
-	public static int reload = 10;
 	public static Color currentColor = Color.GREEN;
 	public static boolean click = false;
 	public static File addFile = null;
-	public static int addFileX = 0;
-	public static int addFileY = 0;
-	public static boolean hasChange = false;
 	
 	public static JPanel panel = new JPanel();
 	public static Mainscreen mainscreen = new Mainscreen();
@@ -59,13 +50,18 @@ public class Main{
 		fenetre.setVisible(true);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetre.addMouseListener(devices);
+		fenetre.addMouseWheelListener(devices);
+		fenetre.addKeyListener(devices);
 		fenetre.setContentPane(panel);
 		
 		panel.setLayout(new BorderLayout());
 		panel.add("Center", sPaneMain);
-		panel.add("West", sPaneLeft);
 		panel.add("South", footerBar);
-		panel.addMouseListener(devices);
+		panel.add("West", sPaneLeft);
+		
+		sPaneMain.addMouseListener(devices);
+		sPaneMain.addMouseWheelListener(devices);
+		sPaneMain.addKeyListener(devices);
 		
 		sPaneLeft.setPreferredSize(new Dimension(200, sPaneLeft.getHeight()));
 		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
