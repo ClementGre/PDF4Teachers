@@ -1,28 +1,32 @@
 package fr.themsou.panel;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.MouseInfo;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
+import java.io.IOException;
+
 import javax.swing.JPanel;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+
 import fr.themsou.main.Main;
 import fr.themsou.main.Render;
 
 @SuppressWarnings({"serial"})
 public class Mainscreen extends JPanel{
 	
-	public static int zoom = 100;
+	public static int zoom = 150;
 	public static File current = null;
-	public static boolean loading = false;
+	public static int status = 0;
 	public static Image[] rendered;
+	public static int pages = 0;
 	private int lastWidth = getWidth();
 	private int lastHeight = getHeight();
 	
@@ -31,46 +35,56 @@ public class Mainscreen extends JPanel{
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		System.out.println("repaint");
-		int mouseX = MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x;
-		int mouseY = MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y;
+		//int mouseX = MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x;
+		//int mouseY = MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y;
 		
 		g.setColor(new Color(102, 102, 102));
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
 		if(current == null){
 			
-			if(loading){
+			if(status == 0){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement...", new Font("FreeSans", 1, 20));
-			}else{
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun document ouvert", new Font("FreeSans", 1, 20));
+			}else if(status == 1){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun fichier ouvert", new Font("FreeSans", 1, 20));
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement du document...", new Font("FreeSans", 1, 20));
+			}else if(status == 2){
+				g.setColor(Color.WHITE);
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Une erreur est survenue lors du chargement du document :/", new Font("FreeSans", 1, 20));
 			}
 			
 		}else{
 
-			Image img = rendered[0];
+			
 			
 			int imgWidth = 0; int imgHeight = 0;
-			
-			if(Main.sPaneMain.getHeight() * Main.sPaneMain.getWidth() > img.getHeight(null) * img.getWidth(null)){
+			if((double)Main.sPaneMain.getHeight() / (double)Main.sPaneMain.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
 				int maxSize = Main.sPaneMain.getWidth();
-				imgWidth = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) - 50);
-				imgHeight = (int) (((double) imgWidth) / ((double) img.getWidth(null)) * img.getHeight(null));
+				imgWidth = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
+				imgHeight = (int) (((double) imgWidth) / ((double) rendered[0].getWidth(null)) * rendered[0].getHeight(null));
+				System.out.println("cotés");
 			}else{
 				int maxSize = Main.sPaneMain.getHeight();
-				imgHeight = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) - 50);
-				imgWidth = (int) (((double) imgHeight) / ((double) img.getHeight(null)) * img.getWidth(null));
+				imgHeight = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
+				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
 			}
 			
-			g.drawImage(rendered[0], getWidth() / 2 - imgWidth / 2, getHeight() / 2 - imgHeight / 2, imgWidth, imgHeight, null);
+			int pages = 0;
+			int imgsHeight = 40;
+			for(Image img : rendered){
+				pages++;
+				g.drawImage(img, getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight, null);
+				imgsHeight += imgHeight + 40;
+			}
+			this.pages = pages;
 			
-			
-			setPreferredSize(new Dimension(imgWidth + 40, imgHeight + 40));
-			Main.sPaneMain.updateUI();
-			
-			
-			System.out.println(imgHeight + 200 + " - " + Main.sPaneMain.getHeight());
+			if(lastWidth != imgWidth || lastHeight != imgHeight){
+				setPreferredSize(new Dimension(imgWidth + 80, imgsHeight));
+				Main.sPaneMain.updateUI();
+				lastWidth = imgWidth;
+				lastHeight = imgHeight;
+			}
 			
 			
 			
@@ -81,17 +95,31 @@ public class Mainscreen extends JPanel{
 	
 	public void openFile(File file){
 		
-		
-		zoom = 100;
+		zoom = 150;
 		rendered = null;
 		current = null;
-		loading = true;
-		repaint();
+		status = 1;
+		lastWidth = 0;
+		setPreferredSize(new Dimension(0, 0));
+		Main.sPaneMain.updateUI();
+		paintComponent(getGraphics());
 		
-		rendered = new Render().render(file);
-		current = file;
-		loading = false;
+		try{
+			PDDocument doc = PDDocument.load(file);
+			
+			rendered = new Render().render(doc, 0, 4);
+			if(rendered != null){
+				current = file;
+				status = 0;
+			}
+			
+		}catch(IOException e){
+			status = 2; e.printStackTrace();
+		}
+		
 		repaint();
+		Main.footerBar.repaint();
+		
 		
 	}
 	public void saveFile(){

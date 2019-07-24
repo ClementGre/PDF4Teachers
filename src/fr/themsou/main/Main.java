@@ -12,6 +12,7 @@ import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ChangeListener;
 
 import fr.themsou.devices.Devices;
 import fr.themsou.devices.FileDrop;
@@ -35,11 +36,11 @@ public class Main{
 	public static JScrollPane sPaneMain = new JScrollPane(mainscreen);
 	public static JScrollPane sPaneLeft = new JScrollPane(new Leftbar());
 
-	public static DropTarget fileDrop = new DropTarget(panel, new FileDrop());
+	public static DropTarget fileDrop = new DropTarget(mainscreen, new FileDrop());
 
 	public static void main(String[] args){
 		
-		fileDrop.setActive(false);
+		fileDrop.setActive(true);
 		fileDrop.setDefaultActions(DnDConstants.ACTION_COPY);
 		
 		fenetre = new JFrame("PDF Marker");
@@ -50,7 +51,6 @@ public class Main{
 		fenetre.setVisible(true);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		fenetre.addMouseListener(devices);
-		fenetre.addMouseWheelListener(devices);
 		fenetre.addKeyListener(devices);
 		fenetre.setContentPane(panel);
 		
@@ -59,20 +59,15 @@ public class Main{
 		panel.add("South", footerBar);
 		panel.add("West", sPaneLeft);
 		
-		sPaneMain.addMouseListener(devices);
-		sPaneMain.addMouseWheelListener(devices);
-		sPaneMain.addKeyListener(devices);
+		
 		
 		sPaneLeft.setPreferredSize(new Dimension(200, sPaneLeft.getHeight()));
 		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
+		Main.sPaneMain.getVerticalScrollBar().setUnitIncrement(30);
 		fenetre.setSize(1200, 674);
+		fenetre.addComponentListener(new ComponentAdapter(){  public void componentResized(ComponentEvent componentEvent){} });
 		
-		fenetre.addComponentListener(new ComponentAdapter() {
-		    public void componentResized(ComponentEvent componentEvent) {
-		    }
-		});
-		
-		mainscreen.openFile(new File("/home/clement/Téléchargements/test-1.pdf"));
+		//mainscreen.openFile(new File(System.getProperty("user.home") + "/test-1.pdf"));
 		
 		/*int reload = 10;
 		while(true){

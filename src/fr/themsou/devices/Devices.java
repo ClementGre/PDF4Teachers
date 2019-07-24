@@ -1,5 +1,4 @@
 package fr.themsou.devices;
-
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -12,14 +11,22 @@ import fr.themsou.panel.Mainscreen;
 
 public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 
+	
 	@Override
 	public void keyPressed(KeyEvent e) {
+		//System.out.println(e.getKeyCode());
+		
+		if(e.getKeyCode() == 17){
+			Main.mainscreen.addMouseWheelListener(Main.devices);
+		}
 		
 	}
-
 	@Override
-	public void keyReleased(KeyEvent e) {
+	public void keyReleased(KeyEvent e){
 		
+		if(e.getKeyCode() == 17){
+			Main.mainscreen.removeMouseWheelListener(Main.devices);
+		}
 	}
 
 	@Override
@@ -50,8 +57,6 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		
-		
 		Main.click = false;
 	}
 
@@ -60,16 +65,27 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 		
 		if(Mainscreen.current != null){
 			
-			if(e.getWheelRotation() == 1) Mainscreen.zoom -= 5;
+			if(e.isControlDown()){
 			
-			else Mainscreen.zoom += 5;
-			
-			if(Mainscreen.zoom <= 0) Mainscreen.zoom = 5;
-			else if(Mainscreen.zoom >= 499) Mainscreen.zoom = 500;
-			
-			Main.mainscreen.repaint();
-			Main.footerBar.repaint();
-			
+				System.out.println("Rotation=" + e.getWheelRotation() + "  ClicCount=" + e.getClickCount());
+				
+				if(e.getWheelRotation() == 1) Mainscreen.zoom -= 5 * e.getClickCount();
+				
+				else Mainscreen.zoom += 5;
+				
+				if(Mainscreen.zoom <= 0) Mainscreen.zoom = 5;
+				else if(Mainscreen.zoom >= 499) Mainscreen.zoom = 500;
+				
+				
+				Main.mainscreen.repaint();
+				Main.footerBar.repaint();
+				
+				
+			}else{
+				
+				
+				
+			}
 		}
 		
 	}

@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/home/clement/Documents/Dev/Java/pdfbox-2.0.16.jar"/>
-	<classpathentry kind="lib" path="/home/clement/Documents/Dev/Java/fontbox-2.0.2.jar"/>
 	<classpathentry kind="lib" path="/home/clement/Documents/Dev/Java/commons-logging-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/clement/Documents/Dev/Java/fontbox-2.0.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
