@@ -5,20 +5,22 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.io.File;
-
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ChangeListener;
-
+import javax.swing.JTabbedPane;
 import fr.themsou.devices.Devices;
 import fr.themsou.devices.FileDrop;
 import fr.themsou.panel.Footerbar;
-import fr.themsou.panel.Leftbar;
+import fr.themsou.panel.LeftbarFiles;
+import fr.themsou.panel.LeftbarNote;
+import fr.themsou.panel.LeftbarPaint;
+import fr.themsou.panel.LeftbarText;
 import fr.themsou.panel.Mainscreen;
+import fr.themsou.panel.Menubar;
 
 public class Main{
 	
@@ -34,8 +36,9 @@ public class Main{
 	
 	public static Footerbar footerBar = new Footerbar();
 	public static JScrollPane sPaneMain = new JScrollPane(mainscreen);
-	public static JScrollPane sPaneLeft = new JScrollPane(new Leftbar());
-
+	public static JTabbedPane leftBar = new JTabbedPane();
+	public static JMenuBar menuBar = new JMenuBar();
+	
 	public static DropTarget fileDrop = new DropTarget(mainscreen, new FileDrop());
 
 	public static void main(String[] args){
@@ -54,18 +57,26 @@ public class Main{
 		fenetre.addKeyListener(devices);
 		fenetre.setContentPane(panel);
 		
+		new Menubar().setup();
 		panel.setLayout(new BorderLayout());
 		panel.add("Center", sPaneMain);
+		panel.add("North", menuBar);
 		panel.add("South", footerBar);
-		panel.add("West", sPaneLeft);
+		panel.add("West", leftBar);
 		
+		leftBar.add(new LeftbarFiles(), new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
+		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
+		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
+		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
+		leftBar.setPreferredSize(new Dimension(200, leftBar.getHeight()));
 		
-		
-		sPaneLeft.setPreferredSize(new Dimension(200, sPaneLeft.getHeight()));
 		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
-		Main.sPaneMain.getVerticalScrollBar().setUnitIncrement(30);
+		
+		sPaneMain.getVerticalScrollBar().setUnitIncrement(30);
+		sPaneMain.setBorder(null);
+		
+		
 		fenetre.setSize(1200, 674);
-		fenetre.addComponentListener(new ComponentAdapter(){  public void componentResized(ComponentEvent componentEvent){} });
 		
 		//mainscreen.openFile(new File(System.getProperty("user.home") + "/test-1.pdf"));
 		

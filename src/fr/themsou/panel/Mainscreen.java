@@ -56,8 +56,6 @@ public class Mainscreen extends JPanel{
 			
 		}else{
 
-			
-			
 			int imgWidth = 0; int imgHeight = 0;
 			if((double)Main.sPaneMain.getHeight() / (double)Main.sPaneMain.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
 				int maxSize = Main.sPaneMain.getWidth();
