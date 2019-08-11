@@ -9,7 +9,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import fr.themsou.panel.MainScreen;
 
-public class Render {
+public class PDFRender {
 	
 	public Image[] render(PDDocument doc, int start, int max){
 		

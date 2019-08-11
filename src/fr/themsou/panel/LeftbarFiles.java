@@ -70,9 +70,9 @@ public class LeftbarFiles extends JPanel{
 	}
 
 	public void openFile(File file){
-		System.out.println("open");
+		
 		if(!file.isDirectory()){
-			if(!files.contains(file)){
+			if(isFilePdf(file) && !files.contains(file)){
 				files.add(file);
 			}
 		}else{
@@ -82,13 +82,15 @@ public class LeftbarFiles extends JPanel{
 				if(isFilePdf(VFile) && !files.contains(VFile)){
 					files.add(VFile);
 				}
-				
 			}
-			
-			
 		}
 		repaint();
+	}
+	public void openFiles(File[] files){
 		
+		for(File file : files){
+			openFile(file);
+		}
 	}
 	
 	private boolean isFilePdf(File file) {

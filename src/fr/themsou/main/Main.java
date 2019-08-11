@@ -61,8 +61,7 @@ public class Main{
 	
 	public static void main(String[] args){
 		
-		mainScreenDrop.setDefaultActions(DnDConstants.ACTION_COPY);
-		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+//		WINDOW
 		
 		fenetre = new JFrame("PDF Teacher");
 		fenetre.setSize(1200, 675);
@@ -77,31 +76,43 @@ public class Main{
 		fenetre.addKeyListener(devices);
 		fenetre.setContentPane(panel);
 		
+//		MAIN
+		
+		mainScreenScroll.getVerticalScrollBar().setUnitIncrement(30);
+		mainScreenScroll.setBorder(null);
+		mainScreenDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+		
+//		LEFT BAR
+		
 		leftBar.setUI(new BasicTabbedPaneUI(){
 	        private final Insets borderInsets = new Insets(0, 0, 0, 0);
 	        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex){}
 	        @Override protected Insets getContentBorderInsets(int tabPlacement){ return borderInsets; }
 	    });
 		leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
+		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
+		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
+		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
+		leftBar.setPreferredSize(new Dimension(204, leftBar.getHeight()));
+		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+		
+//		FOOTER-HEADER BAR
 		
 		menuBar.setup();
+		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
+		
+//		PANEL
+		
 		panel.setLayout(new BorderLayout());
 		panel.add("Center", mainScreenScroll);
 		panel.add("North", menuBar);
 		panel.add("South", footerBar);
 		panel.add("West", leftBar);
 		
-		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
-		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
-		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
-		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
-		leftBar.setPreferredSize(new Dimension(204, leftBar.getHeight()));
-		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
-		
-		mainScreenScroll.getVerticalScrollBar().setUnitIncrement(30);
-		mainScreenScroll.setBorder(null);
-		
 		fenetre.setSize(1200, 674);
+		
+//		RUN
 		
 		while(true){
 			
@@ -117,5 +128,13 @@ public class Main{
 		
 		
 	}
+	
+	public static String getFileExtension(File file) {
+        String fileName = file.getName();
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+        return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
+    }
+
 
 }

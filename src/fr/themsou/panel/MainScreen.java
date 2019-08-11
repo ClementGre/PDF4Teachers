@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import fr.themsou.main.Main;
-import fr.themsou.main.Render;
+import fr.themsou.main.PDFRender;
 
 @SuppressWarnings({"serial"})
 public class MainScreen extends JPanel{
@@ -106,7 +106,7 @@ public class MainScreen extends JPanel{
 		try{
 			PDDocument doc = PDDocument.load(file);
 			
-			rendered = new Render().render(doc, 0, 4);
+			rendered = new PDFRender().render(doc, 0, 4);
 			if(rendered != null){
 				current = file;
 				status = 0;
