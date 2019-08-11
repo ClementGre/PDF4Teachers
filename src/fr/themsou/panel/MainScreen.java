@@ -20,7 +20,7 @@ import fr.themsou.main.Main;
 import fr.themsou.main.Render;
 
 @SuppressWarnings({"serial"})
-public class Mainscreen extends JPanel{
+public class MainScreen extends JPanel{
 	
 	public static int zoom = 150;
 	public static File current = null;
@@ -30,11 +30,12 @@ public class Mainscreen extends JPanel{
 	private int lastWidth = getWidth();
 	private int lastHeight = getHeight();
 	
+	@SuppressWarnings("static-access")
 	public void paintComponent(Graphics go){
 		
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		System.out.println("repaint");
+		
 		//int mouseX = MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x;
 		//int mouseY = MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y;
 		
@@ -57,13 +58,13 @@ public class Mainscreen extends JPanel{
 		}else{
 
 			int imgWidth = 0; int imgHeight = 0;
-			if((double)Main.sPaneMain.getHeight() / (double)Main.sPaneMain.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
-				int maxSize = Main.sPaneMain.getWidth();
+			if((double)Main.mainScreenScroll.getHeight() / (double)Main.mainScreenScroll.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
+				int maxSize = Main.mainScreenScroll.getWidth();
 				imgWidth = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
 				imgHeight = (int) (((double) imgWidth) / ((double) rendered[0].getWidth(null)) * rendered[0].getHeight(null));
 				System.out.println("cotés");
 			}else{
-				int maxSize = Main.sPaneMain.getHeight();
+				int maxSize = Main.mainScreenScroll.getHeight();
 				imgHeight = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
 				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
 			}
@@ -79,7 +80,7 @@ public class Mainscreen extends JPanel{
 			
 			if(lastWidth != imgWidth || lastHeight != imgHeight){
 				setPreferredSize(new Dimension(imgWidth + 80, imgsHeight));
-				Main.sPaneMain.updateUI();
+				Main.mainScreenScroll.updateUI();
 				lastWidth = imgWidth;
 				lastHeight = imgHeight;
 			}
@@ -99,7 +100,7 @@ public class Mainscreen extends JPanel{
 		status = 1;
 		lastWidth = 0;
 		setPreferredSize(new Dimension(0, 0));
-		Main.sPaneMain.updateUI();
+		Main.mainScreenScroll.updateUI();
 		paintComponent(getGraphics());
 		
 		try{

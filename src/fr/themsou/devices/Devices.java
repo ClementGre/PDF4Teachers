@@ -3,13 +3,14 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.Mainscreen;
+import fr.themsou.panel.MainScreen;
 
-public class Devices implements MouseListener, KeyListener, MouseWheelListener{
+public class Devices implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener{
 
 	
 	@Override
@@ -17,7 +18,7 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 		//System.out.println(e.getKeyCode());
 		
 		if(e.getKeyCode() == 17){
-			Main.mainscreen.addMouseWheelListener(Main.devices);
+			Main.mainScreen.addMouseWheelListener(Main.devices);
 		}
 		
 	}
@@ -25,7 +26,7 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 	public void keyReleased(KeyEvent e){
 		
 		if(e.getKeyCode() == 17){
-			Main.mainscreen.removeMouseWheelListener(Main.devices);
+			Main.mainScreen.removeMouseWheelListener(Main.devices);
 		}
 	}
 
@@ -36,6 +37,11 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		
+		if(e.getComponent().equals(Main.leftBarFiles)){
+			
+			Main.leftBarFiles.click(e.getY());
+		}
 		
 	}
 
@@ -63,21 +69,17 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		
-		if(Mainscreen.current != null){
+		if(MainScreen.current != null){
 			
 			if(e.isControlDown()){
 			
-				System.out.println("Rotation=" + e.getWheelRotation() + "  ClicCount=" + e.getClickCount());
+				if(e.getWheelRotation() == 1) MainScreen.zoom -= 5;
+				if(e.getWheelRotation() == -1) MainScreen.zoom += 5;
 				
-				if(e.getWheelRotation() == 1) Mainscreen.zoom -= 5 * e.getClickCount();
+				if(MainScreen.zoom <= 0) MainScreen.zoom = 5;
+				else if(MainScreen.zoom >= 499) MainScreen.zoom = 500;
 				
-				else Mainscreen.zoom += 5;
-				
-				if(Mainscreen.zoom <= 0) Mainscreen.zoom = 5;
-				else if(Mainscreen.zoom >= 499) Mainscreen.zoom = 500;
-				
-				
-				Main.mainscreen.repaint();
+				Main.mainScreen.repaint();
 				Main.footerBar.repaint();
 				
 				
@@ -87,6 +89,16 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener{
 				
 			}
 		}
+		
+	}
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
+	}
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		
+		
 		
 	}
 

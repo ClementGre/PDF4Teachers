@@ -16,12 +16,18 @@ import fr.themsou.main.Main;
 @SuppressWarnings("serial")
 public class FileDrop extends DropTarget {
 
+	private int component = 0;
+	public FileDrop(int component){
+		this.component = component;
+	}
+	
 
 	@SuppressWarnings("rawtypes")
 	public void dragEnter(DropTargetDragEvent e){
 		
 		Transferable transférable = e.getTransferable();
 		DataFlavor[] types = transférable.getTransferDataFlavors();
+		
 		
         for(DataFlavor type : types){
            try{
@@ -30,7 +36,7 @@ public class FileDrop extends DropTarget {
                  Iterator iterator = ((List) transférable.getTransferData(type)).iterator();
                  File file = (File) iterator.next();
                  
-                 if(getFileExtension(file).equals("pdf")){
+                 if(isFileAcceptable(file)){
                 	 e.acceptDrag(1);
                  }else{
                 	 e.rejectDrag();
@@ -62,8 +68,14 @@ public class FileDrop extends DropTarget {
                  Iterator iterator = ((List) transférable.getTransferData(type)).iterator();
                  File file = (File) iterator.next();
                  
-                 if(getFileExtension(file).equals("pdf")){
-                	 Main.mainscreen.openFile(file);
+                 if(isFileAcceptable(file)){
+                	 
+                	 if(component == 1){
+                		 Main.mainScreen.openFile(file);
+                	 }else if(component == 2){
+                		Main.leftBarFiles.openFile(file);
+                	 }
+                	
                  }else{
                 	 e.rejectDrop();
                  }
@@ -74,10 +86,33 @@ public class FileDrop extends DropTarget {
         e.dropComplete(true);
 	}
 	
-	private static String getFileExtension(File file) {
+	private boolean isFileAcceptable(File file) {
         String fileName = file.getName();
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-        return fileName.substring(fileName.lastIndexOf(".")+1);
-        else return "";
+        String ext = "";
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) 
+        	ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+        
+        if(component == 1){
+        	
+        	if(ext.equals("pdf")){
+        		return true;
+        	}
+        	
+        }else if(component == 2){
+        	
+        	if(ext.equals("pdf")){
+        		return true;
+        		
+        	}else if(file.isDirectory()){
+        		return true;
+        	}
+        	
+        }
+        
+        return false;
     }
+	
+	
+	
+	
 }

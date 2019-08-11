@@ -7,18 +7,18 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.ImageIcon;
 import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 
 import fr.themsou.main.Main;
 
-public class Menubar{
+@SuppressWarnings("serial")
+public class MenuBar extends JMenuBar{
 	
 	
 	public void setup(){
-		
-		
 		
 		JMenu menu1 = new JMenu("Fichier");
 		JMenuItem menu1arg1 = new JMenuItem("Ouvrir un fichier     ");
@@ -94,8 +94,8 @@ public class Menubar{
 		
 		menu1arg1.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) { // Supprimer
 			
-			if(Mainscreen.current != null){
-				int i = JOptionPane.showConfirmDialog(null, "Êtes vous sur de vouloir supprimer le document " + Mainscreen.current.getName() + " ?");
+			if(MainScreen.current != null){
+				int i = JOptionPane.showConfirmDialog(null, "Êtes vous sur de vouloir supprimer le document " + MainScreen.current.getName() + " ?");
 				if(i == 0){
 					
 				}

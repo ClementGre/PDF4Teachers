@@ -24,13 +24,13 @@ public class Footerbar extends JPanel{
 			fullCenterString(g, 0, getWidth(), 0, getHeight(), "Mode : note", new Font("FreeSans", 0, 15));
 		}
 		
-		if(Mainscreen.current != null){
-			alignRightString(g, getWidth() - 4, 0, getHeight(), Mainscreen.current.getName(), new Font("FreeSans", 0, 15));
+		if(MainScreen.current != null){
+			alignRightString(g, getWidth() - 4, 0, getHeight(), MainScreen.current.getName(), new Font("FreeSans", 0, 15));
 		}else{
 			alignRightString(g, getWidth() - 4, 0, getHeight(), "Aucun fichier ouvert", new Font("FreeSans", 0, 15));
 		}
 		
-		alignLeftString(g, 4, 0, getHeight(), "zoom : " + Mainscreen.zoom + "%", new Font("FreeSans", 0, 15));
+		alignLeftString(g, 4, 0, getHeight(), "zoom : " + MainScreen.zoom + "%", new Font("FreeSans", 0, 15));
 	
 	}
 	

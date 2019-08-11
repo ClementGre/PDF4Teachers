@@ -3,15 +3,21 @@ package fr.themsou.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.io.File;
+
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.border.EtchedBorder;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
+
 import fr.themsou.devices.Devices;
 import fr.themsou.devices.FileDrop;
 import fr.themsou.panel.Footerbar;
@@ -19,8 +25,8 @@ import fr.themsou.panel.LeftbarFiles;
 import fr.themsou.panel.LeftbarNote;
 import fr.themsou.panel.LeftbarPaint;
 import fr.themsou.panel.LeftbarText;
-import fr.themsou.panel.Mainscreen;
-import fr.themsou.panel.Menubar;
+import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.MenuBar;
 
 public class Main{
 	
@@ -32,69 +38,82 @@ public class Main{
 	public static File addFile = null;
 	
 	public static JPanel panel = new JPanel();
-	public static Mainscreen mainscreen = new Mainscreen();
+	
+//		MAIN
+	
+	public static MainScreen mainScreen = new MainScreen();
+	public static JScrollPane mainScreenScroll = new JScrollPane(mainScreen);
+	public static DropTarget mainScreenDrop = new DropTarget(mainScreen, new FileDrop(1));
+	
+//		LEFT BAR
+	
+	public static JTabbedPane leftBar = new JTabbedPane();
+	
+	public static LeftbarFiles leftBarFiles = new LeftbarFiles();
+	public static JScrollPane leftBarFilesScroll = new JScrollPane(leftBarFiles);
+	public static DropTarget leftBarFilesDrop = new DropTarget(leftBarFiles, new FileDrop(2));
+	
+	
+//		FOOTER-HEADER BAR
 	
 	public static Footerbar footerBar = new Footerbar();
-	public static JScrollPane sPaneMain = new JScrollPane(mainscreen);
-	public static JTabbedPane leftBar = new JTabbedPane();
-	public static JMenuBar menuBar = new JMenuBar();
+	public static MenuBar menuBar = new MenuBar();
 	
-	public static DropTarget fileDrop = new DropTarget(mainscreen, new FileDrop());
-
 	public static void main(String[] args){
 		
-		fileDrop.setActive(true);
-		fileDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+		mainScreenDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
 		
-		fenetre = new JFrame("PDF Marker");
+		fenetre = new JFrame("PDF Teacher");
 		fenetre.setSize(1200, 675);
 		fenetre.setMinimumSize(new Dimension(700, 393));
 		fenetre.setResizable(true);
 		fenetre.setLocationRelativeTo(null);
 		fenetre.setVisible(true);
 		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		fenetre.addMouseListener(devices);
+		mainScreen.addMouseListener(devices);
+		leftBarFiles.addMouseListener(devices);
+		fenetre.addMouseMotionListener(devices);
 		fenetre.addKeyListener(devices);
 		fenetre.setContentPane(panel);
 		
-		new Menubar().setup();
+		leftBar.setUI(new BasicTabbedPaneUI(){
+	        private final Insets borderInsets = new Insets(0, 0, 0, 0);
+	        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex){}
+	        @Override protected Insets getContentBorderInsets(int tabPlacement){ return borderInsets; }
+	    });
+		leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+		
+		menuBar.setup();
 		panel.setLayout(new BorderLayout());
-		panel.add("Center", sPaneMain);
+		panel.add("Center", mainScreenScroll);
 		panel.add("North", menuBar);
 		panel.add("South", footerBar);
 		panel.add("West", leftBar);
 		
-		leftBar.add(new LeftbarFiles(), new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
+		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
 		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
 		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
 		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
-		leftBar.setPreferredSize(new Dimension(200, leftBar.getHeight()));
-		
+		leftBar.setPreferredSize(new Dimension(204, leftBar.getHeight()));
 		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
 		
-		sPaneMain.getVerticalScrollBar().setUnitIncrement(30);
-		sPaneMain.setBorder(null);
-		
+		mainScreenScroll.getVerticalScrollBar().setUnitIncrement(30);
+		mainScreenScroll.setBorder(null);
 		
 		fenetre.setSize(1200, 674);
 		
-		//mainscreen.openFile(new File(System.getProperty("user.home") + "/test-1.pdf"));
-		
-		/*int reload = 10;
 		while(true){
 			
 			try{
 				Thread.sleep(20);
 			}catch(InterruptedException e){ e.printStackTrace(); }
 			
-			
-			if(reload > 0){
-				reload --;
-			}else if(reload == 0){
-				reload --;
+			if(leftBar.getSelectedIndex() == 0){
+				leftBarFiles.repaint();
 			}
 			
-		}*/
+		}
 		
 		
 	}

@@ -7,7 +7,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 
-import fr.themsou.panel.Mainscreen;
+import fr.themsou.panel.MainScreen;
 
 public class Render {
 	
@@ -41,7 +41,7 @@ public class Render {
 			
 		}catch(Exception | NoSuchMethodError e){
 			System.out.println(e.getMessage());
-			Mainscreen.status = 2;
+			MainScreen.status = 2;
 			return null;
 		}
 		
