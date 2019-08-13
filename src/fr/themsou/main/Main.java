@@ -122,6 +122,7 @@ public class Main{
 			
 			if(leftBar.getSelectedIndex() == 0){
 				leftBarFiles.repaint();
+				mainScreen.repaint();
 			}
 			
 		}

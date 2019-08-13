@@ -1,7 +1,8 @@
-package fr.themsou.main;
+package fr.themsou.render;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
@@ -11,26 +12,31 @@ import fr.themsou.panel.MainScreen;
 
 public class PDFRender {
 	
-	public Image[] render(PDDocument doc, int start, int max){
+	public Image[] render(File file, int startPage, int maxPages){
 		
 		try{
 			
+			PDDocument doc = PDDocument.load(file);
+				
 			System.out.println("Start render");
 			long time = System.currentTimeMillis();
 			
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
 			
-			if(doc.getNumberOfPages() < max) max = doc.getNumberOfPages() - 1;
+			if(doc.getNumberOfPages() < maxPages) maxPages = doc.getNumberOfPages() - 1;
 			
-			int pageCounter = start;
-			Image[] images = new Image[max - start + 1];
+			int pageCounter = startPage;
+			Image[] images = new Image[maxPages - startPage + 1];
 			
 			for(@SuppressWarnings("unused") PDPage page : doc.getPages()){
 				
-				if(pageCounter > max) continue;
+				if(pageCounter > maxPages) continue;
 				
-			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 200, ImageType.RGB);
+			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 300, ImageType.RGB);
 			    images[pageCounter] = (Image) bimg;
+			    
+			    
+			    
 			    pageCounter ++;
 			}
 			doc.close();
