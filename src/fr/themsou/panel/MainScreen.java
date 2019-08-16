@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -11,14 +12,14 @@ import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
-import java.util.HashMap;
 
 import javax.swing.JPanel;
 
 import fr.themsou.main.Main;
-import fr.themsou.render.EditRender;
+import fr.themsou.render.ElementRender;
 import fr.themsou.render.PDFRender;
-import fr.themsou.utils.AdvancedText;
+import fr.themsou.render.PageRender;
+import fr.themsou.render.TextRender;
 import fr.themsou.utils.Hand;
 import fr.themsou.utils.Location;
 
@@ -30,7 +31,7 @@ public class MainScreen extends JPanel{
 	public static int status = 0;
 	public static Image[] rendered;
 	public static int pages = 0;
-	public static HashMap<Integer, EditRender> pagesRenderer = new HashMap<>();
+	public static PageRender pageRender;
 	public static Hand hand = null;
 	private int lastWidth = getWidth();
 	private int lastHeight = getHeight();
@@ -73,17 +74,25 @@ public class MainScreen extends JPanel{
 				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
 			}
 			
-			int pages = 0;
+			int page = 0;
 			int imgsHeight = 40;
+			int imgMouseX = 0;
+			int imgMouseY = 0;
 			for(Image img : rendered){
 				
-				g.drawImage(img, getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight, null);
-				setCursor(pagesRenderer.get(pages).render(g, getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight, mouseX, mouseY));
+				imgMouseX = (int) (((double) (mouseX - (getWidth()/2-imgWidth/2))) / ((double)imgWidth) * img.getWidth(null));
+				imgMouseY = (int) (((double) (mouseY - imgsHeight)) / ((double)imgHeight) * img.getHeight(null));
+				
+				Image imgRendered = pageRender.render(img, page, imgMouseX, imgMouseY);
+				
+				g.drawImage(imgRendered, getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight, null);
 				
 				imgsHeight += imgHeight + 40;
-				pages++;
+				page++;
 			}
-			this.pages = pages;
+			this.pages = page;
+			
+			pageRender.afterRender(imgMouseX, imgMouseY);
 			
 			
 			
@@ -101,6 +110,48 @@ public class MainScreen extends JPanel{
 		
 	}
 	
+	public void mouse(PageRender page, ElementRender element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
+		
+		System.out.println("   MX:" + mouseX + " MY:" + mouseY);
+		if(hand != null)
+		System.out.println("FROM --> " + hand.getLoc().toString());
+		if(hand == null && Main.click && element != null){ // Ajouter
+			
+			hand = new Hand(element, element.getLocation().substractValues(new Location(mouseX, mouseY)), element.getPage());
+			page.removeElement(element);
+			
+		}else if(hand != null){ // Déposer - Déplacer
+			
+			hand.setPage(pageNumber);
+			hand.setLoc(new Location(mouseX, mouseY).additionValues(hand.getShift()));
+			verifyLoc(page, hand.getElement(), mouseX, mouseY);
+			
+			if(!Main.click){ // Déposer
+				
+				page.addElement(hand.getElement());
+				hand.getElement().paint(g, mouseX, mouseY);
+				hand = null;
+			}
+		}
+		if(hand != null)
+		System.out.print("TO --> " + hand.getLoc().toString());
+		
+		
+		
+	}
+	public void verifyLoc(PageRender page, ElementRender element, int mouseX, int mouseY){
+		
+		Location minLoc = element.getLocation().substractValues(element.getMargin());
+		Location maxLoc = element.getLocation().additionValues(element.getMargin());
+		
+		if(minLoc.getX() < 0) element.setX(0 + element.getMargin().getX());
+		if(maxLoc.getX() > page.getWidth()) element.setX(page.getWidth() - element.getMargin().getX());
+		
+		if(minLoc.getY() < 0) element.setY(0 + element.getMargin().getY());
+		if(maxLoc.getY() > page.getHeight()) element.setY(page.getHeight() - element.getMargin().getY());
+			
+	}
+	
 	public void openFile(File file){
 		
 		zoom = 150;
@@ -111,18 +162,19 @@ public class MainScreen extends JPanel{
 		setPreferredSize(new Dimension(0, 0));
 		Main.mainScreenScroll.updateUI();
 		paintComponent(getGraphics());
+		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
 		rendered = new PDFRender().render(file, 0, 4);
 		if(rendered != null){
 			current = file;
 			status = 0;
-			
-			for(int i = 0; i < rendered.length; i++){
-				pagesRenderer.put(i, new EditRender());
-			}
+			pageRender = new PageRender(rendered[0].getWidth(null), rendered[0].getHeight(null));
+				
 		}
-		
-		pagesRenderer.get(0).putText(new AdvancedText(new Font("Arial", 0, 10), "Très grosse erreur !", Color.RED, false), new Location(50, 50));
+		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		pageRender.addElement(new TextRender(null, 0, new Font("Arial", 0, 70), "Très grosse erreur !", new Color(172, 51, 53)));
+		pageRender.addElement(new TextRender(new Location(200, 200), 0, new Font("Arial", 0, 70), "Hey !", Color.BLACK));
+		pageRender.addElement(new TextRender(null, 0, new Font("Arial", 0, 70), "Bonjour.", new Color(32, 158, 16)));
 		
 		repaint();
 		Main.footerBar.repaint();

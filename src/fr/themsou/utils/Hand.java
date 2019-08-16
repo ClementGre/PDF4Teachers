@@ -1,57 +1,32 @@
 package fr.themsou.utils;
 
-import java.awt.Image;
+import fr.themsou.render.ElementRender;
 
 public class Hand {
 	
-	private AdvancedText text = null;
-	private Image draw = null;
-	private int note = -1;
-	private Location shift = null;
+	private ElementRender element;
+	private Location shift;
 	
-	public Hand(AdvancedText text, Image draw, int note, Location shift) {
+	public Hand(ElementRender element, Location shift, int page) {
 		super();
-		this.text = text;
-		this.draw = draw;
-		this.note = note;
+		this.element = element;
 		this.shift = shift;
+		this.element.setPage(page);
 	}
+
 	
-	public int getType() {
-		if(text != null){
-			return 1;
-		}
-		if(draw != null){
-			return 2;
-		}
-		if(note != 2){
-			return 3;
-		}
-		return 0;
+	public ElementRender getElement() {
+		return element;
 	}
-	
-	public AdvancedText getText() {
-		return text;
+	public void setElement(ElementRender element) {
+		this.element = element;
+	}
+	public Location getLoc() {
+		return element.getLocation();
 	}
 
-	public void setText(AdvancedText text) {
-		this.text = text;
-	}
-
-	public Image getDraw() {
-		return draw;
-	}
-
-	public void setDraw(Image draw) {
-		this.draw = draw;
-	}
-
-	public int getNote() {
-		return note;
-	}
-
-	public void setNote(int note) {
-		this.note = note;
+	public void setLoc(Location loc) {
+		this.element.setLocation(loc);
 	}
 
 	public Location getShift() {
@@ -61,6 +36,15 @@ public class Hand {
 	public void setShift(Location shift) {
 		this.shift = shift;
 	}
+
+	public int getPage() {
+		return element.getPage();
+	}
+
+	public void setPage(int page) {
+		this.element.setPage(page);
+	}
+	
 	
 
 }

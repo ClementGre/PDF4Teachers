@@ -3,21 +3,14 @@ package fr.themsou.main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.io.File;
-
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.border.EtchedBorder;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
 import fr.themsou.devices.Devices;
 import fr.themsou.devices.FileDrop;
 import fr.themsou.panel.Footerbar;
@@ -84,23 +77,24 @@ public class Main{
 		
 //		LEFT BAR
 		
-		leftBar.setUI(new BasicTabbedPaneUI(){
+		/*leftBar.setUI(new BasicTabbedPaneUI(){
 	        private final Insets borderInsets = new Insets(0, 0, 0, 0);
 	        @Override protected void paintContentBorder(Graphics g, int tabPlacement, int selectedIndex){}
 	        @Override protected Insets getContentBorderInsets(int tabPlacement){ return borderInsets; }
-	    });
-		leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
+	    });*/
+		//leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
 		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
 		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
 		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
-		leftBar.setPreferredSize(new Dimension(204, leftBar.getHeight()));
+		leftBar.setPreferredSize(new Dimension(230, leftBar.getHeight()));
 		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
 		
 //		FOOTER-HEADER BAR
 		
 		menuBar.setup();
 		footerBar.setPreferredSize(new Dimension(footerBar.getWidth(), 20));
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		
 //		PANEL
 		

@@ -32,7 +32,7 @@ public class PDFRender {
 				
 				if(pageCounter > maxPages) continue;
 				
-			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 300, ImageType.RGB);
+			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 200, ImageType.RGB);
 			    images[pageCounter] = (Image) bimg;
 			    
 			    

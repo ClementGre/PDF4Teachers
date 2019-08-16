@@ -34,6 +34,13 @@ public class Location {
 		if(loc.x == x && loc.y == y) return true;
 		return false;
 	}
+
+	public Location substractValues(Location loc){
+		return new Location(x - loc.getX(), y - loc.getY());
+	}
+	public Location additionValues(Location loc){
+		return new Location(x + loc.getX(), y + loc.getY());
+	}
 	
 
 }
