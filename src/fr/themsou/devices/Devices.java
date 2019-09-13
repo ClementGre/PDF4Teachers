@@ -38,10 +38,6 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
-		if(e.getComponent().equals(Main.leftBarFiles)){
-			
-			Main.leftBarFiles.click(e.getY());
-		}
 		
 	}
 
@@ -64,6 +60,12 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		Main.click = false;
+		
+		if(e.getComponent() == Main.leftBarFiles){
+			Main.leftBarFiles.mouseReleased();
+		}
+		
+		
 	}
 
 	@Override

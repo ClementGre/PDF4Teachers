@@ -32,7 +32,7 @@ public class FileDrop extends DropTarget {
         for(DataFlavor type : types){
            try{
               if(type.equals(DataFlavor.javaFileListFlavor)){
-            	  e.acceptDrag(DnDConstants.ACTION_COPY);
+            	 e.acceptDrag(DnDConstants.ACTION_COPY);
                  Iterator iterator = ((List) transférable.getTransferData(type)).iterator();
                  File file = (File) iterator.next();
                  
@@ -71,7 +71,7 @@ public class FileDrop extends DropTarget {
                  if(isFileAcceptable(file)){
                 	 
                 	 if(component == 1){
-                		 Main.mainScreen.openFile(file);
+                		Main.mainScreen.openFile(file);
                 	 }else if(component == 2){
                 		Main.leftBarFiles.openFile(file);
                 	 }

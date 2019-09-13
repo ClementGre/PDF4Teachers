@@ -56,7 +56,7 @@ public class Main{
 		
 //		WINDOW
 		
-		fenetre = new JFrame("PDF Teacher");
+		fenetre = new JFrame("PDF Teacher - Aucun document");
 		fenetre.setSize(1200, 675);
 		fenetre.setMinimumSize(new Dimension(700, 393));
 		fenetre.setResizable(true);
@@ -89,6 +89,8 @@ public class Main{
 		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
 		leftBar.setPreferredSize(new Dimension(230, leftBar.getHeight()));
 		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
+		leftBarFilesScroll.setBorder(null);
+		leftBarFilesScroll.getVerticalScrollBar().setUnitIncrement(30);
 		
 //		FOOTER-HEADER BAR
 		
@@ -111,7 +113,7 @@ public class Main{
 		while(true){
 			
 			try{
-				Thread.sleep(20);
+				Thread.sleep(30);
 			}catch(InterruptedException e){ e.printStackTrace(); }
 			
 			if(leftBar.getSelectedIndex() == 0){

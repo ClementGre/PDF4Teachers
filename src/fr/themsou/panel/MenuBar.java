@@ -103,42 +103,28 @@ public class MenuBar extends JMenuBar{
 		menu3arg1.add(menu3arg1arg3);
 		menu3arg1.add(menu3arg1arg4);
 		
-		JMenu menu3arg2 = new JMenu("Qualité de rendu     ");
-		menu3arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/settings.png")));
-		JMenuItem menu3arg2arg1 = new JMenuItem("Trés élevé (900)     ");
-		JMenuItem menu3arg2arg2 = new JMenuItem("Élevé (600)     ");
-		JMenuItem menu3arg2arg3 = new JMenuItem("Normal (300)     ");
-		JMenuItem menu3arg2arg4 = new JMenuItem("Bas (200)     ");
-		JMenuItem menu3arg2arg5 = new JMenuItem("Très bas (100)     ");
+		JMenu menu3arg2 = new JMenu("Pages maximum     ");
+		menu3arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/maxPages.png")));
+		JMenuItem menu3arg2arg1 = new JMenuItem("5     ");
+		JMenuItem menu3arg2arg2 = new JMenuItem("15     ");
+		JMenuItem menu3arg2arg3 = new JMenuItem("30     ");
+		JMenuItem menu3arg2arg4 = new JMenuItem("500     ");
 		menu3arg2.add(menu3arg2arg1);
 		menu3arg2.add(menu3arg2arg2);
 		menu3arg2.add(menu3arg2arg3);
 		menu3arg2.add(menu3arg2arg4);
-		menu3arg2.add(menu3arg2arg5);
 		
-		JMenu menu3arg3 = new JMenu("Pages maximum     ");
-		menu3arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/maxPages.png")));
-		JMenuItem menu3arg3arg1 = new JMenuItem("5     ");
-		JMenuItem menu3arg3arg2 = new JMenuItem("15     ");
-		JMenuItem menu3arg3arg3 = new JMenuItem("30     ");
-		JMenuItem menu3arg3arg4 = new JMenuItem("500     ");
+		JMenu menu3arg3 = new JMenu("Sauvegarde auto     ");
+		menu3arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
+		JMenuItem menu3arg3arg1 = new JMenuItem("Activer     ");
+		JMenuItem menu3arg3arg2 = new JMenuItem("Désactiver     ");
 		menu3arg3.add(menu3arg3arg1);
 		menu3arg3.add(menu3arg3arg2);
-		menu3arg3.add(menu3arg3arg3);
-		menu3arg3.add(menu3arg3arg4);
-		
-		JMenu menu3arg4 = new JMenu("Sauvegarde auto     ");
-		menu3arg4.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
-		JMenuItem menu3arg4arg1 = new JMenuItem("Activer     ");
-		JMenuItem menu3arg4arg2 = new JMenuItem("Désactiver     ");
-		menu3arg4.add(menu3arg4arg1);
-		menu3arg4.add(menu3arg4arg2);
 		
 		Main.menuBar.add(menu3);
 		menu3.add(menu3arg1);
 		menu3.add(menu3arg2);
 		menu3.add(menu3arg3);
-		menu3.add(menu3arg4);
 		
 		
 		JMenu menu4 = new JMenu("À propos");

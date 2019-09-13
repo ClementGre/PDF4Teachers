@@ -25,7 +25,11 @@ public class Footerbar extends JPanel{
 		}
 		
 		if(MainScreen.current != null){
-			alignRightString(g, getWidth() - 4, 0, getHeight(), MainScreen.current.getName(), new Font("FreeSans", 0, 15));
+			if(MainScreen.page == -1){
+				alignRightString(g, getWidth() - 4, 0, getHeight(), MainScreen.current.getName() + " - " + "?/" + MainScreen.rendered.length, new Font("FreeSans", 0, 15));
+			}else{
+				alignRightString(g, getWidth() - 4, 0, getHeight(), MainScreen.current.getName() + " - " + (MainScreen.page+1) + "/" + MainScreen.rendered.length, new Font("FreeSans", 0, 15));	
+			}
 		}else{
 			alignRightString(g, getWidth() - 4, 0, getHeight(), "Aucun fichier ouvert", new Font("FreeSans", 0, 15));
 		}

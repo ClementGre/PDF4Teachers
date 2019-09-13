@@ -43,14 +43,15 @@ public class PageRender {
 				}
 			}
 		}
-		System.out.print("draw page " + page);
 		if((mouseY > img.getHeight(null) && (page+1) != MainScreen.rendered.length) || (mouseY < 0 && page != 0)){}else{
-			System.out.print("   +Mouse");
-			System.out.print("   mouseY:" + mouseY);
+			
 			Main.mainScreen.mouse(this, current, g, page, mouseX, mouseY);
 			if(MainScreen.hand != null)
 				MainScreen.hand.getElement().paint(g, mouseX, mouseY);
-			
+			if(MainScreen.page != page){
+				MainScreen.page = page;
+				Main.footerBar.repaint();
+			}
 		}
 		
 		g.dispose();
@@ -59,7 +60,6 @@ public class PageRender {
 	}
 	public void afterRender(int mouseX, int mouseY){
 		
-		System.out.println();
 		if(current != null || MainScreen.hand != null){
 			if(Main.mainScreen.getCursor() != Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR))
 				Main.mainScreen.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
@@ -68,7 +68,10 @@ public class PageRender {
 				Main.mainScreen.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		}
 		
-		current = null;	
+		current = null;
+		
+		if(MainScreen.page == -1) Main.footerBar.repaint();
+		
 	}
 	
 	

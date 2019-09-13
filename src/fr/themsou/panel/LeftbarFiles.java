@@ -11,6 +11,8 @@ import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import fr.themsou.main.Main;
@@ -18,53 +20,62 @@ import fr.themsou.main.Main;
 @SuppressWarnings("serial")
 public class LeftbarFiles extends JPanel{
 	
-	ArrayList<File> files = new ArrayList<>();
-	int width = 0;
-	int height = 0;
+	private ArrayList<File> files = new ArrayList<>();
+	private int width = 0;
+	private int height = 0;
+	private int maxWidth = 0;
+	private int currentTime = 0;
+	private int current = -1;
 	
 	public void paintComponent(Graphics go){
 		
-		Main.leftBarFilesScroll.setBorder(null);
+		boolean hasCurrent = false;
+		
 		setBorder(null);
 		int mouseX = MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x;
 		int mouseY = MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y;
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
-		g.setColor(new Color(200, 221, 242));
+		g.setColor(new Color(189, 195, 199));
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		int maxWidth = 0;
 		int i = 0;
 		for(i = 0; i < files.size(); i++){
 			
 			if(mouseY > i*30 && mouseY < i*30+30 && mouseX > 0 && mouseX < Main.leftBarFilesScroll.getWidth()){
-				g.setColor(new Color(255, 210, 170));
+				
+				if(current != i){
+					current = i;
+					currentTime = 0;
+				}
+				if(currentTime < 10) currentTime++;
+				hasCurrent = true;
+				
+				g.setColor(new Color(127, 140, 141, currentTime*25));
 				g.fillRect(0, i*30, getWidth(), 30);
+				
+				g.setColor(new Color(44, 62, 80));
+				maxWidth = centerString(g, 8 + (currentTime * 4), i*30, i*30+30, files.get(i).getName(), new Font("FreeSans", 0, 15))[0] + (currentTime * 4) + 8;
+				
+				g.drawImage(new ImageIcon(Main.devices.getClass().getResource("/img/FilesBar/supprimer.png")).getImage(), 5 - 40+(currentTime * 4), i*30+5, 20, 20, null);
+				g.drawImage(new ImageIcon(Main.devices.getClass().getResource("/img/FilesBar/fermer.png")).getImage(), 28 - 40+(currentTime * 4), i*30+7, 16, 16, null);
+				
+			}else{
+				g.setColor(new Color(44, 62, 80));
+				maxWidth = centerString(g, 8, i*30, i*30+30, files.get(i).getName(), new Font("FreeSans", 0, 15))[0] + 8;
 			}
 			
-			g.setColor(Color.BLACK);
-			int[] size = centerString(g, 10, i*30, i*30+30, files.get(i).getName(), new Font("FreeSans", 0, 15));
-			if(size[0] >= maxWidth)
-				maxWidth = size[0];
+			
 		}
 		
-		if(maxWidth != width || i*30 != height){
+		if(!hasCurrent) current = -1;
+		
+		if((maxWidth != width && (currentTime == 10 || !hasCurrent)) || i*30 != height){
 			width = maxWidth;
 			height = i*30;
-			setPreferredSize(new Dimension(width + 20, height));
+			setPreferredSize(new Dimension(width + 10, height));
 			Main.leftBarFilesScroll.updateUI();
-		}
-			
-		
-	}
-	
-	public void click(int y) {
-		
-		for(int i = 0; i < files.size(); i++){
-			if(y > i*30 && y < i*30+30){
-				Main.mainScreen.openFile(files.get(i));
-			}
 		}
 		
 	}
@@ -91,6 +102,27 @@ public class LeftbarFiles extends JPanel{
 		for(File file : files){
 			openFile(file);
 		}
+	}
+	public void clearFiles(){
+		if(MainScreen.current != null){
+			if(files.contains(MainScreen.current)){
+				Main.mainScreen.closeFile();
+			}
+		}
+		
+		
+		files =  new ArrayList<>();
+	}
+	public void removeFile(int file){
+		
+		if(MainScreen.current != null){
+			if(MainScreen.current.equals(files.get(file))){
+				Main.mainScreen.closeFile();
+			}
+		}
+		
+		
+		files.remove(file);
 	}
 	
 	private boolean isFilePdf(File file) {
@@ -124,6 +156,33 @@ public class LeftbarFiles extends JPanel{
 	    int retur[] = { rWidth, rHeight };
 	    
 	    return retur;
+	}
+
+	
+	public void mouseReleased(){
+		
+		int mouseX = MouseInfo.getPointerInfo().getLocation().x - getLocationOnScreen().x;
+		int mouseY = MouseInfo.getPointerInfo().getLocation().y - getLocationOnScreen().y;
+		
+		int i = 0;
+		for(i = 0; i < files.size(); i++){
+			
+			if(mouseY > i*30 && mouseY < i*30+30 && mouseX > 0 && mouseX < Main.leftBarFilesScroll.getWidth()){
+				
+				if(mouseX > 7 && mouseX < 23){ // Clear Edit
+					
+				}else if(mouseX > 28 && mouseX < 44){ // Remove
+					removeFile(i);
+					
+				}else if(mouseY > i*30 && mouseY < i*30+30){
+					Main.mainScreen.openFile(files.get(i));
+				}
+				
+			}
+			
+			
+			
+		}
 	}
 
 	

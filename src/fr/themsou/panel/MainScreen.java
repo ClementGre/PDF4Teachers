@@ -30,13 +30,12 @@ public class MainScreen extends JPanel{
 	public static File current = null;
 	public static int status = 0;
 	public static Image[] rendered;
-	public static int pages = 0;
+	public static int page = 1;
 	public static PageRender pageRender;
 	public static Hand hand = null;
 	private int lastWidth = getWidth();
 	private int lastHeight = getHeight();
 	
-	@SuppressWarnings("static-access")
 	public void paintComponent(Graphics go){
 		
 		Graphics2D g = (Graphics2D) go;
@@ -74,6 +73,7 @@ public class MainScreen extends JPanel{
 				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
 			}
 			
+			MainScreen.page = -1;
 			int page = 0;
 			int imgsHeight = 40;
 			int imgMouseX = 0;
@@ -90,11 +90,8 @@ public class MainScreen extends JPanel{
 				imgsHeight += imgHeight + 40;
 				page++;
 			}
-			this.pages = page;
 			
 			pageRender.afterRender(imgMouseX, imgMouseY);
-			
-			
 			
 			if(lastWidth != imgWidth || lastHeight != imgHeight){
 				setPreferredSize(new Dimension(imgWidth + 80, imgsHeight));
@@ -112,9 +109,6 @@ public class MainScreen extends JPanel{
 	
 	public void mouse(PageRender page, ElementRender element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
 		
-		System.out.println("   MX:" + mouseX + " MY:" + mouseY);
-		if(hand != null)
-		System.out.println("FROM --> " + hand.getLoc().toString());
 		if(hand == null && Main.click && element != null){ // Ajouter
 			
 			hand = new Hand(element, element.getLocation().substractValues(new Location(mouseX, mouseY)), element.getPage());
@@ -133,11 +127,6 @@ public class MainScreen extends JPanel{
 				hand = null;
 			}
 		}
-		if(hand != null)
-		System.out.print("TO --> " + hand.getLoc().toString());
-		
-		
-		
 	}
 	public void verifyLoc(PageRender page, ElementRender element, int mouseX, int mouseY){
 		
@@ -154,13 +143,7 @@ public class MainScreen extends JPanel{
 	
 	public void openFile(File file){
 		
-		zoom = 150;
-		rendered = null;
-		current = null;
-		status = 1;
-		lastWidth = 0;
-		setPreferredSize(new Dimension(0, 0));
-		Main.mainScreenScroll.updateUI();
+		closeFile();
 		paintComponent(getGraphics());
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
@@ -169,7 +152,7 @@ public class MainScreen extends JPanel{
 			current = file;
 			status = 0;
 			pageRender = new PageRender(rendered[0].getWidth(null), rendered[0].getHeight(null));
-				
+			Main.fenetre.setName("PDF Teacher - " + file.getName());
 		}
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 		pageRender.addElement(new TextRender(null, 0, new Font("Arial", 0, 70), "Très grosse erreur !", new Color(172, 51, 53)));
@@ -188,6 +171,12 @@ public class MainScreen extends JPanel{
 	public void closeFile(){
 		
 		current = null;
+		zoom = 150;
+		rendered = null;
+		lastWidth = 0;
+		setPreferredSize(new Dimension(0, 0));
+		Main.mainScreenScroll.updateUI();
+		Main.fenetre.setName("PDF Teacher - Aucun document");
 	}
 	
 	public int[] fullCenterString(Graphics g, int minX, int maxX, int minY, int maxY, String s, Font font) {

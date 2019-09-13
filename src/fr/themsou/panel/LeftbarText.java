@@ -13,6 +13,9 @@ public class LeftbarText extends Component {
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
+		
+		
+		
 	}
 
 	
