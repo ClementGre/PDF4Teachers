@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/home/clement/Développement/Java/Libs/commons-logging-1.2.jar"/>
-	<classpathentry kind="lib" path="/home/clement/Développement/Java/Libs/fontbox-2.0.3.jar"/>
-	<classpathentry kind="lib" path="/home/clement/Développement/Java/Libs/pdfbox-2.0.16.jar"/>
-	<classpathentry kind="output" path="bin"/>
-</classpath>
