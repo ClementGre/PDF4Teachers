@@ -78,15 +78,11 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 				if(e.getWheelRotation() == 1) MainScreen.zoom -= 5;
 				if(e.getWheelRotation() == -1) MainScreen.zoom += 5;
 				
-				if(MainScreen.zoom <= 0) MainScreen.zoom = 5;
-				else if(MainScreen.zoom >= 499) MainScreen.zoom = 500;
+				if(MainScreen.zoom <= 9) MainScreen.zoom = 10;
+				else if(MainScreen.zoom >= 399) MainScreen.zoom = 400;
 				
 				Main.mainScreen.repaint();
 				Main.footerBar.repaint();
-				
-				
-			}else{
-				
 				
 				
 			}
@@ -95,7 +91,6 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	}
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
 	}
 	@Override
 	public void mouseMoved(MouseEvent e) {

@@ -1,4 +1,4 @@
-package fr.themsou.render;
+package fr.themsou.document.page;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -10,7 +10,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 import fr.themsou.panel.MainScreen;
 
-public class PDFRender {
+public class PDFPagesRender {
 	
 	public Image[] render(File file, int startPage, int maxPages){
 		

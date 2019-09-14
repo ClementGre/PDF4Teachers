@@ -56,7 +56,7 @@ public class LeftbarFiles extends JPanel{
 				g.fillRect(0, i*30, getWidth(), 30);
 				
 				g.setColor(new Color(44, 62, 80));
-				maxWidth = centerString(g, 8 + (currentTime * 4), i*30, i*30+30, files.get(i).getName(), new Font("FreeSans", 0, 15))[0] + (currentTime * 4) + 8;
+				maxWidth = centerString(g, 8 + (currentTime * 4), i*30, i*30+30, files.get(i).getName(), new Font("FreeSans", Font.PLAIN, 15))[0] + (currentTime * 4) + 8;
 				
 				g.drawImage(new ImageIcon(Main.devices.getClass().getResource("/img/FilesBar/supprimer.png")).getImage(), 5 - 40+(currentTime * 4), i*30+5, 20, 20, null);
 				g.drawImage(new ImageIcon(Main.devices.getClass().getResource("/img/FilesBar/fermer.png")).getImage(), 28 - 40+(currentTime * 4), i*30+7, 16, 16, null);
@@ -109,8 +109,6 @@ public class LeftbarFiles extends JPanel{
 				Main.mainScreen.closeFile();
 			}
 		}
-		
-		
 		files =  new ArrayList<>();
 	}
 	public void removeFile(int file){
@@ -130,13 +128,9 @@ public class LeftbarFiles extends JPanel{
         String ext = "";
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) 
         	ext = fileName.substring(fileName.lastIndexOf(".") + 1);
-        
-        if(ext.equals("pdf")){
-        	return true;
-        }
-        
-        return false;
-    }
+
+		return ext.equals("pdf");
+	}
 	
 	public int[] centerString(Graphics g, int X, int minY, int maxY, String s, Font font) {
 		

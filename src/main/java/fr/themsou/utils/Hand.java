@@ -1,13 +1,13 @@
 package fr.themsou.utils;
 
-import fr.themsou.render.ElementRender;
+import fr.themsou.document.elements.Element;
 
 public class Hand {
 	
-	private ElementRender element;
+	private Element element;
 	private Location shift;
 	
-	public Hand(ElementRender element, Location shift, int page) {
+	public Hand(Element element, Location shift, int page) {
 		super();
 		this.element = element;
 		this.shift = shift;
@@ -15,10 +15,10 @@ public class Hand {
 	}
 
 	
-	public ElementRender getElement() {
+	public Element getElement() {
 		return element;
 	}
-	public void setElement(ElementRender element) {
+	public void setElement(Element element) {
 		this.element = element;
 	}
 	public Location getLoc() {

@@ -1,7 +1,6 @@
 package fr.themsou.main;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -23,12 +22,10 @@ import fr.themsou.panel.MenuBar;
 
 public class Main{
 	
-	public static JFrame fenetre;
+	public static JFrame window;
 	public static Devices devices = new Devices();
 
-	public static Color currentColor = Color.GREEN;
 	public static boolean click = false;
-	public static File addFile = null;
 	
 	public static JPanel panel = new JPanel();
 	
@@ -41,11 +38,11 @@ public class Main{
 //		LEFT BAR
 	
 	public static JTabbedPane leftBar = new JTabbedPane();
-	
+
 	public static LeftbarFiles leftBarFiles = new LeftbarFiles();
 	public static JScrollPane leftBarFilesScroll = new JScrollPane(leftBarFiles);
 	public static DropTarget leftBarFilesDrop = new DropTarget(leftBarFiles, new FileDrop(2));
-	
+
 	
 //		FOOTER-HEADER BAR
 	
@@ -56,18 +53,18 @@ public class Main{
 		
 //		WINDOW
 		
-		fenetre = new JFrame("PDF Teacher - Aucun document");
-		fenetre.setSize(1200, 675);
-		fenetre.setMinimumSize(new Dimension(700, 393));
-		fenetre.setResizable(true);
-		fenetre.setLocationRelativeTo(null);
-		fenetre.setVisible(true);
-		fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window = new JFrame("PDF Teacher - Aucun document");
+		window.setSize(1200, 675);
+		window.setMinimumSize(new Dimension(700, 393));
+		window.setResizable(true);
+		window.setLocationRelativeTo(null);
+		window.setVisible(true);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		mainScreen.addMouseListener(devices);
 		leftBarFiles.addMouseListener(devices);
-		fenetre.addMouseMotionListener(devices);
-		fenetre.addKeyListener(devices);
-		fenetre.setContentPane(panel);
+		window.addMouseMotionListener(devices);
+		window.addKeyListener(devices);
+		window.setContentPane(panel);
 		
 //		MAIN
 		
@@ -106,7 +103,7 @@ public class Main{
 		panel.add("South", footerBar);
 		panel.add("West", leftBar);
 		
-		fenetre.setSize(1200, 674);
+		window.setSize(1200, 674);
 		
 //		RUN
 		

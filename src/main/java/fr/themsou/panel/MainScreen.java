@@ -16,10 +16,10 @@ import java.io.File;
 import javax.swing.JPanel;
 
 import fr.themsou.main.Main;
-import fr.themsou.render.ElementRender;
-import fr.themsou.render.PDFRender;
-import fr.themsou.render.PageRender;
-import fr.themsou.render.TextRender;
+import fr.themsou.document.elements.Element;
+import fr.themsou.document.page.PDFPagesRender;
+import fr.themsou.document.page.PageRender;
+import fr.themsou.document.elements.TextElement;
 import fr.themsou.utils.Hand;
 import fr.themsou.utils.Location;
 
@@ -51,25 +51,25 @@ public class MainScreen extends JPanel{
 			
 			if(status == 0){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun document ouvert", new Font("FreeSans", 1, 20));
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun document ouvert", new Font("FreeSans", Font.BOLD, 20));
 			}else if(status == 1){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement du document...", new Font("FreeSans", 1, 20));
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement du document...", new Font("FreeSans", Font.BOLD, 20));
 			}else if(status == 2){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Une erreur est survenue lors du chargement du document :/", new Font("FreeSans", 1, 20));
+				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Une erreur est survenue lors du chargement du document :/", new Font("FreeSans", Font.BOLD, 20));
 			}
-			
+
 		}else{
 
-			int imgWidth = 0; int imgHeight = 0;
+			int imgWidth; int imgHeight;
 			if((double)Main.mainScreenScroll.getHeight() / (double)Main.mainScreenScroll.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
 				int maxSize = Main.mainScreenScroll.getWidth();
-				imgWidth = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
+				imgWidth = (int) ((((double) zoom) / 100.0) * ((double) maxSize) - 100);
 				imgHeight = (int) (((double) imgWidth) / ((double) rendered[0].getWidth(null)) * rendered[0].getHeight(null));
 			}else{
 				int maxSize = Main.mainScreenScroll.getHeight();
-				imgHeight = (int) (((double)((double) zoom) / ((double) 100.0)) * ((double) maxSize) -100);
+				imgHeight = (int) (( ((double) zoom) / 100.0) * ((double) maxSize) -100);
 				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
 			}
 			
@@ -107,7 +107,7 @@ public class MainScreen extends JPanel{
 		
 	}
 	
-	public void mouse(PageRender page, ElementRender element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
+	public void mouse(PageRender page, Element element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
 		
 		if(hand == null && Main.click && element != null){ // Ajouter
 			
@@ -118,7 +118,7 @@ public class MainScreen extends JPanel{
 			
 			hand.setPage(pageNumber);
 			hand.setLoc(new Location(mouseX, mouseY).additionValues(hand.getShift()));
-			verifyLoc(page, hand.getElement(), mouseX, mouseY);
+			verifyLoc(page, hand.getElement());
 			
 			if(!Main.click){ // Déposer
 				
@@ -128,15 +128,15 @@ public class MainScreen extends JPanel{
 			}
 		}
 	}
-	public void verifyLoc(PageRender page, ElementRender element, int mouseX, int mouseY){
+	public void verifyLoc(PageRender page, Element element){
 		
 		Location minLoc = element.getLocation().substractValues(element.getMargin());
 		Location maxLoc = element.getLocation().additionValues(element.getMargin());
 		
-		if(minLoc.getX() < 0) element.setX(0 + element.getMargin().getX());
+		if(minLoc.getX() < 0) element.setX(element.getMargin().getX());
 		if(maxLoc.getX() > page.getWidth()) element.setX(page.getWidth() - element.getMargin().getX());
 		
-		if(minLoc.getY() < 0) element.setY(0 + element.getMargin().getY());
+		if(minLoc.getY() < 0) element.setY(element.getMargin().getY());
 		if(maxLoc.getY() > page.getHeight()) element.setY(page.getHeight() - element.getMargin().getY());
 			
 	}
@@ -147,17 +147,17 @@ public class MainScreen extends JPanel{
 		paintComponent(getGraphics());
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		
-		rendered = new PDFRender().render(file, 0, 4);
+		rendered = new PDFPagesRender().render(file, 0, 4);
 		if(rendered != null){
 			current = file;
 			status = 0;
 			pageRender = new PageRender(rendered[0].getWidth(null), rendered[0].getHeight(null));
-			Main.fenetre.setName("PDF Teacher - " + file.getName());
+			Main.window.setTitle("PDF Teacher - " + file.getName());
 		}
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		pageRender.addElement(new TextRender(null, 0, new Font("Arial", 0, 70), "Très grosse erreur !", new Color(172, 51, 53)));
-		pageRender.addElement(new TextRender(new Location(200, 200), 0, new Font("Arial", 0, 70), "Hey !", Color.BLACK));
-		pageRender.addElement(new TextRender(null, 0, new Font("Arial", 0, 70), "Bonjour.", new Color(32, 158, 16)));
+		pageRender.addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Très grosse erreur !", new Color(172, 51, 53)));
+		pageRender.addElement(new TextElement(new Location(200, 200), 0, new Font("Arial", Font.PLAIN, 70), "Hey !", Color.BLACK));
+		pageRender.addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Bonjour.", new Color(32, 158, 16)));
 		
 		repaint();
 		Main.footerBar.repaint();
@@ -176,7 +176,7 @@ public class MainScreen extends JPanel{
 		lastWidth = 0;
 		setPreferredSize(new Dimension(0, 0));
 		Main.mainScreenScroll.updateUI();
-		Main.fenetre.setName("PDF Teacher - Aucun document");
+		Main.window.setTitle("PDF Teacher - Aucun document");
 	}
 	
 	public int[] fullCenterString(Graphics g, int minX, int maxX, int minY, int maxY, String s, Font font) {

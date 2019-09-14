@@ -1,4 +1,4 @@
-package fr.themsou.render;
+package fr.themsou.document.elements;
 
 import java.awt.Font;
 import java.awt.Graphics;
@@ -8,22 +8,22 @@ import java.awt.geom.Rectangle2D;
 
 import fr.themsou.utils.Location;
 
-public abstract class ElementRender {
+public abstract class Element {
 	
 	private Location loc;
 	private Location margin;
 	private int page;
 	
-	public ElementRender(Location loc, int page) {
+	Element(Location loc, int page) {
 		this.loc = loc;
 		this.page = page;
 	}
 
 	public abstract boolean paint(Graphics2D g, int mouseX, int mouseY);
-	public abstract boolean equals(ElementRender object);
+	public abstract boolean equals(Element object);
 
-	
-	public ElementRender setLocation(Location loc){
+
+	public Element setLocation(Location loc){
 		this.loc = loc;
 		return this;
 	}
@@ -31,17 +31,17 @@ public abstract class ElementRender {
 		return loc;
 	}
 	
-	public int getX(){
+	int getX(){
 		return loc.getX();
 	}
 	public int getY(){
 		return loc.getY();
 	}
-	public ElementRender setX(int x){
+	public Element setX(int x){
 		this.loc.setX(x);
 		return this;
 	}
-	public ElementRender setY(int y){
+	public Element setY(int y){
 		this.loc.setY(y);
 		return this;
 	}
@@ -60,10 +60,10 @@ public abstract class ElementRender {
 	
 	@Override
 	public String toString() {
-		return "ElementRender [X=" + getX() + ", Y=" + getY() + ", SUB=" + super.toString() + "]";
+		return "Element [X=" + getX() + ", Y=" + getY() + ", SUB=" + super.toString() + "]";
 	}
 	
-	public static int[] getStringDimensions(Graphics2D g, int minX, int maxX, int minY, int maxY, String s, Font font) {
+	public static int[] getStringDimensions(String s, Font font) {
 		
 		
 	    FontRenderContext frc = new FontRenderContext(null, true, true);
@@ -71,9 +71,10 @@ public abstract class ElementRender {
 	    Rectangle2D r2D = font.getStringBounds(s, frc);
 	    int rWidth = (int) Math.round(r2D.getWidth());
 	    int rHeight = (int) Math.round(r2D.getHeight());
-	   
+
 	    int retur[] = { rWidth, rHeight };
 	    return retur;
+
 	    
 	}
 	public static int[] fullCenterString(Graphics g, int minX, int maxX, int minY, int maxY, String s, Font font) {

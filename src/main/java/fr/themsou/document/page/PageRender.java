@@ -1,4 +1,4 @@
-package fr.themsou.render;
+package fr.themsou.document.page;
 
 import java.awt.Cursor;
 import java.awt.Graphics2D;
@@ -7,6 +7,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import fr.themsou.document.elements.Element;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.utils.Location;
@@ -14,11 +15,11 @@ import fr.themsou.utils.Location;
 public class PageRender {
 	
 	
-	private ArrayList<ElementRender> elements = new ArrayList<>();
+	private ArrayList<Element> elements = new ArrayList<>();
 
 	private int width;
 	private int height;
-	private ElementRender current = null;
+	private Element current = null;
 	
 	public PageRender(int width, int height) {
 		this.width = width;
@@ -32,8 +33,8 @@ public class PageRender {
 		Graphics2D g = bimg.createGraphics();
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.drawImage(img, 0, 0, img.getWidth(null), img.getHeight(null), null);
-		
-		
+
+
 		for(int i = 0; i < elements.size(); i++){
 			if(elements.get(i).getPage() == page){
 				
@@ -43,8 +44,8 @@ public class PageRender {
 				}
 			}
 		}
-		if((mouseY > img.getHeight(null) && (page+1) != MainScreen.rendered.length) || (mouseY < 0 && page != 0)){}else{
-			
+		if(!((mouseY > img.getHeight(null) && (page+1) != MainScreen.rendered.length) || (mouseY < 0 && page != 0))){ // mouse on
+
 			Main.mainScreen.mouse(this, current, g, page, mouseX, mouseY);
 			if(MainScreen.hand != null)
 				MainScreen.hand.getElement().paint(g, mouseX, mouseY);
@@ -76,7 +77,7 @@ public class PageRender {
 	
 	
 	
-	public void addElement(ElementRender element){
+	public void addElement(Element element){
 		
 		if(element != null){	
 			
@@ -86,7 +87,7 @@ public class PageRender {
 			elements.add(element);
 		}
 	}
-	public void removeElement(ElementRender element){
+	public void removeElement(Element element){
 		
 		if(element != null){
 			

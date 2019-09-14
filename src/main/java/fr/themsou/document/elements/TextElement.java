@@ -1,4 +1,4 @@
-package fr.themsou.render;
+package fr.themsou.document.elements;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,13 +6,13 @@ import java.awt.Graphics2D;
 
 import fr.themsou.utils.Location;
 
-public class TextRender extends ElementRender{
+public class TextElement extends Element{
 	
 	private Font font = new Font("", 0, 15);
 	private String content = "";
 	private Color color = Color.BLACK;
 	
-	public TextRender(Location loc, int page, Font font, String content, Color color){
+	public TextElement(Location loc, int page, Font font, String content, Color color){
 		super(loc, page);
 		this.font = font;
 		this.content = content;
@@ -21,15 +21,20 @@ public class TextRender extends ElementRender{
 
 	public Color getColor(){
 		return color;
-	}public void setColor(Color color){
+	}
+	public void setColor(Color color){
 		this.color = color;
-	}public Font getFont(){
+	}
+	public Font getFont(){
 		return font;
-	}public void setFont(Font font){
+	}
+	public void setFont(Font font){
 		this.font = font;
-	}public String getContent(){
+	}
+	public String getContent(){
 		return content;
-	}public void setContent(String content){
+	}
+	public void setContent(String content){
 		this.content = content;
 	}
 
@@ -51,11 +56,11 @@ public class TextRender extends ElementRender{
 	}
 
 	@Override
-	public boolean equals(ElementRender element){
+	public boolean equals(Element element){
 		
-		if(element instanceof TextRender){
+		if(element instanceof TextElement){
 			
-			TextRender text = (TextRender) element;
+			TextElement text = (TextElement) element;
 			
 			if(content.equals(text.getContent())){
 				if(font.getName().equals(text.getFont().getName()) && font.getSize() == text.getFont().getSize()){
