@@ -1,14 +1,14 @@
-package fr.themsou.document.page;
+package fr.themsou.document.render;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
+
+import fr.themsou.main.Main;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
-
-import fr.themsou.panel.MainScreen;
 
 public class PDFPagesRender {
 	
@@ -33,7 +33,7 @@ public class PDFPagesRender {
 				if(pageCounter > maxPages) continue;
 				
 			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 200, ImageType.RGB);
-			    images[pageCounter] = (Image) bimg;
+			    images[pageCounter] = bimg;
 			    
 			    
 			    
@@ -47,7 +47,7 @@ public class PDFPagesRender {
 			
 		}catch(Exception | NoSuchMethodError e){
 			System.out.println(e.getMessage());
-			MainScreen.status = 2;
+			Main.mainScreen.status = 2;
 			return null;
 		}
 		

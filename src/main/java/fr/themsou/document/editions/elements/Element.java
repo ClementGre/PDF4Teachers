@@ -1,18 +1,21 @@
-package fr.themsou.document.elements;
+package fr.themsou.document.editions.elements;
 
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import fr.themsou.utils.Location;
 
 public abstract class Element {
-	
+
 	private Location loc;
 	private Location margin;
-	private int page;
+	protected int page;
 	
 	Element(Location loc, int page) {
 		this.loc = loc;
@@ -21,6 +24,8 @@ public abstract class Element {
 
 	public abstract boolean paint(Graphics2D g, int mouseX, int mouseY);
 	public abstract boolean equals(Element object);
+	public abstract void writeData(DataOutputStream writer) throws IOException;
+
 
 
 	public Element setLocation(Location loc){

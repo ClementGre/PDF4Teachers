@@ -8,7 +8,6 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.MainScreen;
 
 public class Devices implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener{
 
@@ -71,15 +70,15 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		
-		if(MainScreen.current != null){
+		if(Main.mainScreen.status == -1){
 			
 			if(e.isControlDown()){
 			
-				if(e.getWheelRotation() == 1) MainScreen.zoom -= 5;
-				if(e.getWheelRotation() == -1) MainScreen.zoom += 5;
+				if(e.getWheelRotation() == 1) Main.mainScreen.zoom -= 5;
+				if(e.getWheelRotation() == -1) Main.mainScreen.zoom += 5;
 				
-				if(MainScreen.zoom <= 9) MainScreen.zoom = 10;
-				else if(MainScreen.zoom >= 399) MainScreen.zoom = 400;
+				if(Main.mainScreen.zoom <= 9) Main.mainScreen.zoom = 10;
+				else if(Main.mainScreen.zoom >= 399) Main.mainScreen.zoom = 400;
 				
 				Main.mainScreen.repaint();
 				Main.footerBar.repaint();

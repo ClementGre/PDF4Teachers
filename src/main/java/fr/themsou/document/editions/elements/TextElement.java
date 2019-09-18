@@ -1,8 +1,11 @@
-package fr.themsou.document.elements;
+package fr.themsou.document.editions.elements;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 import fr.themsou.utils.Location;
 
@@ -40,9 +43,10 @@ public class TextElement extends Element{
 
 	@Override
 	public boolean paint(Graphics2D g, int mouseX, int mouseY){
-		
+
+		System.out.println("painting element " + content + " with color : " + font.getSize());
+
 		g.setColor(color);
-		
 		int[] dim = fullCenterString(g, getX(), getX(), getY(), getY(), content, font);
 		setMargin(new Location(dim[0] / 2 + 10, dim[1] / 2 + 10));
 		
@@ -73,6 +77,33 @@ public class TextElement extends Element{
 		
 		return false;
 		
+	}
+
+	@Override
+	public void writeData(DataOutputStream writer) throws IOException{
+		writer.writeByte(1);
+		writer.writeByte(super.page);
+		writer.writeShort(getX());
+		writer.writeShort(getY());
+		writer.writeByte(font.getSize());
+		writer.writeByte(font.getStyle());
+		writer.writeUTF(font.getFontName());
+		writer.write(color.getRGB());
+		writer.writeUTF(content);
+	}
+
+	public static Element readDataAndCreate(DataInputStream reader) throws IOException{
+
+		byte page = reader.readByte();
+		short x = reader.readShort();
+		short y = reader.readShort();
+		byte fontSize = reader.readByte();
+		byte fontStyle = reader.readByte();
+		String fontName = reader.readUTF();
+		int color = reader.read();
+		String content = reader.readUTF();
+
+		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontStyle, fontSize), content, Color.decode("" + color));
 	}
 
 }

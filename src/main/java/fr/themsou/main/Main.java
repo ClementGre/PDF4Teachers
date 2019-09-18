@@ -81,9 +81,9 @@ public class Main{
 	    });*/
 		//leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
-		leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
 		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
 		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
+        leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
 		leftBar.setPreferredSize(new Dimension(230, leftBar.getHeight()));
 		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
 		leftBarFilesScroll.setBorder(null);
@@ -104,6 +104,7 @@ public class Main{
 		panel.add("West", leftBar);
 		
 		window.setSize(1200, 674);
+
 		
 //		RUN
 		

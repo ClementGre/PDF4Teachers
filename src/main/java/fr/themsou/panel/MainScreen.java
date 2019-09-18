@@ -9,32 +9,23 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.MouseInfo;
 import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
-import java.awt.geom.Rectangle2D;
 import java.io.File;
 
 import javax.swing.JPanel;
 
+import fr.themsou.document.Document;
 import fr.themsou.main.Main;
-import fr.themsou.document.elements.Element;
-import fr.themsou.document.page.PDFPagesRender;
-import fr.themsou.document.page.PageRender;
-import fr.themsou.document.elements.TextElement;
-import fr.themsou.utils.Hand;
-import fr.themsou.utils.Location;
+import fr.themsou.utils.StringDrawing;
 
-@SuppressWarnings({"serial"})
 public class MainScreen extends JPanel{
-	
-	public static int zoom = 150;
-	public static File current = null;
-	public static int status = 0;
-	public static Image[] rendered;
-	public static int page = 1;
-	public static PageRender pageRender;
-	public static Hand hand = null;
+
+	public int zoom = 150;
+	public int status = 0;
+
 	private int lastWidth = getWidth();
 	private int lastHeight = getHeight();
+
+	public Document document;
 	
 	public void paintComponent(Graphics go){
 		
@@ -47,52 +38,57 @@ public class MainScreen extends JPanel{
 		g.setColor(new Color(102, 102, 102));
 		g.fillRect(0, 0, getWidth(), getHeight());
 		
-		if(current == null){
+		if(status != -1){
 			
 			if(status == 0){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun document ouvert", new Font("FreeSans", Font.BOLD, 20));
+				StringDrawing.fullCenterString(g, 0, getWidth(), 0, getHeight(), "Aucun document ouvert", new Font("FreeSans", Font.BOLD, 20));
 			}else if(status == 1){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement du document...", new Font("FreeSans", Font.BOLD, 20));
+				StringDrawing.fullCenterString(g, 0, getWidth(), 0, getHeight(), "Chargement du document...", new Font("FreeSans", Font.BOLD, 20));
 			}else if(status == 2){
 				g.setColor(Color.WHITE);
-				fullCenterString(g, 0, getWidth(), 0, getHeight(), "Une erreur est survenue lors du chargement du document :/", new Font("FreeSans", Font.BOLD, 20));
+				StringDrawing.fullCenterString(g, 0, getWidth(), 0, getHeight(), "Une erreur est survenue lors du chargement du document :/", new Font("FreeSans", Font.BOLD, 20));
 			}
 
 		}else{
 
+			// Measure page size
+
 			int imgWidth; int imgHeight;
-			if((double)Main.mainScreenScroll.getHeight() / (double)Main.mainScreenScroll.getWidth() > (double)rendered[0].getHeight(null) / (double)rendered[0].getWidth(null)){
+			if((double)Main.mainScreenScroll.getHeight() / (double)Main.mainScreenScroll.getWidth() > (double)document.rendered[0].getHeight(null) / (double)document.rendered[0].getWidth(null)){
 				int maxSize = Main.mainScreenScroll.getWidth();
 				imgWidth = (int) ((((double) zoom) / 100.0) * ((double) maxSize) - 100);
-				imgHeight = (int) (((double) imgWidth) / ((double) rendered[0].getWidth(null)) * rendered[0].getHeight(null));
+				imgHeight = (int) (((double) imgWidth) / ((double) document.rendered[0].getWidth(null)) * document.rendered[0].getHeight(null));
 			}else{
 				int maxSize = Main.mainScreenScroll.getHeight();
 				imgHeight = (int) (( ((double) zoom) / 100.0) * ((double) maxSize) -100);
-				imgWidth = (int) (((double) imgHeight) / ((double) rendered[0].getHeight(null)) * rendered[0].getWidth(null));
+				imgWidth = (int) (((double) imgHeight) / ((double) document.rendered[0].getHeight(null)) * document.rendered[0].getWidth(null));
 			}
-			
-			MainScreen.page = -1;
+
+			// render
+
 			int page = 0;
 			int imgsHeight = 40;
-			int imgMouseX = 0;
-			int imgMouseY = 0;
-			for(Image img : rendered){
+			int imgMouseX;
+			int imgMouseY;
+			for(Image img : document.rendered){
 				
 				imgMouseX = (int) (((double) (mouseX - (getWidth()/2-imgWidth/2))) / ((double)imgWidth) * img.getWidth(null));
 				imgMouseY = (int) (((double) (mouseY - imgsHeight)) / ((double)imgHeight) * img.getHeight(null));
 				
-				Image imgRendered = pageRender.render(img, page, imgMouseX, imgMouseY);
+				Image imgRendered = document.edition.editRender.render(img, page, imgMouseX, imgMouseY);
 				
 				g.drawImage(imgRendered, getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight, null);
 				
 				imgsHeight += imgHeight + 40;
 				page++;
 			}
-			
-			pageRender.afterRender(imgMouseX, imgMouseY);
-			
+
+			updateAfterRender();
+
+			// Update UI
+
 			if(lastWidth != imgWidth || lastHeight != imgHeight){
 				setPreferredSize(new Dimension(imgWidth + 80, imgsHeight));
 				Main.mainScreenScroll.updateUI();
@@ -107,97 +103,52 @@ public class MainScreen extends JPanel{
 		
 	}
 	
-	public void mouse(PageRender page, Element element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
-		
-		if(hand == null && Main.click && element != null){ // Ajouter
-			
-			hand = new Hand(element, element.getLocation().substractValues(new Location(mouseX, mouseY)), element.getPage());
-			page.removeElement(element);
-			
-		}else if(hand != null){ // Déposer - Déplacer
-			
-			hand.setPage(pageNumber);
-			hand.setLoc(new Location(mouseX, mouseY).additionValues(hand.getShift()));
-			verifyLoc(page, hand.getElement());
-			
-			if(!Main.click){ // Déposer
-				
-				page.addElement(hand.getElement());
-				hand.getElement().paint(g, mouseX, mouseY);
-				hand = null;
-			}
-		}
-	}
-	public void verifyLoc(PageRender page, Element element){
-		
-		Location minLoc = element.getLocation().substractValues(element.getMargin());
-		Location maxLoc = element.getLocation().additionValues(element.getMargin());
-		
-		if(minLoc.getX() < 0) element.setX(element.getMargin().getX());
-		if(maxLoc.getX() > page.getWidth()) element.setX(page.getWidth() - element.getMargin().getX());
-		
-		if(minLoc.getY() < 0) element.setY(element.getMargin().getY());
-		if(maxLoc.getY() > page.getHeight()) element.setY(page.getHeight() - element.getMargin().getY());
-			
-	}
-	
 	public void openFile(File file){
 		
 		closeFile();
 		paintComponent(getGraphics());
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-		
-		rendered = new PDFPagesRender().render(file, 0, 4);
-		if(rendered != null){
-			current = file;
-			status = 0;
-			pageRender = new PageRender(rendered[0].getWidth(null), rendered[0].getHeight(null));
+        status = 1;
+		this.document = new Document(file);
+
+		if(document.renderPDFPages()){
+			status = -1;
 			Main.window.setTitle("PDF Teacher - " + file.getName());
 		}
+
 		setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		pageRender.addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Très grosse erreur !", new Color(172, 51, 53)));
-		pageRender.addElement(new TextElement(new Location(200, 200), 0, new Font("Arial", Font.PLAIN, 70), "Hey !", Color.BLACK));
-		pageRender.addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Bonjour.", new Color(32, 158, 16)));
-		
 		repaint();
 		Main.footerBar.repaint();
 		
 	}
-	public void saveFile(){
-		
-		
-		
-	}
 	public void closeFile(){
-		
-		current = null;
+
+	    if(document != null){
+            document.save();
+            document = null;
+        }
+
+		status = 0;
 		zoom = 150;
-		rendered = null;
 		lastWidth = 0;
 		setPreferredSize(new Dimension(0, 0));
 		Main.mainScreenScroll.updateUI();
 		Main.window.setTitle("PDF Teacher - Aucun document");
 	}
-	
-	public int[] fullCenterString(Graphics g, int minX, int maxX, int minY, int maxY, String s, Font font) {
-		
-		
-	    FontRenderContext frc = new FontRenderContext(null, true, true);
 
-	    Rectangle2D r2D = font.getStringBounds(s, frc);
-	    int rWidth = (int) Math.round(r2D.getWidth());
-	    int rHeight = (int) Math.round(r2D.getHeight());
-	    int rX = (int) Math.round(r2D.getX());
-	    int rY = (int) Math.round(r2D.getY());
+	public void updateAfterRender(){
 
-	    int a = ((maxX - minX) / 2) - (rWidth / 2) - rX;
-	    int b = ((maxY - minY) / 2) - (rHeight / 2) - rY;
+		if(document.edition.editRender.current != null || document.edition.editRender.hand != null){
+			if(getCursor() != Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR))
+				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
+		}else{
+			if(getCursor() != Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
+				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
 
-	    g.setFont(font);
-	    g.drawString(s, minX + a, minY + b);
-	    
-	    int retur[] = { rWidth, rHeight };
-	    return retur;
+		document.edition.editRender.current = null;
+		if(document.currentPage == -1) Main.footerBar.repaint();
+
 	}
 	
 }

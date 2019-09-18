@@ -1,6 +1,6 @@
 package fr.themsou.utils;
 
-import fr.themsou.document.elements.Element;
+import fr.themsou.document.editions.elements.Element;
 
 public class Hand {
 	
