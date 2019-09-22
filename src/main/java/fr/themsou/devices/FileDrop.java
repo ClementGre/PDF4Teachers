@@ -65,20 +65,20 @@ public class FileDrop extends DropTarget {
            try{
               if(type.equals(DataFlavor.javaFileListFlavor)){
             	 e.acceptDrop(DnDConstants.ACTION_COPY);
-                 Iterator iterator = ((List) transférable.getTransferData(type)).iterator();
-                 File file = (File) iterator.next();
-                 
-                 if(isFileAcceptable(file)){
-                	 
-                	 if(component == 1){
-                		Main.mainScreen.openFile(file);
-                	 }else if(component == 2){
-                		Main.leftBarFiles.openFile(file);
-                	 }
-                	
-                 }else{
-                	 e.rejectDrop();
-                 }
+
+				  for(Object o : (List) transférable.getTransferData(type)){
+					  File file = (File) o;
+
+					  if (isFileAcceptable(file)) {
+
+						  if (component == 1) {
+							  Main.mainScreen.openFile(file);
+						  } else if (component == 2) {
+							  Main.leftBarFiles.openFile(file);
+						  }
+					  }
+
+				  }
               }
            }catch (Exception e1){ e1.printStackTrace(); }
         }

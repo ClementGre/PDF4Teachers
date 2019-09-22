@@ -6,6 +6,7 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Hand;
 import fr.themsou.utils.Location;
@@ -35,6 +36,12 @@ public class EditRender {
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		g.drawImage(img, 0, 0, img.getWidth(null), img.getHeight(null), null);
 
+		if(Main.leftBarText.elementToEdit != null && Main.leftBarText.elementToEdit.getPage() == page){
+			if(Main.leftBarText.elementToEdit.getMargin() == null){
+				Main.leftBarText.elementToEdit.paint(g, mouseX, mouseY);
+			}
+			verifyLoc(this, Main.leftBarText.elementToEdit);
+		}
 
 		for(int i = 0; i < edition.elements.size(); i++){
 			if(edition.elements.get(i).getPage() == page){
@@ -68,8 +75,14 @@ public class EditRender {
 
 			hand = new Hand(element, element.getLocation().substractValues(new Location(mouseX, mouseY)), element.getPage());
 			edition.removeElement(element);
+			if(element instanceof TextElement)
+				Main.leftBarText.selectTextElement(element);
 
 		}else if(hand != null){ // Déposer - Déplacer
+
+			if(hand.getElement().getMargin() == null){
+				hand.getElement().paint(g, mouseX, mouseY);
+			}
 
 			hand.setPage(pageNumber);
 			hand.setLoc(new Location(mouseX, mouseY).additionValues(hand.getShift()));

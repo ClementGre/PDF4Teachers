@@ -4,8 +4,10 @@ import fr.themsou.document.Document;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.EditRender;
+import fr.themsou.main.Main;
 import fr.themsou.utils.Location;
 
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class Edition {
     public void load(){
 
         this.editRender = new EditRender(this, document.rendered[0].getWidth(null), document.rendered[0].getHeight(null));
-        new File(System.getProperty("user.home") + "/.PDFTeacher/").mkdirs();
+        new File(System.getProperty("user.home") + "/.PDFTeacher/editions/").mkdirs();
 
         try{
             if(editFile.createNewFile()){ //file was created
@@ -57,9 +59,9 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
-        //addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Très grosse erreur !", new Color(172, 51, 53)));
-        //addElement(new TextElement(new Location(200, 200), 0, new Font("Arial", Font.PLAIN, 70), "Hey !", Color.BLACK));
-        //addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, 70), "Bonjour.", new Color(32, 158, 16)));
+        /*addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, (int) (20*2.75)), "Très grosse erreur !", new Color(172, 51, 53)));
+        addElement(new TextElement(new Location(200, 200), 0, new Font("Arial", Font.PLAIN, (int) (20*2.75)), "Hey !", Color.BLACK));
+        addElement(new TextElement(null, 0, new Font("Arial", Font.PLAIN, (int) (20*2.75)), "Bonjour.", new Color(32, 158, 16)));*/
 
     }
 
@@ -94,7 +96,6 @@ public class Edition {
                 element.setLocation(new Location(editRender.getWidth() / 2, editRender.getHeight() / 2));
             }
             elements.add(element);
-            System.out.println("add " + ((TextElement)element).getContent());
         }
     }
     public void removeElement(Element element){
@@ -107,7 +108,20 @@ public class Edition {
 
     public static File getEditFile(File file){
 
-        return new File(System.getProperty("user.home") + "/.PDFTeacher/" +  file.getParentFile().getAbsolutePath().replace("/", "!E") + "!E" + file.getName() + ".edit");
+        return new File(System.getProperty("user.home") + "/.PDFTeacher/editions/" +  file.getParentFile().getAbsolutePath().replace("/", "!E") + "!E" + file.getName() + ".edit");
+
+    }
+
+    public static void clearEdit(File file){
+
+        int i = JOptionPane.showConfirmDialog(null, "Etes vous sur de vouloir supprimer l'édition ?");
+        if(i == 0){ // YES
+
+            if(Main.mainScreen.document.getFile() == file)
+                Main.mainScreen.document.edition.clear();
+            else
+                Edition.getEditFile(file).delete();
+        }
 
     }
 

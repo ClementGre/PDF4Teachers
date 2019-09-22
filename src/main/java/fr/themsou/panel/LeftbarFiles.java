@@ -11,8 +11,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import javax.swing.ImageIcon;
-import javax.swing.JPanel;
+import javax.swing.*;
+
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.StringDrawing;
@@ -104,18 +104,18 @@ public class LeftbarFiles extends JPanel{
 			openFile(file);
 		}
 	}
-	public void clearFiles(){
+	public void clearFiles(boolean confirm){
 		if(Main.mainScreen.status == -1){
 			if(files.contains(Main.mainScreen.document.getFile())){
-				Main.mainScreen.closeFile();
+				if(!Main.mainScreen.closeFile(confirm)) return;
 			}
 		}
 		files = new ArrayList<>();
 	}
-	public void removeFile(int file){
+	public void removeFile(int file, boolean confirm){
 		if(Main.mainScreen.status == -1){
 			if(files.contains(Main.mainScreen.document.getFile())){
-				Main.mainScreen.closeFile();
+				if(!Main.mainScreen.closeFile(confirm)) return;
 			}
 		}
 		files.remove(file);
@@ -141,11 +141,9 @@ public class LeftbarFiles extends JPanel{
 			if(mouseY > i*30 && mouseY < i*30+30 && mouseX > 0 && mouseX < Main.leftBarFilesScroll.getWidth()){
 				
 				if(mouseX > 7 && mouseX < 23){ // Clear Edit
-					Edition.getEditFile(files.get(i)).delete();
-					//files.get(i).delete();
-					removeFile(i);
+					Edition.clearEdit(files.get(i));
 				}else if(mouseX > 28 && mouseX < 44){ // Remove
-					removeFile(i);
+					removeFile(i, true);
 					
 				}else if(mouseY > i*30 && mouseY < i*30+30){
 					Main.mainScreen.openFile(files.get(i));

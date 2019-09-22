@@ -15,7 +15,7 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		//System.out.println(e.getKeyCode());
-		
+
 		if(e.getKeyCode() == 17){
 			Main.mainScreen.addMouseWheelListener(Main.devices);
 		}
@@ -31,7 +31,7 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		
+
 	}
 
 	@Override
@@ -52,8 +52,12 @@ public class Devices implements MouseListener, KeyListener, MouseWheelListener, 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent e) {
+	public void mousePressed(MouseEvent e){
 		Main.click = true;
+
+		if(e.getComponent() == Main.mainScreen){
+			Main.mainScreen.getTopLevelAncestor().requestFocus();
+		}
 	}
 
 	@Override

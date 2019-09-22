@@ -11,15 +11,16 @@ import fr.themsou.utils.Location;
 
 public class TextElement extends Element{
 	
-	private Font font = new Font("", 0, 15);
-	private String content = "";
-	private Color color = Color.BLACK;
+	private Font font;
+	private String content;
+	private Color color;
 	
 	public TextElement(Location loc, int page, Font font, String content, Color color){
 		super(loc, page);
 		this.font = font;
 		this.content = content;
 		this.color = color;
+
 	}
 
 	public Color getColor(){
@@ -44,10 +45,9 @@ public class TextElement extends Element{
 	@Override
 	public boolean paint(Graphics2D g, int mouseX, int mouseY){
 
-		System.out.println("painting element " + content + " with color : " + font.getSize());
 
 		g.setColor(color);
-		int[] dim = fullCenterString(g, getX(), getX(), getY(), getY(), content, font);
+		int[] dim = fullCenterString(g, getX(), getX(), getY(), getY(), content, new Font(font.getName(), font.getStyle(), (int) (font.getSize() * 2.75)));
 		setMargin(new Location(dim[0] / 2 + 10, dim[1] / 2 + 10));
 		
 		if(mouseX > (getX() - dim[0]/2) && mouseX < (getX() + dim[0]/2)){
@@ -88,7 +88,9 @@ public class TextElement extends Element{
 		writer.writeByte(font.getSize());
 		writer.writeByte(font.getStyle());
 		writer.writeUTF(font.getFontName());
-		writer.write(color.getRGB());
+		writer.writeByte(color.getRed() - 128);
+		writer.writeByte(color.getGreen() - 128);
+		writer.writeByte(color.getBlue() - 128);
 		writer.writeUTF(content);
 	}
 
@@ -100,10 +102,12 @@ public class TextElement extends Element{
 		byte fontSize = reader.readByte();
 		byte fontStyle = reader.readByte();
 		String fontName = reader.readUTF();
-		int color = reader.read();
+		short colorRed = (short) (reader.readByte() + 128);
+		short colorGreen = (short) (reader.readByte() + 128);
+		short colorBlue = (short) (reader.readByte() + 128);
 		String content = reader.readUTF();
 
-		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontStyle, fontSize), content, Color.decode("" + color));
+		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontStyle, fontSize), content, new Color(colorRed, colorGreen, colorBlue));
 	}
 
 }

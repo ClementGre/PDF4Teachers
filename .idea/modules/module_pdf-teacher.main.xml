@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_pdf-teacher.main" default="compile.module.pdf-teacher.main">
+  <dirname property="module.pdf-teacher.main.basedir" file="${ant.file.module_pdf-teacher.main}"/>
+  
+  <property name="module.jdk.home.pdf-teacher.main" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.pdf-teacher.main" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.pdf-teacher.main" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.pdf-teacher.main" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="pdf-teacher.main.output.dir" value="${module.pdf-teacher.main.basedir}/../../build/classes/java/main"/>
+  <property name="pdf-teacher.main.testoutput.dir" value="${module.pdf-teacher.main.basedir}/../../build/classes/java/main"/>
+  
+  <path id="pdf-teacher.main.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pdf-teacher.main.module.production.classpath">
+    <path refid="${module.jdk.classpath.pdf-teacher.main}"/>
+    <path refid="library.gradle:_org.apache.pdfbox:pdfbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:28.0-jre.classpath"/>
+    <path refid="library.gradle:_org.apache.pdfbox:fontbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.gradle:_com.google.guava:failureaccess:1.0.1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava.classpath"/>
+    <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+    <path refid="library.gradle:_org.checkerframework:checker-qual:2.8.1.classpath"/>
+    <path refid="library.gradle:_com.google.errorprone:error_prone_annotations:2.3.2.classpath"/>
+    <path refid="library.gradle:_com.google.j2objc:j2objc-annotations:1.3.classpath"/>
+    <path refid="library.gradle:_org.codehaus.mojo:animal-sniffer-annotations:1.17.classpath"/>
+  </path>
+  
+  <path id="pdf-teacher.main.runtime.production.module.classpath">
+    <pathelement location="${pdf-teacher.main.output.dir}"/>
+    <path refid="library.gradle:_org.apache.pdfbox:pdfbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:28.0-jre.classpath"/>
+    <path refid="library.gradle:_org.apache.pdfbox:fontbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.gradle:_com.google.guava:failureaccess:1.0.1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava.classpath"/>
+    <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+    <path refid="library.gradle:_org.checkerframework:checker-qual:2.8.1.classpath"/>
+    <path refid="library.gradle:_com.google.errorprone:error_prone_annotations:2.3.2.classpath"/>
+    <path refid="library.gradle:_com.google.j2objc:j2objc-annotations:1.3.classpath"/>
+    <path refid="library.gradle:_org.codehaus.mojo:animal-sniffer-annotations:1.17.classpath"/>
+  </path>
+  
+  <path id="pdf-teacher.main.module.classpath">
+    <path refid="${module.jdk.classpath.pdf-teacher.main}"/>
+    <pathelement location="${pdf-teacher.main.output.dir}"/>
+    <path refid="library.gradle:_org.apache.pdfbox:pdfbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:28.0-jre.classpath"/>
+    <path refid="library.gradle:_org.apache.pdfbox:fontbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.gradle:_com.google.guava:failureaccess:1.0.1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava.classpath"/>
+    <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+    <path refid="library.gradle:_org.checkerframework:checker-qual:2.8.1.classpath"/>
+    <path refid="library.gradle:_com.google.errorprone:error_prone_annotations:2.3.2.classpath"/>
+    <path refid="library.gradle:_com.google.j2objc:j2objc-annotations:1.3.classpath"/>
+    <path refid="library.gradle:_org.codehaus.mojo:animal-sniffer-annotations:1.17.classpath"/>
+  </path>
+  
+  <path id="pdf-teacher.main.runtime.module.classpath">
+    <pathelement location="${pdf-teacher.main.output.dir}"/>
+    <path refid="library.gradle:_org.apache.pdfbox:pdfbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_com.google.guava:guava:28.0-jre.classpath"/>
+    <path refid="library.gradle:_org.apache.pdfbox:fontbox:2.0.13.classpath"/>
+    <path refid="library.gradle:_commons-logging:commons-logging:1.2.classpath"/>
+    <path refid="library.gradle:_com.google.guava:failureaccess:1.0.1.classpath"/>
+    <path refid="library.gradle:_com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava.classpath"/>
+    <path refid="library.gradle:_com.google.code.findbugs:jsr305:3.0.2.classpath"/>
+    <path refid="library.gradle:_org.checkerframework:checker-qual:2.8.1.classpath"/>
+    <path refid="library.gradle:_com.google.errorprone:error_prone_annotations:2.3.2.classpath"/>
+    <path refid="library.gradle:_com.google.j2objc:j2objc-annotations:1.3.classpath"/>
+    <path refid="library.gradle:_org.codehaus.mojo:animal-sniffer-annotations:1.17.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pdf-teacher.main">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pdf-teacher.main">
+    <patternset refid="excluded.from.module.pdf-teacher.main"/>
+  </patternset>
+  
+  <path id="pdf-teacher.main.module.sourcepath">
+    <dirset dir="${module.pdf-teacher.main.basedir}/../../src/main">
+      <include name="java"/>
+      <include name="resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pdf-teacher.main" depends="compile.module.pdf-teacher.main.production,compile.module.pdf-teacher.main.tests" description="Compile module pdf-teacher.main"/>
+  
+  <target name="compile.module.pdf-teacher.main.production" depends="register.custom.compilers" description="Compile module pdf-teacher.main; production classes">
+    <mkdir dir="${pdf-teacher.main.output.dir}"/>
+    <javac2 destdir="${pdf-teacher.main.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pdf-teacher.main}/javac">
+      <compilerarg line="${compiler.args.pdf-teacher.main}"/>
+      <bootclasspath refid="pdf-teacher.main.module.bootclasspath"/>
+      <classpath refid="pdf-teacher.main.module.production.classpath"/>
+      <src refid="pdf-teacher.main.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pdf-teacher.main"/>
+    </javac2>
+    
+    <copy todir="${pdf-teacher.main.output.dir}">
+      <fileset dir="${module.pdf-teacher.main.basedir}/../../src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.pdf-teacher.main.basedir}/../../src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pdf-teacher.main.tests" depends="register.custom.compilers,compile.module.pdf-teacher.main.production" description="compile module pdf-teacher.main; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pdf-teacher.main" description="cleanup module">
+    <delete dir="${pdf-teacher.main.output.dir}"/>
+    <delete dir="${pdf-teacher.main.testoutput.dir}"/>
+  </target>
+</project>

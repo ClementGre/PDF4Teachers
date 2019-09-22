@@ -28,7 +28,7 @@ public class MainScreen extends JPanel{
 	public Document document;
 	
 	public void paintComponent(Graphics go){
-		
+
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 		
@@ -105,7 +105,7 @@ public class MainScreen extends JPanel{
 	
 	public void openFile(File file){
 		
-		closeFile();
+		closeFile(true);
 		paintComponent(getGraphics());
 		setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         status = 1;
@@ -121,12 +121,19 @@ public class MainScreen extends JPanel{
 		Main.footerBar.repaint();
 		
 	}
-	public void closeFile(){
+	public boolean closeFile(boolean confirm){
+
 
 	    if(document != null){
-            document.save();
+	    	if(confirm){
+	    		if(!document.save()) return false;
+			}
+			else document.edition.save();
+
             document = null;
         }
+
+        Main.leftBarText.elementToEdit = null;
 
 		status = 0;
 		zoom = 150;
@@ -134,6 +141,8 @@ public class MainScreen extends JPanel{
 		setPreferredSize(new Dimension(0, 0));
 		Main.mainScreenScroll.updateUI();
 		Main.window.setTitle("PDF Teacher - Aucun document");
+
+		return true;
 	}
 
 	public void updateAfterRender(){

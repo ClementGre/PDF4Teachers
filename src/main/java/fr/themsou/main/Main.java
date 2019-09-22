@@ -4,12 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
+import javax.swing.*;
+
 import fr.themsou.devices.Devices;
 import fr.themsou.devices.FileDrop;
 import fr.themsou.panel.Footerbar;
@@ -24,6 +23,7 @@ public class Main{
 	
 	public static JFrame window;
 	public static Devices devices = new Devices();
+	public static Settings settings = new Settings();
 
 	public static boolean click = false;
 	
@@ -42,6 +42,9 @@ public class Main{
 	public static LeftbarFiles leftBarFiles = new LeftbarFiles();
 	public static JScrollPane leftBarFilesScroll = new JScrollPane(leftBarFiles);
 	public static DropTarget leftBarFilesDrop = new DropTarget(leftBarFiles, new FileDrop(2));
+
+	public static LeftbarText leftBarText = new LeftbarText();
+	public static JScrollPane leftBarTextScroll = new JScrollPane(leftBarText);
 
 	
 //		FOOTER-HEADER BAR
@@ -63,9 +66,28 @@ public class Main{
 		mainScreen.addMouseListener(devices);
 		leftBarFiles.addMouseListener(devices);
 		window.addMouseMotionListener(devices);
+		window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		window.addKeyListener(devices);
 		window.setContentPane(panel);
-		
+
+		window.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+			if(mainScreen.document != null){
+				if(mainScreen.document.save()){
+					System.exit(0);
+				}
+			}else{
+				System.exit(0);
+			}
+			}
+		});
+
+		try {
+			//UIManager.setLookAndFeel("de.javasoft.synthetica.dark.SyntheticaDarkLookAndFeel");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 //		MAIN
 		
 		mainScreenScroll.getVerticalScrollBar().setUnitIncrement(30);
@@ -81,13 +103,19 @@ public class Main{
 	    });*/
 		//leftBar.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 		leftBar.add(leftBarFilesScroll, new ImageIcon(Main.devices.getClass().getResource("/img/PDF-Document.png")));
-		leftBar.add(new LeftbarText(), new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
+		leftBar.add(leftBarTextScroll, new ImageIcon(Main.devices.getClass().getResource("/img/Text.png")));
 		leftBar.add(new LeftbarNote(), new ImageIcon(Main.devices.getClass().getResource("/img/Note.png")));
         leftBar.add(new LeftbarPaint(), new ImageIcon(Main.devices.getClass().getResource("/img/Paint.png")));
 		leftBar.setPreferredSize(new Dimension(230, leftBar.getHeight()));
+
 		leftBarFilesDrop.setDefaultActions(DnDConstants.ACTION_COPY);
 		leftBarFilesScroll.setBorder(null);
 		leftBarFilesScroll.getVerticalScrollBar().setUnitIncrement(30);
+
+		leftBarTextScroll.setBorder(null);
+		leftBarTextScroll.getVerticalScrollBar().setUnitIncrement(30);
+		leftBarText.setup();
+
 		
 //		FOOTER-HEADER BAR
 		
@@ -116,8 +144,11 @@ public class Main{
 			
 			if(leftBar.getSelectedIndex() == 0){
 				leftBarFiles.repaint();
-				mainScreen.repaint();
+			}else if(leftBar.getSelectedIndex() == 1){
+				leftBarText.repaint();
 			}
+			mainScreen.repaint();
+
 			
 		}
 		
@@ -130,6 +161,35 @@ public class Main{
         return fileName.substring(fileName.lastIndexOf(".")+1);
         else return "";
     }
+    /*
+    		while(true){
+    			String input = JOptionPane.showInputDialog(null, "Entrez le nom de x", <Panel>);
+				if(input == null){
+					break; // Annuler
+				}
+				if(input.isEmpty()){
+					JOptionPane.showMessageDialog(null, "Vous devez saisir un nom");
+					continue; // Erreur
+				}
+				if(input != null){ // GOOD
+
+					break;
+				}
+    		}
+
+    		String[] values = new String[]{"1  580px/861px", "2  1160px/1722px", "3  1740px/2583px", "4  2320px/3444px", "5  29000px/4305px"};
+    		String input = (String) JOptionPane.showInputDialog(null, "Choisissez une valeur", "NOM de la fenêtre", JOptionPane.QUESTION_MESSAGE, null, values, values[2]);
+			if(input != null){ // GOOD
+
+			}
+
+    		int i = JOptionPane.showConfirmDialog(null, "Etes vous sur de vouloir supprimer ???");
+			if(i == 0){ // YES
+
+			}
+
+
+     */
 
 
 }
