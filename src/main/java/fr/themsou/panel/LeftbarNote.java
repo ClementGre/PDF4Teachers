@@ -13,7 +13,7 @@ public class LeftbarNote extends JPanel{
 
 	public void paintComponent(Graphics go){
 
-		Main.footerBar.repaint();
+		//Main.footerBar.repaint();
 		
 		Graphics2D g = (Graphics2D) go;
 		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

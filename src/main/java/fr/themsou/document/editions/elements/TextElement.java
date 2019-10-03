@@ -1,13 +1,16 @@
 package fr.themsou.document.editions.elements;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import fr.themsou.utils.Location;
+import javafx.geometry.VPos;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class TextElement extends Element{
 	
@@ -43,15 +46,27 @@ public class TextElement extends Element{
 	}
 
 	@Override
-	public boolean paint(Graphics2D g, int mouseX, int mouseY){
+	public boolean paint(GraphicsContext g, int mouseX, int mouseY){
 
 
-		g.setColor(color);
-		int[] dim = fullCenterString(g, getX(), getX(), getY(), getY(), content, new Font(font.getName(), font.getStyle(), (int) (font.getSize() * 2.75)));
-		setMargin(new Location(dim[0] / 2 + 10, dim[1] / 2 + 10));
+		g.setFill(color);
+		g.setTextAlign(TextAlignment.CENTER);
+		g.setTextBaseline(VPos.CENTER);
+
+
+		final Text text = new Text(content);
+		Font font = Font.font("Arial", 20);
+		text.setFont(new Font(font.getName(), (int) (font.getSize() * 2.75)));
+
+		final double width = text.getLayoutBounds().getWidth();
+		final double height = text.getLayoutBounds().getHeight();
+
+
+
+		setMargin(new Location((int) width / 2 + 10, (int) height / 2 + 10));
 		
-		if(mouseX > (getX() - dim[0]/2) && mouseX < (getX() + dim[0]/2)){
-			if(mouseY > (getY() - dim[1]/2) && mouseY < (getY() + dim[1]/2)){
+		if(mouseX > (getX() - width/2) && mouseX < (getX() + width/2)){
+			if(mouseY > (getY() - height/2) && mouseY < (getY() + height/2)){
 				return true;
 			}
 		}
@@ -85,12 +100,11 @@ public class TextElement extends Element{
 		writer.writeByte(super.page);
 		writer.writeShort(getX());
 		writer.writeShort(getY());
-		writer.writeByte(font.getSize());
-		writer.writeByte(font.getStyle());
-		writer.writeUTF(font.getFontName());
-		writer.writeByte(color.getRed() - 128);
-		writer.writeByte(color.getGreen() - 128);
-		writer.writeByte(color.getBlue() - 128);
+		writer.writeByte((int) font.getSize());
+		writer.writeUTF(font.getName());
+		writer.writeByte((int) color.getRed() - 128);
+		writer.writeByte((int) color.getGreen() - 128);
+		writer.writeByte((int) color.getBlue() - 128);
 		writer.writeUTF(content);
 	}
 
@@ -100,14 +114,13 @@ public class TextElement extends Element{
 		short x = reader.readShort();
 		short y = reader.readShort();
 		byte fontSize = reader.readByte();
-		byte fontStyle = reader.readByte();
 		String fontName = reader.readUTF();
 		short colorRed = (short) (reader.readByte() + 128);
 		short colorGreen = (short) (reader.readByte() + 128);
 		short colorBlue = (short) (reader.readByte() + 128);
 		String content = reader.readUTF();
 
-		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontStyle, fontSize), content, new Color(colorRed, colorGreen, colorBlue));
+		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontSize), content, Color.rgb(colorRed, colorGreen, colorBlue));
 	}
 
 }

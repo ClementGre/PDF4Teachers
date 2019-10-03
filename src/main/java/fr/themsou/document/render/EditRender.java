@@ -1,8 +1,6 @@
 package fr.themsou.document.render;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -10,6 +8,10 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Hand;
 import fr.themsou.utils.Location;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.WritableImage;
 
 public class EditRender {
 	
@@ -30,11 +32,10 @@ public class EditRender {
 	}
 
 	public Image render(Image img, int page, int mouseX, int mouseY){
-		
-		BufferedImage bimg = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_RGB);
-		Graphics2D g = bimg.createGraphics();
-		g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-		g.drawImage(img, 0, 0, img.getWidth(null), img.getHeight(null), null);
+
+		javafx.scene.canvas.Canvas canvas = new Canvas(300, 250);
+		GraphicsContext g = canvas.getGraphicsContext2D();
+		g.drawImage(javafx.scene.image.Image.impl_fromPlatformImage(img), 0, 0, img.getWidth(null), img.getHeight(null));
 
 		if(Main.leftBarText.elementToEdit != null && Main.leftBarText.elementToEdit.getPage() == page){
 			if(Main.leftBarText.elementToEdit.getMargin() == null){
@@ -59,17 +60,17 @@ public class EditRender {
 				hand.getElement().paint(g, mouseX, mouseY);
 			if(edition.document.currentPage != page){
 				edition.document.currentPage = page;
-				Main.footerBar.repaint();
+				//Main.footerBar.repaint();
 			}
 		}
-		
-		g.dispose();
-		return bimg;
+
+		WritableImage image = canvas.snapshot(null, null);
+		return SwingFXUtils.fromFXImage(image, null);
 		
 	}
 
 
-	public void mouse(EditRender page, Element element, Graphics2D g, int pageNumber, int mouseX, int mouseY){
+	public void mouse(EditRender page, Element element, GraphicsContext g, int pageNumber, int mouseX, int mouseY){
 
 		if(hand == null && Main.click && element != null){ // Ajouter
 

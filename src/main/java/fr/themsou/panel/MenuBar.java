@@ -1,56 +1,45 @@
 package fr.themsou.panel;
 
-import java.awt.Event;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.io.File;
-
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.filechooser.FileFilter;
 import fr.themsou.main.Main;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 
 @SuppressWarnings("serial")
-public class MenuBar extends JMenuBar{
+public class MenuBar extends javafx.scene.control.MenuBar{
 	
 	
 	public void setup(){
 		
-		JMenu menu1 = new JMenu("Fichier");
-		JMenuItem menu1arg1 = new JMenuItem("Ouvrir     ");
-		menu1arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/ouvrir.png")));
-		menu1arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK, true));
-		JMenuItem menu1arg2 = new JMenuItem("Fermer le fichier     ");
+		Menu menu1 = new Menu("Fichier");
+		MenuItem menu1arg1 = new MenuItem("Ouvrir     ");
+		//menu1arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/ouvrir.png")));
+		/*menu1arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK, true));
+		MenuItem menu1arg2 = new MenuItem("Fermer le fichier     ");
 		menu1arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/fermer.png")));
 		menu1arg2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK, true));
-		JMenuItem menu1arg3 = new JMenuItem("Vider la liste     ");
+		MenuItem menu1arg3 = new MenuItem("Vider la liste     ");
 		menu1arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/vider.png")));
 		menu1arg3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK | Event.SHIFT_MASK, true));
 		
-		JMenuItem menu1arg4 = new JMenuItem("Sauvegarder l'édition     ");
+		MenuItem menu1arg4 = new MenuItem("Sauvegarder l'édition     ");
 		menu1arg4.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
 		menu1arg4.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK, true));
-		JMenu menu1arg5 = new JMenu("Éditions du même nom     ");
+		Menu menu1arg5 = new Menu("Éditions du même nom     ");
 		menu1arg5.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/memeNom.png")));
-		JMenuItem menu1arg6 = new JMenuItem("Supprimer l'édition     ");
+		MenuItem menu1arg6 = new MenuItem("Supprimer l'édition     ");
 		menu1arg6.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/supprimer.png")));
 		menu1arg6.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, Event.CTRL_MASK, true));
 		
-		JMenuItem menu1arg7 = new JMenuItem("Exporter     ");
+		MenuItem menu1arg7 = new MenuItem("Exporter     ");
 		menu1arg7.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/exporter.png")));
 		menu1arg7.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Event.CTRL_MASK, true));
-		JMenuItem menu1arg8 = new JMenuItem("Tout exporter     ");
+		MenuItem menu1arg8 = new MenuItem("Tout exporter     ");
 		menu1arg8.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/exporter.png")));
 		menu1arg8.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Event.CTRL_MASK | Event.SHIFT_MASK, true));
-		
-		Main.menuBar.add(menu1);
-		menu1.add(menu1arg1);
-		menu1.add(menu1arg2);
+		*/
+		getMenus().add(menu1);
+		menu1.getItems().add(menu1arg1);
+		/*menu1.add(menu1arg2);
 		menu1.add(menu1arg3);
 		menu1.addSeparator();
 		menu1.add(menu1arg4);
@@ -62,21 +51,21 @@ public class MenuBar extends JMenuBar{
 		
 		
 		
-		JMenu menu2 = new JMenu("Édition");
-		JMenuItem menu2arg1 = new JMenuItem(" Annuler     ");
+		Menu menu2 = new Menu("Édition");
+		MenuItem menu2arg1 = new MenuItem(" Annuler     ");
 		menu2arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/annuler.png")));
 		menu2arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK, true));
-		JMenuItem menu2arg2 = new JMenuItem(" Rétablir     ");
+		MenuItem menu2arg2 = new MenuItem(" Rétablir     ");
 		menu2arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/retablir.png")));
 		menu2arg2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK, true));
 		
-		JMenuItem menu2arg3 = new JMenuItem(" Couper     ");
+		MenuItem menu2arg3 = new MenuItem(" Couper     ");
 		menu2arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/couper.png")));
 		menu2arg3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Event.CTRL_MASK, true));
-		JMenuItem menu2arg4 = new JMenuItem(" Copier     ");
+		MenuItem menu2arg4 = new MenuItem(" Copier     ");
 		menu2arg4.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/copier.png")));
 		menu2arg4.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK, true));
-		JMenuItem menu2arg5 = new JMenuItem(" Coller     ");
+		MenuItem menu2arg5 = new MenuItem(" Coller     ");
 		menu2arg5.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/coller.png")));
 		menu2arg5.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Event.CTRL_MASK, true));
 		
@@ -90,34 +79,34 @@ public class MenuBar extends JMenuBar{
 		
 		
 		
-		JMenu menu3 = new JMenu("Préférences");
+		Menu menu3 = new Menu("Préférences");
 		
-		JMenu menu3arg1 = new JMenu("Zoom par défaut     ");
+		Menu menu3arg1 = new Menu("Zoom par défaut     ");
 		menu3arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/zoom.png")));
-		JMenuItem menu3arg1arg1 = new JMenuItem("100%     ");
-		JMenuItem menu3arg1arg2 = new JMenuItem("125%     ");
-		JMenuItem menu3arg1arg3 = new JMenuItem("150%     ");
-		JMenuItem menu3arg1arg4 = new JMenuItem("175%     ");
+		MenuItem menu3arg1arg1 = new MenuItem("100%     ");
+		MenuItem menu3arg1arg2 = new MenuItem("125%     ");
+		MenuItem menu3arg1arg3 = new MenuItem("150%     ");
+		MenuItem menu3arg1arg4 = new MenuItem("175%     ");
 		menu3arg1.add(menu3arg1arg1);
 		menu3arg1.add(menu3arg1arg2);
 		menu3arg1.add(menu3arg1arg3);
 		menu3arg1.add(menu3arg1arg4);
 		
-		JMenu menu3arg2 = new JMenu("Pages maximum     ");
+		Menu menu3arg2 = new Menu("Pages maximum     ");
 		menu3arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/maxPages.png")));
-		JMenuItem menu3arg2arg1 = new JMenuItem("5     ");
-		JMenuItem menu3arg2arg2 = new JMenuItem("15     ");
-		JMenuItem menu3arg2arg3 = new JMenuItem("30     ");
-		JMenuItem menu3arg2arg4 = new JMenuItem("500     ");
+		MenuItem menu3arg2arg1 = new MenuItem("5     ");
+		MenuItem menu3arg2arg2 = new MenuItem("15     ");
+		MenuItem menu3arg2arg3 = new MenuItem("30     ");
+		MenuItem menu3arg2arg4 = new MenuItem("500     ");
 		menu3arg2.add(menu3arg2arg1);
 		menu3arg2.add(menu3arg2arg2);
 		menu3arg2.add(menu3arg2arg3);
 		menu3arg2.add(menu3arg2arg4);
 		
-		JMenu menu3arg3 = new JMenu("Sauvegarde auto     ");
+		Menu menu3arg3 = new Menu("Sauvegarde auto     ");
 		menu3arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
-		JMenuItem menu3arg3arg1 = new JMenuItem("Activer     ");
-		JMenuItem menu3arg3arg2 = new JMenuItem("Désactiver     ");
+		MenuItem menu3arg3arg1 = new MenuItem("Activer     ");
+		MenuItem menu3arg3arg2 = new MenuItem("Désactiver     ");
 		menu3arg3.add(menu3arg3arg1);
 		menu3arg3.add(menu3arg3arg2);
 		
@@ -127,11 +116,11 @@ public class MenuBar extends JMenuBar{
 		menu3.add(menu3arg3);
 		
 		
-		JMenu menu4 = new JMenu("À propos");
+		Menu menu4 = new Menu("À propos");
 		Main.menuBar.add(menu4);
 		
-		JMenu menu5 = new JMenu("Aide");
-		JMenuItem menu5arg1 = new JMenuItem("Charger le document d'aide     ");
+		Menu menu5 = new Menu("Aide");
+		MenuItem menu5arg1 = new MenuItem("Charger le document d'aide     ");
 		menu5arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/info.png")));
 		
 		Main.menuBar.add(menu5);
@@ -157,7 +146,7 @@ public class MenuBar extends JMenuBar{
 				Main.leftBarFiles.openFiles(chooser.getSelectedFiles());
 	  		}
 			
-		}});
+		}});*/
 		
 	}
 	

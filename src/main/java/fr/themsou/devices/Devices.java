@@ -8,98 +8,84 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 
 import fr.themsou.main.Main;
+import fr.themsou.panel.LeftbarText;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 
-public class Devices implements MouseListener, KeyListener, MouseWheelListener, MouseMotionListener{
+public class Devices{
 
-	
-	@Override
+
 	public void keyPressed(KeyEvent e) {
-		//System.out.println(e.getKeyCode());
-
 		if(e.getKeyCode() == 17){
-			Main.mainScreen.addMouseWheelListener(Main.devices);
+			//Main.mainScreen.addMouseWheelListener(Main.devices);
 		}
-		
 	}
-	@Override
 	public void keyReleased(KeyEvent e){
-		
 		if(e.getKeyCode() == 17){
-			Main.mainScreen.removeMouseWheelListener(Main.devices);
+			//Main.mainScreen.removeMouseWheelListener(Main.devices);
 		}
 	}
 
-	@Override
-	public void keyTyped(KeyEvent e) {
 
-	}
+	public void addKeyHandler(Scene scene){
+		scene.setOnKeyPressed(e -> {
+			KeyCode keyCode = e.getCode();
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e){
-		Main.click = true;
-
-		if(e.getComponent() == Main.mainScreen){
-			Main.mainScreen.getTopLevelAncestor().requestFocus();
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		Main.click = false;
-		
-		if(e.getComponent() == Main.leftBarFiles){
-			Main.leftBarFiles.mouseReleased();
-		}
-		
-		
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		
-		if(Main.mainScreen.status == -1){
-			
-			if(e.isControlDown()){
-			
-				if(e.getWheelRotation() == 1) Main.mainScreen.zoom -= 5;
-				if(e.getWheelRotation() == -1) Main.mainScreen.zoom += 5;
-				
-				if(Main.mainScreen.zoom <= 9) Main.mainScreen.zoom = 10;
-				else if(Main.mainScreen.zoom >= 399) Main.mainScreen.zoom = 400;
-				
-				Main.mainScreen.repaint();
-				Main.footerBar.repaint();
-				
-				
+			if(keyCode.equals(KeyCode.S)){
+				return;
 			}
-		}
-		
-	}
-	@Override
-	public void mouseDragged(MouseEvent e) {
-	}
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		
-		
-		
+			if(keyCode.equals(KeyCode.R)){
+				return;
+			}
+			if(keyCode.equals(KeyCode.P)){
+				return;
+			}
+			if(keyCode.equals(KeyCode.Q) || keyCode.equals(KeyCode.ESCAPE)) {
+				return;
+			}
+
+		});
 	}
 
+	public void addMousePresedHandler(Scene scene) {
+		scene.setOnMousePressed(e -> {
+			Main.click = true;
+			if(e.getSource() == Main.mainScreen){
+				Main.mainScreen.requestFocus();
+			}
+		});
+	}
+	public void addMouseReleasedHandler(Scene scene) {
+		scene.setOnMouseReleased(e -> {
+			Main.click = false;
+			if(e.getSource() == Main.leftBarFiles){
+				Main.leftBarFiles.mouseReleased();
+			}
+		});
+	}
+
+
+	public void addScrollHandler(Scene scene) {
+		scene.setOnScroll(e -> {
+
+			if(Main.mainScreen.status == -1){
+
+				if(e.isControlDown()){
+
+					if(e.getDeltaY() == 1) Main.mainScreen.zoom -= 5;
+					if(e.getDeltaY() == -1) Main.mainScreen.zoom += 5;
+
+					if(Main.mainScreen.zoom <= 9) Main.mainScreen.zoom = 10;
+					else if(Main.mainScreen.zoom >= 399) Main.mainScreen.zoom = 400;
+
+					//Main.mainScreen.repaint();
+					//Main.footerBar.repaint();
+
+
+				}
+			}
+		});
+	}
 }

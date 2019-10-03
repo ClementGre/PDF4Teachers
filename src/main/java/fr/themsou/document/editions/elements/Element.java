@@ -2,14 +2,13 @@ package fr.themsou.document.editions.elements;
 
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
 import fr.themsou.utils.Location;
+import javafx.scene.canvas.GraphicsContext;
 
 public abstract class Element {
 
@@ -22,11 +21,9 @@ public abstract class Element {
 		this.page = page;
 	}
 
-	public abstract boolean paint(Graphics2D g, int mouseX, int mouseY);
+	public abstract boolean paint(GraphicsContext g, int mouseX, int mouseY);
 	public abstract boolean equals(Element object);
 	public abstract void writeData(DataOutputStream writer) throws IOException;
-
-
 
 	public Element setLocation(Location loc){
 		this.loc = loc;

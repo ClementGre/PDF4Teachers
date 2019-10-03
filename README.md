@@ -20,7 +20,7 @@ La classe main se situe dans le package ``fr.themsou.main``
 
 Les classes du package ``fr.themsou.panel`` sont toutes celles qui etendent (extends) JPanel.
 
-On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le JMenu en haut), MainScreen (La où s'affichera le document à éditer) et toutes les classes LeftBar<suffixe> qui sont les différents JPanels du JTabbedPane de gauche. Les différents onglets permettrons respectivement de voir la liste des fichiers, ajouter du texte, des notes et des formes géométriques.
+On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (La où s'affichera le document à éditer) et toutes les classes LeftBar<suffixe> qui sont les différents JPanels du JTabbedPane de gauche. Les différents onglets permettrons respectivement de voir la liste des fichiers, ajouter du texte, des notes et des formes géométriques.
 
 Ces différents éléments (texte, notes etc.) ont des classes attribués dans ``fr.themsou.document.editions.elements`` qui etendront de ``Element`` et qui permettront de faire le rendu, de stoquer les donnés d'un élément et d'encoder/décoder les donnés en binaire.
 

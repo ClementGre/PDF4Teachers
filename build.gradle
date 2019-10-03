@@ -27,8 +27,8 @@ application {
     mainClassName = 'fr.themsou.main.Main'
 }
 dependencies{
-    compile files('libs/syntheticaDark.jar')
-    compile 'org.apache.pdfbox:pdfbox:2.0.13'
+    implementation 'org.apache.pdfbox:pdfbox:2.0.13'
+    implementation 'org.jfxtras:jmetro:4.2'
     implementation 'com.google.guava:guava:28.0-jre'
 
     // Use JUnit Jupiter API  & JUnit Jupiter Engine for testing.
