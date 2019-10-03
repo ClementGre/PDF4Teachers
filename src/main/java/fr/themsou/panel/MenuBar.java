@@ -143,7 +143,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			});
 	  		int result = chooser.showOpenDialog(chooser);
 	  		if(result == JFileChooser.APPROVE_OPTION){
-				Main.leftBarFiles.openFiles(chooser.getSelectedFiles());
+				Main.lbFiles.openFiles(chooser.getSelectedFiles());
 	  		}
 			
 		}});*/

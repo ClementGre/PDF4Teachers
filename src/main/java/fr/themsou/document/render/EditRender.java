@@ -1,7 +1,7 @@
 package fr.themsou.document.render;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
+
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
@@ -37,11 +37,11 @@ public class EditRender {
 		GraphicsContext g = canvas.getGraphicsContext2D();
 		g.drawImage(javafx.scene.image.Image.impl_fromPlatformImage(img), 0, 0, img.getWidth(null), img.getHeight(null));
 
-		if(Main.leftBarText.elementToEdit != null && Main.leftBarText.elementToEdit.getPage() == page){
-			if(Main.leftBarText.elementToEdit.getMargin() == null){
-				Main.leftBarText.elementToEdit.paint(g, mouseX, mouseY);
+		if(Main.lbTextTab.elementToEdit != null && Main.lbTextTab.elementToEdit.getPage() == page){
+			if(Main.lbTextTab.elementToEdit.getMargin() == null){
+				Main.lbTextTab.elementToEdit.paint(g, mouseX, mouseY);
 			}
-			verifyLoc(this, Main.leftBarText.elementToEdit);
+			verifyLoc(this, Main.lbTextTab.elementToEdit);
 		}
 
 		for(int i = 0; i < edition.elements.size(); i++){
@@ -77,7 +77,7 @@ public class EditRender {
 			hand = new Hand(element, element.getLocation().substractValues(new Location(mouseX, mouseY)), element.getPage());
 			edition.removeElement(element);
 			if(element instanceof TextElement)
-				Main.leftBarText.selectTextElement(element);
+				Main.lbTextTab.selectTextElement(element);
 
 		}else if(hand != null){ // Déposer - Déplacer
 

@@ -1,16 +1,7 @@
 package fr.themsou.devices;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.LeftbarText;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 
@@ -60,8 +51,8 @@ public class Devices{
 	public void addMouseReleasedHandler(Scene scene) {
 		scene.setOnMouseReleased(e -> {
 			Main.click = false;
-			if(e.getSource() == Main.leftBarFiles){
-				Main.leftBarFiles.mouseReleased();
+			if(e.getSource() == Main.lbFilesTab){
+				//Main.lbFiles.mouseReleased();
 			}
 		});
 	}

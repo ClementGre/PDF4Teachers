@@ -119,7 +119,7 @@ public class MainScreen extends StackPane {
             document = null;
         }
 
-        Main.leftBarText.elementToEdit = null;
+        Main.lbTextTab.elementToEdit = null;
 
 		status = 0;
 		zoom = 150;
