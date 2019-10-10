@@ -1,7 +1,10 @@
 package fr.themsou.utils;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Control;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -36,6 +39,25 @@ public class Builders {
             element.setStyle("-fx-min-height: " + height + ";");
             element.minWidthProperty().bind(new SimpleDoubleProperty(width));
             element.minHeightProperty().bind(new SimpleDoubleProperty(height));
+        }
+    }
+
+    public static void setMenuSize(Menu menu){
+
+        for(MenuItem subMenu : menu.getItems()){
+            subMenu.setStyle("-fx-font-size: 13;");
+            if(subMenu instanceof Menu){
+                setMenuSize((Menu) subMenu);
+            }
+        }
+    }
+    public static void setMenuSize(ContextMenu menu){
+
+        for(MenuItem subMenu : menu.getItems()){
+            subMenu.setStyle("-fx-font-size: 13;");
+            if(subMenu instanceof Menu){
+                setMenuSize((Menu) subMenu);
+            }
         }
     }
 

@@ -20,6 +20,13 @@ public class LBNoteTab extends Tab {
     public GridPane pane = new GridPane();
 
     public LBNoteTab(){
+        setup();
+    }
+
+    public void repaint(){
+
+    }
+    public void setup(){
 
         setClosable(false);
         setContent(scroller);
@@ -27,15 +34,6 @@ public class LBNoteTab extends Tab {
 
         setGraphic(Builders.buildImage(getClass().getResource("/img/Note.png")+"", 0, 25));
         Main.leftBar.getTabs().add(2, this);
-
-        setup();
-        repaint();
-    }
-
-    public void repaint(){
-
-    }
-    public void setup(){
 
     }
 

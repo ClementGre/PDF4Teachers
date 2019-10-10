@@ -22,7 +22,6 @@ public class LBPaintTab extends Tab {
         Main.leftBar.getTabs().add(3, this);
 
         setup();
-        repaint();
     }
 
     public void repaint(){

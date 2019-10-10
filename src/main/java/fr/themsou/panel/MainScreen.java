@@ -1,99 +1,91 @@
 package fr.themsou.panel;
 
-import java.awt.*;
 import java.io.File;
 import fr.themsou.document.Document;
+import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 
-public class MainScreen extends StackPane {
+public class MainScreen extends ScrollPane {
 
-	public int zoom = 150;
-	public int status = 0;
+	private int zoom = 100;
+	private IntegerProperty pageWidth = new SimpleIntegerProperty(595);
+	private int status = 0;
+	private int lastStatus = 0;
 
 	public Document document;
+	public Pane pane = new Pane();
 
-	public void drawShapes(GraphicsContext g){
+	private Label info = new Label();
 
-		int mouseX = 0;
-		int mouseY = 0;
-		
-		g.setFill(Color.rgb(102, 102, 102));
-		g.fillRect(0, 0, getWidth(), getHeight());
-		
+	public MainScreen(){
+
+		setup();
+		repaint();
+	}
+
+	public void repaint(){
+
 		if(status != -1){
-
-			g.setFont(new Font("FreeSans", 20));
-			g.setFill(Color.WHITE);
-
+			info.setVisible(true);
 			if(status == 0){
-				g.fillText("Aucun document ouvert", getWidth()/2, getHeight()/2);
+				info.setText("Aucun document ouvert");
 			}else if(status == 1){
-				g.fillText("Chargement du document...", getWidth()/2, getHeight()/2);
+				info.setText("Chargement du document...");
 			}else if(status == 2){
-				g.fillText("Une erreur est survenue lors du chargement du document :/", getWidth()/2, getHeight()/2);
+				info.setText("Une erreur est survenue lors du chargement du document :/");
 			}
 
 		}else{
+			info.setVisible(false);
 
-			// Measure page size
-
-			int imgWidth; int imgHeight;
-			if((double)Main.mainScreenScroll.getHeight() / (double)Main.mainScreenScroll.getWidth() > (double)document.rendered[0].getHeight(null) / (double)document.rendered[0].getWidth(null)){
-				int maxSize = (int) Main.mainScreenScroll.getWidth();
-				imgWidth = (int) ((((double) zoom) / 100.0) * ((double) maxSize) - 100);
-				imgHeight = (int) (((double) imgWidth) / ((double) document.rendered[0].getWidth(null)) * document.rendered[0].getHeight(null));
-			}else{
-				int maxSize = (int) Main.mainScreenScroll.getHeight();
-				imgHeight = (int) (( ((double) zoom) / 100.0) * ((double) maxSize) -100);
-				imgWidth = (int) (((double) imgHeight) / ((double) document.rendered[0].getHeight(null)) * document.rendered[0].getWidth(null));
-			}
-
-			// render
-
-			int page = 0;
-			int imgsHeight = 40;
-			int imgMouseX;
-			int imgMouseY;
-			for(Image img : document.rendered){
-				
-				imgMouseX = (int) (((double) (mouseX - (getWidth()/2-imgWidth/2))) / ((double)imgWidth) * img.getWidth(null));
-				imgMouseY = (int) (((double) (mouseY - imgsHeight)) / ((double)imgHeight) * img.getHeight(null));
-				
-				Image imgRendered = document.edition.editRender.render(img, page, imgMouseX, imgMouseY);
-				
-				g.drawImage(javafx.scene.image.Image.impl_fromPlatformImage(imgRendered), getWidth()/2-imgWidth/2, imgsHeight, imgWidth, imgHeight);
-				
-				imgsHeight += imgHeight + 40;
-				page++;
-			}
-
-			updateAfterRender();
-
-			// Update UI
-
-			/*if(lastWidth != imgWidth || lastHeight != imgHeight){
-				setPreferredSize(new Dimension(imgWidth + 80, imgsHeight));
-				Main.mainScreenScroll.updateUI();
-				lastWidth = imgWidth;
-				lastHeight = imgHeight;
-			}*/
-			
-			
-			
 		}
-		
-		
+
 	}
-	
+	public void setup(){
+
+
+		setContent(pane);
+		getChildren().add(info);
+
+		setFitToHeight(true);
+		setFitToWidth(true);
+
+		pane.setBackground(new Background(new BackgroundFill(Color.rgb(102, 102, 102), CornerRadii.EMPTY, Insets.EMPTY)));
+		pane.setBorder(Border.EMPTY);
+		setBorder(Border.EMPTY);
+
+		info.setFont(new Font("FreeSans", 22));
+		info.setTextFill(Color.WHITE);
+
+		info.translateXProperty().bind(pane.widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
+		info.translateYProperty().bind(pane.heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
+
+		pane.getChildren().add(info);
+
+	}
 	public void openFile(File file){
 		
-		closeFile(true);
-		//paintComponent(getGraphics());
-		//setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		if(!closeFile(true)){
+			return;
+		}
+		setCursor(Cursor.WAIT);
         status = 1;
 		this.document = new Document(file);
 
@@ -102,22 +94,26 @@ public class MainScreen extends StackPane {
 			Main.window.setTitle("PDF Teacher - " + file.getName());
 		}
 
-		//setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		//repaint();
-		//Main.footerBar.repaint();
+		setCursor(Cursor.DEFAULT);
+		repaint();
+		Main.footerBar.repaint();
 		
 	}
 	public boolean closeFile(boolean confirm){
 
-
 	    if(document != null){
 	    	if(confirm){
-	    		if(!document.save()) return false;
+	    		if(!document.save()){
+	    			return false;
+				}
 			}
 			else document.edition.save();
 
             document = null;
         }
+
+	    pane.getChildren().clear();
+	    pane.getChildren().add(info);
 
         Main.lbTextTab.elementToEdit = null;
 
@@ -131,19 +127,72 @@ public class MainScreen extends StackPane {
 		return true;
 	}
 
-	public void updateAfterRender(){
+	public boolean hasDocument(boolean alert){
 
-		/*if(document.edition.editRender.current != null || document.edition.editRender.hand != null){
-			if(getCursor() != Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR))
-				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-		}else{
-			if(getCursor() != Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR))
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}*/
+		if(status != -1){
+			if(alert){
+				Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+				alerte.setAlertType(Alert.AlertType.ERROR);
+				alerte.setTitle("Erreur");
+				alerte.setHeaderText("Aucun document n'est ouvert !");
+				alerte.setContentText("Cette action est censé s'éxécuter sur un document ouvert.");
 
-		document.edition.editRender.current = null;
-		//if(document.currentPage == -1) Main.footerBar.repaint();
+				alerte.showAndWait();
+			}
+			return false;
+		}
+		return true;
+	}
+
+	public void setStatus(int status){
+		this.lastStatus = this.status;
+		this.status = status;
+	}
+	public int getStatus(){
+		return this.status;
+	}
+
+	public int getZoom(){
+		return this.zoom;
+	}
+	public void zoomMore(){
+		this.zoom += 5;
+		checkzoom();
+	}
+	public void zoomLess(){
+		this.zoom -=5;
+		checkzoom();
+		System.out.println("zoomless");
+	}
+	public void checkzoom(){
+		if(zoom <= 9) zoom = 10;
+		else if(zoom >= 399) zoom = 400;
+	}
+	public void setZoom(int zoom){
+		this.zoom = zoom;
+	}
+	public int getPageWidth() {
+		return pageWidth.get();
+	}
+	public IntegerProperty pageWidthProperty() {
+		return pageWidth;
+	}
+	public void setPageWidth(int pageWidth) {
+		this.pageWidth.set(pageWidth);
+	}
+
+	public void addPage(PageRenderer page){
+
+		pane.minHeightProperty().bind( page.heightProperty().add(50).multiply(page.getPage()+1).add(50) );
+		pane.minWidthProperty().bind( page.widthProperty().add(100) );
+
+
+		page.layoutYProperty().bind(page.heightProperty().add(50).multiply(page.getPage()).add(50));
+		page.layoutXProperty().bind(pane.widthProperty().divide(2).subtract(page.widthProperty().divide(2)));
+
+		pane.getChildren().add(page);
+
 
 	}
-	
+
 }

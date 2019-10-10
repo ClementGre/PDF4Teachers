@@ -1,152 +1,180 @@
 package fr.themsou.panel;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.input.KeyCombination;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
-	
-	
+
+	Menu fichier = new Menu("Fichier");
+	MenuItem fichier1Open = new MenuItem("Ouvrir un fichier    ");
+	MenuItem fichier2OpenDir = new MenuItem("Ouvrir un dossier    ");
+	MenuItem fichier3Close = new MenuItem("Fermer le fichier     ");
+	MenuItem fichier4Clear = new MenuItem("Vider la liste     ");
+	MenuItem fichier5Save = new MenuItem("Sauvegarder l'édition    ");
+	MenuItem fichier6Delete = new MenuItem("Supprimer l'édition     ");
+	MenuItem fichier7SameName = new Menu("Éditions du même nom     ");
+	MenuItem fichier8Export = new MenuItem("Exporter     ");
+	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
+
+	Menu preferences = new Menu("Préférences");
+	Menu preferences1Zoom = new Menu("Zoom par défaut     ");
+	Menu preferences2Pages = new Menu("Pages maximum     ");
+	Menu preferences3Save = new Menu("Sauvegarde auto     ");
+
+	Menu apropos = new Menu("À propos");
+	Menu aide = new Menu("Aide");
+	MenuItem aide1Doc = new MenuItem("Charger le document d'aide     ");
+
+	public MenuBar(){
+		setup();
+	}
+
 	public void setup(){
-		
-		Menu menu1 = new Menu("Fichier");
-		MenuItem menu1arg1 = new MenuItem("Ouvrir     ");
-		//menu1arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/ouvrir.png")));
-		/*menu1arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK, true));
-		MenuItem menu1arg2 = new MenuItem("Fermer le fichier     ");
-		menu1arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/fermer.png")));
-		menu1arg2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, Event.CTRL_MASK, true));
-		MenuItem menu1arg3 = new MenuItem("Vider la liste     ");
-		menu1arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/vider.png")));
-		menu1arg3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, Event.CTRL_MASK | Event.SHIFT_MASK, true));
-		
-		MenuItem menu1arg4 = new MenuItem("Sauvegarder l'édition     ");
-		menu1arg4.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
-		menu1arg4.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Event.CTRL_MASK, true));
-		Menu menu1arg5 = new Menu("Éditions du même nom     ");
-		menu1arg5.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/memeNom.png")));
-		MenuItem menu1arg6 = new MenuItem("Supprimer l'édition     ");
-		menu1arg6.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/supprimer.png")));
-		menu1arg6.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, Event.CTRL_MASK, true));
-		
-		MenuItem menu1arg7 = new MenuItem("Exporter     ");
-		menu1arg7.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/exporter.png")));
-		menu1arg7.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Event.CTRL_MASK, true));
-		MenuItem menu1arg8 = new MenuItem("Tout exporter     ");
-		menu1arg8.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/exporter.png")));
-		menu1arg8.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, Event.CTRL_MASK | Event.SHIFT_MASK, true));
-		*/
-		getMenus().add(menu1);
-		menu1.getItems().add(menu1arg1);
-		/*menu1.add(menu1arg2);
-		menu1.add(menu1arg3);
-		menu1.addSeparator();
-		menu1.add(menu1arg4);
-		menu1.add(menu1arg5);
-		menu1.add(menu1arg6);
-		menu1.addSeparator();
-		menu1.add(menu1arg7);
-		menu1.add(menu1arg8);
-		
-		
-		
-		Menu menu2 = new Menu("Édition");
+
+		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
+		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+
+		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/directory.png")+"", 0, 0));
+		fichier2OpenDir.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+O"));
+
+		fichier3Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));
+		fichier3Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+
+		fichier4Clear.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/vider.png")+"", 0, 0));
+		fichier4Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
+
+		fichier5Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		fichier5Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+
+		fichier6Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
+
+		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
+		fichier7SameName.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
+
+		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
+		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+
+		fichier9ExportAll.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
+		fichier9ExportAll.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+E"));
+
+		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Close, fichier4Clear, new SeparatorMenuItem(), fichier5Save, fichier6Delete, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
+
+
+
+		/*Menu menu2 = new Menu("Édition");
 		MenuItem menu2arg1 = new MenuItem(" Annuler     ");
-		menu2arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/annuler.png")));
+		menu2arg1.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/annuler.png")+"", 0, 0));
 		menu2arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK, true));
-		MenuItem menu2arg2 = new MenuItem(" Rétablir     ");
-		menu2arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/retablir.png")));
-		menu2arg2.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Y, Event.CTRL_MASK, true));
-		
+		menu2arg2.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/retablir.png")+"", 0, 0));
 		MenuItem menu2arg3 = new MenuItem(" Couper     ");
-		menu2arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/couper.png")));
-		menu2arg3.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, Event.CTRL_MASK, true));
+		menu2arg3.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/couper.png")+"", 0, 0));
 		MenuItem menu2arg4 = new MenuItem(" Copier     ");
-		menu2arg4.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/copier.png")));
-		menu2arg4.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, Event.CTRL_MASK, true));
+		menu2arg4.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/copier.png")+"", 0, 0));
 		MenuItem menu2arg5 = new MenuItem(" Coller     ");
-		menu2arg5.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/coller.png")));
-		menu2arg5.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, Event.CTRL_MASK, true));
-		
-		Main.menuBar.add(menu2);
-		menu2.add(menu2arg1);
-		menu2.add(menu2arg2);
-		menu2.addSeparator();
-		menu2.add(menu2arg3);
-		menu2.add(menu2arg4);
-		menu2.add(menu2arg5);
-		
-		
-		
-		Menu menu3 = new Menu("Préférences");
-		
-		Menu menu3arg1 = new Menu("Zoom par défaut     ");
-		menu3arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/zoom.png")));
-		MenuItem menu3arg1arg1 = new MenuItem("100%     ");
-		MenuItem menu3arg1arg2 = new MenuItem("125%     ");
-		MenuItem menu3arg1arg3 = new MenuItem("150%     ");
-		MenuItem menu3arg1arg4 = new MenuItem("175%     ");
-		menu3arg1.add(menu3arg1arg1);
-		menu3arg1.add(menu3arg1arg2);
-		menu3arg1.add(menu3arg1arg3);
-		menu3arg1.add(menu3arg1arg4);
-		
-		Menu menu3arg2 = new Menu("Pages maximum     ");
-		menu3arg2.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/maxPages.png")));
-		MenuItem menu3arg2arg1 = new MenuItem("5     ");
-		MenuItem menu3arg2arg2 = new MenuItem("15     ");
-		MenuItem menu3arg2arg3 = new MenuItem("30     ");
-		MenuItem menu3arg2arg4 = new MenuItem("500     ");
-		menu3arg2.add(menu3arg2arg1);
-		menu3arg2.add(menu3arg2arg2);
-		menu3arg2.add(menu3arg2arg3);
-		menu3arg2.add(menu3arg2arg4);
-		
-		Menu menu3arg3 = new Menu("Sauvegarde auto     ");
-		menu3arg3.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/sauvegarder.png")));
-		MenuItem menu3arg3arg1 = new MenuItem("Activer     ");
-		MenuItem menu3arg3arg2 = new MenuItem("Désactiver     ");
-		menu3arg3.add(menu3arg3arg1);
-		menu3arg3.add(menu3arg3arg2);
-		
-		Main.menuBar.add(menu3);
-		menu3.add(menu3arg1);
-		menu3.add(menu3arg2);
-		menu3.add(menu3arg3);
-		
-		
-		Menu menu4 = new Menu("À propos");
-		Main.menuBar.add(menu4);
-		
-		Menu menu5 = new Menu("Aide");
-		MenuItem menu5arg1 = new MenuItem("Charger le document d'aide     ");
-		menu5arg1.setIcon(new ImageIcon(Main.devices.getClass().getResource("/img/MenuBar/info.png")));
-		
-		Main.menuBar.add(menu5);
-		menu5.add(menu5arg1);
-		
-		menu1arg1.addActionListener(new ActionListener() { @Override public void actionPerformed(ActionEvent e) { // Ouvrir un fichier
-			
-			JFileChooser chooser = new JFileChooser(new File(""));
-			chooser.setAcceptAllFileFilterUsed(false);
-			chooser.setMultiSelectionEnabled(true);
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-	  		chooser.setFileFilter(new FileFilter() {
-				@Override
-				public String getDescription(){ return "Document PDF"; }
-				@Override
-				public boolean accept(File file) {
-					if((!file.isFile()) || Main.getFileExtension(file).equals("pdf")) return true;
-	                else return false;
+		menu2arg5.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/coller.png")+"", 0, 0));*/
+
+
+
+		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
+		preferences2Pages.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/maxPages.png")+"", 0, 0));
+		preferences3Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+
+		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save);
+
+
+		aide.getItems().add(aide1Doc);
+
+
+		fichier1Open.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent event){
+
+				final FileChooser chooser = new FileChooser();
+				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
+				chooser.setTitle("Selexionnez un fichier ou un dossier");
+				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+				List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
+				if(listFiles != null){
+					File[] files = new File[listFiles.size()];
+					files = listFiles.toArray(files);
+					Main.lbFilesTab.openFiles(files);
 				}
-			});
-	  		int result = chooser.showOpenDialog(chooser);
-	  		if(result == JFileChooser.APPROVE_OPTION){
-				Main.lbFiles.openFiles(chooser.getSelectedFiles());
-	  		}
-			
-		}});*/
+
+			}
+		});
+		fichier2OpenDir.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent event){
+
+				final DirectoryChooser chooser = new DirectoryChooser();
+				chooser.setTitle("Selexionnez un ou plusieurs dossier");
+				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+
+				File file = chooser.showDialog(Main.window);
+				if(file != null) {
+					Main.lbFilesTab.openFile(file);
+				}
+
+			}
+		});
+		fichier3Close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent event){
+				if(Main.mainScreen.hasDocument(true)){
+					Main.mainScreen.closeFile(true);
+				}
+			}
+		});
+		fichier4Clear.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+				Main.lbFilesTab.clearFiles(true);
+			}
+		});
+		fichier5Save.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+				if(Main.mainScreen.hasDocument(true)){
+					Main.mainScreen.document.save();
+				}
+			}
+		});
+		fichier6Delete.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+				if(Main.mainScreen.hasDocument(true)){
+					Main.mainScreen.document.edition.clearEdit(true);
+				}
+			}
+		});
+		fichier8Export.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+
+			}
+		});
+		fichier9ExportAll.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+
+			}
+		});
+
+		//setStyle("-fx-font-size: 13");
+		getMenus().addAll(fichier, preferences, apropos, aide);
+
+		for(Menu menu : getMenus()){
+			Builders.setMenuSize(menu);
+		}
+
+
 		
 	}
 	

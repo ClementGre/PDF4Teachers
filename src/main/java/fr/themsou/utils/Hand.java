@@ -11,11 +11,11 @@ public class Hand {
 		super();
 		this.element = element;
 		this.shift = shift;
-		this.element.setPage(page);
+		//this.element.setPage(page);
 	}
 
 	
-	public Element getElement() {
+	/*public Element getElement() {
 		return element;
 	}
 	public void setElement(Element element) {
@@ -43,7 +43,7 @@ public class Hand {
 
 	public void setPage(int page) {
 		this.element.setPage(page);
-	}
+	}*/
 	
 	
 

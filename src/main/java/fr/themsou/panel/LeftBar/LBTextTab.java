@@ -81,7 +81,6 @@ public class LBTextTab extends Tab {
 		Main.leftBar.getTabs().add(1, this);
 
 		setup();
-		repaint();
 	}
 
 	public void repaint(){
@@ -155,12 +154,12 @@ public class LBTextTab extends Tab {
 		});
 
 		txtField.textProperty().addListener((obs, oldText, newText) -> {
-			elementToEdit.setContent(newText);
+			elementToEdit.setText(newText);
 		});
 
 		colorPicker.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent actionEvent) {
-				elementToEdit.setColor(colorPicker.getValue());
+				elementToEdit.setTextFill(colorPicker.getValue());
 			}
 		});
 
@@ -183,10 +182,10 @@ public class LBTextTab extends Tab {
 				if(Main.mainScreen.document != null){
 
 					if(elementToEdit != null){
-						if(txtField.getText().isEmpty()) Main.mainScreen.document.edition.removeElement(elementToEdit);
+						if(txtField.getText().isEmpty()) Main.mainScreen.document.selected.delete();
 					}
 
-					elementToEdit = new TextElement(new Location(0, 0), 0, new Font("Arial", 14), "", Color.BLACK);
+					elementToEdit = new TextElement(0, 0, new Font("Arial", 14), "", Color.BLACK, null);
 					Main.mainScreen.document.edition.editRender.hand = new Hand(elementToEdit, new Location(0, 0), Main.mainScreen.document.currentPage);
 					txtField.setText("");
 					txtField.requestFocus();
@@ -197,7 +196,7 @@ public class LBTextTab extends Tab {
 
 		deleteBtn.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent mouseEvent) {
-				Main.mainScreen.document.edition.removeElement(elementToEdit);
+				elementToEdit.delete();
 				elementToEdit = null;
 			}
 		});
@@ -209,8 +208,8 @@ public class LBTextTab extends Tab {
 
 		fontCombo.getSelectionModel().select(((TextElement) element).getFont().getName());
 		sizeCombo.getSelectionModel().select((int) ((TextElement) element).getFont().getSize());
-		colorPicker.setValue(((TextElement) element).getColor());
-		txtField.setText(((TextElement) element).getContent());
+		colorPicker.setValue((Color) ((TextElement) element).getTextFill());
+		txtField.setText(((TextElement) element).getText());
 
 	}
 

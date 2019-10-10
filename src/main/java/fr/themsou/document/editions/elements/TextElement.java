@@ -1,114 +1,114 @@
 package fr.themsou.document.editions.elements;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import fr.themsou.utils.Location;
-import javafx.geometry.VPos;
-import javafx.scene.canvas.GraphicsContext;
+import fr.themsou.document.render.PageRenderer;
+import fr.themsou.main.Main;
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.EventHandler;
+import javafx.scene.Cursor;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
-public class TextElement extends Element{
-	
-	private Font font;
-	private String content;
-	private Color color;
-	
-	public TextElement(Location loc, int page, Font font, String content, Color color){
-		super(loc, page);
-		this.font = font;
-		this.content = content;
-		this.color = color;
+public class TextElement extends Label implements Element {
 
-	}
+	private IntegerProperty x = new SimpleIntegerProperty();
+	private IntegerProperty y = new SimpleIntegerProperty();
+	private PageRenderer page;
+	private int shiftX = 0;
+	private int shiftY = 0;
+	Thread moover;
 
-	public Color getColor(){
-		return color;
-	}
-	public void setColor(Color color){
-		this.color = color;
-	}
-	public Font getFont(){
-		return font;
-	}
-	public void setFont(Font font){
-		this.font = font;
-	}
-	public String getContent(){
-		return content;
-	}
-	public void setContent(String content){
-		this.content = content;
-	}
+	public TextElement(int x, int y, Font font, String text, Color color, PageRenderer page){
 
-	@Override
-	public boolean paint(GraphicsContext g, int mouseX, int mouseY){
+		setLayoutX(x);
+		setLayoutY(y);
 
+		this.x.bind(layoutXProperty().divide(page.widthProperty()).multiply(100));
+		this.y.bind(layoutYProperty().divide(page.heightProperty()).multiply(100));
 
-		g.setFill(color);
-		g.setTextAlign(TextAlignment.CENTER);
-		g.setTextBaseline(VPos.CENTER);
+		setFont(font);
+		setText(text);
+		setTextFill(color);
 
+		setCursor(Cursor.MOVE);
 
-		final Text text = new Text(content);
-		Font font = Font.font("Arial", 20);
-		text.setFont(new Font(font.getName(), (int) (font.getSize() * 2.75)));
+		if(page != null)
+			this.page = page;
 
-		final double width = text.getLayoutBounds().getWidth();
-		final double height = text.getLayoutBounds().getHeight();
+		setOnMousePressed(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
 
+				shiftX = (int) (getLayoutX() - MouseInfo.getPointerInfo().getLocation().getX());
+				shiftY = (int) (getLayoutY() - MouseInfo.getPointerInfo().getLocation().getY());
 
+				if(moover == null){
+					moover = new Thread(new Runnable() {
+						@Override public void run(){
+							while(true){
+								try{
+									Thread.sleep(30);
+								}catch(InterruptedException e){ e.printStackTrace(); }
 
-		setMargin(new Location((int) width / 2 + 10, (int) height / 2 + 10));
-		
-		if(mouseX > (getX() - width/2) && mouseX < (getX() + width/2)){
-			if(mouseY > (getY() - height/2) && mouseY < (getY() + height/2)){
-				return true;
+								int x = (int) (MouseInfo.getPointerInfo().getLocation().getX() + shiftX);
+								int y = (int) (MouseInfo.getPointerInfo().getLocation().getY() + shiftY);
+
+								if(x < 0) x = 0;
+								if(x > page.getWidth() - getLayoutBounds().getWidth()) x = (int) (page.getWidth() - getLayoutBounds().getWidth());
+								if(y < 0) y = 0;
+								if(y > page.getHeight() - getLayoutBounds().getHeight()) y = (int) (page.getHeight() - getLayoutBounds().getHeight());
+
+								setLayoutX(x);
+								setLayoutY(y);
+							}
+						}
+					}, "moover");
+					moover.start();
+				}else{
+					moover.stop();
+					moover = null;
+				}
+				select();
 			}
-		}
-		return false;
-		
-	}
-
-	@Override
-	public boolean equals(Element element){
-		
-		if(element instanceof TextElement){
-			
-			TextElement text = (TextElement) element;
-			
-			if(content.equals(text.getContent())){
-				if(font.getName().equals(text.getFont().getName()) && font.getSize() == text.getFont().getSize()){
-					if(color.equals(text.getColor())){
-						return true;
-					}
+		});
+		setOnMouseReleased(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if(moover != null){
+					moover.stop();
+					moover = null;
 				}
 			}
-		}
-		
-		return false;
-		
+		});
 	}
-
+	void select(){
+		Main.mainScreen.document.selected = this;
+		toFront();
+	}
 	@Override
+	public void delete(){
+		page.removeElement(this);
+	}
 	public void writeData(DataOutputStream writer) throws IOException{
 		writer.writeByte(1);
-		writer.writeByte(super.page);
+		writer.writeByte(page.getPage());
 		writer.writeShort(getX());
 		writer.writeShort(getY());
-		writer.writeByte((int) font.getSize());
-		writer.writeUTF(font.getName());
-		writer.writeByte((int) color.getRed() - 128);
-		writer.writeByte((int) color.getGreen() - 128);
-		writer.writeByte((int) color.getBlue() - 128);
-		writer.writeUTF(content);
+		writer.writeByte((int) getFont().getSize());
+		writer.writeUTF(getFont().getName());
+		writer.writeByte((int) ((Color)getTextFill()).getRed() - 128);
+		writer.writeByte((int) ((Color)getTextFill()).getGreen() - 128);
+		writer.writeByte((int) ((Color)getTextFill()).getBlue() - 128);
+		writer.writeUTF(getText());
 	}
-
-	public static Element readDataAndCreate(DataInputStream reader) throws IOException{
+	public static void readDataAndCreate(DataInputStream reader) throws IOException{
 
 		byte page = reader.readByte();
 		short x = reader.readShort();
@@ -118,9 +118,31 @@ public class TextElement extends Element{
 		short colorRed = (short) (reader.readByte() + 128);
 		short colorGreen = (short) (reader.readByte() + 128);
 		short colorBlue = (short) (reader.readByte() + 128);
-		String content = reader.readUTF();
+		String text = reader.readUTF();
 
-		return new TextElement(new Location(x + 30, y + 30), page, new Font(fontName, fontSize), content, Color.rgb(colorRed, colorGreen, colorBlue));
+		if(Main.mainScreen.document.pages.size() > page){
+			Main.mainScreen.document.pages.get(page).addElement(
+					new TextElement(
+							x, y, new Font(fontName, fontSize), text, Color.rgb(colorRed, colorGreen, colorBlue), Main.mainScreen.document.pages.get(page)));
+		}
 	}
 
+	public int getX() {
+		return x.get();
+	}
+	public IntegerProperty xProperty() {
+		return x;
+	}
+	public void setX(int x) {
+		this.x.set(x);
+	}
+	public int getY() {
+		return y.get();
+	}
+	public IntegerProperty yProperty() {
+		return y;
+	}
+	public void setY(int y) {
+		this.y.set(y);
+	}
 }

@@ -47,7 +47,7 @@ public class PDFPagesRender {
 			
 		}catch(Exception | NoSuchMethodError e){
 			System.out.println(e.getMessage());
-			Main.mainScreen.status = 2;
+			Main.mainScreen.setStatus(2);
 			return null;
 		}
 		
