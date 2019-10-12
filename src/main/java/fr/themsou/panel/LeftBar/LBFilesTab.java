@@ -55,7 +55,7 @@ public class LBFilesTab extends Tab {
 		setup();
 	}
 
-	public void repaint(){
+		public void repaint(){
 
 
 

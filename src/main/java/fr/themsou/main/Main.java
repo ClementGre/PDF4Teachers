@@ -12,9 +12,11 @@ import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro8.JMetro;
 
@@ -51,7 +53,8 @@ public class Main extends Application {
 				try{
 					Thread.sleep(200);
 				}catch(InterruptedException e){ e.printStackTrace(); }
-				window.requestFocus();
+
+
 			}
 		}
 	}, "mainTimer");
@@ -66,6 +69,7 @@ public class Main extends Application {
 		BorderPane root = new BorderPane();
 
 		Scene scene = new Scene(root, 1200, 675);
+
 		window.setMinWidth(700);
 		window.setMinHeight(393);
 		window.setTitle("PDF Teacher - Aucun document");
@@ -89,7 +93,7 @@ public class Main extends Application {
 		settings = new Settings();
 		devices = new Devices();
 
-		mainScreen = new MainScreen();
+		mainScreen = new MainScreen((int) (21 * 37.795275591));
 		footerBar = new Footerbar();
 		menuBar = new MenuBar();
 

@@ -39,15 +39,7 @@ public class Devices{
 	public void addScrollHandler(Scene scene) {
 
 		scene.setOnScroll(e -> {
-			System.out.println("scroll");
-			if(Main.mainScreen.getStatus() == -1){
 
-				if(e.isControlDown()){
-					if(e.getDeltaY() > 0) Main.mainScreen.zoomLess();
-					if(e.getDeltaY() < 0) Main.mainScreen.zoomMore();
-
-				}
-			}
 		});
 	}
 }

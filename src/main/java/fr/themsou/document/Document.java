@@ -1,13 +1,15 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -20,7 +22,7 @@ public class Document {
 
     public ArrayList<PageRenderer> pages = new ArrayList<>();
 
-    public Element selected;
+    private Image[] rendered;
 
     public int currentPage = -1;
     public int totalPages = -1;
@@ -33,23 +35,34 @@ public class Document {
     public boolean renderPDFPages(){
 
         pages = new ArrayList<>();
-        Image[] rendered = new PDFPagesRender().render(file, 0, 4);
+        rendered = new PDFPagesRender().render(file, 0, Main.settings.getMaxPages());
         if(rendered != null){
 
             totalPages = rendered.length;
             this.edition = new Edition(file, this);
 
-            int i = 0;
-            for(Image render : rendered){
-                PageRenderer page = new PageRenderer(render, i);
-                Main.mainScreen.addPage(page);
-                pages.add(page);
-                i++;
-            }
-
             return true;
         }
         return false;
+    }
+
+    public void showPages(){
+
+        int i = 0;
+        for(Image render : rendered){
+            PageRenderer page = new PageRenderer(render, i);
+            Main.mainScreen.addPage(page);
+            pages.add(page);
+            i++;
+        }
+
+        pages.get(0).addElement(new TextElement(0, 0, new Font("cmr10", 20),
+                "Bonjour les amis", Color.BLACK, Main.mainScreen.document.pages.get(0)));
+
+    }
+
+    public boolean hasRendered(){
+        return rendered != null;
     }
 
     public boolean save(){

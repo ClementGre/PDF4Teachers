@@ -8,8 +8,8 @@ public class Settings {
 
     public Settings(){
 
-        defaultZoom = 150;
-        maxPages = 10;
+        defaultZoom = 100;
+        maxPages = 9;
         autoSave = false;
 
     }

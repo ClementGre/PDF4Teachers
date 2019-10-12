@@ -3,15 +3,10 @@ package fr.themsou.document.editions;
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.document.render.EditRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Location;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Optional;
@@ -21,10 +16,7 @@ public class Edition {
     private File file;
     private File editFile;
 
-    public EditRender editRender;
     public Document document;
-
-    public ArrayList<Element> elements = new ArrayList<>();
 
     public Edition(File file, Document document){
         this.document = document;
@@ -35,7 +27,6 @@ public class Edition {
 
     public void load(){
 
-        this.editRender = new EditRender(this, 500, 500);
         new File(System.getProperty("user.home") + "/.PDFTeacher/editions/").mkdirs();
 
         try{
@@ -71,8 +62,10 @@ public class Edition {
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, false)));
 
-            for(int i = 0; i < elements.size(); i++){
-                elements.get(i).writeData(writer);
+            for(PageRenderer page : document.pages){
+                for(int i = 0; i < page.getElements().size(); i++){
+                    page.getElements().get(i).writeData(writer);
+                }
             }
 
             writer.flush();

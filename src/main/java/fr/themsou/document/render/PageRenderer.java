@@ -21,18 +21,18 @@ public class PageRenderer extends Pane {
         this.render = SwingFXUtils.toFXImage((BufferedImage) render, null);
         this.page = page;
         renderView = new ImageView(this.render);
+        final double ratio = this.render.getHeight() / this.render.getWidth();
 
         setWidth(Main.mainScreen.pageWidthProperty().get());
-        setHeight(Main.mainScreen.pageWidthProperty().get() * this.render.getHeight() / this.render.getWidth());
+        setHeight(Main.mainScreen.pageWidthProperty().get() * ratio);
 
         prefWidthProperty().bind(Main.mainScreen.pageWidthProperty());
-        prefHeightProperty().bind(widthProperty().multiply(this.render.getHeight()).divide(this.render.getWidth()));
+        prefHeightProperty().bind(widthProperty().multiply(ratio));
 
         renderView.fitHeightProperty().bind(heightProperty());
         renderView.fitWidthProperty().bind(widthProperty());
 
         getChildren().add(renderView);
-
 
     }
 
@@ -70,5 +70,8 @@ public class PageRenderer extends Pane {
     }
     public void setPage(int page) {
         this.page = page;
+    }
+    public ArrayList<Element> getElements() {
+        return elements;
     }
 }

@@ -2,14 +2,11 @@ package fr.themsou.utils;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
@@ -63,7 +60,13 @@ public class CustomListView {
         item1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                Main.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()));
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        Main.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()));
+                    }
+                });
+
+
             }
         });
         item2.setOnAction(new EventHandler<ActionEvent>() {

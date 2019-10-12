@@ -4,9 +4,9 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.Hand;
-import fr.themsou.utils.Location;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -21,10 +21,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -49,8 +45,6 @@ public class LBTextTab extends Tab {
 
 	private int currentTime = 0;
 	private int current = -1;
-
-	public TextElement elementToEdit;
 
 	// Swing elements
 
@@ -89,6 +83,8 @@ public class LBTextTab extends Tab {
 
 	public void setup(){
 
+
+
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		fontNames = ge.getAvailableFontFamilyNames();
 		fontCombo = new ComboBox<>(FXCollections.observableArrayList(fontNames));
@@ -107,120 +103,113 @@ public class LBTextTab extends Tab {
 		fontCombo.getSelectionModel().select("Arial");
 		fontCombo.setMaxHeight(25);
 		pane.getChildren().add(fontCombo);
+		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(sizeCombo, 170, 5, 95, 30, true);
 		sizeCombo.setStyle("-fx-font-size: 13");
 		sizeCombo.setCursor(Cursor.HAND);
 		sizeCombo.getSelectionModel().select(7);
 		pane.getChildren().add(sizeCombo);
+		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(colorPicker, 5, 40, 160, 30, false);
 		colorPicker.setStyle("-fx-font-size: 13");
 		colorPicker.setCursor(Cursor.HAND);
 		pane.getChildren().add(colorPicker);
+		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(boldBtn, 170, 40, 45, 29, true);
 		boldBtn.setCursor(Cursor.HAND);
 		boldBtn.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Bold.png")+"", 0, 0));
 		pane.getChildren().add(boldBtn);
+		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(itBtn, 220, 40, 45, 29, true);
 		itBtn.setFont(Font.font("Arial", FontPosture.ITALIC, 20));
 		itBtn.setCursor(Cursor.HAND);
 		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Italic.png")+"", 0, 0));
 		pane.getChildren().add(itBtn);
+		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(txtField, 5, 75, 260, 3, false);
 		pane.getChildren().add(txtField);
+		txtField.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(deleteBtn, 5, 110, 127.5, 30, false);
 		deleteBtn.setCursor(Cursor.HAND);
 		pane.getChildren().add(deleteBtn);
+		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(newBtn, 137.5, 110, 127.5, 30, false);
 		newBtn.setCursor(Cursor.HAND);
 		pane.getChildren().add(newBtn);
+		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
 
-		fontCombo.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-			@Override public void changed(ObservableValue<? extends String> observableValue, String oldValue, String newValue) {
 
-			}
-		});
-		sizeCombo.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Integer>(){
-			@Override public void changed(ObservableValue<? extends Integer> observableValue, Integer oldValue, Integer newValue) {
+		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
+			public void changed(ObservableValue<? extends Element> observableValue, Element oldElement, Element newElement){
 
-			}
-		});
+				if(oldElement != null){
+					if(oldElement instanceof TextElement){
+						TextElement current = (TextElement) oldElement;
 
-		txtField.textProperty().addListener((obs, oldText, newText) -> {
-			elementToEdit.setText(newText);
-		});
+						current.textProperty().unbind();
+						current.textFillProperty().unbind();
+						current.fontProperty().unbind();
+					}
+				}
 
-		colorPicker.setOnAction(new EventHandler<ActionEvent>(){
-			@Override public void handle(ActionEvent actionEvent) {
-				elementToEdit.setTextFill(colorPicker.getValue());
-			}
-		});
 
-		boldBtn.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
+				if(newElement != null){
+					if(newElement instanceof TextElement){
+						TextElement current = (TextElement) newElement;
 
-			}
-		});
-		itBtn.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent mouseEvent) {
+						txtField.setText(current.getText());
+						colorPicker.setValue((Color) current.getTextFill());
+						fontCombo.getSelectionModel().select(current.getFont().getFamily());
+						sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
 
+						current.textProperty().bind(txtField.textProperty());
+						current.textFillProperty().bind(colorPicker.valueProperty());
+						current.fontProperty().bind(Bindings.createObjectBinding(() -> { return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+
+					}
+				}
 			}
 		});
 
 		newBtn.setOnMouseReleased(new EventHandler<MouseEvent>(){
 			@Override public void handle(MouseEvent mouseEvent) {
 
-				if(Main.mainScreen.document != null){
+				TextElement current = new TextElement(0, 0, getFont(),
+						txtField.getText(), colorPicker.getValue(), Main.mainScreen.document.pages.get(0));
 
-					if(elementToEdit != null){
-						if(txtField.getText().isEmpty()) Main.mainScreen.document.selected.delete();
-					}
+				Main.mainScreen.document.pages.get(0).addElement(current);
+				Main.mainScreen.selectedProperty().setValue(current);
 
-					elementToEdit = new TextElement(0, 0, new Font("Arial", 14), "", Color.BLACK, null);
-					Main.mainScreen.document.edition.editRender.hand = new Hand(elementToEdit, new Location(0, 0), Main.mainScreen.document.currentPage);
-					txtField.setText("");
-					txtField.requestFocus();
-				}else{
-					JOptionPane.showMessageDialog(null, "Vous devez ouvrir un document");
-				}
+				txtField.setText("");
+				txtField.requestFocus();
+
 		}});
 
 		deleteBtn.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent mouseEvent) {
-				elementToEdit.delete();
-				elementToEdit = null;
+
+				Main.mainScreen.getSelected().delete();
+				Main.mainScreen.setSelected(null);
 			}
 		});
 	}
 
-
-	public void selectTextElement(Element element) {
-		elementToEdit = (TextElement) element;
-
-		fontCombo.getSelectionModel().select(((TextElement) element).getFont().getName());
-		sizeCombo.getSelectionModel().select((int) ((TextElement) element).getFont().getSize());
-		colorPicker.setValue((Color) ((TextElement) element).getTextFill());
-		txtField.setText(((TextElement) element).getText());
-
-	}
-
-	private void refreshFont(){
+	private Font getFont(){
 
 		FontWeight fontWeight = FontWeight.NORMAL;
 		FontPosture fontPosture = FontPosture.REGULAR;
 		if(boldBtn.isSelected()) fontWeight = FontWeight.BOLD;
 		if(itBtn.isSelected()) fontPosture = FontPosture.ITALIC;
 
-		elementToEdit.setFont(Font.font(fontCombo.getSelectionModel().getSelectedItem(), fontWeight, fontPosture, sizeCombo.getSelectionModel().getSelectedItem()));
+		return Font.font(fontCombo.getSelectionModel().getSelectedItem(), fontWeight, fontPosture, sizeCombo.getSelectionModel().getSelectedItem());
 	}
 
 	private String toHexString(Color colour) throws NullPointerException {

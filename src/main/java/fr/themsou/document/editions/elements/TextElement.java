@@ -8,7 +8,9 @@ import java.io.IOException;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -41,6 +43,8 @@ public class TextElement extends Label implements Element {
 
 		if(page != null)
 			this.page = page;
+
+
 
 		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
@@ -89,7 +93,8 @@ public class TextElement extends Label implements Element {
 		});
 	}
 	void select(){
-		Main.mainScreen.document.selected = this;
+
+		Main.mainScreen.setSelected(this);
 		toFront();
 	}
 	@Override
@@ -122,8 +127,8 @@ public class TextElement extends Label implements Element {
 
 		if(Main.mainScreen.document.pages.size() > page){
 			Main.mainScreen.document.pages.get(page).addElement(
-					new TextElement(
-							x, y, new Font(fontName, fontSize), text, Color.rgb(colorRed, colorGreen, colorBlue), Main.mainScreen.document.pages.get(page)));
+					new TextElement(x, y, new Font(fontName, fontSize), text, Color.rgb(colorRed, colorGreen, colorBlue),
+                            Main.mainScreen.document.pages.get(page)));
 		}
 	}
 
