@@ -1,14 +1,15 @@
 package fr.themsou.document.editions;
 
 import fr.themsou.document.Document;
-import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
+
 import java.io.*;
-import java.util.ArrayList;
 import java.util.Optional;
 
 public class Edition {
@@ -85,8 +86,9 @@ public class Edition {
 
     public static void clearEdit(File file, boolean confirm){
 
-        if(confirm == true){
+        if(confirm){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle("Confirmation");
             alert.setHeaderText("Êtes vous sûr de vouloir supprimer l'édition de ce document ?");
             alert.setContentText("Cette action est irréversible.");
@@ -97,10 +99,10 @@ public class Edition {
             }
         }
 
-        if(confirm == false){
+        if(!confirm){
             if(Main.mainScreen.getStatus() == -1){
-                if(Main.mainScreen.document.getFile() == file){
-                    Main.mainScreen.document.edition.clearEdit(true);
+                if(Main.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    Main.mainScreen.document.edition.clearEdit(false);
                     return;
                 }
             }
@@ -109,8 +111,9 @@ public class Edition {
     }
 
     public void clearEdit(boolean confirm){
-        if(confirm == true){
+        if(confirm){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle("Confirmation");
             alert.setHeaderText("Êtes vous sûr de vouloir supprimer l'édition de ce document ?");
             alert.setContentText("Cette action est irréversible.");
@@ -121,10 +124,9 @@ public class Edition {
             }
         }
 
-        if(confirm == false){
-            if(Main.mainScreen.document.getFile() == file){
-                Main.mainScreen.document.edition.clearEdit(true);
-                return;
+        if(!confirm){
+            for(PageRenderer page : document.pages){
+                page.clearElements();
             }
         }
     }

@@ -7,16 +7,21 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 
 public class MainScreen extends ScrollPane {
@@ -30,10 +35,12 @@ public class MainScreen extends ScrollPane {
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 
 
+	public Document tmpDocument;
 	public Document document;
 	public Pane pane = new Pane();
 
 	private Label info = new Label();
+	private ProgressBar loader = new ProgressBar();
 
 	public MainScreen(int defaultPageWidth){
 
@@ -46,17 +53,23 @@ public class MainScreen extends ScrollPane {
 
 	public void repaint(){
 
-		if(status.get() != -1){
+		if(status.get() != -1 && status.get() != 1) {
+			loader.setVisible(true);
 			info.setVisible(true);
+
 			if(status.get() == 0){
 				info.setText("Aucun document ouvert");
-			}else if(status.get() == 1){
-				info.setText("Chargement du document...");
+				loader.setVisible(false);
 			}else if(status.get() == 2){
 				info.setText("Une erreur est survenue lors du chargement du document :/");
+				loader.setVisible(false);
 			}
 
+		}else if(status.get() == 1){
+			loader.setVisible(true);
+			info.setVisible(false);
 		}else{
+			loader.setVisible(false);
 			info.setVisible(false);
 
 		}
@@ -65,19 +78,15 @@ public class MainScreen extends ScrollPane {
 			@Override
 			public void handle(ScrollEvent e) {
 				if(e.isControlDown()){
-					if(e.getDeltaY() > 0){
-						zoomLess();
-					}
-					if(e.getDeltaY() < 0) zoomMore();
+					if(e.getDeltaY() > 0) zoomMore();
+					if(e.getDeltaY() < 0) zoomLess();
 				}
 			}
 		});
-
 	}
 	public void setup(){
 
 		setContent(pane);
-		getChildren().add(info);
 
 		setFitToHeight(true);
 		setFitToWidth(true);
@@ -87,14 +96,29 @@ public class MainScreen extends ScrollPane {
 		setBorder(Border.EMPTY);
 
 		info.setFont(new Font("FreeSans", 22));
-		info.setTextFill(Color.WHITE);
+		info.setStyle("-fx-text-fill: white;");
 
 		info.translateXProperty().bind(pane.widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
 		info.translateYProperty().bind(pane.heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 
+		loader.setPrefWidth(300);
+		loader.setPrefHeight(10);
+		loader.setStyle("-fx-text-fill: white;");
+		loader.translateXProperty().bind(pane.widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
+		loader.translateYProperty().bind(pane.heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
+
 		pageWidth.bind(zoom.multiply(defaultPageWidth).divide(100));
 
+		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
+
+
+		zoom.addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observableValue, Number oldZoom, Number newZoom) {
+				pane.setPrefHeight(pane.getHeight());
+			}
+		});
 
 	}
 	public void openFile(File file){
@@ -116,60 +140,39 @@ public class MainScreen extends ScrollPane {
 
 		hasRender = false;
 
-
-		Platform.runLater(new Runnable() {
+		new Thread(new Runnable() {
+			@Override
 			public void run() {
-
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+				tmpDocument = new Document(file);
+				if(!tmpDocument.renderPDFPages()){
+					tmpDocument = null;
 				}
+				hasRender = true;
 
-				new Thread(new Runnable() {
-					@Override
+				Platform.runLater(new Runnable() {
 					public void run() {
-						document = new Document(file);
-						if(document.renderPDFPages()){
-						}else{
-							document = null;
+						if (hasRender) {
+							if(tmpDocument.hasRendered()){
+								finishOpen();
+							}else if(tmpDocument == null){
+								failOpen();
+							}
 						}
-						hasRender = true;
 					}
-				}, "loader").start();
-
-				int i = 0;
-				while(true) {
-
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-					i++;
-
-					if (hasRender) {
-						if (document.hasRendered()) {
-							finishOpen();
-						} else if (document == null) {
-							failOpen();
-						}
-						break;
-					}
-
-					if (i >= 200) {
-						failOpen();
-						break;
-					}
-				}
+				});
 			}
-		});
+		}, "loader").start();
+
 	}
 
 	public void finishOpen(){
 
+		this.document = this.tmpDocument;
+		tmpDocument = null;
+
 		status.set(-1);
 		document.showPages();
+		document.loadEdition();
 		Main.window.setTitle("PDF Teacher - " + document.getFile().getName());
 
 		setHvalue(0.5);
@@ -182,6 +185,7 @@ public class MainScreen extends ScrollPane {
 	}
 	public void failOpen() {
 
+		this.tmpDocument = null;
 		status.set(2);
 		setCursor(Cursor.DEFAULT);
 		repaint();
@@ -203,6 +207,12 @@ public class MainScreen extends ScrollPane {
 
 	    pane.getChildren().clear();
 		pane.getChildren().add(info);
+		pane.getChildren().add(loader);
+		pane.minHeightProperty().unbind();
+		pane.minWidthProperty().unbind();
+		pane.setMinWidth(0);
+		pane.setMinHeight(0);
+
 		selected.set(null);
 
 		status.set(0);
@@ -221,6 +231,7 @@ public class MainScreen extends ScrollPane {
 		if(status.get() != -1){
 			if(alert){
 				Alert alerte = new Alert(Alert.AlertType.INFORMATION);
+				new JMetro(alerte.getDialogPane(), Style.LIGHT);
 				alerte.setAlertType(Alert.AlertType.ERROR);
 				alerte.setTitle("Erreur");
 				alerte.setHeaderText("Aucun document n'est ouvert !");
@@ -236,31 +247,24 @@ public class MainScreen extends ScrollPane {
 	public Element getSelected() {
 		return selected.get();
 	}
-
 	public ObjectProperty<Element> selectedProperty() {
 		return selected;
 	}
-
 	public void setSelected(Element selected) {
 		this.selected.set(selected);
 	}
-
 	public void setStatus(int status){
 		this.status.set(status);
 	}
-
 	public IntegerProperty zoomProperty() {
 		return zoom;
 	}
-
 	public IntegerProperty statusProperty() {
 		return status;
 	}
-
 	public int getStatus(){
 		return this.status.get();
 	}
-
 	public int getZoom(){
 		return zoom.get();
 	}

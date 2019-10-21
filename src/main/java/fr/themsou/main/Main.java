@@ -1,6 +1,7 @@
 package fr.themsou.main;
 
 import java.io.File;
+import java.util.Objects;
 
 import fr.themsou.devices.Devices;
 import fr.themsou.panel.Footerbar;
@@ -12,13 +13,12 @@ import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro8.JMetro;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 public class Main extends Application {
 
@@ -65,8 +65,10 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window) throws Exception {
 
+
 		Main.window = window;
-		BorderPane root = new BorderPane();
+		BorderPane root = new BorderPane(); // = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("main.fxml")));
+
 
 		Scene scene = new Scene(root, 1200, 675);
 
@@ -104,10 +106,8 @@ public class Main extends Application {
 
 		mainScreen.repaint();
 		footerBar.repaint();
-		lbTextTab.repaint();
 		lbPaintTab.repaint();
 		lbNoteTab.repaint();
-		lbFilesTab.repaint();
 
 //		PANELS
 
@@ -128,8 +128,8 @@ public class Main extends Application {
 
 //		THEME
 
-		new JMetro(JMetro.Style.LIGHT).applyTheme(root);
-		new JMetro(JMetro.Style.DARK).applyTheme(menuBar);
+		new JMetro(root, Style.LIGHT);
+		new JMetro(menuBar, Style.DARK);
 
 //		SHOWING
 

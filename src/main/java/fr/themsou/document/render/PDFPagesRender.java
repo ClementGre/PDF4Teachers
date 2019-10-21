@@ -3,7 +3,6 @@ package fr.themsou.document.render;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
-
 import fr.themsou.main.Main;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -50,8 +49,6 @@ public class PDFPagesRender {
 			Main.mainScreen.setStatus(2);
 			return null;
 		}
-		
-		
 		
 	}
 

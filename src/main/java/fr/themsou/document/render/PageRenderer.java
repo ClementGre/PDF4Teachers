@@ -3,9 +3,11 @@ package fr.themsou.document.render;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.scene.control.Control;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ public class PageRenderer extends Pane {
     private ImageView renderView;
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
+    public double mouseX = 0;
+    public double mouseY = 0;
 
     public PageRenderer(java.awt.Image render, int page) {
         this.render = SwingFXUtils.toFXImage((BufferedImage) render, null);
@@ -34,10 +38,28 @@ public class PageRenderer extends Pane {
 
         getChildren().add(renderView);
 
+        setOnMouseMoved(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        });
+        setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent e) {
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
+        });
+        setOnMouseEntered(new EventHandler<MouseEvent>() {
+            @Override public void handle(MouseEvent event) {
+                Main.mainScreen.document.setCurrentPage(page);
+            }
+        });
+
     }
 
     public void clearElements(){
-        getChildren().removeAll();
+        getChildren().clear();
         getChildren().add(renderView);
         elements = new ArrayList<>();
     }

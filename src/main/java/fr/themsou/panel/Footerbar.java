@@ -37,10 +37,10 @@ public class Footerbar extends AnchorPane {
 
 		if(Main.mainScreen.getStatus() == -1){
 
-			if(Main.mainScreen.document.currentPage == -1){
+			if(Main.mainScreen.document.getCurrentPage() == -1){
 				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + "?/" + Main.mainScreen.document.totalPages);
 			}else{
-				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + (Main.mainScreen.document.currentPage+1) + "/" + Main.mainScreen.document.totalPages);
+				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + (Main.mainScreen.document.getCurrentPage()+1) + "/" + Main.mainScreen.document.totalPages);
 			}
 		}else{
 			rightInfo.setText("Aucun fichier ouvert");

@@ -6,6 +6,8 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -37,6 +39,17 @@ public class CustomListView {
                     ContextMenu menu = getNewMenu();
                     menu.setId(file.getAbsolutePath());
                     setContextMenu(menu);
+
+                    pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
+                        public void handle(MouseEvent mouseEvent){
+                            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                                if(mouseEvent.getClickCount() == 2){
+                                    Main.mainScreen.openFile(file);
+                                }
+                            }
+                        }
+                    });
+
                 }else{
                     getChildren().clear();
                 }
@@ -113,7 +126,6 @@ public class CustomListView {
                 Main.lbFilesTab.clearFiles(true);
             }
         });
-
         return menu;
 
     }

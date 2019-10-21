@@ -5,16 +5,27 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
-import java.util.Arrays;
+import java.net.URL;
 import java.util.List;
+import java.util.ResourceBundle;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -33,7 +44,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu preferences = new Menu("Préférences");
 	Menu preferences1Zoom = new Menu("Zoom par défaut     ");
 	Menu preferences2Pages = new Menu("Pages maximum     ");
-	Menu preferences3Save = new Menu("Sauvegarde auto     ");
+	RadioMenuItem preferences3Save = new RadioMenuItem("Sauvegarde auto     ");
 
 	Menu apropos = new Menu("À propos");
 	Menu aide = new Menu("Aide");
@@ -44,6 +55,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 
 	public void setup(){
+
+
+		setStyle("-fx-background-color: #2B2B2B;");
 
 		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
 		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
@@ -73,8 +87,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Close, fichier4Clear, new SeparatorMenuItem(), fichier5Save, fichier6Delete, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
 
-
-
 		/*Menu menu2 = new Menu("Édition");
 		MenuItem menu2arg1 = new MenuItem(" Annuler     ");
 		menu2arg1.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/annuler.png")+"", 0, 0));
@@ -92,6 +104,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
 		preferences2Pages.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/maxPages.png")+"", 0, 0));
 		preferences3Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		preferences3Save.selectedProperty().set(Main.settings.isAutoSave());
+		Main.settings.autoSavingProperty().bind(preferences3Save.selectedProperty());
 
 		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save);
 
@@ -104,7 +118,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				final FileChooser chooser = new FileChooser();
 				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
-				chooser.setTitle("Selexionnez un fichier ou un dossier");
+				chooser.setTitle("Selexionnez un ou plusieurs fichier");
 				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
 				List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -153,6 +167,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			@Override public void handle(ActionEvent actionEvent) {
 				if(Main.mainScreen.hasDocument(true)){
 					Main.mainScreen.document.edition.clearEdit(true);
+					Main.mainScreen.setSelected(null);
 				}
 			}
 		});
@@ -177,7 +192,4 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		
 	}
-	
-	
-
 }

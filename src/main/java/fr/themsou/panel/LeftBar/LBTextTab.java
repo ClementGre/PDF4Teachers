@@ -2,11 +2,11 @@ package fr.themsou.panel.LeftBar;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableObjectValue;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -24,10 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
-
-import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -37,24 +34,13 @@ public class LBTextTab extends Tab {
 	public ScrollPane scroller = new ScrollPane();
 	public Pane pane = new Pane();
 
-	private ArrayList<TextElement> favorites = new ArrayList<>();
-	private ArrayList<TextElement> lasts = new ArrayList<>();
-	private int width = 0;
-	private int height = 0;
-	private int maxWidth = 0;
-
-	private int currentTime = 0;
-	private int current = -1;
-
-	// Swing elements
-
 	private ComboBox<String> fontCombo; String[] fontNames;
-	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42));
+	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
 
 	private ColorPicker colorPicker = new ColorPicker();
 
-	ToggleButton boldBtn = new ToggleButton("B");
-	ToggleButton itBtn = new ToggleButton("I");
+	ToggleButton boldBtn = new ToggleButton("");
+	ToggleButton itBtn = new ToggleButton("");
 
 	private TextField txtField = new TextField();
 	private Button deleteBtn = new Button("Supprimer");
@@ -77,10 +63,6 @@ public class LBTextTab extends Tab {
 		setup();
 	}
 
-	public void repaint(){
-
-	}
-
 	public void setup(){
 
 
@@ -96,6 +78,7 @@ public class LBTextTab extends Tab {
 				return new ShapeCell();
 			}
 		});
+		//fontCombo.setEditable(true);
 
 		Builders.setPosition(fontCombo, 5, 5, 160, 30, true);
 		fontCombo.setStyle("-fx-font-size: 13");
@@ -115,6 +98,7 @@ public class LBTextTab extends Tab {
 		Builders.setPosition(colorPicker, 5, 40, 160, 30, false);
 		colorPicker.setStyle("-fx-font-size: 13");
 		colorPicker.setCursor(Cursor.HAND);
+		colorPicker.setValue(Color.BLACK);
 		pane.getChildren().add(colorPicker);
 		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
@@ -155,8 +139,7 @@ public class LBTextTab extends Tab {
 						TextElement current = (TextElement) oldElement;
 
 						current.textProperty().unbind();
-						current.textFillProperty().unbind();
-						current.fontProperty().unbind();
+						current.realFontProperty().unbind();
 					}
 				}
 
@@ -166,15 +149,27 @@ public class LBTextTab extends Tab {
 						TextElement current = (TextElement) newElement;
 
 						txtField.setText(current.getText());
+						boldBtn.setSelected(TextElement.getFontWeight(current.getRealFont()) == FontWeight.BOLD);
+						itBtn.setSelected(TextElement.getFontPosture(current.getRealFont()) == FontPosture.ITALIC);
 						colorPicker.setValue((Color) current.getTextFill());
-						fontCombo.getSelectionModel().select(current.getFont().getFamily());
-						sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
+						fontCombo.getSelectionModel().select(current.getRealFont().getFamily());
+						sizeCombo.getSelectionModel().select((Integer) ((int) current.getRealFont().getSize()));
 
 						current.textProperty().bind(txtField.textProperty());
-						current.textFillProperty().bind(colorPicker.valueProperty());
-						current.fontProperty().bind(Bindings.createObjectBinding(() -> { return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+						current.realFontProperty().bind(Bindings.createObjectBinding(() -> { return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 
 					}
+				}
+			}
+		});
+
+		colorPicker.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				if(Main.mainScreen.getSelected() != null){
+					if(Main.mainScreen.getSelected() instanceof TextElement){
+						((TextElement) Main.mainScreen.getSelected()).setStyle("-fx-text-fill: #" + Integer.toHexString(colorPicker.getValue().hashCode()) + ";");
+					}
+
 				}
 			}
 		});
@@ -182,16 +177,34 @@ public class LBTextTab extends Tab {
 		newBtn.setOnMouseReleased(new EventHandler<MouseEvent>(){
 			@Override public void handle(MouseEvent mouseEvent) {
 
-				TextElement current = new TextElement(0, 0, getFont(),
-						txtField.getText(), colorPicker.getValue(), Main.mainScreen.document.pages.get(0));
+				if(Main.mainScreen.getSelected() != null){
+					if(Main.mainScreen.getSelected() instanceof TextElement){
+						Main.mainScreen.getSelected().delete();
+					}
+				}
 
-				Main.mainScreen.document.pages.get(0).addElement(current);
+
+				PageRenderer page = Main.mainScreen.document.pages.get(0);
+				if (Main.mainScreen.document.getCurrentPage() != -1)
+					page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+
+				for (PageRenderer pagerenderer : Main.mainScreen.document.pages) {
+					if (pagerenderer.mouseY > 0 && pagerenderer.mouseY < pagerenderer.getHeight()) {
+						page = pagerenderer;
+					}
+				}
+
+				TextElement current = new TextElement(0, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
+						txtField.getText(), colorPicker.getValue(), page);
+
+				page.addElement(current);
 				Main.mainScreen.selectedProperty().setValue(current);
 
 				txtField.setText("");
 				txtField.requestFocus();
 
-		}});
+			}
+		});
 
 		deleteBtn.setOnMouseReleased(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent mouseEvent) {
@@ -200,14 +213,14 @@ public class LBTextTab extends Tab {
 				Main.mainScreen.setSelected(null);
 			}
 		});
+
+
 	}
 
 	private Font getFont(){
 
-		FontWeight fontWeight = FontWeight.NORMAL;
-		FontPosture fontPosture = FontPosture.REGULAR;
-		if(boldBtn.isSelected()) fontWeight = FontWeight.BOLD;
-		if(itBtn.isSelected()) fontPosture = FontPosture.ITALIC;
+		FontWeight fontWeight = boldBtn.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL;
+		FontPosture fontPosture = itBtn.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR;
 
 		return Font.font(fontCombo.getSelectionModel().getSelectedItem(), fontWeight, fontPosture, sizeCombo.getSelectionModel().getSelectedItem());
 	}

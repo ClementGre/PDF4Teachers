@@ -1,15 +1,15 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
+
 import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class Document {
 
     private Image[] rendered;
 
-    public int currentPage = -1;
+    private int currentPage = -1;
     public int totalPages = -1;
 
     public Document(File file){
@@ -37,10 +37,7 @@ public class Document {
         pages = new ArrayList<>();
         rendered = new PDFPagesRender().render(file, 0, Main.settings.getMaxPages());
         if(rendered != null){
-
             totalPages = rendered.length;
-            this.edition = new Edition(file, this);
-
             return true;
         }
         return false;
@@ -56,9 +53,9 @@ public class Document {
             i++;
         }
 
-        pages.get(0).addElement(new TextElement(0, 0, new Font("cmr10", 20),
-                "Bonjour les amis", Color.BLACK, Main.mainScreen.document.pages.get(0)));
-
+    }
+    public void loadEdition(){
+        this.edition = new Edition(file, this);
     }
 
     public boolean hasRendered(){
@@ -72,6 +69,7 @@ public class Document {
         }else{
 
             Alert alerte = new Alert(Alert.AlertType.CONFIRMATION);
+            new JMetro(alerte.getDialogPane(), Style.LIGHT);
             alerte.setTitle("Édition non sauvegardée");
             alerte.setHeaderText("L'édition du document n'est pas enregistrée.");
             alerte.setContentText("Voulez-vous l'enregistrer ?");
@@ -93,5 +91,12 @@ public class Document {
     }
     public File getFile(){
         return file;
+    }
+    public int getCurrentPage() {
+        return currentPage;
+    }
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+        Main.footerBar.repaint();
     }
 }
