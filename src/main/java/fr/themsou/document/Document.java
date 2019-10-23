@@ -68,7 +68,6 @@ public class Document {
         if(Main.settings.isAutoSave()){
             edition.save();
         }else{
-
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle("Édition non sauvegardée");
