@@ -12,12 +12,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
+
 import java.io.File;
 import java.util.Optional;
 
 public class CustomListView {
-
-
 
     public CustomListView(ListView listView){
 
@@ -100,6 +101,8 @@ public class CustomListView {
             public void handle(ActionEvent e) {
 
                 Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                new JMetro(alert.getDialogPane(), Style.LIGHT);
+                Builders.secureAlert(alert);
                 alert.setTitle("Confirmation");
                 alert.setHeaderText("Êtes vous sûr de vouloir supprimer le document avec son édition ?");
                 alert.setContentText("Cette action est irréversible.");

@@ -4,6 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -35,7 +36,7 @@ public class Document {
     public boolean renderPDFPages(){
 
         pages = new ArrayList<>();
-        rendered = new PDFPagesRender().render(file, 0, Main.settings.getMaxPages());
+        rendered = new PDFPagesRender().render(file, 0, Main.settings.getMaxPages()-1);
         if(rendered != null){
             totalPages = rendered.length;
             return true;
@@ -68,16 +69,17 @@ public class Document {
             edition.save();
         }else{
 
-            Alert alerte = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alerte.getDialogPane(), Style.LIGHT);
-            alerte.setTitle("Édition non sauvegardée");
-            alerte.setHeaderText("L'édition du document n'est pas enregistrée.");
-            alerte.setContentText("Voulez-vous l'enregistrer ?");
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            new JMetro(alert.getDialogPane(), Style.LIGHT);
+            alert.setTitle("Édition non sauvegardée");
+            alert.setHeaderText("L'édition du document n'est pas enregistrée.");
+            alert.setContentText("Voulez-vous l'enregistrer ?");
             ButtonType yesButton = new ButtonType("Oui", ButtonBar.ButtonData.YES);
             ButtonType noButton = new ButtonType("Non", ButtonBar.ButtonData.NO);
             ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alerte.getButtonTypes().setAll(yesButton, noButton, cancelButton);
-            Optional<ButtonType> option = alerte.showAndWait();
+            alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
+            Builders.secureAlert(alert);
+            Optional<ButtonType> option = alert.showAndWait();
             if(option.get() == yesButton){
                 edition.save(); return true;
             }else{

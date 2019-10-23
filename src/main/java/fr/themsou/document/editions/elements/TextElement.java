@@ -1,6 +1,5 @@
 package fr.themsou.document.editions.elements;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -30,7 +29,6 @@ public class TextElement extends Label implements Element {
 
 	private int shiftX = 0;
 	private int shiftY = 0;
-	Thread moover;
 
 	public TextElement(int x, int y, Font font, String text, Color color, PageRenderer page) {
 
@@ -84,7 +82,6 @@ public class TextElement extends Label implements Element {
 					}
 				}else if(thisObject.page.mouseY > thisObject.page.getHeight() + 30){
 					if(thisObject.page.getPage() < Main.mainScreen.document.pages.size()-1){
-
 						thisObject.page.removeElement(thisObject);
 						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() + 1);
 						thisObject.page.addElement(thisObject);
@@ -108,16 +105,23 @@ public class TextElement extends Label implements Element {
 	void select() {
 
 		Main.mainScreen.setSelected(this);
+		Main.lbTextTab.selectItem();
 		toFront();
 	}
 
+	public NoDisplayTextElement toNoDisplayTextElement(boolean isFavorite){
+		return new NoDisplayTextElement(getRealFont(), getText(), (Color) getTextFill(), isFavorite);
+	}
 	@Override
 	public void delete() {
 		page.removeElement(this);
 	}
 
-	public void writeData(DataOutputStream writer) throws IOException {
+	public void writeSimpleData(DataOutputStream writer) throws IOException {
 		writer.writeByte(1);
+		writeData(writer);
+	}
+	public void writeData(DataOutputStream writer) throws IOException {
 		writer.writeByte(page.getPage());
 		writer.writeShort(getX());
 		writer.writeShort(getY());
@@ -131,7 +135,7 @@ public class TextElement extends Label implements Element {
 		writer.writeUTF(getText());
 	}
 
-	public static void readDataAndCreate(DataInputStream reader) throws IOException {
+	public static TextElement readDataAndGive(DataInputStream reader) throws IOException {
 
 		byte page = reader.readByte();
 		short x = reader.readShort();
@@ -149,9 +153,14 @@ public class TextElement extends Label implements Element {
 		FontPosture fontPosture = isItalic ? FontPosture.ITALIC : FontPosture.REGULAR;
 		Font font = Font.font(fontName, fontWeight, fontPosture, fontSize);
 
-		if (Main.mainScreen.document.pages.size() > page) {
-			Main.mainScreen.document.pages.get(page).addElement(
-					new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), Main.mainScreen.document.pages.get(page)));
+		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), Main.mainScreen.document.pages.get(page));
+
+	}
+	public static void readDataAndCreate(DataInputStream reader) throws IOException {
+
+		TextElement element = readDataAndGive(reader);
+		if(Main.mainScreen.document.pages.size() > element.page.getPage()){
+			Main.mainScreen.document.pages.get(element.page.getPage()).addElement(element);
 		}
 	}
 

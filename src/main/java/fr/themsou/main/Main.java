@@ -1,8 +1,6 @@
 package fr.themsou.main;
 
 import java.io.File;
-import java.util.Objects;
-
 import fr.themsou.devices.Devices;
 import fr.themsou.panel.Footerbar;
 import fr.themsou.panel.LeftBar.LBFilesTab;
@@ -26,6 +24,7 @@ public class Main extends Application {
 
 	public static Devices devices;
 	public static Settings settings;
+	public static UserData userData;
 
 	public static boolean click = false;
 	
@@ -51,9 +50,10 @@ public class Main extends Application {
 
 			while(true){
 				try{
-					Thread.sleep(200);
+					Thread.sleep(300000);
 				}catch(InterruptedException e){ e.printStackTrace(); }
 
+				userData.saveData();
 
 			}
 		}
@@ -80,12 +80,12 @@ public class Main extends Application {
 		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
 			@Override
 			public void handle(javafx.stage.WindowEvent e) {
-				if(mainScreen.document != null){
-					if(!mainScreen.document.save()){
-						e.consume();
-						return;
-					}
+				if(!mainScreen.closeFile(!settings.isAutoSave())){
+					userData.saveData();
+					e.consume();
+					return;
 				}
+				userData.saveData();
 				System.exit(0);
 			}
 		});
@@ -93,6 +93,7 @@ public class Main extends Application {
 //		SETUPS
 
 		settings = new Settings();
+		userData = new UserData();
 		devices = new Devices();
 
 		mainScreen = new MainScreen((int) (21 * 37.795275591));

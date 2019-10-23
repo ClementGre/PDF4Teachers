@@ -1,7 +1,10 @@
 package fr.themsou.panel;
 
 import fr.themsou.main.Main;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -75,6 +78,12 @@ public class Footerbar extends AnchorPane {
 		getChildren().add(leftInfo);
 		getChildren().add(middleInfo);
 		getChildren().add(rightInfo);
+
+		Main.leftBar.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
+			@Override public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
+				repaint();
+			}
+		});
 
 	}
 }

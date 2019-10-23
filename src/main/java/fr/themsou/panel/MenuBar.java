@@ -1,31 +1,22 @@
 package fr.themsou.panel;
 
-import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
 import java.io.File;
-import java.net.URL;
+import java.util.*;
 import java.util.List;
-import java.util.ResourceBundle;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -42,8 +33,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
 
 	Menu preferences = new Menu("Préférences");
-	Menu preferences1Zoom = new Menu("Zoom par défaut     ");
-	Menu preferences2Pages = new Menu("Pages maximum     ");
+	MenuItem preferences1Zoom = new MenuItem("Zoom par défaut     ");
+	MenuItem preferences2Pages = new MenuItem("Pages maximum     ");
 	RadioMenuItem preferences3Save = new RadioMenuItem("Sauvegarde auto     ");
 
 	Menu apropos = new Menu("À propos");
@@ -179,6 +170,42 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier9ExportAll.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
 
+			}
+		});
+
+		preferences1Zoom.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent event) {
+
+				List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
+				ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
+				new JMetro(dialog.getDialogPane(), Style.LIGHT);
+				Builders.secureAlert(dialog);
+				dialog.setTitle("Zoom par défaut");
+				dialog.setHeaderText("Vous allez définire le zoom par défaut quand vous ouvrirez un document.");
+				dialog.setContentText("Choisissez un pourcentage :");
+
+				Optional<Integer> newZoom = dialog.showAndWait();
+				if(!newZoom.isEmpty()){
+					Main.settings.setDefaultZoom(newZoom.get());
+				}
+
+			}
+		});
+		preferences2Pages.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent event) {
+
+				List<Integer> choices = new ArrayList<>(Arrays.asList(10, 20, 30, 40, 50, 60, 80, 100, 120, 160, 200, 99999));
+				ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getMaxPages(), choices);
+				new JMetro(dialog.getDialogPane(), Style.LIGHT);
+				Builders.secureAlert(dialog);
+				dialog.setTitle("Nombre de pages maximum");
+				dialog.setHeaderText("Vous allez définire le nombre de pages maximum qui pouront être affichés.");
+				dialog.setContentText("Choisissez un nombre :");
+
+				Optional<Integer> newMax = dialog.showAndWait();
+				if(!newMax.isEmpty()){
+					Main.settings.setMaxPages(newMax.get());
+				}
 			}
 		});
 

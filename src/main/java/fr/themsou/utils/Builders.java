@@ -1,10 +1,9 @@
 package fr.themsou.utils;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Control;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
+import javafx.event.EventHandler;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -59,6 +58,31 @@ public class Builders {
                 setMenuSize((Menu) subMenu);
             }
         }
+    }
+
+    public static void secureAlert(Dialog alert){
+        alert.setOnShowing(new EventHandler<DialogEvent>() {
+            @Override public void handle(DialogEvent e) {
+                new Thread(new Runnable() {
+                    @Override  public void run() {
+
+                        try{
+                            Thread.sleep(400);
+                        }catch(InterruptedException ex){ ex.printStackTrace();  }
+
+                        Platform.runLater(new Runnable(){
+                            @Override public void run(){
+                                if(alert.getDialogPane().getScene().getWindow().getWidth() < 100){
+                                    alert.getDialogPane().getScene().getWindow().setWidth(500);
+                                    alert.getDialogPane().getScene().getWindow().setHeight(200);
+                                }
+                            }
+                        });
+
+                    }
+                }, "AlertResizer").start();
+            }
+        });
     }
 
 

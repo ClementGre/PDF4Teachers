@@ -1,24 +1,30 @@
 package fr.themsou.panel.LeftBar;
 
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.CustomTreeView;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -26,12 +32,10 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
 import java.awt.*;
-import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
 
-	public ScrollPane scroller = new ScrollPane();
 	public Pane pane = new Pane();
 
 	private ComboBox<String> fontCombo; String[] fontNames;
@@ -46,16 +50,15 @@ public class LBTextTab extends Tab {
 	private Button deleteBtn = new Button("Supprimer");
 	private Button newBtn = new Button("Nouveau");
 
-	private Canvas canvas;
-	private GraphicsContext g;
+	private TreeView treeView = new TreeView<>();
+	private TreeItem<String> treeViewRoot = new TreeItem<>();
+
+	private boolean selectedIsNew = false;
 
 	public LBTextTab(){
 
 		setClosable(false);
-		setContent(scroller);
-		scroller.setContent(pane);
-
-		scroller.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+		setContent(pane);
 
 		setGraphic(Builders.buildImage(getClass().getResource("/img/Text.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(1, this);
@@ -64,7 +67,6 @@ public class LBTextTab extends Tab {
 	}
 
 	public void setup(){
-
 
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -118,7 +120,7 @@ public class LBTextTab extends Tab {
 
 		Builders.setPosition(txtField, 5, 75, 260, 3, false);
 		pane.getChildren().add(txtField);
-		txtField.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
+		txtField.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.getSelected() == null || !(Main.mainScreen.getSelected() instanceof TextElement);}, Main.mainScreen.selectedProperty()));
 
 		Builders.setPosition(deleteBtn, 5, 110, 127.5, 30, false);
 		deleteBtn.setCursor(Cursor.HAND);
@@ -130,6 +132,29 @@ public class LBTextTab extends Tab {
 		pane.getChildren().add(newBtn);
 		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
 
+		txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override public void handle(KeyEvent e) {
+				if(e.getCode() == KeyCode.DELETE){
+					Main.mainScreen.getSelected().delete();
+					Main.mainScreen.setSelected(null);
+				}
+			}
+		});
+
+		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
+			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
+
+				if(oldValue != null && selectedIsNew){
+					if(oldValue instanceof TextElement){
+						if(!((TextElement) oldValue).getText().isEmpty()){
+							addSavedElement(((TextElement) oldValue).toNoDisplayTextElement(false));
+						}
+					}
+				}
+				selectedIsNew = false;
+				txtField.requestFocus();
+			}
+		});
 
 		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
 			public void changed(ObservableValue<? extends Element> observableValue, Element oldElement, Element newElement){
@@ -179,10 +204,11 @@ public class LBTextTab extends Tab {
 
 				if(Main.mainScreen.getSelected() != null){
 					if(Main.mainScreen.getSelected() instanceof TextElement){
-						Main.mainScreen.getSelected().delete();
+						if(((TextElement) Main.mainScreen.getSelected()).getText().isEmpty()){
+							Main.mainScreen.getSelected().delete();
+						}
 					}
 				}
-
 
 				PageRenderer page = Main.mainScreen.document.pages.get(0);
 				if (Main.mainScreen.document.getCurrentPage() != -1)
@@ -196,13 +222,14 @@ public class LBTextTab extends Tab {
 
 				TextElement current = new TextElement(0, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
 						txtField.getText(), colorPicker.getValue(), page);
+						Main.mainScreen.getSelected().delete();
 
 				page.addElement(current);
 				Main.mainScreen.selectedProperty().setValue(current);
 
-				txtField.setText("");
 				txtField.requestFocus();
-
+				txtField.setText("");
+				selectedIsNew = true;
 			}
 		});
 
@@ -214,6 +241,41 @@ public class LBTextTab extends Tab {
 			}
 		});
 
+		// TREE VIEW
+
+
+		treeView.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
+		treeView.setEditable(true);
+		treeView.setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
+		treeView.setLayoutY(150);
+		treeView.setPrefWidth(270);
+		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(150));
+		treeView.setShowRoot(false);
+		treeView.setRoot(treeViewRoot);
+		new CustomTreeView(treeView);
+
+		treeViewRoot.getChildren().addAll(Main.userData.favoritesText, Main.userData.lastsText);
+
+		pane.getChildren().add(treeView);
+
+	}
+
+	public void selectItem(){
+		new Thread(new Runnable() {
+			@Override public void run() {
+				try{
+					Thread.sleep(50);
+					Platform.runLater(new Runnable() {
+						@Override public void run() {
+							String text = txtField.getText();
+							txtField.requestFocus();
+							txtField.setText(text);
+							txtField.positionCaret(txtField.getText().length());
+						}
+					});
+				}catch(InterruptedException e){ e.printStackTrace();}
+			}
+		}, "selector").start();
 
 	}
 
@@ -224,15 +286,6 @@ public class LBTextTab extends Tab {
 
 		return Font.font(fontCombo.getSelectionModel().getSelectedItem(), fontWeight, fontPosture, sizeCombo.getSelectionModel().getSelectedItem());
 	}
-
-	private String toHexString(Color colour) throws NullPointerException {
-		String hexColour = String.format("#%02x%02x%02x", (int)colour.getRed(), (int)colour.getGreen(), (int)colour.getBlue());
-		if (hexColour.length() < 6) {
-			hexColour = "000000".substring(0, 6 - hexColour.length()) + hexColour;
-		}
-		return "#" + hexColour;
-	}
-
 	public class ShapeCell extends ListCell<String>{
 		@Override
 		public void updateItem(String item, boolean empty){
@@ -246,5 +299,33 @@ public class LBTextTab extends Tab {
 				setStyle("-fx-font: 14 \"" + item + "\"");
 			}
 		}
+	}
+	public void addSavedElement(NoDisplayTextElement element){
+		if(element.isFavorite()){
+			if(!Main.userData.favoritesText.getChildren().contains(element)){
+				Main.userData.favoritesText.getChildren().add(element);
+			}
+		}else{
+			if(!Main.userData.lastsText.getChildren().contains(element)){
+				Main.userData.lastsText.getChildren().add(0, element);
+				if(Main.userData.lastsText.getChildren().size() > 30){
+					Main.userData.lastsText.getChildren().remove(Main.userData.lastsText.getChildren().size()-1);
+				}
+			}
+		}
+
+	}
+	public void removeSavedElement(NoDisplayTextElement element){
+		if(element.isFavorite()){
+			Main.userData.favoritesText.getChildren().remove(element);
+		}else{
+			Main.userData.lastsText.getChildren().remove(element);
+		}
+	}
+	public void clearSavedFavoritesElements(){
+		Main.userData.favoritesText.getChildren().clear();
+	}
+	public void clearSavedLastsElements(){
+		Main.userData.lastsText.getChildren().clear();
 	}
 }

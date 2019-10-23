@@ -5,6 +5,7 @@ import fr.themsou.document.Document;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -26,11 +27,10 @@ import jfxtras.styles.jmetro.Style;
 
 public class MainScreen extends ScrollPane {
 
-	private IntegerProperty zoom = new SimpleIntegerProperty(100);
+	private IntegerProperty zoom = new SimpleIntegerProperty(Main.settings.getDefaultZoom());
 	private int defaultPageWidth;
 	private IntegerProperty pageWidth = new SimpleIntegerProperty(defaultPageWidth);
 	private IntegerProperty status = new SimpleIntegerProperty(0);
-	private boolean hasRender = false;
 
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 
@@ -71,7 +71,6 @@ public class MainScreen extends ScrollPane {
 		}else{
 			loader.setVisible(false);
 			info.setVisible(false);
-
 		}
 
 		pane.setOnScroll(new EventHandler<ScrollEvent>() {
@@ -86,6 +85,7 @@ public class MainScreen extends ScrollPane {
 	}
 	public void setup(){
 
+		setStyle("-fx-padding: 0;");
 		setContent(pane);
 
 		setFitToHeight(true);
@@ -102,8 +102,7 @@ public class MainScreen extends ScrollPane {
 		info.translateYProperty().bind(pane.heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 
 		loader.setPrefWidth(300);
-		loader.setPrefHeight(10);
-		loader.setStyle("-fx-text-fill: white;");
+		loader.setPrefHeight(20);
 		loader.translateXProperty().bind(pane.widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
 		loader.translateYProperty().bind(pane.heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
 
@@ -111,7 +110,6 @@ public class MainScreen extends ScrollPane {
 
 		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
-
 
 		zoom.addListener(new ChangeListener<Number>() {
 			@Override
@@ -122,8 +120,8 @@ public class MainScreen extends ScrollPane {
 
 	}
 	public void openFile(File file){
-		
-		if(!closeFile(true)){
+
+		if(!closeFile(!Main.settings.isAutoSave())){
 			return;
 		}
 
@@ -138,26 +136,21 @@ public class MainScreen extends ScrollPane {
 		repaint();
 		Main.footerBar.repaint();
 
-		hasRender = false;
 
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				tmpDocument = new Document(file);
-				if(!tmpDocument.renderPDFPages()){
-					tmpDocument = null;
-				}
-				hasRender = true;
+				tmpDocument.renderPDFPages();
 
 				Platform.runLater(new Runnable() {
 					public void run() {
-						if (hasRender) {
-							if(tmpDocument.hasRendered()){
-								finishOpen();
-							}else if(tmpDocument == null){
-								failOpen();
-							}
+						if(tmpDocument.hasRendered()){
+							finishOpen();
+						}else{
+							failOpen();
 						}
+
 					}
 				});
 			}
@@ -183,7 +176,7 @@ public class MainScreen extends ScrollPane {
 		Main.footerBar.repaint();
 
 	}
-	public void failOpen() {
+	public void failOpen(){
 
 		this.tmpDocument = null;
 		status.set(2);
@@ -216,7 +209,7 @@ public class MainScreen extends ScrollPane {
 		selected.set(null);
 
 		status.set(0);
-		zoom.set(100);
+		zoom.set(Main.settings.getDefaultZoom());
 
 		repaint();
 		Main.footerBar.repaint();
@@ -226,18 +219,19 @@ public class MainScreen extends ScrollPane {
 		return true;
 	}
 
-	public boolean hasDocument(boolean alert){
+	public boolean hasDocument(boolean confirm){
 
 		if(status.get() != -1){
-			if(alert){
-				Alert alerte = new Alert(Alert.AlertType.INFORMATION);
-				new JMetro(alerte.getDialogPane(), Style.LIGHT);
-				alerte.setAlertType(Alert.AlertType.ERROR);
-				alerte.setTitle("Erreur");
-				alerte.setHeaderText("Aucun document n'est ouvert !");
-				alerte.setContentText("Cette action est censé s'éxécuter sur un document ouvert.");
+			if(confirm){
+				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				new JMetro(alert.getDialogPane(), Style.LIGHT);
+				Builders.secureAlert(alert);
+				alert.setAlertType(Alert.AlertType.ERROR);
+				alert.setTitle("Erreur");
+				alert.setHeaderText("Aucun document n'est ouvert !");
+				alert.setContentText("Cette action est censé s'éxécuter sur un document ouvert.");
 
-				alerte.showAndWait();
+				alert.showAndWait();
 			}
 			return false;
 		}
