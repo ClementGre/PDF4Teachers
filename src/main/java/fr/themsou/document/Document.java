@@ -55,7 +55,6 @@ public class Document {
         }
 
     }
-
     public void loadEdition(){
         this.edition = new Edition(file, this);
     }
