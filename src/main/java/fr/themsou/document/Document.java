@@ -59,7 +59,6 @@ public class Document {
     public void loadEdition(){
         this.edition = new Edition(file, this);
     }
-
     public boolean hasRendered(){
         return rendered != null;
     }
