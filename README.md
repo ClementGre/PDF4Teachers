@@ -1,3 +1,7 @@
+[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red)](LICENSE)
+[![Build Status](https://travis-ci.com/themsou/PDFTeacher.svg?branch=master)](https://travis-ci.com/themsou/PDFTeacher/)
+[![Release](https://img.shields.io/github/release/themsou/PDFTeacher.svg)](https://github.com/themsou/PDFTeacher/releases/)
+
 ## PDFTeacher <En cours de développement>
 
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisépent de corriger des copies PDF.**
