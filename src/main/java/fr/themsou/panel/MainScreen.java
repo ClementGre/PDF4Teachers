@@ -2,11 +2,13 @@ package fr.themsou.panel;
 
 import java.io.File;
 import fr.themsou.document.Document;
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -118,6 +120,10 @@ public class MainScreen extends ScrollPane {
 			}
 		});
 
+		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> {
+			return status.get() == -1 ? "PDF Teacher - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF Teacher - Aucun document";
+		}, status, Edition.isSaveProperty()));
+
 	}
 	public void openFile(File file){
 
@@ -167,7 +173,6 @@ public class MainScreen extends ScrollPane {
 
 		document.showPages();
 		document.loadEdition();
-		Main.window.setTitle("PDF Teacher - " + document.getFile().getName());
 
 		setHvalue(0.5);
 		setVvalue(0);
@@ -189,13 +194,16 @@ public class MainScreen extends ScrollPane {
 	public boolean closeFile(boolean confirm){
 
 	    if(document != null){
-	    	if(confirm){
-	    		if(!document.save()){
-	    			return false;
+	    	if(!Edition.isSave()){
+				if(confirm){
+					if(!document.save()){
+						return false;
+					}
 				}
+				else document.edition.save();
 			}
-			else document.edition.save();
 
+			document.documentSaver.stop();
             document = null;
         }
 
@@ -214,8 +222,6 @@ public class MainScreen extends ScrollPane {
 
 		repaint();
 		Main.footerBar.repaint();
-
-		Main.window.setTitle("PDF Teacher - Aucun document");
 
 		return true;
 	}

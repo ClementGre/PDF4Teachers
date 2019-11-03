@@ -48,7 +48,7 @@ public class Main extends Application {
 	public static Footerbar footerBar;
 	public static MenuBar menuBar;
 
-	Thread timer = new Thread(new Runnable() {
+	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
 
 			while(true){
@@ -57,11 +57,10 @@ public class Main extends Application {
 				}catch(InterruptedException e){ e.printStackTrace(); }
 
 				userData.saveData();
-
 			}
 		}
-	}, "mainTimer");
-	
+	}, "userData AutoSaver");
+
 	public static void main(String[] args){
 		launch(args);
 	}
@@ -139,7 +138,7 @@ public class Main extends Application {
 //		SHOWING
 
 		window.show();
-		timer.start();
+		userDataSaver.start();
 		mainScreen.repaint();
 
 	}

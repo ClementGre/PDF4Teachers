@@ -6,20 +6,21 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class Edition {
 
     private File file;
     private File editFile;
+    private static BooleanProperty isSave = new SimpleBooleanProperty(true);
 
     public Document document;
 
@@ -89,6 +90,9 @@ public class Edition {
 
     public void save(){
 
+        if(Edition.isSave()) return;
+
+
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, false)));
 
@@ -104,6 +108,8 @@ public class Edition {
         }catch (IOException e) {
             e.printStackTrace();
         }
+
+        isSave.set(true);
 
     }
     public static File getEditFile(File file){
@@ -161,4 +167,13 @@ public class Edition {
         }
     }
 
+    public static boolean isSave() {
+        return isSave.get();
+    }
+    public static void setUnsave() {
+        isSave.set(false);
+    }
+    public static BooleanProperty isSaveProperty() {
+        return isSave;
+    }
 }

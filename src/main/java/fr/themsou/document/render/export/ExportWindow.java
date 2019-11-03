@@ -14,7 +14,6 @@ import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -74,7 +73,7 @@ public class ExportWindow {
                         if(option.get() == stopAll){
                             window.close();
                             return;
-                        }// else continue;
+                        }
                     }
                 }
                 window.close();

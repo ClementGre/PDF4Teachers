@@ -5,6 +5,7 @@ import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -20,13 +21,32 @@ public class Document {
 
     private File file;
     public Edition edition;
-
     public ArrayList<PageRenderer> pages = new ArrayList<>();
 
     private Image[] rendered;
 
     private int currentPage = -1;
     public int totalPages = -1;
+
+    public Thread documentSaver = new Thread(new Runnable() {
+        @Override public void run() {
+
+            while(true){
+                if(Main.settings.getRegularSaving() != -1){
+                    try{
+                        Thread.sleep(Main.settings.getRegularSaving() * 60000);
+                    }catch(InterruptedException e){ e.printStackTrace(); }
+
+                    if(!Edition.isSave()) Platform.runLater(new Runnable(){public void run(){  edition.save();  }});
+
+                }else{
+                    try{
+                        Thread.sleep(60000);
+                    }catch(InterruptedException e){ e.printStackTrace(); }
+                }
+            }
+        }
+    }, "Document AutoSaver");
 
     public Document(File file){
         this.file = file;
@@ -55,15 +75,20 @@ public class Document {
         }
 
     }
-
     public void loadEdition(){
         this.edition = new Edition(file, this);
+        Edition.isSaveProperty().set(true);
+        documentSaver.start();
     }
     public boolean hasRendered(){
         return rendered != null;
     }
 
     public boolean save(){
+
+        if(Edition.isSave()){
+            return true;
+        }
 
         if(Main.settings.isAutoSave()){
             edition.save();

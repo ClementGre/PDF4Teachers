@@ -72,6 +72,7 @@ public class PageRenderer extends Pane {
 
             elements.add(element);
             getChildren().add((Shape) element);
+            Main.mainScreen.document.edition.setUnsave();
 
         }
     }
@@ -80,6 +81,7 @@ public class PageRenderer extends Pane {
         if(element != null){
             elements.remove(element);
             getChildren().remove((Shape) element);
+            Main.mainScreen.document.edition.setUnsave();
         }
     }
 

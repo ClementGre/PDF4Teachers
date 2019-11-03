@@ -6,19 +6,24 @@ import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+
+import javax.swing.*;
 import java.io.File;
 import java.util.*;
 import java.util.List;
@@ -117,9 +122,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
 		preferences2Pages.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/maxPages.png")+"", 0, 0));
 		preferences3Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		preferences4Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
 		preferences3Save.selectedProperty().set(Main.settings.isAutoSave());
 		Main.settings.autoSavingProperty().bind(preferences3Save.selectedProperty());
-		preferences4Regular.disableProperty().bind(preferences3Save.selectedProperty().not());
 
 		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save, preferences4Regular);
 
@@ -173,7 +178,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier5Save.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
 				if(Main.mainScreen.hasDocument(true)){
-					Main.mainScreen.document.save();
+					Main.mainScreen.document.edition.save();
 				}
 			}
 		});
@@ -229,6 +234,45 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				if(!newMax.isEmpty()){
 					Main.settings.setMaxPages(newMax.get());
 				}
+			}
+		});
+		preferences4Regular.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent event) {
+
+				Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+
+				HBox pane = new HBox();
+				ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
+				combo.getSelectionModel().select(Main.settings.getRegularSaving() == -1 ? (Integer) 5 : (Integer) Main.settings.getRegularSaving());
+				combo.setStyle("-fx-padding-left: 20px;");
+				CheckBox activated = new CheckBox("Activer");
+				activated.setSelected(Main.settings.getRegularSaving() != -1);
+				pane.getChildren().add(0, activated);
+				pane.getChildren().add(1, combo);
+				HBox.setMargin(activated, new Insets(5, 0, 0, 10));
+				HBox.setMargin(combo, new Insets(0, 0, 0, 30));
+
+				combo.disableProperty().bind(activated.selectedProperty().not());
+
+				new JMetro(dialog.getDialogPane(), Style.LIGHT);
+				Builders.secureAlert(dialog);
+
+				dialog.setTitle("Sauvegarde régulière");
+				dialog.setHeaderText("Vous allez définire le nombre de minutes entre deux sauvegardes automatiques.");
+
+				dialog.getDialogPane().setContent(pane);
+
+				ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+				ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+				dialog.getButtonTypes().setAll(cancel, ok);
+
+				Optional<ButtonType> option = dialog.showAndWait();
+				if(option.get() == ok){
+					int time = -1;
+					if(activated.isSelected()) time = combo.getSelectionModel().getSelectedItem();
+					Main.settings.setRegularSaving(time);
+				}
+
 			}
 		});
 

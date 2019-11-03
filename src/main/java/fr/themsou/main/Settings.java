@@ -10,12 +10,14 @@ public class Settings {
     private int defaultZoom;
     private int maxPages;
     private BooleanProperty autoSave = new SimpleBooleanProperty();
+    private int regularSaving;
 
     public Settings(){
 
         defaultZoom = 100;
         maxPages = 30;
         autoSave.set(false);
+        regularSaving = -1;
 
         loadSettings();
 
@@ -56,6 +58,11 @@ public class Settings {
                                         autoSave.set(Boolean.parseBoolean(line.split("=")[1]));
                                     }catch(Exception ignored){}
                                     break;
+                                case "regularSaving":
+                                    try{
+                                        regularSaving = Integer.parseInt(line.split("=")[1]);
+                                    }catch(Exception ignored){}
+                                    break;
                             }
                         }
                         reader.close();
@@ -83,6 +90,8 @@ public class Settings {
                     writer.write("maxPages=" + maxPages);
                     writer.newLine();
                     writer.write("autoSave=" + autoSave.get());
+                    writer.newLine();
+                    writer.write("regularSaving=" + regularSaving);
 
                     writer.flush();
                     writer.close();
@@ -118,5 +127,12 @@ public class Settings {
     }
     public BooleanProperty autoSavingProperty(){
         return this.autoSave;
+    }
+    public int getRegularSaving() {
+        return regularSaving;
+    }
+    public void setRegularSaving(int regularSaving) {
+        this.regularSaving = regularSaving;
+        saveSettings();
     }
 }

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import javafx.beans.binding.Bindings;
@@ -12,9 +13,10 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -100,6 +102,12 @@ public class TextElement extends Text implements Element {
 
 			}
 		});
+
+		textProperty().addListener(new ChangeListener<String>() {
+			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				Edition.setUnsave();
+			}
+		});
 	}
 
 	void select() {
@@ -107,6 +115,7 @@ public class TextElement extends Text implements Element {
 		Main.mainScreen.setSelected(this);
 		Main.lbTextTab.selectItem();
 		toFront();
+		Edition.setUnsave();
 	}
 
 	public NoDisplayTextElement toNoDisplayTextElement(boolean isFavorite){

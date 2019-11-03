@@ -1,5 +1,6 @@
 package fr.themsou.panel.LeftBar;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
@@ -193,7 +194,7 @@ public class LBTextTab extends Tab {
 						sizeCombo.getSelectionModel().select((Integer) ((int) current.getRealFont().getSize()));
 
 						current.textProperty().bind(txtField.textProperty());
-						current.realFontProperty().bind(Bindings.createObjectBinding(() -> { return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+						current.realFontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 
 					}
 				}
@@ -205,6 +206,7 @@ public class LBTextTab extends Tab {
 				if(Main.mainScreen.getSelected() != null){
 					if(Main.mainScreen.getSelected() instanceof TextElement){
 						((TextElement) Main.mainScreen.getSelected()).setFill(colorPicker.getValue());
+						Edition.setUnsave();
 					}
 
 				}
