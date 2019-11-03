@@ -9,6 +9,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.CustomListView;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -115,11 +116,11 @@ public class LBFilesTab extends Tab {
 		}
 	}
 	public void clearFiles(boolean confirm){
-		if(Main.mainScreen.getStatus() == -1){
+		/*if(Main.mainScreen.getStatus() == -1){
 			if(files.getItems().contains(Main.mainScreen.document.getFile())){
 				if(!Main.mainScreen.closeFile(confirm)) return;
 			}
-		}
+		}*/
 		files.getItems().clear();
 	}
 	public void removeFile(int file, boolean confirm){
@@ -129,6 +130,7 @@ public class LBFilesTab extends Tab {
 			}
 		}
 		files.getItems().remove(file);
+
 	}
 	public void removeFile(File file, boolean confirm){
 		/*if(Main.mainScreen.getStatus() == -1){

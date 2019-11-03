@@ -27,6 +27,21 @@ public class NoDisplayTextElement extends TreeItem{
 		this.isFavorite = isFavorite;
 	}
 
+	@Override
+	public boolean equals(Object v){
+
+		if(v instanceof NoDisplayTextElement){
+			NoDisplayTextElement element = (NoDisplayTextElement) v;
+			if(element.isFavorite == isFavorite && element.text.equals(text) && element.color.hashCode() == color.hashCode()){
+				if(element.font.getStyle().equals(font.getStyle()) && element.font.getSize() == font.getSize() && element.getFont().getFamily().equals(font.getFamily())){
+
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	public void writeData(DataOutputStream writer) throws IOException {
 
 		writer.writeFloat((float) font.getSize());

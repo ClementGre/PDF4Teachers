@@ -31,7 +31,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
-import java.awt.*;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
@@ -66,12 +69,21 @@ public class LBTextTab extends Tab {
 		setup();
 	}
 
+	private static File[] getResourceFolderFiles(String folder){
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		URL url = loader.getResource(folder);
+		String path = url.getPath();
+
+		return new File(path + "/").listFiles();
+	}
+
 	public void setup(){
 
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		/*GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		fontNames = ge.getAvailableFontFamilyNames();
-		fontCombo = new ComboBox<>(FXCollections.observableArrayList(fontNames));
+		fontCombo = new ComboBox<>(FXCollections.observableArrayList(fontNames));*/
+		fontCombo = new ComboBox<>(FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Times New Roman"));
 
 		fontCombo.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
 			@Override
@@ -176,7 +188,7 @@ public class LBTextTab extends Tab {
 						txtField.setText(current.getText());
 						boldBtn.setSelected(TextElement.getFontWeight(current.getRealFont()) == FontWeight.BOLD);
 						itBtn.setSelected(TextElement.getFontPosture(current.getRealFont()) == FontPosture.ITALIC);
-						colorPicker.setValue((Color) current.getTextFill());
+						colorPicker.setValue((Color) current.getFill());
 						fontCombo.getSelectionModel().select(current.getRealFont().getFamily());
 						sizeCombo.getSelectionModel().select((Integer) ((int) current.getRealFont().getSize()));
 
@@ -192,7 +204,7 @@ public class LBTextTab extends Tab {
 			@Override public void handle(ActionEvent e) {
 				if(Main.mainScreen.getSelected() != null){
 					if(Main.mainScreen.getSelected() instanceof TextElement){
-						((TextElement) Main.mainScreen.getSelected()).setStyle("-fx-text-fill: #" + Integer.toHexString(colorPicker.getValue().hashCode()) + ";");
+						((TextElement) Main.mainScreen.getSelected()).setFill(colorPicker.getValue());
 					}
 
 				}
@@ -222,7 +234,7 @@ public class LBTextTab extends Tab {
 
 				TextElement current = new TextElement(0, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
 						txtField.getText(), colorPicker.getValue(), page);
-						Main.mainScreen.getSelected().delete();
+
 
 				page.addElement(current);
 				Main.mainScreen.selectedProperty().setValue(current);
@@ -242,7 +254,6 @@ public class LBTextTab extends Tab {
 		});
 
 		// TREE VIEW
-
 
 		treeView.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
 		treeView.setEditable(true);
@@ -281,11 +292,9 @@ public class LBTextTab extends Tab {
 
 	private Font getFont(){
 
-		FontWeight fontWeight = boldBtn.isSelected() ? FontWeight.BOLD : FontWeight.NORMAL;
-		FontPosture fontPosture = itBtn.isSelected() ? FontPosture.ITALIC : FontPosture.REGULAR;
-
-		return Font.font(fontCombo.getSelectionModel().getSelectedItem(), fontWeight, fontPosture, sizeCombo.getSelectionModel().getSelectedItem());
+		return TextElement.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
 	}
+
 	public class ShapeCell extends ListCell<String>{
 		@Override
 		public void updateItem(String item, boolean empty){
@@ -308,6 +317,7 @@ public class LBTextTab extends Tab {
 		}else{
 			if(!Main.userData.lastsText.getChildren().contains(element)){
 				Main.userData.lastsText.getChildren().add(0, element);
+
 				if(Main.userData.lastsText.getChildren().size() > 30){
 					Main.userData.lastsText.getChildren().remove(Main.userData.lastsText.getChildren().size()-1);
 				}
@@ -327,5 +337,27 @@ public class LBTextTab extends Tab {
 	}
 	public void clearSavedLastsElements(){
 		Main.userData.lastsText.getChildren().clear();
+	}
+
+	public void ascendElement(NoDisplayTextElement element) {
+		int pos = element.isFavorite() ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
+		removeSavedElement(element);
+
+		if(element.isFavorite()){
+			Main.userData.favoritesText.getChildren().add(pos - 1, element);
+		}else{
+			Main.userData.lastsText.getChildren().add(pos - 1, element);
+		}
+	}
+
+	public void descendElement(NoDisplayTextElement element) {
+		int pos = element.isFavorite() ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
+		removeSavedElement(element);
+
+		if(element.isFavorite()){
+			Main.userData.favoritesText.getChildren().add(pos + 1, element);
+		}else{
+			Main.userData.lastsText.getChildren().add(pos + 1, element);
+		}
 	}
 }

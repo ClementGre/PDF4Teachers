@@ -1,6 +1,7 @@
 package fr.themsou.document.editions;
 
 import fr.themsou.document.Document;
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -11,6 +12,8 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class Edition {
@@ -55,8 +58,33 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
+    }
+    public static Element[] simpleLoad(File editFile) throws Exception{
 
+        if(editFile.createNewFile()){ //file was created
+            return new Element[0];
+        }else{ // file already exist
+            DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
+            ArrayList<Element> elements = new ArrayList<>();
 
+            while(reader.available() != 0){
+                byte elementType = reader.readByte();
+
+                switch (elementType){
+                    case 1:
+                        elements.add(TextElement.readDataAndGive(reader, false));
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                }
+            }
+            reader.close();
+            return elements.toArray(new Element[elements.size()]);
+        }
     }
 
     public void save(){

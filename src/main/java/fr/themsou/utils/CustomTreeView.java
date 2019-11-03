@@ -2,6 +2,8 @@ package fr.themsou.utils;
 
 import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.main.Main;
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -16,6 +18,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
+import org.w3c.dom.ls.LSOutput;
 
 public class CustomTreeView {
 
@@ -71,11 +74,22 @@ public class CustomTreeView {
         MenuItem item1 = new MenuItem("Ajouter");
         MenuItem item2 = new MenuItem("Retirer");
         MenuItem item3 = new MenuItem("Ajouter aux favoris");
-        MenuItem item4 = new MenuItem("Vider la liste");
+        MenuItem item4 = new MenuItem("Monter");
+        MenuItem item5 = new MenuItem("Descendre");
+        MenuItem item6 = new MenuItem("Vider la liste");
+
+        if(element.isFavorite()){
+            item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.favoritesText.getChildren())));
+            item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) >= Main.userData.favoritesText.getChildren().size()-1;}, Bindings.size(Main.userData.favoritesText.getChildren())));
+        }else{
+            item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.lastsText.getChildren())));
+            item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) >= Main.userData.lastsText.getChildren().size()-1;}, Bindings.size(Main.userData.lastsText.getChildren())));
+        }
+
 
         menu.getItems().addAll(item1, item2);
         if(!element.isFavorite()) menu.getItems().add(item3);
-        menu.getItems().addAll(new SeparatorMenuItem(), item4);
+        menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
         item1.setOnAction(new EventHandler<ActionEvent>() {
@@ -97,8 +111,17 @@ public class CustomTreeView {
             }
         });
         item4.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
+            @Override public void handle(ActionEvent e) {
+                Main.lbTextTab.ascendElement(element);
+            }
+        });
+        item5.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
+                Main.lbTextTab.descendElement(element);
+            }
+        });
+        item6.setOnAction(new EventHandler<ActionEvent>() {
+            @Override public void handle(ActionEvent e) {
                 if(element.isFavorite()){
                     Main.lbTextTab.clearSavedFavoritesElements();
                 }else{

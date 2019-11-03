@@ -9,7 +9,7 @@ repositories{
 }
 dependencies{
 
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.13'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.16'
     compile (group: 'org.jfxtras', name: 'jmetro', version: '11.5.10'){
         exclude group: 'org.openjfx'
     }
@@ -21,7 +21,7 @@ javafx {
 }
 mainClassName = "fr.themsou.main.Main"
 jlink {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--module-path', '/home/clement/bin/jdk-11-Windows/jmodss']
     launcher {
         name = 'PDFTeacher'
     }

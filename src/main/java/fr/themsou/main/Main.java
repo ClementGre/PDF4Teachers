@@ -1,6 +1,8 @@
 package fr.themsou.main;
 
 import java.io.File;
+import java.io.InputStream;
+
 import fr.themsou.devices.Devices;
 import fr.themsou.panel.Footerbar;
 import fr.themsou.panel.LeftBar.LBFilesTab;
@@ -14,6 +16,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -98,12 +101,13 @@ public class Main extends Application {
 
 		mainScreen = new MainScreen((int) (21 * 37.795275591));
 		footerBar = new Footerbar();
-		menuBar = new MenuBar();
 
 		lbFilesTab = new LBFilesTab();
 		lbTextTab = new LBTextTab();
 		lbNoteTab = new LBNoteTab();
 		lbPaintTab = new LBPaintTab();
+
+		menuBar = new MenuBar();
 
 		mainScreen.repaint();
 		footerBar.repaint();

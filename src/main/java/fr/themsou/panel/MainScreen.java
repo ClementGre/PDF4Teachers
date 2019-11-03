@@ -164,6 +164,7 @@ public class MainScreen extends ScrollPane {
 		tmpDocument = null;
 
 		status.set(-1);
+
 		document.showPages();
 		document.loadEdition();
 		Main.window.setTitle("PDF Teacher - " + document.getFile().getName());

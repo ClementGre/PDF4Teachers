@@ -9,6 +9,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Shape;
+
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
@@ -69,7 +71,7 @@ public class PageRenderer extends Pane {
         if(element != null){
 
             elements.add(element);
-            getChildren().add((Control) element);
+            getChildren().add((Shape) element);
 
         }
     }
@@ -77,7 +79,7 @@ public class PageRenderer extends Pane {
 
         if(element != null){
             elements.remove(element);
-            getChildren().remove((Control) element);
+            getChildren().remove((Shape) element);
         }
     }
 

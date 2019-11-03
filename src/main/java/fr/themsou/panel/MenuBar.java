@@ -1,7 +1,12 @@
 package fr.themsou.panel;
 
+import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
@@ -36,6 +41,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem preferences1Zoom = new MenuItem("Zoom par défaut     ");
 	MenuItem preferences2Pages = new MenuItem("Pages maximum     ");
 	RadioMenuItem preferences3Save = new RadioMenuItem("Sauvegarde auto     ");
+	MenuItem preferences4Regular = new MenuItem("Sauvegarde régulière     ");
 
 	Menu apropos = new Menu("À propos");
 	Menu aide = new Menu("Aide");
@@ -58,23 +64,39 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		fichier3Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));
 		fichier3Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+		fichier3Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier4Clear.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/vider.png")+"", 0, 0));
 		fichier4Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
+		fichier4Clear.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
 
 		fichier5Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
 		fichier5Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		fichier5Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier6Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
+		fichier6Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
+		fichier6Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
-		fichier7SameName.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
+		fichier7SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
 		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
+		fichier8Export.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier9ExportAll.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
 		fichier9ExportAll.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+E"));
+		fichier9ExportAll.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
+
+
+
+		Main.lbFilesTab.files.itemsProperty().addListener(new ChangeListener<ObservableList<File>>() {
+			@Override
+			public void changed(ObservableValue<? extends ObservableList<File>> observable, ObservableList<File> oldValue, ObservableList<File> newValue) {
+				System.out.println("change");
+			}
+		});
 
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Close, fichier4Clear, new SeparatorMenuItem(), fichier5Save, fichier6Delete, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
 
@@ -97,8 +119,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		preferences3Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
 		preferences3Save.selectedProperty().set(Main.settings.isAutoSave());
 		Main.settings.autoSavingProperty().bind(preferences3Save.selectedProperty());
+		preferences4Regular.disableProperty().bind(preferences3Save.selectedProperty().not());
 
-		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save);
+		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save, preferences4Regular);
 
 
 		aide.getItems().add(aide1Doc);
@@ -164,12 +187,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		fichier8Export.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
-
+				new ExportWindow().export(Collections.singletonList(Main.mainScreen.document.getFile()));
 			}
 		});
 		fichier9ExportAll.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
-
+				new ExportWindow().export(Main.lbFilesTab.files.getItems());
 			}
 		});
 

@@ -1,6 +1,7 @@
 package fr.themsou.utils;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Optional;
 
 public class CustomListView {
@@ -120,7 +122,7 @@ public class CustomListView {
         item5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-
+                new ExportWindow().export(Collections.singletonList(new File(((MenuItem)e.getSource()).getParentPopup().getId())));
             }
         });
         item6.setOnAction(new EventHandler<ActionEvent>() {

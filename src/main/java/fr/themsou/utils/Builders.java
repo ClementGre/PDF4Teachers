@@ -72,9 +72,11 @@ public class Builders {
 
                         Platform.runLater(new Runnable(){
                             @Override public void run(){
-                                if(alert.getDialogPane().getScene().getWindow().getWidth() < 100){
-                                    alert.getDialogPane().getScene().getWindow().setWidth(500);
-                                    alert.getDialogPane().getScene().getWindow().setHeight(200);
+                                if(alert.isShowing()){
+                                    if(alert.getDialogPane().getScene().getWindow().getWidth() < 100){
+                                        alert.getDialogPane().getScene().getWindow().setWidth(500);
+                                        alert.getDialogPane().getScene().getWindow().setHeight(200);
+                                    }
                                 }
                             }
                         });
