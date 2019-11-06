@@ -150,29 +150,6 @@ public class LBFilesTab extends Tab {
 		return ext.equals("pdf");
 	}
 
-
-	public void mouseReleased(){
-
-		int mouseX = 0;
-		int mouseY = 0;
-
-		for(int i = 0; i < files.getItems().size(); i++){
-
-			if(mouseY > i*30 && mouseY < i*30+30 && mouseX > 0 && mouseX < 0){
-
-				if(mouseX > 7 && mouseX < 23){ // Clear Edit
-
-				}else if(mouseX > 28 && mouseX < 44){ // Remove
-					removeFile(i, true);
-
-				}else if(mouseY > i*30 && mouseY < i*30+30){
-					Main.mainScreen.openFile(files.getItems().get(i));
-				}
-
-			}
-		}
-	}
-
 	
 
 }

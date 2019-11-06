@@ -122,7 +122,17 @@ public class CustomListView {
         item5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                new ExportWindow().export(Collections.singletonList(new File(((MenuItem)e.getSource()).getParentPopup().getId())));
+                if(new File(((MenuItem)e.getSource()).getParentPopup().getId()).exists()){
+
+                    if(Main.mainScreen.hasDocument(false)){
+                        if(Main.mainScreen.document.getFile().getAbsolutePath().equals(((MenuItem)e.getSource()).getParentPopup().getId())){
+                            Main.mainScreen.document.save();
+                        }
+                    }
+
+                    new ExportWindow(Collections.singletonList(new File(((MenuItem)e.getSource()).getParentPopup().getId())));
+                }
+
             }
         });
         item6.setOnAction(new EventHandler<ActionEvent>() {

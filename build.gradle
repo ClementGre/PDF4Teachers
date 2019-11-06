@@ -21,10 +21,12 @@ javafx {
 }
 mainClassName = "fr.themsou.main.Main"
 jlink {
-    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages', '--module-path', '/home/clement/bin/jdk-11-Windows/jmodss']
+    options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         name = 'PDFTeacher'
     }
+    targetPlatform('win', '/home/clement/bin/jdk-11-Windows/')
+    targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
 }
 
 

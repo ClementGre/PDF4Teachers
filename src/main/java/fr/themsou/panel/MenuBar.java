@@ -153,7 +153,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			@Override public void handle(ActionEvent event){
 
 				final DirectoryChooser chooser = new DirectoryChooser();
-				chooser.setTitle("Selexionnez un ou plusieurs dossier");
+				chooser.setTitle("Selexionnez un dossier");
 				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
 				File file = chooser.showDialog(Main.window);
@@ -192,12 +192,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		fichier8Export.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
-				new ExportWindow().export(Collections.singletonList(Main.mainScreen.document.getFile()));
+
+				Main.mainScreen.document.save();
+				new ExportWindow(Collections.singletonList(Main.mainScreen.document.getFile()));
 			}
 		});
 		fichier9ExportAll.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
-				new ExportWindow().export(Main.lbFilesTab.files.getItems());
+
+				if(Main.mainScreen.hasDocument(false))
+					Main.mainScreen.document.save();
+
+				new ExportWindow(Main.lbFilesTab.files.getItems());
 			}
 		});
 
@@ -209,7 +215,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				new JMetro(dialog.getDialogPane(), Style.LIGHT);
 				Builders.secureAlert(dialog);
 				dialog.setTitle("Zoom par défaut");
-				dialog.setHeaderText("Vous allez définire le zoom par défaut quand vous ouvrirez un document.");
+				dialog.setHeaderText("Vous allez définir le zoom par défaut quand vous ouvrirez un document.");
 				dialog.setContentText("Choisissez un pourcentage :");
 
 				Optional<Integer> newZoom = dialog.showAndWait();
@@ -227,7 +233,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				new JMetro(dialog.getDialogPane(), Style.LIGHT);
 				Builders.secureAlert(dialog);
 				dialog.setTitle("Nombre de pages maximum");
-				dialog.setHeaderText("Vous allez définire le nombre de pages maximum qui pouront être affichés.");
+				dialog.setHeaderText("Vous allez définir le nombre de pages maximum qui pouront être affichés.");
 				dialog.setContentText("Choisissez un nombre :");
 
 				Optional<Integer> newMax = dialog.showAndWait();
@@ -258,7 +264,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				Builders.secureAlert(dialog);
 
 				dialog.setTitle("Sauvegarde régulière");
-				dialog.setHeaderText("Vous allez définire le nombre de minutes entre deux sauvegardes automatiques.");
+				dialog.setHeaderText("Vous allez définir le nombre de minutes entre deux sauvegardes automatiques.");
 
 				dialog.getDialogPane().setContent(pane);
 
@@ -276,7 +282,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		});
 
-		//setStyle("-fx-font-size: 13");
 		getMenus().addAll(fichier, preferences, apropos, aide);
 
 		for(Menu menu : getMenus()){
