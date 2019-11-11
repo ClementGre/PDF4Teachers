@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import fr.themsou.document.render.export.ExportWindow;
+import fr.themsou.main.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
@@ -11,20 +12,23 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import javax.swing.*;
-import java.io.File;
+import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -34,21 +38,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu fichier = new Menu("Fichier");
 	MenuItem fichier1Open = new MenuItem("Ouvrir un fichier    ");
 	MenuItem fichier2OpenDir = new MenuItem("Ouvrir un dossier    ");
-	MenuItem fichier3Close = new MenuItem("Fermer le fichier     ");
-	MenuItem fichier4Clear = new MenuItem("Vider la liste     ");
-	MenuItem fichier5Save = new MenuItem("Sauvegarder l'édition    ");
-	MenuItem fichier6Delete = new MenuItem("Supprimer l'édition     ");
+	MenuItem fichier3Clear = new MenuItem("Vider la liste     ");
+	MenuItem fichier4Save = new MenuItem("Sauvegarder l'édition    ");
+	MenuItem fichier5Delete = new MenuItem("Supprimer l'édition     ");
+	MenuItem fichier6Close = new MenuItem("Fermer le fichier     ");
 	MenuItem fichier7SameName = new Menu("Éditions du même nom     ");
 	MenuItem fichier8Export = new MenuItem("Exporter     ");
 	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
 
 	Menu preferences = new Menu("Préférences");
 	MenuItem preferences1Zoom = new MenuItem("Zoom par défaut     ");
-	MenuItem preferences2Pages = new MenuItem("Pages maximum     ");
-	RadioMenuItem preferences3Save = new RadioMenuItem("Sauvegarde auto     ");
-	MenuItem preferences4Regular = new MenuItem("Sauvegarde régulière     ");
+	RadioMenuItem preferences2Save = new RadioMenuItem("Sauvegarde auto     ");
+	MenuItem preferences3Regular = new MenuItem("Sauvegarde régulière     ");
 
-	Menu apropos = new Menu("À propos");
+	Menu apropos = new Menu();
 	Menu aide = new Menu("Aide");
 	MenuItem aide1Doc = new MenuItem("Charger le document d'aide     ");
 
@@ -61,32 +64,33 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		setStyle("-fx-background-color: #2B2B2B;");
 
-		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
+		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar/ouvrir.png")+"", 0, 0));
 		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
 
-		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/directory.png")+"", 0, 0));
+		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "directory.png")+"", 0, 0));
 		fichier2OpenDir.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+O"));
 
-		fichier3Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));
-		fichier3Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
-		fichier3Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
+		fichier3Clear.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "vider.png")+"", 0, 0));
+		fichier3Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
+		fichier3Clear.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
 
-		fichier4Clear.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/vider.png")+"", 0, 0));
-		fichier4Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
-		fichier4Clear.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
+		fichier4Save.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "sauvegarder.png")+"", 0, 0));
+		fichier4Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
+		fichier4Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier5Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		fichier5Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
-		fichier5Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
+		fichier5Delete.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "supprimer.png")+"", 0, 0));
+		fichier5Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
+		fichier5Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier6Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
-		fichier6Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
-		fichier6Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
+		fichier6Close.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "fermer.png")+"", 0, 0));
+		fichier6Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
+		fichier6Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
+
+		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img/MenuBar/memeNom.png")+"", 0, 0));
 		fichier7SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
+		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar/exporter.png")+"", 0, 0));
 		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
 		fichier8Export.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
@@ -103,7 +107,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		});
 
-		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Close, fichier4Clear, new SeparatorMenuItem(), fichier5Save, fichier6Delete, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
+		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6Close, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
 
 		/*Menu menu2 = new Menu("Édition");
 		MenuItem menu2arg1 = new MenuItem(" Annuler     ");
@@ -120,13 +124,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 
 		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
-		preferences2Pages.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/maxPages.png")+"", 0, 0));
-		preferences3Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		preferences4Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		preferences3Save.selectedProperty().set(Main.settings.isAutoSave());
-		Main.settings.autoSavingProperty().bind(preferences3Save.selectedProperty());
+		preferences2Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		preferences3Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		preferences2Save.selectedProperty().set(Main.settings.isAutoSave());
+		Main.settings.autoSavingProperty().bind(preferences2Save.selectedProperty());
 
-		preferences.getItems().addAll(preferences1Zoom, preferences2Pages, preferences3Save, preferences4Regular);
+		preferences.getItems().addAll(preferences1Zoom, preferences2Save, preferences3Regular);
 
 
 		aide.getItems().add(aide1Doc);
@@ -137,7 +140,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				final FileChooser chooser = new FileChooser();
 				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
-				chooser.setTitle("Selexionnez un ou plusieurs fichier");
+				chooser.setTitle("Selectionner un ou plusieurs fichier");
 				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
 				List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -153,7 +156,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			@Override public void handle(ActionEvent event){
 
 				final DirectoryChooser chooser = new DirectoryChooser();
-				chooser.setTitle("Selexionnez un dossier");
+				chooser.setTitle("Selectionner un dossier");
 				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
 
 				File file = chooser.showDialog(Main.window);
@@ -163,30 +166,30 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			}
 		});
-		fichier3Close.setOnAction(new EventHandler<ActionEvent>(){
-			@Override public void handle(ActionEvent event){
-				if(Main.mainScreen.hasDocument(true)){
-					Main.mainScreen.closeFile(true);
-				}
-			}
-		});
-		fichier4Clear.setOnAction(new EventHandler<ActionEvent>() {
+		fichier3Clear.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
 				Main.lbFilesTab.clearFiles(true);
 			}
 		});
-		fichier5Save.setOnAction(new EventHandler<ActionEvent>() {
+		fichier4Save.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
 				if(Main.mainScreen.hasDocument(true)){
 					Main.mainScreen.document.edition.save();
 				}
 			}
 		});
-		fichier6Delete.setOnAction(new EventHandler<ActionEvent>() {
+		fichier5Delete.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent actionEvent) {
 				if(Main.mainScreen.hasDocument(true)){
 					Main.mainScreen.document.edition.clearEdit(true);
 					Main.mainScreen.setSelected(null);
+				}
+			}
+		});
+		fichier6Close.setOnAction(new EventHandler<ActionEvent>(){
+			@Override public void handle(ActionEvent event){
+				if(Main.mainScreen.hasDocument(true)){
+					Main.mainScreen.closeFile(true);
 				}
 			}
 		});
@@ -215,8 +218,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				new JMetro(dialog.getDialogPane(), Style.LIGHT);
 				Builders.secureAlert(dialog);
 				dialog.setTitle("Zoom par défaut");
-				dialog.setHeaderText("Vous allez définir le zoom par défaut quand vous ouvrirez un document.");
-				dialog.setContentText("Choisissez un pourcentage :");
+				dialog.setHeaderText("Zoom par défaut lors de l'ouverture d'un document");
+				dialog.setContentText("Choisir un pourcentage :");
 
 				Optional<Integer> newZoom = dialog.showAndWait();
 				if(!newZoom.isEmpty()){
@@ -225,24 +228,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			}
 		});
-		preferences2Pages.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent event) {
-
-				List<Integer> choices = new ArrayList<>(Arrays.asList(10, 20, 30, 40, 50, 60, 80, 100, 120, 160, 200, 99999));
-				ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getMaxPages(), choices);
-				new JMetro(dialog.getDialogPane(), Style.LIGHT);
-				Builders.secureAlert(dialog);
-				dialog.setTitle("Nombre de pages maximum");
-				dialog.setHeaderText("Vous allez définir le nombre de pages maximum qui pouront être affichés.");
-				dialog.setContentText("Choisissez un nombre :");
-
-				Optional<Integer> newMax = dialog.showAndWait();
-				if(!newMax.isEmpty()){
-					Main.settings.setMaxPages(newMax.get());
-				}
-			}
-		});
-		preferences4Regular.setOnAction(new EventHandler<ActionEvent>() {
+		preferences3Regular.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent event) {
 
 				Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
@@ -264,7 +250,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				Builders.secureAlert(dialog);
 
 				dialog.setTitle("Sauvegarde régulière");
-				dialog.setHeaderText("Vous allez définir le nombre de minutes entre deux sauvegardes automatiques.");
+				dialog.setHeaderText("Définir le nombre de minutes entre deux sauvegardes automatiques.");
 
 				dialog.getDialogPane().setContent(pane);
 
@@ -281,6 +267,36 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			}
 		});
+
+		aide1Doc.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent event) {
+
+				try{
+
+					InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
+
+					File doc = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "" +
+							"Documentation - PDFTeacher.pdf");
+					if(!doc.exists()) Files.copy(docRes, doc.getAbsoluteFile().toPath());
+
+					Main.mainScreen.openFile(doc);
+
+				}catch(IOException ex){
+					ex.printStackTrace();
+				}
+
+			}
+		});
+
+		Label name = new Label("À propos");
+		name.setAlignment(Pos.CENTER_LEFT);
+		name.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent event) {
+				new AboutWindow();
+			}
+		});
+		apropos.setGraphic(name);
+
 
 		getMenus().addAll(fichier, preferences, apropos, aide);
 

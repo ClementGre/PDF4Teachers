@@ -16,7 +16,7 @@ public class UserData {
     }
     public void loadData(){
 
-        new File(System.getProperty("user.home") + "/.PDFTeacher/").mkdirs();
+        new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher/").mkdirs();
         File file = new File(System.getProperty("user.home") + "/.PDFTeacher/userData.hex");
 
         try{

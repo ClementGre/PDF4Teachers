@@ -11,7 +11,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 
 public class PDFPagesRender {
 	
-	public Image[] render(File file, int startPage, int maxPages){
+	public Image[] render(File file){
 		
 		try{
 			
@@ -21,21 +21,15 @@ public class PDFPagesRender {
 			long time = System.currentTimeMillis();
 			
 			PDFRenderer pdfRenderer = new PDFRenderer(doc);
-			
-			if(doc.getNumberOfPages() < maxPages) maxPages = doc.getNumberOfPages() - 1;
-			
-			int pageCounter = startPage;
-			Image[] images = new Image[maxPages - startPage + 1];
+
+			int pageCounter = 0;
+			Image[] images = new Image[doc.getNumberOfPages()];
 			
 			for(@SuppressWarnings("unused") PDPage page : doc.getPages()){
-				
-				if(pageCounter > maxPages) continue;
-				
-			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 200, ImageType.RGB);
+
+			    BufferedImage bimg = pdfRenderer.renderImageWithDPI(pageCounter, 150, ImageType.RGB);
+
 			    images[pageCounter] = bimg;
-			    
-			    
-			    
 			    pageCounter ++;
 			}
 			doc.close();

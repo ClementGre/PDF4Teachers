@@ -2,17 +2,19 @@ package fr.themsou.document.render;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
+import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
-import javafx.scene.control.Control;
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Shape;
-
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.concurrent.Callable;
 
 public class PageRenderer extends Pane {
 
@@ -57,6 +59,17 @@ public class PageRenderer extends Pane {
                 Main.mainScreen.document.setCurrentPage(page);
             }
         });
+
+        // Disable pane when is not into the visible part of the ScrollPane to prevent lags
+        visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+            try{
+                Bounds paneBounds = Main.mainScreen.localToScene(Main.mainScreen.getBoundsInParent());
+                Bounds nodeBounds = localToScene(getBoundsInLocal());
+                return paneBounds.intersects(nodeBounds);
+            }catch(IndexOutOfBoundsException ex){
+                return false;
+            }
+        }, Main.mainScreen.vvalueProperty()));
 
     }
 

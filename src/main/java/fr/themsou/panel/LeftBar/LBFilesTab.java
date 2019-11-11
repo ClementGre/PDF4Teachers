@@ -45,8 +45,6 @@ public class LBFilesTab extends Tab {
 		setGraphic(Builders.buildImage(getClass().getResource("/img/PDF-Document.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(0, this);
 
-		openFile(new File(System.getProperty("user.home") + "/"));
-
 		setup();
 	}
 

@@ -6,6 +6,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 
 public class Builders {
 
@@ -61,6 +62,7 @@ public class Builders {
     }
 
     public static void secureAlert(Dialog alert){
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Builders.class.getResource("/App Logo.png")+""));
         alert.setOnShowing(new EventHandler<DialogEvent>() {
             @Override public void handle(DialogEvent e) {
                 new Thread(new Runnable() {

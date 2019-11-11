@@ -1,31 +1,61 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.beryx.jlink' version '2.12.0'
+    id 'org.beryx.jlink' version '2.16.3'
 }
 repositories{
     mavenCentral()
     jcenter()
 }
 dependencies{
-
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.16'
     compile (group: 'org.jfxtras', name: 'jmetro', version: '11.5.10'){
         exclude group: 'org.openjfx'
     }
 }
-
 javafx {
     version = "11.0.2"
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 mainClassName = "fr.themsou.main.Main"
+
+task javaPackager(type: Exec){
+    workingDir project.projectDir
+    commandLine = [
+            './jpackager',
+            'create-installer', "deb",
+            '--module-path', 'fr.themsou',
+            '--echo-mode',
+            '--name', "PDFTeacher",
+            '--app-image', "${buildDir}/image/PDFTeacher-lin",
+            '--output', "${buildDir}/package"
+    ]
+}
+task javaPackagerImage(type: Exec){
+    workingDir project.projectDir
+    commandLine = [
+            './jpackager',
+            'create-image',
+            '--name', 'PDFTeacher',
+            //'--main-jar', "pdf-teacher.jar",
+            '--class','Main',
+            '--module-path', "${buildDir}/libs/",
+            '--module', 'fr.themsou',
+            '--add-modules', 'fr.themsou',
+            //'--runtime-image', "${buildDir}/image/PDFTeacher-lin",
+            '--output', "${buildDir}/package",
+
+
+    ]
+}
+
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
         name = 'PDFTeacher'
     }
     targetPlatform('win', '/home/clement/bin/jdk-11-Windows/')
+    targetPlatform('lin', '/usr/lib/jvm/java-11-openjdk-amd64/')
     targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
 }
 

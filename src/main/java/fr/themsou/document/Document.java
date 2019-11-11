@@ -56,7 +56,7 @@ public class Document {
     public boolean renderPDFPages(){
 
         pages = new ArrayList<>();
-        rendered = new PDFPagesRender().render(file, 0, Main.settings.getMaxPages()-1);
+        rendered = new PDFPagesRender().render(file);
         if(rendered != null){
             totalPages = rendered.length;
             return true;

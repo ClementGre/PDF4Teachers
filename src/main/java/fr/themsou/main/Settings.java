@@ -8,14 +8,12 @@ import java.io.*;
 public class Settings {
 
     private int defaultZoom;
-    private int maxPages;
     private BooleanProperty autoSave = new SimpleBooleanProperty();
     private int regularSaving;
 
     public Settings(){
 
         defaultZoom = 100;
-        maxPages = 30;
         autoSave.set(false);
         regularSaving = -1;
 
@@ -32,8 +30,8 @@ public class Settings {
         new Thread(new Runnable() {
             @Override public void run() {
 
-                new File(System.getProperty("user.home") + "/.PDFTeacher/").mkdirs();
-                File settings = new File(System.getProperty("user.home") + "/.PDFTeacher/Settings.yml");
+                new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "").mkdirs();
+                File settings = new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "Settings.yml");
                 try{
                     if(settings.createNewFile()){ //file was created
                         saveSettings();
@@ -46,11 +44,6 @@ public class Settings {
                                 case "defaultZoom":
                                     try{
                                         defaultZoom = Integer.parseInt(line.split("=")[1]);
-                                    }catch(Exception ignored){}
-                                    break;
-                                case "maxPages":
-                                    try{
-                                        maxPages = Integer.parseInt(line.split("=")[1]);
                                     }catch(Exception ignored){}
                                     break;
                                 case "autoSave":
@@ -78,16 +71,14 @@ public class Settings {
         new Thread(new Runnable() {
             @Override public void run() {
 
-                new File(System.getProperty("user.home") + "/.PDFTeacher/").mkdirs();
-                File settings = new File(System.getProperty("user.home") + "/.PDFTeacher/Settings.yml");
+                new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "").mkdirs();
+                File settings = new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "Settings.yml");
 
                 try{
                     settings.createNewFile();
                     BufferedWriter writer = new BufferedWriter(new FileWriter(settings, false));
 
                     writer.write("defaultZoom=" + defaultZoom);
-                    writer.newLine();
-                    writer.write("maxPages=" + maxPages);
                     writer.newLine();
                     writer.write("autoSave=" + autoSave.get());
                     writer.newLine();
@@ -107,18 +98,11 @@ public class Settings {
     public int getDefaultZoom(){
         return defaultZoom;
     }
-    public int getMaxPages(){
-        return maxPages;
-    }
     public boolean isAutoSave(){
         return autoSave.get();
     }
     public void setDefaultZoom(int zoom){
         this.defaultZoom = zoom;
-        saveSettings();
-    }
-    public void setMaxPages(int maxPages){
-        this.maxPages = maxPages;
         saveSettings();
     }
     public void setAutoSaving(boolean autoSave){

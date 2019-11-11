@@ -3,14 +3,13 @@ package fr.themsou.document.render.export;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -38,6 +37,7 @@ public class ExportWindow {
 
         window.initOwner(Main.window);
         window.initModality(Modality.WINDOW_MODAL);
+        window.getIcons().add(new Image(getClass().getResource("/App Logo.png")+""));
         window.setWidth(650);
         window.setHeight(450);
 

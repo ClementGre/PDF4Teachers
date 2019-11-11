@@ -1,7 +1,9 @@
 package fr.themsou.main;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import fr.themsou.devices.Devices;
 import fr.themsou.panel.Footerbar;
@@ -12,11 +14,12 @@ import fr.themsou.panel.LeftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
 import javafx.application.Application;
+import javafx.application.HostServices;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -48,6 +51,8 @@ public class Main extends Application {
 	public static Footerbar footerBar;
 	public static MenuBar menuBar;
 
+	public static HostServices hostServices;
+
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
 
@@ -67,16 +72,20 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window) throws Exception {
 
+		File dataFolder = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "");
+		boolean firstLaunch = !dataFolder.exists();
+
+		hostServices = getHostServices();
 
 		Main.window = window;
 		BorderPane root = new BorderPane(); // = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("main.fxml")));
-
 
 		Scene scene = new Scene(root, 1200, 675);
 
 		window.setMinWidth(700);
 		window.setMinHeight(393);
 		window.setTitle("PDF Teacher - Aucun document");
+		window.getIcons().add(new Image(getClass().getResource("" + File.separator + "App Logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);
 		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
@@ -141,13 +150,17 @@ public class Main extends Application {
 		userDataSaver.start();
 		mainScreen.repaint();
 
-	}
 
-	public static String getFileExtension(File file) {
-		String fileName = file.getName();
-		if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-			return fileName.substring(fileName.lastIndexOf(".")+1);
-		else return "";
+		if(firstLaunch){
+			InputStream docRes = getClass().getResourceAsStream(File.separator + "Documentation - PDFTeacher.pdf");
+			File doc = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "Documentation - PDFTeacher.pdf");
+			Files.copy(docRes, doc.getAbsoluteFile().toPath());
+			Main.mainScreen.openFile(doc);
+		}
+
+
+
+
 	}
 
 

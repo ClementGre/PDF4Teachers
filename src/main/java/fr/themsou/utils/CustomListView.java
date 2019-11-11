@@ -106,7 +106,7 @@ public class CustomListView {
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(alert);
                 alert.setTitle("Confirmation");
-                alert.setHeaderText("Êtes vous sûr de vouloir supprimer le document avec son édition ?");
+                alert.setHeaderText("Êtes vous sûr de vouloir supprimer le document et son édition ?");
                 alert.setContentText("Cette action est irréversible.");
 
                 Optional<ButtonType> result = alert.showAndWait();

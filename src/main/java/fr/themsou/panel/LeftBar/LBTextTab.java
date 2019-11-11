@@ -225,14 +225,11 @@ public class LBTextTab extends Tab {
 				}
 
 				PageRenderer page = Main.mainScreen.document.pages.get(0);
-				if (Main.mainScreen.document.getCurrentPage() != -1)
+				if(Main.mainScreen.document.getCurrentPage() != -1){
+					System.out.println("current page : " + Main.mainScreen.document.getCurrentPage());
 					page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+				}else System.out.println("no current page");
 
-				for (PageRenderer pagerenderer : Main.mainScreen.document.pages) {
-					if (pagerenderer.mouseY > 0 && pagerenderer.mouseY < pagerenderer.getHeight()) {
-						page = pagerenderer;
-					}
-				}
 
 				TextElement current = new TextElement(0, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
 						txtField.getText(), colorPicker.getValue(), page);

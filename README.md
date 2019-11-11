@@ -4,7 +4,7 @@
 
 ## PDFTeacher <En cours de développement>
 
-**Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisépent de corriger des copies PDF.**
+**Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 
 Elle est basée sur un système d'édition, vous pouvez éditer votre document et sauvegarder l'édition pour reprendre votre travil plus tard. Vous pouvez ensuite exporter le document sous la forme d'un nouveau fichier PDF.
 Les éditions sont composés de plusieurs éléments : Les commentaires (Texte), les Notes* et les formes géométriques (Carrés, ronds etc.)

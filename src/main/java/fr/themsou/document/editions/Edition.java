@@ -33,7 +33,7 @@ public class Edition {
 
     public void load(){
 
-        new File(System.getProperty("user.home") + "/.PDFTeacher/editions/").mkdirs();
+        new File(System.getProperty("user.home") + "/.PDFTeacher" + File.separator + "editions/").mkdirs();
 
         try{
             if(editFile.createNewFile()){ //file was created
