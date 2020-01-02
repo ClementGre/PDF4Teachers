@@ -37,7 +37,7 @@ public class ExportWindow {
 
         window.initOwner(Main.window);
         window.initModality(Modality.WINDOW_MODAL);
-        window.getIcons().add(new Image(getClass().getResource("/App Logo.png")+""));
+        window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         window.setWidth(650);
         window.setHeight(450);
 

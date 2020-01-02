@@ -28,11 +28,13 @@ public class TextElement extends Text implements Element {
 	private PageRenderer page;
 	private ObjectProperty<Font> realFont = new SimpleObjectProperty<>();
 
+	private int pageNumber = -1;
 	private int shiftX = 0;
 	private int shiftY = 0;
 
-	public TextElement(int x, int y, Font font, String text, Color color, PageRenderer page) {
+	public TextElement(int x, int y, Font font, String text, Color color, int pageNumber, PageRenderer page) {
 
+		this.pageNumber = pageNumber;
 		this.realX.set(x);
 		this.realY.set(y);
 
@@ -160,16 +162,15 @@ public class TextElement extends Text implements Element {
 
 		Font font = getFont(fontName, isItalic, isBold, (int) fontSize);
 
-		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), hasPage ? Main.mainScreen.document.pages.get(page) : null);
+		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? Main.mainScreen.document.pages.get(page) : null);
 
 	}
 	public static void readDataAndCreate(DataInputStream reader) throws IOException {
 
 		TextElement element = readDataAndGive(reader, true);
 
-		if(Main.mainScreen.document.pages.size() > element.page.getPage()){
+		if(Main.mainScreen.document.pages.size() > element.page.getPage())
 			Main.mainScreen.document.pages.get(element.page.getPage()).addElement(element);
-		}
 
 	}
 
@@ -260,5 +261,10 @@ public class TextElement extends Text implements Element {
 		}
 
 		return FontPosture.REGULAR;
+	}
+
+	@Override
+	public int getPageNumber() {
+		return pageNumber;
 	}
 }

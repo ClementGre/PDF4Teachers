@@ -34,7 +34,7 @@ public class AboutWindow extends Stage {
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/App Logo.png")+""));
+        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(550);
         setHeight(450);
         setMinWidth(550);
@@ -56,7 +56,7 @@ public class AboutWindow extends Stage {
 
         VBox vBox = new VBox();
 
-            ImageView logo = new ImageView(getClass().getResource(File.separator + "App Logo.png")+"");
+            ImageView logo = new ImageView(getClass().getResource(File.separator + "logo.png")+"");
             logo.setFitWidth(200);
             logo.setPreserveRatio(true);
 

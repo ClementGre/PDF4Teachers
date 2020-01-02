@@ -62,7 +62,7 @@ public class Builders {
     }
 
     public static void secureAlert(Dialog alert){
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Builders.class.getResource("/App Logo.png")+""));
+        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Builders.class.getResource("/logo.png")+""));
         alert.setOnShowing(new EventHandler<DialogEvent>() {
             @Override public void handle(DialogEvent e) {
                 new Thread(new Runnable() {

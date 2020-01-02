@@ -1,5 +1,6 @@
 package fr.themsou.document.render;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
 import javafx.beans.Observable;
@@ -85,7 +86,7 @@ public class PageRenderer extends Pane {
 
             elements.add(element);
             getChildren().add((Shape) element);
-            Main.mainScreen.document.edition.setUnsave();
+            Edition.setUnsave();
 
         }
     }
@@ -94,7 +95,7 @@ public class PageRenderer extends Pane {
         if(element != null){
             elements.remove(element);
             getChildren().remove((Shape) element);
-            Main.mainScreen.document.edition.setUnsave();
+            Edition.setUnsave();
         }
     }
 

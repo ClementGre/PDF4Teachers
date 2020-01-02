@@ -74,6 +74,9 @@ public class Document {
             i++;
         }
 
+        Main.mainScreen.vValueTemp = Main.mainScreen.getVvalue();
+        Main.mainScreen.setHvalue(0.5);
+
     }
     public void loadEdition(){
         this.edition = new Edition(file, this);

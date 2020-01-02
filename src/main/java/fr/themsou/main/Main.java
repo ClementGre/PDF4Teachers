@@ -85,7 +85,7 @@ public class Main extends Application {
 		window.setMinWidth(700);
 		window.setMinHeight(393);
 		window.setTitle("PDF Teacher - Aucun document");
-		window.getIcons().add(new Image(getClass().getResource("" + File.separator + "App Logo.png")+""));
+		window.getIcons().add(new Image(getClass().getResource("" + File.separator + "logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);
 		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
@@ -133,7 +133,6 @@ public class Main extends Application {
 
 //		SETUP DEVICES
 
-		devices.addKeyHandler(window.getScene());
 		devices.addMousePresedHandler(window.getScene());
 		devices.addMouseReleasedHandler(window.getScene());
 

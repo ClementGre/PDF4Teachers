@@ -1,20 +1,20 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.beryx.jlink' version '2.16.3'
+    id 'org.beryx.jlink' version '2.16.4'
 }
 repositories{
     mavenCentral()
     jcenter()
 }
 dependencies{
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.16'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
     compile (group: 'org.jfxtras', name: 'jmetro', version: '11.5.10'){
         exclude group: 'org.openjfx'
     }
 }
 javafx {
-    version = "11.0.2"
+    version = "13.0.1"
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 mainClassName = "fr.themsou.main.Main"
@@ -22,14 +22,17 @@ mainClassName = "fr.themsou.main.Main"
 task javaPackager(type: Exec){
     workingDir project.projectDir
     commandLine = [
+            'jpackage'
+    ]
+    /*commandLine = [
             './jpackager',
-            'create-installer', "deb",
-            '--module-path', 'fr.themsou',
-            '--echo-mode',
+            'create-installer', 'pkg',
+            '--class', 'fr.themsou.Main',
             '--name', "PDFTeacher",
             '--app-image', "${buildDir}/image/PDFTeacher-lin",
-            '--output', "${buildDir}/package"
-    ]
+            '--input', "${buildDir}/image/PDFTeacher-lin",
+            '--output', "${buildDir}/packagement"
+    ]*/
 }
 task javaPackagerImage(type: Exec){
     workingDir project.projectDir
@@ -37,15 +40,10 @@ task javaPackagerImage(type: Exec){
             './jpackager',
             'create-image',
             '--name', 'PDFTeacher',
-            //'--main-jar', "pdf-teacher.jar",
-            '--class','Main',
-            '--module-path', "${buildDir}/libs/",
-            '--module', 'fr.themsou',
-            '--add-modules', 'fr.themsou',
-            //'--runtime-image', "${buildDir}/image/PDFTeacher-lin",
-            '--output', "${buildDir}/package",
-
-
+            '-j','PDFTeacher.jar',
+            '-c', 'fr.themsou.Main',
+            '--input', "${buildDir}",
+            '--output', "${buildDir}/packagement"
     ]
 }
 
@@ -54,9 +52,9 @@ jlink {
     launcher {
         name = 'PDFTeacher'
     }
-    targetPlatform('win', '/home/clement/bin/jdk-11-Windows/')
-    targetPlatform('lin', '/usr/lib/jvm/java-11-openjdk-amd64/')
-    targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
+    //targetPlatform('win', '/home/clement/bin/jdk-11-Windows/')
+    targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13')
+    //targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
 }
 
 

@@ -19,8 +19,12 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class ExportRenderer {
 
@@ -31,50 +35,55 @@ public class ExportRenderer {
         editFile.createNewFile();
 
         PDDocument doc = PDDocument.load(file);
-        PDPage page = doc.getPage(0);
 
-        PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, false);
+        Element[] elements = Edition.simpleLoad(editFile);
 
-        PDRectangle pageSize = page.getBleedBox();
+        for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
 
+            PDPage page = doc.getPage(pageNumber);
+            PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, false);
+            PDRectangle pageSize = page.getBleedBox();
 
-        for(Element element : Edition.simpleLoad(editFile)){
+            for(Element element : elements){
 
-            if(element instanceof TextElement){
-                if(!textElements) continue;
+                if(element.getPageNumber() != pageNumber) continue;
 
-                TextElement txtElement = (TextElement) element;
+                if(element instanceof TextElement){
+                    if(!textElements) continue;
 
-                contentStream.beginText();
-                contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()),
-                                              (float) (pageSize.getHeight() - txtElement.getRealY() / 800.0 * pageSize.getHeight()) );
+                    TextElement txtElement = (TextElement) element;
 
-                Color color = (Color) txtElement.getFill();
-                contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()),
+                            (float) (pageSize.getHeight() - txtElement.getRealY() / 800.0 * pageSize.getHeight()));
 
-                boolean bold = false;
-                if(TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
-                boolean italic = false;
-                if(TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
+                    Color color = (Color) txtElement.getFill();
+                    contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
 
-                InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
-                contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize());
+                    boolean bold = false;
+                    if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
+                    boolean italic = false;
+                    if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
 
-                contentStream.showText(txtElement.getText());
+                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
+                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize());
 
-                contentStream.endText();
+                    contentStream.showText(txtElement.getText());
 
-            }/*else if(element instanceof NoteElement){
-                if(!notesElements) continue;
+                    contentStream.endText();
 
-            }else if(element instanceof DrawElement){
-                if(!drawElements) continue;
+                }/*else if(element instanceof NoteElement){
+                    if(!notesElements) continue;
 
-            }*/
+                }else if(element instanceof DrawElement){
+                    if(!drawElements) continue;
 
+                }*/
+            }
+            contentStream.close();
         }
 
-        contentStream.close();
+
 
         if(!new File(directory).exists()){
             if(mkdirs){

@@ -1,6 +1,10 @@
 package fr.themsou.panel;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.Objects;
+import java.util.Set;
+
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -14,12 +18,12 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.control.skin.ScrollPaneSkin;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -43,6 +47,13 @@ public class MainScreen extends ScrollPane {
 
 	private Label info = new Label();
 	private ProgressBar loader = new ProgressBar();
+
+	public boolean ctrlDown = false;
+
+	public boolean vVisibleTemp = false;
+	public boolean hVisibleTemp = false;
+	public double vValueTemp = 0;
+	public double hValueTemp = 0.5;
 
 	public MainScreen(int defaultPageWidth){
 
@@ -75,15 +86,6 @@ public class MainScreen extends ScrollPane {
 			info.setVisible(false);
 		}
 
-		pane.setOnScroll(new EventHandler<ScrollEvent>() {
-			@Override
-			public void handle(ScrollEvent e) {
-				if(e.isControlDown()){
-					if(e.getDeltaY() > 0) zoomMore();
-					if(e.getDeltaY() < 0) zoomLess();
-				}
-			}
-		});
 	}
 	public void setup(){
 
@@ -112,6 +114,62 @@ public class MainScreen extends ScrollPane {
 
 		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
+
+		addEventFilter(ScrollEvent.SCROLL, e -> {
+			if(e.isControlDown()){
+				ctrlDown = true;
+				e.consume();
+
+				if(e.getDeltaY() > 0) zoomMore();
+				if(e.getDeltaY() < 0) zoomLess();
+
+				setVvalue(vValueTemp);
+				setHvalue(hValueTemp);
+
+			}else ctrlDown = false;
+
+			boolean newVisible = getVerticalSB(Main.mainScreen).isVisible();
+			if(!vVisibleTemp && newVisible){
+				vVisibleTemp = true;
+				vValueTemp = 0.5;
+				setVvalue(0.5);
+			}
+			vVisibleTemp = newVisible;
+
+			newVisible = getHorizontalSB(Main.mainScreen).isVisible();
+			if(!hVisibleTemp && newVisible){
+				hVisibleTemp = true;
+				hValueTemp = 0.5;
+				setHvalue(0.5);
+			}
+			hVisibleTemp = newVisible;
+
+			vValueTemp = getVvalue();
+			hValueTemp = getHvalue();
+		});
+
+		setOnMouseMoved(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent e) {
+				ctrlDown = e.isControlDown();
+			}
+		});
+
+		vvalueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
+				if(!ctrlDown){
+					vValueTemp = newValue.doubleValue();
+				}
+			}
+		});
+		hvalueProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if(!ctrlDown){
+					hValueTemp = newValue.doubleValue();
+				}
+			}
+		});
 
 		zoom.addListener(new ChangeListener<Number>() {
 			@Override
@@ -305,5 +363,30 @@ public class MainScreen extends ScrollPane {
 		page.layoutXProperty().bind(pane.widthProperty().divide(2).subtract(page.widthProperty().divide(2)));
 
 		pane.getChildren().add(page);
+	}
+
+	private ScrollBar getHorizontalSB(final ScrollPane scrollPane) {
+		Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
+		for (final Node node : nodes) {
+			if (node instanceof ScrollBar) {
+				ScrollBar sb = (ScrollBar) node;
+				if(sb.getOrientation() == Orientation.HORIZONTAL){
+					return sb;
+				}
+			}
+		}
+		return null;
+	}
+	private ScrollBar getVerticalSB(final ScrollPane scrollPane) {
+		Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
+		for (final Node node : nodes) {
+			if (node instanceof ScrollBar) {
+				ScrollBar sb = (ScrollBar) node;
+				if(sb.getOrientation() == Orientation.VERTICAL){
+					return sb;
+				}
+			}
+		}
+		return null;
 	}
 }

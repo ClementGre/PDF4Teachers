@@ -1,5 +1,4 @@
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red)](LICENSE)
-[![Build Status](https://travis-ci.com/themsou/PDFTeacher.svg?branch=master)](https://travis-ci.com/themsou/PDFTeacher/)
 [![Release](https://img.shields.io/github/release/themsou/PDFTeacher.svg)](https://github.com/themsou/PDFTeacher/releases/)
 
 ## PDFTeacher <En cours de développement>
@@ -13,7 +12,7 @@ Les éditions sont composés de plusieurs éléments : Les commentaires (Texte),
 
 ## Les APIs
 
-L'application à été développé sous Java SE 11.
+L'application à été développé sous Java SE 8 (avec Swing) puis passée sous Java SE 11 et enfin sous Java SE 13.
 
 - J'utilise l'API PDF BOX pour générer des images à partir d'un fichier PDF ainsi que commons-logging et Font BOX qui lui sont nécessaires.
 - L'application, initialement basé sur Swing, a migré vers JavaFx pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings etc.).
@@ -28,7 +27,7 @@ Des releases seront aussi bientôt disponibles.
 La classe main se situe dans le package ``fr.themsou.main``
 Les classes du package ``fr.themsou.panel`` représentent toutes une partie de l'écran, elle etendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
 
-On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (La où s'affichera le document à éditer) et toutes les classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans Main. Les différents onglets permettrons respectivement de voir la liste des fichiers, ajouter du texte, des notes et des formes géométriques.
+On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et toutes les classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans Main. Les différents onglets permettrons respectivement de voir la liste des fichiers, ajouter du texte, des notes et des formes géométriques.
 
 **Classes pour gérer l'édition du document (``fr.themsou.panel.LeftBar``)**
 

@@ -1,7 +1,7 @@
 module fr.themsou {
 
-    requires pdfbox;
-    requires fontbox;
+    requires org.apache.pdfbox;
+    requires org.apache.fontbox;
     requires commons.logging;
 
     requires org.jfxtras.styles.jmetro;

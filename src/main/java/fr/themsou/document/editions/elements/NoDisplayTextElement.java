@@ -54,7 +54,7 @@ public class NoDisplayTextElement extends TreeItem{
 		writer.writeUTF(text);
 	}
 	public TextElement toRealTextElement(int x, int y, int page){
-		return new TextElement(x, y, font, text, color, Main.mainScreen.document.pages.get(page));
+		return new TextElement(x, y, font, text, color, page, Main.mainScreen.document.pages.get(page));
 	}
 	public static NoDisplayTextElement readDataAndGive(DataInputStream reader, boolean isFavorite) throws IOException {
 
@@ -83,11 +83,6 @@ public class NoDisplayTextElement extends TreeItem{
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
-			for (PageRenderer pagerenderer : Main.mainScreen.document.pages) {
-				if (pagerenderer.mouseY > 0 && pagerenderer.mouseY < pagerenderer.getHeight()) {
-					page = pagerenderer;
-				}
-			}
 
 			TextElement realElement = toRealTextElement(0, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
 			page.addElement(realElement);
