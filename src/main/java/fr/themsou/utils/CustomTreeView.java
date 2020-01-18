@@ -1,6 +1,7 @@
 package fr.themsou.utils;
 
 import fr.themsou.document.editions.elements.NoDisplayTextElement;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -45,7 +46,7 @@ public class CustomTreeView {
                         Text name = new Text(element.getText());
                         setStyle("-fx-padding: 5 15;");
                         name.setFill(element.getColor());
-                        name.setFont(new Font(element.getFont().getFamily(), 14));
+                        name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
                         setGraphic(name);
 
                         ContextMenu menu = getNewMenu(element);

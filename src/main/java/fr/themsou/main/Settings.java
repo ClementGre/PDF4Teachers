@@ -30,8 +30,8 @@ public class Settings {
         new Thread(new Runnable() {
             @Override public void run() {
 
-                new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "").mkdirs();
-                File settings = new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "Settings.yml");
+                new File(Main.dataFolder).mkdirs();
+                File settings = new File(Main.dataFolder + "Settings.yml");
                 try{
                     if(settings.createNewFile()){ //file was created
                         saveSettings();
@@ -71,8 +71,8 @@ public class Settings {
         new Thread(new Runnable() {
             @Override public void run() {
 
-                new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "").mkdirs();
-                File settings = new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher" + File.separator + "Settings.yml");
+                new File(Main.dataFolder).mkdirs();
+                File settings = new File(Main.dataFolder + "Settings.yml");
 
                 try{
                     settings.createNewFile();

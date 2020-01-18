@@ -16,8 +16,8 @@ public class UserData {
     }
     public void loadData(){
 
-        new File(System.getProperty("user.home") + "" + File.separator + ".PDFTeacher/").mkdirs();
-        File file = new File(System.getProperty("user.home") + "/.PDFTeacher/userData.hex");
+        new File(Main.dataFolder).mkdirs();
+        File file = new File(Main.dataFolder + "userData.hex");
 
         try{
             if(file.createNewFile()){ //file was created
@@ -50,8 +50,8 @@ public class UserData {
 
     public void saveData(){
 
-        new File(System.getProperty("user.home") + "/.PDFTeacher/").mkdirs();
-        File file = new File(System.getProperty("user.home") + "/.PDFTeacher/userData.hex");
+        new File(Main.dataFolder).mkdirs();
+        File file = new File(Main.dataFolder + "userData.hex");
 
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, false)));

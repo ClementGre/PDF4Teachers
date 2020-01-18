@@ -33,7 +33,7 @@ public class Edition {
 
     public void load(){
 
-        new File(System.getProperty("user.home") + "/.PDFTeacher" + File.separator + "editions/").mkdirs();
+        new File(Main.dataFolder + "editions").mkdirs();
 
         try{
             if(editFile.createNewFile()){ //file was created
@@ -92,7 +92,6 @@ public class Edition {
 
         if(Edition.isSave()) return;
 
-
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, false)));
 
@@ -114,7 +113,7 @@ public class Edition {
     }
     public static File getEditFile(File file){
 
-        return new File(System.getProperty("user.home") + "/.PDFTeacher/editions/" +  file.getParentFile().getAbsolutePath().replace("/", "!E") + "!E" + file.getName() + ".edit");
+        return new File(Main.dataFolder + "editions" + File.separator + file.getParentFile().getAbsolutePath().replace(File.separator, "!E").replace(":", "!E") + "!E" + file.getName() + ".edit");
 
     }
 

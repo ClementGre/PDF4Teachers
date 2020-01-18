@@ -21,9 +21,7 @@ import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class ExportRenderer {
@@ -35,13 +33,14 @@ public class ExportRenderer {
         editFile.createNewFile();
 
         PDDocument doc = PDDocument.load(file);
+        doc.getDocumentInformation().setCreationDate(Calendar.getInstance());
 
         Element[] elements = Edition.simpleLoad(editFile);
 
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
 
             PDPage page = doc.getPage(pageNumber);
-            PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, false);
+            PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
             PDRectangle pageSize = page.getBleedBox();
 
             for(Element element : elements){
@@ -107,16 +106,16 @@ public class ExportRenderer {
             }
         }
 
-        String uri = directory + "/" + customName;
+        String uri = directory + File.separator+ customName;
         if(customName.isEmpty()){
-            uri = directory + "/" + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(replace, by) + suffix + ".pdf";
+            uri = directory + File.separator + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(replace, by) + suffix + ".pdf";
         }
 
         if(new File(uri).exists() && !erase){
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle("Fichier existant");
-            alert.setHeaderText("Le fichier de destination \"" + uri.replace(directory + "/", "") + "\" existe déjà");
+            alert.setHeaderText("Le fichier de destination \"" + uri.replace(directory + File.separator, "") + "\" existe déjà");
             alert.setContentText("Voulez-vous l'écraser ?");
             ButtonType yesButton = new ButtonType("Écraser", ButtonBar.ButtonData.YES);
             ButtonType yesAlwaysButton = new ButtonType("Toujours écraser", ButtonBar.ButtonData.YES);
@@ -164,7 +163,6 @@ public class ExportRenderer {
                 }
             }
         }
-        System.out.println("save with uri : " + uri);
         doc.save(uri);
         doc.close();
         return 1;

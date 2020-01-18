@@ -24,6 +24,8 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
+import javax.swing.*;
+
 public class Main extends Application {
 
 	public static Stage window;
@@ -53,6 +55,8 @@ public class Main extends Application {
 
 	public static HostServices hostServices;
 
+	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator;
+
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
 
@@ -68,12 +72,16 @@ public class Main extends Application {
 
 	public static void main(String[] args){
 		launch(args);
+
 	}
 	@Override
 	public void start(Stage window) throws Exception {
+		if(System.getProperty("os.name").toLowerCase().contains("win")){
 
-		File dataFolder = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "");
-		boolean firstLaunch = !dataFolder.exists();
+			dataFolder = System.getenv("APPDATA") + File.separator + "PDFTeacher" + File.separator;
+		}
+
+		boolean firstLaunch = !new File(dataFolder).exists();
 
 		hostServices = getHostServices();
 
@@ -85,7 +93,7 @@ public class Main extends Application {
 		window.setMinWidth(700);
 		window.setMinHeight(393);
 		window.setTitle("PDF Teacher - Aucun document");
-		window.getIcons().add(new Image(getClass().getResource("" + File.separator + "logo.png")+""));
+		window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);
 		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
@@ -149,10 +157,10 @@ public class Main extends Application {
 		userDataSaver.start();
 		mainScreen.repaint();
 
-
 		if(firstLaunch){
-			InputStream docRes = getClass().getResourceAsStream(File.separator + "Documentation - PDFTeacher.pdf");
-			File doc = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "Documentation - PDFTeacher.pdf");
+
+			InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
+			File doc = new File(Main.dataFolder + "Documentation - PDFTeacher.pdf");
 			Files.copy(docRes, doc.getAbsoluteFile().toPath());
 			Main.mainScreen.openFile(doc);
 		}

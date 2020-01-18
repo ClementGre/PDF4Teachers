@@ -33,7 +33,7 @@ public class CustomListView {
                 if(file != null) {
                     VBox pane = new VBox();
                     Text name = new Text(file.getName().replace(".pdf", ""));
-                    Text path = new Text(file.getAbsolutePath().replaceFirst(System.getProperty("user.home"),"~").replace(file.getName(), ""));
+                    Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
                     setStyle("-fx-padding: 5 15;");
                     path.setFont(new Font(10));
                     pane.getChildren().addAll(name, path);

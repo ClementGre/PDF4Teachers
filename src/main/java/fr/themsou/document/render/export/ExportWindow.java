@@ -75,7 +75,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
             HBox filePathPane = new HBox();
-                TextField filePath = new TextField(files.get(0).getParentFile().getPath() + "/");
+                TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
                 filePath.setPromptText("Chemin du dossier d'exportation");
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
@@ -137,7 +137,7 @@ public class ExportWindow {
 
                 File file = chooser.showDialog(Main.window);
                 if(file != null){
-                    filePath.setText(file.getAbsolutePath() + "/");
+                    filePath.setText(file.getAbsolutePath() + File.separator);
                 }
             }
         });
@@ -206,7 +206,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
         HBox filePathPane = new HBox();
-        TextField filePath = new TextField(files.get(0).getParentFile().getPath() + "/");
+        TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
         filePath.setMinWidth(1);
         filePath.setMinHeight(30);
         HBox.setHgrow(filePath, Priority.ALWAYS);
@@ -275,7 +275,7 @@ public class ExportWindow {
 
                 File file = chooser.showDialog(Main.window);
                 if(file != null){
-                    filePath.setText(file.getAbsolutePath() + "/");
+                    filePath.setText(file.getAbsolutePath() + File.separator);
                 }
             }
         });

@@ -15,4 +15,6 @@ module fr.themsou {
     requires java.desktop;
 
     exports fr.themsou.main;
+    exports fr.themsou.document;
+    exports fr.themsou.panel;
 }

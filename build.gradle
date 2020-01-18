@@ -17,6 +17,9 @@ javafx {
     version = "13.0.1"
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
 mainClassName = "fr.themsou.main.Main"
 
 task javaPackager(type: Exec){
@@ -24,7 +27,7 @@ task javaPackager(type: Exec){
     commandLine = [
             'jpackage'
     ]
-    /*commandLine = [
+    commandLine = [
             './jpackager',
             'create-installer', 'pkg',
             '--class', 'fr.themsou.Main',
@@ -32,7 +35,7 @@ task javaPackager(type: Exec){
             '--app-image', "${buildDir}/image/PDFTeacher-lin",
             '--input', "${buildDir}/image/PDFTeacher-lin",
             '--output', "${buildDir}/packagement"
-    ]*/
+    ]
 }
 task javaPackagerImage(type: Exec){
     workingDir project.projectDir
@@ -52,8 +55,8 @@ jlink {
     launcher {
         name = 'PDFTeacher'
     }
-    //targetPlatform('win', '/home/clement/bin/jdk-11-Windows/')
-    targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13')
+    targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-13.0.1.9-hotspot')
+    targetPlatform('lin', 'C:\\Program Files\\AdoptOpenJDK\\jre-13.0.1-LINUX')
     //targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
 }
 

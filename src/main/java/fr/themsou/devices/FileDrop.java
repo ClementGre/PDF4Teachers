@@ -25,15 +25,15 @@ public class FileDrop extends DropTarget {
 	@SuppressWarnings("rawtypes")
 	public void dragEnter(DropTargetDragEvent e){
 		
-		Transferable transférable = e.getTransferable();
-		DataFlavor[] types = transférable.getTransferDataFlavors();
+		Transferable transferable = e.getTransferable();
+		DataFlavor[] types = transferable.getTransferDataFlavors();
 		
 		
         for(DataFlavor type : types){
            try{
               if(type.equals(DataFlavor.javaFileListFlavor)){
             	 e.acceptDrag(DnDConstants.ACTION_COPY);
-                 Iterator iterator = ((List) transférable.getTransferData(type)).iterator();
+                 Iterator iterator = ((List) transferable.getTransferData(type)).iterator();
                  File file = (File) iterator.next();
                  
                  if(isFileAcceptable(file)){
@@ -58,15 +58,15 @@ public class FileDrop extends DropTarget {
 	@SuppressWarnings("rawtypes")
 	public void drop(DropTargetDropEvent e){
 		
-		Transferable transférable = e.getTransferable();
-		DataFlavor[] types = transférable.getTransferDataFlavors();
+		Transferable transferable = e.getTransferable();
+		DataFlavor[] types = transferable.getTransferDataFlavors();
 		
         for(DataFlavor type : types){
            try{
               if(type.equals(DataFlavor.javaFileListFlavor)){
             	 e.acceptDrop(DnDConstants.ACTION_COPY);
 
-				  for(Object o : (List) transférable.getTransferData(type)){
+				  for(Object o : (List) transferable.getTransferData(type)){
 					  File file = (File) o;
 
 					  if (isFileAcceptable(file)) {

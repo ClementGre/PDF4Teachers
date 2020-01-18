@@ -64,48 +64,39 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		setStyle("-fx-background-color: #2B2B2B;");
 
-		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar/ouvrir.png")+"", 0, 0));
+		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
 		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
 
-		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "directory.png")+"", 0, 0));
+		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/directory.png")+"", 0, 0));
 		fichier2OpenDir.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+O"));
 
-		fichier3Clear.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "vider.png")+"", 0, 0));
+		fichier3Clear.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/vider.png")+"", 0, 0));
 		fichier3Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
 		fichier3Clear.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
 
-		fichier4Save.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "sauvegarder.png")+"", 0, 0));
+		fichier4Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
 		fichier4Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
 		fichier4Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier5Delete.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "supprimer.png")+"", 0, 0));
+		fichier5Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
 		fichier5Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
 		fichier5Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier6Close.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar" + File.separator + "fermer.png")+"", 0, 0));
+		fichier6Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));
 		fichier6Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
 		fichier6Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 
-		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img/MenuBar/memeNom.png")+"", 0, 0));
+		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
 		fichier7SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("" + File.separator + "img" + File.separator + "MenuBar/exporter.png")+"", 0, 0));
+		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
 		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
 		fichier8Export.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier9ExportAll.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
 		fichier9ExportAll.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+E"));
 		fichier9ExportAll.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
-
-
-
-		Main.lbFilesTab.files.itemsProperty().addListener(new ChangeListener<ObservableList<File>>() {
-			@Override
-			public void changed(ObservableValue<? extends ObservableList<File>> observable, ObservableList<File> oldValue, ObservableList<File> newValue) {
-				System.out.println("change");
-			}
-		});
 
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6Close, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
 
@@ -275,7 +266,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 					InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
 
-					File doc = new File(System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator + "" +
+					File doc = new File(Main.dataFolder + "" +
 							"Documentation - PDFTeacher.pdf");
 					if(!doc.exists()) Files.copy(docRes, doc.getAbsoluteFile().toPath());
 

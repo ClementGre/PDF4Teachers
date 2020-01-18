@@ -47,6 +47,7 @@ public class TextElement extends Text implements Element {
 			return translateFont(getRealFont());
 		}, realFontProperty(), Main.mainScreen.zoomProperty()));
 
+
 		setBoundsType(TextBoundsType.VISUAL);
 
 		if(page == null) return;

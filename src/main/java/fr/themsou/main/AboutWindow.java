@@ -30,15 +30,15 @@ public class AboutWindow extends Stage {
     public AboutWindow(){
 
         VBox root = new VBox();
-        Scene scene = new Scene(root, 550, 450);
+        Scene scene = new Scene(root, 400, 500);
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(550);
-        setHeight(450);
-        setMinWidth(550);
-        setMinHeight(450);
+        setWidth(400);
+        setHeight(500);
+        setMinWidth(400);
+        setMinHeight(500);
         setTitle("PDF Teacher - À Propos");
         setResizable(false);
         setScene(scene);
@@ -56,7 +56,7 @@ public class AboutWindow extends Stage {
 
         VBox vBox = new VBox();
 
-            ImageView logo = new ImageView(getClass().getResource(File.separator + "logo.png")+"");
+            ImageView logo = new ImageView(getClass().getResource("/logo.png")+"");
             logo.setFitWidth(200);
             logo.setPreserveRatio(true);
 

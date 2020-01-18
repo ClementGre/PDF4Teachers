@@ -69,7 +69,7 @@ public class NoDisplayTextElement extends TreeItem{
 
 		FontWeight fontWeight = isBold ? FontWeight.BOLD : FontWeight.NORMAL;
 		FontPosture fontPosture = isItalic ? FontPosture.ITALIC : FontPosture.REGULAR;
-		Font font = Font.font(fontName, fontWeight, fontPosture, fontSize);
+		Font font = TextElement.getFont(fontName, isBold, isItalic, (int) fontSize);
 
 		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), isFavorite);
 
@@ -83,6 +83,8 @@ public class NoDisplayTextElement extends TreeItem{
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
+
+			System.out.println(font);
 
 			TextElement realElement = toRealTextElement(0, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
 			page.addElement(realElement);
