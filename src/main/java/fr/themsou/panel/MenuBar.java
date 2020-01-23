@@ -36,20 +36,21 @@ import java.util.List;
 public class MenuBar extends javafx.scene.control.MenuBar{
 
 	Menu fichier = new Menu("Fichier");
-	MenuItem fichier1Open = new MenuItem("Ouvrir un fichier    ");
+	MenuItem fichier1Open = new MenuItem("Ouvrir un·des fichiers    ");
 	MenuItem fichier2OpenDir = new MenuItem("Ouvrir un dossier    ");
 	MenuItem fichier3Clear = new MenuItem("Vider la liste     ");
 	MenuItem fichier4Save = new MenuItem("Sauvegarder l'édition    ");
 	MenuItem fichier5Delete = new MenuItem("Supprimer l'édition     ");
 	MenuItem fichier6Close = new MenuItem("Fermer le fichier     ");
 	MenuItem fichier7SameName = new Menu("Éditions du même nom     ");
-	MenuItem fichier8Export = new MenuItem("Exporter     ");
+	MenuItem fichier8Export = new MenuItem("Exporter (Regénérer le PDF)     ");
 	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
 
 	Menu preferences = new Menu("Préférences");
 	MenuItem preferences1Zoom = new MenuItem("Zoom par défaut     ");
 	RadioMenuItem preferences2Save = new RadioMenuItem("Sauvegarde auto     ");
 	MenuItem preferences3Regular = new MenuItem("Sauvegarde régulière     ");
+	RadioMenuItem preferences4Restore = new RadioMenuItem("Toujours restaurer la session précédente     ");
 
 	Menu apropos = new Menu();
 	Menu aide = new Menu("Aide");
@@ -117,11 +118,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
 		preferences2Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
 		preferences3Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		//preferences4Restore.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+
 		preferences2Save.selectedProperty().set(Main.settings.isAutoSave());
+		preferences4Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
+
 		Main.settings.autoSavingProperty().bind(preferences2Save.selectedProperty());
+		Main.settings.restoreLastSessionProperty().bind(preferences4Restore.selectedProperty());
 
-		preferences.getItems().addAll(preferences1Zoom, preferences2Save, preferences3Regular);
-
+		preferences.getItems().addAll(preferences1Zoom, preferences2Save, preferences3Regular, preferences4Restore);
 
 		aide.getItems().add(aide1Doc);
 
@@ -139,6 +144,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					File[] files = new File[listFiles.size()];
 					files = listFiles.toArray(files);
 					Main.lbFilesTab.openFiles(files);
+					if(files.length == 1){
+						Main.mainScreen.openFile(files[0]);
+					}
+
 				}
 
 			}
@@ -152,7 +161,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				File file = chooser.showDialog(Main.window);
 				if(file != null) {
-					Main.lbFilesTab.openFile(file);
+					Main.lbFilesTab.openFiles(new File[]{file});
 				}
 
 			}

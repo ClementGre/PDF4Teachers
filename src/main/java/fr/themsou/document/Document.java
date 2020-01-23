@@ -50,7 +50,6 @@ public class Document {
 
     public Document(File file){
         this.file = file;
-
     }
 
     public boolean renderPDFPages(){
@@ -76,6 +75,8 @@ public class Document {
 
         Main.mainScreen.vValueTemp = Main.mainScreen.getVvalue();
         Main.mainScreen.setHvalue(0.5);
+
+        Main.settings.setOpenedFile(file);
 
     }
     public void loadEdition(){

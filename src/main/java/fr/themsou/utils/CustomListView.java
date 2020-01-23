@@ -46,9 +46,7 @@ public class CustomListView {
                     pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
                         public void handle(MouseEvent mouseEvent){
                             if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-                                if(mouseEvent.getClickCount() == 2){
-                                    Main.mainScreen.openFile(file);
-                                }
+                                Main.mainScreen.openFile(file);
                             }
                         }
                     });

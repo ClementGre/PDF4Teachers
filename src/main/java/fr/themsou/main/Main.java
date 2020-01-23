@@ -13,6 +13,7 @@ import fr.themsou.panel.LeftBar.LBPaintTab;
 import fr.themsou.panel.LeftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
+import fr.themsou.utils.StringUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.event.EventHandler;
@@ -35,6 +36,7 @@ public class Main extends Application {
 	public static UserData userData;
 
 	public static boolean click = false;
+	public static boolean hasToClose = false;
 	
 //		MAIN
 	
@@ -99,9 +101,11 @@ public class Main extends Application {
 		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
 			@Override
 			public void handle(javafx.stage.WindowEvent e) {
+				hasToClose = true;
 				if(!mainScreen.closeFile(!settings.isAutoSave())){
 					userData.saveData();
 					e.consume();
+					hasToClose = false;
 					return;
 				}
 				userData.saveData();
@@ -163,6 +167,11 @@ public class Main extends Application {
 			File doc = new File(Main.dataFolder + "Documentation - PDFTeacher.pdf");
 			Files.copy(docRes, doc.getAbsoluteFile().toPath());
 			Main.mainScreen.openFile(doc);
+		}
+
+
+		if(settings.getOpenedFile() != null){
+			mainScreen.openFile(settings.getOpenedFile());
 		}
 
 

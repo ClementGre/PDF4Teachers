@@ -1,25 +1,39 @@
 package fr.themsou.main;
+import fr.themsou.utils.StringUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Settings {
 
     private int defaultZoom;
     private BooleanProperty autoSave = new SimpleBooleanProperty();
     private int regularSaving;
+    private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
+    private File[] openedFiles;
+    private File openedFile;
 
     public Settings(){
 
         defaultZoom = 100;
         autoSave.set(false);
         regularSaving = -1;
+        restoreLastSession.set(true);
+        openedFiles = new File[]{};
+        openedFile = null;
 
         loadSettings();
 
         autoSavingProperty().addListener(new ChangeListener<Boolean>() {
+            @Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                saveSettings();
+            }
+        });
+        restoreLastSessionProperty().addListener(new ChangeListener<Boolean>() {
             @Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 saveSettings();
             }
@@ -33,6 +47,10 @@ public class Settings {
                 new File(Main.dataFolder).mkdirs();
                 File settings = new File(Main.dataFolder + "Settings.yml");
                 try{
+
+                    List<File> lastFiles = new ArrayList<>();
+                    File lastFile = null;
+
                     if(settings.createNewFile()){ //file was created
                         saveSettings();
                     }else{ // file already exist
@@ -40,25 +58,57 @@ public class Settings {
 
                         String line;
                         while((line = reader.readLine()) != null) {
+
+                            String value = StringUtils.removeBefore(line, '=');
+
                             switch(line.split("=")[0]){
                                 case "defaultZoom":
                                     try{
-                                        defaultZoom = Integer.parseInt(line.split("=")[1]);
+                                        defaultZoom = Integer.parseInt(value);
                                     }catch(Exception ignored){}
-                                    break;
+                                break;
                                 case "autoSave":
                                     try{
-                                        autoSave.set(Boolean.parseBoolean(line.split("=")[1]));
+                                        autoSave.set(Boolean.parseBoolean(value));
                                     }catch(Exception ignored){}
-                                    break;
+                                break;
                                 case "regularSaving":
                                     try{
-                                        regularSaving = Integer.parseInt(line.split("=")[1]);
+                                        regularSaving = Integer.parseInt(value);
                                     }catch(Exception ignored){}
-                                    break;
+                                break;
+                                case "restoreLastSession":
+                                    try{
+                                        restoreLastSession.set(Boolean.parseBoolean(value));
+                                    }catch(Exception ignored){}
+                                break;
+                                case "openedFiles":
+                                    try{
+                                        for(String filePath : value.split(";/;")){
+                                            if(new File(filePath).exists()){
+                                                lastFiles.add(new File(filePath));
+                                            }
+                                        }
+
+                                    }catch(Exception ignored){}
+                                break;
+                                case "openedFile":
+                                    try{
+                                        System.out.println(value);
+                                        if(new File(value).exists()) lastFile = new File(value);
+                                    }catch(Exception ignored){}
+                                break;
                             }
                         }
                         reader.close();
+
+                        if(restoreLastSession.get()){
+                            openedFiles = new File[lastFiles.size()];
+                            openedFiles = lastFiles.toArray(openedFiles);
+                            openedFile = lastFile;
+                        }
+
+
                     }
                 }catch (IOException e){ e.printStackTrace(); }
 
@@ -83,6 +133,21 @@ public class Settings {
                     writer.write("autoSave=" + autoSave.get());
                     writer.newLine();
                     writer.write("regularSaving=" + regularSaving);
+                    writer.newLine();
+                    writer.write("restoreLastSession=" + restoreLastSession.get());
+
+                    writer.newLine();
+                    writer.write("openedFiles=");
+                    for(File file : openedFiles){
+                        writer.write(file.getAbsolutePath() + ";/;");
+                    }
+
+                    writer.newLine();
+                    if(openedFile != null){
+                        writer.write("openedFile=" + openedFile.getAbsolutePath());
+                    }else{
+                        writer.write("openedFile=");
+                    }
 
                     writer.flush();
                     writer.close();
@@ -112,11 +177,38 @@ public class Settings {
     public BooleanProperty autoSavingProperty(){
         return this.autoSave;
     }
+
     public int getRegularSaving() {
         return regularSaving;
     }
     public void setRegularSaving(int regularSaving) {
         this.regularSaving = regularSaving;
+        saveSettings();
+    }
+
+    public boolean isRestoreLastSession() {
+        return restoreLastSession.get();
+    }
+    public BooleanProperty restoreLastSessionProperty() {
+        return restoreLastSession;
+    }
+    public void setRestoreLastSession(boolean restoreLastSession) {
+        this.restoreLastSession.set(restoreLastSession);
+        saveSettings();
+    }
+
+    public File[] getOpenedFiles() {
+        return openedFiles;
+    }
+    public void setOpenedFiles(File[] openedFiles) {
+        this.openedFiles = openedFiles;
+        saveSettings();
+    }
+    public File getOpenedFile() {
+        return openedFile;
+    }
+    public void setOpenedFile(File openedFile) {
+        this.openedFile = openedFile;
         saveSettings();
     }
 }

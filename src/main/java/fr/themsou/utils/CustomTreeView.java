@@ -54,7 +54,7 @@ public class CustomTreeView {
 
                         setOnMouseClicked(new EventHandler<MouseEvent>(){
                             public void handle(MouseEvent mouseEvent){
-                                if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() >= 2){
+                                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
                                     element.addToDocument();
                                 }
                             }

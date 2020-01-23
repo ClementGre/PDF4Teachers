@@ -42,6 +42,8 @@ public class MainScreen extends ScrollPane {
 
 
 	public Document tmpDocument;
+	private boolean finishedLoading = false;
+
 	public Document document;
 	public Pane pane = new Pane();
 
@@ -182,24 +184,51 @@ public class MainScreen extends ScrollPane {
 			return status.get() == -1 ? "PDF Teacher - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF Teacher - Aucun document";
 		}, status, Edition.isSaveProperty()));
 
+
+
 	}
 	public void openFile(File file){
+
+		if(tmpDocument != null){
+			Alert alert = new Alert(Alert.AlertType.INFORMATION);
+			new JMetro(alert.getDialogPane(), Style.LIGHT);
+			Builders.secureAlert(alert);
+			alert.setAlertType(Alert.AlertType.ERROR);
+			alert.setTitle("Erreur");
+			alert.setHeaderText("Impossible d'ouvrir le document !");
+			alert.setContentText("Un autre document est déjà en train de charger");
+
+			alert.show();
+			return;
+		}
 
 		if(!closeFile(!Main.settings.isAutoSave())){
 			return;
 		}
-
-		new Thread(new Runnable() {
-			public void run(){
-
-			}
-		}, "loader").start();
 
 		setCursor(Cursor.WAIT);
         status.set(1);
 		repaint();
 		Main.footerBar.repaint();
 
+		finishedLoading = false;
+
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try{
+					Thread.sleep(10000);
+					if(!finishedLoading){
+						Platform.runLater(new Runnable() {
+							public void run() {
+								failOpen();
+							}
+						});
+					}
+
+				}catch(InterruptedException e){ e.printStackTrace(); }
+			}
+		}, "loader").start();
 
 		new Thread(new Runnable() {
 			@Override
@@ -209,12 +238,13 @@ public class MainScreen extends ScrollPane {
 
 				Platform.runLater(new Runnable() {
 					public void run() {
+						if(tmpDocument == null) return;
 						if(tmpDocument.hasRendered()){
 							finishOpen();
 						}else{
 							failOpen();
 						}
-
+						finishedLoading = true;
 					}
 				});
 			}
@@ -223,6 +253,7 @@ public class MainScreen extends ScrollPane {
 	}
 
 	public void finishOpen(){
+
 
 		this.document = this.tmpDocument;
 		tmpDocument = null;
@@ -280,6 +311,7 @@ public class MainScreen extends ScrollPane {
 
 		repaint();
 		Main.footerBar.repaint();
+		if(!Main.hasToClose) Main.settings.setOpenedFile(null);
 
 		return true;
 	}

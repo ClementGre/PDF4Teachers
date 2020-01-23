@@ -89,9 +89,15 @@ public class LBFilesTab extends Tab {
 			}
 		});
 
+		// import last session opened files
+
+		if(Main.settings.getOpenedFiles() != null){
+			files.getItems().addAll(Main.settings.getOpenedFiles());
+		}
+
 	}
 
-	public void openFile(File file){
+	private void openFile(File file){
 		
 		if(!file.isDirectory()){
 			if(isFilePdf(file) && !files.getItems().contains(file)){
@@ -112,6 +118,8 @@ public class LBFilesTab extends Tab {
 		for(File file : files){
 			openFile(file);
 		}
+		updateOpenFilesList();
+
 	}
 	public void clearFiles(boolean confirm){
 		/*if(Main.mainScreen.getStatus() == -1){
@@ -120,6 +128,7 @@ public class LBFilesTab extends Tab {
 			}
 		}*/
 		files.getItems().clear();
+		updateOpenFilesList();
 	}
 	public void removeFile(int file, boolean confirm){
 		if(Main.mainScreen.getStatus() == -1){
@@ -128,6 +137,7 @@ public class LBFilesTab extends Tab {
 			}
 		}
 		files.getItems().remove(file);
+		updateOpenFilesList();
 
 	}
 	public void removeFile(File file, boolean confirm){
@@ -137,6 +147,7 @@ public class LBFilesTab extends Tab {
 			}
 		}*/
 		files.getItems().remove(file);
+		updateOpenFilesList();
 	}
 	
 	private boolean isFilePdf(File file) {
@@ -146,6 +157,15 @@ public class LBFilesTab extends Tab {
         	ext = fileName.substring(fileName.lastIndexOf(".") + 1);
 
 		return ext.equals("pdf");
+	}
+
+	private void updateOpenFilesList(){
+
+		File[] openedFiles = new File[Main.lbFilesTab.files.getItems().size()];
+		openedFiles = Main.lbFilesTab.files.getItems().toArray(openedFiles);
+
+		Main.settings.setOpenedFiles(openedFiles);
+
 	}
 
 	

@@ -74,7 +74,7 @@ public class FileDrop extends DropTarget {
 						  if (component == 1) {
 							  Main.mainScreen.openFile(file);
 						  } else if (component == 2) {
-							  Main.lbFilesTab.openFile(file);
+							  Main.lbFilesTab.openFiles(new File[]{file});
 						  }
 					  }
 

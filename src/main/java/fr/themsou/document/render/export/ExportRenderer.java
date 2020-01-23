@@ -33,7 +33,7 @@ public class ExportRenderer {
         editFile.createNewFile();
 
         PDDocument doc = PDDocument.load(file);
-        doc.getDocumentInformation().setCreationDate(Calendar.getInstance());
+        doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
 
         Element[] elements = Edition.simpleLoad(editFile);
 

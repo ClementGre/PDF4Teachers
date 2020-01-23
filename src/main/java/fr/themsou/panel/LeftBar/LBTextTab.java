@@ -229,7 +229,7 @@ public class LBTextTab extends Tab {
 					page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
 
-				TextElement current = new TextElement(0, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
+				TextElement current = new TextElement(30, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
 						txtField.getText(), colorPicker.getValue(), page.getPage(), page);
 
 

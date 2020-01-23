@@ -86,7 +86,7 @@ public class NoDisplayTextElement extends TreeItem{
 
 			System.out.println(font);
 
-			TextElement realElement = toRealTextElement(0, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
+			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
 			page.addElement(realElement);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}
