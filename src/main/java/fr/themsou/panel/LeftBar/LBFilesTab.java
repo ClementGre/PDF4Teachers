@@ -1,34 +1,16 @@
 package fr.themsou.panel.LeftBar;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.CustomListView;
-import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Tab;
-import javafx.scene.image.Image;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Border;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.*;
-
-import javax.swing.*;
 
 public class LBFilesTab extends Tab {
 
@@ -51,7 +33,7 @@ public class LBFilesTab extends Tab {
 	public void setup(){
 		files.setStyle("-fx-border-width: 0px;");
 		files.setPrefWidth(270);
-		new CustomListView(files);
+		new LBFilesListView(files);
 
 		files.setOnDragOver(new EventHandler<DragEvent>(){
 			@Override
@@ -114,10 +96,11 @@ public class LBFilesTab extends Tab {
 		}
 	}
 	public void openFiles(File[] files){
-		
+
 		for(File file : files){
 			openFile(file);
 		}
+
 		updateOpenFilesList();
 
 	}

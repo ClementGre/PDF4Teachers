@@ -42,7 +42,7 @@ public class MainScreen extends ScrollPane {
 
 
 	public Document tmpDocument;
-	private boolean finishedLoading = false;
+	private boolean finishedLoading = true;
 
 	public Document document;
 	public Pane pane = new Pane();
@@ -189,7 +189,7 @@ public class MainScreen extends ScrollPane {
 	}
 	public void openFile(File file){
 
-		if(tmpDocument != null){
+		if(tmpDocument != null || !finishedLoading){
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			new JMetro(alert.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(alert);
@@ -206,12 +206,11 @@ public class MainScreen extends ScrollPane {
 			return;
 		}
 
+		finishedLoading = false;
 		setCursor(Cursor.WAIT);
         status.set(1);
 		repaint();
 		Main.footerBar.repaint();
-
-		finishedLoading = false;
 
 		new Thread(new Runnable() {
 			@Override
@@ -221,6 +220,7 @@ public class MainScreen extends ScrollPane {
 					if(!finishedLoading){
 						Platform.runLater(new Runnable() {
 							public void run() {
+								System.out.println("time out");
 								failOpen();
 							}
 						});
@@ -238,13 +238,12 @@ public class MainScreen extends ScrollPane {
 
 				Platform.runLater(new Runnable() {
 					public void run() {
-						if(tmpDocument == null) return;
+						if(tmpDocument == null || finishedLoading) return;
 						if(tmpDocument.hasRendered()){
 							finishOpen();
 						}else{
 							failOpen();
 						}
-						finishedLoading = true;
 					}
 				});
 			}
@@ -257,6 +256,7 @@ public class MainScreen extends ScrollPane {
 
 		this.document = this.tmpDocument;
 		tmpDocument = null;
+		finishedLoading = true;
 
 		status.set(-1);
 
@@ -274,6 +274,7 @@ public class MainScreen extends ScrollPane {
 	public void failOpen(){
 
 		this.tmpDocument = null;
+		finishedLoading = true;
 		status.set(2);
 		setCursor(Cursor.DEFAULT);
 		repaint();

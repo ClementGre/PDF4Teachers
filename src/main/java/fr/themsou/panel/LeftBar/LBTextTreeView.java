@@ -1,8 +1,9 @@
-package fr.themsou.utils;
+package fr.themsou.panel.LeftBar;
 
 import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
@@ -11,19 +12,16 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.w3c.dom.ls.LSOutput;
 
-public class CustomTreeView {
+public class LBTextTreeView {
 
-    public CustomTreeView(TreeView treeView){
+    public LBTextTreeView(TreeView treeView){
 
         treeView.setCellFactory(new Callback<TreeView, TreeCell>() {
             @Override public TreeCell call(TreeView param) {
@@ -34,8 +32,8 @@ public class CustomTreeView {
                 if(text != null) {
 
                     Text name = new Text(text);
-                    setStyle("-fx-padding: 5 15;");
                     name.setFont(new Font(14));
+                    setStyle("-fx-padding: 5 0;");
                     setGraphic(name);
 
                 }else{
@@ -43,11 +41,24 @@ public class CustomTreeView {
                     if(getTreeItem() instanceof NoDisplayTextElement){
                         NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
 
-                        Text name = new Text(element.getText());
-                        setStyle("-fx-padding: 5 15;");
-                        name.setFill(element.getColor());
-                        name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
-                        setGraphic(name);
+
+
+                        VBox nameParts = new VBox();
+                        String fullName = element.getText();
+                        int index = 0;
+                        while (index < fullName.length()) {
+                            String namePart = fullName.substring(index, Math.min(index + 35,fullName.length()));
+
+                            Text name = new Text(namePart);
+                            name.setFill(element.getColor());
+                            name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
+
+                            nameParts.getChildren().add(name);
+                            index += 35;
+                        }
+
+                        setGraphic(nameParts);
+                        setStyle("-fx-padding: 3 -15;");
 
                         ContextMenu menu = getNewMenu(element);
                         setContextMenu(menu);

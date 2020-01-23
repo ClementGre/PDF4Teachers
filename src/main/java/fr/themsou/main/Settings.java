@@ -94,7 +94,6 @@ public class Settings {
                                 break;
                                 case "openedFile":
                                     try{
-                                        System.out.println(value);
                                         if(new File(value).exists()) lastFile = new File(value);
                                     }catch(Exception ignored){}
                                 break;

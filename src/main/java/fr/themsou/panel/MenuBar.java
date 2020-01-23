@@ -3,6 +3,7 @@ package fr.themsou.panel;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.AboutWindow;
 import fr.themsou.main.Main;
+import fr.themsou.panel.LeftBar.LBFilesListView;
 import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -137,7 +138,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				final FileChooser chooser = new FileChooser();
 				chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
 				chooser.setTitle("Selectionner un ou plusieurs fichier");
-				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+				chooser.setInitialDirectory((LBFilesListView.lastDirChoosed.exists() ? LBFilesListView.lastDirChoosed : new File(System.getProperty("user.home"))));
 
 				List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
 				if(listFiles != null){
@@ -147,6 +148,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					if(files.length == 1){
 						Main.mainScreen.openFile(files[0]);
 					}
+					LBFilesListView.lastDirChoosed = files[0].getParentFile();
 
 				}
 
@@ -157,11 +159,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				final DirectoryChooser chooser = new DirectoryChooser();
 				chooser.setTitle("Selectionner un dossier");
-				chooser.setInitialDirectory(new File(System.getProperty("user.home")));
+				chooser.setInitialDirectory((LBFilesListView.lastDirChoosed.exists() ? LBFilesListView.lastDirChoosed : new File(System.getProperty("user.home"))));
 
 				File file = chooser.showDialog(Main.window);
 				if(file != null) {
 					Main.lbFilesTab.openFiles(new File[]{file});
+					LBFilesListView.lastDirChoosed = file.getParentFile();
 				}
 
 			}

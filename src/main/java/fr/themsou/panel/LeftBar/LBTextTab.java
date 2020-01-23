@@ -7,7 +7,6 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.CustomTreeView;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -34,7 +33,6 @@ import javafx.scene.text.FontWeight;
 import javafx.util.Callback;
 
 import java.io.File;
-import java.io.InputStream;
 import java.net.URL;
 
 @SuppressWarnings("serial")
@@ -260,7 +258,7 @@ public class LBTextTab extends Tab {
 		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(150));
 		treeView.setShowRoot(false);
 		treeView.setRoot(treeViewRoot);
-		new CustomTreeView(treeView);
+		new LBTextTreeView(treeView);
 
 		treeViewRoot.getChildren().addAll(Main.userData.favoritesText, Main.userData.lastsText);
 

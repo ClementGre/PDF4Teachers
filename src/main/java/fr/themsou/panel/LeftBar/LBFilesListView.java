@@ -1,8 +1,9 @@
-package fr.themsou.utils;
+package fr.themsou.panel.LeftBar;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -20,9 +21,11 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
 
-public class CustomListView {
+public class LBFilesListView {
 
-    public CustomListView(ListView listView){
+    public static File lastDirChoosed = new File(System.getProperty("user.home"));
+
+    public LBFilesListView(ListView listView){
 
         listView.setCellFactory(new Callback<ListView<File>, ListCell<File>>() {
             @Override public ListCell<File> call(ListView<File> arg0){
@@ -45,7 +48,7 @@ public class CustomListView {
 
                     pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
                         public void handle(MouseEvent mouseEvent){
-                            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
+                            if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2){
                                 Main.mainScreen.openFile(file);
                             }
                         }
