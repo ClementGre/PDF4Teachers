@@ -81,7 +81,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier4Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier5Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
-		fichier5Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Del"));
+		fichier5Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Suppr"));
 		fichier5Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
 		fichier6Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));

@@ -1,6 +1,8 @@
 package fr.themsou.panel.LeftBar;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
@@ -12,12 +14,14 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -27,8 +31,10 @@ public class LBFilesListView {
 
     public LBFilesListView(ListView listView){
 
-        listView.setCellFactory(new Callback<ListView<File>, ListCell<File>>() {
-            @Override public ListCell<File> call(ListView<File> arg0){
+
+
+        listView.setCellFactory(new Callback<ListView<File>, ListCell<File>>(){
+            @Override public ListCell<File> call(ListView<File> listView){
             return new ListCell<File>(){
             @Override protected void updateItem(File file, boolean bln) {
                 super.updateItem(file, bln);
@@ -38,6 +44,33 @@ public class LBFilesListView {
                     Text name = new Text(file.getName().replace(".pdf", ""));
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
                     setStyle("-fx-padding: 5 15;");
+
+                    if(Edition.getEditFile(file).exists()){
+                        name.setFont(Font.font(null, FontWeight.BOLD, 12));
+                        try{
+                            Element[] elements = Edition.simpleLoad(Edition.getEditFile(file));
+
+                            int textElements = 0; int noteElements = 0; int drawElements = 0;
+                            for(Element element : elements){
+                                if(element instanceof TextElement){
+                                    textElements++;
+                                }/*else if(element instanceof NoteElement){
+                                noteElements++;
+                            }else if(element instanceof DrawElement){
+                                drawElements++;
+                            }*/
+                            }
+                            path.setText(path.getText() + " | " + elements.length + " Éléments");
+                            setTooltip(new Tooltip(elements.length + " Éléments\n" + textElements + " Commentaires\n" + noteElements + " Notes\n" + drawElements + " Figures"));
+
+                        }catch(Exception e){}
+                    }else{
+                        name.setFont(Font.font(null, FontWeight.NORMAL, 12));
+                        path.setText(path.getText() + " | Non édité");
+                        setTooltip(new Tooltip("Non édité"));
+                    }
+
+
                     path.setFont(new Font(10));
                     pane.getChildren().addAll(name, path);
                     setGraphic(pane);
@@ -45,6 +78,8 @@ public class LBFilesListView {
                     ContextMenu menu = getNewMenu();
                     menu.setId(file.getAbsolutePath());
                     setContextMenu(menu);
+
+
 
                     pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
                         public void handle(MouseEvent mouseEvent){
@@ -54,12 +89,18 @@ public class LBFilesListView {
                         }
                     });
 
+                    listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            listView.refresh();
+                        }
+                    });
+
                 }else{
                     getChildren().clear();
                 }
             }};}
         });
-
     }
 
     public ContextMenu getNewMenu(){

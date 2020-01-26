@@ -4,6 +4,7 @@ import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.StringUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
@@ -45,20 +46,32 @@ public class LBTextTreeView {
 
                         VBox nameParts = new VBox();
                         String fullName = element.getText();
-                        int index = 0;
-                        while (index < fullName.length()) {
-                            String namePart = fullName.substring(index, Math.min(index + 35,fullName.length()));
-
-                            Text name = new Text(namePart);
-                            name.setFill(element.getColor());
-                            name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
-
-                            nameParts.getChildren().add(name);
-                            index += 35;
-                        }
 
                         setGraphic(nameParts);
                         setStyle("-fx-padding: 3 -15;");
+
+                        int index = 0;
+                        while(index < fullName.split(" ").length) {
+                            String namePart = fullName.split(" ")[index];
+                            Text name = new Text(namePart);
+                            index++;
+
+                            name.setFill(element.getColor());
+                            name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
+
+                            while(index < fullName.split(" ").length){
+                                String lastNamePart = namePart;
+                                namePart += " " + fullName.split(" ")[index];
+                                name.setText(namePart);
+
+                                if(name.getBoundsInParent().getWidth() > 235){
+                                    name.setText(lastNamePart);
+                                    break;
+                                }
+                                index++;
+                            }
+                            nameParts.getChildren().add(name);
+                        }
 
                         ContextMenu menu = getNewMenu(element);
                         setContextMenu(menu);
@@ -89,19 +102,25 @@ public class LBTextTreeView {
         MenuItem item4 = new MenuItem("Monter");
         MenuItem item5 = new MenuItem("Descendre");
         MenuItem item6 = new MenuItem("Vider la liste");
+        MenuItem item7 = new MenuItem("Ajouter aux éléments précédents");
 
-        if(element.isFavorite()){
+        if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
             item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.favoritesText.getChildren())));
             item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) >= Main.userData.favoritesText.getChildren().size()-1;}, Bindings.size(Main.userData.favoritesText.getChildren())));
-        }else{
+        }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
             item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.lastsText.getChildren())));
             item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) >= Main.userData.lastsText.getChildren().size()-1;}, Bindings.size(Main.userData.lastsText.getChildren())));
         }
 
 
         menu.getItems().addAll(item1, item2);
-        if(!element.isFavorite()) menu.getItems().add(item3);
-        menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
+
+        if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3);
+        if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item7);
+        else{
+            menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
+        }
+
         Builders.setMenuSize(menu);
 
         item1.setOnAction(new EventHandler<ActionEvent>() {
@@ -113,13 +132,17 @@ public class LBTextTreeView {
         item2.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
-                Main.lbTextTab.removeSavedElement(element);
+                if(element.getType() == NoDisplayTextElement.ONFILE_TYPE){
+                    element.getCores().delete();
+                }else{
+                    Main.lbTextTab.removeSavedElement(element);
+                }
             }
         });
         item3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e){
-                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), true));
+                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE));
             }
         });
         item4.setOnAction(new EventHandler<ActionEvent>() {
@@ -134,12 +157,18 @@ public class LBTextTreeView {
         });
         item6.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent e) {
-                if(element.isFavorite()){
+                if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
                     Main.lbTextTab.clearSavedFavoritesElements();
-                }else{
+                }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
                     Main.lbTextTab.clearSavedLastsElements();
                 }
 
+            }
+        });
+        item7.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e){
+                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE));
             }
         });
         return menu;

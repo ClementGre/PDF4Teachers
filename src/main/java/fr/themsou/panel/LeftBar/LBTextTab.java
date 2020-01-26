@@ -9,6 +9,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.ObjectPropertyBase;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -34,6 +36,7 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URL;
+import java.util.concurrent.Callable;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
@@ -42,18 +45,16 @@ public class LBTextTab extends Tab {
 
 	private ComboBox<String> fontCombo; String[] fontNames;
 	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
-
 	private ColorPicker colorPicker = new ColorPicker();
-
-	ToggleButton boldBtn = new ToggleButton("");
-	ToggleButton itBtn = new ToggleButton("");
-
+	private ToggleButton boldBtn = new ToggleButton("");
+	private ToggleButton itBtn = new ToggleButton("");
 	private TextField txtField = new TextField();
 	private Button deleteBtn = new Button("Supprimer");
 	private Button newBtn = new Button("Nouveau");
 
 	private TreeView treeView = new TreeView<>();
 	private TreeItem<String> treeViewRoot = new TreeItem<>();
+	TreeItem<String> onFileText = new TreeItem<>("Éléments sur ce document");
 
 	private boolean selectedIsNew = false;
 
@@ -143,27 +144,18 @@ public class LBTextTab extends Tab {
 		pane.getChildren().add(newBtn);
 		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
 
-		txtField.setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override public void handle(KeyEvent e) {
-				if(e.getCode() == KeyCode.DELETE){
-					Main.mainScreen.getSelected().delete();
-					Main.mainScreen.setSelected(null);
-				}
-			}
-		});
-
 		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
 			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
 
 				if(oldValue != null && selectedIsNew){
 					if(oldValue instanceof TextElement){
 						if(!((TextElement) oldValue).getText().isEmpty()){
-							addSavedElement(((TextElement) oldValue).toNoDisplayTextElement(false));
+							addSavedElement(((TextElement) oldValue).toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, false));
 						}
 					}
 				}
 				selectedIsNew = false;
-				txtField.requestFocus();
+
 			}
 		});
 
@@ -234,9 +226,9 @@ public class LBTextTab extends Tab {
 				page.addElement(current);
 				Main.mainScreen.selectedProperty().setValue(current);
 
-				txtField.requestFocus();
 				txtField.setText("");
 				selectedIsNew = true;
+				txtField.requestFocus();
 			}
 		});
 
@@ -260,7 +252,7 @@ public class LBTextTab extends Tab {
 		treeView.setRoot(treeViewRoot);
 		new LBTextTreeView(treeView);
 
-		treeViewRoot.getChildren().addAll(Main.userData.favoritesText, Main.userData.lastsText);
+		treeViewRoot.getChildren().addAll(Main.userData.favoritesText, Main.userData.lastsText, onFileText);
 
 		pane.getChildren().add(treeView);
 
@@ -274,7 +266,6 @@ public class LBTextTab extends Tab {
 					Platform.runLater(new Runnable() {
 						@Override public void run() {
 							String text = txtField.getText();
-							txtField.requestFocus();
 							txtField.setText(text);
 							txtField.positionCaret(txtField.getText().length());
 						}
@@ -305,11 +296,11 @@ public class LBTextTab extends Tab {
 		}
 	}
 	public void addSavedElement(NoDisplayTextElement element){
-		if(element.isFavorite()){
+		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
 			if(!Main.userData.favoritesText.getChildren().contains(element)){
 				Main.userData.favoritesText.getChildren().add(element);
 			}
-		}else{
+		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
 			if(!Main.userData.lastsText.getChildren().contains(element)){
 				Main.userData.lastsText.getChildren().add(0, element);
 
@@ -318,10 +309,9 @@ public class LBTextTab extends Tab {
 				}
 			}
 		}
-
 	}
 	public void removeSavedElement(NoDisplayTextElement element){
-		if(element.isFavorite()){
+		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
 			Main.userData.favoritesText.getChildren().remove(element);
 		}else{
 			Main.userData.lastsText.getChildren().remove(element);
@@ -335,24 +325,41 @@ public class LBTextTab extends Tab {
 	}
 
 	public void ascendElement(NoDisplayTextElement element) {
-		int pos = element.isFavorite() ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
+		int pos = (element.getType() == NoDisplayTextElement.FAVORITE_TYPE) ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
 		removeSavedElement(element);
 
-		if(element.isFavorite()){
+		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
 			Main.userData.favoritesText.getChildren().add(pos - 1, element);
-		}else{
+		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
 			Main.userData.lastsText.getChildren().add(pos - 1, element);
 		}
 	}
 
 	public void descendElement(NoDisplayTextElement element) {
-		int pos = element.isFavorite() ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
+		int pos = (element.getType() == NoDisplayTextElement.FAVORITE_TYPE) ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
 		removeSavedElement(element);
 
-		if(element.isFavorite()){
+		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
 			Main.userData.favoritesText.getChildren().add(pos + 1, element);
-		}else{
+		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
 			Main.userData.lastsText.getChildren().add(pos + 1, element);
 		}
+	}
+
+	public void updateOnFileElementsList(){
+
+		onFileText.getChildren().clear();
+
+		if(Main.mainScreen.getStatus() == -1){
+			for(PageRenderer page : Main.mainScreen.document.pages){
+				for(int i = 0; i < page.getElements().size(); i++){
+					if(page.getElements().get(i) instanceof TextElement){
+						TextElement element = (TextElement) page.getElements().get(i);
+						onFileText.getChildren().add(element.toNoDisplayTextElement(NoDisplayTextElement.ONFILE_TYPE, true));
+					}
+				}
+			}
+		}
+
 	}
 }

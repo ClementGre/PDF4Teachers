@@ -17,14 +17,28 @@ public class NoDisplayTextElement extends TreeItem{
 	private Font font;
 	private String text;
 	private Color color;
-	private boolean isFavorite;
+	private int type;
 
-	public NoDisplayTextElement(Font font, String text, Color color, boolean isFavorite) {
+	private TextElement cores = null;
+
+	public static final int FAVORITE_TYPE = 1;
+	public static final int LAST_TYPE = 2;
+	public static final int ONFILE_TYPE = 3;
+
+	public NoDisplayTextElement(Font font, String text, Color color, int type) {
 
 		this.font = font;
 		this.text = text;
 		this.color = color;
-		this.isFavorite = isFavorite;
+		this.type = type;
+	}
+	public NoDisplayTextElement(Font font, String text, Color color, int type, TextElement cores) {
+
+		this.font = font;
+		this.text = text;
+		this.color = color;
+		this.type = type;
+		this.cores = cores;
 	}
 
 	@Override
@@ -32,9 +46,8 @@ public class NoDisplayTextElement extends TreeItem{
 
 		if(v instanceof NoDisplayTextElement){
 			NoDisplayTextElement element = (NoDisplayTextElement) v;
-			if(element.isFavorite == isFavorite && element.text.equals(text) && element.color.hashCode() == color.hashCode()){
+			if(element.type == type && element.text.equals(text) && element.color.hashCode() == color.hashCode()){
 				if(element.font.getStyle().equals(font.getStyle()) && element.font.getSize() == font.getSize() && element.getFont().getFamily().equals(font.getFamily())){
-
 					return true;
 				}
 			}
@@ -56,7 +69,7 @@ public class NoDisplayTextElement extends TreeItem{
 	public TextElement toRealTextElement(int x, int y, int page){
 		return new TextElement(x, y, font, text, color, page, Main.mainScreen.document.pages.get(page));
 	}
-	public static NoDisplayTextElement readDataAndGive(DataInputStream reader, boolean isFavorite) throws IOException {
+	public static NoDisplayTextElement readDataAndGive(DataInputStream reader, int type) throws IOException {
 
 		double fontSize = reader.readFloat();
 		boolean isBold = reader.readBoolean();
@@ -71,7 +84,7 @@ public class NoDisplayTextElement extends TreeItem{
 		FontPosture fontPosture = isItalic ? FontPosture.ITALIC : FontPosture.REGULAR;
 		Font font = TextElement.getFont(fontName, isBold, isItalic, (int) fontSize);
 
-		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), isFavorite);
+		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type);
 
 	}
 
@@ -108,10 +121,16 @@ public class NoDisplayTextElement extends TreeItem{
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	public boolean isFavorite() {
-		return isFavorite;
+	public int getType() {
+		return type;
 	}
-	public void setFavorite(boolean favorite) {
-		isFavorite = favorite;
+	public void setType(int type) {
+		this.type = type;
+	}
+	public TextElement getCores() {
+		return cores;
+	}
+	public void setCores(TextElement cores) {
+		this.cores = cores;
 	}
 }

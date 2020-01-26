@@ -3,19 +3,22 @@ package fr.themsou.document.render;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
-import javafx.beans.Observable;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.concurrent.Callable;
+import java.util.Random;
 
 public class PageRenderer extends Pane {
 
@@ -43,14 +46,20 @@ public class PageRenderer extends Pane {
 
         getChildren().add(renderView);
 
+        // BORDER
+
+        setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
         setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
                 mouseX = e.getX();
                 mouseY = e.getY();
             }
         });
+
         setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {
+
                 mouseX = e.getX();
                 mouseY = e.getY();
             }
@@ -78,6 +87,7 @@ public class PageRenderer extends Pane {
         getChildren().clear();
         getChildren().add(renderView);
         elements = new ArrayList<>();
+        Main.lbTextTab.updateOnFileElementsList();
     }
 
     public void addElement(Element element){
@@ -87,6 +97,7 @@ public class PageRenderer extends Pane {
             elements.add(element);
             getChildren().add((Shape) element);
             Edition.setUnsave();
+            Main.lbTextTab.updateOnFileElementsList();
 
         }
     }
@@ -96,6 +107,7 @@ public class PageRenderer extends Pane {
             elements.remove(element);
             getChildren().remove((Shape) element);
             Edition.setUnsave();
+            Main.lbTextTab.updateOnFileElementsList();
         }
     }
 

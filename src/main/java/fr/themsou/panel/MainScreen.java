@@ -185,6 +185,14 @@ public class MainScreen extends ScrollPane {
 		}, status, Edition.isSaveProperty()));
 
 
+		setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent e) {
+				if(!(e.getTarget() instanceof Element)){
+					setSelected(null);
+				}
+			}
+		});
 
 	}
 	public void openFile(File file){

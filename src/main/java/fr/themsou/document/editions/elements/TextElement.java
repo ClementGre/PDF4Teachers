@@ -4,10 +4,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.invoke.VarHandle;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -15,10 +17,19 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
 
 public class TextElement extends Text implements Element {
@@ -28,11 +39,20 @@ public class TextElement extends Text implements Element {
 	private PageRenderer page;
 	private ObjectProperty<Font> realFont = new SimpleObjectProperty<>();
 
+	private Rectangle border = new Rectangle(0, 0, Color.TRANSPARENT);
+
+	ContextMenu menu = new ContextMenu();
+
 	private int pageNumber = -1;
 	private int shiftX = 0;
 	private int shiftY = 0;
 
 	public TextElement(int x, int y, Font font, String text, Color color, int pageNumber, PageRenderer page) {
+
+		TextElement thisObject = this;
+
+		border.setStroke(Color.RED);
+		border.setManaged(false);
 
 		this.pageNumber = pageNumber;
 		this.realX.set(x);
@@ -47,7 +67,6 @@ public class TextElement extends Text implements Element {
 			return translateFont(getRealFont());
 		}, realFontProperty(), Main.mainScreen.zoomProperty()));
 
-
 		setBoundsType(TextBoundsType.VISUAL);
 
 		if(page == null) return;
@@ -58,26 +77,96 @@ public class TextElement extends Text implements Element {
 
 		setCursor(Cursor.MOVE);
 
-		setOnMousePressed(new EventHandler<MouseEvent>(){
-			@Override public void handle(MouseEvent e){
-				shiftX = (int) e.getX();
-				shiftY = (int) e.getY();
-				select();
+		// BORDER
+
+		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
+			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
+				if(oldValue == thisObject && newValue != thisObject){
+					setEffect(null);
+					menu.hide();
+				}else if(oldValue != thisObject && newValue == thisObject){
+					DropShadow ds = new DropShadow();
+					ds.setOffsetY(3.0f);
+					ds.setColor(Color.color(0f, 0f, 0f));
+					setEffect(ds);
+					setCache(true);
+					requestFocus();
+				}
 			}
 		});
 
-		TextElement thisObject = this;
+		MenuItem item1 = new MenuItem("Supprimer");
+		item1.setAccelerator(KeyCombination.keyCombination("Suppr"));
+		MenuItem item2 = new MenuItem("Dupliquer");
+		MenuItem item3 = new MenuItem("Ajouter aux éléments précédents");
+		MenuItem item4 = new MenuItem("Ajouter aux éléments Favoris");
+		menu.getItems().addAll(item1, item2, item3, item4);
+		Builders.setMenuSize(menu);
+
+		item1.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				delete();
+			}
+		});
+		item2.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				PageRenderer page = Main.mainScreen.document.pages.get(0);
+				if (Main.mainScreen.document.getCurrentPage() != -1)
+					page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+
+				TextElement realElement = (TextElement) thisObject.clone();
+				realElement.setRealX(realElement.getRealX() + 10);
+				realElement.setRealY(realElement.getRealY() + 10);
+				page.addElement(realElement);
+				Main.mainScreen.selectedProperty().setValue(realElement);
+			}
+		});
+		item3.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, false));
+			}
+		});
+		item4.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent e) {
+				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, false));
+			}
+		});
+
+		setOnMousePressed(new EventHandler<MouseEvent>(){
+			@Override public void handle(MouseEvent e){
+				e.consume();
+
+				shiftX = (int) e.getX();
+				shiftY = (int) e.getY();
+				menu.hide();
+				select();
+
+				if(e.getButton() == MouseButton.SECONDARY){
+					menu.show(page, e.getScreenX(), e.getScreenY());
+				}
+			}
+		});
+		setOnKeyPressed(new EventHandler<KeyEvent>() {
+			@Override public void handle(KeyEvent e) {
+				if(e.getCode() == KeyCode.DELETE){
+					Main.mainScreen.setSelected(null);
+					delete();
+				}
+			}
+		});
+
+
+
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
-
-				shiftX = 0;
-				shiftY = 0;
 
 				double itemX = thisObject.page.mouseX - shiftX;
 				double itemY = thisObject.page.mouseY - shiftY;
 
 				if(thisObject.page.mouseY < -30){
 					if(thisObject.page.getPage() > 0){
+
+						Main.mainScreen.setSelected(null);
 
 						thisObject.page.removeElement(thisObject);
 						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() -1);
@@ -87,6 +176,9 @@ public class TextElement extends Text implements Element {
 					}
 				}else if(thisObject.page.mouseY > thisObject.page.getHeight() + 30){
 					if(thisObject.page.getPage() < Main.mainScreen.document.pages.size()-1){
+
+						Main.mainScreen.setSelected(null);
+
 						thisObject.page.removeElement(thisObject);
 						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() + 1);
 						thisObject.page.addElement(thisObject);
@@ -118,11 +210,13 @@ public class TextElement extends Text implements Element {
 		Main.mainScreen.setSelected(this);
 		Main.lbTextTab.selectItem();
 		toFront();
+		requestFocus();
 		Edition.setUnsave();
 	}
 
-	public NoDisplayTextElement toNoDisplayTextElement(boolean isFavorite){
-		return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), isFavorite);
+	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean cores){
+		if(cores) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, this);
+		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type);
 	}
 	@Override
 	public void delete() {
@@ -268,4 +362,10 @@ public class TextElement extends Text implements Element {
 	public int getPageNumber() {
 		return pageNumber;
 	}
+
+	@Override
+	public Element clone() {
+		return new TextElement(getRealX(), getRealY(), getRealFont(), getText(), (Color) getFill(), pageNumber, page);
+	}
+
 }

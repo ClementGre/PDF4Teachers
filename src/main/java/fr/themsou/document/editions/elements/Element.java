@@ -9,4 +9,5 @@ public interface Element {
 	void writeSimpleData(DataOutputStream writer) throws IOException;
 	void delete();
 	int getPageNumber();
+	Element clone();
 }

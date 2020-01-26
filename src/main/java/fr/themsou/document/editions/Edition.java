@@ -36,9 +36,8 @@ public class Edition {
         new File(Main.dataFolder + "editions").mkdirs();
 
         try{
-            if(editFile.createNewFile()){ //file was created
+            if(editFile.exists()){ //file does not exist
 
-            }else{ // file already exist
                 DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
 
                 while(reader.available() != 0){
@@ -62,7 +61,7 @@ public class Edition {
     }
     public static Element[] simpleLoad(File editFile) throws Exception{
 
-        if(editFile.createNewFile()){ //file was created
+        if(!editFile.exists()){ //file does not exist
             return new Element[0];
         }else{ // file already exist
             DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
@@ -93,16 +92,20 @@ public class Edition {
         if(Edition.isSave()) return;
 
         try{
+            editFile.createNewFile();
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, false)));
 
+            int counter = 0;
             for(PageRenderer page : document.pages){
                 for(int i = 0; i < page.getElements().size(); i++){
                     page.getElements().get(i).writeSimpleData(writer);
+                    counter++;
                 }
             }
-
             writer.flush();
             writer.close();
+
+            if(counter == 0) editFile.delete();
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -163,6 +166,7 @@ public class Edition {
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
+            editFile.delete();
         }
     }
 
