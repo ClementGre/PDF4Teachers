@@ -136,6 +136,7 @@ public class Main extends Application {
 
 //		PANELS
 
+		window.show();
 		leftBar.setPrefWidth(270);
 
 		root.setCenter(mainScreen);
@@ -157,7 +158,7 @@ public class Main extends Application {
 
 //		SHOWING
 
-		window.show();
+
 		userDataSaver.start();
 		mainScreen.repaint();
 

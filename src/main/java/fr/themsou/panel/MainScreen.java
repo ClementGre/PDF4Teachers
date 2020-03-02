@@ -52,10 +52,10 @@ public class MainScreen extends ScrollPane {
 
 	public boolean ctrlDown = false;
 
-	public boolean vVisibleTemp = false;
-	public boolean hVisibleTemp = false;
-	public double vValueTemp = 0;
-	public double hValueTemp = 0.5;
+	public boolean lastVerticalScrollIsVisible = true;
+	public boolean lastHorizontalScrollIsVisible = true;
+	public double lastVerticalScrollValue = 0;
+	public double lastHorizontalScrollValue = 0.5;
 
 	public MainScreen(int defaultPageWidth){
 
@@ -117,6 +117,7 @@ public class MainScreen extends ScrollPane {
 		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
 
+		// prevent scroll on zoom
 		addEventFilter(ScrollEvent.SCROLL, e -> {
 			if(e.isControlDown()){
 				ctrlDown = true;
@@ -125,29 +126,29 @@ public class MainScreen extends ScrollPane {
 				if(e.getDeltaY() > 0) zoomMore();
 				if(e.getDeltaY() < 0) zoomLess();
 
-				setVvalue(vValueTemp);
-				setHvalue(hValueTemp);
+				setVvalue(lastVerticalScrollValue);
+				setHvalue(lastHorizontalScrollValue);
 
 			}else ctrlDown = false;
 
 			boolean newVisible = getVerticalSB(Main.mainScreen).isVisible();
-			if(!vVisibleTemp && newVisible){
-				vVisibleTemp = true;
-				vValueTemp = 0.5;
+			if(!lastVerticalScrollIsVisible && newVisible){
+				lastVerticalScrollIsVisible = true;
+				lastVerticalScrollValue = 0.5;
 				setVvalue(0.5);
 			}
-			vVisibleTemp = newVisible;
+			lastVerticalScrollIsVisible = newVisible;
 
 			newVisible = getHorizontalSB(Main.mainScreen).isVisible();
-			if(!hVisibleTemp && newVisible){
-				hVisibleTemp = true;
-				hValueTemp = 0.5;
+			if(!lastHorizontalScrollIsVisible && newVisible){
+				lastHorizontalScrollIsVisible = true;
+				lastHorizontalScrollValue = 0.5;
 				setHvalue(0.5);
 			}
-			hVisibleTemp = newVisible;
+			lastHorizontalScrollIsVisible = newVisible;
 
-			vValueTemp = getVvalue();
-			hValueTemp = getHvalue();
+			lastVerticalScrollValue = getVvalue();
+			lastHorizontalScrollValue = getHvalue();
 		});
 
 		setOnMouseMoved(new EventHandler<MouseEvent>() {
@@ -160,7 +161,7 @@ public class MainScreen extends ScrollPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
 				if(!ctrlDown){
-					vValueTemp = newValue.doubleValue();
+					lastVerticalScrollValue = newValue.doubleValue();
 				}
 			}
 		});
@@ -168,11 +169,13 @@ public class MainScreen extends ScrollPane {
 			@Override
 			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
 				if(!ctrlDown){
-					hValueTemp = newValue.doubleValue();
+					lastHorizontalScrollValue = newValue.doubleValue();
 				}
 			}
 		});
+		// end
 
+		// bind zoom value with the page size
 		zoom.addListener(new ChangeListener<Number>() {
 			@Override
 			public void changed(ObservableValue<? extends Number> observableValue, Number oldZoom, Number newZoom) {
@@ -180,12 +183,13 @@ public class MainScreen extends ScrollPane {
 			}
 		});
 
+		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> {
 			return status.get() == -1 ? "PDF Teacher - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF Teacher - Aucun document";
 		}, status, Edition.isSaveProperty()));
 
 
-		setOnMouseClicked(new EventHandler<MouseEvent>() {
+		setOnMousePressed(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent e) {
 				if(!(e.getTarget() instanceof Element)){

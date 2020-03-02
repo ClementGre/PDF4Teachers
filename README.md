@@ -40,3 +40,4 @@ Ces différents éléments (texte, notes etc.) ont des classes attribués dans `
 - ``.document.Document`` qui fera le rendu des pages avec ``.document.render.PDFPagesRender``, il initialisera ensuite sous demande de MainScreen :
   - ``.document.render.PageRenderer`` pour chacune des pages en passant en paramètre une image : le rendu de la page. PageRenderer stoquera touts les Elements dans une ArrayList<>. Document et PageRenderer feront les Bindings nécessaires pour automatiser la taille de la Page par rapport au zoom et aux dimensions de MainScreen.
   - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en Hexadécimal et stoqué dans ``<user.home>/.PDFTEacher/<nom de l'édition>.edit``. Il traduira l'Hexadécimal en Classes avec les classes des éléments (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans Document. Il poura aussi écrire les fichiers lors de la sauvegarde.
+

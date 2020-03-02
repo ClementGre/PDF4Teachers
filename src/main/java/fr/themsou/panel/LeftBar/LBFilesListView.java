@@ -63,7 +63,7 @@ public class LBFilesListView {
                             path.setText(path.getText() + " | " + elements.length + " Éléments");
                             setTooltip(new Tooltip(elements.length + " Éléments\n" + textElements + " Commentaires\n" + noteElements + " Notes\n" + drawElements + " Figures"));
 
-                        }catch(Exception e){}
+                        }catch(Exception e){ e.printStackTrace();}
                     }else{
                         name.setFont(Font.font(null, FontWeight.NORMAL, 12));
                         path.setText(path.getText() + " | Non édité");

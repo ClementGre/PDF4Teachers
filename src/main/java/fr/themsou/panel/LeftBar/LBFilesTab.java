@@ -15,9 +15,6 @@ import javafx.scene.input.TransferMode;
 public class LBFilesTab extends Tab {
 
 	public ListView<File> files = new ListView<>();
-	private int currentTime = 0;
-	private int current = -1;
-
 
 	public LBFilesTab(){
 
@@ -71,8 +68,7 @@ public class LBFilesTab extends Tab {
 			}
 		});
 
-		// import last session opened files
-
+		// import last session files
 		if(Main.settings.getOpenedFiles() != null){
 			files.getItems().addAll(Main.settings.getOpenedFiles());
 		}

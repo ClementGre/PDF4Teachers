@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
@@ -58,8 +59,10 @@ public class TextElement extends Text implements Element {
 		this.realX.set(x);
 		this.realY.set(y);
 
+
 		setRealFont(font);
 		setText(text);
+		setTextOrigin(VPos.BOTTOM);
 		setStyle("-fx-text-fill: #" + Integer.toHexString(color.hashCode()));
 		setFill(color);
 
@@ -77,8 +80,7 @@ public class TextElement extends Text implements Element {
 
 		setCursor(Cursor.MOVE);
 
-		// BORDER
-
+		// enable shadow if this element is selected
 		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
 			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
 				if(oldValue == thisObject && newValue != thisObject){
@@ -160,6 +162,9 @@ public class TextElement extends Text implements Element {
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 
+				shiftX = -10;
+				shiftY = -10;
+
 				double itemX = thisObject.page.mouseX - shiftX;
 				double itemY = thisObject.page.mouseY - shiftY;
 
@@ -186,8 +191,10 @@ public class TextElement extends Text implements Element {
 						itemY = 0;
 					}
 				}
+				double linesHeight = getLayoutBounds().getHeight();
+				System.out.println(linesHeight);
 
-				if(itemY < 0 + getLayoutBounds().getHeight()) itemY = getLayoutBounds().getHeight();
+				if(itemY < linesHeight) itemY = linesHeight;
 				if(itemY > thisObject.page.getHeight()) itemY = thisObject.page.getHeight();
 				if(itemX < 0) itemX = 0;
 				if(itemX > thisObject.page.getWidth() - getLayoutBounds().getWidth()) itemX = thisObject.page.getWidth() - getLayoutBounds().getWidth();

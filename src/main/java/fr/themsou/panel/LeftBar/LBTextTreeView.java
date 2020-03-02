@@ -26,69 +26,72 @@ public class LBTextTreeView {
 
         treeView.setCellFactory(new Callback<TreeView, TreeCell>() {
             @Override public TreeCell call(TreeView param) {
-            return new TreeCell<String>() {
-            @Override protected void updateItem(String text, boolean bln) {
-                super.updateItem(text, bln);
+                return new TreeCell<String>() {
+                    @Override protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
 
-                if(text != null) {
-
-                    Text name = new Text(text);
-                    name.setFont(new Font(14));
-                    setStyle("-fx-padding: 5 0;");
-                    setGraphic(name);
-
-                }else{
-
-                    if(getTreeItem() instanceof NoDisplayTextElement){
-                        NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
-
-
-
-                        VBox nameParts = new VBox();
-                        String fullName = element.getText();
-
-                        setGraphic(nameParts);
-                        setStyle("-fx-padding: 3 -15;");
-
-                        int index = 0;
-                        while(index < fullName.split(" ").length) {
-                            String namePart = fullName.split(" ")[index];
-                            Text name = new Text(namePart);
-                            index++;
-
-                            name.setFill(element.getColor());
-                            name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
-
-                            while(index < fullName.split(" ").length){
-                                String lastNamePart = namePart;
-                                namePart += " " + fullName.split(" ")[index];
-                                name.setText(namePart);
-
-                                if(name.getBoundsInParent().getWidth() > 235){
-                                    name.setText(lastNamePart);
-                                    break;
-                                }
-                                index++;
-                            }
-                            nameParts.getChildren().add(name);
+                        if(empty){
+                            setGraphic(null);
+                            return;
                         }
 
-                        ContextMenu menu = getNewMenu(element);
-                        setContextMenu(menu);
+                        if(item != null){
 
-                        setOnMouseClicked(new EventHandler<MouseEvent>(){
-                            public void handle(MouseEvent mouseEvent){
-                                if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-                                    element.addToDocument();
+                            Text name = new Text(item);
+                            name.setFont(new Font(14));
+                            setStyle("-fx-padding: 5 0;");
+                            setGraphic(name);
+                            return;
+                        }
+
+                        if(getTreeItem() instanceof NoDisplayTextElement){
+                            NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
+
+                            VBox nameParts = new VBox();
+                            String fullName = element.getText();
+
+                            setGraphic(nameParts);
+                            setStyle("-fx-padding: 3 -15;");
+
+                            int index = 0;
+                            while(index < fullName.split(" ").length) {
+                                String namePart = fullName.split(" ")[index];
+                                Text name = new Text(namePart);
+                                index++;
+
+                                name.setFill(element.getColor());
+                                name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
+
+                                while(index < fullName.split(" ").length){
+                                    String lastNamePart = namePart;
+                                    namePart += " " + fullName.split(" ")[index];
+                                    name.setText(namePart);
+
+                                    if(name.getBoundsInParent().getWidth() > 235){
+                                        name.setText(lastNamePart);
+                                        break;
+                                    }
+                                    index++;
                                 }
+                                nameParts.getChildren().add(name);
                             }
-                        });
-                    }else{
-                        Pane pane = new Pane();
-                        setGraphic(pane);
+
+                            ContextMenu menu = getNewMenu(element);
+                            setContextMenu(menu);
+
+                            setOnMouseClicked(new EventHandler<MouseEvent>(){
+                                public void handle(MouseEvent mouseEvent){
+                                    if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && getGraphic() instanceof VBox){
+                                        element.addToDocument();
+                                    }
+                                }
+                            });
+                        }else{
+                            setGraphic(null);
+                        }
                     }
-                }
-            }};}
+                };
+            }
         });
 
     }

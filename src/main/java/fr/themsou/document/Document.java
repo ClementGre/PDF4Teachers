@@ -73,7 +73,7 @@ public class Document {
             i++;
         }
 
-        Main.mainScreen.vValueTemp = Main.mainScreen.getVvalue();
+        Main.mainScreen.lastVerticalScrollValue = Main.mainScreen.getVvalue();
         Main.mainScreen.setHvalue(0.5);
 
         Main.settings.setOpenedFile(file);

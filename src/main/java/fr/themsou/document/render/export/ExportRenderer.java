@@ -4,12 +4,14 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.utils.Builders;
+import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextBoundsType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -51,11 +53,16 @@ public class ExportRenderer {
                     if(!textElements) continue;
 
                     TextElement txtElement = (TextElement) element;
+                    txtElement.setBoundsType(TextBoundsType.LOGICAL);
+
+
+                    double height = txtElement.getLayoutBounds().getHeight() / 1080 * pageSize.getHeight();
+                    int lineNumber = txtElement.getText().split("\\n").length;
+                    double lineHeight = height / lineNumber;
 
                     contentStream.beginText();
-                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()),
-                            (float) (pageSize.getHeight() - txtElement.getRealY() / 800.0 * pageSize.getHeight()));
 
+                    // Text Style
                     Color color = (Color) txtElement.getFill();
                     contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
 
@@ -63,12 +70,19 @@ public class ExportRenderer {
                     if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
                     boolean italic = false;
                     if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
-
                     InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
                     contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize());
 
-                    contentStream.showText(txtElement.getText());
+                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()), (float) (pageSize.getHeight() - (txtElement.getRealY()) / 800.0 * pageSize.getHeight() + height));
 
+                    for(String text : txtElement.getText().split("\\n")){
+
+                        float shiftY = (float) -lineHeight;
+                        System.out.println(text + " "  + lineHeight + " " + shiftY);
+                        contentStream.newLineAtOffset(0, shiftY);
+
+                        contentStream.showText(text);
+                    }
                     contentStream.endText();
 
                 }/*else if(element instanceof NoteElement){

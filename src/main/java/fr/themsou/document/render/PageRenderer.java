@@ -9,11 +9,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import java.awt.image.BufferedImage;
@@ -47,8 +49,9 @@ public class PageRenderer extends Pane {
         getChildren().add(renderView);
 
         // BORDER
-
-        setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        DropShadow ds = new DropShadow();
+        ds.setColor(Color.BLACK);
+        setEffect(ds);
 
         setOnMouseMoved(new EventHandler<MouseEvent>() {
             @Override public void handle(MouseEvent e) {

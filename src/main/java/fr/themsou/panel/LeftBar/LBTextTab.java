@@ -9,20 +9,18 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.ObjectPropertyBase;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -32,11 +30,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URL;
-import java.util.concurrent.Callable;
+import java.util.Set;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
@@ -48,15 +47,16 @@ public class LBTextTab extends Tab {
 	private ColorPicker colorPicker = new ColorPicker();
 	private ToggleButton boldBtn = new ToggleButton("");
 	private ToggleButton itBtn = new ToggleButton("");
-	private TextField txtField = new TextField();
+	private TextArea txtArea = new TextArea();
 	private Button deleteBtn = new Button("Supprimer");
 	private Button newBtn = new Button("Nouveau");
 
 	private TreeView treeView = new TreeView<>();
 	private TreeItem<String> treeViewRoot = new TreeItem<>();
-	TreeItem<String> onFileText = new TreeItem<>("Éléments sur ce document");
+	private TreeItem<String> onFileText = new TreeItem<>("Éléments sur ce document");
 
 	private boolean selectedIsNew = false;
+	private boolean txtAreaScrollBarListenerIsSetup = false;
 
 	public LBTextTab(){
 
@@ -130,9 +130,27 @@ public class LBTextTab extends Tab {
 		pane.getChildren().add(itBtn);
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.selectedProperty().get() == null;}, Main.mainScreen.selectedProperty()));
 
-		Builders.setPosition(txtField, 5, 75, 260, 3, false);
-		pane.getChildren().add(txtField);
-		txtField.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.getSelected() == null || !(Main.mainScreen.getSelected() instanceof TextElement);}, Main.mainScreen.selectedProperty()));
+		Builders.setPosition(txtArea, 5, 75, 260, 30, true);
+		txtArea.setStyle("-fx-font-size: 13");
+		pane.getChildren().add(txtArea);
+		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.getSelected() == null || !(Main.mainScreen.getSelected() instanceof TextElement);}, Main.mainScreen.selectedProperty()));
+
+		txtArea.textProperty().addListener(new ChangeListener<String>() {
+			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+				updateOnFileElementsList();
+				updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
+				if(!txtAreaScrollBarListenerIsSetup){
+					getHorizontalSB(txtArea).visibleProperty().addListener(new ChangeListener<Boolean>() {
+						@Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+							updateHeightAndYLocations(newValue);
+						}
+					});
+					txtAreaScrollBarListenerIsSetup = true;
+				}
+			}
+		});
+
+
 
 		Builders.setPosition(deleteBtn, 5, 110, 127.5, 30, false);
 		deleteBtn.setCursor(Cursor.HAND);
@@ -143,6 +161,7 @@ public class LBTextTab extends Tab {
 		newBtn.setCursor(Cursor.HAND);
 		pane.getChildren().add(newBtn);
 		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
+
 
 		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
 			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
@@ -176,14 +195,14 @@ public class LBTextTab extends Tab {
 					if(newElement instanceof TextElement){
 						TextElement current = (TextElement) newElement;
 
-						txtField.setText(current.getText());
+						txtArea.setText(current.getText());
 						boldBtn.setSelected(TextElement.getFontWeight(current.getRealFont()) == FontWeight.BOLD);
 						itBtn.setSelected(TextElement.getFontPosture(current.getRealFont()) == FontPosture.ITALIC);
 						colorPicker.setValue((Color) current.getFill());
 						fontCombo.getSelectionModel().select(current.getRealFont().getFamily());
 						sizeCombo.getSelectionModel().select((Integer) ((int) current.getRealFont().getSize()));
 
-						current.textProperty().bind(txtField.textProperty());
+						current.textProperty().bind(txtArea.textProperty());
 						current.realFontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 
 					}
@@ -220,15 +239,15 @@ public class LBTextTab extends Tab {
 
 
 				TextElement current = new TextElement(30, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
-						txtField.getText(), colorPicker.getValue(), page.getPage(), page);
+						txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
 
 				page.addElement(current);
 				Main.mainScreen.selectedProperty().setValue(current);
 
-				txtField.setText("");
+				txtArea.setText("");
 				selectedIsNew = true;
-				txtField.requestFocus();
+				txtArea.requestFocus();
 			}
 		});
 
@@ -258,6 +277,22 @@ public class LBTextTab extends Tab {
 
 	}
 
+	public void updateHeightAndYLocations(boolean sbIsVisible){
+
+		int lineNumber = txtArea.getParagraphs().size();
+		int height = lineNumber >= 3 ? 70 : lineNumber*20+10;
+
+		if(sbIsVisible) height += 15;
+
+		if(txtArea.getHeight() != height){
+			txtArea.minHeightProperty().bind(new SimpleDoubleProperty(height));
+			deleteBtn.setLayoutY(80 + height);
+			newBtn.setLayoutY(80 + height);
+			treeView.setLayoutY(120 + height);
+		}
+
+	}
+
 	public void selectItem(){
 		new Thread(new Runnable() {
 			@Override public void run() {
@@ -265,9 +300,9 @@ public class LBTextTab extends Tab {
 					Thread.sleep(50);
 					Platform.runLater(new Runnable() {
 						@Override public void run() {
-							String text = txtField.getText();
-							txtField.setText(text);
-							txtField.positionCaret(txtField.getText().length());
+							String text = txtArea.getText();
+							txtArea.setText(text);
+							txtArea.positionCaret(txtArea.getText().length());
 						}
 					});
 				}catch(InterruptedException e){ e.printStackTrace();}
@@ -361,5 +396,18 @@ public class LBTextTab extends Tab {
 			}
 		}
 
+	}
+
+	private ScrollBar getHorizontalSB(final TextArea scrollPane) {
+		Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
+		for (final Node node : nodes) {
+			if (node instanceof ScrollBar) {
+				ScrollBar sb = (ScrollBar) node;
+				if(sb.getOrientation() == Orientation.HORIZONTAL){
+					return sb;
+				}
+			}
+		}
+		return null;
 	}
 }
