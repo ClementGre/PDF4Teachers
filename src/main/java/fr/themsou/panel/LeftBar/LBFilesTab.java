@@ -12,6 +12,7 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class LBFilesTab extends Tab {
@@ -78,7 +79,8 @@ public class LBFilesTab extends Tab {
 			@Override public void call(String sortType, boolean order) {
 				System.out.println("sort by " + sortType + " - " + (order ? "AZ" : "ZA"));
 			}
-		}, null, null).setup(options, "Nom", "Nom", "Ordre d'ajout");
+		}, null, null).setup(options, "", "Ajout", "Nom", "Dossier");
+
 
 		// import last session files
 		if(Main.settings.getOpenedFiles() != null){

@@ -9,7 +9,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+
 import java.util.HashMap;
 
 public class SortManager {
@@ -33,6 +36,8 @@ public class SortManager {
         for(String buttonName : buttonsName){
             Button button = new Button(buttonName);
             button.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/down.png")+"", 0, 0));
+            button.setMaxWidth(Double.MAX_VALUE);
+            HBox.setHgrow(button, Priority.ALWAYS);
             BooleanProperty order = new SimpleBooleanProperty(true);
             buttons.put(button, order);
             parent.getChildren().add(button);
