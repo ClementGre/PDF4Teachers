@@ -41,6 +41,7 @@ public class MainScreen extends ScrollPane {
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 
 
+	public String documentToLoad = "";
 	public Document tmpDocument;
 	private boolean finishedLoading = true;
 
@@ -224,12 +225,14 @@ public class MainScreen extends ScrollPane {
 		repaint();
 		Main.footerBar.repaint();
 
+		documentToLoad = file.getName();
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				try{
+					String documentToLoad = Main.mainScreen.documentToLoad;
 					Thread.sleep(10000);
-					if(!finishedLoading){
+					if(!finishedLoading && documentToLoad.equals(Main.mainScreen.documentToLoad)){
 						Platform.runLater(new Runnable() {
 							public void run() {
 								System.out.println("time out");
@@ -237,10 +240,9 @@ public class MainScreen extends ScrollPane {
 							}
 						});
 					}
-
 				}catch(InterruptedException e){ e.printStackTrace(); }
 			}
-		}, "loader").start();
+		}, "timeOut").start();
 
 		new Thread(new Runnable() {
 			@Override
@@ -264,7 +266,6 @@ public class MainScreen extends ScrollPane {
 	}
 
 	public void finishOpen(){
-
 
 		this.document = this.tmpDocument;
 		tmpDocument = null;

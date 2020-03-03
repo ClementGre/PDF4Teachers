@@ -2,24 +2,30 @@ package fr.themsou.panel.LeftBar;
 
 import java.io.File;
 import java.util.Objects;
-
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.SortEvent;
+import fr.themsou.utils.SortManager;
 import javafx.event.EventHandler;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Tab;
+import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class LBFilesTab extends Tab {
 
+	private VBox separator = new VBox();
+	private HBox options = new HBox();
 	public ListView<File> files = new ListView<>();
+	boolean titleSortAZ = true;
+	boolean orderSortAZ = true;
 
 	public LBFilesTab(){
 
 		setClosable(false);
-		setContent(files);
+		setContent(separator);
 
 		setGraphic(Builders.buildImage(getClass().getResource("/img/PDF-Document.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(0, this);
@@ -68,10 +74,23 @@ public class LBFilesTab extends Tab {
 			}
 		});
 
+		new SortManager(new SortEvent() {
+			@Override public void call(String sortType, boolean order) {
+				System.out.println("sort by " + sortType + " - " + (order ? "AZ" : "ZA"));
+			}
+		}, null, null).setup(options, "Nom", "Nom", "Ordre d'ajout");
+
 		// import last session files
 		if(Main.settings.getOpenedFiles() != null){
 			files.getItems().addAll(Main.settings.getOpenedFiles());
 		}
+		separator.getChildren().addAll(options, files);
+
+		/*files.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<File>() {
+			@Override public void changed(ObservableValue<? extends File> observableValue, File lastFile, File newFile) {
+				Main.mainScreen.openFile(newFile);
+			}
+		});*/
 
 	}
 

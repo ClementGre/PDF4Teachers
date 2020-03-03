@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 
 public class Builders {
 
-    public static ImageView buildImage(String imgPatch, int width, int height) {
-        ImageView imageView = new ImageView(new Image(imgPatch));
+    public static ImageView buildImage(String imgPath, int width, int height) {
+        ImageView imageView = new ImageView(new Image(imgPath));
 
         if(width == 0 && height == 0) return imageView;
 

@@ -135,7 +135,7 @@ public class ExportRenderer {
             ButtonType yesAlwaysButton = new ButtonType("Toujours écraser", ButtonBar.ButtonData.YES);
             ButtonType renameButton = new ButtonType("Renomer", ButtonBar.ButtonData.OTHER);
             ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-            ButtonType cancelAllButton = new ButtonType("Tout Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType cancelAllButton = new ButtonType("Tout Arrêter", ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
             Builders.secureAlert(alert);
             Optional<ButtonType> option = alert.showAndWait();

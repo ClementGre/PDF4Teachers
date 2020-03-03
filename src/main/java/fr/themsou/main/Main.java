@@ -1,8 +1,10 @@
 package fr.themsou.main;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.nio.file.Files;
 
 import fr.themsou.devices.Devices;

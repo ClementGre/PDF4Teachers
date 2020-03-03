@@ -107,6 +107,7 @@ public class LBTextTreeView {
         MenuItem item6 = new MenuItem("Vider la liste");
         MenuItem item7 = new MenuItem("Ajouter aux éléments précédents");
 
+        // Désactiver monter/descendre
         if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
             item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.favoritesText.getChildren())));
             item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) >= Main.userData.favoritesText.getChildren().size()-1;}, Bindings.size(Main.userData.favoritesText.getChildren())));
@@ -116,16 +117,14 @@ public class LBTextTreeView {
         }
 
 
+        // Ajouter les items en fonction du type
         menu.getItems().addAll(item1, item2);
-
         if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3);
         if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item7);
-        else{
-            menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
-        }
-
+        else menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
+        // Définis les actions des boutons
         item1.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e) {
@@ -146,6 +145,11 @@ public class LBTextTreeView {
             @Override
             public void handle(ActionEvent e){
                 Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE));
+                if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+                    if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
+                        Main.lbTextTab.removeSavedElement(element);
+                    }
+                }
             }
         });
         item4.setOnAction(new EventHandler<ActionEvent>() {

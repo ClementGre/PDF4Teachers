@@ -10,4 +10,14 @@ public class StringUtils {
         if(index < string.length()) return string.substring(index + 1);
         return "";
     }
+    public static String removeBeforeLastRejex(String string, String rejex){
+
+        int index = string.lastIndexOf(rejex);
+
+        if(index == -1) return string;
+        if(index < string.length()){
+            return string.substring(index + rejex.length());
+        }
+        return "";
+    }
 }

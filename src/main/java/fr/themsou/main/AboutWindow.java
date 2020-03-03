@@ -83,7 +83,7 @@ public class AboutWindow extends Stage {
             devInfo.setAlignment(Pos.CENTER);
 
             HBox gitInfo = new HBox();
-                Label git = new Label("Projet GitHub :");
+                Label git = new Label("Projet GitHub : ");
                 git.setFont(new Font(17));
 
                 Hyperlink gitName = new Hyperlink("themsou/PDFTeacher");
@@ -97,7 +97,7 @@ public class AboutWindow extends Stage {
             gitInfo.setAlignment(Pos.CENTER);
 
             HBox issueInfo = new HBox();
-                Hyperlink issueName = new Hyperlink("un problème ?");
+                Hyperlink issueName = new Hyperlink("Demander de l'aide sur GutHub");
                 issueName.setFont(new Font(17));
                 issueName.setOnAction(new EventHandler<ActionEvent>() {
                     public void handle(ActionEvent t) {

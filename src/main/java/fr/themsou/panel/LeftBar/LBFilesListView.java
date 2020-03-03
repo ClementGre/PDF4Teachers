@@ -31,8 +31,6 @@ public class LBFilesListView {
 
     public LBFilesListView(ListView listView){
 
-
-
         listView.setCellFactory(new Callback<ListView<File>, ListCell<File>>(){
             @Override public ListCell<File> call(ListView<File> listView){
             return new ListCell<File>(){
@@ -78,8 +76,6 @@ public class LBFilesListView {
                     ContextMenu menu = getNewMenu();
                     menu.setId(file.getAbsolutePath());
                     setContextMenu(menu);
-
-
 
                     pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
                         public void handle(MouseEvent mouseEvent){
@@ -188,5 +184,3 @@ public class LBFilesListView {
     }
 
 }
-
-

@@ -82,7 +82,7 @@ public class Document {
     public void loadEdition(){
         this.edition = new Edition(file, this);
         Edition.isSaveProperty().set(true);
-        documentSaver.start();
+        if(!documentSaver.isAlive()) documentSaver.start();
     }
     public boolean hasRendered(){
         return rendered != null;

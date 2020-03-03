@@ -192,7 +192,6 @@ public class TextElement extends Text implements Element {
 					}
 				}
 				double linesHeight = getLayoutBounds().getHeight();
-				System.out.println(linesHeight);
 
 				if(itemY < linesHeight) itemY = linesHeight;
 				if(itemY > thisObject.page.getHeight()) itemY = thisObject.page.getHeight();

@@ -1,20 +1,20 @@
 package fr.themsou.panel;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.panel.LeftBar.LBFilesListView;
 import fr.themsou.utils.Builders;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioMenuItem;
@@ -22,13 +22,15 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
+import java.awt.*;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
@@ -42,29 +44,29 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem fichier3Clear = new MenuItem("Vider la liste     ");
 	MenuItem fichier4Save = new MenuItem("Sauvegarder l'édition    ");
 	MenuItem fichier5Delete = new MenuItem("Supprimer l'édition     ");
-	MenuItem fichier6Close = new MenuItem("Fermer le fichier     ");
-	MenuItem fichier7SameName = new Menu("Éditions du même nom     ");
+	MenuItem fichier6Close = new MenuItem("Fermer le document     ");
+	Menu fichier7SameName = new Menu("Éditions des documents du même nom");
+	MenuItem fichier7SameNameNull = new MenuItem("Aucune édition trouvée");
 	MenuItem fichier8Export = new MenuItem("Exporter (Regénérer le PDF)     ");
 	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
 
 	Menu preferences = new Menu("Préférences");
-	MenuItem preferences1Zoom = new MenuItem("Zoom par défaut     ");
-	RadioMenuItem preferences2Save = new RadioMenuItem("Sauvegarde auto     ");
-	MenuItem preferences3Regular = new MenuItem("Sauvegarde régulière     ");
+	MenuItem preferences1Zoom = new MenuItem("Zoom lors de l'ouverture d'un document    ");
+	RadioMenuItem preferences2Save = new RadioMenuItem("Sauvegarder automatiquement     ");
+	MenuItem preferences3Regular = new MenuItem("Sauvegarder régulièrement     ");
 	RadioMenuItem preferences4Restore = new RadioMenuItem("Toujours restaurer la session précédente     ");
+	RadioMenuItem preferences5RemoveWhenAdd = new RadioMenuItem("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris");
 
 	Menu apropos = new Menu();
 	Menu aide = new Menu("Aide");
 	MenuItem aide1Doc = new MenuItem("Charger le document d'aide     ");
+	MenuItem aide2Probleme = new MenuItem("Demander de l'aide sur GutHub     ");
 
 	public MenuBar(){
 		setup();
 	}
 
 	public void setup(){
-
-
-		setStyle("-fx-background-color: #2B2B2B;");
 
 		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
 		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
@@ -88,9 +90,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier6Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
 		fichier6Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 
-
 		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
 		fichier7SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
+		fichier7SameName.getItems().add(fichier7SameNameNull);
 
 		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
 		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
@@ -115,21 +117,26 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		menu2arg5.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/coller.png")+"", 0, 0));*/
 
 
-
 		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
 		preferences2Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		preferences3Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		//preferences4Restore.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
+		preferences3Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder-recharger.png")+"", 0, 0));
+		preferences4Restore.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/recharger.png")+"", 0, 0));
+		preferences5RemoveWhenAdd.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/favoris.png")+"", 0, 0));
 
 		preferences2Save.selectedProperty().set(Main.settings.isAutoSave());
 		preferences4Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
+		preferences5RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
 
 		Main.settings.autoSavingProperty().bind(preferences2Save.selectedProperty());
 		Main.settings.restoreLastSessionProperty().bind(preferences4Restore.selectedProperty());
+		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences5RemoveWhenAdd.selectedProperty());
 
-		preferences.getItems().addAll(preferences1Zoom, preferences2Save, preferences3Regular, preferences4Restore);
 
-		aide.getItems().add(aide1Doc);
+		preferences.getItems().addAll(preferences2Save, preferences3Regular, new SeparatorMenuItem(), preferences1Zoom, preferences4Restore, new SeparatorMenuItem(), preferences5RemoveWhenAdd);
+
+		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
+		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0));
+		aide.getItems().addAll(aide1Doc, aide2Probleme);
 
 
 		fichier1Open.setOnAction(new EventHandler<ActionEvent>(){
@@ -185,7 +192,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			@Override public void handle(ActionEvent actionEvent) {
 				if(Main.mainScreen.hasDocument(true)){
 					Main.mainScreen.document.edition.clearEdit(true);
-					Main.mainScreen.setSelected(null);
 				}
 			}
 		});
@@ -194,6 +200,71 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				if(Main.mainScreen.hasDocument(true)){
 					Main.mainScreen.closeFile(true);
 				}
+			}
+		});
+		fichier7SameName.setOnShowing(new EventHandler<Event>() {
+			@Override
+			public void handle(Event event) {
+				fichier7SameName.getItems().clear();
+				int i = 0;
+				for(File file : Edition.getEditFilesWithSameName(Main.mainScreen.document.getFile())){
+
+					MenuItem item = new MenuItem(file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
+					fichier7SameName.getItems().add(item);
+					item.setOnAction(new EventHandler<ActionEvent>() {
+						@Override public void handle(ActionEvent actionEvent) {
+
+							Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+							new JMetro(dialog.getDialogPane(), Style.LIGHT);
+							Builders.secureAlert(dialog);
+							dialog.setTitle("Charger une autre édition");
+							dialog.setHeaderText("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?");
+
+							ButtonType cancel = new ButtonType("Non", ButtonBar.ButtonData.CANCEL_CLOSE);
+							ButtonType yes = new ButtonType("Oui", ButtonBar.ButtonData.OK_DONE);
+							ButtonType yesAll = new ButtonType("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier", ButtonBar.ButtonData.OTHER);
+							dialog.getButtonTypes().setAll(cancel, yes, yesAll);
+
+							Optional<ButtonType> option = dialog.showAndWait();
+							if(option.get() == yes){
+								if(Main.mainScreen.hasDocument(true)){
+									Main.mainScreen.document.edition.clearEdit(false);
+									Edition.mergeEditFileWithDocFile(file, Main.mainScreen.document.getFile());
+									Main.mainScreen.document.loadEdition();
+								}
+							}else if(option.get() == yesAll){
+								if(Main.mainScreen.hasDocument(true)){
+									Main.mainScreen.document.edition.clearEdit(false);
+									Edition.mergeEditFileWithDocFile(file, Main.mainScreen.document.getFile());
+									Main.mainScreen.document.loadEdition();
+
+									for(File otherFileDest : Main.lbFilesTab.files.getItems()){
+										if(otherFileDest.getParentFile().getAbsolutePath().equals(Main.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(Main.mainScreen.document.getFile())){
+											File fromEditFile = Edition.getEditFile(new File(file.getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
+											if(fromEditFile.exists()){
+												Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
+											}else{
+												Alert alert = new Alert(Alert.AlertType.ERROR);
+												new JMetro(alert.getDialogPane(), Style.LIGHT);
+												alert.setTitle("Fichier introuvable");
+												alert.setHeaderText("Le fichier correspondant à \"" + otherFileDest.getName() + "\" dans \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" n'a pas d'édition.");
+												ButtonType ok = new ButtonType("Ignorer", ButtonBar.ButtonData.OK_DONE);
+												ButtonType cancelAll = new ButtonType("Tout Arreter", ButtonBar.ButtonData.CANCEL_CLOSE);
+												alert.getButtonTypes().setAll(ok, cancelAll);
+												Builders.secureAlert(alert);
+												Optional<ButtonType> option2 = alert.showAndWait();
+												if(option2.get() == cancelAll) return;
+											}
+										}
+									}
+								}
+							}
+
+						}
+					}); i++;
+				}
+				if(i == 0) fichier7SameName.getItems().add(fichier7SameNameNull);
+				Builders.setMenuSize(fichier7SameName);
 			}
 		});
 		fichier8Export.setOnAction(new EventHandler<ActionEvent>() {
@@ -290,6 +361,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			}
 		});
+		aide2Probleme.setOnAction(new EventHandler<ActionEvent>() {
+			@Override public void handle(ActionEvent actionEvent) {
+				try{
+					Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDFTeacher/issues/new"));
+				}catch(IOException | URISyntaxException e){
+					e.printStackTrace();
+				}
+			}
+		});
 
 		Label name = new Label("À propos");
 		name.setAlignment(Pos.CENTER_LEFT);
@@ -300,14 +380,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		apropos.setGraphic(name);
 
-
+		// UI Style
+		setStyle("-fx-background-color: #2B2B2B;");
 		getMenus().addAll(fichier, preferences, apropos, aide);
 
 		for(Menu menu : getMenus()){
 			Builders.setMenuSize(menu);
 		}
-
-
-		
 	}
 }

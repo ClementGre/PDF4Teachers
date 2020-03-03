@@ -6,6 +6,7 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.StringUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
@@ -13,7 +14,9 @@ import javafx.scene.control.ButtonType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 public class Edition {
@@ -115,8 +118,34 @@ public class Edition {
 
     }
     public static File getEditFile(File file){
+        return new File(Main.dataFolder + "editions" + File.separator + file.getParentFile().getAbsolutePath().replace(File.separator, "!E!").replace(":", "!P!") + "!E!" + file.getName() + ".edit");
+    }
+    public static File getFileEdit(File file){
+        return new File(file.getName().replaceAll("!E!", "\\" + File.separator).replaceAll("!P!", ":").replace(".edit", ""));
+    }
+    public static void mergeEditFileWithDocFile(File from, File dest){
+        mergeEditFileWithEditFile(getEditFile(from), getEditFile(dest));
+    }
+    public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){
+        if(destEdit.exists()) destEdit.delete();
+        fromEdit.renameTo(destEdit);
+        fromEdit.delete();
+    }
 
-        return new File(Main.dataFolder + "editions" + File.separator + file.getParentFile().getAbsolutePath().replace(File.separator, "!E").replace(":", "!E") + "!E" + file.getName() + ".edit");
+    public static ArrayList<File> getEditFilesWithSameName(File originFile){
+
+        ArrayList<File> files = new ArrayList<>();
+
+        for(File editFile : new File(Main.dataFolder + "editions" + File.separator).listFiles()){
+
+            File file = getFileEdit(editFile);
+            String path = file.getParentFile().getAbsolutePath();
+
+            if(file.getName().equals(originFile.getName()) && !file.equals(originFile)){
+                files.add(file);
+            }
+        }
+        return files;
 
     }
 
@@ -167,6 +196,7 @@ public class Edition {
                 page.clearElements();
             }
             editFile.delete();
+            Main.mainScreen.setSelected(null);
         }
     }
 

@@ -14,6 +14,7 @@ public class Settings {
     private BooleanProperty autoSave = new SimpleBooleanProperty();
     private int regularSaving;
     private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
+    private BooleanProperty removeElementInPreviousListWhenAddingToFavorites = new SimpleBooleanProperty();
     private File[] openedFiles;
     private File openedFile;
 
@@ -25,6 +26,7 @@ public class Settings {
         restoreLastSession.set(true);
         openedFiles = new File[]{};
         openedFile = null;
+        removeElementInPreviousListWhenAddingToFavorites.set(false);
 
         loadSettings();
 
@@ -35,6 +37,11 @@ public class Settings {
         });
         restoreLastSessionProperty().addListener(new ChangeListener<Boolean>() {
             @Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                saveSettings();
+            }
+        });
+        removeElementInPreviousListWhenAddingToFavorites.addListener(new ChangeListener<Boolean>() {
+            @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
                 saveSettings();
             }
         });
@@ -97,6 +104,11 @@ public class Settings {
                                         if(new File(value).exists()) lastFile = new File(value);
                                     }catch(Exception ignored){}
                                 break;
+                                case "removeElementInPreviousListWhenAddingToFavorites":
+                                    try{
+                                        removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
+                                    }catch(Exception ignored){}
+                                break;
                             }
                         }
                         reader.close();
@@ -128,10 +140,13 @@ public class Settings {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(settings, false));
 
                     writer.write("defaultZoom=" + defaultZoom);
+
                     writer.newLine();
                     writer.write("autoSave=" + autoSave.get());
+
                     writer.newLine();
                     writer.write("regularSaving=" + regularSaving);
+
                     writer.newLine();
                     writer.write("restoreLastSession=" + restoreLastSession.get());
 
@@ -147,6 +162,9 @@ public class Settings {
                     }else{
                         writer.write("openedFile=");
                     }
+
+                    writer.newLine();
+                    writer.write("removeElementInPreviousListWhenAddingToFavorites=" + removeElementInPreviousListWhenAddingToFavorites.get());
 
                     writer.flush();
                     writer.close();
@@ -208,6 +226,17 @@ public class Settings {
     }
     public void setOpenedFile(File openedFile) {
         this.openedFile = openedFile;
+        saveSettings();
+    }
+
+    public boolean isRemoveElementInPreviousListWhenAddingToFavorites() {
+        return removeElementInPreviousListWhenAddingToFavorites.get();
+    }
+    public BooleanProperty removeElementInPreviousListWhenAddingToFavoritesProperty() {
+        return removeElementInPreviousListWhenAddingToFavorites;
+    }
+    public void setRemoveElementInPreviousListWhenAddingToFavorites(boolean removeElementInPreviousListWhenAddingToFavorites) {
+        this.removeElementInPreviousListWhenAddingToFavorites.set(removeElementInPreviousListWhenAddingToFavorites);
         saveSettings();
     }
 }
