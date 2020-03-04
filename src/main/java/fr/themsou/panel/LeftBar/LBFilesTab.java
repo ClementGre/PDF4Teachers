@@ -1,27 +1,32 @@
 package fr.themsou.panel.LeftBar;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.SortEvent;
 import fr.themsou.utils.SortManager;
+import fr.themsou.utils.Sorter;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 public class LBFilesTab extends Tab {
 
+	private SortManager sortManager;
 	private VBox separator = new VBox();
-	private HBox options = new HBox();
+	private GridPane options = new GridPane();
 	public ListView<File> files = new ListView<>();
-	boolean titleSortAZ = true;
-	boolean orderSortAZ = true;
 
 	public LBFilesTab(){
 
@@ -37,6 +42,8 @@ public class LBFilesTab extends Tab {
 	public void setup(){
 		files.setStyle("-fx-border-width: 0px;");
 		files.setPrefWidth(270);
+		files.setMaxHeight(Double.MAX_VALUE);
+		VBox.setVgrow(files, Priority.ALWAYS);
 		new LBFilesListView(files);
 
 		files.setOnDragOver(new EventHandler<DragEvent>(){
@@ -75,12 +82,29 @@ public class LBFilesTab extends Tab {
 			}
 		});
 
-		new SortManager(new SortEvent() {
+		sortManager = new SortManager(new SortEvent() {
 			@Override public void call(String sortType, boolean order) {
 				System.out.println("sort by " + sortType + " - " + (order ? "AZ" : "ZA"));
-			}
-		}, null, null).setup(options, "", "Ajout", "Nom", "Dossier");
 
+				if(sortType.equals("Nom")){
+					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+					files.getItems().clear();
+					files.getItems().addAll(Sorter.sortByName(toSort, order));
+				}else if(sortType.equals("Dossier")){
+					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+					files.getItems().clear();
+					files.getItems().addAll(Sorter.sortByDir(toSort, order));
+				}else if(sortType.equals("Édition")){
+					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+					files.getItems().clear();
+					files.getItems().addAll(Sorter.sortByEdit(toSort, order));
+				}else if(sortType.equals("Date d'Ajout")){
+					backOpenFilesList(!order);
+				}
+
+			}
+		}, null, null);
+		sortManager.setup(options, "Date d'Ajout", "Date d'Ajout", "Édition", "\n", "Nom", "Dossier");
 
 		// import last session files
 		if(Main.settings.getOpenedFiles() != null){
@@ -101,25 +125,23 @@ public class LBFilesTab extends Tab {
 		if(!file.isDirectory()){
 			if(isFilePdf(file) && !files.getItems().contains(file)){
 				files.getItems().add(file);
+				addOpenFilesList(file);
+				sortManager.simulateCall();
 			}
 		}else{
-			
 			for(File VFile : Objects.requireNonNull(file.listFiles())){
-				
 				if(isFilePdf(VFile) && !files.getItems().contains(VFile)){
 					files.getItems().add(VFile);
+					addOpenFilesList(VFile);
 				}
 			}
+			sortManager.simulateCall();
 		}
 	}
 	public void openFiles(File[] files){
-
 		for(File file : files){
 			openFile(file);
 		}
-
-		updateOpenFilesList();
-
 	}
 	public void clearFiles(boolean confirm){
 		/*if(Main.mainScreen.getStatus() == -1){
@@ -130,16 +152,6 @@ public class LBFilesTab extends Tab {
 		files.getItems().clear();
 		updateOpenFilesList();
 	}
-	public void removeFile(int file, boolean confirm){
-		if(Main.mainScreen.getStatus() == -1){
-			if(files.getItems().contains(Main.mainScreen.document.getFile())){
-				if(!Main.mainScreen.closeFile(confirm)) return;
-			}
-		}
-		files.getItems().remove(file);
-		updateOpenFilesList();
-
-	}
 	public void removeFile(File file, boolean confirm){
 		/*if(Main.mainScreen.getStatus() == -1){
 			if(files.getItems().contains(Main.mainScreen.document.getFile())){
@@ -147,7 +159,7 @@ public class LBFilesTab extends Tab {
 			}
 		}*/
 		files.getItems().remove(file);
-		updateOpenFilesList();
+		removeOpenFilesList(file);
 	}
 	
 	private boolean isFilePdf(File file) {
@@ -161,11 +173,27 @@ public class LBFilesTab extends Tab {
 
 	private void updateOpenFilesList(){
 
-		File[] openedFiles = new File[Main.lbFilesTab.files.getItems().size()];
-		openedFiles = Main.lbFilesTab.files.getItems().toArray(openedFiles);
+		ArrayList<File> openedFilesList = new ArrayList<>();
+		for(File file : Main.lbFilesTab.files.getItems()){
+			openedFilesList.add(file);
+		}
+		Main.settings.setOpenedFiles(openedFilesList);
 
-		Main.settings.setOpenedFiles(openedFiles);
+	}
+	private void backOpenFilesList(boolean reverse){
 
+		files.getItems().clear();
+		ArrayList<File> openedFilesList = (ArrayList<File>) Main.settings.getOpenedFiles().clone();
+		if(reverse) Collections.reverse(openedFilesList);
+		for(File file : openedFilesList){
+			files.getItems().add(file);
+		}
+	}
+	private void addOpenFilesList(File file){
+		Main.settings.addOpenedFiles(file);
+	}
+	private void removeOpenFilesList(File file){
+		Main.settings.removeOpenedFiles(file);
 	}
 
 	

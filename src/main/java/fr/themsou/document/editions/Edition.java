@@ -89,6 +89,36 @@ public class Edition {
             return elements.toArray(new Element[elements.size()]);
         }
     }
+    public static Integer[] countElements(File editFile) throws Exception{
+
+        if(!editFile.exists()){ //file does not exist
+            return new Integer[0];
+        }else{ // file already exist
+            DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
+
+            int text = 0;
+            int notes = 0;
+            int draw = 0;
+            while(reader.available() != 0){
+                byte elementType = reader.readByte();
+
+                switch (elementType){
+                    case 1:
+                        text++;
+                        TextElement.consumeData(reader);
+                    break;
+                    case 2:
+                        notes++;
+                    break;
+                    case 3:
+                        draw++;
+                    break;
+                }
+            }
+            reader.close();
+            return new Integer[]{text+notes+draw, text, notes, draw};
+        }
+    }
 
     public void save(){
 

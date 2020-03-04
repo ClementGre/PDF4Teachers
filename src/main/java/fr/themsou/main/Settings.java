@@ -15,7 +15,7 @@ public class Settings {
     private int regularSaving;
     private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
     private BooleanProperty removeElementInPreviousListWhenAddingToFavorites = new SimpleBooleanProperty();
-    private File[] openedFiles;
+    private ArrayList<File> openedFiles;
     private File openedFile;
 
     public Settings(){
@@ -24,7 +24,7 @@ public class Settings {
         autoSave.set(false);
         regularSaving = -1;
         restoreLastSession.set(true);
-        openedFiles = new File[]{};
+        openedFiles = new ArrayList<>();
         openedFile = null;
         removeElementInPreviousListWhenAddingToFavorites.set(false);
 
@@ -55,7 +55,7 @@ public class Settings {
                 File settings = new File(Main.dataFolder + "Settings.yml");
                 try{
 
-                    List<File> lastFiles = new ArrayList<>();
+                    ArrayList<File> lastFiles = new ArrayList<>();
                     File lastFile = null;
 
                     if(settings.createNewFile()){ //file was created
@@ -114,8 +114,7 @@ public class Settings {
                         reader.close();
 
                         if(restoreLastSession.get()){
-                            openedFiles = new File[lastFiles.size()];
-                            openedFiles = lastFiles.toArray(openedFiles);
+                            openedFiles = lastFiles;
                             openedFile = lastFile;
                         }
 
@@ -214,13 +213,22 @@ public class Settings {
         saveSettings();
     }
 
-    public File[] getOpenedFiles() {
+    public ArrayList<File> getOpenedFiles() {
         return openedFiles;
     }
-    public void setOpenedFiles(File[] openedFiles) {
+    public void setOpenedFiles(ArrayList<File> openedFiles) {
         this.openedFiles = openedFiles;
         saveSettings();
     }
+    public void addOpenedFiles(File file) {
+        openedFiles.add(file);
+        saveSettings();
+    }
+    public void removeOpenedFiles(File file) {
+        openedFiles.remove(file);
+        saveSettings();
+    }
+
     public File getOpenedFile() {
         return openedFile;
     }

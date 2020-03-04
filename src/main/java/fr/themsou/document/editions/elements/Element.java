@@ -7,7 +7,13 @@ import java.io.IOException;
 public interface Element {
 
 	void writeSimpleData(DataOutputStream writer) throws IOException;
+
+
+	void select();
 	void delete();
+
 	int getPageNumber();
 	Element clone();
+
+
 }

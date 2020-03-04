@@ -8,7 +8,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
@@ -31,16 +33,23 @@ public class SortManager {
         this.updateSort = updateSort;
     }
 
-    public void setup(Pane parent, String selectedButtonName, String... buttonsName){
+    public void setup(GridPane parent, String selectedButtonName, String... buttonsName){
 
+        int row = 0;
         for(String buttonName : buttonsName){
+
+            if(buttonName.equals("\n")){
+                row++; continue;
+            }
+
             Button button = new Button(buttonName);
             button.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/down.png")+"", 0, 0));
+            button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
-            HBox.setHgrow(button, Priority.ALWAYS);
+            GridPane.setHgrow(button, Priority.ALWAYS);
             BooleanProperty order = new SimpleBooleanProperty(true);
             buttons.put(button, order);
-            parent.getChildren().add(button);
+            parent.addRow(row, button);
 
             if(selectedButtonName.equals(buttonName)){
                 selectedButton.set(button);
@@ -79,5 +88,9 @@ public class SortManager {
                 updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
             }
         });
+    }
+
+    public void simulateCall(){
+        updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
     }
 }

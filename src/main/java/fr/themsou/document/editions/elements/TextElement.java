@@ -211,7 +211,8 @@ public class TextElement extends Text implements Element {
 		});
 	}
 
-	void select() {
+	@Override
+	public void select() {
 
 		Main.mainScreen.setSelected(this);
 		Main.lbTextTab.selectItem();
@@ -229,6 +230,7 @@ public class TextElement extends Text implements Element {
 		page.removeElement(this);
 	}
 
+	@Override
 	public void writeSimpleData(DataOutputStream writer) throws IOException {
 		writer.writeByte(1);
 		writeData(writer);
@@ -265,6 +267,12 @@ public class TextElement extends Text implements Element {
 
 		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? Main.mainScreen.document.pages.get(page) : null);
 
+	}
+	public static void consumeData(DataInputStream reader) throws IOException {
+		reader.readByte();reader.readShort();reader.readShort();
+		reader.readFloat();reader.readBoolean();reader.readBoolean();reader.readUTF();
+		reader.readByte();reader.readByte();reader.readByte();
+		reader.readUTF();
 	}
 	public static void readDataAndCreate(DataInputStream reader) throws IOException {
 

@@ -46,20 +46,10 @@ public class LBFilesListView {
                     if(Edition.getEditFile(file).exists()){
                         name.setFont(Font.font(null, FontWeight.BOLD, 12));
                         try{
-                            Element[] elements = Edition.simpleLoad(Edition.getEditFile(file));
+                            Integer[] elementsCount = Edition.countElements(Edition.getEditFile(file));
 
-                            int textElements = 0; int noteElements = 0; int drawElements = 0;
-                            for(Element element : elements){
-                                if(element instanceof TextElement){
-                                    textElements++;
-                                }/*else if(element instanceof NoteElement){
-                                noteElements++;
-                            }else if(element instanceof DrawElement){
-                                drawElements++;
-                            }*/
-                            }
-                            path.setText(path.getText() + " | " + elements.length + " Éléments");
-                            setTooltip(new Tooltip(elements.length + " Éléments\n" + textElements + " Commentaires\n" + noteElements + " Notes\n" + drawElements + " Figures"));
+                            path.setText(path.getText() + " | " + elementsCount[0] + " Éléments");
+                            setTooltip(new Tooltip(elementsCount[0] + " Éléments\n" + elementsCount[1] + " Commentaires\n" + elementsCount[2] + " Notes\n" + elementsCount[3] + " Figures"));
 
                         }catch(Exception e){ e.printStackTrace();}
                     }else{
