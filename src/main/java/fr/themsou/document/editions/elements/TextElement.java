@@ -23,10 +23,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.paint.Color;
@@ -157,8 +154,6 @@ public class TextElement extends Text implements Element {
 			}
 		});
 
-
-
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 
@@ -221,9 +216,9 @@ public class TextElement extends Text implements Element {
 		Edition.setUnsave();
 	}
 
-	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean cores){
-		if(cores) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, this);
-		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type);
+	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean hasCore){
+		if(hasCore) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, 0, this);
+		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, 0);
 	}
 	@Override
 	public void delete() {

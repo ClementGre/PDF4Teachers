@@ -32,23 +32,37 @@ public class LBTextTreeView {
 
                         if(empty){
                             setGraphic(null);
+                            setStyle(null);
+                            setContextMenu(null);
                             return;
-                        }
-
-                        if(item != null){
+                        }if(item != null){
+                            if(item.equals("favoritesOptions")){
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setGraphic(Main.lbTextTab.favoritesTextOptions);
+                                return;
+                            }if(item.equals("lastsOptions")){
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setGraphic(Main.lbTextTab.lastsTextOptions);
+                                return;
+                            }if(item.equals("onFileOptions")){
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setGraphic(Main.lbTextTab.onFileTextOptions);
+                                return;
+                            }
 
                             Text name = new Text(item);
                             name.setFont(new Font(14));
-                            setStyle("-fx-padding: 5 0;");
+                            setStyle("-fx-padding: 5 0; -fx-background-color: #0078d7;");
                             setGraphic(name);
                             return;
                         }
 
                         if(getTreeItem() instanceof NoDisplayTextElement){
+                            setStyle(null);
                             NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
 
                             VBox nameParts = new VBox();
-                            String fullName = element.getText();
+                            String fullName = element.getText() + " - " + element.getUses() + " - " + element.getCreationDate();
 
                             setGraphic(nameParts);
                             setStyle("-fx-padding: 3 -15;");
@@ -79,7 +93,7 @@ public class LBTextTreeView {
                             ContextMenu menu = getNewMenu(element);
                             setContextMenu(menu);
 
-                            setOnMouseClicked(new EventHandler<MouseEvent>(){
+                            nameParts.setOnMouseClicked(new EventHandler<MouseEvent>(){
                                 public void handle(MouseEvent mouseEvent){
                                     if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && getGraphic() instanceof VBox){
                                         element.addToDocument();
@@ -87,7 +101,9 @@ public class LBTextTreeView {
                                 }
                             });
                         }else{
+                            setStyle(null);
                             setGraphic(null);
+                            setContextMenu(null);
                         }
                     }
                 };
@@ -102,26 +118,15 @@ public class LBTextTreeView {
         MenuItem item1 = new MenuItem("Ajouter");
         MenuItem item2 = new MenuItem("Retirer");
         MenuItem item3 = new MenuItem("Ajouter aux favoris");
-        MenuItem item4 = new MenuItem("Monter");
-        MenuItem item5 = new MenuItem("Descendre");
         MenuItem item6 = new MenuItem("Vider la liste");
         MenuItem item7 = new MenuItem("Ajouter aux éléments précédents");
-
-        // Désactiver monter/descendre
-        if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-            item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.favoritesText.getChildren())));
-            item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.favoritesText.getChildren().indexOf(element) >= Main.userData.favoritesText.getChildren().size()-1;}, Bindings.size(Main.userData.favoritesText.getChildren())));
-        }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-            item4.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) <= 0;}, Bindings.size(Main.userData.lastsText.getChildren())));
-            item5.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.userData.lastsText.getChildren().indexOf(element) >= Main.userData.lastsText.getChildren().size()-1;}, Bindings.size(Main.userData.lastsText.getChildren())));
-        }
 
 
         // Ajouter les items en fonction du type
         menu.getItems().addAll(item1, item2);
         if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3);
         if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item7);
-        else menu.getItems().addAll(new SeparatorMenuItem(), item4, item5, new SeparatorMenuItem(), item6);
+        else menu.getItems().addAll(new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
         // Définis les actions des boutons
@@ -135,7 +140,7 @@ public class LBTextTreeView {
             @Override
             public void handle(ActionEvent e) {
                 if(element.getType() == NoDisplayTextElement.ONFILE_TYPE){
-                    element.getCores().delete();
+                    element.getCore().delete();
                 }else{
                     Main.lbTextTab.removeSavedElement(element);
                 }
@@ -144,22 +149,12 @@ public class LBTextTreeView {
         item3.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e){
-                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE));
+                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
                 if(element.getType() == NoDisplayTextElement.LAST_TYPE){
                     if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
                         Main.lbTextTab.removeSavedElement(element);
                     }
                 }
-            }
-        });
-        item4.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                Main.lbTextTab.ascendElement(element);
-            }
-        });
-        item5.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                Main.lbTextTab.descendElement(element);
             }
         });
         item6.setOnAction(new EventHandler<ActionEvent>() {
@@ -175,7 +170,7 @@ public class LBTextTreeView {
         item7.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent e){
-                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE));
+                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE, 0, System.currentTimeMillis()/1000));
             }
         });
         return menu;

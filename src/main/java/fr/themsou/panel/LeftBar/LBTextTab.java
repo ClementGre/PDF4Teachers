@@ -7,6 +7,9 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.SortEvent;
+import fr.themsou.utils.SortManager;
+import fr.themsou.utils.Sorter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -22,10 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -35,7 +35,10 @@ import javafx.util.Callback;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
@@ -51,9 +54,25 @@ public class LBTextTab extends Tab {
 	private Button deleteBtn = new Button("Supprimer");
 	private Button newBtn = new Button("Nouveau");
 
-	private TreeView treeView = new TreeView<>();
-	private TreeItem<String> treeViewRoot = new TreeItem<>();
-	private TreeItem<String> onFileText = new TreeItem<>("Éléments sur ce document");
+
+
+	public TreeView treeView = new TreeView<>();
+	public TreeItem<String> treeViewRoot = new TreeItem<>();
+
+	public TreeItem<String> favoritesText = new TreeItem<>("Éléments Favoris");
+	public TreeItem<String> favoritesTextOptionsItem = new TreeItem("favoritesOptions");
+	public GridPane favoritesTextOptions = new GridPane();
+	public SortManager favoritesTextSortManager;
+
+	public TreeItem<String> lastsText = new TreeItem<>("Éléments Précédents");
+	public TreeItem<String> lastsTextOptionsItem = new TreeItem("lastsOptions");
+	public GridPane lastsTextOptions = new GridPane();
+	public SortManager lastsTextSortManager;
+
+	public TreeItem<String> onFileText = new TreeItem<>("Éléments sur ce document");
+	public TreeItem<String> onFileTextOptionsItem = new TreeItem("onFileOptions");
+	public GridPane onFileTextOptions = new GridPane();
+	public SortManager onFileTextSortManager;
 
 	private boolean selectedIsNew = false;
 	private boolean txtAreaScrollBarListenerIsSetup = false;
@@ -137,7 +156,7 @@ public class LBTextTab extends Tab {
 
 		txtArea.textProperty().addListener(new ChangeListener<String>() {
 			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				updateOnFileElementsList();
+
 				updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
 				if(!txtAreaScrollBarListenerIsSetup){
 					getHorizontalSB(txtArea).visibleProperty().addListener(new ChangeListener<Boolean>() {
@@ -271,7 +290,42 @@ public class LBTextTab extends Tab {
 		treeView.setRoot(treeViewRoot);
 		new LBTextTreeView(treeView);
 
-		treeViewRoot.getChildren().addAll(Main.userData.favoritesText, Main.userData.lastsText, onFileText);
+		favoritesTextSortManager = new SortManager(new SortEvent(){
+			@Override public void call(String sortType, boolean order){
+				System.out.println("sort fav");
+				List<NoDisplayTextElement> toSort = new ArrayList<>();
+				for(int i = 1; i < favoritesText.getChildren().size(); i++) toSort.add((NoDisplayTextElement) favoritesText.getChildren().get(i));
+				clearSavedFavoritesElements();
+				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) favoritesText.getChildren().add(item);
+			}
+		}, null, null);
+		favoritesTextSortManager.setup(favoritesTextOptions, "Date d'Ajout", "Date d'Ajout", "Nom", "Utilisation", "\n", "Police", "Taille", "Couleur");
+		favoritesText.getChildren().add(favoritesTextOptionsItem);
+
+		lastsTextSortManager = new SortManager(new SortEvent(){
+			@Override public void call(String sortType, boolean order){
+				System.out.println("sort text");
+				List<NoDisplayTextElement> toSort = new ArrayList<>();
+				for(int i = 1; i < lastsText.getChildren().size(); i++) toSort.add((NoDisplayTextElement) lastsText.getChildren().get(i));
+				clearSavedLastsElements();
+				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) lastsText.getChildren().add(item);
+			}
+		}, null, null);
+		lastsTextSortManager.setup(lastsTextOptions, "Date d'Ajout", "Date d'Ajout", "Nom", "Utilisation", "\n", "Police", "Taille", "Couleur");
+		lastsText.getChildren().add(lastsTextOptionsItem);
+
+		onFileTextSortManager = new SortManager(new SortEvent(){
+			@Override public void call(String sortType, boolean order){
+				List<NoDisplayTextElement> toSort = new ArrayList<>();
+				for(int i = 1; i < onFileText.getChildren().size(); i++) toSort.add((NoDisplayTextElement) onFileText.getChildren().get(i));
+				clearSavedOnFileElements();
+				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) onFileText.getChildren().add(item);
+			}
+		}, null, null);
+		onFileTextSortManager.setup(onFileTextOptions, "Position", "Position", "Nom", "\n", "Police", "Taille", "Couleur");
+		onFileText.getChildren().add(onFileTextOptionsItem);
+
+		treeViewRoot.getChildren().addAll(favoritesText, lastsText, onFileText);
 
 		pane.getChildren().add(treeView);
 
@@ -332,58 +386,51 @@ public class LBTextTab extends Tab {
 	}
 	public void addSavedElement(NoDisplayTextElement element){
 		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-			if(!Main.userData.favoritesText.getChildren().contains(element)){
-				Main.userData.favoritesText.getChildren().add(element);
+			if(!favoritesText.getChildren().contains(element)){
+				favoritesText.getChildren().add(element);
 			}
 		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-			if(!Main.userData.lastsText.getChildren().contains(element)){
-				Main.userData.lastsText.getChildren().add(0, element);
+			if(!lastsText.getChildren().contains(element)){
+				lastsText.getChildren().add(1, element);
 
-				if(Main.userData.lastsText.getChildren().size() > 30){
-					Main.userData.lastsText.getChildren().remove(Main.userData.lastsText.getChildren().size()-1);
+				if(lastsText.getChildren().size() > 31){
+					lastsText.getChildren().remove(lastsText.getChildren().size()-1);
 				}
 			}
 		}
 	}
 	public void removeSavedElement(NoDisplayTextElement element){
 		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-			Main.userData.favoritesText.getChildren().remove(element);
+			favoritesText.getChildren().remove(element);
 		}else{
-			Main.userData.lastsText.getChildren().remove(element);
+			lastsText.getChildren().remove(element);
 		}
 	}
 	public void clearSavedFavoritesElements(){
-		Main.userData.favoritesText.getChildren().clear();
-	}
-	public void clearSavedLastsElements(){
-		Main.userData.lastsText.getChildren().clear();
-	}
-
-	public void ascendElement(NoDisplayTextElement element) {
-		int pos = (element.getType() == NoDisplayTextElement.FAVORITE_TYPE) ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
-		removeSavedElement(element);
-
-		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-			Main.userData.favoritesText.getChildren().add(pos - 1, element);
-		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-			Main.userData.lastsText.getChildren().add(pos - 1, element);
+		List<TreeItem<String>> items = favoritesText.getChildren();
+		for(int i = 2; i <= items.size();){
+			items.remove(1);
 		}
 	}
-
-	public void descendElement(NoDisplayTextElement element) {
-		int pos = (element.getType() == NoDisplayTextElement.FAVORITE_TYPE) ? Main.userData.favoritesText.getChildren().indexOf(element) : Main.userData.lastsText.getChildren().indexOf(element);
-		removeSavedElement(element);
-
-		if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-			Main.userData.favoritesText.getChildren().add(pos + 1, element);
-		}else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-			Main.userData.lastsText.getChildren().add(pos + 1, element);
+	public void clearSavedLastsElements(){
+		List<TreeItem<String>> items = lastsText.getChildren();
+		for(int i = 2; i <= items.size();){
+			items.remove(1);
+		}
+	}
+	public void clearSavedOnFileElements(){
+		List<TreeItem<String>> items = onFileText.getChildren();
+		for(int i = 2; i <= items.size();){
+			items.remove(1);
 		}
 	}
 
 	public void updateOnFileElementsList(){
 
-		onFileText.getChildren().clear();
+		List<TreeItem<String>> items = onFileText.getChildren();
+		for(int i = 2; i <= items.size();){
+			items.remove(1);
+		}
 
 		if(Main.mainScreen.getStatus() == -1){
 			for(PageRenderer page : Main.mainScreen.document.pages){
@@ -395,6 +442,7 @@ public class LBTextTab extends Tab {
 				}
 			}
 		}
+		onFileTextSortManager.simulateCall();
 
 	}
 
@@ -409,5 +457,29 @@ public class LBTextTab extends Tab {
 			}
 		}
 		return null;
+	}
+	private List<NoDisplayTextElement> autoSortList(List<NoDisplayTextElement> toSort, String sortType, boolean order){
+
+		if(sortType.equals("Date d'Ajout")){
+			return Sorter.sortElementsByDate(toSort, order);
+
+		}else if(sortType.equals("Nom")){
+			return Sorter.sortElementsByName(toSort, order);
+
+		}else if(sortType.equals("Utilisation")){
+			return Sorter.sortElementsByUtils(toSort, order);
+
+		}else if(sortType.equals("Police")){
+			return Sorter.sortElementsByPolice(toSort, order);
+
+		}else if(sortType.equals("Taille")){
+			return Sorter.sortElementsBySize(toSort, order);
+
+		}else if(sortType.equals("Couleur")){
+			return Sorter.sortElementsByColor(toSort, order);
+		}else if(sortType.equals("Position")){
+			return Sorter.sortElementsByCorePosition(toSort, order);
+		}
+		return toSort;
 	}
 }

@@ -119,7 +119,6 @@ public class Main extends Application {
 //		SETUPS
 
 		settings = new Settings();
-		userData = new UserData();
 		devices = new Devices();
 
 		mainScreen = new MainScreen((int) (21 * 37.795275591));
@@ -140,7 +139,6 @@ public class Main extends Application {
 //		PANELS
 
 		window.show();
-		leftBar.setPrefWidth(270);
 
 		root.setCenter(mainScreen);
 		root.setTop(menuBar);
@@ -177,6 +175,10 @@ public class Main extends Application {
 		if(settings.getOpenedFile() != null){
 			mainScreen.openFile(settings.getOpenedFile());
 		}
+
+		// load data
+
+		userData = new UserData();
 
 
 

@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Settings {
 

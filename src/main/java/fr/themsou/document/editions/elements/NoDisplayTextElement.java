@@ -2,8 +2,14 @@ package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.control.TreeItem;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -18,27 +24,59 @@ public class NoDisplayTextElement extends TreeItem{
 	private String text;
 	private Color color;
 	private int type;
+	private long uses;
+	private long creationDate;
 
-	private TextElement cores = null;
+	private TextElement core = null;
 
 	public static final int FAVORITE_TYPE = 1;
 	public static final int LAST_TYPE = 2;
 	public static final int ONFILE_TYPE = 3;
 
-	public NoDisplayTextElement(Font font, String text, Color color, int type) {
-
+	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate) {
 		this.font = font;
 		this.text = text;
 		this.color = color;
 		this.type = type;
+		this.uses = uses;
+		this.creationDate = creationDate;
 	}
-	public NoDisplayTextElement(Font font, String text, Color color, int type, TextElement cores) {
-
+	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
 		this.font = font;
 		this.text = text;
 		this.color = color;
 		this.type = type;
-		this.cores = cores;
+		this.uses = uses;
+		this.creationDate = creationDate;
+		this.core = core;
+
+		core.textProperty().addListener(new ChangeListener<String>() {
+			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue){
+				setText(newValue);
+				Main.lbTextTab.treeView.refresh();
+			}
+		});
+		core.fontProperty().addListener(new ChangeListener<Font>() {
+			@Override public void changed(ObservableValue<? extends Font> observable, Font oldValue, Font newValue){
+				setFont(newValue);
+				Main.lbTextTab.treeView.refresh();
+			}
+		});
+		core.fillProperty().addListener(new ChangeListener<Paint>() {
+			@Override public void changed(ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) {
+				setColor((Color) newValue);
+				Main.lbTextTab.treeView.refresh();
+			}
+		});
+		core.setOnMouseReleased(new EventHandler<MouseEvent>() {
+			@Override public void handle(MouseEvent event) {
+				if(event.getButton() == MouseButton.PRIMARY){
+					if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals("Position")){
+						Main.lbTextTab.onFileTextSortManager.simulateCall();
+					}
+				}
+			}
+		});
 	}
 
 	@Override
@@ -64,6 +102,8 @@ public class NoDisplayTextElement extends TreeItem{
 		writer.writeByte((int) (color.getRed() * 255.0 - 128));
 		writer.writeByte((int) (color.getGreen() * 255.0 - 128));
 		writer.writeByte((int) (color.getBlue() * 255.0 - 128));
+		writer.writeLong(uses);
+		writer.writeLong(creationDate);
 		writer.writeUTF(text);
 	}
 	public TextElement toRealTextElement(int x, int y, int page){
@@ -78,20 +118,20 @@ public class NoDisplayTextElement extends TreeItem{
 		short colorRed = (short) (reader.readByte() + 128);
 		short colorGreen = (short) (reader.readByte() + 128);
 		short colorBlue = (short) (reader.readByte() + 128);
+		long uses = reader.readLong();
+		long creationDate = reader.readLong();
 		String text = reader.readUTF();
 
-		FontWeight fontWeight = isBold ? FontWeight.BOLD : FontWeight.NORMAL;
-		FontPosture fontPosture = isItalic ? FontPosture.ITALIC : FontPosture.REGULAR;
 		Font font = TextElement.getFont(fontName, isBold, isItalic, (int) fontSize);
 
-		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type);
+		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
 
 	}
 
 	public void addToDocument(){
 
 		if(Main.mainScreen.hasDocument(false)){
-
+			uses++;
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
@@ -127,10 +167,22 @@ public class NoDisplayTextElement extends TreeItem{
 	public void setType(int type) {
 		this.type = type;
 	}
-	public TextElement getCores() {
-		return cores;
+	public long getUses() {
+		return uses;
 	}
-	public void setCores(TextElement cores) {
-		this.cores = cores;
+	public void setUses(long uses) {
+		this.uses = uses;
+	}
+	public long getCreationDate() {
+		return creationDate;
+	}
+	public void setCreationDate(long creationDate) {
+		this.creationDate = creationDate;
+	}
+	public TextElement getCore() {
+		return core;
+	}
+	public void setCore(TextElement core) {
+		this.core = core;
 	}
 }

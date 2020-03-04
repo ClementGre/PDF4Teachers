@@ -11,8 +11,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
 import java.util.HashMap;
@@ -92,5 +90,9 @@ public class SortManager {
 
     public void simulateCall(){
         updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
+    }
+
+    public Button getSelectedButton() {
+        return selectedButton.get();
     }
 }

@@ -7,11 +7,7 @@ import java.io.*;
 
 public class UserData {
 
-    public TreeItem<String> favoritesText = new TreeItem<>("Éléments Favoris");
-    public TreeItem<String> lastsText = new TreeItem<>("Éléments Précédents");
-
     public UserData(){
-
         loadData();
     }
     public void loadData(){
@@ -31,15 +27,17 @@ public class UserData {
                     switch(dataType){
                         case NoDisplayTextElement.FAVORITE_TYPE: // Favorite TextElement
                             try{
-                                favoritesText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.FAVORITE_TYPE));
+                                Main.lbTextTab.favoritesText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.FAVORITE_TYPE));
                             }catch(IOException e){ e.printStackTrace(); }
-                            break;
+                        break;
                         case NoDisplayTextElement.LAST_TYPE: // Last TextElement
                             try{
-                                lastsText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.LAST_TYPE));
+                                Main.lbTextTab.lastsText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.LAST_TYPE));
                             }catch(IOException e){ e.printStackTrace(); }
                         break;
                     }
+                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                    Main.lbTextTab.lastsTextSortManager.simulateCall();
                 }
                 reader.close();
             }
@@ -56,13 +54,17 @@ public class UserData {
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, false)));
 
-            for(TreeItem<String> item : favoritesText.getChildren()){
-                writer.writeByte(NoDisplayTextElement.FAVORITE_TYPE);
-                ((NoDisplayTextElement) item).writeData(writer);
+            for(TreeItem<String> item : Main.lbTextTab.favoritesText.getChildren()){
+                if(item instanceof  NoDisplayTextElement){
+                    writer.writeByte(NoDisplayTextElement.FAVORITE_TYPE);
+                    ((NoDisplayTextElement) item).writeData(writer);
+                }
             }
-            for(TreeItem<String> item : lastsText.getChildren()){
-                writer.writeByte(NoDisplayTextElement.LAST_TYPE);
-                ((NoDisplayTextElement) item).writeData(writer);
+            for(TreeItem<String> item : Main.lbTextTab.lastsText.getChildren()){
+                if(item instanceof  NoDisplayTextElement){
+                    writer.writeByte(NoDisplayTextElement.LAST_TYPE);
+                    ((NoDisplayTextElement) item).writeData(writer);
+                }
             }
 
             writer.flush();

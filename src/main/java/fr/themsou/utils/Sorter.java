@@ -1,19 +1,16 @@
 package fr.themsou.utils;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.TextElement;
-import javafx.scene.control.Tooltip;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-
+import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 
 public class Sorter {
 
-    public static List<File> sortByName(List<File> files, boolean order){
+    // FILES SORTING
+
+    public static List<File> sortFilesByName(List<File> files, boolean order){
 
 
         files.sort(new Comparator<File>() {
@@ -24,7 +21,7 @@ public class Sorter {
         });
         return files;
     }
-    public static List<File> sortByDir(List<File> files, boolean order){
+    public static List<File> sortFilesByDir(List<File> files, boolean order){
 
         files.sort(new Comparator<File>() {
             @Override public int compare(File file1, File file2){
@@ -34,7 +31,7 @@ public class Sorter {
         });
         return files;
     }
-    public static List<File> sortByEdit(List<File> files, boolean order){
+    public static List<File> sortFilesByEdit(List<File> files, boolean order){
 
         files.sort(new Comparator<File>() {
             @Override public int compare(File file1, File file2){
@@ -57,5 +54,76 @@ public class Sorter {
             }
         });
         return files;
+    }
+
+    // ELEMENT SORTING
+
+    public static List<NoDisplayTextElement> sortElementsByDate(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+
+                if(!order) return ((element1.getCreationDate()-999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate()-999999999999L) + element2.getText())*-1;
+                return ((element1.getCreationDate()-999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate()-999999999999L) + element2.getText());
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsByName(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+
+                if(!order) return element1.getText().compareToIgnoreCase(element2.getText())*-1;
+                return element1.getText().compareToIgnoreCase(element2.getText());
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsByUtils(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+
+                if(!order) return ((element1.getUses()-99999) + element1.getText()).compareToIgnoreCase((element2.getUses()-99999) + element2.getText())*-1;
+                return ((element1.getUses()-99999) + element1.getText()).compareToIgnoreCase((element2.getUses()-99999) + element2.getText());
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsByPolice(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+
+                if(!order) return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText()))*-1;
+                return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText()));
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsBySize(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+
+                if(!order) return ((element1.getFont().getSize()-999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize()-999.0) + element2.getText())*-1;
+                return ((element1.getFont().getSize()-999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize()-999.0) + element2.getText());
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsByColor(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+                if(!order) return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText()))*-1;
+                return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText()));
+            }
+        });
+        return elements;
+    }
+    public static List<NoDisplayTextElement> sortElementsByCorePosition(List<NoDisplayTextElement> elements, boolean order){
+        elements.sort(new Comparator<NoDisplayTextElement>() {
+            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+                if(!order) return ((element1.getCore().getPageNumber() + "" + element1.getCore().getRealY() + "" + element1.getCore().getRealX()).compareToIgnoreCase(element2.getCore().getPageNumber() + "" + element2.getCore().getRealY() + "" + element2.getCore().getRealX()))*-1;
+                return ((element1.getCore().getPageNumber() + "" + element1.getCore().getRealY() + "" + element1.getCore().getRealX()).compareToIgnoreCase(element2.getCore().getPageNumber() + "" + element2.getCore().getRealY() + "" + element2.getCore().getRealX()));
+            }
+        });
+        return elements;
     }
 }

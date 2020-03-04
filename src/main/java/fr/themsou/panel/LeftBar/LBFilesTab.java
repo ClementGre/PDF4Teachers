@@ -84,20 +84,18 @@ public class LBFilesTab extends Tab {
 
 		sortManager = new SortManager(new SortEvent() {
 			@Override public void call(String sortType, boolean order) {
-				System.out.println("sort by " + sortType + " - " + (order ? "AZ" : "ZA"));
-
 				if(sortType.equals("Nom")){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortByName(toSort, order));
+					files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
 				}else if(sortType.equals("Dossier")){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortByDir(toSort, order));
+					files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
 				}else if(sortType.equals("Édition")){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortByEdit(toSort, order));
+					files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
 				}else if(sortType.equals("Date d'Ajout")){
 					backOpenFilesList(!order);
 				}
