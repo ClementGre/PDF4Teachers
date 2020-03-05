@@ -64,7 +64,7 @@ public class AboutWindow extends Stage {
             name.setFont(new Font(23));
             name.setAlignment(Pos.CENTER);
 
-            Label version = new Label("version 1.0.0");
+            Label version = new Label("version 1.0.1");
             version.setFont(new Font(15));
             version.setAlignment(Pos.CENTER);
 
