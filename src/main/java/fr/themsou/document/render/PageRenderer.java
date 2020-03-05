@@ -2,6 +2,7 @@ package fr.themsou.document.render;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -93,24 +94,35 @@ public class PageRenderer extends Pane {
         Main.lbTextTab.updateOnFileElementsList();
     }
 
-    public void addElement(Element element){
+    public void addElementSimple(Element element){
+
+        if(element != null){
+            elements.add(element);
+            getChildren().add((Shape) element);
+        }
+    }
+    public void addElement(Element element, boolean update){
 
         if(element != null){
 
             elements.add(element);
             getChildren().add((Shape) element);
             Edition.setUnsave();
-            Main.lbTextTab.updateOnFileElementsList();
-
+            if(element instanceof TextElement){
+                if(update) Main.lbTextTab.addOnFileElement((TextElement) element);
+            }
         }
     }
-    public void removeElement(Element element){
+    public void removeElement(Element element, boolean update){
 
         if(element != null){
             elements.remove(element);
             getChildren().remove((Shape) element);
             Edition.setUnsave();
-            Main.lbTextTab.updateOnFileElementsList();
+            if(element instanceof TextElement){
+                if(update) Main.lbTextTab.removeOnFileElement((TextElement) element);
+            }
+
         }
     }
 

@@ -23,6 +23,7 @@ public class NoDisplayTextElement extends TreeItem{
 	private Font font;
 	private String text;
 	private Color color;
+
 	private int type;
 	private long uses;
 	private long creationDate;
@@ -68,15 +69,18 @@ public class NoDisplayTextElement extends TreeItem{
 				Main.lbTextTab.treeView.refresh();
 			}
 		});
-		core.setOnMouseReleased(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent event) {
-				if(event.getButton() == MouseButton.PRIMARY){
-					if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals("Position")){
-						Main.lbTextTab.onFileTextSortManager.simulateCall();
+		if(type == NoDisplayTextElement.ONFILE_TYPE){
+			core.setOnMouseReleased(new EventHandler<MouseEvent>() {
+				@Override public void handle(MouseEvent event) {
+					if(event.getButton() == MouseButton.PRIMARY){
+						if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals("Position")){
+							Main.lbTextTab.onFileTextSortManager.simulateCall();
+						}
 					}
 				}
-			}
-		});
+			});
+		}
+
 	}
 
 	@Override
@@ -137,7 +141,7 @@ public class NoDisplayTextElement extends TreeItem{
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
 			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
-			page.addElement(realElement);
+			page.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}
 

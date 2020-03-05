@@ -13,6 +13,7 @@ public interface Element {
 	void delete();
 
 	int getPageNumber();
+	int getCurrentPageNumber();
 	Element clone();
 
 

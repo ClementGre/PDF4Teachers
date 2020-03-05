@@ -120,8 +120,10 @@ public class Sorter {
     public static List<NoDisplayTextElement> sortElementsByCorePosition(List<NoDisplayTextElement> elements, boolean order){
         elements.sort(new Comparator<NoDisplayTextElement>() {
             @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
-                if(!order) return ((element1.getCore().getPageNumber() + "" + element1.getCore().getRealY() + "" + element1.getCore().getRealX()).compareToIgnoreCase(element2.getCore().getPageNumber() + "" + element2.getCore().getRealY() + "" + element2.getCore().getRealX()))*-1;
-                return ((element1.getCore().getPageNumber() + "" + element1.getCore().getRealY() + "" + element1.getCore().getRealX()).compareToIgnoreCase(element2.getCore().getPageNumber() + "" + element2.getCore().getRealY() + "" + element2.getCore().getRealX()));
+
+                if(!order) return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999));
+                return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999))*-1;
+
             }
         });
         return elements;

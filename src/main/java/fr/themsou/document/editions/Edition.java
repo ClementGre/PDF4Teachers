@@ -59,6 +59,7 @@ public class Edition {
                     }
                 }
                 reader.close();
+                Main.lbTextTab.updateOnFileElementsList();
             }
         }catch (IOException e){ e.printStackTrace(); }
     }

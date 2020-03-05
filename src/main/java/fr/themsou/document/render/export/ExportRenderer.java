@@ -78,7 +78,6 @@ public class ExportRenderer {
                     for(String text : txtElement.getText().split("\\n")){
 
                         float shiftY = (float) -lineHeight;
-                        System.out.println(text + " "  + lineHeight + " " + shiftY);
                         contentStream.newLineAtOffset(0, shiftY);
 
                         contentStream.showText(text);

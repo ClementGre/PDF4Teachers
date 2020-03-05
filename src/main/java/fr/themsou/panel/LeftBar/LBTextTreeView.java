@@ -10,6 +10,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -20,7 +22,10 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import org.w3c.dom.ls.LSOutput;
 
+import javax.swing.*;
+
 public class LBTextTreeView {
+
 
     public LBTextTreeView(TreeView treeView){
 
@@ -34,26 +39,55 @@ public class LBTextTreeView {
                             setGraphic(null);
                             setStyle(null);
                             setContextMenu(null);
+                            setOnMouseClicked(null);
                             return;
                         }if(item != null){
                             if(item.equals("favoritesOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
                                 setGraphic(Main.lbTextTab.favoritesTextOptions);
                                 return;
                             }if(item.equals("lastsOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
                                 setGraphic(Main.lbTextTab.lastsTextOptions);
                                 return;
                             }if(item.equals("onFileOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0");
+                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
                                 setGraphic(Main.lbTextTab.onFileTextOptions);
                                 return;
                             }
 
-                            Text name = new Text(item);
+
+                            HBox box = new HBox();
+                            box.setAlignment(Pos.CENTER);
+                            setMaxHeight(30);
+                            box.setPrefHeight(18);
+                            setStyle("-fx-padding: 6 6 6 2; -fx-background-color: #cccccc;");
+                            box.setStyle("-fx-padding: -6 -6 -6 0;");
+
+                            Text name = new Text();
                             name.setFont(new Font(14));
-                            setStyle("-fx-padding: 5 0; -fx-background-color: #0078d7;");
-                            setGraphic(name);
+                            box.getChildren().add(name);
+
+                            Region spacer = new Region();
+                            HBox.setHgrow(spacer, Priority.ALWAYS);
+                            box.getChildren().add(spacer);
+
+                            Pane toggle = new Pane();
+                            box.getChildren().add(toggle);
+
+                            if(item.equals("favoritesText")){
+                                name.setText("Éléments Favoris");
+                                toggle.getChildren().add(Main.lbTextTab.favoritesTextToggleOption);
+                            }if(item.equals("lastsText")){
+                                name.setText("Éléments Précédents");
+                                box.getChildren().add(Main.lbTextTab.lastsTextToggleOption);
+                            }if(item.equals("onFileText")){
+                                name.setText("Éléments sur ce document");
+                                box.getChildren().add(Main.lbTextTab.onFileTextToggleOption);
+                            }
+                            setGraphic(box);
+
+
                             return;
                         }
 
@@ -62,10 +96,10 @@ public class LBTextTreeView {
                             NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
 
                             VBox nameParts = new VBox();
-                            String fullName = element.getText() + " - " + element.getUses() + " - " + element.getCreationDate();
+                            String fullName = element.getText();
 
                             setGraphic(nameParts);
-                            setStyle("-fx-padding: 3 -15;");
+                            setStyle("-fx-padding: 3 -10;");
 
                             int index = 0;
                             while(index < fullName.split(" ").length) {
@@ -93,10 +127,15 @@ public class LBTextTreeView {
                             ContextMenu menu = getNewMenu(element);
                             setContextMenu(menu);
 
-                            nameParts.setOnMouseClicked(new EventHandler<MouseEvent>(){
+                            setOnMouseClicked(new EventHandler<MouseEvent>(){
                                 public void handle(MouseEvent mouseEvent){
                                     if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && getGraphic() instanceof VBox){
                                         element.addToDocument();
+                                        if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
+                                            Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                                        }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+                                            Main.lbTextTab.lastsTextSortManager.simulateCall();
+                                        }
                                     }
                                 }
                             });
@@ -104,6 +143,7 @@ public class LBTextTreeView {
                             setStyle(null);
                             setGraphic(null);
                             setContextMenu(null);
+                            setOnMouseClicked(null);
                         }
                     }
                 };
@@ -134,6 +174,12 @@ public class LBTextTreeView {
             @Override
             public void handle(ActionEvent e) {
                 element.addToDocument();
+                if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
+                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+                    Main.lbTextTab.lastsTextSortManager.simulateCall();
+                }
+
             }
         });
         item2.setOnAction(new EventHandler<ActionEvent>() {

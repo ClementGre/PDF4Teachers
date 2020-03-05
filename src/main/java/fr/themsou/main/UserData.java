@@ -36,10 +36,10 @@ public class UserData {
                             }catch(IOException e){ e.printStackTrace(); }
                         break;
                     }
-                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
-                    Main.lbTextTab.lastsTextSortManager.simulateCall();
                 }
                 reader.close();
+                Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                Main.lbTextTab.lastsTextSortManager.simulateCall();
             }
         }catch(IOException e){
             e.printStackTrace();

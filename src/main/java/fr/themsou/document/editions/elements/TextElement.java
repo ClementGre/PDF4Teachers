@@ -116,18 +116,18 @@ public class TextElement extends Text implements Element {
 				TextElement realElement = (TextElement) thisObject.clone();
 				realElement.setRealX(realElement.getRealX() + 10);
 				realElement.setRealY(realElement.getRealY() + 10);
-				page.addElement(realElement);
+				page.addElement(realElement, true);
 				Main.mainScreen.selectedProperty().setValue(realElement);
 			}
 		});
 		item3.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, false));
+				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, true));
 			}
 		});
 		item4.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent e) {
-				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, false));
+				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, true));
 			}
 		});
 
@@ -163,27 +163,30 @@ public class TextElement extends Text implements Element {
 				double itemX = thisObject.page.mouseX - shiftX;
 				double itemY = thisObject.page.mouseY - shiftY;
 
+				boolean changePage = false;
 				if(thisObject.page.mouseY < -30){
 					if(thisObject.page.getPage() > 0){
 
 						Main.mainScreen.setSelected(null);
 
-						thisObject.page.removeElement(thisObject);
+						thisObject.page.removeElement(thisObject, false);
 						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() -1);
-						thisObject.page.addElement(thisObject);
+						thisObject.page.addElement(thisObject, false);
 
 						itemY = thisObject.page.getHeight() - getLayoutBounds().getHeight();
+						changePage = true;
 					}
 				}else if(thisObject.page.mouseY > thisObject.page.getHeight() + 30){
 					if(thisObject.page.getPage() < Main.mainScreen.document.pages.size()-1){
 
 						Main.mainScreen.setSelected(null);
 
-						thisObject.page.removeElement(thisObject);
+						thisObject.page.removeElement(thisObject, false);
 						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() + 1);
-						thisObject.page.addElement(thisObject);
+						thisObject.page.addElement(thisObject, false);
 
 						itemY = 0;
+						changePage = true;
 					}
 				}
 				double linesHeight = getLayoutBounds().getHeight();
@@ -195,6 +198,10 @@ public class TextElement extends Text implements Element {
 
 				realX.set((int) (itemX / thisObject.page.getWidth() * 500.0));
 				realY.set((int) (itemY / thisObject.page.getHeight() * 800.0));
+
+				if(changePage){
+					Main.lbTextTab.onFileTextSortManager.simulateCall();
+				}
 
 			}
 		});
@@ -217,12 +224,12 @@ public class TextElement extends Text implements Element {
 	}
 
 	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean hasCore){
-		if(hasCore) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, 0, this);
-		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, 0);
+		if(hasCore) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
+		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
 	}
 	@Override
 	public void delete() {
-		page.removeElement(this);
+		page.removeElement(this, true);
 	}
 
 	@Override
@@ -274,7 +281,7 @@ public class TextElement extends Text implements Element {
 		TextElement element = readDataAndGive(reader, true);
 
 		if(Main.mainScreen.document.pages.size() > element.page.getPage())
-			Main.mainScreen.document.pages.get(element.page.getPage()).addElement(element);
+			Main.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
 
 	}
 
@@ -370,6 +377,10 @@ public class TextElement extends Text implements Element {
 	@Override
 	public int getPageNumber() {
 		return pageNumber;
+	}
+	@Override
+	public int getCurrentPageNumber() {
+		return page.getPage();
 	}
 
 	@Override

@@ -39,7 +39,7 @@ public class PDFPagesRender {
 			return images;
 			
 		}catch(Exception | NoSuchMethodError e){
-			System.out.println(e.getMessage());
+			e.printStackTrace();
 			Main.mainScreen.setStatus(2);
 			return null;
 		}
