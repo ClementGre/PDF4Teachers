@@ -12,13 +12,13 @@ Les éditions sont composés de plusieurs éléments : Les commentaires (Texte),
 
 ## Les APIs
 
-L'application à été développé sous Java SE 8 (avec Swing) puis passée sous Java SE 11 et enfin sous Java SE 13.
+L'application à été développé sous Java SE 8 (avec Swing) puis passée sous Java SE 11 avec JavaFX et enfin sous Java SE 13.
 
-- J'utilise l'API PDF BOX pour générer des images à partir d'un fichier PDF ainsi que commons-logging et Font BOX qui lui sont nécessaires.
+- J'utilise l'API PDF BOX pour générer des images à partir d'un fichier PDF puis pour regénérer un fichier PDF, ainsi que commons-logging et Font BOX qui lui sont nécessaires.
 - L'application, initialement basé sur Swing, a migré vers JavaFx pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings etc.).
-- J'ai choisit Gradle pour gérer les dépendances, vous pouvez donc éxécuter ``./gradlew run`` dans un terminal de commande pour exécuter l'application. 
+- J'ai choisit Gradle pour gérer les dépendances, vous pouvez donc éxécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. 
 
-Des releases seront aussi bientôt disponibles.
+Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink pour votre système d'exploitation.
 
 ## L'organisation du code
 
@@ -29,9 +29,9 @@ Les classes du package ``fr.themsou.panel`` représentent toutes une partie de l
 
 On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et toutes les classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans Main. Les différents onglets permettrons respectivement de voir la liste des fichiers, ajouter du texte, des notes et des formes géométriques.
 
-**Classes pour gérer l'édition du document (``fr.themsou.panel.LeftBar``)**
+**Classes des éléments (``fr.themsou.document.editions.elements``)**
 
-Ces différents éléments (texte, notes etc.) ont des classes attribués dans ``.document.editions.elements`` qui implémenterons ``Element``, etendront d'un élément graphique de ``javafx.scene.control`` et qui permettront de faire le rendu, de stoquer les donnés d'un élément et d'encoder/décoder les donnés en hexadécimal.
+Ces différents éléments (texte, notes et formes géométriques) ont des classes attribués dans ``.document.editions.elements`` qui implémenterons ``Element``, etendront d'un élément graphique de ``javafx.scene.control`` et qui permettront de faire le rendu, de stoquer les donnés d'un élément et d'encoder/décoder les donnés en hexadécimal.
 
 **Classes pour gérer les documents PDF (``fr.themsou.document``)**
 
