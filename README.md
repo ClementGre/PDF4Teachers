@@ -16,7 +16,7 @@ L'application à été développé sous Java SE 8 (avec Swing) puis passée sous
 
 - J'utilise l'API PDF BOX pour générer des images à partir d'un fichier PDF puis pour regénérer un fichier PDF, ainsi que commons-logging et Font BOX qui lui sont nécessaires.
 - L'application, initialement basé sur Swing, a migré vers JavaFx pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings etc.).
-- J'ai choisit Gradle pour gérer les dépendances, vous pouvez donc éxécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. 
+- J'ai choisi Gradle pour gérer les dépendances, vous pouvez donc éxécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. 
 
 Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink pour votre système d'exploitation.
 

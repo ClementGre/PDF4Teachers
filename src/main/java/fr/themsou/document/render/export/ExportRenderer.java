@@ -71,7 +71,7 @@ public class ExportRenderer {
                     boolean italic = false;
                     if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
                     InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
-                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize());
+                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize() / 595 * pageSize.getWidth());
 
                     contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()), (float) (pageSize.getHeight() - (txtElement.getRealY()) / 800.0 * pageSize.getHeight() + height));
 

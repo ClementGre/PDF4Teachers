@@ -45,6 +45,7 @@ public class LBTextTreeView {
                             if(item.equals("favoritesOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
                                 setGraphic(Main.lbTextTab.favoritesTextOptions);
+
                                 return;
                             }if(item.equals("lastsOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
@@ -55,7 +56,6 @@ public class LBTextTreeView {
                                 setGraphic(Main.lbTextTab.onFileTextOptions);
                                 return;
                             }
-
 
                             HBox box = new HBox();
                             box.setAlignment(Pos.CENTER);
@@ -87,58 +87,12 @@ public class LBTextTreeView {
                             }
                             setGraphic(box);
 
-
                             return;
                         }
 
                         if(getTreeItem() instanceof NoDisplayTextElement){
-                            setStyle(null);
-                            NoDisplayTextElement element = (NoDisplayTextElement) getTreeItem();
+                            ((NoDisplayTextElement) getTreeItem()).updateGraphic(this);
 
-                            VBox nameParts = new VBox();
-                            String fullName = element.getText();
-
-                            setGraphic(nameParts);
-                            setStyle("-fx-padding: 3 -10;");
-
-                            int index = 0;
-                            while(index < fullName.split(" ").length) {
-                                String namePart = fullName.split(" ")[index];
-                                Text name = new Text(namePart);
-                                index++;
-
-                                name.setFill(element.getColor());
-                                name.setFont(TextElement.getFont(element.getFont().getFamily(), false, false, 14));
-
-                                while(index < fullName.split(" ").length){
-                                    String lastNamePart = namePart;
-                                    namePart += " " + fullName.split(" ")[index];
-                                    name.setText(namePart);
-
-                                    if(name.getBoundsInParent().getWidth() > 235){
-                                        name.setText(lastNamePart);
-                                        break;
-                                    }
-                                    index++;
-                                }
-                                nameParts.getChildren().add(name);
-                            }
-
-                            ContextMenu menu = getNewMenu(element);
-                            setContextMenu(menu);
-
-                            setOnMouseClicked(new EventHandler<MouseEvent>(){
-                                public void handle(MouseEvent mouseEvent){
-                                    if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && getGraphic() instanceof VBox){
-                                        element.addToDocument();
-                                        if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-                                            Main.lbTextTab.favoritesTextSortManager.simulateCall();
-                                        }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-                                            Main.lbTextTab.lastsTextSortManager.simulateCall();
-                                        }
-                                    }
-                                }
-                            });
                         }else{
                             setStyle(null);
                             setGraphic(null);
@@ -152,7 +106,7 @@ public class LBTextTreeView {
 
     }
 
-    public ContextMenu getNewMenu(NoDisplayTextElement element){
+    public static ContextMenu getNewMenu(NoDisplayTextElement element){
 
         ContextMenu menu = new ContextMenu();
         MenuItem item1 = new MenuItem("Ajouter");

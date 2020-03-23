@@ -41,7 +41,7 @@ public class TextElement extends Text implements Element {
 
 	ContextMenu menu = new ContextMenu();
 
-	private int pageNumber = -1;
+	private int pageNumber;
 	private int shiftX = 0;
 	private int shiftY = 0;
 

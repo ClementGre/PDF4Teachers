@@ -91,14 +91,6 @@ public class LBTextTab extends Tab {
 		setup();
 	}
 
-	private static File[] getResourceFolderFiles(String folder){
-		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		URL url = loader.getResource(folder);
-		String path = url.getPath();
-
-		return new File(path + "/").listFiles();
-	}
-
 	public void setup(){
 
 
@@ -171,8 +163,6 @@ public class LBTextTab extends Tab {
 				}
 			}
 		});
-
-
 
 		Builders.setPosition(deleteBtn, 5, 110, 127.5, 30, false);
 		deleteBtn.setCursor(Cursor.HAND);
@@ -312,7 +302,7 @@ public class LBTextTab extends Tab {
 		treeView.setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
 		treeView.setLayoutY(150);
 		treeView.setPrefWidth(270);
-		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(150));
+		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(treeView.layoutYProperty()));
 		treeView.setShowRoot(false);
 		treeView.setRoot(treeViewRoot);
 
@@ -344,6 +334,7 @@ public class LBTextTab extends Tab {
 				}
 				clearSavedLastsElements();
 				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) lastsText.getChildren().add(item);
+
 			}
 		}, null, null);
 		lastsTextSortManager.setup(lastsTextOptions, "Ajout", "Ajout", "Nom", "Utilisation", "\n", "Police", "Taille", "Couleur");
@@ -359,6 +350,7 @@ public class LBTextTab extends Tab {
 				}
 				clearSavedOnFileElements();
 				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) onFileText.getChildren().add(item);
+
 			}
 		}, null, null);
 		onFileTextSortManager.setup(onFileTextOptions, "Position", "Position", "Nom", "\n", "Police", "Taille", "Couleur");
@@ -374,7 +366,7 @@ public class LBTextTab extends Tab {
 		int lineNumber = txtArea.getParagraphs().size();
 		int height = lineNumber >= 3 ? 70 : lineNumber*20+10;
 
-		if(sbIsVisible) height += 15;
+		if(sbIsVisible) height += 16;
 
 		if(txtArea.getHeight() != height){
 			txtArea.minHeightProperty().bind(new SimpleDoubleProperty(height));
@@ -492,7 +484,6 @@ public class LBTextTab extends Tab {
 			}
 		}
 		onFileTextSortManager.simulateCall();
-
 	}
 	public void addOnFileElement(TextElement element){
 

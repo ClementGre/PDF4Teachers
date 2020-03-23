@@ -345,8 +345,8 @@ public class ExportWindow {
         new JMetro(alert.getDialogPane(), Style.LIGHT);
         Builders.secureAlert(alert);
         alert.setTitle("Exportation terminée");
-        alert.setHeaderText("Vos documents ont bien étés exportés !");
-        alert.setContentText("Vous pouvez les retrouver dans le dossier choisit.");
+        alert.setHeaderText("Vos documents ont bien été exportés !");
+        alert.setContentText("Vous pouvez les retrouver dans le dossier choisi.");
         alert.show();
 
     }
