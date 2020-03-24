@@ -56,7 +56,6 @@ public class TextElement extends Text implements Element {
 		this.realX.set(x);
 		this.realY.set(y);
 
-
 		setRealFont(font);
 		setText(text);
 		setTextOrigin(VPos.BOTTOM);
@@ -93,7 +92,6 @@ public class TextElement extends Text implements Element {
 				}
 			}
 		});
-
 		MenuItem item1 = new MenuItem("Supprimer");
 		item1.setAccelerator(KeyCombination.keyCombination("Suppr"));
 		MenuItem item2 = new MenuItem("Dupliquer");
@@ -157,11 +155,8 @@ public class TextElement extends Text implements Element {
 		setOnMouseDragged(new EventHandler<MouseEvent>() {
 			@Override public void handle(MouseEvent e) {
 
-				shiftX = -10;
-				shiftY = -10;
-
-				double itemX = thisObject.page.mouseX - shiftX;
-				double itemY = thisObject.page.mouseY - shiftY;
+				double itemX = getLayoutX() + e.getX() - shiftX;
+				double itemY = getLayoutY() + e.getY() - shiftY;
 
 				boolean changePage = false;
 				if(thisObject.page.mouseY < -30){
@@ -189,15 +184,8 @@ public class TextElement extends Text implements Element {
 						changePage = true;
 					}
 				}
-				double linesHeight = getLayoutBounds().getHeight();
 
-				if(itemY < linesHeight) itemY = linesHeight;
-				if(itemY > thisObject.page.getHeight()) itemY = thisObject.page.getHeight();
-				if(itemX < 0) itemX = 0;
-				if(itemX > thisObject.page.getWidth() - getLayoutBounds().getWidth()) itemX = thisObject.page.getWidth() - getLayoutBounds().getWidth();
-
-				realX.set((int) (itemX / thisObject.page.getWidth() * 500.0));
-				realY.set((int) (itemY / thisObject.page.getHeight() * 800.0));
+				checkLocation(itemX, itemY);
 
 				if(changePage){
 					Main.lbTextTab.onFileTextSortManager.simulateCall();
@@ -209,8 +197,25 @@ public class TextElement extends Text implements Element {
 		textProperty().addListener(new ChangeListener<String>() {
 			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 				Edition.setUnsave();
+
+				if(getLayoutY() < getLayoutBounds().getHeight()){
+					checkLocation(getLayoutX(), getLayoutY());
+				}
 			}
 		});
+	}
+
+	public void checkLocation(double itemX, double itemY){
+
+		double linesHeight = getLayoutBounds().getHeight();
+		if(itemY < linesHeight) itemY = linesHeight;
+		if(itemY > page.getHeight()) itemY = page.getHeight();
+		if(itemX < 0) itemX = 0;
+		if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
+
+		realX.set((int) (itemX / page.getWidth() * 500.0));
+		realY.set((int) (itemY / page.getHeight() * 800.0));
+
 	}
 
 	@Override

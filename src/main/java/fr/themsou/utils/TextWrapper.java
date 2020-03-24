@@ -60,7 +60,7 @@ public class TextWrapper {
     }
 
     private void appendLine(String text){
-        wrappedLine += wrappedLine.isEmpty() ? text : "\n " + text;
+        wrappedLine += wrappedLine.isEmpty() ? text : "\n" + text;
     }
 
     private boolean test(String line){

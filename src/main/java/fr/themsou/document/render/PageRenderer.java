@@ -83,7 +83,7 @@ public class PageRenderer extends Pane {
             }catch(IndexOutOfBoundsException ex){
                 return false;
             }
-        }, Main.mainScreen.vvalueProperty()));
+        }, Main.mainScreen.vvalueProperty(), widthProperty()));
 
     }
 

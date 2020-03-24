@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -44,6 +45,11 @@ public class NoDisplayTextElement extends TreeItem{
 
 	private NoDisplayTextElement thisObject = this;
 
+	// Graphics items
+	Text name = new Text();
+	ContextMenu menu;
+	EventHandler<MouseEvent> onMouseCLick;
+
 	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate) {
 		this.font.set(font);
 		this.text = text;
@@ -51,6 +57,8 @@ public class NoDisplayTextElement extends TreeItem{
 		this.type = type;
 		this.uses = uses;
 		this.creationDate = creationDate;
+
+		setup();
 	}
 	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
 		this.font.set(font);
@@ -65,7 +73,7 @@ public class NoDisplayTextElement extends TreeItem{
 		core.textProperty().addListener(new ChangeListener<String>() {
 			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue){
 				setText(newValue);
-				updateGraphic(findCellByItem(thisObject, Main.lbTextTab.treeView));
+				updateGraphic();
 			}
 		});
 		// BIND la couleur et le font
@@ -76,6 +84,7 @@ public class NoDisplayTextElement extends TreeItem{
 			}
 		});
 
+		// Update la position lors des déplacements
 		if(type == NoDisplayTextElement.ONFILE_TYPE){
 			core.setOnMouseReleased(new EventHandler<MouseEvent>() {
 				@Override public void handle(MouseEvent event) {
@@ -87,31 +96,16 @@ public class NoDisplayTextElement extends TreeItem{
 				}
 			});
 		}
+		setup();
 	}
 
-	public void updateGraphic(TreeCell<String> cell){
+	public void setup(){
 
-		if(cell == null){
-			System.out.println("Error : Cell is null");
-			return;
-		}
+		// Setup les éléments graphiques
 
-		cell.setStyle(null);
-		cell.setStyle("-fx-padding: 3 -10;");
+		menu = LBTextTreeView.getNewMenu(this);
 
-		int maxWidth = (int) (Main.lbTextTab.treeView.getWidth() + 20);
-		if(maxWidth < 0) return;
-
-		Text name = new Text(new TextWrapper(getText(), getFont(), maxWidth).wrap());
-
-		name.fillProperty().bind(colorProperty());
-		name.fontProperty().bind(Bindings.createObjectBinding(() -> TextElement.getFont(getFont().getFamily(), false, false, 14), fontProperty()));
-
-		cell.setGraphic(name);
-
-		cell.setContextMenu(LBTextTreeView.getNewMenu(this));
-
-		cell.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		onMouseCLick = new EventHandler<MouseEvent>(){
 			public void handle(MouseEvent mouseEvent){
 				if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 					addToDocument();
@@ -122,15 +116,34 @@ public class NoDisplayTextElement extends TreeItem{
 					}
 				}
 			}
-		});
+		};
 
+		name.fillProperty().bind(colorProperty());
+		name.fontProperty().bind(Bindings.createObjectBinding(() -> TextElement.getFont(getFont().getFamily(), false, false, 14), fontProperty()));
 	}
 
-	public static TreeCell<String> findCellByItem(TreeItem treeItem, TreeView treeView) {
-		return (TreeCell<String>) treeView.lookupAll(".tree-cell").stream()
-				.filter(n -> ((TreeCell) n).getTreeItem() == treeItem)
-				.findFirst()
-				.orElse(null);
+	public void updateGraphic(){
+
+		int maxWidth = (int) (Main.lbTextTab.treeView.getWidth() + 20);
+		if(maxWidth < 0) return;
+
+		String wrappedText = "";
+		for(String text : getText().split("\\n")){
+			wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, getFont(), maxWidth).wrap() : "\n" + new TextWrapper(text, getFont(), maxWidth).wrap();
+		}
+		name.setText(wrappedText);
+	}
+	public void updateCell(TreeCell<String> cell){
+
+		if(cell == null) return;
+		if(name.getText().isEmpty()) updateGraphic();
+
+		cell.setGraphic(name);
+		cell.setStyle(null);
+		cell.setStyle("-fx-padding: 5 -10;");
+		cell.setContextMenu(menu);
+		cell.setOnMouseClicked(onMouseCLick);
+
 	}
 
 	@Override

@@ -118,8 +118,17 @@ public class MainScreen extends ScrollPane {
 		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
 
-		// prevent scroll on zoom
+
+		final double SPEED = 3;
+		getContent().setOnScroll(scrollEvent -> {
+			double deltaY = scrollEvent.getDeltaY() / pane.getHeight() * SPEED;
+			setVvalue(getVvalue() - deltaY);
+		});
+
+
 		addEventFilter(ScrollEvent.SCROLL, e -> {
+
+			// prevent scroll on zoom
 			if(e.isControlDown()){
 				ctrlDown = true;
 				e.consume();
@@ -132,6 +141,8 @@ public class MainScreen extends ScrollPane {
 
 			}else ctrlDown = false;
 
+			// Check on ScrollBar switch to visible state
+			// In order to set the default value to 0.5
 			boolean newVisible = getVerticalSB(Main.mainScreen).isVisible();
 			if(!lastVerticalScrollIsVisible && newVisible){
 				lastVerticalScrollIsVisible = true;
@@ -276,8 +287,14 @@ public class MainScreen extends ScrollPane {
 		document.showPages();
 		document.loadEdition();
 
+
 		setHvalue(0.5);
 		setVvalue(0);
+		lastHorizontalScrollValue = 0.5;
+		lastHorizontalScrollValue = 0;
+		lastHorizontalScrollIsVisible = true;
+		lastVerticalScrollIsVisible = true;
+
 		setCursor(Cursor.DEFAULT);
 
 		repaint();

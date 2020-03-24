@@ -91,7 +91,7 @@ public class LBTextTreeView {
                         }
 
                         if(getTreeItem() instanceof NoDisplayTextElement){
-                            ((NoDisplayTextElement) getTreeItem()).updateGraphic(this);
+                            ((NoDisplayTextElement) getTreeItem()).updateCell(this);
 
                         }else{
                             setStyle(null);
