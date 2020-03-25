@@ -1,14 +1,13 @@
 package fr.themsou.main;
 
+import fr.themsou.document.editions.elements.TextElement;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -219,68 +218,68 @@ public class License {
 
     public License(){
 
-        VBox root = new VBox();
-        Scene scene = new Scene(root, 650, 450);
+        ScrollPane root = new ScrollPane();
+        VBox container = new VBox();
+        Scene scene = new Scene(root, 545, 720);
 
         window.initOwner(Main.window);
         window.initModality(Modality.WINDOW_MODAL);
         window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        window.setWidth(650);
-        window.setHeight(450);
-
-        window.setMinWidth(500);
-        window.setMinHeight(450);
-        window.setMaxWidth(800);
-        window.setMaxHeight(450);
+        window.setWidth(545);
+        window.setHeight(720);
         window.setTitle("PDF Teacher - License");
         window.setScene(scene);
-        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(javafx.stage.WindowEvent e){ window.close(); }
+        window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
+            System.out.println(new File(Main.dataFolder + File.separator + "settings.yml").delete());
+            window.close();
+            System.exit(0);
         });
         new JMetro(root, Style.LIGHT);
 
-        setupSimplePanel(root);
+        root.setContent(container);
+        setupPanel(container);
 
         window.show();
 
+        new Thread(() -> {
+            try{ Thread.sleep(1500); }catch(InterruptedException e){ e.printStackTrace(); }
+            Platform.runLater(() -> root.setVvalue(0));
+        }).start();
+
     }
 
-    public void setupSimplePanel(VBox root){
+    public void setupPanel(VBox root){
 
         Text info = new Text("Vous devez accepter la license pour accéder à l'application.");
 
         Label license = new Label(LICENSE);
+        license.setFont(TextElement.getFont("Arial", false, false, 12));
         license.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 
         HBox btns = new HBox();
         Button cancel = new Button("Refuser");
-        cancel.requestFocus();
         Button accept = new Button("Accepter");
 
         btns.getChildren().addAll(cancel, accept);
         btns.setAlignment(Pos.CENTER_RIGHT);
 
         root.getChildren().addAll(info, license, btns);
+        root.setStyle("-fx-padding: 10;");
 
-        VBox.setMargin(info, new Insets(40, 10, 40, 10));
+        VBox.setMargin(info, new Insets(40, 10, 40, 0));
+        license.setStyle("-fx-padding: 10;");
 
-        HBox.setMargin(license, new Insets(0, 10, 10, 10));
+        HBox.setMargin(cancel, new Insets(20, 5, 0, 0));
+        HBox.setMargin(accept, new Insets(20, 0, 0, 5));
 
-        HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
-        HBox.setMargin(accept, new Insets(50, 10, 10, 5));
-
-
-        accept.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-
-                window.close();
-            }
+        accept.setOnAction((ActionEvent event) -> {
+            window.close();
         });
-        cancel.setOnAction(new EventHandler<ActionEvent>(){
-            @Override public void handle(ActionEvent event){
-                window.close();
-            }
+        cancel.setOnAction((ActionEvent event) -> {
+            System.out.println(new File(Main.dataFolder + File.separator + "settings.yml").delete());
+            window.close();
+            System.exit(0);
         });
 
     }

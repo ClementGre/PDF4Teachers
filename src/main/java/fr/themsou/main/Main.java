@@ -82,11 +82,9 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window) throws Exception {
 		if(System.getProperty("os.name").toLowerCase().contains("win")){
-
 			dataFolder = System.getenv("APPDATA") + File.separator + "PDFTeacher" + File.separator;
 		}
-
-		boolean firstLaunch = !new File(dataFolder).exists();
+		boolean firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 
 		hostServices = getHostServices();
 
@@ -165,10 +163,13 @@ public class Main extends Application {
 
 		if(firstLaunch){
 
-			InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
 			File doc = new File(Main.dataFolder + "Documentation - PDFTeacher.pdf");
-			Files.copy(docRes, doc.getAbsoluteFile().toPath());
+			if(!doc.exists()){
+				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
+				Files.copy(docRes, doc.getAbsoluteFile().toPath());
+			}
 			Main.mainScreen.openFile(doc);
+
 		}
 
 
@@ -177,11 +178,11 @@ public class Main extends Application {
 		}
 
 		// load data
-
 		userData = new UserData();
 
-
-
+		if(firstLaunch){
+			new License();
+		}
 
 	}
 
