@@ -15,9 +15,11 @@ import javafx.scene.text.TextBoundsType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 
 import java.io.File;
@@ -25,11 +27,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 
 public class ExportRenderer {
 
     public int exportFile(File file, String directory, String prefix, String suffix, String replace, String by, String customName,
-                          boolean erase, boolean mkdirs, boolean textElements, boolean notesElements, boolean drawElements) throws Exception {
+                          Boolean erase, boolean mkdirs, boolean textElements, boolean notesElements, boolean drawElements) throws Exception {
 
         File editFile = Edition.getEditFile(file);
         editFile.createNewFile();
@@ -121,7 +124,7 @@ public class ExportRenderer {
 
         String uri = directory + File.separator+ customName;
         if(customName.isEmpty()){
-            uri = directory + File.separator + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(replace, by) + suffix + ".pdf";
+            uri = directory + File.separator + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(Pattern.quote(replace), Pattern.quote(by)) + suffix + ".pdf";
         }
 
         if(new File(uri).exists() && !erase){
@@ -143,7 +146,7 @@ public class ExportRenderer {
             }else if(option.get() == cancelButton){
                 return 1;
             }else if(option.get() == yesAlwaysButton){
-                mkdirs = true;
+                ExportWindow.erase = true;
             }else if(option.get() == renameButton){
                 int i = 1;
                 String tmpUri = uri;
@@ -152,28 +155,6 @@ public class ExportRenderer {
                     i++;
                 }
                 uri = tmpUri;
-            }
-        }
-
-        if(!new File(directory).exists()){
-            if(mkdirs){
-                new File(directory).mkdirs();
-            }else{
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                alert.setTitle("Dossier introuvable");
-                alert.setHeaderText("Le dossier d'exportation n'est pas existant.");
-                alert.setContentText("Voulez-vous en le créer ou modifier la destination ?");
-                ButtonType yesButton = new ButtonType("Créer le dossier", ButtonBar.ButtonData.YES);
-                ButtonType cancelButton = new ButtonType("Modifier la destination", ButtonBar.ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(yesButton, cancelButton);
-                Builders.secureAlert(alert);
-                Optional<ButtonType> option = alert.showAndWait();
-                if(option.get() == yesButton){
-                    new File(directory).mkdirs();
-                }else{
-                    return 0;
-                }
             }
         }
         doc.save(uri);

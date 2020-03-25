@@ -6,6 +6,9 @@ import fr.themsou.main.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.panel.LeftBar.LBFilesListView;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.NodeRadioMenuItem;
+import fr.themsou.utils.TextWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -17,16 +20,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.RadioMenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
@@ -38,29 +39,65 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
 
+	////////// FICHIER //////////
+
 	Menu fichier = new Menu("Fichier");
-	MenuItem fichier1Open = new MenuItem("Ouvrir un·des fichiers    ");
-	MenuItem fichier2OpenDir = new MenuItem("Ouvrir un dossier    ");
-	MenuItem fichier3Clear = new MenuItem("Vider la liste     ");
-	MenuItem fichier4Save = new MenuItem("Sauvegarder l'édition    ");
-	MenuItem fichier5Delete = new MenuItem("Supprimer l'édition     ");
-	MenuItem fichier6Close = new MenuItem("Fermer le document     ");
-	Menu fichier7SameName = new Menu("Éditions des documents du même nom");
-	MenuItem fichier7SameNameNull = new MenuItem("Aucune édition trouvée");
-	MenuItem fichier8Export = new MenuItem("Exporter (Regénérer le PDF)     ");
-	MenuItem fichier9ExportAll = new MenuItem("Tout exporter     ");
+	NodeMenuItem fichier1Open = createMenuItem("Ouvrir un·des fichiers", "ouvrir", "Ctrl+O",
+			"Vous permet d'ajouter un ou plusieurs fichiers de votre ordinateur dans la liste des fichiers, disponible dans le 1er onglet du menu latéral gauche.");
+
+	NodeMenuItem fichier2OpenDir = createMenuItem("Ouvrir un dossier", "directory", "Ctrl+Shift+O",
+			"Vous permet d'ajouter tous les fichiers pdf d'un dossier de votre ordinateur dans la liste des fichiers, disponible dans le 1er onglet du menu latéral gauche.");
+
+	NodeMenuItem fichier3Clear = createMenuItem("Vider la liste", "vider", "Ctrl+Shift+W",
+			"Vous permet de vider la liste des fichiers, disponible dans le 1er onglet du menu latéral gauche", false, true, 0);
+
+	NodeMenuItem fichier4Save = createMenuItem("Sauvegarder l'édition", "sauvegarder", "Ctrl+S",
+			"Vous permet de sauvegarder l'édition du document ouvert. Cette édition est composé de tous les éléments que vous avez ajouté au document. Pour créer un nouveau fichier PDF à partir de celui ouvert, veuillez plutôt utiliser la fonction Exporter.", true, false, 0);
+
+	NodeMenuItem fichier5Delete = createMenuItem("Supprimer l'édition", "supprimer", "Ctrl+Del",
+			"Vous permet de supprimer l'édition du document ouvert. Cette édition est composé de tous les éléments que vous avez ajouté au document.", true, false, 0);
+
+	NodeMenuItem fichier6Close = createMenuItem("Fermer le document", "fermer", "Ctrl+W",
+			"Vous permet de fermer le document actuellement ouvert.", true, false, 0);
+
+	Menu fichier7SameName = createSubMenu("Éditions des documents du même nom", "memeNom",
+			"Vous permet d'intervertir l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsque vous déplacez votre fichier PDF. En effet, si vous déplacez un document dans un autre dossier, PDFTeacher n'arrivera plus à récupérer son édition, sauf avec cette fonction.", true);
+
+	NodeMenuItem fichier7SameNameNull = createMenuItem("Aucune édition trouvée", "", "",
+			"");
+
+	NodeMenuItem fichier8Export = createMenuItem("Exporter (Regénérer le PDF)", "exporter", "Ctrl+E",
+			"Vous permet de créer un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments que vous avez ajoutés.", true, false, 0);
+
+	NodeMenuItem fichier9ExportAll = createMenuItem("Tout exporter", "exporter", "Ctrl+Shift+E",
+			"Vous permet de créer des nouveau fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition.", false, true, 0);
+
+	////////// PREFS //////////
 
 	Menu preferences = new Menu("Préférences");
-	MenuItem preferences1Zoom = new MenuItem("Zoom lors de l'ouverture d'un document    ");
-	RadioMenuItem preferences2Save = new RadioMenuItem("Sauvegarder automatiquement     ");
-	MenuItem preferences3Regular = new MenuItem("Sauvegarder régulièrement     ");
-	RadioMenuItem preferences4Restore = new RadioMenuItem("Toujours restaurer la session précédente     ");
-	RadioMenuItem preferences5RemoveWhenAdd = new RadioMenuItem("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris");
+
+	NodeMenuItem preferences1Zoom = createMenuItem("Zoom lors de l'ouverture d'un document", "zoom", "",
+			"Définis le zoom par défaut lors de l'ouverture d'un document.", 30);
+
+	NodeRadioMenuItem preferences2Save = createRadioMenuItem("Sauvegarder automatiquement", "sauvegarder",
+			"Sauvegarde l'édition du document automatiquement lorsque vous fermez le document ou que vous quittez l'application.", true);
+
+	NodeRadioMenuItem preferences3Regular = createRadioMenuItem("Sauvegarder régulièrement", "sauvegarder-recharger",
+			"Sauvegarde l'édition du document automatiquement toutes les x minutes.", false);
+
+	NodeRadioMenuItem preferences4Restore = createRadioMenuItem("Toujours restaurer la session précédente", "recharger",
+			"Réouvre les derniers fichiers ouverts quand vous fermez puis réouvrez l'application.", true);
+
+	NodeRadioMenuItem preferences5RemoveWhenAdd = createRadioMenuItem("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris", "favoris",
+			"Dans la liste des derniers éléments textuels utilisés, dans le 2em onglet du paneau latéral gauche, si cette option est activé, quand vous ajouterez un des éléments de la liste des éléments précédents aux favoris, cet élément sera retiré de la liste des éléments précédents automatiquement.", true);
+
+
+	////////// OTHER //////////
 
 	Menu apropos = new Menu();
 	Menu aide = new Menu("Aide");
 	MenuItem aide1Doc = new MenuItem("Charger le document d'aide     ");
-	MenuItem aide2Probleme = new MenuItem("Demander de l'aide sur GutHub     ");
+	MenuItem aide2Probleme = new MenuItem("Demander de l'aide sur GitHub     ");
 
 	public MenuBar(){
 		setup();
@@ -68,62 +105,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public void setup(){
 
-		fichier1Open.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/ouvrir.png")+"", 0, 0));
-		fichier1Open.setAccelerator(KeyCombination.keyCombination("Ctrl+O"));
+		////////// FICHIER //////////
 
-		fichier2OpenDir.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/directory.png")+"", 0, 0));
-		fichier2OpenDir.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+O"));
-
-		fichier3Clear.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/vider.png")+"", 0, 0));
-		fichier3Clear.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+W"));
-		fichier3Clear.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
-
-		fichier4Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		fichier4Save.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
-		fichier4Save.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
-
-		fichier5Delete.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/supprimer.png")+"", 0, 0));
-		fichier5Delete.setAccelerator(KeyCombination.keyCombination("Ctrl+Suppr"));
-		fichier5Delete.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
-
-		fichier6Close.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/fermer.png")+"", 0, 0));
-		fichier6Close.setAccelerator(KeyCombination.keyCombination("Ctrl+W"));
-		fichier6Close.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
-
-		fichier7SameName.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/memeNom.png")+"", 0, 0));
 		fichier7SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
 		fichier7SameName.getItems().add(fichier7SameNameNull);
 
-		fichier8Export.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
-		fichier8Export.setAccelerator(KeyCombination.keyCombination("Ctrl+E"));
-		fichier8Export.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
-
-		fichier9ExportAll.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/exporter.png")+"", 0, 0));
-		fichier9ExportAll.setAccelerator(KeyCombination.keyCombination("Ctrl+Shift+E"));
-		fichier9ExportAll.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
-
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6Close, fichier7SameName, new SeparatorMenuItem(), fichier8Export, fichier9ExportAll);
 
-		/*Menu menu2 = new Menu("Édition");
-		MenuItem menu2arg1 = new MenuItem(" Annuler     ");
-		menu2arg1.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/annuler.png")+"", 0, 0));
-		menu2arg1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, Event.CTRL_MASK, true));
-		menu2arg2.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/retablir.png")+"", 0, 0));
-		MenuItem menu2arg3 = new MenuItem(" Couper     ");
-		menu2arg3.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/couper.png")+"", 0, 0));
-		MenuItem menu2arg4 = new MenuItem(" Copier     ");
-		menu2arg4.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/copier.png")+"", 0, 0));
-		MenuItem menu2arg5 = new MenuItem(" Coller     ");
-		menu2arg5.setGraphic(Builders.buildImage(Main.devices.getClass().getResource("/img/MenuBar/coller.png")+"", 0, 0));*/
-
-
-		preferences1Zoom.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/zoom.png")+"", 0, 0));
-		preferences2Save.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder.png")+"", 0, 0));
-		preferences3Regular.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/sauvegarder-recharger.png")+"", 0, 0));
-		preferences4Restore.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/recharger.png")+"", 0, 0));
-		preferences5RemoveWhenAdd.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/favoris.png")+"", 0, 0));
+		////////// PREFS //////////
 
 		preferences2Save.selectedProperty().set(Main.settings.isAutoSave());
+		preferences3Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
 		preferences4Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
 		preferences5RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
 
@@ -131,13 +123,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		Main.settings.restoreLastSessionProperty().bind(preferences4Restore.selectedProperty());
 		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences5RemoveWhenAdd.selectedProperty());
 
-
 		preferences.getItems().addAll(preferences2Save, preferences3Regular, new SeparatorMenuItem(), preferences1Zoom, preferences4Restore, new SeparatorMenuItem(), preferences5RemoveWhenAdd);
+
+		////////// OTHER //////////
 
 		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
 		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0));
 		aide.getItems().addAll(aide1Doc, aide2Probleme);
 
+		/////////////////////////////
+
+		////////// FICHIER //////////
 
 		fichier1Open.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent event){
@@ -284,6 +280,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		});
 
+		////////// PREFS //////////
+
 		preferences1Zoom.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent event) {
 
@@ -334,13 +332,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				Optional<ButtonType> option = dialog.showAndWait();
 				if(option.get() == ok){
-					int time = -1;
-					if(activated.isSelected()) time = combo.getSelectionModel().getSelectedItem();
-					Main.settings.setRegularSaving(time);
+					if(activated.isSelected()){
+						Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
+						preferences3Regular.setSelected(true);
+					}else{
+						Main.settings.setRegularSaving(-1);
+						preferences3Regular.setSelected(false);
+					}
+
 				}
 
 			}
 		});
+
+		////////// OTHER //////////
 
 		aide1Doc.setOnAction(new EventHandler<ActionEvent>() {
 			@Override public void handle(ActionEvent event) {
@@ -387,5 +392,65 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		for(Menu menu : getMenus()){
 			Builders.setMenuSize(menu);
 		}
+
+	}
+
+	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
+
+		Menu menu = new Menu();
+		HBox pane = new HBox();
+
+		Label text = new Label(name);
+		text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
+
+
+		ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0);
+
+		if(disableIfNoDoc){
+			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != -1, Main.mainScreen.statusProperty()));
+		}
+
+		Tooltip toolTipUI = new Tooltip(new TextWrapper(toolTip, null, 350).wrap());
+		toolTipUI.setShowDuration(Duration.INDEFINITE);
+		Tooltip.install(pane, toolTipUI);
+
+		pane.getChildren().addAll(icon, text);
+		menu.setGraphic(pane);
+
+		return menu;
+	}
+	public NodeRadioMenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
+
+		NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text, 330, true, autoUpdate);
+
+		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+
+		return menuItem;
+
+	}
+	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, double leftMargin){
+
+		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text, 330, true);
+
+		if(!imgName.isBlank()) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+		if(!accelerator.isBlank()) menuItem.setAccelerator(accelerator);
+		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+		if(leftMargin != 0) menuItem.setFalseLeftData(leftMargin);
+
+		if(disableIfNoDoc){
+			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != -1, Main.mainScreen.statusProperty()));
+		}if(disableIfNoList){
+			menuItem.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
+		}
+
+		return menuItem;
+
+	}
+	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip){
+		return createMenuItem(text, imgName, accelerator, toolTip, false, false, 0);
+	}
+	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, double leftMargin){
+		return createMenuItem(text, imgName, accelerator, toolTip, false, false, leftMargin);
 	}
 }

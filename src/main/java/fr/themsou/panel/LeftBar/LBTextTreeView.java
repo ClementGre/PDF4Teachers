@@ -4,6 +4,7 @@ import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
@@ -35,17 +36,22 @@ public class LBTextTreeView {
                     @Override protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
 
+                        // Null
                         if(empty){
                             setGraphic(null);
                             setStyle(null);
                             setContextMenu(null);
                             setOnMouseClicked(null);
                             return;
-                        }if(item != null){
+                        }
+                        // Category or Sort Options
+                        if(item != null){
+                            setContextMenu(null);
+                            setOnMouseClicked(null);
+
                             if(item.equals("favoritesOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
                                 setGraphic(Main.lbTextTab.favoritesTextOptions);
-
                                 return;
                             }if(item.equals("lastsOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
@@ -78,9 +84,11 @@ public class LBTextTreeView {
                             if(item.equals("favoritesText")){
                                 name.setText("Éléments Favoris");
                                 toggle.getChildren().add(Main.lbTextTab.favoritesTextToggleOption);
+                                setContextMenu(getCategoryMenu(true));
                             }if(item.equals("lastsText")){
                                 name.setText("Éléments Précédents");
                                 box.getChildren().add(Main.lbTextTab.lastsTextToggleOption);
+                                setContextMenu(getCategoryMenu(false));
                             }if(item.equals("onFileText")){
                                 name.setText("Éléments sur ce document");
                                 box.getChildren().add(Main.lbTextTab.onFileTextToggleOption);
@@ -89,16 +97,18 @@ public class LBTextTreeView {
 
                             return;
                         }
-
+                        // TextElement
                         if(getTreeItem() instanceof NoDisplayTextElement){
                             ((NoDisplayTextElement) getTreeItem()).updateCell(this);
-
-                        }else{
-                            setStyle(null);
-                            setGraphic(null);
-                            setContextMenu(null);
-                            setOnMouseClicked(null);
+                            return;
                         }
+
+                        // Other
+                        setStyle(null);
+                        setGraphic(null);
+                        setContextMenu(null);
+                        setOnMouseClicked(null);
+
                     }
                 };
             }
@@ -106,72 +116,103 @@ public class LBTextTreeView {
 
     }
 
-    public static ContextMenu getNewMenu(NoDisplayTextElement element){
+    public static ContextMenu getCategoryMenu(boolean favorites){
+
 
         ContextMenu menu = new ContextMenu();
-        MenuItem item1 = new MenuItem("Ajouter");
-        MenuItem item2 = new MenuItem("Retirer");
-        MenuItem item3 = new MenuItem("Ajouter aux favoris");
-        MenuItem item6 = new MenuItem("Vider la liste");
-        MenuItem item7 = new MenuItem("Ajouter aux éléments précédents");
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Vider la liste", -1, false);
+        item1.setToolTip("Cette option va supprimer tous les éléments de cette liste. Elle ne supprime en aucun cas les éléments sur le document.");
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Supprimer les donnés d'utilisation", -1, false);
+        item2.setToolTip("Cette option va réinitialiser les donnés des éléments de la liste concernant l'utilisation que vous faites de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.");
 
-
-        // Ajouter les items en fonction du type
         menu.getItems().addAll(item1, item2);
-        if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3);
-        if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item7);
-        else menu.getItems().addAll(new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
-        // Définis les actions des boutons
         item1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                element.addToDocument();
-                if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
-                }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-                    Main.lbTextTab.lastsTextSortManager.simulateCall();
-                }
-
+            @Override public void handle(ActionEvent e) {
+                if(favorites) Main.lbTextTab.clearSavedFavoritesElements();
+                else Main.lbTextTab.clearSavedLastsElements();
             }
         });
         item2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if(element.getType() == NoDisplayTextElement.ONFILE_TYPE){
-                    element.getCore().delete();
+            @Override public void handle(ActionEvent e) {
+                if(favorites){
+                    for(TreeItem<String> element : Main.lbTextTab.favoritesText.getChildren()){
+                        if(element instanceof NoDisplayTextElement){
+                            ((NoDisplayTextElement) element).setUses(0);
+                        }
+                    }
+                    if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals("Utilisation")){
+                        Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                    }
                 }else{
-                    Main.lbTextTab.removeSavedElement(element);
-                }
-            }
-        });
-        item3.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e){
-                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
-                if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-                    if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
-                        Main.lbTextTab.removeSavedElement(element);
+                    for(TreeItem<String> element : Main.lbTextTab.lastsText.getChildren()){
+                        if(element instanceof NoDisplayTextElement){
+                            ((NoDisplayTextElement) element).setUses(0);
+                        }
+                    }
+                    if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals("Utilisation")){
+                        Main.lbTextTab.lastsTextSortManager.simulateCall();
                     }
                 }
             }
         });
-        item6.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
-                    Main.lbTextTab.clearSavedFavoritesElements();
-                }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
-                    Main.lbTextTab.clearSavedLastsElements();
-                }
 
+        return menu;
+    }
+
+    public static ContextMenu getNewMenu(NoDisplayTextElement element){
+
+        ContextMenu menu = new ContextMenu();
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ajouter", -1, false);
+        item1.setToolTip("Cette option va ajouter cet élément à l'édition du document ouvert.");
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
+        item2.setToolTip("Cette option va retirer cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document.");
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux favoris", -1, false);
+        item3.setToolTip("Cette option va ajouter cet élément à la liste des éléments précédents.");
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
+        item4.setToolTip("Cette option va ajouter cet élément à la liste des éléments favoris.");
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Dé-lier l'éléemnt", -1, false);
+        item5.setToolTip("Cette option va dé-lier l'élément : l'élément de sera plus synchronisé avec l'élément du document.");
+
+
+        // Ajouter les items en fonction du type
+        menu.getItems().addAll(item1, item2);
+        if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
+        if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item4); // onFile
+        if(element.getType() == NoDisplayTextElement.LAST_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
+
+        Builders.setMenuSize(menu);
+
+        // Définis les actions des boutons
+        item1.setOnAction((e) -> {
+            element.addToDocument();
+            if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
+                Main.lbTextTab.favoritesTextSortManager.simulateCall();
+            }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+                Main.lbTextTab.lastsTextSortManager.simulateCall();
             }
         });
-        item7.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e){
-                Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+        item2.setOnAction((e) -> {
+            if(element.getType() == NoDisplayTextElement.ONFILE_TYPE){
+                element.getCore().delete();
+            }else{
+                Main.lbTextTab.removeSavedElement(element);
             }
+        });
+        item3.setOnAction((e) -> {
+            Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
+            if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+                if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
+                    Main.lbTextTab.removeSavedElement(element);
+                }
+            }
+        });
+        item4.setOnAction((e) -> {
+            Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+        });
+        item5.setOnAction((e) -> {
+            element.unLink();
         });
         return menu;
 

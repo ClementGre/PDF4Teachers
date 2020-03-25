@@ -10,6 +10,8 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.TextWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -26,9 +28,11 @@ import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
+import javafx.util.Duration;
 
 public class TextElement extends Text implements Element {
 
@@ -92,11 +96,15 @@ public class TextElement extends Text implements Element {
 				}
 			}
 		});
-		MenuItem item1 = new MenuItem("Supprimer");
-		item1.setAccelerator(KeyCombination.keyCombination("Suppr"));
-		MenuItem item2 = new MenuItem("Dupliquer");
-		MenuItem item3 = new MenuItem("Ajouter aux éléments précédents");
-		MenuItem item4 = new MenuItem("Ajouter aux éléments Favoris");
+		NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Supprimer", -1, false);
+		item1.setAccelerator("Suppr");
+		item1.setToolTip("Cette option va supprimer cet élément. Cet élément sera donc retiré de l'édition.");
+		NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Dupliquer", -1, false);
+		item2.setToolTip("Cette option va créer un second élément identique à celui-ci.");
+		NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
+		item3.setToolTip("Cette option va ajouter cet élément à la liste des éléments précédents.");
+		NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments Favoris", -1, false);
+		item4.setToolTip("Cette option va ajouter cet élément à la liste des éléments favoris.");
 		menu.getItems().addAll(item1, item2, item3, item4);
 		Builders.setMenuSize(menu);
 

@@ -6,12 +6,14 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -92,12 +94,19 @@ public class LBFilesListView {
     public ContextMenu getNewMenu(){
 
         ContextMenu menu = new ContextMenu();
-        MenuItem item1 = new MenuItem("Ouvrir");
-        MenuItem item2 = new MenuItem("Retirer");
-        MenuItem item3 = new MenuItem("Supprimer l'édition");
-        MenuItem item4 = new MenuItem("Supprimer le fichier");
-        MenuItem item5 = new MenuItem("Exporter");
-        MenuItem item6 = new MenuItem("Vider la liste");
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ouvrir", -1, false);
+        item1.setToolTip("Cette option va ouvrir le fichier avec l'éditeur de PDFTeacher. Vous pouvez aussi le faire en double cliquant sur le fichier.");
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
+        item2.setToolTip("Cette option va retirer le fichier de la liste. Le fichier ne sera en aucun cas supprimé.");
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Supprimer l'édition", -1, false);
+        item3.setToolTip("Cette option va réinitialiser l'édition du document.");
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Supprimer le fichier", -1, false);
+        item4.setToolTip("Cette option va supprimer le fichier sur votre ordinateur. Vous n'y aurez donc plus accès.");
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Exporter", -1, false);
+        item5.setToolTip("Cette option va vous permettre de créer un nouveau fichier PDF à partir de celui-ci, avec tous les éléments présents dans son édition.");
+        NodeMenuItem item6 = new NodeMenuItem(new HBox(), "Vider la liste", -1, false);
+        item6.setToolTip("Cette option va retirer tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.");
+
         menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 

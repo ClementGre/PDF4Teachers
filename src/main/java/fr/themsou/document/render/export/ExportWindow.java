@@ -28,6 +28,8 @@ public class ExportWindow {
     Stage window = new Stage();
     List<File> files;
 
+    public static boolean erase = false;
+
     public ExportWindow(List<File> files){
 
         this.files = files;
@@ -296,7 +298,8 @@ public class ExportWindow {
     }
 
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
-                                 boolean erase, boolean mkdirs, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
+                                 boolean eraseFile, boolean mkdirs, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
+        erase = eraseFile;
 
         for(File file : files){
             try{
