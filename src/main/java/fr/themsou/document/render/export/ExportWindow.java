@@ -47,7 +47,7 @@ public class ExportWindow {
         window.setMinHeight(470);
         window.setMaxWidth(800);
         window.setMaxHeight(470);
-        window.setTitle("PDF Teacher - Exporter (" + files.size() + " documents)");
+        window.setTitle("PDF4Teachers - Exporter (" + files.size() + " documents)");
         window.setScene(scene);
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(javafx.stage.WindowEvent e){ window.close(); }

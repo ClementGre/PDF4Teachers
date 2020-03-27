@@ -1,14 +1,8 @@
 package fr.themsou.main;
 
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.file.Files;
-import java.nio.file.attribute.UserPrincipalLookupService;
-import java.util.Calendar;
-
 import fr.themsou.devices.Devices;
 import fr.themsou.panel.Footerbar;
 import fr.themsou.panel.LeftBar.LBFilesTab;
@@ -17,11 +11,8 @@ import fr.themsou.panel.LeftBar.LBPaintTab;
 import fr.themsou.panel.LeftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
-import fr.themsou.utils.FilesUtils;
-import fr.themsou.utils.StringUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -32,8 +23,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
-import javax.swing.*;
 
 public class Main extends Application {
 
@@ -101,7 +90,7 @@ public class Main extends Application {
 
 		window.setMinWidth(700);
 		window.setMinHeight(393);
-		window.setTitle("PDF Teacher - Aucun document");
+		window.setTitle("PDF4Teachers - Aucun document");
 		window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);

@@ -197,7 +197,7 @@ public class MainScreen extends ScrollPane {
 
 		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> {
-			return status.get() == -1 ? "PDF Teacher - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF Teacher - Aucun document";
+			return status.get() == -1 ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF4Teachers - Aucun document";
 		}, status, Edition.isSaveProperty()));
 
 

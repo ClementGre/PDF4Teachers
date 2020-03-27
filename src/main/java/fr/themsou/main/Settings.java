@@ -27,7 +27,7 @@ public class Settings {
         restoreLastSession.set(true);
         openedFiles = new ArrayList<>();
         openedFile = null;
-        removeElementInPreviousListWhenAddingToFavorites.set(false);
+        removeElementInPreviousListWhenAddingToFavorites.set(true);
         showOnlyStartInTextsList.set(true);
         smallFontInTextsList.set(false);
 

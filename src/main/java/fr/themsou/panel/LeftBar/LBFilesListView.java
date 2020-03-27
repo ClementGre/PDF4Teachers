@@ -43,7 +43,7 @@ public class LBFilesListView {
                     VBox pane = new VBox();
                     Text name = new Text(file.getName().replace(".pdf", ""));
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
-                    setStyle("-fx-padding: 5 15;");
+                    setStyle("-fx-padding: 2 15;");
 
                     if(Edition.getEditFile(file).exists()){
                         name.setFont(Font.font(null, FontWeight.BOLD, 12));

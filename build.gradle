@@ -31,9 +31,9 @@ task javaPackager(type: Exec){
             './jpackager',
             'create-installer', 'pkg',
             '--class', 'fr.themsou.Main',
-            '--name', "PDFTeacher",
-            '--app-image', "${buildDir}/image/PDFTeacher-lin",
-            '--input', "${buildDir}/image/PDFTeacher-lin",
+            '--name', "PDF4Teachers",
+            '--app-image', "${buildDir}/image/PDF4Teachers-lin",
+            '--input', "${buildDir}/image/PDF4Teachers-lin",
             '--output', "${buildDir}/packagement"
     ]
 }
@@ -42,8 +42,8 @@ task javaPackagerImage(type: Exec){
     commandLine = [
             './jpackager',
             'create-image',
-            '--name', 'PDFTeacher',
-            '-j','PDFTeacher.jar',
+            '--name', 'PDF4Teachers',
+            '-j','PDF4Teachers.jar',
             '-c', 'fr.themsou.Main',
             '--input', "${buildDir}",
             '--output', "${buildDir}/packagement"
@@ -53,7 +53,7 @@ task javaPackagerImage(type: Exec){
 jlink {
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
     launcher {
-        name = 'PDFTeacher'
+        name = 'PDF4Teachers'
     }
     targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-13.0.1.9-hotspot')
     //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13/')

@@ -227,7 +227,7 @@ public class License {
         window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         window.setWidth(545);
         window.setHeight(720);
-        window.setTitle("PDF Teacher - License");
+        window.setTitle("PDF chersTeacher - License");
         window.setScene(scene);
         window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
             System.out.println(new File(Main.dataFolder + "settings.yml").delete());

@@ -61,7 +61,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			"Ferme le document actuellement ouvert.", true, false, 0);
 
 	Menu fichier8SameName = createSubMenu("Éditions des documents du même nom", "memeNom",
-			"Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDFTeacher n'arrivera plus à récupérer son édition, sauf avec cette fonction.", true);
+			"Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction.", true);
 
 	NodeMenuItem fichier8SameNameNull = createMenuItem("Aucune édition trouvée", "", "",
 			"");
@@ -380,9 +380,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		aide1Doc.setOnAction((ActionEvent actionEvent) -> {
 
 			try{
-				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
+				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
 				File doc = new File(Main.dataFolder + "" +
-						"Documentation - PDFTeacher.pdf");
+						"Documentation - PDF4Teachers.pdf");
 				if(!doc.exists()) Files.copy(docRes, doc.getAbsoluteFile().toPath());
 
 				Main.mainScreen.openFile(doc);
@@ -391,7 +391,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		aide2Probleme.setOnAction((ActionEvent actionEvent) -> {
 			try{
-				Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDFTeacher/issues/new"));
+				Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDF4Teachers/issues/new"));
 			}catch(IOException | URISyntaxException e){ e.printStackTrace(); }
 		});
 

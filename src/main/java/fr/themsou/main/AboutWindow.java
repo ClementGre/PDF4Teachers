@@ -39,7 +39,7 @@ public class AboutWindow extends Stage {
         setHeight(600);
         setMinWidth(400);
         setMinHeight(600);
-        setTitle("PDF Teacher - À Propos");
+        setTitle("PDF4Teachers - À Propos");
         setResizable(false);
         setScene(scene);
         setOnCloseRequest(new EventHandler<WindowEvent>() {
