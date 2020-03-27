@@ -66,7 +66,7 @@ public class Main extends Application {
 
 	public static HostServices hostServices;
 
-	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDFTeacher" + File.separator;
+	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
@@ -88,7 +88,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window) throws Exception {
 		if(System.getProperty("os.name").toLowerCase().contains("win")){
-			dataFolder = System.getenv("APPDATA") + File.separator + "PDFTeacher" + File.separator;
+			dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		}
 		boolean firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 
@@ -177,9 +177,9 @@ public class Main extends Application {
 
 		if(firstLaunch){
 
-			File doc = new File(Main.dataFolder + "Documentation - PDFTeacher.pdf");
+			File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
 			if(!doc.exists()){
-				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDFTeacher.pdf");
+				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
 				Files.copy(docRes, doc.getAbsoluteFile().toPath());
 			}
 			Main.mainScreen.openFile(doc);

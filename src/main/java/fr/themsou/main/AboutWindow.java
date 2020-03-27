@@ -60,7 +60,7 @@ public class AboutWindow extends Stage {
             logo.setFitWidth(200);
             logo.setPreserveRatio(true);
 
-            Label name = new Label("PDFTeacher");
+            Label name = new Label("PDF4Teachers");
             name.setFont(new Font(23));
             name.setAlignment(Pos.CENTER);
 
@@ -86,10 +86,10 @@ public class AboutWindow extends Stage {
                 Label git = new Label("Projet GitHub : ");
                 git.setFont(new Font(17));
 
-                Hyperlink gitName = new Hyperlink("themsou/PDFTeacher");
+                Hyperlink gitName = new Hyperlink("themsou/PDF4Teachers");
                 gitName.setFont(new Font(17));
                 gitName.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://github.com/themsou/PDFTeacher");
+                    Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers");
                 });
             gitInfo.getChildren().addAll(git, gitName);
             gitInfo.setAlignment(Pos.CENTER);
@@ -119,7 +119,7 @@ public class AboutWindow extends Stage {
                 Hyperlink issueName = new Hyperlink("Demander de l'aide sur GutHub");
                 issueName.setFont(new Font(17));
                 issueName.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://github.com/themsou/PDFTeacher/issues/new");
+                    Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new");
                 });
             issueInfo.getChildren().addAll(issueName);
             issueInfo.setAlignment(Pos.CENTER);

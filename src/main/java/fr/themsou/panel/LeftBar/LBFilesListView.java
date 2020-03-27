@@ -95,7 +95,7 @@ public class LBFilesListView {
 
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ouvrir", -1, false);
-        item1.setToolTip("Ouvre le fichier avec l'éditeur de PDFTeacher. Il est aussi possible de l'ouvrir avec un double clic.");
+        item1.setToolTip("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.");
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
         item2.setToolTip("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.");
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Supprimer l'édition", -1, false);

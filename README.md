@@ -1,7 +1,7 @@
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red)](LICENSE)
-[![Release](https://img.shields.io/github/release/themsou/PDFTeacher.svg)](https://github.com/themsou/PDFTeacher/releases/)
+[![Release](https://img.shields.io/github/release/themsou/PDF4Teachers.svg)](https://github.com/themsou/PDF4Teachers/releases/)
 
-## PDFTeacher <En cours de développement>
+## PDF4Teachers <En cours de développement>
 
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 
