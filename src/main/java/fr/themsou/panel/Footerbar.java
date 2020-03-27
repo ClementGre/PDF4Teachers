@@ -19,7 +19,6 @@ public class Footerbar extends AnchorPane {
 
 	public Footerbar(){
 
-
 		setup();
 	}
 

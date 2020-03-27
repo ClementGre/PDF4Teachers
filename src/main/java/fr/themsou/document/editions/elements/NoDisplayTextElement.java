@@ -129,26 +129,29 @@ public class NoDisplayTextElement extends TreeItem{
 
 		Font font = getListFont();
 		String wrappedText = "";
+		final String[] splittedText = getText().split("\\n");
 
-		if(Main.settings.isShowOnlyStartInTextsList()){
-			String[] splittedText = getText().split("\\n");
-			String text = splittedText[0];
-			wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
-			text = text.replaceFirst(Pattern.quote(wrappedText), "");
+		if(splittedText.length != 0){
+			if(Main.settings.isShowOnlyStartInTextsList()){
 
-			// SECOND LINE
-			if(!text.isEmpty()){
-				String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
-				wrappedText += "\n" + wrapped;
-				if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
-			}else if(splittedText.length > 1){
-				String wrapped = new TextWrapper(splittedText[1], font, maxWidth - 13).wrapFirstLine();
-				wrappedText += "\n" + wrapped;
-				if(!splittedText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
-			}
-		}else{
-			for(String text : getText().split("\\n")){
-				wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
+				String text = splittedText[0];
+				wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
+				text = text.replaceFirst(Pattern.quote(wrappedText), "");
+
+				// SECOND LINE
+				if(!text.isEmpty()){
+					String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
+					wrappedText += "\n" + wrapped;
+					if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+				}else if(splittedText.length > 1){
+					String wrapped = new TextWrapper(splittedText[1], font, maxWidth - 13).wrapFirstLine();
+					wrappedText += "\n" + wrapped;
+					if(!splittedText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+				}
+			}else{
+				for(String text : splittedText){
+					wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
+				}
 			}
 		}
 

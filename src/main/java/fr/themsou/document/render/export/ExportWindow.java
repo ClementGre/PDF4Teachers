@@ -35,18 +35,18 @@ public class ExportWindow {
         this.files = files;
 
         VBox root = new VBox();
-        Scene scene = new Scene(root, 650, 450);
+        Scene scene = new Scene(root, 650, 470);
 
         window.initOwner(Main.window);
         window.initModality(Modality.WINDOW_MODAL);
         window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         window.setWidth(650);
-        window.setHeight(450);
+        window.setHeight(470);
 
         window.setMinWidth(500);
-        window.setMinHeight(450);
+        window.setMinHeight(470);
         window.setMaxWidth(800);
-        window.setMaxHeight(450);
+        window.setMaxHeight(470);
         window.setTitle("PDF Teacher - Exporter (" + files.size() + " documents)");
         window.setScene(scene);
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -150,7 +150,7 @@ public class ExportWindow {
                 if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
 
                 startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                        erase.isSelected(), folders.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected());
+                        erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  notesElements.isSelected(), drawElements.isSelected());
             }
         });
         cancel.setOnAction(new EventHandler<ActionEvent>(){
@@ -231,8 +231,10 @@ public class ExportWindow {
         CheckBox erase = new CheckBox("Toujours écraser");
         CheckBox folders = new CheckBox("Créer les dossiers manquants");
         folders.setSelected(true);
+        CheckBox onlyEdited = new CheckBox("Exporter uniquement les documents édités");
+        onlyEdited.setSelected(true);
         CheckBox delEdit = new CheckBox("Supprimer les éditions aprés le rendu");
-        settings.getChildren().addAll(erase, folders, delEdit);
+        settings.getChildren().addAll(erase, folders, onlyEdited, delEdit);
 
         HBox btns = new HBox();
         Button export = new Button("Exporter");
@@ -263,6 +265,7 @@ public class ExportWindow {
 
         VBox.setMargin(erase, new Insets(20, 10, 5, 10));
         VBox.setMargin(folders, new Insets(0, 10, 5, 10));
+        VBox.setMargin(onlyEdited, new Insets(0, 10, 5, 10));
         VBox.setMargin(delEdit, new Insets(0, 10, 0, 10));
 
         HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
@@ -286,7 +289,7 @@ public class ExportWindow {
             @Override public void handle(ActionEvent event) {
 
                 startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                        erase.isSelected(), folders.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected());
+                        erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected());
             }
         });
         cancel.setOnAction(new EventHandler<ActionEvent>(){
@@ -298,14 +301,17 @@ public class ExportWindow {
     }
 
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
-                                 boolean eraseFile, boolean mkdirs, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
+                                 boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
         erase = eraseFile;
+        int exported = 0;
 
         for(File file : files){
             try{
-                int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, textElements, notesElements, drawElements);
+                int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, notesElements, drawElements);
                 if(result == 0){
                     return;
+                }else if(result == 1){
+                    exported++;
                 }
 
                 if(deleteEdit){
@@ -348,7 +354,11 @@ public class ExportWindow {
         new JMetro(alert.getDialogPane(), Style.LIGHT);
         Builders.secureAlert(alert);
         alert.setTitle("Exportation terminée");
-        alert.setHeaderText("Vos documents ont bien été exportés !");
+
+        if(exported == 0) alert.setHeaderText("Aucun documents ont été exportés !");
+        else if(exported == 1) alert.setHeaderText("Votre document a bien été exporté !");
+        else alert.setHeaderText(exported + " documents ont été exportés !");
+
         alert.setContentText("Vous pouvez les retrouver dans le dossier choisi.");
         alert.show();
 

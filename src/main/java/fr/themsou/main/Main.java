@@ -137,8 +137,6 @@ public class Main extends Application {
 
 		mainScreen.repaint();
 		footerBar.repaint();
-		lbPaintTab.repaint();
-		lbNoteTab.repaint();
 
 //		PANELS
 
@@ -173,7 +171,6 @@ public class Main extends Application {
 		new JMetro(menuBar, Style.DARK);
 
 //		SHOWING
-
 
 		userDataSaver.start();
 		mainScreen.repaint();

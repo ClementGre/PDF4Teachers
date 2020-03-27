@@ -32,10 +32,13 @@ import java.util.regex.Pattern;
 public class ExportRenderer {
 
     public int exportFile(File file, String directory, String prefix, String suffix, String replace, String by, String customName,
-                          Boolean erase, boolean mkdirs, boolean textElements, boolean notesElements, boolean drawElements) throws Exception {
+                          Boolean erase, boolean mkdirs, boolean onlyEdited, boolean textElements, boolean notesElements, boolean drawElements) throws Exception {
 
         File editFile = Edition.getEditFile(file);
-        editFile.createNewFile();
+
+        if(onlyEdited && !editFile.exists()){
+            return 2;
+        }
 
         PDDocument doc = PDDocument.load(file);
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
@@ -124,7 +127,7 @@ public class ExportRenderer {
 
         String uri = directory + File.separator+ customName;
         if(customName.isEmpty()){
-            uri = directory + File.separator + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(Pattern.quote(replace), Pattern.quote(by)) + suffix + ".pdf";
+            uri = directory + File.separator + prefix + file.getName().substring(0, file.getName().length() - 4).replaceAll(Pattern.quote(replace), by) + suffix + ".pdf";
         }
 
         if(new File(uri).exists() && !erase){

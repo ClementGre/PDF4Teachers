@@ -63,7 +63,6 @@ public class TextElement extends Text implements Element {
 		setRealFont(font);
 		setText(text);
 		setTextOrigin(VPos.BOTTOM);
-		setStyle("-fx-text-fill: #" + Integer.toHexString(color.hashCode()));
 		setFill(color);
 
 		fontProperty().bind(Bindings.createObjectBinding(() -> {

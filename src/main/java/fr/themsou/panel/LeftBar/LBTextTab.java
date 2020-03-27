@@ -96,11 +96,12 @@ public class LBTextTab extends Tab {
 
 		setClosable(false);
 		setContent(pane);
-
 		setGraphic(Builders.buildImage(getClass().getResource("/img/Text.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(1, this);
 
 		setup();
+
+		pane.getChildren().addAll(optionPane, treeView);
 	}
 
 	public void setup(){
@@ -336,7 +337,7 @@ public class LBTextTab extends Tab {
 
 		treeViewRoot.getChildren().addAll(favoritesText, lastsText, onFileText);
 
-		pane.getChildren().addAll(optionPane, treeView);
+
 
 	}
 
