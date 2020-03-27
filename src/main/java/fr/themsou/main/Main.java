@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.file.Files;
+import java.nio.file.attribute.UserPrincipalLookupService;
 import java.util.Calendar;
 
 import fr.themsou.devices.Devices;
@@ -16,11 +17,15 @@ import fr.themsou.panel.LeftBar.LBPaintTab;
 import fr.themsou.panel.LeftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
+import fr.themsou.utils.FilesUtils;
 import fr.themsou.utils.StringUtils;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
@@ -42,7 +47,8 @@ public class Main extends Application {
 	public static boolean hasToClose = false;
 	
 //		MAIN
-	
+
+	public static SplitPane mainPane = new SplitPane();
 	public static MainScreen mainScreen;
 	
 //		LEFT BAR
@@ -138,17 +144,28 @@ public class Main extends Application {
 
 		window.show();
 
-		root.setCenter(mainScreen);
+		mainPane.getItems().addAll(leftBar, mainScreen);
+		mainPane.setDividerPositions(270 / root.getWidth());
+		mainPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+			double width = newValue.doubleValue() * root.getWidth();
+			if(width >= 400){
+				mainPane.setDividerPositions(400 / root.getWidth());
+			}
+		});
+
+		root.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+			double width = mainPane.getDividerPositions()[0] * oldValue.doubleValue();
+			mainPane.setDividerPositions(width / newValue.doubleValue());
+		});
+
+		root.setCenter(mainPane);
 		root.setTop(menuBar);
 		root.setBottom(footerBar);
-		root.setLeft(leftBar);
 
 //		SETUP DEVICES
 
 		devices.addMousePresedHandler(window.getScene());
 		devices.addMouseReleasedHandler(window.getScene());
-
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
 
 //		THEME
 

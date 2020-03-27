@@ -41,7 +41,6 @@ public class LBFilesTab extends Tab {
 
 	public void setup(){
 		files.setStyle("-fx-border-width: 0px;");
-		files.setPrefWidth(270);
 		files.setMaxHeight(Double.MAX_VALUE);
 		VBox.setVgrow(files, Priority.ALWAYS);
 		new LBFilesListView(files);

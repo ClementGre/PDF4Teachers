@@ -98,14 +98,14 @@ public class TextElement extends Text implements Element {
 		});
 		NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Supprimer", -1, false);
 		item1.setAccelerator("Suppr");
-		item1.setToolTip("Cette option va supprimer cet élément. Cet élément sera donc retiré de l'édition.");
+		item1.setToolTip("Supprime cet élément. Il sera donc retiré de l'édition.");
 		NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Dupliquer", -1, false);
-		item2.setToolTip("Cette option va créer un second élément identique à celui-ci.");
+		item2.setToolTip("Crée un second élément identique à celui-ci.");
 		NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
-		item3.setToolTip("Cette option va ajouter cet élément à la liste des éléments précédents.");
+		item3.setToolTip("Ajoute cet élément à la liste des éléments précédents.");
 		NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments Favoris", -1, false);
-		item4.setToolTip("Cette option va ajouter cet élément à la liste des éléments favoris.");
-		menu.getItems().addAll(item1, item2, item3, item4);
+		item4.setToolTip("Ajoute cet élément à la liste des éléments favoris.");
+		menu.getItems().addAll(item1, item2, item4, item3);
 		Builders.setMenuSize(menu);
 
 		item1.setOnAction(new EventHandler<ActionEvent>() {
@@ -342,7 +342,7 @@ public class TextElement extends Text implements Element {
 		return getFont(font.getFamily(), italic, bold, (int) (font.getSize() / 75.0 * Main.mainScreen.getZoom()));
 	}
 
-	public static Font getFont(String family, boolean italic, boolean bold, int size){
+	public static Font getFont(String family, boolean italic, boolean bold, double size){
 
 		InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + getFontPath(family, italic, bold));
 

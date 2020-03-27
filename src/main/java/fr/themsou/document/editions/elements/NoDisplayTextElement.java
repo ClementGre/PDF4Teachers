@@ -12,12 +12,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -29,6 +31,7 @@ import javafx.scene.text.Text;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 public class NoDisplayTextElement extends TreeItem{
 
@@ -49,7 +52,7 @@ public class NoDisplayTextElement extends TreeItem{
 	// Graphics items
 	HBox pane = new HBox();
 	ImageView linkImage = Builders.buildImage(getClass().getResource("/img/link.png")+"", 0, 0);
-	Text name = new Text();
+	Label name = new Label();
 	ContextMenu menu;
 	EventHandler<MouseEvent> onMouseCLick;
 
@@ -113,52 +116,81 @@ public class NoDisplayTextElement extends TreeItem{
 			}
 		};
 
-		name.fillProperty().bind(colorProperty());
-		name.fontProperty().bind(Bindings.createObjectBinding(() -> TextElement.getFont(getFont().getFamily(), false, false, 14), fontProperty()));
+		name.textFillProperty().bind(colorProperty());
+		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.smallFontInTextsListProperty()));
 
 		updateIcon();
 	}
 
-	public void updateGraphic(){
+	public void updateGraphic(){ // Re calcule le Text
 
 		int maxWidth = (int) (Main.lbTextTab.treeView.getWidth() - 45);
 		if(maxWidth < 0) return;
 
-		Font font = TextElement.getFont(getFont().getFamily(), false, false, 14);
-
+		Font font = getListFont();
 		String wrappedText = "";
-		for(String text : getText().split("\\n")){
-			wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
+
+		if(Main.settings.isShowOnlyStartInTextsList()){
+			String[] splittedText = getText().split("\\n");
+			String text = splittedText[0];
+			wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
+			text = text.replaceFirst(Pattern.quote(wrappedText), "");
+
+			// SECOND LINE
+			if(!text.isEmpty()){
+				String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
+				wrappedText += "\n" + wrapped;
+				if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+			}else if(splittedText.length > 1){
+				String wrapped = new TextWrapper(splittedText[1], font, maxWidth - 13).wrapFirstLine();
+				wrappedText += "\n" + wrapped;
+				if(!splittedText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+			}
+		}else{
+			for(String text : getText().split("\\n")){
+				wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
+			}
 		}
+
+		name.setMinHeight(18);
+		name.setStyle("-fx-padding: 0;");
 		name.setText(wrappedText);
+		pane.setStyle("-fx-padding: " + (Main.settings.isSmallFontInTextsList() ? 0 : 1) + " 0;");
 
 	}
-	public void updateIcon(){
+	public void updateIcon(){ // Re définis les children de la pane
 
 		pane.getChildren().clear();
 
 		if(core != null){
-			pane.getChildren().add(linkImage);
-			Region spacer = new Region(); spacer.setPrefWidth(5);
+			Pane spacer = new Pane(); spacer.setPrefWidth(20);
+			spacer.getChildren().add(linkImage);
+			spacer.setStyle("-fx-padding: 1.5 0;");
+			spacer.setPrefHeight(18);
 			pane.getChildren().add(spacer);
 		}else{
 			Region spacer = new Region(); spacer.setPrefWidth(20);
+			spacer.setPrefHeight(18);
 			pane.getChildren().add(spacer);
 		}
 		pane.getChildren().add(name);
 
 	}
-	public void updateCell(TreeCell<String> cell){
+	public void updateCell(TreeCell<String> cell){ // Réatribue une cell à la pane
 
 		if(cell == null) return;
 		if(name.getText().isEmpty()) updateGraphic();
 
 		cell.setGraphic(pane);
 		cell.setStyle(null);
-		cell.setStyle("-fx-padding: 5 -30;");
+		cell.setStyle("-fx-padding: 0 -30;");
 		cell.setContextMenu(menu);
 		cell.setOnMouseClicked(onMouseCLick);
 
+	}
+
+	private Font getListFont(){
+		return TextElement.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
 	}
 
 	@Override

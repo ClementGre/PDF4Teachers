@@ -59,9 +59,9 @@ public class Edition {
                     }
                 }
                 reader.close();
-                Main.lbTextTab.updateOnFileElementsList();
             }
         }catch (IOException e){ e.printStackTrace(); }
+        Main.lbTextTab.updateOnFileElementsList();
     }
     public static Element[] simpleLoad(File editFile) throws Exception{
 

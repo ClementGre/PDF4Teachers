@@ -14,6 +14,8 @@ public class Settings {
     private int regularSaving;
     private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
     private BooleanProperty removeElementInPreviousListWhenAddingToFavorites = new SimpleBooleanProperty();
+    private BooleanProperty showOnlyStartInTextsList = new SimpleBooleanProperty();
+    private BooleanProperty smallFontInTextsList = new SimpleBooleanProperty();
     private ArrayList<File> openedFiles;
     private File openedFile;
 
@@ -26,23 +28,27 @@ public class Settings {
         openedFiles = new ArrayList<>();
         openedFile = null;
         removeElementInPreviousListWhenAddingToFavorites.set(false);
+        showOnlyStartInTextsList.set(true);
+        smallFontInTextsList.set(false);
 
         loadSettings();
 
-        autoSavingProperty().addListener(new ChangeListener<Boolean>() {
-            @Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                saveSettings();
-            }
+        autoSavingProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
         });
-        restoreLastSessionProperty().addListener(new ChangeListener<Boolean>() {
-            @Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-                saveSettings();
-            }
+        restoreLastSessionProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
         });
-        removeElementInPreviousListWhenAddingToFavorites.addListener(new ChangeListener<Boolean>() {
-            @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                saveSettings();
-            }
+        removeElementInPreviousListWhenAddingToFavorites.addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+        });
+        showOnlyStartInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+            if(Main.lbTextTab != null) Main.lbTextTab.updateListsGraphic();
+        });
+        smallFontInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+            if(Main.lbTextTab != null) Main.lbTextTab.updateListsGraphic();
         });
     }
     public void loadSettings(){
@@ -108,6 +114,16 @@ public class Settings {
                                         removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
                                     }catch(Exception ignored){}
                                 break;
+                                case "showOnlyStartInTextsList":
+                                    try{
+                                        showOnlyStartInTextsList.set(Boolean.parseBoolean(value));
+                                    }catch(Exception ignored){}
+                                break;
+                                case "smallFontInTextsList":
+                                    try{
+                                        smallFontInTextsList.set(Boolean.parseBoolean(value));
+                                    }catch(Exception ignored){}
+                                break;
                             }
                         }
                         reader.close();
@@ -163,6 +179,12 @@ public class Settings {
 
                     writer.newLine();
                     writer.write("removeElementInPreviousListWhenAddingToFavorites=" + removeElementInPreviousListWhenAddingToFavorites.get());
+
+                    writer.newLine();
+                    writer.write("showOnlyStartInTextsList=" + showOnlyStartInTextsList.get());
+
+                    writer.newLine();
+                    writer.write("smallFontInTextsList=" + smallFontInTextsList.get());
 
                     writer.flush();
                     writer.close();
@@ -244,6 +266,28 @@ public class Settings {
     }
     public void setRemoveElementInPreviousListWhenAddingToFavorites(boolean removeElementInPreviousListWhenAddingToFavorites) {
         this.removeElementInPreviousListWhenAddingToFavorites.set(removeElementInPreviousListWhenAddingToFavorites);
+        saveSettings();
+    }
+
+    public boolean isShowOnlyStartInTextsList() {
+        return showOnlyStartInTextsList.get();
+    }
+    public BooleanProperty showOnlyStartInTextsListProperty() {
+        return showOnlyStartInTextsList;
+    }
+    public void setShowOnlyStartInTextsList(boolean showOnlyStartInTextsList) {
+        this.showOnlyStartInTextsList.set(showOnlyStartInTextsList);
+        saveSettings();
+    }
+
+    public boolean isSmallFontInTextsList() {
+        return smallFontInTextsList.get();
+    }
+    public BooleanProperty smallFontInTextsListProperty() {
+        return smallFontInTextsList;
+    }
+    public void setSmallFontInTextsList(boolean smallFontInTextsList) {
+        this.smallFontInTextsList.set(smallFontInTextsList);
         saveSettings();
     }
 }

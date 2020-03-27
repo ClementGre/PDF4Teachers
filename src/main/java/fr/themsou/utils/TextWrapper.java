@@ -21,9 +21,29 @@ public class TextWrapper {
 
     }
 
+    public String wrapFirstLine(){
+
+        while(text.length() != 0) { // Tant que l'index est plus petit que le nombre de mots, crée une nouvelle ligne et la remplis de mots
+
+            if(text.split(" ").length == 0) break;
+            if(text.startsWith(" ")) text = text.replaceFirst(Pattern.quote(" "), "");
+            String firstWord = text.split(" ")[0];
+
+            if(!test(firstWord)){
+                while(!test(firstWord)){
+                    String[] results = fillLineWithChar(firstWord);
+                    return results[0];
+                }
+            }
+
+            String[] results = fillLineWithWord(text);
+            return results[0];
+
+        }
+        return wrappedLine;
+    }
+
     public String wrap(){
-
-
 
         while(text.length() != 0) { // Tant que l'index est plus petit que le nombre de mots, crée une nouvelle ligne et la remplis de mots
 

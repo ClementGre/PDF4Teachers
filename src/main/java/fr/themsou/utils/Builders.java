@@ -3,9 +3,13 @@ package fr.themsou.utils;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class Builders {
@@ -30,8 +34,11 @@ public class Builders {
 
     public static void setPosition(Control element, double x, double y, double width, double height, boolean force){
 
-        element.setLayoutX(x);
-        element.setLayoutY(y);
+        if(x >= 0){
+            element.setLayoutX(x);
+        }if(y >= 0){
+            element.setLayoutY(y);
+        }
         element.setPrefSize(width, height);
 
         if(force){
@@ -40,6 +47,24 @@ public class Builders {
             element.minWidthProperty().bind(new SimpleDoubleProperty(width));
             element.minHeightProperty().bind(new SimpleDoubleProperty(height));
         }
+    }
+
+    public static void setHBoxPosition(Control element, double width, double height, double margin){
+
+        if(width == -1){
+            HBox.setHgrow(element, Priority.ALWAYS);
+            element.setMaxWidth(Double.MAX_VALUE);
+        }else{
+            element.setPrefWidth(width);
+            element.minWidthProperty().bind(new SimpleDoubleProperty(width));
+        }
+        if(height == -1){
+            VBox.setVgrow(element, Priority.ALWAYS);
+        }else{
+            element.setPrefHeight(height);
+            element.minHeightProperty().bind(new SimpleDoubleProperty(height));
+        }
+        HBox.setMargin(element, new Insets(margin, margin, margin, margin));
     }
 
     public static void setMenuSize(Menu menu){

@@ -121,9 +121,9 @@ public class LBTextTreeView {
 
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Vider la liste", -1, false);
-        item1.setToolTip("Cette option va supprimer tous les éléments de cette liste. Elle ne supprime en aucun cas les éléments sur le document.");
+        item1.setToolTip("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document.");
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Supprimer les donnés d'utilisation", -1, false);
-        item2.setToolTip("Cette option va réinitialiser les donnés des éléments de la liste concernant l'utilisation que vous faites de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.");
+        item2.setToolTip("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.");
 
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
@@ -165,15 +165,15 @@ public class LBTextTreeView {
 
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ajouter", -1, false);
-        item1.setToolTip("Cette option va ajouter cet élément à l'édition du document ouvert.");
+        item1.setToolTip("Ajoute cet élément à l'édition du document ouvert.");
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
-        item2.setToolTip("Cette option va retirer cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document.");
+        item2.setToolTip("Retire cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document.");
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux favoris", -1, false);
-        item3.setToolTip("Cette option va ajouter cet élément à la liste des éléments précédents.");
+        item3.setToolTip("Ajoute cet élément à la liste des éléments précédents.");
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
-        item4.setToolTip("Cette option va ajouter cet élément à la liste des éléments favoris.");
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Dé-lier l'éléemnt", -1, false);
-        item5.setToolTip("Cette option va dé-lier l'élément : l'élément de sera plus synchronisé avec l'élément du document.");
+        item4.setToolTip("Ajoute cet élément à la liste des éléments favoris.");
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Dé-lier l'élément", -1, false);
+        item5.setToolTip("Dé-lie l'élément : l'élément de sera plus synchronisé avec l'élément du document.");
 
 
         // Ajouter les items en fonction du type

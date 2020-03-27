@@ -230,7 +230,7 @@ public class License {
         window.setTitle("PDF Teacher - License");
         window.setScene(scene);
         window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
-            System.out.println(new File(Main.dataFolder + File.separator + "settings.yml").delete());
+            System.out.println(new File(Main.dataFolder + "settings.yml").delete());
             window.close();
             System.exit(0);
         });
@@ -277,7 +277,7 @@ public class License {
             window.close();
         });
         cancel.setOnAction((ActionEvent event) -> {
-            System.out.println(new File(Main.dataFolder + File.separator + "settings.yml").delete());
+            System.out.println(new File(Main.dataFolder + "settings.yml").delete());
             window.close();
             System.exit(0);
         });

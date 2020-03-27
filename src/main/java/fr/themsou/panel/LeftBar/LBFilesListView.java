@@ -95,17 +95,17 @@ public class LBFilesListView {
 
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ouvrir", -1, false);
-        item1.setToolTip("Cette option va ouvrir le fichier avec l'éditeur de PDFTeacher. Vous pouvez aussi le faire en double cliquant sur le fichier.");
+        item1.setToolTip("Ouvre le fichier avec l'éditeur de PDFTeacher. Il est aussi possible de l'ouvrir avec un double clic.");
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
-        item2.setToolTip("Cette option va retirer le fichier de la liste. Le fichier ne sera en aucun cas supprimé.");
+        item2.setToolTip("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.");
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Supprimer l'édition", -1, false);
-        item3.setToolTip("Cette option va réinitialiser l'édition du document.");
+        item3.setToolTip("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant.");
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Supprimer le fichier", -1, false);
-        item4.setToolTip("Cette option va supprimer le fichier sur votre ordinateur. Vous n'y aurez donc plus accès.");
+        item4.setToolTip("Supprime le fichier PDF sur l'ordinateur.");
         NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Exporter", -1, false);
-        item5.setToolTip("Cette option va vous permettre de créer un nouveau fichier PDF à partir de celui-ci, avec tous les éléments présents dans son édition.");
+        item5.setToolTip("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés.");
         NodeMenuItem item6 = new NodeMenuItem(new HBox(), "Vider la liste", -1, false);
-        item6.setToolTip("Cette option va retirer tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.");
+        item6.setToolTip("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.");
 
         menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
