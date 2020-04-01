@@ -26,7 +26,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -91,7 +90,7 @@ public class NoDisplayTextElement extends TreeItem{
 		this.core = core;
 
 		// bindings with the core
-		fontProperty().bind(core.fontProperty());
+		fontProperty().bind(core.realFontProperty());
 		core.textProperty().addListener(textChangeListener);
 		core.fillProperty().addListener(colorChangeListener);
 		if(type == NoDisplayTextElement.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
