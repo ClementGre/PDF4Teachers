@@ -57,7 +57,7 @@ jlink {
     }
     targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-13.0.1.9-hotspot')
     //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13/')
-    //targetPlatform('mac', '/home/clement/bin/jdk-11-Mac/')
+    //targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home/')
 }
 
 

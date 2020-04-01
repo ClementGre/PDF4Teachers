@@ -4,7 +4,6 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.utils.Builders;
-import javafx.geometry.VPos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -15,18 +14,15 @@ import javafx.scene.text.TextBoundsType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDEmbeddedFilesNameTreeNode;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.encryption.PDEncryption;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.util.Matrix;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class ExportRenderer {
@@ -48,8 +44,9 @@ public class ExportRenderer {
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
 
             PDPage page = doc.getPage(pageNumber);
-            PDPageContentStream contentStream = new PDPageContentStream(doc, page, true, true, true);
+            PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
             PDRectangle pageSize = page.getBleedBox();
+            contentStream.saveGraphicsState();
 
             for(Element element : elements){
 
@@ -67,6 +64,7 @@ public class ExportRenderer {
                     double lineHeight = height / lineNumber;
 
                     contentStream.beginText();
+                    //contentStream.setTextMatrix(new Matrix(1f, 0f, 0f, -1f, 0f, 0f));
 
                     // Text Style
                     Color color = (Color) txtElement.getFill();
@@ -98,6 +96,7 @@ public class ExportRenderer {
 
                 }*/
             }
+            contentStream.restoreGraphicsState();
             contentStream.close();
         }
 
