@@ -154,6 +154,7 @@ public class NoDisplayTextElement extends TreeItem{
 			}
 		}
 
+
 		name.setMinHeight(18);
 		name.setStyle("-fx-padding: 0;");
 		name.setText(wrappedText);
