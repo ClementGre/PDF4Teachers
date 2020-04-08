@@ -1,6 +1,7 @@
 package fr.themsou.main;
 
 import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -227,7 +228,7 @@ public class License {
         window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         window.setWidth(545);
         window.setHeight(720);
-        window.setTitle("PDF4Teachers - License");
+        window.setTitle(TR.tr("PDF4Teachers - License"));
         window.setScene(scene);
         window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
             System.out.println(new File(Main.dataFolder + "settings.yml").delete());
@@ -250,7 +251,7 @@ public class License {
 
     public void setupPanel(VBox root){
 
-        Text info = new Text("Vous devez accepter la license pour accéder à l'application.");
+        Text info = new Text(TR.tr("Vous devez accepter la license pour accéder à l'application."));
 
         Label license = new Label(LICENSE);
         license.setFont(TextElement.getFont("Arial", false, false, 12));
@@ -258,8 +259,8 @@ public class License {
 
 
         HBox btns = new HBox();
-        Button cancel = new Button("Refuser");
-        Button accept = new Button("Accepter");
+        Button cancel = new Button(TR.tr("Refuser"));
+        Button accept = new Button(TR.tr("Accepter"));
 
         btns.getChildren().addAll(cancel, accept);
         btns.setAlignment(Pos.CENTER_RIGHT);

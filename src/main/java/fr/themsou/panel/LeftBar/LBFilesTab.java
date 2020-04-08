@@ -8,10 +8,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.*;
 import fr.themsou.utils.SortEvent;
-import fr.themsou.utils.SortManager;
-import fr.themsou.utils.Sorter;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
@@ -77,25 +75,25 @@ public class LBFilesTab extends Tab {
 
 		sortManager = new SortManager(new SortEvent() {
 			@Override public void call(String sortType, boolean order) {
-				if(sortType.equals("Nom")){
+				if(sortType.equals(TR.tr("Nom"))){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
 					files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
-				}else if(sortType.equals("Dossier")){
+				}else if(sortType.equals(TR.tr("Dossier"))){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
 					files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
-				}else if(sortType.equals("Édition")){
+				}else if(sortType.equals(TR.tr("Édition"))){
 					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 					files.getItems().clear();
 					files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
-				}else if(sortType.equals("Date d'Ajout")){
+				}else if(sortType.equals(TR.tr("Date d'Ajout"))){
 					backOpenFilesList(!order);
 				}
 
 			}
 		}, null, null);
-		sortManager.setup(options, "Date d'Ajout", "Date d'Ajout", "Édition", "\n", "Nom", "Dossier");
+		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
 		// import last session files
 		if(Main.settings.getOpenedFiles() != null){

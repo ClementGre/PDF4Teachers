@@ -2,6 +2,7 @@ package fr.themsou.panel.LeftBar;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -34,8 +35,8 @@ public class LBPaintTab extends Tab {
 
     public void setup(){
 
-        String infoTxt = "Cette fonctionnalité est en cours de développement.";
-        String infoTxt2 = "Elle vous permettra de mettre des images, des icones/emojis, des rectangles, des cercles etc.";
+        String infoTxt = TR.tr("Cette fonctionnalité est en cours de développement.");
+        String infoTxt2 = TR.tr("Elle vous permettra de mettre des images, des icones/emojis, des rectangles, des cercles etc.");
         Label info = new Label();
         VBox.setMargin(info, new Insets(5, 5, 5, 5));
 

@@ -2,6 +2,7 @@ package fr.themsou.panel.LeftBar;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -35,8 +36,8 @@ public class LBNoteTab extends Tab {
 
     public void setup(){
 
-        String infoTxt = "Cette fonctionnalité est en cours de développement.";
-        String infoTxt2 = "Elle vous permettra de mettre des notes à vos élèves, de faire la somme automatiquement et d'exporter le tout sous format CSV.";
+        String infoTxt = TR.tr("Cette fonctionnalité est en cours de développement.");
+        String infoTxt2 = TR.tr("Elle vous permettra de mettre des notes à vos élèves, de faire la somme automatiquement et d'exporter le tout sous format CSV.");
         Label info = new Label();
         VBox.setMargin(info, new Insets(5, 5, 5, 5));
 

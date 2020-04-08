@@ -4,6 +4,7 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.LeftBar.LBTextTreeView;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -65,7 +66,7 @@ public class NoDisplayTextElement extends TreeItem{
 	};
 	private EventHandler<MouseEvent> coreMouseReleaseEvent = (MouseEvent e) -> {
 		if(e.getButton() == MouseButton.PRIMARY && getCore() == core){
-			if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals("Position")) Main.lbTextTab.onFileTextSortManager.simulateCall();
+			if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals(TR.tr("Position"))) Main.lbTextTab.onFileTextSortManager.simulateCall();
 		}
 	};
 

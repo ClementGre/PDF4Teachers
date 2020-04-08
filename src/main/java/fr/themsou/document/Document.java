@@ -5,6 +5,7 @@ import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -99,12 +100,12 @@ public class Document {
         }else{
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
-            alert.setTitle("Édition non sauvegardée");
-            alert.setHeaderText("L'édition du document n'est pas enregistrée.");
-            alert.setContentText("Voulez-vous l'enregistrer ?");
-            ButtonType yesButton = new ButtonType("Oui", ButtonBar.ButtonData.YES);
-            ButtonType noButton = new ButtonType("Non", ButtonBar.ButtonData.NO);
-            ButtonType cancelButton = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.setTitle(TR.tr("Édition non sauvegardée"));
+            alert.setHeaderText(TR.tr("L'édition du document n'est pas enregistrée."));
+            alert.setContentText(TR.tr("Voulez-vous l'enregistrer ?"));
+            ButtonType yesButton = new ButtonType(TR.tr("Oui"), ButtonBar.ButtonData.YES);
+            ButtonType noButton = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.NO);
+            ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
             Builders.secureAlert(alert);
             Optional<ButtonType> option = alert.showAndWait();

@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import fr.themsou.main.Main;
+import fr.themsou.utils.TR;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -24,17 +25,17 @@ public class Footerbar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.setText("zoom : " + Main.mainScreen.getZoom() + "%");
+		leftInfo.setText(TR.tr("zoom") + " : " + Main.mainScreen.getZoom() + "%");
 
 		switch (Main.leftBar.getSelectionModel().getSelectedIndex()){
 			case 0:
-				middleInfo.setText("Mode Fichiers"); break;
+				middleInfo.setText(TR.tr("Mode Fichiers")); break;
 			case 1:
-				middleInfo.setText("Mode Texte"); break;
+				middleInfo.setText(TR.tr("Mode Texte")); break;
 			case 2:
-				middleInfo.setText("Mode Notes"); break;
+				middleInfo.setText(TR.tr("Mode Notes")); break;
 			case 3:
-				middleInfo.setText("Mode Dessin"); break;
+				middleInfo.setText(TR.tr("Mode Dessin")); break;
 		}
 
 		if(Main.mainScreen.getStatus() == -1){
@@ -45,7 +46,7 @@ public class Footerbar extends AnchorPane {
 				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + (Main.mainScreen.document.getCurrentPage()+1) + "/" + Main.mainScreen.document.totalPages);
 			}
 		}else{
-			rightInfo.setText("Aucun fichier ouvert");
+			rightInfo.setText(TR.tr("Aucun fichier ouvert"));
 		}
 
 

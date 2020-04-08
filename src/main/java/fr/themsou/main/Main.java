@@ -11,6 +11,7 @@ import fr.themsou.panel.LeftBar.LBPaintTab;
 import fr.themsou.panel.LeftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
+import fr.themsou.utils.TR;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.beans.value.ObservableValue;
@@ -58,6 +59,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
+	public static final String VERSION = "snapshot 1.0.3";
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
@@ -92,7 +94,7 @@ public class Main extends Application {
 
 		window.setMinWidth(700);
 		window.setMinHeight(393);
-		window.setTitle("PDF4Teachers - Aucun document");
+		window.setTitle(TR.tr("PDF4Teachers - Aucun document"));
 		window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);

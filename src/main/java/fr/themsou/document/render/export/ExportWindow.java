@@ -3,6 +3,7 @@ package fr.themsou.document.render.export;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -47,7 +48,7 @@ public class ExportWindow {
         window.setMinHeight(470);
         window.setMaxWidth(800);
         window.setMaxHeight(470);
-        window.setTitle("PDF4Teachers - Exporter (" + files.size() + " documents)");
+        window.setTitle("PDF4Teachers - " + TR.tr("Exporter") + " (" + files.size() + " " + TR.tr("documents)"));
         window.setScene(scene);
         window.setOnCloseRequest(new EventHandler<WindowEvent>() {
             public void handle(javafx.stage.WindowEvent e){ window.close(); }
@@ -65,11 +66,11 @@ public class ExportWindow {
 
     public void setupSimplePanel(VBox root){
 
-        Text info = new Text("Vous allez exporter un document pour former un nouveau fichier PDF.");
+        Text info = new Text(TR.tr("Vous allez exporter un document pour former un nouveau fichier PDF."));
 
         HBox name = new HBox();
             TextField fileName = new TextField(files.get(0).getName());
-            fileName.setPromptText("Nom du document");
+            fileName.setPromptText(TR.tr("Nom du document"));
             fileName.setMinWidth(1);
             HBox.setHgrow(fileName, Priority.ALWAYS);
             fileName.setMinHeight(30);
@@ -78,36 +79,36 @@ public class ExportWindow {
         HBox path = new HBox();
             HBox filePathPane = new HBox();
                 TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
-                filePath.setPromptText("Chemin du dossier d'exportation");
+                filePath.setPromptText(TR.tr("Chemin du dossier d'exportation"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
                 HBox.setHgrow(filePath, Priority.ALWAYS);
             HBox.setHgrow(filePathPane, Priority.SOMETIMES);
             filePathPane.getChildren().add(filePath);
-            Button changePath = new Button("Parcourir");
+            Button changePath = new Button(TR.tr("Parcourir"));
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-            CheckBox textElements = new CheckBox("Texte");
+            CheckBox textElements = new CheckBox(TR.tr("Texte"));
             textElements.setSelected(true);
-            CheckBox notesElements = new CheckBox("Notes");
+            CheckBox notesElements = new CheckBox(TR.tr("Notes"));
             notesElements.setSelected(true);
-            CheckBox drawElements = new CheckBox("Dessins");
+            CheckBox drawElements = new CheckBox(TR.tr("Dessins"));
             drawElements.setSelected(true);
         types.getChildren().addAll(textElements, notesElements, drawElements);
 
 
         VBox settings = new VBox();
-            CheckBox erase = new CheckBox("Toujours écraser");
-            CheckBox folders = new CheckBox("Créer les dossiers manquants");
+            CheckBox erase = new CheckBox(TR.tr("Toujours écraser"));
+            CheckBox folders = new CheckBox(TR.tr("Créer les dossiers manquants"));
             folders.setSelected(true);
-            CheckBox delEdit = new CheckBox("Supprimer les éditions aprés le rendu");
+            CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés le rendu"));
         settings.getChildren().addAll(erase, folders, delEdit);
 
         HBox btns = new HBox();
-            Button export = new Button("Exporter");
+            Button export = new Button(TR.tr("Exporter"));
             export.requestFocus();
-            Button cancel = new Button("Annuler");
+            Button cancel = new Button(TR.tr("Annuler"));
         btns.getChildren().addAll(cancel, export);
         btns.setAlignment(Pos.CENTER_RIGHT);
 
@@ -134,7 +135,7 @@ public class ExportWindow {
             @Override public void handle(ActionEvent event) {
 
                 final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle("Selexionnez un dossier");
+                chooser.setTitle(TR.tr("Selexionnez un dossier"));
                 chooser.setInitialDirectory(files.get(0).getParentFile());
 
                 File file = chooser.showDialog(Main.window);
@@ -162,24 +163,24 @@ public class ExportWindow {
     }
     public void setupComplexPanel(VBox root){
 
-        Text info = new Text("Vous allez exporter un document pour former un nouveau fichier PDF.");
+        Text info = new Text(TR.tr("Vous allez exporter un document pour former un nouveau fichier PDF."));
 
         HBox name = new HBox();
 
             TextField prefix = new TextField();
-            prefix.setPromptText("Préfixe");
+            prefix.setPromptText(TR.tr("Préfixe"));
             prefix.setMinWidth(1);
             //prefix.setAlignment(Pos.CENTER_RIGHT);
             HBox.setHgrow(prefix, Priority.ALWAYS);
             prefix.setMinHeight(30);
 
-            TextField fileName = new TextField("Nom du document");
+            TextField fileName = new TextField(TR.tr("Nom du document"));
             fileName.setDisable(true);
             fileName.setAlignment(Pos.CENTER);
             fileName.setMinHeight(30);
 
             TextField suffix = new TextField();
-            suffix.setPromptText("Suffixe");
+            suffix.setPromptText(TR.tr("Suffixe"));
             suffix.setMinWidth(1);
             HBox.setHgrow(suffix, Priority.ALWAYS);
             suffix.setMinHeight(30);
@@ -188,7 +189,7 @@ public class ExportWindow {
 
         HBox replace = new HBox();
 
-            Label replaceText = new Label("Remplacer");
+            Label replaceText = new Label(TR.tr("Remplacer"));
             replaceText.setFont(new Font(14));
 
             TextField replaceInput = new TextField();
@@ -196,7 +197,7 @@ public class ExportWindow {
             HBox.setHgrow(replaceInput, Priority.ALWAYS);
             replaceInput.setMinHeight(30);
 
-            Label byText = new Label("par");
+            Label byText = new Label(TR.tr("par"));
             byText.setFont(new Font(14));
 
             TextField byInput = new TextField();
@@ -214,32 +215,32 @@ public class ExportWindow {
         HBox.setHgrow(filePath, Priority.ALWAYS);
         HBox.setHgrow(filePathPane, Priority.SOMETIMES);
         filePathPane.getChildren().add(filePath);
-        Button changePath = new Button("Parcourir");
+        Button changePath = new Button(TR.tr("Parcourir"));
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-        CheckBox textElements = new CheckBox("Texte");
+        CheckBox textElements = new CheckBox(TR.tr("Texte"));
         textElements.setSelected(true);
-        CheckBox notesElements = new CheckBox("Notes");
+        CheckBox notesElements = new CheckBox(TR.tr("Notes"));
         notesElements.setSelected(true);
-        CheckBox drawElements = new CheckBox("Dessins");
+        CheckBox drawElements = new CheckBox(TR.tr("Dessins"));
         drawElements.setSelected(true);
         types.getChildren().addAll(textElements, notesElements, drawElements);
 
 
         VBox settings = new VBox();
-        CheckBox erase = new CheckBox("Toujours écraser");
-        CheckBox folders = new CheckBox("Créer les dossiers manquants");
+        CheckBox erase = new CheckBox(TR.tr("Toujours écraser"));
+        CheckBox folders = new CheckBox(TR.tr("Créer les dossiers manquants"));
         folders.setSelected(true);
-        CheckBox onlyEdited = new CheckBox("Exporter uniquement les documents édités");
+        CheckBox onlyEdited = new CheckBox(TR.tr("Exporter uniquement les documents édités"));
         onlyEdited.setSelected(true);
-        CheckBox delEdit = new CheckBox("Supprimer les éditions aprés le rendu");
+        CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés le rendu"));
         settings.getChildren().addAll(erase, folders, onlyEdited, delEdit);
 
         HBox btns = new HBox();
-        Button export = new Button("Exporter");
+        Button export = new Button(TR.tr("Exporter"));
         export.requestFocus();
-        Button cancel = new Button("Annuler");
+        Button cancel = new Button(TR.tr("Annuler"));
         btns.getChildren().addAll(cancel, export);
         btns.setAlignment(Pos.CENTER_RIGHT);
 
@@ -275,7 +276,7 @@ public class ExportWindow {
             @Override public void handle(ActionEvent event) {
 
                 final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle("Selexionnez un dossier");
+                chooser.setTitle(TR.tr("Selexionnez un dossier"));
                 chooser.setInitialDirectory(files.get(0).getParentFile());
 
                 File file = chooser.showDialog(Main.window);
@@ -324,21 +325,21 @@ public class ExportWindow {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(alert);
-                alert.setTitle("Erreur de rendu");
-                alert.setHeaderText("Une erreur de rendu s'est produite avec le document : " + file.getName());
-                alert.setContentText("Choisissez une action.");
+                alert.setTitle(TR.tr("Erreur de rendu"));
+                alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite avec le document : ") + file.getName());
+                alert.setContentText(TR.tr("Choisissez une action."));
 
                 TextArea textArea = new TextArea(e.getMessage());
                 textArea.setEditable(false);
                 textArea.setWrapText(true);
                 GridPane expContent = new GridPane();
                 expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(new Label("L'erreur survenue est la suivante :"), 0, 0);
+                expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
                 expContent.add(textArea, 0, 1);
                 alert.getDialogPane().setExpandableContent(expContent);
 
-                ButtonType stopAll = new ButtonType("Arreter tout", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType continueRender = new ButtonType("Continuer", ButtonBar.ButtonData.NEXT_FORWARD);
+                ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
                 alert.getButtonTypes().setAll(stopAll, continueRender);
 
                 Optional<ButtonType> option = alert.showAndWait();
@@ -353,13 +354,13 @@ public class ExportWindow {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         new JMetro(alert.getDialogPane(), Style.LIGHT);
         Builders.secureAlert(alert);
-        alert.setTitle("Exportation terminée");
+        alert.setTitle(TR.tr("Exportation terminée"));
 
-        if(exported == 0) alert.setHeaderText("Aucun documents ont été exportés !");
-        else if(exported == 1) alert.setHeaderText("Votre document a bien été exporté !");
-        else alert.setHeaderText(exported + " documents ont été exportés !");
+        if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents ont été exportés !"));
+        else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
+        else alert.setHeaderText(exported + TR.tr(" documents ont été exportés !"));
 
-        alert.setContentText("Vous pouvez les retrouver dans le dossier choisi.");
+        alert.setContentText(TR.tr("Vous pouvez les retrouver dans le dossier choisi."));
         alert.show();
 
     }

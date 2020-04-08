@@ -38,72 +38,72 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// FICHIER //////////
 
-	Menu fichier = new Menu("Fichier");
-	NodeMenuItem fichier1Open = createMenuItem("Ouvrir un·des fichiers", "ouvrir", "Ctrl+O",
-			"Ajoute un ou plusieurs fichiers dans le panneau des fichiers.");
+	Menu fichier = new Menu(TR.tr("Fichier"));
+	NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", "Ctrl+O",
+			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	NodeMenuItem fichier2OpenDir = createMenuItem("Ouvrir un dossier", "directory", "Ctrl+Shift+O",
-			"Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers;");
+	NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", "Ctrl+Shift+O",
+			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers;"));
 
-	NodeMenuItem fichier3Clear = createMenuItem("Vider la liste", "vider", "Ctrl+Shift+W",
-			"Vide la liste des fichiers", false, true, 0);
+	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", "Ctrl+Shift+W",
+			TR.tr("Vide la liste des fichiers"), false, true, 0);
 
-	NodeMenuItem fichier4Save = createMenuItem("Sauvegarder l'édition", "sauvegarder", "Ctrl+S",
-			"Sauvegarde les éléments d'édition du document ouvert. (Mais ne modifie pas le fichier PDF pré-existant)", true, false, 0);
+	NodeMenuItem fichier4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", "Ctrl+S",
+			TR.tr("Sauvegarde les éléments d'édition du document ouvert. (Mais ne modifie pas le fichier PDF pré-existant)"), true, false, 0);
 
-	NodeMenuItem fichier5Delete = createMenuItem("Supprimer l'édition", "supprimer", "",
-			"Supprime les éléments d'édition du document ouvert.", true, false, 0);
+	NodeMenuItem fichier5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", "",
+			TR.tr("Supprime les éléments d'édition du document ouvert."), true, false, 0);
 
-	NodeMenuItem fichier6DeleteAll = createMenuItem("Supprimer les éditions des fichiers ouvert", "supprimer", "",
-			"Supprime les éditions de tous les fichiers ouverts.");
+	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouvert"), "supprimer", "",
+			TR.tr("Supprime les éditions de tous les fichiers ouverts."));
 
-	NodeMenuItem fichier7Close = createMenuItem("Fermer le document", "fermer", "Ctrl+W",
-			"Ferme le document actuellement ouvert.", true, false, 0);
+	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", "Ctrl+W",
+			TR.tr("Ferme le document actuellement ouvert."), true, false, 0);
 
-	Menu fichier8SameName = createSubMenu("Éditions des documents du même nom", "memeNom",
-			"Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction.", true);
+	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memeNom",
+			TR.tr("Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction."), true);
 
-	NodeMenuItem fichier8SameNameNull = createMenuItem("Aucune édition trouvée", "", "",
+	NodeMenuItem fichier8SameNameNull = createMenuItem(TR.tr("Aucune édition trouvée"), "", "",
 			"");
 
-	NodeMenuItem fichier9Export = createMenuItem("Exporter (Regénérer le PDF)", "exporter", "Ctrl+E",
-			"Créee un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments ajoutés.", true, false, 0);
+	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", "Ctrl+E",
+			TR.tr("Créee un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments ajoutés."), true, false, 0);
 
-	NodeMenuItem fichier10ExportAll = createMenuItem("Tout exporter", "exporter", "Ctrl+Shift+E",
-			"Créee des nouveau fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition.", false, true, 0);
+	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", "Ctrl+Shift+E",
+			TR.tr("Créee des nouveau fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition."), false, true, 0);
 
 	////////// PREFS //////////
 
-	Menu preferences = new Menu("Préférences");
+	Menu preferences = new Menu(TR.tr("Préférences"));
 
-	NodeMenuItem preferences1Zoom = createMenuItem("Zoom lors de l'ouverture d'un document", "zoom", "",
-			"Définis le zoom par défaut lors de l'ouverture d'un document.", 30);
+	NodeMenuItem preferences1Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
+			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document."), 30);
 
-	NodeRadioMenuItem preferences2Save = createRadioMenuItem("Sauvegarder automatiquement", "sauvegarder",
-			"Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application.", true);
+	NodeRadioMenuItem preferences2Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	NodeRadioMenuItem preferences3Regular = createRadioMenuItem("Sauvegarder régulièrement", "sauvegarder-recharger",
-			"Sauvegarde l'édition du document automatiquement toutes les x minutes.", false);
+	NodeRadioMenuItem preferences3Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
-	NodeRadioMenuItem preferences4Restore = createRadioMenuItem("Toujours restaurer la session précédente", "recharger",
-			"Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application.", true);
+	NodeRadioMenuItem preferences4Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences5RemoveWhenAdd = createRadioMenuItem("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris", "favoris",
-			"Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris.", true);
+	NodeRadioMenuItem preferences5RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem preferences6ShowStart = createRadioMenuItem("N'afficher que le début des éléments textuels", "lines",
-			"Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément.", true);
+	NodeRadioMenuItem preferences6ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem preferences7SmallFont = createRadioMenuItem("Réduire la taille des éléments dans les listes", "cursor",
-			"Dans les liste des éléments textuels, affiche les éléments en plus petit.", true);
+	NodeRadioMenuItem preferences7SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
 	////////// OTHER //////////
 
 	Menu apropos = new Menu();
-	Menu aide = new Menu("Aide");
-	MenuItem aide1Doc = new MenuItem("Charger le document d'aide     ");
-	MenuItem aide2Probleme = new MenuItem("Demander de l'aide sur GitHub     ");
+	Menu aide = new Menu(TR.tr("Aide"));
+	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide") + "     ");
+	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide sur GitHub") + "     ");
 
 	public MenuBar(){
 		setup();
@@ -149,8 +149,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier1Open.setOnAction((ActionEvent actionEvent) -> {
 
 			final FileChooser chooser = new FileChooser();
-			chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("Fichier PDF", "*.pdf"));
-			chooser.setTitle("Selectionner un ou plusieurs fichier");
+			chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
+			chooser.setTitle(TR.tr("Selectionner un ou plusieurs fichier"));
 			chooser.setInitialDirectory((LBFilesListView.lastDirChoosed.exists() ? LBFilesListView.lastDirChoosed : new File(System.getProperty("user.home"))));
 
 			List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -168,7 +168,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier2OpenDir.setOnAction((ActionEvent actionEvent) -> {
 
 			final DirectoryChooser chooser = new DirectoryChooser();
-			chooser.setTitle("Selectionner un dossier");
+			chooser.setTitle(TR.tr("Selectionner un dossier"));
 			chooser.setInitialDirectory((LBFilesListView.lastDirChoosed.exists() ? LBFilesListView.lastDirChoosed : new File(System.getProperty("user.home"))));
 
 			File file = chooser.showDialog(Main.window);
@@ -194,8 +194,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
 			new JMetro(dialog.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(dialog);
-			dialog.setTitle("Supprimer les éditions");
-			dialog.setHeaderText("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?");
+			dialog.setTitle(TR.tr("Supprimer les éditions"));
+			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
 
 			float yesButSize = FilesUtils.convertOctetToMo(FilesUtils.getSize(new File(Main.dataFolder + "editions")));
@@ -205,9 +205,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				yesSize += FilesUtils.getSize(editFile);
 			}yesSize = FilesUtils.convertOctetToMo((long) yesSize);
 
-			ButtonType cancel = new ButtonType("Non", ButtonBar.ButtonData.CANCEL_CLOSE);
-			ButtonType yes = new ButtonType("Oui (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
-			ButtonType yesBut = new ButtonType("Supprimer l'ensemble des\néditions enregistrées (" + yesButSize + "Mo)", ButtonBar.ButtonData.OTHER);
+			ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
+			ButtonType yes = new ButtonType(TR.tr("Oui") + " (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
+			ButtonType yesBut = new ButtonType(TR.tr("Supprimer l'ensemble des\néditions enregistrées") + " (" + yesButSize + "Mo)", ButtonBar.ButtonData.OTHER);
 			dialog.getButtonTypes().setAll(yesBut, cancel, yes);
 
 			Optional<ButtonType> option = dialog.showAndWait();
@@ -229,9 +229,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Alert alert = new Alert(Alert.AlertType.INFORMATION);
 			new JMetro(alert.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(alert);
-			alert.setTitle("Supression terminée");
-			alert.setHeaderText("Vos éditions ont bien été supprimés.");
-			alert.setContentText("Vous avez supprimé " + size + "Mo");
+			alert.setTitle(TR.tr("Supression terminée"));
+			alert.setHeaderText(TR.tr("Vos éditions ont bien été supprimés."));
+			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
 		});
 		fichier7Close.setOnAction((ActionEvent e) -> {
@@ -250,12 +250,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
 					new JMetro(dialog.getDialogPane(), Style.LIGHT);
 					Builders.secureAlert(dialog);
-					dialog.setTitle("Charger une autre édition");
-					dialog.setHeaderText("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?");
+					dialog.setTitle(TR.tr("Charger une autre édition"));
+					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
 
-					ButtonType cancel = new ButtonType("Non", ButtonBar.ButtonData.CANCEL_CLOSE);
-					ButtonType yes = new ButtonType("Oui", ButtonBar.ButtonData.OK_DONE);
-					ButtonType yesAll = new ButtonType("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier", ButtonBar.ButtonData.OTHER);
+					ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
+					ButtonType yes = new ButtonType(TR.tr("Oui"), ButtonBar.ButtonData.OK_DONE);
+					ButtonType yesAll = new ButtonType(TR.tr("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
 					dialog.getButtonTypes().setAll(cancel, yes, yesAll);
 
 					Optional<ButtonType> option = dialog.showAndWait();
@@ -279,10 +279,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 									}else{
 										Alert alert = new Alert(Alert.AlertType.ERROR);
 										new JMetro(alert.getDialogPane(), Style.LIGHT);
-										alert.setTitle("Fichier introuvable");
-										alert.setHeaderText("Le fichier correspondant à \"" + otherFileDest.getName() + "\" dans \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" n'a pas d'édition.");
-										ButtonType ok = new ButtonType("Ignorer", ButtonBar.ButtonData.OK_DONE);
-										ButtonType cancelAll = new ButtonType("Tout Arreter", ButtonBar.ButtonData.CANCEL_CLOSE);
+										alert.setTitle(TR.tr("Fichier introuvable"));
+										alert.setHeaderText(TR.tr("Le fichier correspondant à") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
+										ButtonType ok = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.OK_DONE);
+										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);
 										Builders.secureAlert(alert);
 										Optional<ButtonType> option2 = alert.showAndWait();
@@ -321,9 +321,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
 			new JMetro(dialog.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(dialog);
-			dialog.setTitle("Zoom par défaut");
-			dialog.setHeaderText("Zoom par défaut lors de l'ouverture d'un document");
-			dialog.setContentText("Choisir un pourcentage :");
+			dialog.setTitle(TR.tr("Zoom par défaut"));
+			dialog.setHeaderText(TR.tr("Zoom par défaut lors de l'ouverture d'un document"));
+			dialog.setContentText(TR.tr("Choisir un pourcentage :"));
 
 			Optional<Integer> newZoom = dialog.showAndWait();
 			if(!newZoom.isEmpty()){
@@ -339,7 +339,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
 			combo.getSelectionModel().select(Main.settings.getRegularSaving() == -1 ? (Integer) 5 : (Integer) Main.settings.getRegularSaving());
 			combo.setStyle("-fx-padding-left: 20px;");
-			CheckBox activated = new CheckBox("Activer");
+			CheckBox activated = new CheckBox(TR.tr("Activer"));
 			activated.setSelected(Main.settings.getRegularSaving() != -1);
 			pane.getChildren().add(0, activated);
 			pane.getChildren().add(1, combo);
@@ -351,13 +351,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			new JMetro(dialog.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(dialog);
 
-			dialog.setTitle("Sauvegarde régulière");
-			dialog.setHeaderText("Définir le nombre de minutes entre deux sauvegardes automatiques.");
+			dialog.setTitle(TR.tr("Sauvegarde régulière"));
+			dialog.setHeaderText(TR.tr("Définir le nombre de minutes entre deux sauvegardes automatiques."));
 
 			dialog.getDialogPane().setContent(pane);
 
-			ButtonType cancel = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
-			ButtonType ok = new ButtonType("OK", ButtonBar.ButtonData.OK_DONE);
+			ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+			ButtonType ok = new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE);
 			dialog.getButtonTypes().setAll(cancel, ok);
 
 			Optional<ButtonType> option = dialog.showAndWait();
@@ -395,7 +395,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}catch(IOException | URISyntaxException e){ e.printStackTrace(); }
 		});
 
-		Label name = new Label("À propos");
+		Label name = new Label(TR.tr("À propos"));
 		name.setAlignment(Pos.CENTER_LEFT);
 		name.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {

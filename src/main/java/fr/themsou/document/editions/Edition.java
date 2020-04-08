@@ -7,6 +7,7 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
+import fr.themsou.utils.TR;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
@@ -188,9 +189,9 @@ public class Edition {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             Builders.secureAlert(alert);
-            alert.setTitle("Confirmation");
-            alert.setHeaderText("Êtes vous sûr de vouloir supprimer l'édition de ce document ?");
-            alert.setContentText("Cette action est irréversible.");
+            alert.setTitle(TR.tr("Confirmation"));
+            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
+            alert.setContentText(TR.tr("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){
@@ -214,9 +215,9 @@ public class Edition {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             Builders.secureAlert(alert);
-            alert.setTitle("Confirmation");
-            alert.setHeaderText("Êtes vous sûr de vouloir supprimer l'édition de ce document ?");
-            alert.setContentText("Cette action est irréversible.");
+            alert.setTitle(TR.tr("Confirmation"));
+            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
+            alert.setContentText(TR.tr("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){

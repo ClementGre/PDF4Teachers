@@ -6,10 +6,8 @@ import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.*;
 import fr.themsou.utils.SortEvent;
-import fr.themsou.utils.SortManager;
-import fr.themsou.utils.Sorter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -65,8 +63,8 @@ public class LBTextTab extends Tab {
 	private TextArea txtArea = new TextArea();
 
 	private HBox btnBox = new HBox();
-	private Button deleteBtn = new Button("Supprimer");
-	private Button newBtn = new Button("Nouveau");
+	private Button deleteBtn = new Button(TR.tr("Supprimer"));
+	private Button newBtn = new Button(TR.tr("Nouveau"));
 
 	// TREE VIEW
 
@@ -315,7 +313,7 @@ public class LBTextTab extends Tab {
 				for(NoDisplayTextElement item : autoSortList(toSort, sortType, order)) favoritesText.getChildren().add(item);
 			}
 		}, null, null);
-		favoritesTextSortManager.setup(favoritesTextOptions, "Ajout", "Ajout", "Nom", "Utilisation", "\n", "Police", "Taille", "Couleur");
+		favoritesTextSortManager.setup(favoritesTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
 		lastsTextSortManager = new SortManager(new SortEvent(){
 			@Override public void call(String sortType, boolean order){
@@ -331,7 +329,7 @@ public class LBTextTab extends Tab {
 
 			}
 		}, null, null);
-		lastsTextSortManager.setup(lastsTextOptions, "Ajout", "Ajout", "Nom", "Utilisation", "\n", "Police", "Taille", "Couleur");
+		lastsTextSortManager.setup(lastsTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
 		onFileTextSortManager = new SortManager(new SortEvent(){
 			@Override public void call(String sortType, boolean order){
@@ -347,7 +345,7 @@ public class LBTextTab extends Tab {
 
 			}
 		}, null, null);
-		onFileTextSortManager.setup(onFileTextOptions, "Position", "Position", "Nom", "\n", "Police", "Taille", "Couleur");
+		onFileTextSortManager.setup(onFileTextOptions, TR.tr("Position"), TR.tr("Position"), TR.tr("Nom"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
 		treeViewRoot.getChildren().addAll(favoritesText, lastsText, onFileText);
 
@@ -535,19 +533,19 @@ public class LBTextTab extends Tab {
 	}
 	private List<NoDisplayTextElement> autoSortList(List<NoDisplayTextElement> toSort, String sortType, boolean order){
 
-		if(sortType.equals("Ajout")){
+		if(sortType.equals(TR.tr("Ajout"))){
 			return Sorter.sortElementsByDate(toSort, order);
-		}else if(sortType.equals("Nom")){
+		}else if(sortType.equals(TR.tr("Nom"))){
 			return Sorter.sortElementsByName(toSort, order);
-		}else if(sortType.equals("Utilisation")){
+		}else if(sortType.equals(TR.tr("Utilisation"))){
 			return Sorter.sortElementsByUtils(toSort, order);
-		}else if(sortType.equals("Police")){
+		}else if(sortType.equals(TR.tr("Police"))){
 			return Sorter.sortElementsByPolice(toSort, order);
-		}else if(sortType.equals("Taille")){
+		}else if(sortType.equals(TR.tr("Taille"))){
 			return Sorter.sortElementsBySize(toSort, order);
-		}else if(sortType.equals("Couleur")){
+		}else if(sortType.equals(TR.tr("Couleur"))){
 			return Sorter.sortElementsByColor(toSort, order);
-		}else if(sortType.equals("Position")){
+		}else if(sortType.equals(TR.tr("Position"))){
 			return Sorter.sortElementsByCorePosition(toSort, order);
 		}
 		return toSort;

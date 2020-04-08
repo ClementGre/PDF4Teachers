@@ -11,6 +11,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -74,10 +75,10 @@ public class MainScreen extends ScrollPane {
 			info.setVisible(true);
 
 			if(status.get() == 0){
-				info.setText("Aucun document ouvert");
+				info.setText(TR.tr("Aucun document ouvert"));
 				loader.setVisible(false);
 			}else if(status.get() == 2){
-				info.setText("Une erreur est survenue lors du chargement du document :/");
+				info.setText(TR.tr("Une erreur est survenue lors du chargement du document :/"));
 				loader.setVisible(false);
 			}
 
@@ -197,7 +198,7 @@ public class MainScreen extends ScrollPane {
 
 		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> {
-			return status.get() == -1 ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " (Non sauvegardé)") : "PDF4Teachers - Aucun document";
+			return status.get() == -1 ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document");
 		}, status, Edition.isSaveProperty()));
 
 
@@ -218,9 +219,9 @@ public class MainScreen extends ScrollPane {
 			new JMetro(alert.getDialogPane(), Style.LIGHT);
 			Builders.secureAlert(alert);
 			alert.setAlertType(Alert.AlertType.ERROR);
-			alert.setTitle("Erreur");
-			alert.setHeaderText("Impossible d'ouvrir le document !");
-			alert.setContentText("Un autre document est déjà en train de charger");
+			alert.setTitle(TR.tr("Erreur"));
+			alert.setHeaderText(TR.tr("Impossible d'ouvrir le document !"));
+			alert.setContentText(TR.tr("Un autre document est déjà en train de charger"));
 
 			alert.show();
 			return;
@@ -355,9 +356,9 @@ public class MainScreen extends ScrollPane {
 				new JMetro(alert.getDialogPane(), Style.LIGHT);
 				Builders.secureAlert(alert);
 				alert.setAlertType(Alert.AlertType.ERROR);
-				alert.setTitle("Erreur");
-				alert.setHeaderText("Aucun document n'est ouvert !");
-				alert.setContentText("Cette action est censé s'éxécuter sur un document ouvert.");
+				alert.setTitle(TR.tr("Erreur"));
+				alert.setHeaderText(TR.tr("Aucun document n'est ouvert !"));
+				alert.setContentText(TR.tr("Cette action est censé s'éxécuter sur un document ouvert."));
 
 				alert.showAndWait();
 			}

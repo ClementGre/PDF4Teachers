@@ -1,20 +1,16 @@
 package fr.themsou.main;
 
-import javafx.application.Application;
+import fr.themsou.utils.TR;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Control;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Modality;
@@ -22,8 +18,6 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
-import java.io.File;
 
 public class AboutWindow extends Stage {
 
@@ -39,7 +33,7 @@ public class AboutWindow extends Stage {
         setHeight(600);
         setMinWidth(400);
         setMinHeight(600);
-        setTitle("PDF4Teachers - À Propos");
+        setTitle(TR.tr("PDF4Teachers - À Propos"));
         setResizable(false);
         setScene(scene);
         setOnCloseRequest(new EventHandler<WindowEvent>() {
@@ -64,12 +58,12 @@ public class AboutWindow extends Stage {
             name.setFont(new Font(23));
             name.setAlignment(Pos.CENTER);
 
-            Label version = new Label("version 1.0.2");
+            Label version = new Label(TR.tr("Version ") + Main.VERSION);
             version.setFont(new Font(15));
             version.setAlignment(Pos.CENTER);
 
             HBox devInfo = new HBox();
-                Label dev = new Label("Développeur :");
+                Label dev = new Label(TR.tr("Développeur :"));
                 dev.setFont(new Font(17));
 
                 Hyperlink devName = new Hyperlink("Clément Gre.");
@@ -83,7 +77,7 @@ public class AboutWindow extends Stage {
             devInfo.setAlignment(Pos.CENTER);
 
             HBox gitInfo = new HBox();
-                Label git = new Label("Projet GitHub : ");
+                Label git = new Label(TR.tr("Projet GitHub : "));
                 git.setFont(new Font(17));
 
                 Hyperlink gitName = new Hyperlink("themsou/PDF4Teachers");
@@ -95,7 +89,7 @@ public class AboutWindow extends Stage {
             gitInfo.setAlignment(Pos.CENTER);
 
             VBox apiInfo = new VBox();
-                Label api = new Label("Dépendances : ");
+                Label api = new Label(TR.tr("Dépendances : "));
 
                 Hyperlink javaFx = new Hyperlink("Java FX 13.0.1");
                 javaFx.setOnAction((ActionEvent t) -> {
@@ -116,7 +110,7 @@ public class AboutWindow extends Stage {
             apiInfo.setAlignment(Pos.CENTER);
 
             HBox issueInfo = new HBox();
-                Hyperlink issueName = new Hyperlink("Demander de l'aide sur GutHub");
+                Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide sur GutHub"));
                 issueName.setFont(new Font(17));
                 issueName.setOnAction((ActionEvent t) -> {
                     Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new");

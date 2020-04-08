@@ -6,6 +6,7 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
+import fr.themsou.utils.TR;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
@@ -82,15 +83,15 @@ public class LBTextTreeView {
                             box.getChildren().add(toggle);
 
                             if(item.equals("favoritesText")){
-                                name.setText("Éléments Favoris");
+                                name.setText(TR.tr("Éléments Favoris"));
                                 toggle.getChildren().add(Main.lbTextTab.favoritesTextToggleOption);
                                 setContextMenu(getCategoryMenu(true));
                             }if(item.equals("lastsText")){
-                                name.setText("Éléments Précédents");
+                                name.setText(TR.tr("Éléments Précédents"));
                                 box.getChildren().add(Main.lbTextTab.lastsTextToggleOption);
                                 setContextMenu(getCategoryMenu(false));
                             }if(item.equals("onFileText")){
-                                name.setText("Éléments sur ce document");
+                                name.setText(TR.tr("Éléments sur ce document"));
                                 box.getChildren().add(Main.lbTextTab.onFileTextToggleOption);
                             }
                             setGraphic(box);
@@ -120,10 +121,10 @@ public class LBTextTreeView {
 
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Vider la liste", -1, false);
-        item1.setToolTip("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document.");
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Supprimer les donnés d'utilisation", -1, false);
-        item2.setToolTip("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.");
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+        item1.setToolTip(TR.tr("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer les donnés d'utilisation"), -1, false);
+        item2.setToolTip(TR.tr("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
 
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
@@ -142,7 +143,7 @@ public class LBTextTreeView {
                             ((NoDisplayTextElement) element).setUses(0);
                         }
                     }
-                    if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals("Utilisation")){
+                    if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
                         Main.lbTextTab.favoritesTextSortManager.simulateCall();
                     }
                 }else{
@@ -151,7 +152,7 @@ public class LBTextTreeView {
                             ((NoDisplayTextElement) element).setUses(0);
                         }
                     }
-                    if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals("Utilisation")){
+                    if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
                         Main.lbTextTab.lastsTextSortManager.simulateCall();
                     }
                 }
@@ -164,16 +165,16 @@ public class LBTextTreeView {
     public static ContextMenu getNewMenu(NoDisplayTextElement element){
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Ajouter", -1, false);
-        item1.setToolTip("Ajoute cet élément à l'édition du document ouvert.");
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Retirer", -1, false);
-        item2.setToolTip("Retire cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document.");
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux favoris", -1, false);
-        item3.setToolTip("Ajoute cet élément à la liste des éléments précédents.");
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
-        item4.setToolTip("Ajoute cet élément à la liste des éléments favoris.");
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), "Dé-lier l'élément", -1, false);
-        item5.setToolTip("Dé-lie l'élément : l'élément de sera plus synchronisé avec l'élément du document.");
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter"), -1, false);
+        item1.setToolTip(TR.tr("Ajoute cet élément à l'édition du document ouvert."));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
+        item2.setToolTip(TR.tr("Retire cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document."));
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux favoris"), -1, false);
+        item3.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments précédents."));
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), -1, false);
+        item4.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments favoris."));
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Dé-lier l'élément"), -1, false);
+        item5.setToolTip(TR.tr("Dé-lie l'élément : l'élément de sera plus synchronisé avec l'élément du document."));
 
 
         // Ajouter les items en fonction du type

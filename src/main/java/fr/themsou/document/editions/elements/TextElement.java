@@ -11,6 +11,7 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
@@ -95,15 +96,15 @@ public class TextElement extends Text implements Element {
 				}
 			}
 		});
-		NodeMenuItem item1 = new NodeMenuItem(new HBox(), "Supprimer", -1, false);
+		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), -1, false);
 		item1.setAccelerator("Suppr");
-		item1.setToolTip("Supprime cet élément. Il sera donc retiré de l'édition.");
-		NodeMenuItem item2 = new NodeMenuItem(new HBox(), "Dupliquer", -1, false);
-		item2.setToolTip("Crée un second élément identique à celui-ci.");
-		NodeMenuItem item3 = new NodeMenuItem(new HBox(), "Ajouter aux éléments précédents", -1, false);
-		item3.setToolTip("Ajoute cet élément à la liste des éléments précédents.");
-		NodeMenuItem item4 = new NodeMenuItem(new HBox(), "Ajouter aux éléments Favoris", -1, false);
-		item4.setToolTip("Ajoute cet élément à la liste des éléments favoris.");
+		item1.setToolTip(TR.tr("Supprime cet élément. Il sera donc retiré de l'édition."));
+		NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Dupliquer"), -1, false);
+		item2.setToolTip(TR.tr("Crée un second élément identique à celui-ci."));
+		NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), -1, false);
+		item3.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments précédents."));
+		NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments Favoris"), -1, false);
+		item4.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments favoris."));
 		menu.getItems().addAll(item1, item2, item4, item3);
 		Builders.setMenuSize(menu);
 
