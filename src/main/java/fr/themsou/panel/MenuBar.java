@@ -281,7 +281,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 										new JMetro(alert.getDialogPane(), Style.LIGHT);
 										alert.setTitle(TR.tr("Fichier introuvable"));
 										alert.setHeaderText(TR.tr("Le fichier correspondant à") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
-										ButtonType ok = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.OK_DONE);
+										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
 										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);
 										Builders.secureAlert(alert);

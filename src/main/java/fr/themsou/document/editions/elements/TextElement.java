@@ -52,11 +52,6 @@ public class TextElement extends Text implements Element {
 
 	public TextElement(int x, int y, Font font, String text, Color color, int pageNumber, PageRenderer page) {
 
-		TextElement thisObject = this;
-
-		border.setStroke(Color.RED);
-		border.setManaged(false);
-
 		this.pageNumber = pageNumber;
 		this.realX.set(x);
 		this.realY.set(y);
@@ -66,13 +61,14 @@ public class TextElement extends Text implements Element {
 		setTextOrigin(VPos.BOTTOM);
 		setFill(color);
 
+		setBoundsType(TextBoundsType.VISUAL);
+
+		if(page == null) return;
+
 		fontProperty().bind(Bindings.createObjectBinding(() -> {
 			return translateFont(getRealFont());
 		}, realFontProperty(), Main.mainScreen.zoomProperty()));
 
-		setBoundsType(TextBoundsType.VISUAL);
-
-		if(page == null) return;
 		this.page = page;
 
 		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(500.0)));
@@ -81,6 +77,7 @@ public class TextElement extends Text implements Element {
 		setCursor(Cursor.MOVE);
 
 		// enable shadow if this element is selected
+		TextElement thisObject = this;
 		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
 			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
 				if(oldValue == thisObject && newValue != thisObject){

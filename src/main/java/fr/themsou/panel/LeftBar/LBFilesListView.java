@@ -60,7 +60,7 @@ public class LBFilesListView {
                             Integer[] elementsCount = Edition.countElements(Edition.getEditFile(file));
 
                             path.setText(path.getText() + " | " + elementsCount[0] + " " + TR.tr("Éléments"));
-                            setTooltip(new Tooltip(elementsCount[0] + " " + TR.tr("Éléments") + "\n" + elementsCount[1] + " " + TR.tr("Commentaires") + "\n" + elementsCount[2] + " " + TR.tr("Notes") + "\n" + elementsCount[3] + "\n" + TR.tr("Figures")));
+                            setTooltip(new Tooltip(elementsCount[0] + " " + TR.tr("Éléments") + "\n" + elementsCount[1] + " " + TR.tr("Commentaires") + "\n" + elementsCount[2] + " " + TR.tr("Notes") + "\n" + elementsCount[3] + " " + TR.tr("Figures")));
 
                         }catch(Exception e){ e.printStackTrace();}
                     }else{

@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextBoundsType;
@@ -33,22 +34,24 @@ public class ExportRenderer {
 
         File editFile = Edition.getEditFile(file);
 
-        if(onlyEdited && !editFile.exists()){
-            return 2;
-        }
+        if(onlyEdited && !editFile.exists()) return 2;
 
         PDDocument doc = PDDocument.load(file);
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
 
         Element[] elements = Edition.simpleLoad(editFile);
-
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
 
             PDPage page = doc.getPage(pageNumber);
             PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
-            PDRectangle pageSize = page.getBleedBox();
-            contentStream.saveGraphicsState();
 
+            float pageHeight = page.getBleedBox().getHeight();
+            float pageWidth = page.getBleedBox().getWidth();
+            // ROTATE PAGES ADAPT
+            if(page.getRotation() == 90 || page.getRotation() == 270){
+                pageHeight = page.getBleedBox().getWidth();
+                pageWidth = page.getBleedBox().getHeight();
+            }
             for(Element element : elements){
 
                 if(element.getPageNumber() != pageNumber) continue;
@@ -57,34 +60,47 @@ public class ExportRenderer {
                     if(!textElements) continue;
 
                     TextElement txtElement = (TextElement) element;
+
+                    // PARAMS
                     txtElement.setBoundsType(TextBoundsType.LOGICAL);
 
+                    // COLOR
+                    Color color = (Color) txtElement.getFill();
+                    contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
 
-                    double height = txtElement.getLayoutBounds().getHeight() / 1080 * pageSize.getHeight();
+                    // FONT
+                    boolean bold = false;
+                    if (TextElement.getFontWeight(txtElement.getRealFont()) == FontWeight.BOLD) bold = true;
+                    boolean italic = false;
+                    if (TextElement.getFontPosture(txtElement.getRealFont()) == FontPosture.ITALIC) italic = true;
+                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getRealFont().getFamily(), italic, bold));
+                    txtElement.setFont(TextElement.getFont(txtElement.getRealFont().getFamily(), italic, bold, txtElement.getRealFont().getSize() / 595.0 * pageWidth));
+
+                    // LINE HEIGHT VARIABLES
+                    double height = txtElement.getLayoutBounds().getHeight();
                     int lineNumber = txtElement.getText().split("\\n").length;
                     double lineHeight = height / lineNumber;
 
                     contentStream.beginText();
-                    //contentStream.setTextMatrix(new Matrix(1f, 0f, 0f, -1f, 0f, 0f));
 
-                    // Text Style
-                    Color color = (Color) txtElement.getFill();
-                    contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
+                    // ROTATE PAGES ADAPT
+                    switch(page.getRotation()){
+                        case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageHeight, 0));
+                        break;
+                        case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageWidth, pageHeight));
+                        break;
+                        case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageWidth));
+                        break;
+                    }
+                    // CUSTOM STREAM
+                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getFont().getSize());
+                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageWidth), (float) (pageHeight - txtElement.getRealY() / 800.0 * pageHeight + height));
 
-                    boolean bold = false;
-                    if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
-                    boolean italic = false;
-                    if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
-                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
-                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getRealFont().getSize() / 595 * pageSize.getWidth());
-
-                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageSize.getWidth()), (float) (pageSize.getHeight() - (txtElement.getRealY()) / 800.0 * pageSize.getHeight() + height));
-
+                    // DRAW LINES
                     for(String text : txtElement.getText().split("\\n")){
 
                         float shiftY = (float) -lineHeight;
                         contentStream.newLineAtOffset(0, shiftY);
-
                         contentStream.showText(text);
                     }
                     contentStream.endText();
@@ -97,7 +113,7 @@ public class ExportRenderer {
 
                 }*/
             }
-            contentStream.restoreGraphicsState();
+            //contentStream.restoreGraphicsState();
             contentStream.close();
         }
 
@@ -139,7 +155,7 @@ public class ExportRenderer {
             ButtonType yesButton = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.YES);
             ButtonType yesAlwaysButton = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.YES);
             ButtonType renameButton = new ButtonType(TR.tr("Renomer"), ButtonBar.ButtonData.OTHER);
-            ButtonType cancelButton = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.CANCEL_CLOSE);
+            ButtonType cancelButton = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
             ButtonType cancelAllButton = new ButtonType(TR.tr("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
             Builders.secureAlert(alert);
