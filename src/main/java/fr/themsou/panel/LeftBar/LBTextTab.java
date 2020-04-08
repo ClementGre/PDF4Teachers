@@ -25,6 +25,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -39,6 +41,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
@@ -196,7 +199,18 @@ public class LBTextTab extends Tab {
 				}
 			}
 		});
+		txtArea.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.TAB){
+				if(Main.leftBar.getSelectionModel().getSelectedIndex() == 1) Main.leftBar.getSelectionModel().select(2);
+				else Main.leftBar.getSelectionModel().select(1);
+			}
+		});
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+
+			if(newValue.contains("\u0009")){
+				txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
+			}
+
 			updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
 			if(!txtAreaScrollBarListenerIsSetup){
 				getHorizontalSB(txtArea).visibleProperty().addListener((ObservableValue<? extends Boolean> observableTxt, Boolean oldTxtValue, Boolean newTxtValue) ->  updateHeightAndYLocations(newTxtValue));

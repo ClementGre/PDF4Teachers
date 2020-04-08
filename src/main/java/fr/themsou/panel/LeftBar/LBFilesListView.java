@@ -33,6 +33,10 @@ public class LBFilesListView {
 
     public LBFilesListView(ListView listView){
 
+        listView.setOnMouseClicked((MouseEvent event) -> {
+            listView.refresh();
+        });
+
         listView.setCellFactory(new Callback<ListView<File>, ListCell<File>>(){
             @Override public ListCell<File> call(ListView<File> listView){
             return new ListCell<File>(){
@@ -40,6 +44,10 @@ public class LBFilesListView {
                 super.updateItem(file, bln);
 
                 if(file != null) {
+                    if(!file.exists()){
+                        Main.lbFilesTab.removeFile(file, false);
+                        return;
+                    }
                     VBox pane = new VBox();
                     Text name = new Text(file.getName().replace(".pdf", ""));
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
@@ -69,18 +77,9 @@ public class LBFilesListView {
                     menu.setId(file.getAbsolutePath());
                     setContextMenu(menu);
 
-                    pane.setOnMouseClicked(new EventHandler<MouseEvent>(){
-                        public void handle(MouseEvent mouseEvent){
-                            if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2){
-                                Main.mainScreen.openFile(file);
-                            }
-                        }
-                    });
-
-                    listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            listView.refresh();
+                    pane.setOnMouseClicked(mouseEvent -> {
+                        if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2){
+                            Main.mainScreen.openFile(file);
                         }
                     });
 

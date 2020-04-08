@@ -19,6 +19,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
@@ -148,6 +150,16 @@ public class Main extends Application {
 		root.setCenter(mainPane);
 		root.setTop(menuBar);
 		root.setBottom(footerBar);
+
+		root.setFocusTraversable(true);
+		root.requestFocus();
+		root.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.TAB){
+				if(leftBar.getSelectionModel().getSelectedIndex() == 1) leftBar.getSelectionModel().select(2);
+				else leftBar.getSelectionModel().select(1);
+				e.consume();
+			}
+		});
 
 //		SETUP DEVICES
 

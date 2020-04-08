@@ -147,6 +147,8 @@ public class Edition {
 
         isSave.set(true);
 
+        Main.lbFilesTab.files.refresh();
+
     }
     public static File getEditFile(File file){
         return new File(Main.dataFolder + "editions" + File.separator + file.getParentFile().getAbsolutePath().replace(File.separator, "!E!").replace(":", "!P!") + "!E!" + file.getName() + ".edit");

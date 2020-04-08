@@ -45,40 +45,34 @@ public class LBFilesTab extends Tab {
 		VBox.setVgrow(files, Priority.ALWAYS);
 		new LBFilesListView(files);
 
-		files.setOnDragOver(new EventHandler<DragEvent>(){
-			@Override
-			public void handle(DragEvent e) {
-				Dragboard db = e.getDragboard();
-				if(db.hasFiles()){
-					for(File file : db.getFiles()){
-						if(isFilePdf(file) || file.isDirectory()){
-							e.acceptTransferModes(TransferMode.ANY);
-							e.consume();
-							return;
-						}
+		files.setOnDragOver((DragEvent e) -> {
+			Dragboard db = e.getDragboard();
+			if(db.hasFiles()){
+				for(File file : db.getFiles()){
+					if(isFilePdf(file) || file.isDirectory()){
+						e.acceptTransferModes(TransferMode.ANY);
+						e.consume();
+						return;
 					}
 				}
-				e.consume();
 			}
+			e.consume();
 		});
-		files.setOnDragDropped(new EventHandler<DragEvent>(){
-			@Override
-			public void handle(DragEvent e) {
-				Dragboard db = e.getDragboard();
-				if(db.hasFiles()){
-					for(File file : db.getFiles()){
-						if(isFilePdf(file) || file.isDirectory()){
-							File[] files = db.getFiles().toArray(new File[db.getFiles().size()]);
-							openFiles(files);
-							e.setDropCompleted(true);
-							e.consume();
-							return;
-						}
+		files.setOnDragDropped((DragEvent e) -> {
+			Dragboard db = e.getDragboard();
+			if(db.hasFiles()){
+				for(File file : db.getFiles()){
+					if(isFilePdf(file) || file.isDirectory()){
+						File[] files = db.getFiles().toArray(new File[db.getFiles().size()]);
+						openFiles(files);
+						e.setDropCompleted(true);
+						e.consume();
+						return;
 					}
 				}
-
-				e.consume();
 			}
+
+			e.consume();
 		});
 
 		sortManager = new SortManager(new SortEvent() {
@@ -108,12 +102,6 @@ public class LBFilesTab extends Tab {
 			files.getItems().addAll(Main.settings.getOpenedFiles());
 		}
 		separator.getChildren().addAll(options, files);
-
-		/*files.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<File>() {
-			@Override public void changed(ObservableValue<? extends File> observableValue, File lastFile, File newFile) {
-				Main.mainScreen.openFile(newFile);
-			}
-		});*/
 
 	}
 
