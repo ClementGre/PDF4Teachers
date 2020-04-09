@@ -4,10 +4,13 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
+import fr.themsou.utils.CallBack;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -16,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,6 +46,7 @@ public class PageRenderer extends Pane {
         loader.translateXProperty().bind(widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
+        getChildren().add(loader);
 
         // BINDINGS & SIZES SETUP
         PDRectangle pageSize = Main.mainScreen.document.pdfPagesRender.getPageSize(page);
@@ -50,8 +55,11 @@ public class PageRenderer extends Pane {
         setWidth(Main.mainScreen.pageWidthProperty().get());
         setHeight(Main.mainScreen.pageWidthProperty().get() * ratio);
 
-        prefWidthProperty().bind(Main.mainScreen.pageWidthProperty());
-        prefHeightProperty().bind(widthProperty().multiply(ratio));
+        maxWidthProperty().bind(Main.mainScreen.pageWidthProperty());
+        minWidthProperty().bind(Main.mainScreen.pageWidthProperty());
+
+        minHeightProperty().bind(widthProperty().multiply(ratio));
+        maxHeightProperty().bind(widthProperty().multiply(ratio));
 
         // BORDER
         DropShadow ds = new DropShadow();
@@ -92,22 +100,34 @@ public class PageRenderer extends Pane {
     private void render(){
         status = PageStatus.RENDERING;
         loader.setVisible(true);
-        new Thread(() -> {
-            try{
-                renderView = new ImageView(SwingFXUtils.toFXImage((BufferedImage) Main.mainScreen.document.pdfPagesRender.renderPage(page), null));
-            }catch(IOException e){
-                e.printStackTrace();
-                status = PageStatus.FAIL;
-            }
+        setCursor(Cursor.WAIT);
 
-            Platform.runLater(() -> {
+        Main.mainScreen.document.pdfPagesRender.renderPage(page, new CallBack<>() {
+            @Override public void call(BufferedImage image){
+
+                if(image == null){
+                    status = PageStatus.FAIL;
+                    return;
+                }
+
+                renderView = new ImageView(SwingFXUtils.toFXImage(image, null));
+
                 renderView.fitHeightProperty().bind(heightProperty());
                 renderView.fitWidthProperty().bind(widthProperty());
 
+                for(Node node : getChildren()){
+                    node.setVisible(true);
+                }
+
+                setCursor(Cursor.DEFAULT);
                 loader.setVisible(false);
-                getChildren().add(renderView);
+                getChildren().add(0, renderView);
                 status = PageStatus.RENDERED;
-            });
+            }
+        });
+
+        new Thread(() -> {
+
 
         }).start();
     }
@@ -124,6 +144,9 @@ public class PageRenderer extends Pane {
         if(element != null){
             elements.add(element);
             getChildren().add((Shape) element);
+            if(status != PageStatus.RENDERED){
+                ((Shape) element).setVisible(false);
+            }
         }
     }
     public void addElement(Element element, boolean update){
@@ -135,6 +158,9 @@ public class PageRenderer extends Pane {
             Edition.setUnsave();
             if(element instanceof TextElement){
                 if(update) Main.lbTextTab.addOnFileElement((TextElement) element);
+            }
+            if(status != PageStatus.RENDERED){
+                ((Shape) element).setVisible(false);
             }
         }
     }

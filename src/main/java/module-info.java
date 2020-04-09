@@ -16,5 +16,10 @@ module fr.themsou {
 
     exports fr.themsou.main;
     exports fr.themsou.document;
+    exports fr.themsou.document.render;
+    exports fr.themsou.document.editions;
+    exports fr.themsou.document.editions.elements;
     exports fr.themsou.panel;
+    exports fr.themsou.panel.leftBar;
+    exports fr.themsou.utils;
 }

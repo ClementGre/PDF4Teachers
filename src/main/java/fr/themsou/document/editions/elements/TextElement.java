@@ -42,8 +42,6 @@ public class TextElement extends Text implements Element {
 	private PageRenderer page;
 	private ObjectProperty<Font> realFont = new SimpleObjectProperty<>();
 
-	private Rectangle border = new Rectangle(0, 0, Color.TRANSPARENT);
-
 	ContextMenu menu = new ContextMenu();
 
 	private int pageNumber;
@@ -77,20 +75,17 @@ public class TextElement extends Text implements Element {
 		setCursor(Cursor.MOVE);
 
 		// enable shadow if this element is selected
-		TextElement thisObject = this;
-		Main.mainScreen.selectedProperty().addListener(new ChangeListener<Element>() {
-			@Override public void changed(ObservableValue<? extends Element> observable, Element oldValue, Element newValue) {
-				if(oldValue == thisObject && newValue != thisObject){
-					setEffect(null);
-					menu.hide();
-				}else if(oldValue != thisObject && newValue == thisObject){
-					DropShadow ds = new DropShadow();
-					ds.setOffsetY(3.0f);
-					ds.setColor(Color.color(0f, 0f, 0f));
-					setEffect(ds);
-					setCache(true);
-					requestFocus();
-				}
+		Main.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(oldValue == this && newValue != this){
+				setEffect(null);
+				menu.hide();
+			}else if(oldValue != this && newValue == this){
+				DropShadow ds = new DropShadow();
+				ds.setOffsetY(3.0f);
+				ds.setColor(Color.color(0f, 0f, 0f));
+				setEffect(ds);
+				setCache(true);
+				requestFocus();
 			}
 		});
 		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), -1, false);
@@ -105,107 +100,87 @@ public class TextElement extends Text implements Element {
 		menu.getItems().addAll(item1, item2, item4, item3);
 		Builders.setMenuSize(menu);
 
-		item1.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
+		item1.setOnAction(e -> delete());
+		item2.setOnAction(e -> {
+			PageRenderer page1 = Main.mainScreen.document.pages.get(0);
+			if (Main.mainScreen.document.getCurrentPage() != -1)
+				page1 = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+
+			TextElement realElement = (TextElement) this.clone();
+			realElement.setRealX(realElement.getRealX() + 10);
+			realElement.setRealY(realElement.getRealY() + 10);
+			page1.addElement(realElement, true);
+			Main.mainScreen.selectedProperty().setValue(realElement);
+		});
+		item3.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, true)));
+		item4.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, true)));
+
+		setOnMousePressed(e -> {
+			e.consume();
+
+			shiftX = (int) e.getX();
+			shiftY = (int) e.getY();
+			menu.hide();
+			select();
+
+			if(e.getButton() == MouseButton.SECONDARY){
+				menu.show(page, e.getScreenX(), e.getScreenY());
+			}
+		});
+		setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.DELETE){
+				Main.mainScreen.setSelected(null);
 				delete();
 			}
 		});
-		item2.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				PageRenderer page = Main.mainScreen.document.pages.get(0);
-				if (Main.mainScreen.document.getCurrentPage() != -1)
-					page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
-				TextElement realElement = (TextElement) thisObject.clone();
-				realElement.setRealX(realElement.getRealX() + 10);
-				realElement.setRealY(realElement.getRealY() + 10);
-				page.addElement(realElement, true);
-				Main.mainScreen.selectedProperty().setValue(realElement);
-			}
-		});
-		item3.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, true));
-			}
-		});
-		item4.setOnAction(new EventHandler<ActionEvent>() {
-			@Override public void handle(ActionEvent e) {
-				Main.lbTextTab.addSavedElement(thisObject.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, true));
-			}
-		});
+		setOnMouseDragged(e -> {
 
-		setOnMousePressed(new EventHandler<MouseEvent>(){
-			@Override public void handle(MouseEvent e){
-				e.consume();
+			double itemX = getLayoutX() + e.getX() - shiftX;
+			double itemY = getLayoutY() + e.getY() - shiftY;
 
-				shiftX = (int) e.getX();
-				shiftY = (int) e.getY();
-				menu.hide();
-				select();
+			boolean changePage = false;
+			if(this.page.mouseY < -30){
+				if(this.page.getPage() > 0){
 
-				if(e.getButton() == MouseButton.SECONDARY){
-					menu.show(page, e.getScreenX(), e.getScreenY());
-				}
-			}
-		});
-		setOnKeyPressed(new EventHandler<KeyEvent>() {
-			@Override public void handle(KeyEvent e) {
-				if(e.getCode() == KeyCode.DELETE){
 					Main.mainScreen.setSelected(null);
-					delete();
+
+					this.page.removeElement(this, false);
+					this.page = Main.mainScreen.document.pages.get(this.page.getPage() -1);
+					this.page.addElement(this, false);
+
+					itemY = this.page.getHeight();
+					changePage = true;
+				}
+			}else if(this.page.mouseY > this.page.getHeight() + 30){
+				if(this.page.getPage() < Main.mainScreen.document.pages.size()-1){
+
+					Main.mainScreen.setSelected(null);
+
+					this.page.removeElement(this, false);
+					this.page = Main.mainScreen.document.pages.get(this.page.getPage() + 1);
+					this.page.addElement(this, false);
+
+					itemY = 0;
+					changePage = true;
 				}
 			}
-		});
 
-		setOnMouseDragged(new EventHandler<MouseEvent>() {
-			@Override public void handle(MouseEvent e) {
+			checkLocation(itemX, itemY);
 
-				double itemX = getLayoutX() + e.getX() - shiftX;
-				double itemY = getLayoutY() + e.getY() - shiftY;
-
-				boolean changePage = false;
-				if(thisObject.page.mouseY < -30){
-					if(thisObject.page.getPage() > 0){
-
-						Main.mainScreen.setSelected(null);
-
-						thisObject.page.removeElement(thisObject, false);
-						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() -1);
-						thisObject.page.addElement(thisObject, false);
-
-						itemY = thisObject.page.getHeight() - getLayoutBounds().getHeight();
-						changePage = true;
-					}
-				}else if(thisObject.page.mouseY > thisObject.page.getHeight() + 30){
-					if(thisObject.page.getPage() < Main.mainScreen.document.pages.size()-1){
-
-						Main.mainScreen.setSelected(null);
-
-						thisObject.page.removeElement(thisObject, false);
-						thisObject.page = Main.mainScreen.document.pages.get(thisObject.page.getPage() + 1);
-						thisObject.page.addElement(thisObject, false);
-
-						itemY = 0;
-						changePage = true;
-					}
-				}
-
-				checkLocation(itemX, itemY);
-
-				if(changePage){
-					Main.lbTextTab.onFileTextSortManager.simulateCall();
-				}
-
+			if(changePage){
+				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(500.0)));
+				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(800.0)));
+				Main.lbTextTab.onFileTextSortManager.simulateCall();
 			}
+
 		});
 
-		textProperty().addListener(new ChangeListener<String>() {
-			@Override public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-				Edition.setUnsave();
+		textProperty().addListener((observable, oldValue, newValue) -> {
+			Edition.setUnsave();
 
-				if(getLayoutY() < getLayoutBounds().getHeight()){
-					checkLocation(getLayoutX(), getLayoutY());
-				}
+			if(getLayoutY() < getLayoutBounds().getHeight()){
+				checkLocation(getLayoutX(), getLayoutY());
 			}
 		});
 	}

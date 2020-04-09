@@ -65,6 +65,7 @@ public class Document {
             Main.mainScreen.addPage(page);
             pages.add(page);
         }
+        Main.mainScreen.finalizePages();
 
         for(PageRenderer page : pages){
             page.updateShowStatus();
@@ -80,6 +81,9 @@ public class Document {
         this.edition = new Edition(file, this);
         Edition.isSaveProperty().set(true);
         if(!documentSaver.isAlive()) documentSaver.start();
+    }
+    public void close(){
+        pdfPagesRender.close();
     }
 
     public boolean save(){

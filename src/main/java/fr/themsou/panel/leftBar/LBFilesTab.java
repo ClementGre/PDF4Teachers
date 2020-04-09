@@ -1,4 +1,4 @@
-package fr.themsou.panel.LeftBar;
+package fr.themsou.panel.leftBar;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.utils.SortEvent;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -127,7 +126,7 @@ public class LBFilesTab extends Tab {
 		}
 	}
 	public void clearFiles(boolean confirm){
-		/*if(Main.mainScreen.getStatus() == -1){
+		/*if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
 			if(files.getItems().contains(Main.mainScreen.document.getFile())){
 				if(!Main.mainScreen.closeFile(confirm)) return;
 			}
@@ -136,7 +135,7 @@ public class LBFilesTab extends Tab {
 		updateOpenFilesList();
 	}
 	public void removeFile(File file, boolean confirm){
-		/*if(Main.mainScreen.getStatus() == -1){
+		/*if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
 			if(files.getItems().contains(Main.mainScreen.document.getFile())){
 				if(!Main.mainScreen.closeFile(confirm)) return;
 			}

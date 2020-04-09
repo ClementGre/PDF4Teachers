@@ -2,7 +2,7 @@ package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.panel.LeftBar.LBTextTreeView;
+import fr.themsou.panel.leftBar.LBTextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;

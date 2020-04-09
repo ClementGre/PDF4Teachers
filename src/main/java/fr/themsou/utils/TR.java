@@ -11,7 +11,7 @@ public class TR {
 
     private static ArrayList<String> template = null;
     private static HashMap<String, String> translations;
-    private static final boolean WRITE_TEMPLATE = true;
+    private static final boolean WRITE_TEMPLATE = false;
 
     public static String tr(String text){
 

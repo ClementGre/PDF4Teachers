@@ -1,4 +1,4 @@
-package fr.themsou.devices;
+package fr.themsou.utils;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

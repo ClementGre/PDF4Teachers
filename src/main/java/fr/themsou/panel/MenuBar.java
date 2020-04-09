@@ -4,7 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.AboutWindow;
 import fr.themsou.main.Main;
-import fr.themsou.panel.LeftBar.LBFilesListView;
+import fr.themsou.panel.leftBar.LBFilesListView;
 import fr.themsou.utils.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;

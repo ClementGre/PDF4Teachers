@@ -38,7 +38,7 @@ public class Footerbar extends AnchorPane {
 				middleInfo.setText(TR.tr("Mode Dessin")); break;
 		}
 
-		if(Main.mainScreen.getStatus() == -1){
+		if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
 
 			if(Main.mainScreen.document.getCurrentPage() == -1){
 				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + "?/" + Main.mainScreen.document.totalPages);

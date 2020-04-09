@@ -1,30 +1,18 @@
-package fr.themsou.panel.LeftBar;
+package fr.themsou.panel.leftBar;
 
 import fr.themsou.document.editions.elements.NoDisplayTextElement;
-import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
-import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.BooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
-import org.w3c.dom.ls.LSOutput;
-
-import javax.swing.*;
 
 public class LBTextTreeView {
 

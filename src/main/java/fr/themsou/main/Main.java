@@ -3,17 +3,18 @@ package fr.themsou.main;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
-import fr.themsou.devices.Devices;
+
 import fr.themsou.panel.Footerbar;
-import fr.themsou.panel.LeftBar.LBFilesTab;
-import fr.themsou.panel.LeftBar.LBNoteTab;
-import fr.themsou.panel.LeftBar.LBPaintTab;
-import fr.themsou.panel.LeftBar.LBTextTab;
+import fr.themsou.panel.leftBar.LBFilesTab;
+import fr.themsou.panel.leftBar.LBNoteTab;
+import fr.themsou.panel.leftBar.LBPaintTab;
+import fr.themsou.panel.leftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
 import fr.themsou.utils.TR;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -21,7 +22,6 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
@@ -30,12 +30,9 @@ import jfxtras.styles.jmetro.Style;
 public class Main extends Application {
 
 	public static Stage window;
-
-	public static Devices devices;
 	public static Settings settings;
 	public static UserData userData;
 
-	public static boolean click = false;
 	public static boolean hasToClose = false;
 	
 //		MAIN
@@ -116,7 +113,6 @@ public class Main extends Application {
 //		SETUPS
 
 		settings = new Settings();
-		devices = new Devices();
 
 		mainScreen = new MainScreen((int) (21 * 37.795275591));
 		footerBar = new Footerbar();
@@ -161,11 +157,6 @@ public class Main extends Application {
 			}
 		});
 
-//		SETUP DEVICES
-
-		devices.addMousePresedHandler(window.getScene());
-		devices.addMouseReleasedHandler(window.getScene());
-
 //		THEME
 
 		new JMetro(root, Style.LIGHT);
@@ -187,10 +178,13 @@ public class Main extends Application {
 
 		}
 
-
-		if(settings.getOpenedFile() != null){
-			mainScreen.openFile(settings.getOpenedFile());
-		}
+		new Thread(() -> {
+			Platform.runLater(() -> {
+				if(settings.getOpenedFile() != null){
+					mainScreen.openFile(settings.getOpenedFile());
+				}
+			});
+		}).start();
 
 		// load data
 		userData = new UserData();

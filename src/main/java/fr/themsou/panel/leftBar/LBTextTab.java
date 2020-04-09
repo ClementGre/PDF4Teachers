@@ -1,4 +1,4 @@
-package fr.themsou.panel.LeftBar;
+package fr.themsou.panel.leftBar;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -16,32 +16,24 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
 
-import java.io.File;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("serial")
 public class LBTextTab extends Tab {
@@ -485,7 +477,7 @@ public class LBTextTab extends Tab {
 	public void updateOnFileElementsList(){
 		clearSavedOnFileElements();
 
-		if(Main.mainScreen.getStatus() == -1){
+		if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
 			for(PageRenderer page : Main.mainScreen.document.pages){
 				for(int i = 0; i < page.getElements().size(); i++){
 					if(page.getElements().get(i) instanceof TextElement){

@@ -5,6 +5,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.panel.MainScreen;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
@@ -200,7 +201,7 @@ public class Edition {
         }
 
         if(!confirm){
-            if(Main.mainScreen.getStatus() == -1){
+            if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
                 if(Main.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                     Main.mainScreen.document.edition.clearEdit(false);
                     return;

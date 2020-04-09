@@ -1,8 +1,6 @@
-package fr.themsou.panel.LeftBar;
+package fr.themsou.panel.leftBar;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
@@ -24,7 +22,6 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 

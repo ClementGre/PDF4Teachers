@@ -2,10 +2,8 @@ package fr.themsou.panel;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.Objects;
+import java.util.ArrayList;
 import java.util.Set;
-
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -13,18 +11,13 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.skin.ScrollPaneSkin;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -37,13 +30,16 @@ public class MainScreen extends ScrollPane {
 
 	private IntegerProperty zoom = new SimpleIntegerProperty(Main.settings.getDefaultZoom());
 	private int defaultPageWidth;
+
 	private IntegerProperty pageWidth = new SimpleIntegerProperty(defaultPageWidth);
+	private ArrayList<ReadOnlyDoubleProperty> pageHeights = new ArrayList<>();
+
 	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 
 	public Document document;
-	public Pane pane = new Pane();
+	public VBox pane = new VBox();
 
 	private Label info = new Label();
 
@@ -122,11 +118,14 @@ public class MainScreen extends ScrollPane {
 				ctrlDown = true;
 				e.consume();
 
-				if(e.getDeltaY() > 0) zoomMore();
-				if(e.getDeltaY() < 0) zoomLess();
+				if(getStatus() == Status.OPEN){
+					if(e.getDeltaY() > 0) zoomMore();
+					if(e.getDeltaY() < 0) zoomLess();
 
-				setVvalue(lastVerticalScrollValue);
-				setHvalue(lastHorizontalScrollValue);
+					setVvalue(lastVerticalScrollValue);
+					setHvalue(lastHorizontalScrollValue);
+				}
+
 
 			}else ctrlDown = false;
 
@@ -188,6 +187,8 @@ public class MainScreen extends ScrollPane {
 		repaint();
 		Main.footerBar.repaint();
 
+		pageHeights = new ArrayList<>();
+
 		try{
 			document = new Document(file);
 		}catch(IOException e){
@@ -200,6 +201,7 @@ public class MainScreen extends ScrollPane {
 
 		status.set(Status.OPEN);
 		document.showPages();
+		document.loadEdition();
 
 		setHvalue(0.5);
 		setVvalue(0);
@@ -225,16 +227,16 @@ public class MainScreen extends ScrollPane {
 	public boolean closeFile(boolean confirm){
 
 	    if(document != null){
+
 	    	if(!Edition.isSave()){
 				if(confirm){
 					if(!document.save()){
 						return false;
 					}
-				}
-				else document.edition.save();
+				}else document.edition.save();
 			}
-
 			document.documentSaver.stop();
+			document.close();
             document = null;
         }
 
@@ -285,9 +287,6 @@ public class MainScreen extends ScrollPane {
 	public void setSelected(Element selected) {
 		this.selected.set(selected);
 	}
-	public void setStatus(int status){
-		this.status.set(status);
-	}
 	public IntegerProperty zoomProperty() {
 		return zoom;
 	}
@@ -313,29 +312,38 @@ public class MainScreen extends ScrollPane {
 		else if(zoom.get() >= 399) zoom.set(400);
 		Main.footerBar.repaint();
 	}
-	public void setZoom(int zoom){
-		this.zoom.set(zoom);
-		Main.footerBar.repaint();
-	}
-	public int getPageWidth() {
-		return pageWidth.get();
-	}
 	public IntegerProperty pageWidthProperty() {
 		return pageWidth;
-	}
-	public void setPageWidth(int pageWidth) {
-		this.pageWidth.set(pageWidth);
 	}
 
 	public void addPage(PageRenderer page){
 
-		pane.minHeightProperty().bind( page.heightProperty().add(50).multiply(page.getPage()+1).add(50) );
-		pane.minWidthProperty().bind( page.widthProperty().add(100));
+		// BIND PAGE X
+		page.translateXProperty().bind(pane.widthProperty().divide(2).subtract(page.widthProperty().divide(2)));
 
-		page.layoutYProperty().bind(page.heightProperty().add(50).multiply(page.getPage()).add(50));
-		page.layoutXProperty().bind(pane.widthProperty().divide(2).subtract(page.widthProperty().divide(2)));
+		VBox.setMargin(page, new Insets(15, 0, 15, 0));
 
+		pageHeights.add(page.heightProperty());
 		pane.getChildren().add(page);
+	}
+	public void finalizePages(){
+
+		pane.minWidthProperty().bind(document.pages.get(0).widthProperty().add(60));
+
+		DoubleBinding heightBindings = null;
+		for(ReadOnlyDoubleProperty height : pageHeights){
+			if(heightBindings == null){
+				heightBindings = height.add(30);
+			}else{
+				heightBindings = heightBindings.add(height).add(30);
+			}
+		}
+
+		if(heightBindings != null){
+			heightBindings = heightBindings.add(65);
+			pane.minHeightProperty().bind(heightBindings);
+		}
+		pageHeights = new ArrayList<>();
 	}
 
 	private ScrollBar getHorizontalSB(final ScrollPane scrollPane) {
