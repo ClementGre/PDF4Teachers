@@ -59,7 +59,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "snapshot 1.0.3";
+	public static final String VERSION = "snapshot 1.0.3 - 9/03";
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
@@ -139,6 +139,7 @@ public class Main extends Application {
 		mainPane.setDividerPositions(270 / root.getWidth());
 		mainPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
 			double width = newValue.doubleValue() * root.getWidth();
+			System.out.println(width);
 			if(width >= 400){
 				mainPane.setDividerPositions(400 / root.getWidth());
 			}
@@ -153,8 +154,6 @@ public class Main extends Application {
 		root.setTop(menuBar);
 		root.setBottom(footerBar);
 
-		root.setFocusTraversable(true);
-		root.requestFocus();
 		root.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.TAB){
 				if(leftBar.getSelectionModel().getSelectedIndex() == 1) leftBar.getSelectionModel().select(2);

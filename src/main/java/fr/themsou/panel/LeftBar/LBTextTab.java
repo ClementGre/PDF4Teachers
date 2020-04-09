@@ -293,8 +293,15 @@ public class LBTextTab extends Tab {
 		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(treeView.layoutYProperty()));
 		treeView.prefWidthProperty().bind(pane.widthProperty());
 		treeView.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-			updateListsGraphic();
+			// Update element's graphic only if it is the last width value
+			new Thread(() -> {
+				try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+				Platform.runLater(() -> {
+					if(treeView.getWidth() == newValue.longValue()) updateListsGraphic();
+				});
+			}).start();
 		});
+		treeView.setMaxWidth(400);
 		treeView.setShowRoot(false);
 		treeView.setRoot(treeViewRoot);
 

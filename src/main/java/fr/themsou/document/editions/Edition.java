@@ -140,6 +140,7 @@ public class Edition {
             writer.flush();
             writer.close();
 
+            // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
 
         }catch (IOException e) {
@@ -147,7 +148,6 @@ public class Edition {
         }
 
         isSave.set(true);
-
         Main.lbFilesTab.files.refresh();
 
     }
