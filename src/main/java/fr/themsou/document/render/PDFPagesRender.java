@@ -1,5 +1,6 @@
 package fr.themsou.document.render;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +41,8 @@ public class PDFPagesRender {
 			BufferedImage image = null;
 			try{
 				if(close) return;
-				image = pdfRenderer.renderImage(page, 3, ImageType.RGB);
+				image = scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+				System.out.println(image.getWidth() + " / " + image.getHeight());
 				if(close) return;
 			}catch(Exception e){
 				e.printStackTrace();
@@ -54,6 +56,30 @@ public class PDFPagesRender {
 
 		}, "Render page " + page).start();
 
+	}
+
+	public static BufferedImage scale(BufferedImage img, double width) {
+
+		if(img.getWidth() < width){
+			return img;
+		}
+
+		int destWidth = (int) (width);
+		int destHeight = (int) (img.getHeight() / ((double) img.getWidth()) * width);
+
+		//créer l'image de destination
+		GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+		BufferedImage newImg = configuration.createCompatibleImage(destWidth, destHeight);
+
+		Graphics2D graphics = newImg.createGraphics();
+		graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+		graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+
+		//dessiner l'image de destination
+		graphics.drawImage(img, 0, 0, destWidth, destHeight, 0, 0, img.getWidth(), img.getHeight(), null);
+		graphics.dispose();
+
+		return newImg;
 	}
 
 	public void close(){

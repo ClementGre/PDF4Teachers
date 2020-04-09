@@ -14,6 +14,8 @@ import fr.themsou.utils.TR;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -32,7 +34,7 @@ public class MainScreen extends ScrollPane {
 	private int defaultPageWidth;
 
 	private IntegerProperty pageWidth = new SimpleIntegerProperty(defaultPageWidth);
-	private ArrayList<ReadOnlyDoubleProperty> pageHeights = new ArrayList<>();
+	private int pageHeights = 0;
 
 	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 
@@ -187,8 +189,6 @@ public class MainScreen extends ScrollPane {
 		repaint();
 		Main.footerBar.repaint();
 
-		pageHeights = new ArrayList<>();
-
 		try{
 			document = new Document(file);
 		}catch(IOException e){
@@ -320,30 +320,21 @@ public class MainScreen extends ScrollPane {
 
 		// BIND PAGE X
 		page.translateXProperty().bind(pane.widthProperty().divide(2).subtract(page.widthProperty().divide(2)));
-
 		VBox.setMargin(page, new Insets(15, 0, 15, 0));
 
-		pageHeights.add(page.heightProperty());
 		pane.getChildren().add(page);
 	}
 	public void finalizePages(){
 
 		pane.minWidthProperty().bind(document.pages.get(0).widthProperty().add(60));
 
-		DoubleBinding heightBindings = null;
-		for(ReadOnlyDoubleProperty height : pageHeights){
-			if(heightBindings == null){
-				heightBindings = height.add(30);
-			}else{
-				heightBindings = heightBindings.add(height).add(30);
+		document.pages.get(0).heightProperty().addListener((observable, oldValue, newValue) -> {
+			int height = 0;
+			for(PageRenderer page : document.pages){
+				height += page.getHeight() + 30;
 			}
-		}
-
-		if(heightBindings != null){
-			heightBindings = heightBindings.add(65);
-			pane.minHeightProperty().bind(heightBindings);
-		}
-		pageHeights = new ArrayList<>();
+			pane.setMinHeight(height + 65);
+		});
 	}
 
 	private ScrollBar getHorizontalSB(final ScrollPane scrollPane) {

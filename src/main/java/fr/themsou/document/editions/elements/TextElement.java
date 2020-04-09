@@ -63,9 +63,7 @@ public class TextElement extends Text implements Element {
 
 		if(page == null) return;
 
-		fontProperty().bind(Bindings.createObjectBinding(() -> {
-			return translateFont(getRealFont());
-		}, realFontProperty(), Main.mainScreen.zoomProperty()));
+		fontProperty().bind(Bindings.createObjectBinding(() -> translateFont(getRealFont()), realFontProperty(), Main.mainScreen.zoomProperty()));
 
 		this.page = page;
 
