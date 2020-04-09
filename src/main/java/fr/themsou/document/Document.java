@@ -12,9 +12,12 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -24,10 +27,10 @@ public class Document {
     public Edition edition;
     public ArrayList<PageRenderer> pages = new ArrayList<>();
 
-    private Image[] rendered;
-
     private int currentPage = -1;
-    public int totalPages = -1;
+    public int totalPages;
+
+    public PDFPagesRender pdfPagesRender;
 
     public Thread documentSaver = new Thread(new Runnable() {
         @Override public void run() {
@@ -38,7 +41,7 @@ public class Document {
                         Thread.sleep(Main.settings.getRegularSaving() * 60000);
                     }catch(InterruptedException e){ e.printStackTrace(); }
 
-                    if(!Edition.isSave()) Platform.runLater(new Runnable(){public void run(){  edition.save();  }});
+                    if(!Edition.isSave()) Platform.runLater(() -> edition.save());
 
                 }else{
                     try{
@@ -49,29 +52,22 @@ public class Document {
         }
     }, "Document AutoSaver");
 
-    public Document(File file){
+    public Document(File file) throws IOException {
         this.file = file;
+
+        pdfPagesRender = new PDFPagesRender(file);
+        totalPages = pdfPagesRender.getNumberOfPages();
     }
-
-    public boolean renderPDFPages(){
-
-        pages = new ArrayList<>();
-        rendered = new PDFPagesRender().render(file);
-        if(rendered != null){
-            totalPages = rendered.length;
-            return true;
-        }
-        return false;
-    }
-
     public void showPages(){
 
-        int i = 0;
-        for(Image render : rendered){
-            PageRenderer page = new PageRenderer(render, i);
+        for(int i = 0 ; i < totalPages ; i++){
+            PageRenderer page = new PageRenderer(i);
             Main.mainScreen.addPage(page);
             pages.add(page);
-            i++;
+        }
+
+        for(PageRenderer page : pages){
+            page.updateShowStatus();
         }
 
         Main.mainScreen.lastVerticalScrollValue = Main.mainScreen.getVvalue();
@@ -84,9 +80,6 @@ public class Document {
         this.edition = new Edition(file, this);
         Edition.isSaveProperty().set(true);
         if(!documentSaver.isAlive()) documentSaver.start();
-    }
-    public boolean hasRendered(){
-        return rendered != null;
     }
 
     public boolean save(){

@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.Set;
@@ -37,20 +38,14 @@ public class MainScreen extends ScrollPane {
 	private IntegerProperty zoom = new SimpleIntegerProperty(Main.settings.getDefaultZoom());
 	private int defaultPageWidth;
 	private IntegerProperty pageWidth = new SimpleIntegerProperty(defaultPageWidth);
-	private IntegerProperty status = new SimpleIntegerProperty(0);
+	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
-
-
-	public String documentToLoad = "";
-	public Document tmpDocument;
-	private boolean finishedLoading = true;
 
 	public Document document;
 	public Pane pane = new Pane();
 
 	private Label info = new Label();
-	private ProgressBar loader = new ProgressBar();
 
 	public boolean ctrlDown = false;
 
@@ -58,6 +53,12 @@ public class MainScreen extends ScrollPane {
 	public boolean lastHorizontalScrollIsVisible = true;
 	public double lastVerticalScrollValue = 0;
 	public double lastHorizontalScrollValue = 0.5;
+
+	public static class Status {
+		public static final int CLOSED = 0;
+		public static final int OPEN = 1;
+		public static final int ERROR = 2;
+	}
 
 	public MainScreen(int defaultPageWidth){
 
@@ -70,23 +71,16 @@ public class MainScreen extends ScrollPane {
 
 	public void repaint(){
 
-		if(status.get() != -1 && status.get() != 1) {
-			loader.setVisible(true);
+		if(status.get() == Status.CLOSED || status.get() == Status.ERROR) {
 			info.setVisible(true);
 
-			if(status.get() == 0){
+			if(status.get() == Status.CLOSED){
 				info.setText(TR.tr("Aucun document ouvert"));
-				loader.setVisible(false);
-			}else if(status.get() == 2){
-				info.setText(TR.tr("Une erreur est survenue lors du chargement du document :/"));
-				loader.setVisible(false);
+			}else if(status.get() == Status.ERROR){
+				info.setText(TR.tr("Impossible de charger ce document"));
 			}
 
-		}else if(status.get() == 1){
-			loader.setVisible(true);
-			info.setVisible(false);
 		}else{
-			loader.setVisible(false);
 			info.setVisible(false);
 		}
 
@@ -109,14 +103,8 @@ public class MainScreen extends ScrollPane {
 		info.translateXProperty().bind(pane.widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
 		info.translateYProperty().bind(pane.heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 
-		loader.setPrefWidth(300);
-		loader.setPrefHeight(20);
-		loader.translateXProperty().bind(pane.widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
-		loader.translateYProperty().bind(pane.heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
-
 		pageWidth.bind(zoom.multiply(defaultPageWidth).divide(100));
 
-		pane.getChildren().add(loader);
 		pane.getChildren().add(info);
 
 
@@ -164,130 +152,54 @@ public class MainScreen extends ScrollPane {
 			lastHorizontalScrollValue = getHvalue();
 		});
 
-		setOnMouseMoved(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent e) {
-				ctrlDown = e.isControlDown();
-			}
-		});
+		setOnMouseMoved(e -> ctrlDown = e.isControlDown());
 
-		vvalueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
-				if(!ctrlDown){
-					lastVerticalScrollValue = newValue.doubleValue();
-				}
+		vvalueProperty().addListener((observable, oldValue, newValue) -> {
+			if(!ctrlDown){
+				lastVerticalScrollValue = newValue.doubleValue();
 			}
 		});
-		hvalueProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if(!ctrlDown){
-					lastHorizontalScrollValue = newValue.doubleValue();
-				}
+		hvalueProperty().addListener((observable, oldValue, newValue) -> {
+			if(!ctrlDown){
+				lastHorizontalScrollValue = newValue.doubleValue();
 			}
 		});
 		// end
 
 		// bind zoom value with the page size
-		zoom.addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observableValue, Number oldZoom, Number newZoom) {
-				pane.setPrefHeight(pane.getHeight());
-			}
-		});
+		zoom.addListener((observableValue, oldZoom, newZoom) -> pane.setPrefHeight(pane.getHeight()));
 
 		// bind window's name
-		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> {
-			return status.get() == -1 ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document");
-		}, status, Edition.isSaveProperty()));
+		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
 
-
-		setOnMousePressed(new EventHandler<MouseEvent>() {
-			@Override
-			public void handle(MouseEvent e) {
-				if(!(e.getTarget() instanceof Element)){
-					setSelected(null);
-				}
+		setOnMousePressed(e -> {
+			if(!(e.getTarget() instanceof Element)){
+				setSelected(null);
 			}
 		});
 
 	}
 	public void openFile(File file){
 
-		if(tmpDocument != null || !finishedLoading){
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			new JMetro(alert.getDialogPane(), Style.LIGHT);
-			Builders.secureAlert(alert);
-			alert.setAlertType(Alert.AlertType.ERROR);
-			alert.setTitle(TR.tr("Erreur"));
-			alert.setHeaderText(TR.tr("Impossible d'ouvrir le document !"));
-			alert.setContentText(TR.tr("Un autre document est déjà en train de charger"));
-
-			alert.show();
-			return;
-		}
-
 		if(!closeFile(!Main.settings.isAutoSave())){
 			return;
 		}
 
-		finishedLoading = false;
-		setCursor(Cursor.WAIT);
-        status.set(1);
 		repaint();
 		Main.footerBar.repaint();
 
-		documentToLoad = file.getName();
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try{
-					String documentToLoad = Main.mainScreen.documentToLoad;
-					Thread.sleep(10000);
-					if(!finishedLoading && documentToLoad.equals(Main.mainScreen.documentToLoad)){
-						Platform.runLater(new Runnable() {
-							public void run() {
-								System.out.println("time out");
-								failOpen();
-							}
-						});
-					}
-				}catch(InterruptedException e){ e.printStackTrace(); }
-			}
-		}, "timeOut").start();
+		try{
+			document = new Document(file);
+		}catch(IOException e){
+			e.printStackTrace();
+			failOpen();
+			return;
+		}
 
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				tmpDocument = new Document(file);
-				tmpDocument.renderPDFPages();
+		// FINISH OPEN
 
-				Platform.runLater(new Runnable() {
-					public void run() {
-						if(tmpDocument == null || finishedLoading) return;
-						if(tmpDocument.hasRendered()){
-							finishOpen();
-						}else{
-							failOpen();
-						}
-					}
-				});
-			}
-		}, "loader").start();
-
-	}
-
-	public void finishOpen(){
-
-		this.document = this.tmpDocument;
-		tmpDocument = null;
-		finishedLoading = true;
-
-		status.set(-1);
-
+		status.set(Status.OPEN);
 		document.showPages();
-		document.loadEdition();
-
 
 		setHvalue(0.5);
 		setVvalue(0);
@@ -296,18 +208,16 @@ public class MainScreen extends ScrollPane {
 		lastHorizontalScrollIsVisible = true;
 		lastVerticalScrollIsVisible = true;
 
-		setCursor(Cursor.DEFAULT);
-
 		repaint();
 		Main.footerBar.repaint();
+
+
 
 	}
 	public void failOpen(){
 
-		this.tmpDocument = null;
-		finishedLoading = true;
-		status.set(2);
-		setCursor(Cursor.DEFAULT);
+		document = null;
+		status.set(Status.ERROR);
 		repaint();
 		Main.footerBar.repaint();
 
@@ -330,7 +240,6 @@ public class MainScreen extends ScrollPane {
 
 	    pane.getChildren().clear();
 		pane.getChildren().add(info);
-		pane.getChildren().add(loader);
 		pane.minHeightProperty().unbind();
 		pane.minWidthProperty().unbind();
 		pane.setMinWidth(0);
@@ -338,7 +247,7 @@ public class MainScreen extends ScrollPane {
 
 		selected.set(null);
 
-		status.set(0);
+		status.set(Status.CLOSED);
 		zoom.set(Main.settings.getDefaultZoom());
 
 		repaint();
@@ -350,7 +259,7 @@ public class MainScreen extends ScrollPane {
 
 	public boolean hasDocument(boolean confirm){
 
-		if(status.get() != -1){
+		if(status.get() != Status.OPEN){
 			if(confirm){
 				Alert alert = new Alert(Alert.AlertType.INFORMATION);
 				new JMetro(alert.getDialogPane(), Style.LIGHT);

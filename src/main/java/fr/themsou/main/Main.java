@@ -139,7 +139,6 @@ public class Main extends Application {
 		mainPane.setDividerPositions(270 / root.getWidth());
 		mainPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
 			double width = newValue.doubleValue() * root.getWidth();
-			System.out.println(width);
 			if(width >= 400){
 				mainPane.setDividerPositions(400 / root.getWidth());
 			}

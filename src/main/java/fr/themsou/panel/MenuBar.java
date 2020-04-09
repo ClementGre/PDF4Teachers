@@ -113,7 +113,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FICHIER //////////
 
-		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != -1;}, Main.mainScreen.statusProperty()));
+		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN;}, Main.mainScreen.statusProperty()));
 		fichier8SameName.getItems().add(fichier8SameNameNull);
 
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6DeleteAll, fichier7Close, fichier8SameName, new SeparatorMenuItem(), fichier9Export, fichier10ExportAll);
@@ -426,7 +426,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0);
 
 		if(disableIfNoDoc){
-			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != -1, Main.mainScreen.statusProperty()));
+			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, Main.mainScreen.statusProperty()));
 		}
 
 		Tooltip toolTipUI = new Tooltip(new TextWrapper(toolTip, null, 350).wrap());
@@ -458,7 +458,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		if(leftMargin != 0) menuItem.setFalseLeftData(leftMargin);
 
 		if(disableIfNoDoc){
-			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != -1, Main.mainScreen.statusProperty()));
+			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, Main.mainScreen.statusProperty()));
 		}if(disableIfNoList){
 			menuItem.disableProperty().bind(Bindings.size(Main.lbFilesTab.files.getItems()).isEqualTo(0));
 		}

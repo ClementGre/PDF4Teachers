@@ -6,6 +6,7 @@ import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.panel.MainScreen;
 import fr.themsou.utils.*;
 import fr.themsou.utils.SortEvent;
 import javafx.application.Platform;
@@ -154,7 +155,7 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(newBtn, -1, 30, 2.5);
 		newBtn.setCursor(Cursor.HAND);
-		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
+		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 
 		combosBox.getChildren().addAll(fontCombo, sizeCombo);
 		colorAndParamsBox.getChildren().addAll(colorPicker, boldBtn, itBtn);
@@ -287,7 +288,7 @@ public class LBTextTab extends Tab {
 			}
 		});
 
-		treeView.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(-1));
+		treeView.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 		treeView.setEditable(true);
 		treeView.setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
 		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(treeView.layoutYProperty()));

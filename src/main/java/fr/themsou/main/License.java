@@ -231,7 +231,7 @@ public class License {
         window.setTitle(TR.tr("PDF4Teachers - License"));
         window.setScene(scene);
         window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
-            System.out.println(new File(Main.dataFolder + "settings.yml").delete());
+            new File(Main.dataFolder + "settings.yml").delete();
             window.close();
             System.exit(0);
         });
@@ -278,7 +278,7 @@ public class License {
             window.close();
         });
         cancel.setOnAction((ActionEvent event) -> {
-            System.out.println(new File(Main.dataFolder + "settings.yml").delete());
+            new File(Main.dataFolder + "settings.yml").delete();
             window.close();
             System.exit(0);
         });

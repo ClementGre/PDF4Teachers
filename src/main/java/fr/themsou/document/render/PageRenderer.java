@@ -4,39 +4,48 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class PageRenderer extends Pane {
 
-    private Image render;
+    PageStatus status = PageStatus.HIDE;
+
     private ImageView renderView;
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     public double mouseX = 0;
     public double mouseY = 0;
 
-    public PageRenderer(java.awt.Image render, int page) {
-        this.render = SwingFXUtils.toFXImage((BufferedImage) render, null);
+    private ProgressBar loader = new ProgressBar();
+
+    public PageRenderer(int page){
         this.page = page;
-        renderView = new ImageView(this.render);
-        final double ratio = this.render.getHeight() / this.render.getWidth();
+        setStyle("-fx-background-color: white;");
+
+        // LOADER
+        loader.setPrefWidth(300);
+        loader.setPrefHeight(20);
+        loader.translateXProperty().bind(widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
+        loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
+        loader.setVisible(false);
+
+        // BINDINGS & SIZES SETUP
+        PDRectangle pageSize = Main.mainScreen.document.pdfPagesRender.getPageSize(page);
+        final double ratio = pageSize.getHeight() / pageSize.getWidth();
 
         setWidth(Main.mainScreen.pageWidthProperty().get());
         setHeight(Main.mainScreen.pageWidthProperty().get() * ratio);
@@ -44,47 +53,63 @@ public class PageRenderer extends Pane {
         prefWidthProperty().bind(Main.mainScreen.pageWidthProperty());
         prefHeightProperty().bind(widthProperty().multiply(ratio));
 
-        renderView.fitHeightProperty().bind(heightProperty());
-        renderView.fitWidthProperty().bind(widthProperty());
-
-        getChildren().add(renderView);
-
         // BORDER
         DropShadow ds = new DropShadow();
         ds.setColor(Color.BLACK);
         setEffect(ds);
 
-        setOnMouseMoved(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
+        // UPDATE MOUSE COORDINATES
+        setOnMouseMoved(e -> {
+            mouseX = e.getX();
+            mouseY = e.getY();
+        });
+        setOnMouseDragged(e -> {
+
+            mouseX = e.getX();
+            mouseY = e.getY();
+        });
+        setOnMouseEntered(event -> Main.mainScreen.document.setCurrentPage(page));
+
+        // START RENDER WHEN IS INTO THE VISIBLE PART OF THE SCROLL PANE
+        Main.mainScreen.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+            updateShowStatus();
         });
 
-        setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent e) {
+    }
 
-                mouseX = e.getX();
-                mouseY = e.getY();
-            }
-        });
-        setOnMouseEntered(new EventHandler<MouseEvent>() {
-            @Override public void handle(MouseEvent event) {
-                Main.mainScreen.document.setCurrentPage(page);
-            }
-        });
+    public void updateShowStatus(){
 
-        // Disable pane when is not into the visible part of the ScrollPane to prevent lags
-        visibleProperty().bind(Bindings.createBooleanBinding(() -> {
+        Bounds mainScreenBounds = Main.mainScreen.localToScene(Main.mainScreen.getBoundsInParent());
+        Bounds nodeBounds = localToScene(getBoundsInLocal());
+        if(mainScreenBounds.intersects(nodeBounds.getMinX(), nodeBounds.getMinY()-nodeBounds.getHeight(), nodeBounds.getWidth(), nodeBounds.getHeight()*2)){
+            setVisible(true);
+            if(status == PageStatus.HIDE) render();
+        }else{
+            setVisible(false);
+        }
+
+    }
+    private void render(){
+        status = PageStatus.RENDERING;
+        loader.setVisible(true);
+        new Thread(() -> {
             try{
-                Bounds paneBounds = Main.mainScreen.localToScene(Main.mainScreen.getBoundsInParent());
-                Bounds nodeBounds = localToScene(getBoundsInLocal());
-                return paneBounds.intersects(nodeBounds);
-            }catch(IndexOutOfBoundsException ex){
-                return false;
+                renderView = new ImageView(SwingFXUtils.toFXImage((BufferedImage) Main.mainScreen.document.pdfPagesRender.renderPage(page), null));
+            }catch(IOException e){
+                e.printStackTrace();
+                status = PageStatus.FAIL;
             }
-        }, Main.mainScreen.vvalueProperty(), widthProperty()));
 
+            Platform.runLater(() -> {
+                renderView.fitHeightProperty().bind(heightProperty());
+                renderView.fitWidthProperty().bind(widthProperty());
+
+                loader.setVisible(false);
+                getChildren().add(renderView);
+                status = PageStatus.RENDERED;
+            });
+
+        }).start();
     }
 
     public void clearElements(){
@@ -126,17 +151,8 @@ public class PageRenderer extends Pane {
         }
     }
 
-    public Image getRender() {
-        return render;
-    }
-    public void setRender(Image render) {
-        this.render = render;
-    }
     public int getPage() {
         return page;
-    }
-    public void setPage(int page) {
-        this.page = page;
     }
     public ArrayList<Element> getElements() {
         return elements;
