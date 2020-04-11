@@ -66,16 +66,15 @@ public class Document {
             pages.add(page);
         }
         Main.mainScreen.finalizePages();
+        Main.settings.setOpenedFile(file);
+
+        updateShowsStatus();
+    }
+    public void updateShowsStatus(){
 
         for(PageRenderer page : pages){
             page.updateShowStatus();
         }
-
-        Main.mainScreen.lastVerticalScrollValue = Main.mainScreen.getVvalue();
-        Main.mainScreen.setHvalue(0.5);
-
-        Main.settings.setOpenedFile(file);
-
     }
     public void loadEdition(){
         this.edition = new Edition(file, this);

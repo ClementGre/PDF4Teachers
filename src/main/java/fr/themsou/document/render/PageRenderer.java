@@ -7,6 +7,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
@@ -52,14 +54,14 @@ public class PageRenderer extends Pane {
         PDRectangle pageSize = Main.mainScreen.document.pdfPagesRender.getPageSize(page);
         final double ratio = pageSize.getHeight() / pageSize.getWidth();
 
-        setWidth(Main.mainScreen.pageWidthProperty().get());
-        setHeight(Main.mainScreen.pageWidthProperty().get() * ratio);
+        setWidth(Main.mainScreen.getPageWidth());
+        setHeight(Main.mainScreen.getPageWidth() * ratio);
 
-        maxWidthProperty().bind(Main.mainScreen.pageWidthProperty());
-        minWidthProperty().bind(Main.mainScreen.pageWidthProperty());
+        setMaxWidth(Main.mainScreen.getPageWidth());
+        setMinWidth(Main.mainScreen.getPageWidth());
 
-        minHeightProperty().bind(widthProperty().multiply(ratio));
-        maxHeightProperty().bind(widthProperty().multiply(ratio));
+        setMaxHeight(Main.mainScreen.getPageWidth() * ratio);
+        setMinHeight(Main.mainScreen.getPageWidth() * ratio);
 
         // BORDER
         DropShadow ds = new DropShadow();
@@ -78,8 +80,8 @@ public class PageRenderer extends Pane {
         });
         setOnMouseEntered(event -> Main.mainScreen.document.setCurrentPage(page));
 
-        // START RENDER WHEN IS INTO THE VISIBLE PART OF THE SCROLL PANE
-        Main.mainScreen.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+        // Show Status
+        Main.mainScreen.pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             updateShowStatus();
         });
 
@@ -87,9 +89,12 @@ public class PageRenderer extends Pane {
 
     public void updateShowStatus(){
 
-        Bounds mainScreenBounds = Main.mainScreen.localToScene(Main.mainScreen.getBoundsInParent());
-        Bounds nodeBounds = localToScene(getBoundsInLocal());
-        if(mainScreenBounds.intersects(nodeBounds.getMinX(), nodeBounds.getMinY()-nodeBounds.getHeight(), nodeBounds.getWidth(), nodeBounds.getHeight()*2)){
+        boolean isUp = Main.mainScreen.pane.getTranslateY() + getTranslateY() + getHeight() < 0;
+        boolean isDown = Main.mainScreen.pane.getTranslateY() + getTranslateY() > Main.mainScreen.getHeight();
+
+        System.out.println("Page " + page + " : " + isUp + "/" + isDown);
+
+        if(!isUp && !isDown){
             setVisible(true);
             if(status == PageStatus.HIDE) render();
         }else{

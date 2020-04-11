@@ -114,7 +114,7 @@ public class Main extends Application {
 
 		settings = new Settings();
 
-		mainScreen = new MainScreen((int) (21 * 37.795275591));
+		mainScreen = new MainScreen();
 		footerBar = new Footerbar();
 
 		lbFilesTab = new LBFilesTab();

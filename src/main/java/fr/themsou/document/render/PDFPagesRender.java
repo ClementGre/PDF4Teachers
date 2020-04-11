@@ -42,7 +42,6 @@ public class PDFPagesRender {
 			try{
 				if(close) return;
 				image = scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-				System.out.println(image.getWidth() + " / " + image.getHeight());
 				if(close) return;
 			}catch(Exception e){
 				e.printStackTrace();

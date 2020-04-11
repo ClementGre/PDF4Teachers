@@ -2,6 +2,7 @@ package fr.themsou.panel;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -10,6 +11,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import java.util.concurrent.Callable;
 
 @SuppressWarnings("serial")
 public class Footerbar extends AnchorPane {
@@ -25,7 +28,7 @@ public class Footerbar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.setText(TR.tr("zoom") + " : " + Main.mainScreen.getZoom() + "%");
+		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (Main.mainScreen.pane.getScaleX()*100) + "%", Main.mainScreen.pane.scaleXProperty()));
 
 		switch (Main.leftBar.getSelectionModel().getSelectedIndex()){
 			case 0:
