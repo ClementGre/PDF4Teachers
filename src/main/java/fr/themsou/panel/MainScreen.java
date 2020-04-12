@@ -2,8 +2,6 @@ package fr.themsou.panel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Set;
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -13,24 +11,14 @@ import fr.themsou.utils.AnimatedZoomOperator;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
-import javafx.beans.InvalidationListener;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
@@ -40,7 +28,7 @@ public class MainScreen extends Pane {
 	public Pane pane = new Pane();
 
 	private IntegerProperty zoom = new SimpleIntegerProperty(Main.settings.getDefaultZoom());
-	AnimatedZoomOperator zoomOperator;
+	public AnimatedZoomOperator zoomOperator;
 
 	private int totalHeight = 40;
 	private int pageWidth = (int) (21 * 37.795275591);
@@ -84,20 +72,20 @@ public class MainScreen extends Pane {
 	public void setup(){
 
 		setStyle("-fx-padding: 0;");
-		getChildren().add(pane);
 
 		setBackground(new Background(new BackgroundFill(Color.rgb(80, 80, 80), CornerRadii.EMPTY, Insets.EMPTY)));
-		pane.setBackground(new Background(new BackgroundFill(Color.rgb(102, 102, 102), CornerRadii.EMPTY, Insets.EMPTY)));
-		pane.setBorder(Border.EMPTY);
 		setBorder(Border.EMPTY);
+
+		pane.setBackground(new Background(new BackgroundFill(Color.rgb(80, 80, 80), CornerRadii.EMPTY, Insets.EMPTY)));
+		pane.setBorder(Border.EMPTY);
+		getChildren().add(pane);
 
 		info.setFont(new Font("FreeSans", 22));
 		info.setStyle("-fx-text-fill: white;");
 
-		info.translateXProperty().bind(pane.widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
-		info.translateYProperty().bind(pane.heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
-
-		pane.getChildren().add(info);
+		info.translateXProperty().bind(widthProperty().divide(2).subtract(widthProperty().divide(2)));
+		info.translateYProperty().bind(heightProperty().divide(2).subtract(heightProperty().divide(2)));
+		getChildren().add(info);
 
 		zoomOperator = new AnimatedZoomOperator(pane, this);
 
@@ -112,10 +100,10 @@ public class MainScreen extends Pane {
 
 				if(getStatus() == Status.OPEN){
 
-					if(e.getDeltaY() > 0){
-						zoomOperator.zoom(1.3, e.getSceneX(), e.getSceneY());
-					}else if(e.getDeltaY() < 0){
-						zoomOperator.zoom(0.7, e.getSceneX(), e.getSceneY());
+					if(e.getDeltaY() < 0){
+						zoomOperator.zoom(0.8, e.getSceneX(), e.getSceneY());
+					}else if(e.getDeltaY() > 0){
+						zoomOperator.zoom(1.2, e.getSceneX(), e.getSceneY());
 					}
 					document.updateShowsStatus();
 				}
@@ -167,7 +155,9 @@ public class MainScreen extends Pane {
 
 		// FINISH OPEN
 
-		totalHeight = 40;
+		Main.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
+
+		totalHeight = 30;
 		status.set(Status.OPEN);
 
 		document.showPages();
@@ -202,6 +192,9 @@ public class MainScreen extends Pane {
         }
 
 	    pane.getChildren().clear();
+
+		pane.setScaleX(Main.settings.getDefaultZoom()/100.0);
+		pane.setScaleY(Main.settings.getDefaultZoom()/100.0);
 
 		selected.set(null);
 
@@ -270,16 +263,14 @@ public class MainScreen extends Pane {
 		page.setTranslateX(30);
 		page.setTranslateY(totalHeight);
 
-		totalHeight += 40 + page.getHeight();
+		totalHeight += 30 + page.getHeight();
 
 		pane.getChildren().add(page);
 	}
 	public void finalizePages(){
 		pane.setScaleX(1); pane.setScaleY(1);
-		pane.setMinWidth(pageWidth + 60.0);
-		pane.setMinHeight(totalHeight);
-
-		zoomOperator.setupDocument();
+		pane.setPrefWidth(pageWidth + 60.0);
+		pane.setPrefHeight(totalHeight);
 
 	}
 }
