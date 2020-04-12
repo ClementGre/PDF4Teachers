@@ -2,7 +2,7 @@ package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
-import fr.themsou.main.AboutWindow;
+import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.LBFilesListView;
 import fr.themsou.utils.*;
@@ -110,7 +110,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// OTHER //////////
 
-	Menu apropos = new Menu();
+	public Menu apropos = new Menu();
 	Menu aide = new Menu(TR.tr("Aide"));
 	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide") + "     ");
 	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide sur GitHub") + "     ");

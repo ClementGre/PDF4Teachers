@@ -6,6 +6,8 @@ module fr.themsou {
 
     requires org.jfxtras.styles.jmetro;
 
+    requires com.fasterxml.jackson.core;
+
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;

@@ -1,11 +1,13 @@
-package fr.themsou.main;
+package fr.themsou.windows;
 
+import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -62,29 +64,34 @@ public class AboutWindow extends Stage {
             version.setFont(new Font(15));
             version.setAlignment(Pos.CENTER);
 
+            Button newVersion = null;
+            if(UpdateWindow.newVersion){
+                newVersion = new Button("Nouvelle Version disponible");
+                newVersion.setAlignment(Pos.CENTER);
+                newVersion.setStyle("-fx-background-color: #ba6800;");
+
+                newVersion.setOnAction(event -> {
+                    new UpdateWindow();
+                });
+            }
+
             HBox devInfo = new HBox();
-                Label dev = new Label(TR.tr("Développeur :"));
+                Label dev = new Label(TR.tr("Développeur :") + " ");
                 dev.setFont(new Font(17));
 
                 Hyperlink devName = new Hyperlink("Clément Gre.");
                 devName.setFont(new Font(17));
-                devName.setOnAction(new EventHandler<ActionEvent>() {
-                    public void handle(ActionEvent t) {
-                        Main.hostServices.showDocument("https://github.com/themsou");
-                    }
-                });
+                devName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/themsou"));
             devInfo.getChildren().addAll(dev, devName);
             devInfo.setAlignment(Pos.CENTER);
 
             HBox gitInfo = new HBox();
-                Label git = new Label(TR.tr("Projet GitHub : "));
+                Label git = new Label(TR.tr("Projet GitHub :") + " ");
                 git.setFont(new Font(17));
 
                 Hyperlink gitName = new Hyperlink("themsou/PDF4Teachers");
                 gitName.setFont(new Font(17));
-                gitName.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers");
-                });
+                gitName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers"));
             gitInfo.getChildren().addAll(git, gitName);
             gitInfo.setAlignment(Pos.CENTER);
 
@@ -102,31 +109,34 @@ public class AboutWindow extends Stage {
                 });
 
                 Hyperlink jMetro = new Hyperlink("JMetro 11.5.10");
-                jMetro.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://pixelduke.com/java-javafx-theme-jmetro/");
-                });
+                jMetro.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pixelduke.com/java-javafx-theme-jmetro/"));
 
-            apiInfo.getChildren().addAll(api, javaFx, pdfBox, jMetro);
+                Hyperlink json = new Hyperlink("Jackson Streaming API 2.10.3");
+                json.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/FasterXML/jackson-core"));
+
+            apiInfo.getChildren().addAll(api, javaFx, pdfBox, jMetro, json);
             apiInfo.setAlignment(Pos.CENTER);
 
             HBox issueInfo = new HBox();
                 Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide sur GutHub"));
                 issueName.setFont(new Font(17));
-                issueName.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new");
-                });
+                issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
             issueInfo.getChildren().addAll(issueName);
             issueInfo.setAlignment(Pos.CENTER);
 
-        vBox.getChildren().addAll(logo, name, version, devInfo, gitInfo, issueInfo, apiInfo);
+        vBox.getChildren().addAll(logo, name, version);
+        if(newVersion != null) vBox.getChildren().add(newVersion);
+        vBox.getChildren().addAll(devInfo, gitInfo, issueInfo, apiInfo);
         vBox.setAlignment(Pos.CENTER);
 
 
-        VBox.setMargin(logo, new Insets(30, 0, 0, 0));
-        VBox.setMargin(name, new Insets(20, 0, 0, 0));
-        VBox.setMargin(version, new Insets(3, 0, 0, 0));
-        VBox.setMargin(devInfo, new Insets(20, 0, 0, 0));
-        VBox.setMargin(issueInfo, new Insets(10, 0, 20, 0));
+
+
+        VBox.setMargin(logo, new Insets(20, 0, 0, 0));
+        VBox.setMargin(name, new Insets(5, 0, 0, 0));
+        VBox.setMargin(version, new Insets(0, 0, 7, 0));
+        VBox.setMargin(devInfo, new Insets(7, 0, 0, 0));
+        VBox.setMargin(issueInfo, new Insets(10, 0, 15, 0));
 
         root.getChildren().addAll(vBox);
     }

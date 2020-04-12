@@ -1,6 +1,7 @@
-package fr.themsou.main;
+package fr.themsou.windows;
 
 import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -22,9 +23,7 @@ import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 
-public class License {
-
-    Stage window = new Stage();
+public class LicenseWindow extends Stage{
 
     private static final String LICENSE = "                                 Apache License\n" +
             "                           Version 2.0, January 2004\n" +
@@ -217,22 +216,22 @@ public class License {
             "   See the License for the specific language governing permissions and\n" +
             "   limitations under the License.";
 
-    public License(){
+    public LicenseWindow(){
 
         ScrollPane root = new ScrollPane();
         VBox container = new VBox();
         Scene scene = new Scene(root, 545, 720);
 
-        window.initOwner(Main.window);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        window.setWidth(545);
-        window.setHeight(720);
-        window.setTitle(TR.tr("PDF4Teachers - License"));
-        window.setScene(scene);
-        window.setOnCloseRequest((javafx.stage.WindowEvent e) -> {
+        initOwner(Main.window);
+        initModality(Modality.WINDOW_MODAL);
+        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
+        setWidth(545);
+        setHeight(720);
+        setTitle(TR.tr("PDF4Teachers - License"));
+        setScene(scene);
+        setOnCloseRequest((javafx.stage.WindowEvent e) -> {
             new File(Main.dataFolder + "settings.yml").delete();
-            window.close();
+            close();
             System.exit(0);
         });
         new JMetro(root, Style.LIGHT);
@@ -240,7 +239,7 @@ public class License {
         root.setContent(container);
         setupPanel(container);
 
-        window.show();
+        show();
 
         new Thread(() -> {
             try{ Thread.sleep(1500); }catch(InterruptedException e){ e.printStackTrace(); }
@@ -275,11 +274,11 @@ public class License {
         HBox.setMargin(accept, new Insets(20, 0, 0, 5));
 
         accept.setOnAction((ActionEvent event) -> {
-            window.close();
+            close();
         });
         cancel.setOnAction((ActionEvent event) -> {
             new File(Main.dataFolder + "settings.yml").delete();
-            window.close();
+            close();
             System.exit(0);
         });
 

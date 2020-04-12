@@ -12,6 +12,8 @@ import fr.themsou.panel.leftBar.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.LicenseWindow;
+import fr.themsou.windows.UpdateWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -20,6 +22,7 @@ import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
@@ -178,20 +181,31 @@ public class Main extends Application {
 
 		}
 
+		// load data
+		userData = new UserData();
+
+		if(firstLaunch){
+			new LicenseWindow();
+		}
+
+		// Open the last file
+		// + check version
 		new Thread(() -> {
 			Platform.runLater(() -> {
 				if(settings.getOpenedFile() != null){
 					mainScreen.openFile(settings.getOpenedFile());
 				}
+
+				if(UpdateWindow.checkVersion()){
+					menuBar.apropos.setStyle("-fx-background-color: #ba6800;");
+					Tooltip.install(menuBar.apropos.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
+
+					if(settings.isCheckUpdates()){
+						new UpdateWindow();
+					}
+				}
 			});
 		}).start();
-
-		// load data
-		userData = new UserData();
-
-		if(firstLaunch){
-			new License();
-		}
 
 	}
 
