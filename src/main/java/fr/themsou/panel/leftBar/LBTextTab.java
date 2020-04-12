@@ -165,7 +165,7 @@ public class LBTextTab extends Tab {
 				if(oldElement instanceof TextElement){
 					TextElement current = (TextElement) oldElement;
 					current.textProperty().unbind();
-					current.realFontProperty().unbind();
+					current.fontProperty().unbind();
 
 					if(((TextElement) oldElement).getText().isBlank()){
 						oldElement.delete();
@@ -179,14 +179,14 @@ public class LBTextTab extends Tab {
 					TextElement current = (TextElement) newElement;
 
 					txtArea.setText(current.getText());
-					boldBtn.setSelected(TextElement.getFontWeight(current.getRealFont()) == FontWeight.BOLD);
-					itBtn.setSelected(TextElement.getFontPosture(current.getRealFont()) == FontPosture.ITALIC);
+					boldBtn.setSelected(TextElement.getFontWeight(current.getFont()) == FontWeight.BOLD);
+					itBtn.setSelected(TextElement.getFontPosture(current.getFont()) == FontPosture.ITALIC);
 					colorPicker.setValue((Color) current.getFill());
-					fontCombo.getSelectionModel().select(current.getRealFont().getFamily());
-					sizeCombo.getSelectionModel().select((Integer) ((int) current.getRealFont().getSize()));
+					fontCombo.getSelectionModel().select(current.getFont().getFamily());
+					sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
 
 					current.textProperty().bind(txtArea.textProperty());
-					current.realFontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+					current.fontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 				}
 			}
 		});
@@ -224,7 +224,7 @@ public class LBTextTab extends Tab {
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
 
-			TextElement current = new TextElement(30, (int) (page.mouseY * 800 / page.getHeight()), getFont(),
+			TextElement current = new TextElement(30, (int) (page.mouseY * TextElement.GRID_HEIGHT / page.getHeight()), getFont(),
 					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
 

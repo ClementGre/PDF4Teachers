@@ -237,17 +237,24 @@ public class AnimatedZoomOperator {
 
         }
 
-        // timeline that scales and moves the node
-        timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateXProperty(), newTranslateX)),
-                new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY)),
-                new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleXProperty(), scale)),
-                new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleYProperty(), scale))
-        );
-        timeline.stop();
-        isPlaying = true;
-        timeline.play();
+        if(Main.settings.isZoomAnimations()){
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateXProperty(), newTranslateX)),
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY)),
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleXProperty(), scale)),
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleYProperty(), scale))
+            );
+            timeline.stop();
+            isPlaying = true;
+            timeline.play();
+        }else{
+            pane.setTranslateY(newTranslateY);
+            pane.setTranslateX(newTranslateX);
+            pane.setScaleY(scale);
+            pane.setScaleX(scale);
+        }
+
     }
 
     public void scrollDown(int factor){
@@ -255,13 +262,17 @@ public class AnimatedZoomOperator {
         double newTranslateY = pane.getTranslateY() - factor;
         if(newTranslateY - getPaneShiftY() < -getScrollableHeight()) newTranslateY = -getScrollableHeight() + getPaneShiftY();
 
-        timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.millis(isPlaying ? 70 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
-        );
-        timeline.stop();
-        isPlaying = true;
-        timeline.play();
+        if(Main.settings.isZoomAnimations()){
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
+            );
+            timeline.stop();
+            isPlaying = true;
+            timeline.play();
+        }else{
+            pane.setTranslateY(newTranslateY);
+        }
     }
 
     public void scrollUp(int factor){
@@ -269,13 +280,17 @@ public class AnimatedZoomOperator {
         double newTranslateY = pane.getTranslateY() + factor;
         if(newTranslateY - getPaneShiftY() > 0) newTranslateY = getPaneShiftY();
 
-        timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().addAll(
-                new KeyFrame(Duration.millis(isPlaying ? 70 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
-        );
-        timeline.stop();
-        isPlaying = true;
-        timeline.play();
+        if(Main.settings.isZoomAnimations()){
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
+            );
+            timeline.stop();
+            isPlaying = true;
+            timeline.play();
+        }else{
+            pane.setTranslateY(newTranslateY);
+        }
     }
 
     // Renvoie le décalage entre les vrais coordonés de pane et entre les coordonés de sa partie visible.

@@ -76,25 +76,35 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	Menu preferences = new Menu(TR.tr("Préférences"));
 
-	NodeMenuItem preferences1Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
-			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document."), 30);
-
-	NodeRadioMenuItem preferences2Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
-			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
-
-	NodeRadioMenuItem preferences3Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
-			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
-
-	NodeRadioMenuItem preferences4Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+	NodeRadioMenuItem preferences1Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences5RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	NodeRadioMenuItem preferences2Update = createRadioMenuItem(TR.tr("Vérifier si une nouvelle version est disponible"), "wifi",
+			TR.tr("Fait apparaitre une fenêtre à chaque démarage si une nouvelle version est disponible."), true);
+
+	NodeMenuItem preferences3Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "Ctrl+Molette",
+			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document. Vous pouvez aussi zoomer avec Ctrl+Molette"), 30);
+
+	NodeRadioMenuItem preferences4Animation = createRadioMenuItem(TR.tr("Animations lors d'un zoom ou défilement"), "cloud",
+			TR.tr("Fait des transitions fluides lors du zoom ou du défilement de la page. Il est possible de désactiver cette option si l'ordinateur a du mal a zoomer."), true);
+
+
+
+	NodeRadioMenuItem preferences5Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
+
+	NodeRadioMenuItem preferences6Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
+
+
+
+	NodeRadioMenuItem preferences7RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem preferences6ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	NodeRadioMenuItem preferences8ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem preferences7SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	NodeRadioMenuItem preferences9SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
@@ -113,28 +123,38 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FICHIER //////////
 
-		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> {return Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN;}, Main.mainScreen.statusProperty()));
+		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, Main.mainScreen.statusProperty()));
 		fichier8SameName.getItems().add(fichier8SameNameNull);
 
 		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6DeleteAll, fichier7Close, fichier8SameName, new SeparatorMenuItem(), fichier9Export, fichier10ExportAll);
 
 		////////// PREFS //////////
 
-		preferences2Save.selectedProperty().set(Main.settings.isAutoSave());
-		preferences3Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
-		preferences4Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
-		preferences5RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-		preferences6ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-		preferences7SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
+		// DEFINE DEFAULT STATE
+		preferences1Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
+		preferences2Update.selectedProperty().set(Main.settings.isCheckUpdates());
+		preferences4Animation.selectedProperty().set(Main.settings.isZoomAnimations());
 
+		preferences5Save.selectedProperty().set(Main.settings.isAutoSave());
+		preferences6Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
 
-		Main.settings.autoSavingProperty().bind(preferences2Save.selectedProperty());
-		Main.settings.restoreLastSessionProperty().bind(preferences4Restore.selectedProperty());
-		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences5RemoveWhenAdd.selectedProperty());
-		Main.settings.showOnlyStartInTextsListProperty().bind(preferences6ShowStart.selectedProperty());
-		Main.settings.smallFontInTextsListProperty().bind(preferences7SmallFont.selectedProperty());
+		preferences7RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+		preferences8ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+		preferences9SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
 
-		preferences.getItems().addAll(preferences2Save, preferences3Regular, new SeparatorMenuItem(), preferences1Zoom, preferences4Restore, new SeparatorMenuItem(), preferences5RemoveWhenAdd, preferences6ShowStart, preferences7SmallFont);
+		// BIND
+		Main.settings.restoreLastSessionProperty().bind(preferences1Restore.selectedProperty());
+		Main.settings.checkUpdatesProperty().bind(preferences2Update.selectedProperty());
+		Main.settings.zoomAnimationsProperty().bind(preferences4Animation.selectedProperty());
+
+		Main.settings.autoSavingProperty().bind(preferences5Save.selectedProperty());
+
+		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences7RemoveWhenAdd.selectedProperty());
+		Main.settings.showOnlyStartInTextsListProperty().bind(preferences8ShowStart.selectedProperty());
+		Main.settings.smallFontInTextsListProperty().bind(preferences9SmallFont.selectedProperty());
+
+		// ADD
+		preferences.getItems().addAll(preferences1Restore, preferences2Update, preferences3Zoom, preferences4Animation, new SeparatorMenuItem(), preferences5Save, preferences6Regular, new SeparatorMenuItem(), preferences7RemoveWhenAdd, preferences8ShowStart, preferences9SmallFont);
 
 		////////// OTHER //////////
 
@@ -315,7 +335,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// PREFS //////////
 
-		preferences1Zoom.setOnAction((ActionEvent actionEvent) -> {
+		preferences3Zoom.setOnAction((ActionEvent actionEvent) -> {
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
 			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
@@ -331,7 +351,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 
 		});
-		preferences3Regular.setOnAction((ActionEvent actionEvent) -> {
+		preferences6Regular.setOnAction((ActionEvent actionEvent) -> {
 
 			Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
 
@@ -364,10 +384,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(option.get() == ok){
 				if(activated.isSelected()){
 					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					preferences3Regular.setSelected(true);
+					preferences6Regular.setSelected(true);
 				}else{
 					Main.settings.setRegularSaving(-1);
-					preferences3Regular.setSelected(false);
+					preferences6Regular.setSelected(false);
 				}
 
 			}
@@ -450,7 +470,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, double leftMargin){
 
-		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text, 350, true);
+		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text, 400, true);
 
 		if(!imgName.isBlank()) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 		if(!accelerator.isBlank()) menuItem.setAccelerator(accelerator);

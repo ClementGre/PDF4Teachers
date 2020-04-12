@@ -70,11 +70,11 @@ public class ExportRenderer {
 
                     // FONT
                     boolean bold = false;
-                    if (TextElement.getFontWeight(txtElement.getRealFont()) == FontWeight.BOLD) bold = true;
+                    if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
                     boolean italic = false;
-                    if (TextElement.getFontPosture(txtElement.getRealFont()) == FontPosture.ITALIC) italic = true;
-                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getRealFont().getFamily(), italic, bold));
-                    txtElement.setFont(TextElement.getFont(txtElement.getRealFont().getFamily(), italic, bold, txtElement.getRealFont().getSize() / 595.0 * pageWidth));
+                    if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
+                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
+                    txtElement.setFont(TextElement.getFont(txtElement.getFont().getFamily(), italic, bold, txtElement.getFont().getSize() / 596.0 * pageWidth));
 
                     // LINE HEIGHT VARIABLES
                     double height = txtElement.getLayoutBounds().getHeight();
@@ -94,7 +94,7 @@ public class ExportRenderer {
                     }
                     // CUSTOM STREAM
                     contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getFont().getSize());
-                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / 500.0 * pageWidth), (float) (pageHeight - txtElement.getRealY() / 800.0 * pageHeight + height));
+                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / TextElement.GRID_WIDTH * pageWidth), (float) (pageHeight - txtElement.getRealY() / TextElement.GRID_HEIGHT * pageHeight + height));
 
                     // DRAW LINES
                     for(String text : txtElement.getText().split("\\n")){

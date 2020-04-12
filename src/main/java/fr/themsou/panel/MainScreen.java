@@ -27,11 +27,10 @@ public class MainScreen extends Pane {
 
 	public Pane pane = new Pane();
 
-	private IntegerProperty zoom = new SimpleIntegerProperty(Main.settings.getDefaultZoom());
 	public AnimatedZoomOperator zoomOperator;
 
 	private int totalHeight = 40;
-	private int pageWidth = (int) (21 * 37.795275591);
+	private int pageWidth = 596;
 
 	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
@@ -83,8 +82,8 @@ public class MainScreen extends Pane {
 		info.setFont(new Font("FreeSans", 22));
 		info.setStyle("-fx-text-fill: white;");
 
-		info.translateXProperty().bind(widthProperty().divide(2).subtract(widthProperty().divide(2)));
-		info.translateYProperty().bind(heightProperty().divide(2).subtract(heightProperty().divide(2)));
+		info.translateXProperty().bind(widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
+		info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 		getChildren().add(info);
 
 		zoomOperator = new AnimatedZoomOperator(pane, this);
@@ -93,8 +92,7 @@ public class MainScreen extends Pane {
 
 			e.consume();
 
-			// ZOOM
-			if(e.isControlDown()){
+			if(e.isControlDown()){ // ZOOM
 				ctrlDown = true;
 
 
@@ -107,7 +105,7 @@ public class MainScreen extends Pane {
 					}
 					document.updateShowsStatus();
 				}
-			}else{
+			}else{ // SCROLL
 				ctrlDown = false;
 
 				if(e.getDeltaY() > 0){
@@ -121,10 +119,6 @@ public class MainScreen extends Pane {
 		});
 
 		setOnMouseMoved(e -> ctrlDown = e.isControlDown());
-
-
-		// bind zoom value with the page size
-		zoom.addListener((observableValue, oldZoom, newZoom) -> pane.setPrefHeight(pane.getHeight()));
 
 		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
@@ -199,7 +193,6 @@ public class MainScreen extends Pane {
 		selected.set(null);
 
 		status.set(Status.CLOSED);
-		zoom.set(Main.settings.getDefaultZoom());
 
 		repaint();
 		Main.footerBar.repaint();
@@ -236,25 +229,13 @@ public class MainScreen extends Pane {
 		this.selected.set(selected);
 	}
 
-	public IntegerProperty zoomProperty() {
-		return zoom;
-	}
 	public IntegerProperty statusProperty() {
 		return status;
 	}
-
 	public int getStatus(){
 		return this.status.get();
 	}
 
-	public int getZoom(){
-		return zoom.get();
-	}
-	public void checkzoom(){
-		if(zoom.get() <= 9) zoom.set(10);
-		else if(zoom.get() >= 399) zoom.set(400);
-		Main.footerBar.repaint();
-	}
 	public int getPageWidth() {
 		return pageWidth;
 	}
@@ -268,7 +249,6 @@ public class MainScreen extends Pane {
 		pane.getChildren().add(page);
 	}
 	public void finalizePages(){
-		pane.setScaleX(1); pane.setScaleY(1);
 		pane.setPrefWidth(pageWidth + 60.0);
 		pane.setPrefHeight(totalHeight);
 

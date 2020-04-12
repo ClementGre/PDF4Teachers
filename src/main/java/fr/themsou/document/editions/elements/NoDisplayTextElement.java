@@ -91,7 +91,7 @@ public class NoDisplayTextElement extends TreeItem{
 		this.core = core;
 
 		// bindings with the core
-		fontProperty().bind(core.realFontProperty());
+		fontProperty().bind(core.fontProperty());
 		core.textProperty().addListener(textChangeListener);
 		core.fillProperty().addListener(colorChangeListener);
 		if(type == NoDisplayTextElement.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
@@ -254,7 +254,7 @@ public class NoDisplayTextElement extends TreeItem{
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
-			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * 800 / page.getHeight()), page.getPage());
+			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * TextElement.GRID_HEIGHT / page.getHeight()), page.getPage());
 			page.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}

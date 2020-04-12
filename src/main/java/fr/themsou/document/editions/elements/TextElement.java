@@ -37,10 +37,13 @@ import javafx.util.Duration;
 
 public class TextElement extends Text implements Element {
 
+	// Size for A4 - 200dpi
+	public static final float GRID_WIDTH = 1654;
+	public static final float GRID_HEIGHT = 2339;
+
 	private IntegerProperty realX = new SimpleIntegerProperty();
 	private IntegerProperty realY = new SimpleIntegerProperty();
 	private PageRenderer page;
-	private ObjectProperty<Font> realFont = new SimpleObjectProperty<>();
 
 	ContextMenu menu = new ContextMenu();
 
@@ -54,7 +57,7 @@ public class TextElement extends Text implements Element {
 		this.realX.set(x);
 		this.realY.set(y);
 
-		setRealFont(font);
+		setFont(font);
 		setText(text);
 		setTextOrigin(VPos.BOTTOM);
 		setFill(color);
@@ -62,13 +65,10 @@ public class TextElement extends Text implements Element {
 		setBoundsType(TextBoundsType.VISUAL);
 
 		if(page == null) return;
-
-		fontProperty().bind(Bindings.createObjectBinding(() -> translateFont(getRealFont()), realFontProperty(), Main.mainScreen.zoomProperty()));
-
 		this.page = page;
 
-		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(500.0)));
-		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(800.0)));
+		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(TextElement.GRID_WIDTH)));
+		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(TextElement.GRID_HEIGHT)));
 
 		setCursor(Cursor.MOVE);
 
@@ -167,8 +167,8 @@ public class TextElement extends Text implements Element {
 			checkLocation(itemX, itemY);
 
 			if(changePage){
-				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(500.0)));
-				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(800.0)));
+				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(TextElement.GRID_WIDTH)));
+				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(TextElement.GRID_HEIGHT)));
 				Main.lbTextTab.onFileTextSortManager.simulateCall();
 			}
 
@@ -191,8 +191,8 @@ public class TextElement extends Text implements Element {
 		if(itemX < 0) itemX = 0;
 		if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
 
-		realX.set((int) (itemX / page.getWidth() * 500.0));
-		realY.set((int) (itemY / page.getHeight() * 800.0));
+		realX.set((int) (itemX / page.getWidth() * TextElement.GRID_WIDTH));
+		realY.set((int) (itemY / page.getHeight() * TextElement.GRID_HEIGHT));
 
 	}
 
@@ -207,8 +207,8 @@ public class TextElement extends Text implements Element {
 	}
 
 	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean hasCore){
-		if(hasCore) return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
-		else return new NoDisplayTextElement(getRealFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
+		if(hasCore) return new NoDisplayTextElement(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
+		else return new NoDisplayTextElement(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
 	}
 	@Override
 	public void delete() {
@@ -224,10 +224,10 @@ public class TextElement extends Text implements Element {
 		writer.writeByte(page.getPage());
 		writer.writeShort(getRealX());
 		writer.writeShort(getRealY());
-		writer.writeFloat((float) getRealFont().getSize());
-		writer.writeBoolean(getFontWeight(getRealFont()) == FontWeight.BOLD);
-		writer.writeBoolean(getFontPosture(getRealFont()) == FontPosture.ITALIC);
-		writer.writeUTF(getRealFont().getFamily());
+		writer.writeFloat((float) getFont().getSize());
+		writer.writeBoolean(getFontWeight(getFont()) == FontWeight.BOLD);
+		writer.writeBoolean(getFontPosture(getFont()) == FontPosture.ITALIC);
+		writer.writeUTF(getFont().getFamily());
 		writer.writeByte((int) (((Color) getFill()).getRed() * 255.0 - 128));
 		writer.writeByte((int) (((Color) getFill()).getGreen() * 255.0 - 128));
 		writer.writeByte((int) (((Color) getFill()).getBlue() * 255.0 - 128));
@@ -290,27 +290,15 @@ public class TextElement extends Text implements Element {
 		this.realY.set(y);
 	}
 
-	public Font getRealFont() {
-		return realFont.get();
-	}
-
-	public ObjectProperty<Font> realFontProperty() {
-		return realFont;
-	}
-
-	public void setRealFont(Font realFont) {
-		this.realFont.set(realFont);
-	}
-
-	private Font translateFont(Font font) {
+	/*private Font translateFont(Font font) {
 
 		boolean bold = false;
 		if(TextElement.getFontWeight(font) == FontWeight.BOLD) bold = true;
 		boolean italic = false;
 		if(TextElement.getFontPosture(font) == FontPosture.ITALIC) italic = true;
 
-		return getFont(font.getFamily(), italic, bold, (int) (font.getSize() / 75.0 * Main.mainScreen.getZoom()));
-	}
+		return getFont(font.getFamily(), italic, bold, (int) (font.getSize()));
+	}*/
 
 	public static Font getFont(String family, boolean italic, boolean bold, double size){
 
@@ -368,7 +356,7 @@ public class TextElement extends Text implements Element {
 
 	@Override
 	public Element clone() {
-		return new TextElement(getRealX(), getRealY(), getRealFont(), getText(), (Color) getFill(), pageNumber, page);
+		return new TextElement(getRealX(), getRealY(), getFont(), getText(), (Color) getFill(), pageNumber, page);
 	}
 
 }

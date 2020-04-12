@@ -9,37 +9,58 @@ import java.util.ArrayList;
 
 public class Settings {
 
+    // PREFS
+    private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
+    private BooleanProperty checkUpdates = new SimpleBooleanProperty();
     private int defaultZoom;
+    private BooleanProperty zoomAnimations = new SimpleBooleanProperty();
+
     private BooleanProperty autoSave = new SimpleBooleanProperty();
     private int regularSaving;
-    private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
+
     private BooleanProperty removeElementInPreviousListWhenAddingToFavorites = new SimpleBooleanProperty();
     private BooleanProperty showOnlyStartInTextsList = new SimpleBooleanProperty();
     private BooleanProperty smallFontInTextsList = new SimpleBooleanProperty();
+
+    // OTHER
     private ArrayList<File> openedFiles;
     private File openedFile;
 
     public Settings(){
 
-        defaultZoom = 100;
+        restoreLastSession.set(true); openedFiles = new ArrayList<>(); openedFile = null;
+        checkUpdates.set(true);
+        defaultZoom = 130;
+        zoomAnimations.set(true);
+
         autoSave.set(false);
         regularSaving = -1;
-        restoreLastSession.set(true);
-        openedFiles = new ArrayList<>();
-        openedFile = null;
+
         removeElementInPreviousListWhenAddingToFavorites.set(true);
         showOnlyStartInTextsList.set(true);
         smallFontInTextsList.set(false);
 
         loadSettings();
 
-        autoSavingProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
-            saveSettings();
-        });
         restoreLastSessionProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
         });
-        removeElementInPreviousListWhenAddingToFavorites.addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+        checkUpdatesProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+        });
+        zoomAnimationsProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+        });
+
+        /////
+
+        autoSavingProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+        });
+
+        /////
+
+        removeElementInPreviousListWhenAddingToFavoritesProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
         });
         showOnlyStartInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
@@ -53,148 +74,192 @@ public class Settings {
     }
     public void loadSettings(){
 
-        new Thread(new Runnable() {
-            @Override public void run() {
+        new Thread(() -> {
 
-                new File(Main.dataFolder).mkdirs();
-                File settings = new File(Main.dataFolder + "Settings.yml");
-                try{
+            new File(Main.dataFolder).mkdirs();
+            File settings = new File(Main.dataFolder + "Settings.yml");
+            try{
 
-                    ArrayList<File> lastFiles = new ArrayList<>();
-                    File lastFile = null;
+                ArrayList<File> lastFiles = new ArrayList<>();
+                File lastFile = null;
 
-                    if(settings.createNewFile()){ //file was created
-                        saveSettings();
-                    }else{ // file already exist
-                        BufferedReader reader = new BufferedReader(new FileReader(settings));
+                if(settings.createNewFile()){ //file was created
+                    saveSettings();
+                }else{ // file already exist
+                    BufferedReader reader = new BufferedReader(new FileReader(settings));
 
-                        String line;
-                        while((line = reader.readLine()) != null) {
+                    String line;
+                    while((line = reader.readLine()) != null) {
 
-                            String value = StringUtils.removeBefore(line, '=');
+                        String value = StringUtils.removeBefore(line, '=');
 
-                            switch(line.split("=")[0]){
-                                case "defaultZoom":
-                                    try{
-                                        defaultZoom = Integer.parseInt(value);
-                                    }catch(Exception ignored){}
-                                break;
-                                case "autoSave":
-                                    try{
-                                        autoSave.set(Boolean.parseBoolean(value));
-                                    }catch(Exception ignored){}
-                                break;
-                                case "regularSaving":
-                                    try{
-                                        regularSaving = Integer.parseInt(value);
-                                    }catch(Exception ignored){}
-                                break;
-                                case "restoreLastSession":
-                                    try{
-                                        restoreLastSession.set(Boolean.parseBoolean(value));
-                                    }catch(Exception ignored){}
-                                break;
-                                case "openedFiles":
-                                    try{
-                                        for(String filePath : value.split(";/;")){
-                                            if(new File(filePath).exists()){
-                                                lastFiles.add(new File(filePath));
-                                            }
+                        switch(line.split("=")[0]){
+
+                            case "restoreLastSession":
+                                try{
+                                    restoreLastSession.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+                            case "openedFiles":
+                                try{
+                                    for(String filePath : value.split(";/;")){
+                                        if(new File(filePath).exists()){
+                                            lastFiles.add(new File(filePath));
                                         }
+                                    }
 
-                                    }catch(Exception ignored){}
+                                }catch(Exception ignored){}
                                 break;
-                                case "openedFile":
-                                    try{
-                                        if(new File(value).exists()) lastFile = new File(value);
-                                    }catch(Exception ignored){}
-                                break;
-                                case "removeElementInPreviousListWhenAddingToFavorites":
-                                    try{
-                                        removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
-                                    }catch(Exception ignored){}
-                                break;
-                                case "showOnlyStartInTextsList":
-                                    try{
-                                        showOnlyStartInTextsList.set(Boolean.parseBoolean(value));
-                                    }catch(Exception ignored){}
-                                break;
-                                case "smallFontInTextsList":
-                                    try{
-                                        smallFontInTextsList.set(Boolean.parseBoolean(value));
-                                    }catch(Exception ignored){}
-                                break;
-                            }
+                            case "openedFile":
+                                try{
+                                    if(new File(value).exists()) lastFile = new File(value);
+                                }catch(Exception ignored){}
+                            break;
+                            case "checkUpdates":
+                                try{
+                                    checkUpdates.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+                            case "defaultZoom":
+                                try{
+                                    defaultZoom = Integer.parseInt(value);
+                                }catch(Exception ignored){}
+                            break;
+                            case "zoomAnimations":
+                                try{
+                                    zoomAnimations.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+
+                                /////
+
+                            case "autoSave":
+                                try{
+                                    autoSave.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+                            case "regularSaving":
+                                try{
+                                    regularSaving = Integer.parseInt(value);
+                                }catch(Exception ignored){}
+                            break;
+
+                                /////
+
+                            case "removeElementInPreviousListWhenAddingToFavorites":
+                                try{
+                                    removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+                            case "showOnlyStartInTextsList":
+                                try{
+                                    showOnlyStartInTextsList.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
+                            case "smallFontInTextsList":
+                                try{
+                                    smallFontInTextsList.set(Boolean.parseBoolean(value));
+                                }catch(Exception ignored){}
+                            break;
                         }
-                        reader.close();
-
-                        if(restoreLastSession.get()){
-                            openedFiles = lastFiles;
-                            openedFile = lastFile;
-                        }
-
-
                     }
-                }catch (IOException e){ e.printStackTrace(); }
+                    reader.close();
 
-            }
+                    if(restoreLastSession.get()){
+                        openedFiles = lastFiles;
+                        openedFile = lastFile;
+                    }
+
+
+                }
+            }catch (IOException e){ e.printStackTrace(); }
+
         }, "SettingsLoader").start();
     }
 
     public void saveSettings(){
 
-        new Thread(new Runnable() {
-            @Override public void run() {
+        new Thread(() -> {
 
-                new File(Main.dataFolder).mkdirs();
-                File settings = new File(Main.dataFolder + "Settings.yml");
+            new File(Main.dataFolder).mkdirs();
+            File settings = new File(Main.dataFolder + "Settings.yml");
 
-                try{
-                    settings.createNewFile();
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(settings, false));
+            try{
+                settings.createNewFile();
+                BufferedWriter writer = new BufferedWriter(new FileWriter(settings, false));
 
-                    writer.write("defaultZoom=" + defaultZoom);
+                /////
 
-                    writer.newLine();
-                    writer.write("autoSave=" + autoSave.get());
+                writer.write("restoreLastSession=" + restoreLastSession.get());
 
-                    writer.newLine();
-                    writer.write("regularSaving=" + regularSaving);
+                writer.newLine();
+                writer.write("openedFiles=");
+                for(File file : openedFiles) writer.write(file.getAbsolutePath() + ";/;");
 
-                    writer.newLine();
-                    writer.write("restoreLastSession=" + restoreLastSession.get());
+                writer.newLine();
+                if(openedFile != null) writer.write("openedFile=" + openedFile.getAbsolutePath());
+                else writer.write("openedFile=");
 
-                    writer.newLine();
-                    writer.write("openedFiles=");
-                    for(File file : openedFiles){
-                        writer.write(file.getAbsolutePath() + ";/;");
-                    }
+                writer.newLine();
+                writer.write("checkUpdates=" + checkUpdates.get());
 
-                    writer.newLine();
-                    if(openedFile != null){
-                        writer.write("openedFile=" + openedFile.getAbsolutePath());
-                    }else{
-                        writer.write("openedFile=");
-                    }
+                writer.newLine();
+                writer.write("defaultZoom=" + defaultZoom);
 
-                    writer.newLine();
-                    writer.write("removeElementInPreviousListWhenAddingToFavorites=" + removeElementInPreviousListWhenAddingToFavorites.get());
+                writer.newLine();
+                writer.write("zoomAnimations=" + zoomAnimations.get());
 
-                    writer.newLine();
-                    writer.write("showOnlyStartInTextsList=" + showOnlyStartInTextsList.get());
+                /////
 
-                    writer.newLine();
-                    writer.write("smallFontInTextsList=" + smallFontInTextsList.get());
+                writer.newLine();
+                writer.write("autoSave=" + autoSave.get());
 
-                    writer.flush();
-                    writer.close();
+                writer.newLine();
+                writer.write("regularSaving=" + regularSaving);
 
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
+                /////
+
+                writer.newLine();
+                writer.write("removeElementInPreviousListWhenAddingToFavorites=" + removeElementInPreviousListWhenAddingToFavorites.get());
+
+                writer.newLine();
+                writer.write("showOnlyStartInTextsList=" + showOnlyStartInTextsList.get());
+
+                writer.newLine();
+                writer.write("smallFontInTextsList=" + smallFontInTextsList.get());
+
+                /////
+
+                writer.flush();
+                writer.close();
+
+            }catch(IOException e){
+                e.printStackTrace();
             }
         }, "SettingsSaver").start();
 
+    }
+
+    public boolean isCheckUpdates() {
+        return checkUpdates.get();
+    }
+    public BooleanProperty checkUpdatesProperty() {
+        return checkUpdates;
+    }
+    public void setCheckUpdates(boolean checkUpdates) {
+        this.checkUpdates.set(checkUpdates);
+        saveSettings();
+    }
+
+    public boolean isZoomAnimations() {
+        return zoomAnimations.get();
+    }
+    public BooleanProperty zoomAnimationsProperty() {
+        return zoomAnimations;
+    }
+    public void setZoomAnimations(boolean zoomAnimations) {
+        this.zoomAnimations.set(zoomAnimations);
+        saveSettings();
     }
 
     public int getDefaultZoom(){
@@ -207,6 +272,7 @@ public class Settings {
         this.defaultZoom = zoom;
         saveSettings();
     }
+
     public void setAutoSaving(boolean autoSave){
         this.autoSave.set(autoSave);
         saveSettings();
@@ -249,7 +315,6 @@ public class Settings {
         openedFiles.remove(file);
         saveSettings();
     }
-
     public File getOpenedFile() {
         return openedFile;
     }
