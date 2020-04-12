@@ -16,6 +16,8 @@ module fr.themsou {
     requires java.xml;
     requires java.desktop;
 
+    requires jdk.crypto.ec;
+
     exports fr.themsou.main;
     exports fr.themsou.document;
     exports fr.themsou.document.render;

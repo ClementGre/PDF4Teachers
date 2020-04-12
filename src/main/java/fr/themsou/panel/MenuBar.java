@@ -79,8 +79,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeRadioMenuItem preferences1Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences2Update = createRadioMenuItem(TR.tr("Vérifier si une nouvelle version est disponible"), "wifi",
-			TR.tr("Fait apparaitre une fenêtre à chaque démarage si une nouvelle version est disponible."), true);
+	NodeRadioMenuItem preferences2Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
+			TR.tr("Fait apparaître une fenêtre à chaque démarage si une nouvelle version est disponible. Même si cette option est désactivé, l'application vérifira si une nouvelle version est disponible et mettra le menu À propos en couleur."), true);
 
 	NodeMenuItem preferences3Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "Ctrl+Molette",
 			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document. Vous pouvez aussi zoomer avec Ctrl+Molette"), 30);
@@ -417,11 +417,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		Label name = new Label(TR.tr("À propos"));
 		name.setAlignment(Pos.CENTER_LEFT);
-		name.setOnMouseClicked(new EventHandler<MouseEvent>() {
-			public void handle(MouseEvent event) {
-				new AboutWindow();
-			}
-		});
+		name.setOnMouseClicked(event -> new AboutWindow());
 		apropos.setGraphic(name);
 
 		// UI Style
