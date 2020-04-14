@@ -45,13 +45,13 @@ public class LBTextTab extends Tab {
 	// Séparés par ligne
 
 	private HBox combosBox = new HBox();
-	private ComboBox<String> fontCombo; String[] fontNames;
-	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
+	public ComboBox<String> fontCombo; String[] fontNames;
+	public ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
 
 	private HBox colorAndParamsBox = new HBox();
-	private ColorPicker colorPicker = new ColorPicker();
-	private ToggleButton boldBtn = new ToggleButton("");
-	private ToggleButton itBtn = new ToggleButton("");
+	public ColorPicker colorPicker = new ColorPicker();
+	public ToggleButton boldBtn = new ToggleButton("");
+	public ToggleButton itBtn = new ToggleButton("");
 
 	private TextArea txtArea = new TextArea();
 
@@ -243,40 +243,34 @@ public class LBTextTab extends Tab {
 		// TREE VIEW
 		Builders.setPosition(favoritesTextToggleOption, 0, 0, 30, 30, true);
 		favoritesTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
-		favoritesTextToggleOption.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue){
-				if(newValue){
-					favoritesText.getChildren().add(0, favoritesTextOptionsItem);
-					favoritesText.setExpanded(true);
-				}else{
-					favoritesText.getChildren().remove(0);
-				}
+		favoritesTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue){
+				favoritesText.getChildren().add(0, favoritesTextOptionsItem);
+				favoritesText.setExpanded(true);
+			}else{
+				favoritesText.getChildren().remove(0);
 			}
 		});
 
 		Builders.setPosition(lastsTextToggleOption, 0, 0, 30, 30, true);
 		lastsTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
-		lastsTextToggleOption.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue){
-					lastsText.getChildren().add(0, lastsTextOptionsItem);
-					lastsText.setExpanded(true);
-				}else{
-					lastsText.getChildren().remove(0);
-				}
+		lastsTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue){
+				lastsText.getChildren().add(0, lastsTextOptionsItem);
+				lastsText.setExpanded(true);
+			}else{
+				lastsText.getChildren().remove(0);
 			}
 		});
 
 		Builders.setPosition(onFileTextToggleOption, 0, 0, 30, 30, true);
 		onFileTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
-		onFileTextToggleOption.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			@Override public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-				if(newValue){
-					onFileText.getChildren().add(0, onFileTextOptionsItem);
-					onFileText.setExpanded(true);
-				}else{
-					onFileText.getChildren().remove(0);
-				}
+		onFileTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue){
+				onFileText.getChildren().add(0, onFileTextOptionsItem);
+				onFileText.setExpanded(true);
+			}else{
+				onFileText.getChildren().remove(0);
 			}
 		});
 
@@ -369,19 +363,15 @@ public class LBTextTab extends Tab {
 	}
 
 	public void selectItem(){
-		new Thread(new Runnable() {
-			@Override public void run() {
-				try{
-					Thread.sleep(50);
-					Platform.runLater(new Runnable() {
-						@Override public void run() {
-							String text = txtArea.getText();
-							txtArea.setText(text);
-							txtArea.positionCaret(txtArea.getText().length());
-						}
-					});
-				}catch(InterruptedException e){ e.printStackTrace();}
-			}
+		new Thread(() -> {
+			try{
+				Thread.sleep(50);
+				Platform.runLater(() -> {
+					String text = txtArea.getText();
+					txtArea.setText(text);
+					txtArea.positionCaret(txtArea.getText().length());
+				});
+			}catch(InterruptedException e){ e.printStackTrace();}
 		}, "selector").start();
 
 	}

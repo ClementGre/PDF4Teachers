@@ -88,7 +88,7 @@ public class Main extends Application {
 		hostServices = getHostServices();
 
 		Main.window = window;
-		BorderPane root = new BorderPane(); // = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("main.fxml")));
+		BorderPane root = new BorderPane();
 
 		Scene scene = new Scene(root, 1200, 675);
 
@@ -98,19 +98,16 @@ public class Main extends Application {
 		window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 		window.setScene(scene);
 		window.setResizable(true);
-		window.setOnCloseRequest(new EventHandler<javafx.stage.WindowEvent>() {
-			@Override
-			public void handle(javafx.stage.WindowEvent e) {
-				hasToClose = true;
-				if(!mainScreen.closeFile(!settings.isAutoSave())){
-					userData.saveData();
-					e.consume();
-					hasToClose = false;
-					return;
-				}
+		window.setOnCloseRequest(e -> {
+			hasToClose = true;
+			if (!mainScreen.closeFile(!settings.isAutoSave())) {
 				userData.saveData();
-				System.exit(0);
+				e.consume();
+				hasToClose = false;
+				return;
 			}
+			userData.saveData();
+			System.exit(0);
 		});
 
 //		SETUPS

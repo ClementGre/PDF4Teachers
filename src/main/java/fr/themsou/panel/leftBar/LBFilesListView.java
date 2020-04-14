@@ -27,8 +27,6 @@ import java.util.Optional;
 
 public class LBFilesListView {
 
-    public static File lastDirChoosed = new File(System.getProperty("user.home"));
-
     public LBFilesListView(ListView listView){
 
         listView.setOnMouseClicked((MouseEvent event) -> {

@@ -2,10 +2,9 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
+import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -17,7 +16,6 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import java.io.File;
@@ -50,9 +48,7 @@ public class ExportWindow {
         window.setMaxHeight(470);
         window.setTitle("PDF4Teachers - " + TR.tr("Exporter") + " (" + files.size() + " " + TR.tr("documents)"));
         window.setScene(scene);
-        window.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(javafx.stage.WindowEvent e){ window.close(); }
-        });
+        window.setOnCloseRequest(e -> window.close());
         new JMetro(root, Style.LIGHT);
 
         if(files.size() == 1){
@@ -78,7 +74,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
             HBox filePathPane = new HBox();
-                TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
+                TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : (files.get(0).getParentFile().getPath() + File.separator)));
                 filePath.setPromptText(TR.tr("Chemin du dossier d'exportation"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
@@ -131,34 +127,26 @@ public class ExportWindow {
         HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
         HBox.setMargin(export, new Insets(50, 10, 10, 5));
 
-        changePath.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
+        changePath.setOnAction(event -> {
 
-                final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(TR.tr("Selexionnez un dossier"));
-                chooser.setInitialDirectory(files.get(0).getParentFile());
+            final DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle(TR.tr("Selexionnez un dossier"));
+            chooser.setInitialDirectory(files.get(0).getParentFile());
 
-                File file = chooser.showDialog(Main.window);
-                if(file != null){
-                    filePath.setText(file.getAbsolutePath() + File.separator);
-                }
+            File file = chooser.showDialog(Main.window);
+            if(file != null){
+                filePath.setText(file.getAbsolutePath() + File.separator);
             }
         });
 
-        export.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
+        export.setOnAction(event -> {
 
-                if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
+            if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
 
-                startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                        erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  notesElements.isSelected(), drawElements.isSelected());
-            }
+            startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
+                    erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  notesElements.isSelected(), drawElements.isSelected());
         });
-        cancel.setOnAction(new EventHandler<ActionEvent>(){
-            @Override public void handle(ActionEvent event){
-                window.close();
-            }
-        });
+        cancel.setOnAction(event -> window.close());
 
     }
     public void setupComplexPanel(VBox root){
@@ -209,7 +197,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
         HBox filePathPane = new HBox();
-        TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
+        TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : (files.get(0).getParentFile().getPath() + File.separator)));
         filePath.setMinWidth(1);
         filePath.setMinHeight(30);
         HBox.setHgrow(filePath, Priority.ALWAYS);
@@ -272,37 +260,27 @@ public class ExportWindow {
         HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
         HBox.setMargin(export, new Insets(50, 10, 10, 5));
 
-        changePath.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
+        changePath.setOnAction(event -> {
 
-                final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(TR.tr("Selexionnez un dossier"));
-                chooser.setInitialDirectory(files.get(0).getParentFile());
+            final DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle(TR.tr("Selexionnez un dossier"));
+            chooser.setInitialDirectory(files.get(0).getParentFile());
 
-                File file = chooser.showDialog(Main.window);
-                if(file != null){
-                    filePath.setText(file.getAbsolutePath() + File.separator);
-                }
+            File file = chooser.showDialog(Main.window);
+            if(file != null){
+                filePath.setText(file.getAbsolutePath() + File.separator);
             }
         });
 
-        export.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent event) {
-
-                startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                        erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected());
-            }
-        });
-        cancel.setOnAction(new EventHandler<ActionEvent>(){
-            @Override public void handle(ActionEvent event){
-                window.close();
-            }
-        });
+        export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
+                erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected()));
+        cancel.setOnAction(event -> window.close());
 
     }
 
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
                                  boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
+        UserData.lastExportDir = directory;
         erase = eraseFile;
         int exported = 0;
 
