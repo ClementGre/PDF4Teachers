@@ -62,7 +62,9 @@ public class TextElement extends Text implements Element {
 		setTextOrigin(VPos.BOTTOM);
 		setFill(color);
 
-		setBoundsType(TextBoundsType.VISUAL);
+		setStyle("-fx-background-color: black;");
+
+		setBoundsType(TextBoundsType.LOGICAL);
 
 		if(page == null) return;
 		this.page = page;
@@ -186,11 +188,13 @@ public class TextElement extends Text implements Element {
 
 	public void checkLocation(double itemX, double itemY){
 
+		setBoundsType(TextBoundsType.VISUAL);
 		double linesHeight = getLayoutBounds().getHeight();
 		if(itemY < linesHeight) itemY = linesHeight;
 		if(itemY > page.getHeight()) itemY = page.getHeight();
 		if(itemX < 0) itemX = 0;
 		if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
+		setBoundsType(TextBoundsType.LOGICAL);
 
 		realX.set((int) (itemX / page.getWidth() * TextElement.GRID_WIDTH));
 		realY.set((int) (itemY / page.getHeight() * TextElement.GRID_HEIGHT));

@@ -3,6 +3,7 @@ package fr.themsou.document.render.export;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.scene.control.Alert;
@@ -61,9 +62,6 @@ public class ExportRenderer {
 
                     TextElement txtElement = (TextElement) element;
 
-                    // PARAMS
-                    txtElement.setBoundsType(TextBoundsType.LOGICAL);
-
                     // COLOR
                     Color color = (Color) txtElement.getFill();
                     contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
@@ -81,6 +79,8 @@ public class ExportRenderer {
                     int lineNumber = txtElement.getText().split("\\n").length;
                     double lineHeight = height / lineNumber;
 
+                    final double underscoreSize = 10.5 / 50.0 * txtElement.getFont().getSize(); // WHEN POLICE_SIZE = 50 : UNDERSCORE_HEIGHT = 9.5 (adapted to 10.5);
+
                     contentStream.beginText();
 
                     // ROTATE PAGES ADAPT
@@ -93,8 +93,9 @@ public class ExportRenderer {
                         break;
                     }
                     // CUSTOM STREAM
+
                     contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getFont().getSize());
-                    contentStream.newLineAtOffset((float) (txtElement.getRealX() / TextElement.GRID_WIDTH * pageWidth), (float) (pageHeight - txtElement.getRealY() / TextElement.GRID_HEIGHT * pageHeight + height));
+                    contentStream.newLineAtOffset(txtElement.getRealX() / TextElement.GRID_WIDTH * pageWidth, (float) (pageHeight - txtElement.getRealY() / TextElement.GRID_HEIGHT * pageHeight + height + underscoreSize));
 
                     // DRAW LINES
                     for(String text : txtElement.getText().split("\\n")){
