@@ -118,7 +118,7 @@ public class AboutWindow extends Stage {
             apiInfo.setAlignment(Pos.CENTER);
 
             HBox issueInfo = new HBox();
-                Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide sur GutHub"));
+                Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide ou signaler un Bug"));
                 issueName.setFont(new Font(17));
                 issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
             issueInfo.getChildren().addAll(issueName);

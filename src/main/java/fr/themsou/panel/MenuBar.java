@@ -63,8 +63,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memeNom",
 			TR.tr("Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction."), true);
 
-	NodeMenuItem fichier8SameNameNull = createMenuItem(TR.tr("Aucune édition trouvée"), "", "",
-			"");
+	MenuItem fichier8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
 	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", "Ctrl+E",
 			TR.tr("Créee un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments ajoutés."), true, false, 0);
@@ -113,7 +112,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public Menu apropos = new Menu();
 	Menu aide = new Menu(TR.tr("Aide"));
 	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide") + "     ");
-	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide sur GitHub") + "     ");
+	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug") + "     ");
 
 	public MenuBar(){
 		setup();
@@ -314,9 +313,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					}
 				});
 				i++;
-				if(i == 0) fichier8SameName.getItems().add(fichier8SameNameNull);
-				Builders.setMenuSize(fichier8SameName);
 			}
+			if(i == 0) fichier8SameName.getItems().add(fichier8SameNameNull);
+			Builders.setMenuSize(fichier8SameName);
 		});
 		fichier9Export.setOnAction((ActionEvent actionEvent) -> {
 
