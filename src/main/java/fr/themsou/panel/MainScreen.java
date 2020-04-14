@@ -88,6 +88,19 @@ public class MainScreen extends Pane {
 
 		zoomOperator = new AnimatedZoomOperator(pane, this);
 
+		addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
+			double zoom = e.getZoomFactor();
+			e.consume();
+			System.out.println("zoom");
+
+			if(zoom < 0){
+				zoomOperator.zoom(1+zoom/200, e.getSceneX(), e.getSceneY());
+			}else if(zoom > 0){
+				zoomOperator.zoom(1+zoom/200, e.getSceneX(), e.getSceneY());
+			}
+
+		});
+
 		addEventFilter(ScrollEvent.SCROLL, e -> {
 
 			e.consume();
