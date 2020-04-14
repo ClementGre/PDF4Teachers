@@ -89,8 +89,8 @@ public class PageRenderer extends Pane {
 
     public void updateShowStatus(){
 
-        boolean isUp = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) + (getHeight()*Main.mainScreen.pane.getScaleX()) < 0;
-        boolean isDown = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) > Main.mainScreen.getHeight();
+        boolean isUp = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) + (getHeight()*Main.mainScreen.pane.getScaleX()*2) < 0;
+        boolean isDown = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) - (getHeight()*Main.mainScreen.pane.getScaleX()) > Main.mainScreen.getHeight();
 
         if(!isUp && !isDown){
             setVisible(true);

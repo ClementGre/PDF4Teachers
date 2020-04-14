@@ -132,6 +132,7 @@ public class TextElement extends Text implements Element {
 			}
 		});
 
+
 		setOnMouseDragged(e -> {
 
 			double itemX = getLayoutX() + e.getX() - shiftX;

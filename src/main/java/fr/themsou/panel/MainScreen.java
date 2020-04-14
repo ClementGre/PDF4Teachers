@@ -109,9 +109,9 @@ public class MainScreen extends Pane {
 				ctrlDown = false;
 
 				if(e.getDeltaY() > 0){
-					zoomOperator.scrollUp(200);
+					zoomOperator.scrollUp(100);
 				}else if(e.getDeltaY() < 0){
-					zoomOperator.scrollDown(200);
+					zoomOperator.scrollDown(100);
 				}
 
 			}

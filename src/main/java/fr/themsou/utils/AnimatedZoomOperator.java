@@ -23,6 +23,10 @@ public class AnimatedZoomOperator {
     public ScrollBar vScrollBar = new ScrollBar();
     public ScrollBar hScrollBar = new ScrollBar();
 
+    private double aimTranslateY = 0;
+    private double aimTranslateX = 0;
+    private double aimScale = 0;
+
     public AnimatedZoomOperator(Pane pane, MainScreen mainScreen){
 
         this.pane = pane;
@@ -68,6 +72,7 @@ public class AnimatedZoomOperator {
             if(scrollableHeight <= 0){
                 vScrollBar.setVisible(false);
                 pane.setTranslateY(centerTranslationY());
+                aimTranslateY = pane.getTranslateY();
             }else{
                 if(!vScrollBar.isVisible()){
                     vScrollBar.setVisible(true);
@@ -77,6 +82,7 @@ public class AnimatedZoomOperator {
                     double translateY = -vScrollBar.getValue() * scrollableHeight + getPaneShiftY();
                     if(translateY != pane.getTranslateY()){
                         pane.setTranslateY(translateY);
+                        aimTranslateY = pane.getTranslateY();
                     }
                 }
             }
@@ -89,6 +95,7 @@ public class AnimatedZoomOperator {
             if(scrollableWidth <= 0){
                 hScrollBar.setVisible(false);
                 pane.setTranslateX(centerTranslationX());
+                aimTranslateX = pane.getTranslateX();
             }else{
                 if(!hScrollBar.isVisible()){
                     hScrollBar.setVisible(true);
@@ -98,6 +105,7 @@ public class AnimatedZoomOperator {
                     double translateX = -hScrollBar.getValue() * scrollableWidth + getPaneShiftX();
                     if(translateX != pane.getTranslateX()){
                         pane.setTranslateX(translateX);
+                        aimTranslateX = pane.getTranslateX();
                     }
                 }
             }
@@ -109,8 +117,9 @@ public class AnimatedZoomOperator {
         vScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
 
             double translateY = -newValue.doubleValue() * getScrollableHeight() + getPaneShiftY();
-            if(translateY != pane.getTranslateY()){
+            if(((int)translateY) != ((int)pane.getTranslateY())){
                 pane.setTranslateY(translateY);
+                aimTranslateY = pane.getTranslateY();
             }
         });
         // Modifie la valeur de la scrollBar lorsque translateY est modifié.
@@ -119,6 +128,7 @@ public class AnimatedZoomOperator {
             if(getScrollableHeight() <= 0){
                 vScrollBar.setVisible(false);
                 pane.setTranslateY(centerTranslationY());
+                aimTranslateY = pane.getTranslateY();
             }else{
                 vScrollBar.setVisible(true);
                 double vValue = (-newValue.doubleValue() + getPaneShiftY()) / getScrollableHeight();
@@ -132,8 +142,9 @@ public class AnimatedZoomOperator {
         hScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
 
             double translateX = -newValue.doubleValue() * getScrollableWidth() + getPaneShiftX();
-            if(translateX != pane.getTranslateX()){
+            if(((int)translateX) != ((int)pane.getTranslateX())){
                 pane.setTranslateX(translateX);
+                aimTranslateX = pane.getTranslateX();
             }
         });
         // Modifie la valeur de la scrollBar lorsque translateX est modifié.
@@ -142,6 +153,7 @@ public class AnimatedZoomOperator {
             if(getScrollableWidth() <= 0){
                 hScrollBar.setVisible(false);
                 pane.setTranslateX(centerTranslationX());
+                aimTranslateX = pane.getTranslateX();
             }else{
                 hScrollBar.setVisible(true);
                 double hValue = (-newValue.doubleValue() + getPaneShiftX()) / getScrollableWidth();
@@ -155,12 +167,15 @@ public class AnimatedZoomOperator {
         // Ce listener est appelé lorsque un nouveau document est chargé.
         pane.heightProperty().addListener((observable, oldValue, newValue) -> {
 
+            aimScale = pane.getScaleX();
+
             vScrollBar.setValue(1);
             hScrollBar.setValue(1);
 
             if(getScrollableHeight() <= 0){
                 vScrollBar.setVisible(false);
                 pane.setTranslateY(centerTranslationY());
+                aimTranslateY = pane.getTranslateY();
             }else{
                 vScrollBar.setVisible(true);
                 double vValue = (-newValue.doubleValue() + getPaneShiftY()) / getScrollableHeight();
@@ -171,6 +186,7 @@ public class AnimatedZoomOperator {
             if(getScrollableWidth() <= 0){
                 hScrollBar.setVisible(false);
                 pane.setTranslateX(centerTranslationX());
+                aimTranslateX = pane.getTranslateX();
             }else{
                 hScrollBar.setVisible(true);
                 double hValue = (-newValue.doubleValue() + getPaneShiftX()) / getScrollableWidth();
@@ -190,9 +206,17 @@ public class AnimatedZoomOperator {
     }
 
     public void zoom(double factor, double x, double y) {
+
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
+
+
         // determine scale
         double oldScale = pane.getScaleX();
-        double scale = Math.min(5, Math.max(oldScale * factor, 0.05));
+        double scale = Math.min(5, Math.max(aimScale * factor, 0.05));
         double f = (scale / oldScale) - 1;
 
         // determine offset that we will have to move the node
@@ -237,13 +261,18 @@ public class AnimatedZoomOperator {
 
         }
 
+        aimTranslateY = newTranslateY;
+        aimTranslateX = newTranslateX;
+        aimScale = scale;
+
         if(Main.settings.isZoomAnimations()){
+
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateXProperty(), newTranslateX)),
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY)),
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleXProperty(), scale)),
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.scaleYProperty(), scale))
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), newTranslateX)),
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY)),
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.scaleXProperty(), scale)),
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.scaleYProperty(), scale))
             );
             timeline.stop();
             isPlaying = true;
@@ -258,32 +287,47 @@ public class AnimatedZoomOperator {
     }
 
     public void scrollDown(int factor){
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
 
-        double newTranslateY = pane.getTranslateY() - factor;
+        double newTranslateY = aimTranslateY - factor;
         if(newTranslateY - getPaneShiftY() < -getScrollableHeight()) newTranslateY = -getScrollableHeight() + getPaneShiftY();
+
+        aimTranslateY = newTranslateY;
 
         if(Main.settings.isZoomAnimations()){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), aimTranslateY))
             );
             timeline.stop();
             isPlaying = true;
             timeline.play();
+
         }else{
-            pane.setTranslateY(newTranslateY);
+            pane.setTranslateY(aimTranslateY);
         }
     }
 
     public void scrollUp(int factor){
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
 
-        double newTranslateY = pane.getTranslateY() + factor;
+        double newTranslateY = aimTranslateY + factor;
         if(newTranslateY - getPaneShiftY() > 0) newTranslateY = getPaneShiftY();
+
+        aimTranslateY = newTranslateY;
 
         if(Main.settings.isZoomAnimations()){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(isPlaying ? 100 : 200), new KeyValue(pane.translateYProperty(), newTranslateY))
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY))
             );
             timeline.stop();
             isPlaying = true;
