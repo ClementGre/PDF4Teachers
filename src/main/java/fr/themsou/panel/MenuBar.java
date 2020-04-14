@@ -82,11 +82,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeRadioMenuItem preferences2Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarage si une nouvelle version est disponible. Même si cette option est désactivé, l'application vérifira si une nouvelle version est disponible et mettra le menu À propos en couleur."), true);
 
-	NodeMenuItem preferences3Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "Ctrl+Molette",
+	NodeMenuItem preferences3Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
 			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document. Vous pouvez aussi zoomer avec Ctrl+Molette"), 30);
 
-	NodeRadioMenuItem preferences4Animation = createRadioMenuItem(TR.tr("Animations lors d'un zoom ou défilement"), "cloud",
-			TR.tr("Fait des transitions fluides lors du zoom ou du défilement de la page. Il est possible de désactiver cette option si l'ordinateur a du mal a zoomer."), true);
+	NodeRadioMenuItem preferences4Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
+			TR.tr("Fait des transitions fluides lors du zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur a du mal a zoomer. Cette option est déconseillé aux utilisateurs de TrackPad."), true);
 
 
 

@@ -31,7 +31,8 @@ public class Settings {
         restoreLastSession.set(true); openedFiles = new ArrayList<>(); openedFile = null;
         checkUpdates.set(true);
         defaultZoom = 130;
-        zoomAnimations.set(true);
+        if(System.getProperty("os.name").equals("Mac OS X")) zoomAnimations.set(false);
+        else zoomAnimations.set(true);
 
         autoSave.set(false);
         regularSaving = -1;

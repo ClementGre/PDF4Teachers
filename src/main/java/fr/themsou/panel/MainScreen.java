@@ -99,20 +99,33 @@ public class MainScreen extends Pane {
 				if(getStatus() == Status.OPEN){
 
 					if(e.getDeltaY() < 0){
-						zoomOperator.zoom(0.8, e.getSceneX(), e.getSceneY());
+						zoomOperator.zoom(1+e.getDeltaY()/200, e.getSceneX(), e.getSceneY());
 					}else if(e.getDeltaY() > 0){
-						zoomOperator.zoom(1.2, e.getSceneX(), e.getSceneY());
+						zoomOperator.zoom(1+e.getDeltaY()/200, e.getSceneX(), e.getSceneY());
 					}
 					document.updateShowsStatus();
 				}
 			}else{ // SCROLL
 				ctrlDown = false;
 
-				if(e.getDeltaY() > 0){
-					zoomOperator.scrollUp(100);
-				}else if(e.getDeltaY() < 0){
-					zoomOperator.scrollDown(100);
+
+				if(e.getDeltaY() != 0){
+					if(e.getDeltaY() > 0){
+						zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5));
+					}else if(e.getDeltaY() < 0){
+						zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5));
+					}
 				}
+
+				if(e.getDeltaX() != 0){
+					if(e.getDeltaX() > 0){
+						zoomOperator.scrollRight((int) (e.getDeltaX() * 2.5));
+					}else if(e.getDeltaY() < 0){
+						zoomOperator.scrollLeft((int) (-e.getDeltaX() * 2.5));
+					}
+				}
+
+
 
 			}
 

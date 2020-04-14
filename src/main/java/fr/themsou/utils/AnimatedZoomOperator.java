@@ -265,7 +265,7 @@ public class AnimatedZoomOperator {
         aimTranslateX = newTranslateX;
         aimScale = scale;
 
-        if(Main.settings.isZoomAnimations()){
+        if(Main.settings.isZoomAnimations() && factor > 0.05){
 
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
@@ -298,7 +298,7 @@ public class AnimatedZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations()){
+        if(Main.settings.isZoomAnimations() && factor > 25){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), aimTranslateY))
@@ -324,7 +324,7 @@ public class AnimatedZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations()){
+        if(Main.settings.isZoomAnimations() && factor > 25){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY))
@@ -334,6 +334,56 @@ public class AnimatedZoomOperator {
             timeline.play();
         }else{
             pane.setTranslateY(newTranslateY);
+        }
+    }
+
+    public void scrollRight(int factor){
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
+
+        double newTranslateX = aimTranslateX - factor;
+        if(newTranslateX - getPaneShiftX() < -getScrollableWidth()) newTranslateX = -getScrollableWidth() + getPaneShiftX();
+
+        aimTranslateX = newTranslateX;
+
+        if(Main.settings.isZoomAnimations() && factor > 25){
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), newTranslateX))
+            );
+            timeline.stop();
+            isPlaying = true;
+            timeline.play();
+        }else{
+            pane.setTranslateX(newTranslateX);
+        }
+    }
+    public void scrollLeft(int factor){
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
+
+        double newTranslateX = aimTranslateX + factor;
+        if(newTranslateX - getPaneShiftX() > 0) newTranslateX = getPaneShiftX();
+
+        aimTranslateX = newTranslateX;
+
+        if(Main.settings.isZoomAnimations() && factor > 25){
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), aimTranslateX))
+            );
+            timeline.stop();
+            isPlaying = true;
+            timeline.play();
+
+        }else{
+            pane.setTranslateX(aimTranslateX);
         }
     }
 

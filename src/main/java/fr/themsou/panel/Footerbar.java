@@ -28,7 +28,7 @@ public class Footerbar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (Main.mainScreen.pane.getScaleX()*100) + "%", Main.mainScreen.pane.scaleXProperty()));
+		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (Main.mainScreen.pane.getScaleX()*100) + "% (Ctrl+Scroll)", Main.mainScreen.pane.scaleXProperty()));
 
 		switch (Main.leftBar.getSelectionModel().getSelectedIndex()){
 			case 0:
@@ -51,9 +51,6 @@ public class Footerbar extends AnchorPane {
 		}else{
 			rightInfo.setText(TR.tr("Aucun fichier ouvert"));
 		}
-
-
-
 	}
 
 	public void setup(){
@@ -82,11 +79,7 @@ public class Footerbar extends AnchorPane {
 		getChildren().add(middleInfo);
 		getChildren().add(rightInfo);
 
-		Main.leftBar.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Tab>() {
-			@Override public void changed(ObservableValue<? extends Tab> observable, Tab oldValue, Tab newValue) {
-				repaint();
-			}
-		});
+		Main.leftBar.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> repaint());
 
 	}
 }
