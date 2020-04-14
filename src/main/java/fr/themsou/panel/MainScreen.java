@@ -112,16 +112,16 @@ public class MainScreen extends Pane {
 				if(e.getDeltaY() != 0){
 					if(e.getDeltaY() > 0){
 						zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5));
-					}else if(e.getDeltaY() < 0){
+					}else{
 						zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5));
 					}
 				}
 
 				if(e.getDeltaX() != 0){
 					if(e.getDeltaX() > 0){
-						zoomOperator.scrollRight((int) (e.getDeltaX() * 2.5));
-					}else if(e.getDeltaY() < 0){
-						zoomOperator.scrollLeft((int) (-e.getDeltaX() * 2.5));
+						zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5));
+					}else{
+						zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5));
 					}
 				}
 
