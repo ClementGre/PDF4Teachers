@@ -59,7 +59,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "snapshot 1.0.3";
+	public static final String VERSION = "1.0.3";
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
