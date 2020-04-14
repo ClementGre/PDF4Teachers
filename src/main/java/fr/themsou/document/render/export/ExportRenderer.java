@@ -71,7 +71,7 @@ public class ExportRenderer {
                     if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
                     boolean italic = false;
                     if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
-                    InputStream fontFile = getClass().getResourceAsStream("/fonts/" + TextElement.getFontPath(txtElement.getFont().getFamily(), italic, bold));
+                    InputStream fontFile = TextElement.getFontFile(txtElement.getFont().getFamily(), italic, bold);
                     txtElement.setFont(TextElement.getFont(txtElement.getFont().getFamily(), italic, bold, txtElement.getFont().getSize() / 596.0 * pageWidth));
 
                     // LINE HEIGHT VARIABLES
@@ -79,7 +79,7 @@ public class ExportRenderer {
                     int lineNumber = txtElement.getText().split("\\n").length;
                     double lineHeight = height / lineNumber;
 
-                    final double underscoreSize = 10.5 / 50.0 * txtElement.getFont().getSize(); // WHEN POLICE_SIZE = 50 : UNDERSCORE_HEIGHT = 9.5 (adapted to 10.5);
+                    final double underscoreSize = 11 / 50.0 * txtElement.getFont().getSize(); // WHEN POLICE_SIZE = 50 : UNDERSCORE_HEIGHT = 9.5 (adapted to 11);
 
                     contentStream.beginText();
 

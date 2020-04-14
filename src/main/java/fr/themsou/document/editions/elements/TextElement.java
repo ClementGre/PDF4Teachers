@@ -307,20 +307,39 @@ public class TextElement extends Text implements Element {
 
 	public static Font getFont(String family, boolean italic, boolean bold, double size){
 
-		InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + getFontPath(family, italic, bold));
-
-		if(fontFile == null) fontFile = TextElement.class.getResourceAsStream("/fonts/" + getFontPath(family, italic, false));
-
-		return Font.loadFont(fontFile, size);
+		return Font.loadFont(getFontFile(family, italic, bold), size);
 	}
-	public static String getFontPath(String family, boolean italic, boolean bold){
+	public static InputStream getFontFile(String family, boolean italic, boolean bold){
+
+		String fileFontName = getFontFileName(italic, bold);
+
+		InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
+
+		while(fontFile == null){
+			if(fileFontName.equals("bold") || fileFontName.equals("italic")){
+				fileFontName = "regular";
+			}else if(fileFontName.equals("bolditalic")){
+				if(TextElement.class.getResourceAsStream("/fonts/" + family + "/italic.ttf") != null) fileFontName = "italic";
+				else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) fileFontName = "bold";
+				else fileFontName = "regular";
+			}else{
+				System.out.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
+				return null;
+			}
+
+			fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
+		}
+
+		return fontFile;
+	}
+	public static String getFontFileName(boolean italic, boolean bold){
 
 		String fileName = "";
 		if(bold) fileName += "bold";
 		if(italic) fileName += "italic";
 		if(fileName.isEmpty()) fileName = "regular";
 
-		return family + "/" + fileName + ".ttf";
+		return fileName;
 	}
 
 	public static FontWeight getFontWeight(Font font) {

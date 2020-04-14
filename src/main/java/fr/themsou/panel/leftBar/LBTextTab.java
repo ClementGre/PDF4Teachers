@@ -102,7 +102,7 @@ public class LBTextTab extends Tab {
 
 		optionPane.setMinWidth(200);
 
-		fontCombo = new ComboBox<>(FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Times New Roman"));
+		fontCombo = new ComboBox<>(FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Calibri", "Calibri Light", "Roboto", "Times New Roman", "Segoe Print", "Arrows"));
 		fontCombo.setCellFactory((ListView<String> stringListView) -> new ShapeCell());
 		//fontCombo.setEditable(true);
 
