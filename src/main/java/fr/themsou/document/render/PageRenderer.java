@@ -89,14 +89,24 @@ public class PageRenderer extends Pane {
 
     public void updateShowStatus(){
 
-        boolean isUp = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) + (getHeight()*Main.mainScreen.pane.getScaleX()*2) < 0;
-        boolean isDown = Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + (getTranslateY()*Main.mainScreen.pane.getScaleX()) - (getHeight()*Main.mainScreen.pane.getScaleX()) > Main.mainScreen.getHeight();
+        int pageHeight = (int) (getHeight()*Main.mainScreen.pane.getScaleX());
+        int upDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX() + pageHeight);
+        int downDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX());
 
-        if(!isUp && !isDown){
+        if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < Main.mainScreen.getHeight()){
+            System.out.println("show : " + page);
             setVisible(true);
             if(status == PageStatus.HIDE) render();
         }else{
             setVisible(false);
+            if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > Main.mainScreen.getHeight()){
+                System.out.println("hide : " + page);
+                getChildren().remove(renderView);
+                status = PageStatus.HIDE;
+                for(Node node : getChildren()){
+                    node.setVisible(false);
+                }
+            }
         }
 
     }

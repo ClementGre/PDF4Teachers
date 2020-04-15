@@ -133,7 +133,7 @@ public class TextElement extends Text implements Element {
 			}
 		});
 		setOnMouseClicked(e -> {
-			if(e.getClickCount() == 2){
+			if(e.getClickCount() == 2 && false){
 				TextArea textArea = new TextArea(getText());
 				textArea.setLayoutX(getLayoutX());
 				textArea.setLayoutY(getLayoutY() - getLayoutBounds().getHeight());

@@ -59,7 +59,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "1.0.3";
+	public static final String VERSION = "snapshot 1.2.0";
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {
@@ -192,16 +192,18 @@ public class Main extends Application {
 				if(settings.getOpenedFile() != null){
 					mainScreen.openFile(settings.getOpenedFile());
 				}
+			});
 
-				if(UpdateWindow.checkVersion()){
+			if(UpdateWindow.checkVersion()){
+				Platform.runLater(() -> {
 					menuBar.apropos.setStyle("-fx-background-color: #ba6800;");
 					Tooltip.install(menuBar.apropos.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
 					if(settings.isCheckUpdates()){
 						new UpdateWindow();
 					}
-				}
-			});
+				});
+			}
 		}).start();
 
 	}
