@@ -94,13 +94,11 @@ public class PageRenderer extends Pane {
         int downDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX());
 
         if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < Main.mainScreen.getHeight()){
-            System.out.println("show : " + page);
             setVisible(true);
             if(status == PageStatus.HIDE) render();
         }else{
             setVisible(false);
             if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > Main.mainScreen.getHeight()){
-                System.out.println("hide : " + page);
                 getChildren().remove(renderView);
                 status = PageStatus.HIDE;
                 for(Node node : getChildren()){

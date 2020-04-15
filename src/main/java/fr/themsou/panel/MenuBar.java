@@ -30,9 +30,11 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -401,10 +403,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			try{
 				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
-				File doc = new File(Main.dataFolder + "" +
-						"Documentation - PDF4Teachers.pdf");
+				File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
 				if(!doc.exists()) Files.copy(docRes, doc.getAbsoluteFile().toPath());
 
+				doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
 				Main.mainScreen.openFile(doc);
 
 			}catch(IOException ex){ ex.printStackTrace(); }
