@@ -3,28 +3,20 @@ package fr.themsou.document.render.export;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.TextBoundsType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
-import org.apache.pdfbox.util.Matrix;
-
+import org.apache.pdfbox.pdmodel.common.PDStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.FileInputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -38,7 +30,10 @@ public class ExportRenderer {
         if(onlyEdited && !editFile.exists()) return 2;
 
         PDDocument doc = PDDocument.load(file);
+        new PDStream(doc, new FileInputStream(file), COSName.FLATE_DECODE);
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
+
+        TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
 
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
@@ -53,59 +48,13 @@ public class ExportRenderer {
                 pageHeight = page.getBleedBox().getWidth();
                 pageWidth = page.getBleedBox().getHeight();
             }
+
             for(Element element : elements){
 
                 if(element.getPageNumber() != pageNumber) continue;
 
                 if(element instanceof TextElement){
-                    if(!textElements) continue;
-
-                    TextElement txtElement = (TextElement) element;
-
-                    // COLOR
-                    Color color = (Color) txtElement.getFill();
-                    contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
-
-                    // FONT
-                    boolean bold = false;
-                    if (TextElement.getFontWeight(txtElement.getFont()) == FontWeight.BOLD) bold = true;
-                    boolean italic = false;
-                    if (TextElement.getFontPosture(txtElement.getFont()) == FontPosture.ITALIC) italic = true;
-                    InputStream fontFile = TextElement.getFontFile(txtElement.getFont().getFamily(), italic, bold);
-                    txtElement.setFont(TextElement.getFont(txtElement.getFont().getFamily(), italic, bold, txtElement.getFont().getSize() / 596.0 * pageWidth));
-
-                    // LINE HEIGHT VARIABLES
-                    double height = txtElement.getLayoutBounds().getHeight();
-                    int lineNumber = txtElement.getText().split("\\n").length;
-                    double lineHeight = height / lineNumber;
-
-                    final double underscoreSize = 11 / 50.0 * txtElement.getFont().getSize(); // WHEN POLICE_SIZE = 50 : UNDERSCORE_HEIGHT = 9.5 (adapted to 11);
-
-                    contentStream.beginText();
-
-                    // ROTATE PAGES ADAPT
-                    switch(page.getRotation()){
-                        case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageHeight, 0));
-                        break;
-                        case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageWidth, pageHeight));
-                        break;
-                        case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageWidth));
-                        break;
-                    }
-                    // CUSTOM STREAM
-
-                    contentStream.setFont(PDTrueTypeFont.loadTTF(doc, fontFile), (float) txtElement.getFont().getSize());
-                    contentStream.newLineAtOffset(txtElement.getRealX() / TextElement.GRID_WIDTH * pageWidth, (float) (pageHeight - txtElement.getRealY() / TextElement.GRID_HEIGHT * pageHeight + height + underscoreSize));
-
-                    // DRAW LINES
-                    for(String text : txtElement.getText().split("\\n")){
-
-                        float shiftY = (float) -lineHeight;
-                        contentStream.newLineAtOffset(0, shiftY);
-                        contentStream.showText(text);
-                    }
-                    contentStream.endText();
-
+                    if(textElements) textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight);
                 }/*else if(element instanceof NoteElement){
                     if(!notesElements) continue;
 
@@ -114,7 +63,7 @@ public class ExportRenderer {
 
                 }*/
             }
-            //contentStream.restoreGraphicsState();
+
             contentStream.close();
         }
 
