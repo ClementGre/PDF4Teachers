@@ -210,9 +210,8 @@ public class MainScreen extends Pane {
 		pane.setScaleX(Main.settings.getDefaultZoom()/100.0);
 		pane.setScaleY(Main.settings.getDefaultZoom()/100.0);
 
-		selected.set(null);
-
 		status.set(Status.CLOSED);
+		selected.set(null);
 
 		repaint();
 		Main.footerBar.repaint();

@@ -1,7 +1,7 @@
 package fr.themsou.utils;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.NoDisplayTextElement;
+import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import java.io.File;
 import java.util.Comparator;
 import java.util.List;
@@ -58,9 +58,9 @@ public class Sorter {
 
     // ELEMENT SORTING
 
-    public static List<NoDisplayTextElement> sortElementsByDate(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByDate(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return ((element1.getCreationDate()-999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate()-999999999999L) + element2.getText())*-1;
                 return ((element1.getCreationDate()-999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate()-999999999999L) + element2.getText());
@@ -68,9 +68,9 @@ public class Sorter {
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsByName(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByName(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return element1.getText().compareToIgnoreCase(element2.getText())*-1;
                 return element1.getText().compareToIgnoreCase(element2.getText());
@@ -78,9 +78,9 @@ public class Sorter {
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsByUtils(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByUtils(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return ((element1.getUses()-99999) + element1.getText()).compareToIgnoreCase((element2.getUses()-99999) + element2.getText())*-1;
                 return ((element1.getUses()-99999) + element1.getText()).compareToIgnoreCase((element2.getUses()-99999) + element2.getText());
@@ -88,9 +88,9 @@ public class Sorter {
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsByPolice(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByPolice(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText()))*-1;
                 return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText()));
@@ -98,9 +98,9 @@ public class Sorter {
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsBySize(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsBySize(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return ((element1.getFont().getSize()-999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize()-999.0) + element2.getText())*-1;
                 return ((element1.getFont().getSize()-999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize()-999.0) + element2.getText());
@@ -108,18 +108,18 @@ public class Sorter {
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsByColor(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByColor(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
                 if(!order) return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText()))*-1;
                 return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText()));
             }
         });
         return elements;
     }
-    public static List<NoDisplayTextElement> sortElementsByCorePosition(List<NoDisplayTextElement> elements, boolean order){
-        elements.sort(new Comparator<NoDisplayTextElement>() {
-            @Override public int compare(NoDisplayTextElement element1, NoDisplayTextElement element2){
+    public static List<TextTreeItem> sortElementsByCorePosition(List<TextTreeItem> elements, boolean order){
+        elements.sort(new Comparator<TextTreeItem>() {
+            @Override public int compare(TextTreeItem element1, TextTreeItem element2){
 
                 if(!order) return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999));
                 return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999))*-1;

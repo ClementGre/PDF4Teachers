@@ -1,4 +1,4 @@
-package fr.themsou.panel.leftBar;
+package fr.themsou.panel.leftBar.notes;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
@@ -18,9 +18,7 @@ public class LBNoteTab extends Tab {
     public VBox pane = new VBox();
     public VBox optionPane = new VBox();
 
-    // TREE VIEW
-    public TreeView treeView = new TreeView<>();
-    public TreeItem<String> treeViewRoot = new TreeItem<>();
+    NoteTreeView treeView;
 
     public LBNoteTab(){
         setClosable(false);
@@ -30,7 +28,29 @@ public class LBNoteTab extends Tab {
 
         setup();
 
+        treeView = new NoteTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);
+
+        NoteTreeItem sub = new NoteTreeItem();
+        sub.getChildren().add(new NoteTreeItem());
+        sub.getChildren().add(new NoteTreeItem());
+        sub.getChildren().add(new NoteTreeItem());
+
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(sub);
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
+        treeView.getRoot().getChildren().add(new NoteTreeItem());
 
     }
 

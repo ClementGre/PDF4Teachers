@@ -1,8 +1,8 @@
-package fr.themsou.document.editions.elements;
+package fr.themsou.panel.leftBar.texts;
 
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.LBTextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
@@ -33,7 +33,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.regex.Pattern;
 
-public class NoDisplayTextElement extends TreeItem{
+public class TextTreeItem extends TreeItem{
 
 	private ObjectProperty<Font> font = new SimpleObjectProperty<>();
 	private String text;
@@ -46,8 +46,6 @@ public class NoDisplayTextElement extends TreeItem{
 	public static final int FAVORITE_TYPE = 1;
 	public static final int LAST_TYPE = 2;
 	public static final int ONFILE_TYPE = 3;
-
-	private NoDisplayTextElement thisObject = this;
 
 	// Graphics items
 	HBox pane = new HBox();
@@ -71,7 +69,7 @@ public class NoDisplayTextElement extends TreeItem{
 	};
 
 
-	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate) {
+	public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate) {
 		this.font.set(font);
 		this.text = text;
 		this.color.set(color);
@@ -81,7 +79,7 @@ public class NoDisplayTextElement extends TreeItem{
 
 		setup();
 	}
-	public NoDisplayTextElement(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
+	public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
 		this.font.set(font);
 		this.text = text;
 		this.color.set(color);
@@ -94,7 +92,7 @@ public class NoDisplayTextElement extends TreeItem{
 		fontProperty().bind(core.fontProperty());
 		core.textProperty().addListener(textChangeListener);
 		core.fillProperty().addListener(colorChangeListener);
-		if(type == NoDisplayTextElement.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
+		if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
 
 
 		setup();
@@ -103,14 +101,14 @@ public class NoDisplayTextElement extends TreeItem{
 	public void setup(){
 
 		// Setup les éléments graphiques
-		menu = LBTextTreeView.getNewMenu(this);
+		menu = TextTreeView.getNewMenu(this);
 
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 				addToDocument();
-				if(getType() == NoDisplayTextElement.FAVORITE_TYPE){
+				if(getType() == TextTreeItem.FAVORITE_TYPE){
 					Main.lbTextTab.favoritesTextSortManager.simulateCall();
-				}else if(getType() == NoDisplayTextElement.LAST_TYPE){
+				}else if(getType() == TextTreeItem.LAST_TYPE){
 					Main.lbTextTab.lastsTextSortManager.simulateCall();
 				}
 			}
@@ -200,8 +198,8 @@ public class NoDisplayTextElement extends TreeItem{
 	@Override
 	public boolean equals(Object v){
 
-		if(v instanceof NoDisplayTextElement){
-			NoDisplayTextElement element = (NoDisplayTextElement) v;
+		if(v instanceof TextTreeItem){
+			TextTreeItem element = (TextTreeItem) v;
 			if(element.type == type && element.text.equals(text) && element.color.hashCode() == color.hashCode()){
 				if(element.font.get().getStyle().equals(font.get().getStyle()) && element.font.get().getSize() == font.get().getSize() && element.getFont().getFamily().equals(font.get().getFamily())){
 					return true;
@@ -227,7 +225,7 @@ public class NoDisplayTextElement extends TreeItem{
 	public TextElement toRealTextElement(int x, int y, int page){
 		return new TextElement(x, y, font.get(), text, color.get(), page, Main.mainScreen.document.pages.get(page));
 	}
-	public static NoDisplayTextElement readDataAndGive(DataInputStream reader, int type) throws IOException {
+	public static TextTreeItem readDataAndGive(DataInputStream reader, int type) throws IOException {
 
 		double fontSize = reader.readFloat();
 		boolean isBold = reader.readBoolean();
@@ -242,7 +240,7 @@ public class NoDisplayTextElement extends TreeItem{
 
 		Font font = TextElement.getFont(fontName, isBold, isItalic, (int) fontSize);
 
-		return new NoDisplayTextElement(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
+		return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
 
 	}
 
@@ -265,7 +263,7 @@ public class NoDisplayTextElement extends TreeItem{
 		fontProperty().unbind();
 		core.textProperty().removeListener(textChangeListener);
 		core.fillProperty().removeListener(colorChangeListener);
-		if(type == NoDisplayTextElement.ONFILE_TYPE) core.setOnMouseReleased(null);
+		if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(null);
 
 		this.core = null;
 		updateIcon();

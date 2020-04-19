@@ -1,6 +1,5 @@
-package fr.themsou.panel.leftBar;
+package fr.themsou.panel.leftBar.texts;
 
-import fr.themsou.document.editions.elements.NoDisplayTextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
@@ -14,10 +13,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 
-public class LBTextTreeView {
+public class TextTreeView {
 
 
-    public LBTextTreeView(TreeView treeView){
+    public TextTreeView(TreeView treeView){
 
         treeView.setCellFactory(new Callback<TreeView, TreeCell>() {
             @Override public TreeCell call(TreeView param) {
@@ -87,8 +86,8 @@ public class LBTextTreeView {
                             return;
                         }
                         // TextElement
-                        if(getTreeItem() instanceof NoDisplayTextElement){
-                            ((NoDisplayTextElement) getTreeItem()).updateCell(this);
+                        if(getTreeItem() instanceof TextTreeItem){
+                            ((TextTreeItem) getTreeItem()).updateCell(this);
                             return;
                         }
 
@@ -127,8 +126,8 @@ public class LBTextTreeView {
             @Override public void handle(ActionEvent e) {
                 if(favorites){
                     for(TreeItem<String> element : Main.lbTextTab.favoritesText.getChildren()){
-                        if(element instanceof NoDisplayTextElement){
-                            ((NoDisplayTextElement) element).setUses(0);
+                        if(element instanceof TextTreeItem){
+                            ((TextTreeItem) element).setUses(0);
                         }
                     }
                     if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
@@ -136,8 +135,8 @@ public class LBTextTreeView {
                     }
                 }else{
                     for(TreeItem<String> element : Main.lbTextTab.lastsText.getChildren()){
-                        if(element instanceof NoDisplayTextElement){
-                            ((NoDisplayTextElement) element).setUses(0);
+                        if(element instanceof TextTreeItem){
+                            ((TextTreeItem) element).setUses(0);
                         }
                     }
                     if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
@@ -150,7 +149,7 @@ public class LBTextTreeView {
         return menu;
     }
 
-    public static ContextMenu getNewMenu(NoDisplayTextElement element){
+    public static ContextMenu getNewMenu(TextTreeItem element){
 
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter"), -1, false);
@@ -167,38 +166,38 @@ public class LBTextTreeView {
 
         // Ajouter les items en fonction du type
         menu.getItems().addAll(item1, item2);
-        if(element.getType() != NoDisplayTextElement.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
-        if(element.getType() == NoDisplayTextElement.ONFILE_TYPE) menu.getItems().add(item4); // onFile
-        if(element.getType() == NoDisplayTextElement.LAST_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
+        if(element.getType() != TextTreeItem.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
+        if(element.getType() == TextTreeItem.ONFILE_TYPE) menu.getItems().add(item4); // onFile
+        if(element.getType() == TextTreeItem.LAST_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
 
         Builders.setMenuSize(menu);
 
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
             element.addToDocument();
-            if(element.getType() == NoDisplayTextElement.FAVORITE_TYPE){
+            if(element.getType() == TextTreeItem.FAVORITE_TYPE){
                 Main.lbTextTab.favoritesTextSortManager.simulateCall();
-            }else if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+            }else if(element.getType() == TextTreeItem.LAST_TYPE){
                 Main.lbTextTab.lastsTextSortManager.simulateCall();
             }
         });
         item2.setOnAction((e) -> {
-            if(element.getType() == NoDisplayTextElement.ONFILE_TYPE){
+            if(element.getType() == TextTreeItem.ONFILE_TYPE){
                 element.getCore().delete();
             }else{
                 Main.lbTextTab.removeSavedElement(element);
             }
         });
         item3.setOnAction((e) -> {
-            Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
-            if(element.getType() == NoDisplayTextElement.LAST_TYPE){
+            Main.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
+            if(element.getType() == TextTreeItem.LAST_TYPE){
                 if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
                     Main.lbTextTab.removeSavedElement(element);
                 }
             }
         });
         item4.setOnAction((e) -> {
-            Main.lbTextTab.addSavedElement(new NoDisplayTextElement(element.getFont(), element.getText(), element.getColor(), NoDisplayTextElement.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+            Main.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.LAST_TYPE, 0, System.currentTimeMillis()/1000));
         });
         item5.setOnAction((e) -> {
             element.unLink();

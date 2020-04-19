@@ -1,9 +1,7 @@
 package fr.themsou.main;
 
-import fr.themsou.document.editions.elements.NoDisplayTextElement;
-import javafx.scene.chart.PieChart;
+import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import javafx.scene.control.TreeItem;
-import javafx.scene.paint.Color;
 
 import java.io.*;
 
@@ -50,12 +48,12 @@ public class UserData {
                         break;
                         case DataType.TEXT_ELEMENT_FAVORITE: // Favorite TextElement
                             try{
-                                Main.lbTextTab.favoritesText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.FAVORITE_TYPE));
+                                Main.lbTextTab.favoritesText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.FAVORITE_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LAST: // Last TextElement
                             try{
-                                Main.lbTextTab.lastsText.getChildren().add(NoDisplayTextElement.readDataAndGive(reader, NoDisplayTextElement.LAST_TYPE));
+                                Main.lbTextTab.lastsText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.LAST_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                     }
@@ -78,16 +76,16 @@ public class UserData {
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, false)));
 
             for(TreeItem<String> item : Main.lbTextTab.favoritesText.getChildren()){
-                if(item instanceof  NoDisplayTextElement){
+                if(item instanceof TextTreeItem){
                     writer.writeInt(DataType.TEXT_ELEMENT_FAVORITE);
-                    ((NoDisplayTextElement) item).writeData(writer);
+                    ((TextTreeItem) item).writeData(writer);
                 }
             }
 
             for(TreeItem<String> item : Main.lbTextTab.lastsText.getChildren()){
-                if(item instanceof  NoDisplayTextElement){
+                if(item instanceof TextTreeItem){
                     writer.writeInt(DataType.TEXT_ELEMENT_LAST);
-                    ((NoDisplayTextElement) item).writeData(writer);
+                    ((TextTreeItem) item).writeData(writer);
                 }
             }
 

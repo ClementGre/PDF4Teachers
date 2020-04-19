@@ -4,41 +4,27 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.invoke.VarHandle;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
-import fr.themsou.utils.TextWrapper;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.*;
-import javafx.util.Duration;
-import jfxtras.styles.jmetro.JMetro;
-
-import javax.swing.*;
 
 public class TextElement extends Text implements Element {
 
@@ -117,8 +103,8 @@ public class TextElement extends Text implements Element {
 			page1.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		});
-		item3.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, true)));
-		item4.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(NoDisplayTextElement.FAVORITE_TYPE, true)));
+		item3.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true)));
+		item4.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.FAVORITE_TYPE, true)));
 
 		setOnMousePressed(e -> {
 			e.consume();
@@ -242,9 +228,9 @@ public class TextElement extends Text implements Element {
 		Edition.setUnsave();
 	}
 
-	public NoDisplayTextElement toNoDisplayTextElement(int type, boolean hasCore){
-		if(hasCore) return new NoDisplayTextElement(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
-		else return new NoDisplayTextElement(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
+	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
+		if(hasCore) return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
+		else return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
 	}
 	@Override
 	public void delete() {
