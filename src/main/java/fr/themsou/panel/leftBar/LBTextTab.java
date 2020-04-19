@@ -45,13 +45,13 @@ public class LBTextTab extends Tab {
 	// Séparés par ligne
 
 	private HBox combosBox = new HBox();
-	public ComboBox<String> fontCombo; String[] fontNames;
-	public ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
+	private ComboBox<String> fontCombo; String[] fontNames;
+	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
 
 	private HBox colorAndParamsBox = new HBox();
-	public ColorPicker colorPicker = new ColorPicker();
-	public ToggleButton boldBtn = new ToggleButton("");
-	public ToggleButton itBtn = new ToggleButton("");
+	private ColorPicker colorPicker = new ColorPicker();
+	private ToggleButton boldBtn = new ToggleButton("");
+	private ToggleButton itBtn = new ToggleButton("");
 
 	private TextArea txtArea = new TextArea();
 
@@ -81,6 +81,14 @@ public class LBTextTab extends Tab {
 	public ToggleButton onFileTextToggleOption = new ToggleButton("");
 	public GridPane onFileTextOptions = new GridPane();
 	public SortManager onFileTextSortManager;
+
+	public boolean isNew = false;
+
+	public String lastFont = "Arial";
+	public int lastFontSize = 14;
+	public String lastColor = "#000000";
+	public boolean lastBold = false;
+	public boolean lastItalic = false;
 
 	// OTHER
 
@@ -112,30 +120,45 @@ public class LBTextTab extends Tab {
 		fontCombo.getSelectionModel().select("Arial");
 		fontCombo.setMaxHeight(25);
 		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+			if(isNew) lastFont = newValue;
+		});
 
 		Builders.setHBoxPosition(sizeCombo, 95, 30, 2.5);
 		sizeCombo.setStyle("-fx-font-size: 13");
 		sizeCombo.setCursor(Cursor.HAND);
 		sizeCombo.getSelectionModel().select(7);
 		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+			if(isNew) lastFontSize = newValue;
+		});
 
 		Builders.setHBoxPosition(colorPicker, -1, 30, 2.5);
 		colorPicker.setStyle("-fx-font-size: 13");
 		colorPicker.setCursor(Cursor.HAND);
 		colorPicker.setValue(Color.BLACK);
 		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+			if(isNew) lastColor = newValue.toString();
+		});
 
 		Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
 		boldBtn.setCursor(Cursor.HAND);
 		boldBtn.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Bold.png")+"", 0, 0));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(isNew) lastBold = newValue;
+		});
 
 		Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
 		itBtn.setFont(Font.font("Arial", FontPosture.ITALIC, 20));
 		itBtn.setCursor(Cursor.HAND);
 		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Italic.png")+"", 0, 0));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(isNew) lastItalic = newValue;
+		});
 
 		Builders.setHBoxPosition(txtArea, -1, 30, 0);
 		txtArea.setStyle("-fx-font-size: 13");
@@ -161,6 +184,7 @@ public class LBTextTab extends Tab {
 
 
 		Main.mainScreen.selectedProperty().addListener((ObservableValue<? extends Element> observable, Element oldElement, Element newElement) -> {
+			isNew = false;
 			if(oldElement != null){
 				if(oldElement instanceof TextElement){
 					TextElement current = (TextElement) oldElement;
@@ -220,16 +244,22 @@ public class LBTextTab extends Tab {
 		newBtn.setOnMouseReleased((MouseEvent mouseEvent) -> {
 
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
-			if(Main.mainScreen.document.getCurrentPage() != -1)
-				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+			if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
+			Main.mainScreen.setSelected(null);
+
+			fontCombo.getSelectionModel().select(lastFont);
+			sizeCombo.getSelectionModel().select((Integer) lastFontSize);
+			colorPicker.setValue(Color.valueOf(lastColor));
+			boldBtn.setSelected(lastBold);
+			itBtn.setSelected(lastItalic);
 
 			TextElement current = new TextElement(30, (int) (page.mouseY * TextElement.GRID_HEIGHT / page.getHeight()), getFont(),
 					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
-
 			page.addElement(current, true);
-			Main.mainScreen.selectedProperty().setValue(current);
+			Main.mainScreen.setSelected(current);
+			isNew = true;
 
 			txtArea.setText("");
 			addSavedElement(current.toNoDisplayTextElement(NoDisplayTextElement.LAST_TYPE, true));

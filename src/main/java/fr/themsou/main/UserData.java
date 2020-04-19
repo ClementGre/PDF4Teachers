@@ -40,11 +40,11 @@ public class UserData {
                             try{
                                 lastOpenDir = new File(reader.readUTF());
                                 lastExportDir = new File(reader.readUTF());
-                                Main.lbTextTab.fontCombo.getSelectionModel().select(reader.readUTF());
-                                Main.lbTextTab.sizeCombo.getSelectionModel().select((Integer) reader.readInt());
-                                Main.lbTextTab.colorPicker.setValue(Color.valueOf(reader.readUTF()));
-                                Main.lbTextTab.boldBtn.setSelected(reader.readBoolean());
-                                Main.lbTextTab.itBtn.setSelected(reader.readBoolean());
+                                Main.lbTextTab.lastFont = reader.readUTF();
+                                Main.lbTextTab.lastFontSize = reader.readInt();
+                                Main.lbTextTab.lastColor = reader.readUTF();
+                                Main.lbTextTab.lastBold = reader.readBoolean();
+                                Main.lbTextTab.lastItalic = reader.readBoolean();
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
@@ -96,11 +96,11 @@ public class UserData {
             writer.writeUTF(lastOpenDir.getAbsolutePath());
             writer.writeUTF(lastExportDir.getAbsolutePath());
 
-            writer.writeUTF(Main.lbTextTab.fontCombo.getSelectionModel().getSelectedItem());
-            writer.writeInt(Main.lbTextTab.sizeCombo.getSelectionModel().getSelectedItem());
-            writer.writeUTF(Main.lbTextTab.colorPicker.getValue().toString());
-            writer.writeBoolean(Main.lbTextTab.boldBtn.isSelected());
-            writer.writeBoolean(Main.lbTextTab.itBtn.isSelected());
+            writer.writeUTF(Main.lbTextTab.lastFont);
+            writer.writeInt(Main.lbTextTab.lastFontSize);
+            writer.writeUTF(Main.lbTextTab.lastColor);
+            writer.writeBoolean(Main.lbTextTab.lastBold);
+            writer.writeBoolean(Main.lbTextTab.lastItalic);
 
             writer.flush();
             writer.close();
