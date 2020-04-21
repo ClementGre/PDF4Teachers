@@ -172,10 +172,11 @@ public class MainScreen extends Pane {
 		Main.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		totalHeight = 30;
-		status.set(Status.OPEN);
 
 		document.showPages();
 		document.loadEdition();
+
+		status.set(Status.OPEN);
 
 		repaint();
 		Main.footerBar.repaint();

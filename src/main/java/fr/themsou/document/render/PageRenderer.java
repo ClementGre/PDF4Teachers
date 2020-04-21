@@ -2,6 +2,7 @@ package fr.themsou.document.render;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
@@ -148,6 +149,7 @@ public class PageRenderer extends Pane {
         getChildren().add(renderView);
         elements = new ArrayList<>();
         Main.lbTextTab.updateOnFileElementsList();
+        Main.lbNoteTab.treeView.clear();
     }
 
     public void addElementSimple(Element element){
@@ -155,6 +157,11 @@ public class PageRenderer extends Pane {
         if(element != null){
             elements.add(element);
             getChildren().add((Shape) element);
+
+            if(element instanceof NoteElement){
+                Main.lbNoteTab.treeView.addElement((NoteElement) element);
+            }
+
             if(status != PageStatus.RENDERED){
                 ((Shape) element).setVisible(false);
             }
@@ -167,12 +174,15 @@ public class PageRenderer extends Pane {
             elements.add(element);
             getChildren().add((Shape) element);
             Edition.setUnsave();
+
             if(element instanceof TextElement){
                 if(update) Main.lbTextTab.addOnFileElement((TextElement) element);
+            }else if(element instanceof NoteElement){
+                Main.lbNoteTab.treeView.addElement((NoteElement) element);
             }
-            if(status != PageStatus.RENDERED){
-                ((Shape) element).setVisible(false);
-            }
+
+            if(status != PageStatus.RENDERED) ((Shape) element).setVisible(false);
+
         }
     }
     public void removeElement(Element element, boolean update){
@@ -181,8 +191,11 @@ public class PageRenderer extends Pane {
             elements.remove(element);
             getChildren().remove((Shape) element);
             Edition.setUnsave();
+
             if(element instanceof TextElement){
                 if(update) Main.lbTextTab.removeOnFileElement((TextElement) element);
+            }else if(element instanceof NoteElement){
+                Main.lbNoteTab.treeView.removeElement((NoteElement) element);
             }
 
         }

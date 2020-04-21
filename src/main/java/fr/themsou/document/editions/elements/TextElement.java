@@ -28,10 +28,6 @@ import javafx.scene.text.*;
 
 public class TextElement extends Text implements Element {
 
-	// Size for A4 - 200dpi
-	public static final float GRID_WIDTH = 1654;
-	public static final float GRID_HEIGHT = 2339;
-
 	private IntegerProperty realX = new SimpleIntegerProperty();
 	private IntegerProperty realY = new SimpleIntegerProperty();
 	private PageRenderer page;
@@ -60,8 +56,8 @@ public class TextElement extends Text implements Element {
 		if(page == null) return;
 		this.page = page;
 
-		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(TextElement.GRID_WIDTH)));
-		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(TextElement.GRID_HEIGHT)));
+		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 
 		setCursor(Cursor.MOVE);
 
@@ -187,8 +183,8 @@ public class TextElement extends Text implements Element {
 			checkLocation(itemX, itemY);
 
 			if(changePage){
-				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(TextElement.GRID_WIDTH)));
-				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(TextElement.GRID_HEIGHT)));
+				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 				Main.lbTextTab.onFileTextSortManager.simulateCall();
 			}
 
@@ -213,8 +209,8 @@ public class TextElement extends Text implements Element {
 		if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
 		setBoundsType(TextBoundsType.LOGICAL);
 
-		realX.set((int) (itemX / page.getWidth() * TextElement.GRID_WIDTH));
-		realY.set((int) (itemY / page.getHeight() * TextElement.GRID_HEIGHT));
+		realX.set((int) (itemX / page.getWidth() * Element.GRID_WIDTH));
+		realY.set((int) (itemY / page.getHeight() * Element.GRID_HEIGHT));
 
 	}
 
@@ -247,8 +243,8 @@ public class TextElement extends Text implements Element {
 		writer.writeShort(getRealX());
 		writer.writeShort(getRealY());
 		writer.writeFloat((float) getFont().getSize());
-		writer.writeBoolean(getFontWeight(getFont()) == FontWeight.BOLD);
-		writer.writeBoolean(getFontPosture(getFont()) == FontPosture.ITALIC);
+		writer.writeBoolean(Element.getFontWeight(getFont()) == FontWeight.BOLD);
+		writer.writeBoolean(Element.getFontPosture(getFont()) == FontPosture.ITALIC);
 		writer.writeUTF(getFont().getFamily());
 		writer.writeByte((int) (((Color) getFill()).getRed() * 255.0 - 128));
 		writer.writeByte((int) (((Color) getFill()).getGreen() * 255.0 - 128));
@@ -270,7 +266,7 @@ public class TextElement extends Text implements Element {
 		short colorBlue = (short) (reader.readByte() + 128);
 		String text = reader.readUTF();
 
-		Font font = getFont(fontName, isItalic, isBold, (int) fontSize);
+		Font font = Element.getFont(fontName, isItalic, isBold, (int) fontSize);
 
 		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? Main.mainScreen.document.pages.get(page) : null);
 
@@ -289,8 +285,6 @@ public class TextElement extends Text implements Element {
 			Main.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
 
 	}
-
-
 
 	public int getRealX() {
 		return realX.get();
@@ -312,79 +306,6 @@ public class TextElement extends Text implements Element {
 		this.realY.set(y);
 	}
 
-	/*private Font translateFont(Font font) {
-
-		boolean bold = false;
-		if(TextElement.getFontWeight(font) == FontWeight.BOLD) bold = true;
-		boolean italic = false;
-		if(TextElement.getFontPosture(font) == FontPosture.ITALIC) italic = true;
-
-		return getFont(font.getFamily(), italic, bold, (int) (font.getSize()));
-	}*/
-
-	public static Font getFont(String family, boolean italic, boolean bold, double size){
-
-		return Font.loadFont(getFontFile(family, italic, bold), size);
-	}
-	public static InputStream getFontFile(String family, boolean italic, boolean bold){
-
-		String fileFontName = getFontFileName(italic, bold);
-
-		InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
-
-		while(fontFile == null){
-			if(fileFontName.equals("bold") || fileFontName.equals("italic")){
-				fileFontName = "regular";
-			}else if(fileFontName.equals("bolditalic")){
-				if(TextElement.class.getResourceAsStream("/fonts/" + family + "/italic.ttf") != null) fileFontName = "italic";
-				else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) fileFontName = "bold";
-				else fileFontName = "regular";
-			}else{
-				System.out.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
-				return null;
-			}
-
-			fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
-		}
-
-		return fontFile;
-	}
-	public static String getFontFileName(boolean italic, boolean bold){
-
-		String fileName = "";
-		if(bold) fileName += "bold";
-		if(italic) fileName += "italic";
-		if(fileName.isEmpty()) fileName = "regular";
-
-		return fileName;
-	}
-
-	public static FontWeight getFontWeight(Font font) {
-
-		String[] style = font.getStyle().split(" ");
-		if(style.length >= 1){
-			if(style[0].equals("Bold")){
-				return FontWeight.BOLD;
-			}
-		}
-
-		return FontWeight.NORMAL;
-	}
-	public static FontPosture getFontPosture(Font font) {
-
-		String[] style = font.getStyle().split(" ");
-		if(style.length == 1){
-			if(style[0].equals("Italic")){
-				return FontPosture.ITALIC;
-			}
-		}else if(style.length == 2){
-			if(style[1].equals("Italic")){
-				return FontPosture.ITALIC;
-			}
-		}
-
-		return FontPosture.REGULAR;
-	}
 
 	@Override
 	public int getPageNumber() {

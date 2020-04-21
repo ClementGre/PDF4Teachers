@@ -1,5 +1,6 @@
 package fr.themsou.windows;
 
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
@@ -253,7 +254,7 @@ public class LicenseWindow extends Stage{
         Text info = new Text(TR.tr("Vous devez accepter la license pour accéder à l'application."));
 
         Label license = new Label(LICENSE);
-        license.setFont(TextElement.getFont("Arial", false, false, 12));
+        license.setFont(Element.getFont("Arial", false, false, 12));
         license.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 

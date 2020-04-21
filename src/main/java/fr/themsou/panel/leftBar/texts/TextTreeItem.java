@@ -1,5 +1,6 @@
 package fr.themsou.panel.leftBar.texts;
 
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -192,7 +193,7 @@ public class TextTreeItem extends TreeItem{
 	}
 
 	private Font getListFont(){
-		return TextElement.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
+		return Element.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
 	}
 
 	@Override
@@ -212,8 +213,8 @@ public class TextTreeItem extends TreeItem{
 	public void writeData(DataOutputStream writer) throws IOException {
 
 		writer.writeFloat((float) font.get().getSize());
-		writer.writeBoolean(TextElement.getFontWeight(font.get()) == FontWeight.BOLD);
-		writer.writeBoolean(TextElement.getFontPosture(font.get()) == FontPosture.ITALIC);
+		writer.writeBoolean(Element.getFontWeight(font.get()) == FontWeight.BOLD);
+		writer.writeBoolean(Element.getFontPosture(font.get()) == FontPosture.ITALIC);
 		writer.writeUTF(font.get().getFamily());
 		writer.writeByte((int) (color.get().getRed() * 255.0 - 128));
 		writer.writeByte((int) (color.get().getGreen() * 255.0 - 128));
@@ -238,7 +239,7 @@ public class TextTreeItem extends TreeItem{
 		long creationDate = reader.readLong();
 		String text = reader.readUTF();
 
-		Font font = TextElement.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
 
 		return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
 
@@ -252,7 +253,7 @@ public class TextTreeItem extends TreeItem{
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
-			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * TextElement.GRID_HEIGHT / page.getHeight()), page.getPage());
+			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()), page.getPage());
 			page.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}

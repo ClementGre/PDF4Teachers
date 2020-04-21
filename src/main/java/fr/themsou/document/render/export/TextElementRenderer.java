@@ -1,5 +1,6 @@
 package fr.themsou.document.render.export;
 
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
@@ -33,11 +34,11 @@ public class TextElementRenderer {
 
         // FONT
         boolean bold = false;
-        if (TextElement.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
+        if (Element.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
         boolean italic = false;
-        if (TextElement.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
-        InputStream fontFile = TextElement.getFontFile(element.getFont().getFamily(), italic, bold);
-        element.setFont(TextElement.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
+        if (Element.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
+        InputStream fontFile = Element.getFontFile(element.getFont().getFamily(), italic, bold);
+        element.setFont(Element.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
 
         // LINE HEIGHT VARIABLES
         double height = element.getLayoutBounds().getHeight();
@@ -59,7 +60,7 @@ public class TextElementRenderer {
         }
         // CUSTOM STREAM
 
-        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), TextElement.getFontFileName(italic, bold));
+        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), Element.getFontFileName(italic, bold));
 
         if(!fonts.containsKey(entry)){
             PDFont font = PDTrueTypeFont.loadTTF(doc, fontFile);
@@ -70,7 +71,7 @@ public class TextElementRenderer {
         }
 
 
-        contentStream.newLineAtOffset(element.getRealX() / TextElement.GRID_WIDTH * pageWidth, (float) (pageHeight - element.getRealY() / TextElement.GRID_HEIGHT * pageHeight + height + underscoreSize));
+        contentStream.newLineAtOffset(element.getRealX() / Element.GRID_WIDTH * pageWidth, (float) (pageHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight + height + underscoreSize));
 
         // DRAW LINES
         for(String text : element.getText().split("\\n")){

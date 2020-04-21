@@ -1,43 +1,48 @@
 package fr.themsou.panel.leftBar.notes;
 
+import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import javafx.beans.binding.Binding;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import java.text.DecimalFormat;
 
 public class NoteTreeItem extends TreeItem {
 
-    String name = "Nouvelle note";
-    DoubleProperty total = new SimpleDoubleProperty(-1);
-    DoubleProperty value = new SimpleDoubleProperty(-1);
+    private NoteElement core;
 
-    TreeCell<String> cell;
-    HBox pane;
+    private TreeCell<String> cell;
+    private HBox pane;
 
-    Text nameText;
-    Button newNote;
-    EventHandler<MouseEvent> mouseEnteredEvent;
-    EventHandler<MouseEvent> mouseExitedEvent;
-    ChangeListener<Boolean> focusedListener;
+    private Text name = new Text();
+    private Text note = new Text();
 
-    TextArea nameField = new TextArea("Nouvelle note");
-    TextArea noteField = new TextArea("5");
-    TextArea totalField = new TextArea("20");
+    private Button newNote;
+    private EventHandler<MouseEvent> mouseEnteredEvent;
+    private EventHandler<MouseEvent> mouseExitedEvent;
+    private ChangeListener<Boolean> focusedListener;
 
-    public NoteTreeItem(){
+    private TextArea nameField = new TextArea("Nouvelle note");
+    private TextArea noteField = new TextArea("5");
+    private TextArea totalField = new TextArea("20");
+
+    public NoteTreeItem(NoteElement core){
+
+        this.core = core;
+
         setupGraphic();
         setupEvents();
     }
@@ -65,7 +70,7 @@ public class NoteTreeItem extends TreeItem {
         };
 
         newNote.setOnAction(event -> {
-            getChildren().add(new NoteTreeItem());
+            Main.lbNoteTab.newNoteElementAuto(this);
         });
 
     }
@@ -77,14 +82,24 @@ public class NoteTreeItem extends TreeItem {
         pane.setPrefHeight(18);
         pane.setStyle("-fx-padding: -6 -6 -6 0;"); // top - right - bottom - left
 
-        //nameText = new Text(name);
-        //nameText.setFont(new Font(14));
+        // TEXTS
 
+        name.textProperty().bind(core.nameProperty());
+        name.setFont(new Font(14));
+
+        note.textProperty().bind(Bindings.createStringBinding(() -> {
+            DecimalFormat format = new DecimalFormat("0.#");
+            return (core.getValue() == -1 ? "?" : format.format(core.getValue())) + "/" + format.format(core.getTotal());
+        }, core.valueProperty(), core.totalProperty()));
+
+        note.setFont(new Font(14));
+        HBox.setMargin(note, new Insets(0, 5, 0, 5));
+
+        // FIELDS
 
         nameField.setBorder(null);
         nameField.setPrefRowCount(1);
-        nameField.setPrefHeight(30);
-
+        nameField.setPrefHeight(10);
 
         noteField.setBorder(null);
         noteField.setPrefWidth(25);
@@ -92,19 +107,22 @@ public class NoteTreeItem extends TreeItem {
         totalField.setBorder(null);
         totalField.setPrefWidth(25);
 
+        // OTHER
+
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         newNote = new Button();
         newNote.setGraphic(Builders.buildImage(getClass().getResource("/img/more.png")+"", 0, 0));
         Builders.setPosition(newNote, 0, 0, 30, 30, true);
+        newNote.disableProperty().bind(LBNoteTab.lockRatingScale);
         newNote.setVisible(false);
 
-        pane.getChildren().addAll(nameField, noteField, new Text("/"), totalField, spacer, newNote);
+        pane.getChildren().addAll(name, spacer, note, newNote);
 
     }
     public void updateGraphic(){
-        nameText.setText(name);
+
     }
 
     public void updateCell(TreeCell<String> cell){
@@ -126,5 +144,15 @@ public class NoteTreeItem extends TreeItem {
 
     public boolean hasSubNote(){
         return getChildren().size() != 0;
+    }
+
+    public NoteElement getCore() {
+        return core;
+    }
+    public void setCore(NoteElement core) {
+        this.core = core;
+    }
+    public TreeCell<String> getCell() {
+        return cell;
     }
 }

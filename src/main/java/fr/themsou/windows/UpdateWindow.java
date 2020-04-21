@@ -3,6 +3,7 @@ package fr.themsou.windows;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
@@ -103,8 +104,8 @@ public class UpdateWindow extends Stage {
 
         Text version = new Text(TR.tr("Vous utilisez la version") + " " + Main.VERSION + " " + TR.tr("et la version") + " " + UpdateWindow.version + " " + TR.tr("est disponible.") + "\n\n" + TR.tr("Description :"));
 
-        Label desc = new Label(new TextWrapper(UpdateWindow.description, TextElement.getFont("Arial", false, false, 12),490).wrap());
-        desc.setFont(TextElement.getFont("Arial", false, false, 12));
+        Label desc = new Label(new TextWrapper(UpdateWindow.description, Element.getFont("Arial", false, false, 12),490).wrap());
+        desc.setFont(Element.getFont("Arial", false, false, 12));
         desc.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 

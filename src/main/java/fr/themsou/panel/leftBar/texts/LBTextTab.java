@@ -201,8 +201,8 @@ public class LBTextTab extends Tab {
 					TextElement current = (TextElement) newElement;
 
 					txtArea.setText(current.getText());
-					boldBtn.setSelected(TextElement.getFontWeight(current.getFont()) == FontWeight.BOLD);
-					itBtn.setSelected(TextElement.getFontPosture(current.getFont()) == FontPosture.ITALIC);
+					boldBtn.setSelected(Element.getFontWeight(current.getFont()) == FontWeight.BOLD);
+					itBtn.setSelected(Element.getFontPosture(current.getFont()) == FontPosture.ITALIC);
 					colorPicker.setValue((Color) current.getFill());
 					fontCombo.getSelectionModel().select(current.getFont().getFamily());
 					sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
@@ -252,7 +252,7 @@ public class LBTextTab extends Tab {
 			boldBtn.setSelected(lastBold);
 			itBtn.setSelected(lastItalic);
 
-			TextElement current = new TextElement(30, (int) (page.mouseY * TextElement.GRID_HEIGHT / page.getHeight()), getFont(),
+			TextElement current = new TextElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()), getFont(),
 					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
 			page.addElement(current, true);
@@ -406,7 +406,7 @@ public class LBTextTab extends Tab {
 
 	private Font getFont(){
 
-		return TextElement.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
+		return Element.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
 	}
 
 	public class ShapeCell extends ListCell<String>{

@@ -2,6 +2,7 @@ package fr.themsou.document.editions;
 
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -53,7 +54,7 @@ public class Edition {
                             TextElement.readDataAndCreate(reader);
                         break;
                         case 2:
-
+                            NoteElement.readDataAndCreate(reader);
                         break;
                         case 3:
 
@@ -81,7 +82,7 @@ public class Edition {
                         elements.add(TextElement.readDataAndGive(reader, false));
                         break;
                     case 2:
-
+                        elements.add(NoteElement.readDataAndGive(reader));
                         break;
                     case 3:
 
@@ -112,6 +113,7 @@ public class Edition {
                     break;
                     case 2:
                         notes++;
+                        NoteElement.consumeData(reader);
                     break;
                     case 3:
                         draw++;
@@ -174,7 +176,6 @@ public class Edition {
         for(File editFile : new File(Main.dataFolder + "editions" + File.separator).listFiles()){
 
             File file = getFileEdit(editFile);
-            String path = file.getParentFile().getAbsolutePath();
 
             if(file.getName().equals(originFile.getName()) && !file.equals(originFile)){
                 files.add(file);
