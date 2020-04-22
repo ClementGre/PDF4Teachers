@@ -5,10 +5,15 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
+import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
+import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
@@ -22,6 +27,7 @@ import javafx.scene.text.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.concurrent.Callable;
 
 public class NoteElement extends Text implements Element {
 
@@ -52,11 +58,31 @@ public class NoteElement extends Text implements Element {
         this.index = index;
         this.parentPath = parentPath;
 
-        setFont(LBNoteTab.getTierFont(index));
+        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
+        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
         setTextOrigin(VPos.BOTTOM);
-        setFill(LBNoteTab.getTierColor(index));
 
-        textProperty().bind(this.value.asString().concat("/").concat(this.total));
+        textProperty().bind(Bindings.createStringBinding(() -> getValue() == -1 ? "" : NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()), this.value, this.total));
+
+        nameProperty().addListener((observable, oldValue, newValue) -> {
+            NoteTreeItem treeItemElement;
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+            else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+
+            // Update children parentPath
+        });
+        valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
+            NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+
+            Platform.runLater(() -> ((NoteTreeItem) treeItemElement.getParent()).makeSum());
+        });
+        totalProperty().addListener((observable, oldValue, newValue) -> {
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
+            NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+
+            Platform.runLater(() -> ((NoteTreeItem) treeItemElement.getParent()).makeSum());
+        });
 
         setBoundsType(TextBoundsType.LOGICAL);
 
@@ -81,9 +107,9 @@ public class NoteElement extends Text implements Element {
                 requestFocus();
             }
         });
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), -1, false);
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
         item1.setAccelerator("Suppr");
-        item1.setToolTip(TR.tr("Supprime cet élément. Il sera donc retiré de l'édition mais restera sur le barème. La note entrée ne sera plus visible."));
+        item1.setToolTip(TR.tr("Réinitialise la note entrée."));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
         item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
         item2.disableProperty().bind(LBNoteTab.lockRatingScale);
@@ -91,7 +117,7 @@ public class NoteElement extends Text implements Element {
         Builders.setMenuSize(menu);
 
         item1.setOnAction(e -> setValue(-1));
-        item1.setOnAction(e -> delete());
+        item2.setOnAction(e -> delete());
 
         setOnMousePressed(e -> {
             e.consume();
@@ -183,8 +209,12 @@ public class NoteElement extends Text implements Element {
 
         Main.mainScreen.setSelected(this);
         toFront();
-        if(getParentPath().isEmpty()) Main.lbNoteTab.treeView.getSelectionModel().select(Main.lbNoteTab.treeView.getRoot());
-        else Main.lbNoteTab.treeView.getSelectionModel().select(Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this));
+
+        // Sélectionne l'élément associé dans l'arbre
+        NoteTreeItem noteElement;
+        if(getParentPath().isEmpty()) noteElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+        else noteElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+        Main.lbNoteTab.treeView.getSelectionModel().select(noteElement);
 
         //requestFocus();
         Edition.setUnsave();

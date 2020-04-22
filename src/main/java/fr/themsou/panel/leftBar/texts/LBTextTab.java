@@ -221,7 +221,7 @@ public class LBTextTab extends Tab {
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
 			if(newValue.contains("\u0009")){
-				txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
+					txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
 			}
 
 			updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
@@ -369,6 +369,9 @@ public class LBTextTab extends Tab {
 		}, null, null);
 		onFileTextSortManager.setup(onFileTextOptions, TR.tr("Position"), TR.tr("Position"), TR.tr("Nom"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
+		favoritesText.setExpanded(true);
+		lastsText.setExpanded(true);
+		onFileText.setExpanded(true);
 		treeViewRoot.getChildren().addAll(favoritesText, lastsText, onFileText);
 
 

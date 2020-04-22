@@ -30,8 +30,7 @@ public class LBNoteTab extends Tab {
 
     public NoteTreeView treeView;
 
-    public static InputStream fontFile = Element.getFontFile("Arial", false, false);
-    public static HashMap<Integer, Map.Entry<Integer, Color>> fontTiers = new HashMap<>();
+    public static HashMap<Integer, Map.Entry<Font, Color>> fontTiers = new HashMap<>();
 
     public static BooleanProperty lockRatingScale = new SimpleBooleanProperty(false);
 
@@ -47,12 +46,12 @@ public class LBNoteTab extends Tab {
     public void setup(){
 
         // DEBUG
-        fontTiers.put(0, Map.entry(22, Color.RED));
-        fontTiers.put(1, Map.entry(16, Color.RED));
-        fontTiers.put(2, Map.entry(16, Color.BLUE));
-        fontTiers.put(3, Map.entry(10, Color.BLUE));
-        fontTiers.put(4, Map.entry(10, Color.GREEN));
-        fontTiers.put(5, Map.entry(6, Color.GREEN));
+        fontTiers.put(0, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 50), Color.RED));
+        fontTiers.put(1, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 40), Color.BLUE));
+        fontTiers.put(2, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 30), Color.PURPLE));
+        fontTiers.put(3, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 20), Color.GREEN));
+        fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 15), Color.YELLOWGREEN));
+        fontTiers.put(5, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 10), Color.YELLOW));
         // -----
 
         treeView = new NoteTreeView(this);
@@ -93,7 +92,7 @@ public class LBNoteTab extends Tab {
     }
 
     public static Font getTierFont(int index){
-        return Font.loadFont(fontFile, fontTiers.get(index).getKey());
+        return fontTiers.get(index).getKey();
     }
     public static Color getTierColor(int index){
         return fontTiers.get(index).getValue();

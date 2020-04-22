@@ -4,9 +4,7 @@ import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.TreeCell;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -14,6 +12,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class NoteTreeView extends TreeView<String> {
@@ -108,6 +107,7 @@ public class NoteTreeView extends TreeView<String> {
             // OTHER
             NoteTreeItem treeElement = element.toNoteTreeItem();
             addToList(getNoteTreeItemParent(element), treeElement);
+            getRoot().setExpanded(true);
         }
     }
     public void removeElement(NoteElement element){
@@ -185,5 +185,9 @@ public class NoteTreeView extends TreeView<String> {
 
     public static String getElementPath(NoteTreeItem parent){
         return parent.getCore().getParentPath() + "\\" + parent.getCore().getName();
+    }
+    public static int getElementTier(String parentPath){
+        if(parentPath.isEmpty()) return 0;
+        return parentPath.split(Pattern.quote("\\")).length;
     }
 }
