@@ -17,7 +17,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import javax.swing.*;
 import java.text.DecimalFormat;
+import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 public class NoteTreeItem extends TreeItem {
@@ -39,7 +42,7 @@ public class NoteTreeItem extends TreeItem {
     private Button newNote;
 
     private TextArea nameField = new TextArea("☺");
-    private TextArea noteField = new TextArea("☺");
+    public TextArea noteField = new TextArea("☺");
     private TextArea totalField = new TextArea("☺");
 
     // EVENTS
@@ -68,17 +71,34 @@ public class NoteTreeItem extends TreeItem {
                 pane.getChildren().clear();
 
                 if(LBNoteTab.lockRatingScale.get()){
-                    if(hasSubNote()) pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
-                    else pane.getChildren().addAll(name, spacer, noteField, slash, total, newNote);
+                    if(hasSubNote()){
+                        pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
+                    }else{
+                        pane.getChildren().addAll(name, spacer, noteField, slash, total, newNote);
+                        Platform.runLater(() -> {
+                            noteField.requestFocus();
+                            noteField.positionCaret(noteField.getText().length());
+                            noteField.selectAll();
+                        });
+                    }
                 }else{
-                    if(hasSubNote()) pane.getChildren().addAll(nameField, spacer, value, slash, total, newNote);
-                    else pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField, newNote);
-                }
+                    if(hasSubNote()){
+                        pane.getChildren().addAll(nameField, spacer, value, slash, total, newNote);
+                        Platform.runLater(() -> {
+                            nameField.requestFocus();
+                            nameField.positionCaret(nameField.getText().length());
+                        });
+                    }else{
+                        pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField, newNote);
+                        Platform.runLater(() -> {
+                            noteField.requestFocus();
+                            noteField.positionCaret(noteField.getText().length());
+                            noteField.selectAll();
+                        });
+                    }
 
-                Platform.runLater(() -> {
-                    noteField.requestFocus();
-                    noteField.positionCaret(noteField.getText().length());
-                });
+
+                }
 
             }else if(oldValue){ // n'est plus selectionné
                 newNote.setVisible(false);
@@ -114,7 +134,7 @@ public class NoteTreeItem extends TreeItem {
         // TEXTS
 
         name.setFont(new Font(14));
-        name.textProperty().bind(core.nameProperty().concat(" | ").concat(core.getIndex()));
+        name.textProperty().bind(core.nameProperty());
         slash.setFont(new Font(14));
 
         value.setFont(new Font(14));
@@ -150,7 +170,7 @@ public class NoteTreeItem extends TreeItem {
         Text meter = new Text();
         meter.setFont(nameField.getFont());
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            String newText = newValue.replaceAll("[^ -~À-ÿ]", "");
+            String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
             if(newText.length() >= 20) newText = newText.substring(0, 20);
 
             nameField.setText(newText);
@@ -164,7 +184,7 @@ public class NoteTreeItem extends TreeItem {
                 totalField.requestFocus();
                 totalField.positionCaret(totalField.getText().length());
             }
-            String newText = newValue.replaceAll("[^0123456789.]", "");
+            String newText = newValue.replaceAll("[^0123456789.,]", "");
             if(newText.length() >= 5) newText = newText.substring(0, 5);
 
             noteField.setText(newText);
@@ -172,7 +192,11 @@ public class NoteTreeItem extends TreeItem {
             noteField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
 
             try{
-                core.setValue(Double.parseDouble(newText.replaceAll(Pattern.quote(","), ".")));
+                double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
+                if(value > core.getTotal()){
+                    core.setValue(core.getTotal());
+                    noteField.setText(format.format(core.getTotal()));
+                }else core.setValue(value);
             }catch(NumberFormatException e){
                 core.setValue(-1);
             }
@@ -218,11 +242,14 @@ public class NoteTreeItem extends TreeItem {
         cell.setGraphic(pane);
         cell.setStyle(null);
         cell.setStyle("-fx-padding: 6 6 6 2;");
-        //cell.setContextMenu(menu);
+        cell.setContextMenu(core.menu);
         cell.setOnMouseEntered(mouseEnteredEvent);
         cell.setOnMouseExited(mouseExitedEvent);
 
         cell.selectedProperty().addListener(selectedListener);
+
+        // DEBUG
+        cell.setTooltip(new Tooltip(core.getParentPath() + "\\" + core.getName() + " - n°" + core.getIndex()));
 
     }
 
@@ -258,5 +285,44 @@ public class NoteTreeItem extends TreeItem {
     }
     public TreeCell<String> getCell() {
         return cell;
+    }
+
+    public void reIndexChildren() {
+
+        for(int i = 0; i < getChildren().size(); i++){
+            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            children.getCore().setIndex(i);
+        }
+
+    }
+    public void resetParentPathChildren() {
+
+        String path = NoteTreeView.getElementPath(this);
+
+        for(int i = 0; i < getChildren().size(); i++){
+            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            children.getCore().setParentPath(path);
+        }
+
+    }
+
+    public void deleteChildren() {
+
+        while(hasSubNote()){
+            NoteTreeItem children = (NoteTreeItem) getChildren().get(0);
+            if(children.hasSubNote()) children.deleteChildren();
+            children.getCore().delete();
+        }
+
+    }
+
+    public boolean isExistTwice(String name){
+        int k = 0;
+        for(int i = 0; i < getChildren().size(); i++){
+            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            if(children.getCore().getName().equals(name)) k++;
+        }
+
+        return k >= 2;
     }
 }

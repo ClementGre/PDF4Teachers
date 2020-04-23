@@ -11,8 +11,6 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
-
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class NoteTreeView extends TreeView<String> {
@@ -114,12 +112,16 @@ public class NoteTreeView extends TreeView<String> {
 
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
+            ((NoteTreeItem) getRoot()).deleteChildren();
             setRoot(null);
             generateRoot();
         }else{
             // OTHER
             NoteTreeItem treeElement = getNoteTreeItem((NoteTreeItem) getRoot(), element);
-            treeElement.getParent().getChildren().remove(treeElement);
+            treeElement.deleteChildren();
+            NoteTreeItem parent = (NoteTreeItem) treeElement.getParent();
+            parent.getChildren().remove(treeElement);
+            parent.reIndexChildren();
         }
     }
 

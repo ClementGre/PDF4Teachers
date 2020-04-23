@@ -31,7 +31,7 @@ import java.util.concurrent.Callable;
 
 public class NoteElement extends Text implements Element {
 
-    private StringProperty name;
+    private StringProperty name = new SimpleStringProperty();
     private DoubleProperty value;
     private DoubleProperty total;
     private int index;
@@ -41,7 +41,7 @@ public class NoteElement extends Text implements Element {
     private IntegerProperty realY = new SimpleIntegerProperty();
     private PageRenderer page;
 
-    ContextMenu menu = new ContextMenu();
+    public ContextMenu menu = new ContextMenu();
 
     private final int pageNumber;
     private int shiftX = 0;
@@ -52,7 +52,6 @@ public class NoteElement extends Text implements Element {
         this.pageNumber = page.getPage();
         this.realX.set(x);
         this.realY.set(y);
-        this.name = new SimpleStringProperty(name);
         this.value = new SimpleDoubleProperty(value);
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
@@ -65,12 +64,24 @@ public class NoteElement extends Text implements Element {
         textProperty().bind(Bindings.createStringBinding(() -> getValue() == -1 ? "" : NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()), this.value, this.total));
 
         nameProperty().addListener((observable, oldValue, newValue) -> {
-            NoteTreeItem treeItemElement;
-            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
-            else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+            Platform.runLater(() -> {
+                NoteTreeItem treeItemElement;
+                if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+                else{
+                    treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
 
-            // Update children parentPath
+                    System.out.println(getParentPath() + "\\" + getName());
+                    if(((NoteTreeItem)treeItemElement.getParent()).isExistTwice(getName())){
+                        setName(getName() + "(1)");
+                    }
+                }
+                if(treeItemElement.hasSubNote()) treeItemElement.resetParentPathChildren();
+            });
         });
+        // Set name after listener declaration to call the listener.
+        this.name.set(name);
+
+        // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
             if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
             NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
@@ -116,8 +127,13 @@ public class NoteElement extends Text implements Element {
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
 
-        item1.setOnAction(e -> setValue(-1));
-        item2.setOnAction(e -> delete());
+        item1.setOnAction(e -> {
+            setValue(-1);
+            Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this).noteField.setText("");
+        });
+        item2.setOnAction(e -> {
+            delete();
+        });
 
         setOnMousePressed(e -> {
             e.consume();
@@ -223,6 +239,7 @@ public class NoteElement extends Text implements Element {
     public NoteTreeItem toNoteTreeItem(){
         return new NoteTreeItem(this);
     }
+
     @Override
     public void delete(){
         page.removeElement(this, true);
@@ -259,14 +276,14 @@ public class NoteElement extends Text implements Element {
 
     }
     public static void consumeData(DataInputStream reader) throws IOException {
-        byte page = reader.readByte();
-        short x = reader.readShort();
-        short y = reader.readShort();
-        int index = reader.readInt();
-        String parentPath = reader.readUTF();
-        double value = reader.readDouble();
-        double total = reader.readDouble();
-        String name = reader.readUTF();
+        reader.readByte();
+        reader.readShort();
+        reader.readShort();
+        reader.readInt();
+        reader.readUTF();
+        reader.readDouble();
+        reader.readDouble();
+        reader.readUTF();
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
 
