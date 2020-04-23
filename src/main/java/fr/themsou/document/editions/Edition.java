@@ -21,6 +21,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class Edition {
 
@@ -93,14 +94,16 @@ public class Edition {
             return elements.toArray(new Element[elements.size()]);
         }
     }
-    public static Integer[] countElements(File editFile) throws Exception{
+    public static double[] countElements(File editFile) throws Exception{
 
         if(!editFile.exists()){ //file does not exist
-            return new Integer[0];
+            return new double[0];
         }else{ // file already exist
             DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
 
+            double[] totalNote = new double[]{-1, 0};
             int text = 0;
+            int allNotes = 0;
             int notes = 0;
             int draw = 0;
             while(reader.available() != 0){
@@ -112,8 +115,10 @@ public class Edition {
                         TextElement.consumeData(reader);
                     break;
                     case 2:
-                        notes++;
-                        NoteElement.consumeData(reader);
+                        allNotes++;
+                        double[] data = NoteElement.consumeData(reader);
+                        if(data.length == 2) totalNote = data;
+                        if(data[0] != -1) notes++;
                     break;
                     case 3:
                         draw++;
@@ -121,7 +126,7 @@ public class Edition {
                 }
             }
             reader.close();
-            return new Integer[]{text+notes+draw, text, notes, draw};
+            return new double[]{text+notes+draw, text, notes, draw, totalNote[0], totalNote[1], allNotes};
         }
     }
 
@@ -137,6 +142,16 @@ public class Edition {
             for(PageRenderer page : document.pages){
                 for(int i = 0; i < page.getElements().size(); i++){
                     page.getElements().get(i).writeSimpleData(writer);
+
+                    // not incrément counter if root value is -1
+                    if(page.getElements().get(i) instanceof NoteElement){
+                        if(Builders.cleanArray(((NoteElement) page.getElements().get(i)).getParentPath().split(Pattern.quote("\\"))).length == 0){ // Element is Root
+                            if(((NoteElement) page.getElements().get(i)).getValue() == -1 && ((NoteElement) page.getElements().get(i)).getTotal() == 20
+                                    && ((NoteElement) page.getElements().get(i)).getName().equals(TR.tr("Total"))){ // Element is default Root
+                                continue;
+                            }
+                        }
+                    }
                     counter++;
                 }
             }

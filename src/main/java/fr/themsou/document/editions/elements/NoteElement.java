@@ -28,10 +28,11 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
 public class NoteElement extends Text implements Element {
 
-    private StringProperty name = new SimpleStringProperty();
+    private StringProperty name;
     private DoubleProperty value;
     private DoubleProperty total;
     private int index;
@@ -52,6 +53,7 @@ public class NoteElement extends Text implements Element {
         this.pageNumber = page.getPage();
         this.realX.set(x);
         this.realY.set(y);
+        this.name = new SimpleStringProperty(name);
         this.value = new SimpleDoubleProperty(value);
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
@@ -64,31 +66,42 @@ public class NoteElement extends Text implements Element {
         textProperty().bind(Bindings.createStringBinding(() -> getValue() == -1 ? "" : NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()), this.value, this.total));
 
         nameProperty().addListener((observable, oldValue, newValue) -> {
+            // Check if name is blank
+            Edition.setUnsave();
+            if(newValue.isBlank()){
+                setName(TR.tr("Nouvelle note")); return;
+            }
+
             Platform.runLater(() -> {
                 NoteTreeItem treeItemElement;
                 if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
                 else{
                     treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
-
-                    System.out.println(getParentPath() + "\\" + getName());
-                    if(((NoteTreeItem)treeItemElement.getParent()).isExistTwice(getName())){
-                        setName(getName() + "(1)");
-                    }
+                    // Check if exist twice
+                    if(((NoteTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
                 }
+
+                // ReIndex childrens
                 if(treeItemElement.hasSubNote()) treeItemElement.resetParentPathChildren();
             });
         });
-        // Set name after listener declaration to call the listener.
-        this.name.set(name);
 
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
+            Edition.setUnsave();
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)){
+                if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).hasSubNote() && newValue.intValue() == -1) ((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).resetChildrenValues();
+                return;
+            }
             NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
 
-            Platform.runLater(() -> ((NoteTreeItem) treeItemElement.getParent()).makeSum());
+            Platform.runLater(() -> {
+                if(treeItemElement.hasSubNote() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
+                ((NoteTreeItem) treeItemElement.getParent()).makeSum();
+            });
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
+            Edition.setUnsave();
             if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
             NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
 
@@ -119,8 +132,7 @@ public class NoteElement extends Text implements Element {
             }
         });
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
-        item1.setAccelerator("Suppr");
-        item1.setToolTip(TR.tr("Réinitialise la note entrée."));
+        item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
         item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
         item2.disableProperty().bind(LBNoteTab.lockRatingScale);
@@ -128,8 +140,10 @@ public class NoteElement extends Text implements Element {
         Builders.setMenuSize(menu);
 
         item1.setOnAction(e -> {
-            setValue(-1);
-            Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this).noteField.setText("");
+            NoteTreeItem treeItemElement;
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+            else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+            treeItemElement.noteField.setText("");
         });
         item2.setOnAction(e -> {
             delete();
@@ -157,6 +171,7 @@ public class NoteElement extends Text implements Element {
 
         setOnMouseDragged(e -> {
 
+            Edition.setUnsave();
             double itemX = getLayoutX() + e.getX() - shiftX;
             double itemY = getLayoutY() + e.getY() - shiftY;
 
@@ -225,6 +240,7 @@ public class NoteElement extends Text implements Element {
 
         Main.mainScreen.setSelected(this);
         toFront();
+        requestFocus();
 
         // Sélectionne l'élément associé dans l'arbre
         NoteTreeItem noteElement;
@@ -232,8 +248,6 @@ public class NoteElement extends Text implements Element {
         else noteElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
         Main.lbNoteTab.treeView.getSelectionModel().select(noteElement);
 
-        //requestFocus();
-        Edition.setUnsave();
     }
 
     public NoteTreeItem toNoteTreeItem(){
@@ -275,15 +289,23 @@ public class NoteElement extends Text implements Element {
         return new NoteElement(x, y, name, value, total, index, parentPath, Main.mainScreen.document.pages.get(page));
 
     }
-    public static void consumeData(DataInputStream reader) throws IOException {
+    // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
+    public static double[] consumeData(DataInputStream reader) throws IOException {
         reader.readByte();
         reader.readShort();
         reader.readShort();
         reader.readInt();
+        String parentPath = reader.readUTF();
+        double value = reader.readDouble();
+        double total = reader.readDouble();
         reader.readUTF();
-        reader.readDouble();
-        reader.readDouble();
-        reader.readUTF();
+
+        if(Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0){
+            return new double[]{value, total};
+        }else{
+            return new double[]{value};
+        }
+
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
 
@@ -327,12 +349,14 @@ public class NoteElement extends Text implements Element {
     }
     public void setIndex(int index) {
         this.index = index;
+        Edition.setUnsave();
     }
     public String getParentPath() {
         return parentPath;
     }
     public void setParentPath(String parentPath) {
         this.parentPath = parentPath;
+        Edition.setUnsave();
     }
 
     public int getRealX() {

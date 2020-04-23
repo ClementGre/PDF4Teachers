@@ -5,10 +5,9 @@ import java.io.InputStream;
 import java.nio.file.Files;
 
 import fr.themsou.panel.Footerbar;
-import fr.themsou.panel.leftBar.LBFilesTab;
+import fr.themsou.panel.leftBar.files.LBFilesTab;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
 import fr.themsou.panel.leftBar.LBPaintTab;
-import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.panel.MenuBar;

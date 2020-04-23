@@ -5,13 +5,11 @@ import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
 import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.LBFilesListView;
 import fr.themsou.utils.*;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -19,7 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -30,11 +27,9 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{

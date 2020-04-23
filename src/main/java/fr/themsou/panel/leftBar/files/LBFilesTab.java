@@ -1,4 +1,4 @@
-package fr.themsou.panel.leftBar;
+package fr.themsou.panel.leftBar.files;
 
 import java.io.File;
 import java.util.ArrayList;

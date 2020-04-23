@@ -12,6 +12,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.Arrays;
+
 public class Builders {
 
     public static ImageView buildImage(String imgPath, int width, int height) {
@@ -112,6 +114,10 @@ public class Builders {
                 }, "AlertResizer").start();
             }
         });
+    }
+
+    public static String[] cleanArray(String[] array) {
+        return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
     }
 
 

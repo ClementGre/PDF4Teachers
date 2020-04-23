@@ -255,6 +255,7 @@ public class NoteTreeItem extends TreeItem {
 
     public void makeSum(){
 
+        boolean hasValue = false;
         double value = 0;
         double total = 0;
 
@@ -262,14 +263,26 @@ public class NoteTreeItem extends TreeItem {
             NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
 
             total += children.getCore().getTotal();
-            if(children.getCore().getValue() > 0) value += children.getCore().getValue();
+            if(children.getCore().getValue() >= 0){
+                hasValue = true;
+                value += children.getCore().getValue();
+            }
         }
 
-        core.setValue(value);
+        if(hasValue) core.setValue(value);
+        else core.setValue(-1);
         core.setTotal(total);
 
         if(getParent() != null){
             ((NoteTreeItem) getParent()).makeSum();
+        }
+    }
+
+    public void resetChildrenValues(){
+
+        for(int i = 0; i < getChildren().size(); i++){
+            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            children.getCore().setValue(-1);
         }
     }
 

@@ -3,6 +3,9 @@ package fr.themsou.panel.leftBar.notes;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen;
+import fr.themsou.utils.Builders;
+import fr.themsou.utils.StringUtils;
+import fr.themsou.utils.TR;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
@@ -11,6 +14,8 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
+
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class NoteTreeView extends TreeView<String> {
@@ -79,7 +84,7 @@ public class NoteTreeView extends TreeView<String> {
 
     private void generateRoot(){
         if(getRoot() != null) ((NoteTreeItem) getRoot()).getCore().delete();
-        Main.lbNoteTab.newNoteElement("Total", -1, 20, 0, "");
+        Main.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
 
         // DEBUG
 
@@ -128,14 +133,15 @@ public class NoteTreeView extends TreeView<String> {
     public NoteTreeItem getNoteTreeItemParent(NoteElement element){
 
         // ELEMENT IS SUB-ROOT
-        if(element.getParentPath().equals(((NoteTreeItem)getRoot()).getCore().getName())){
+        String[] path = Builders.cleanArray(element.getParentPath().split(Pattern.quote("\\")));
+        if(path[0].equals(((NoteTreeItem)getRoot()).getCore().getName()) && path.length == 1){
             return (NoteTreeItem) getRoot();
         }
 
         // OTHER
-        String[] path = element.getParentPath()
+        path = Builders.cleanArray(element.getParentPath()
                 .replaceFirst(Pattern.quote(((NoteTreeItem)getRoot()).getCore().getName()), "")
-                .split(Pattern.quote("\\"));
+                .split(Pattern.quote("\\")));
 
         NoteTreeItem parent = (NoteTreeItem) getRoot();
         for(String parentName : path){
@@ -151,6 +157,7 @@ public class NoteTreeView extends TreeView<String> {
         }
         if(parent.equals(getRoot())){
             System.err.println("L'element Note \"" + element.getName() + "\" a ete place dans Root car aucun parent ne lui a été retrouve.");
+            System.err.println("ParentPath = " + element.getParentPath());
         }
         return parent;
     }

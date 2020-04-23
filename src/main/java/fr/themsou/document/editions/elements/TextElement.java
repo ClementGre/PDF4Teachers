@@ -150,6 +150,7 @@ public class TextElement extends Text implements Element {
 
 		setOnMouseDragged(e -> {
 
+			Edition.setUnsave();
 			double itemX = getLayoutX() + e.getX() - shiftX;
 			double itemY = getLayoutY() + e.getY() - shiftY;
 
@@ -221,7 +222,6 @@ public class TextElement extends Text implements Element {
 		Main.lbTextTab.selectItem();
 		toFront();
 		requestFocus();
-		Edition.setUnsave();
 	}
 
 	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){

@@ -1,8 +1,11 @@
-package fr.themsou.panel.leftBar;
+package fr.themsou.panel.leftBar.files;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
+import fr.themsou.panel.leftBar.notes.LBNoteTab;
+import fr.themsou.panel.leftBar.notes.NoteTreeItem;
+import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
@@ -46,22 +49,34 @@ public class LBFilesListView {
                     }
                     VBox pane = new VBox();
                     Text name = new Text(file.getName().replace(".pdf", ""));
+                    name.setFont(Font.font(null, FontWeight.NORMAL, 12));
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
                     setStyle("-fx-padding: 2 15;");
 
-                    if(Edition.getEditFile(file).exists()){
-                        name.setFont(Font.font(null, FontWeight.BOLD, 12));
-                        try{
-                            Integer[] elementsCount = Edition.countElements(Edition.getEditFile(file));
+                    try{
+                        double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
 
-                            path.setText(path.getText() + " | " + elementsCount[0] + " " + TR.tr("Éléments"));
-                            setTooltip(new Tooltip(elementsCount[0] + " " + TR.tr("Éléments") + "\n" + elementsCount[1] + " " + TR.tr("Commentaires") + "\n" + elementsCount[2] + " " + TR.tr("Notes") + "\n" + elementsCount[3] + " " + TR.tr("Figures")));
+                        if(elementsCount.length > 0){ // has edit file
+                            String note = (elementsCount[4] == -1 ? "?" : NoteTreeItem.format.format(elementsCount[4])) + "/" + NoteTreeItem.format.format(elementsCount[5]);
+                            if(elementsCount[0] > 0){ // Has Elements
 
-                        }catch(Exception e){ e.printStackTrace();}
-                    }else{
-                        name.setFont(Font.font(null, FontWeight.NORMAL, 12));
-                        path.setText(path.getText() + " | " + "Non édité");
-                        setTooltip(new Tooltip(TR.tr("Non édité")));
+                                name.setFont(Font.font(null, FontWeight.BOLD, 12));
+
+                                path.setText(path.getText() + " | " + NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note);
+                                setTooltip(new Tooltip(NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + NoteTreeItem.format.format(elementsCount[2]) + "/" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + NoteTreeItem.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
+
+                            }else{ // Don't have elements
+                                path.setText(path.getText() + " | " + TR.tr("Non édité") + " | " + note);
+                                setTooltip(new Tooltip(TR.tr("Non édité") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
+                            }
+                        }else{ // don't have edit file
+                            path.setText(path.getText() + " | " + TR.tr("Non édité"));
+                            setTooltip(new Tooltip(TR.tr("Non édité")));
+                        }
+                    }catch(Exception e){
+                        path.setStyle("-fx-collor: red;");
+                        path.setText(path.getText() + " | " + TR.tr("Impossible de récupérer les informations"));
+                        setTooltip(new Tooltip(e.getMessage()));
                     }
 
 
