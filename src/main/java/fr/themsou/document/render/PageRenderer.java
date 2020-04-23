@@ -137,21 +137,29 @@ public class PageRenderer extends Pane {
                 status = PageStatus.RENDERED;
             }
         });
-
-        new Thread(() -> {
-
-
-        }).start();
     }
 
     public void clearElements(){
         getChildren().clear();
-        getChildren().add(renderView);
+        if(status == PageStatus.RENDERED){
+            getChildren().add(renderView);
+        }
         elements = new ArrayList<>();
-        Main.lbTextTab.updateOnFileElementsList();
-        Main.lbNoteTab.treeView.clear();
     }
 
+    public void switchElementPage(Element element, PageRenderer page){
+
+        if(element != null){
+
+            elements.remove(element);
+            getChildren().remove(element);
+
+            element.setPage(page);
+
+            page.elements.add(element);
+            page.getChildren().add((Shape) element);
+        }
+    }
     public void addElementSimple(Element element){
 
         if(element != null){

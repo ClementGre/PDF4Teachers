@@ -306,6 +306,12 @@ public class TextElement extends Text implements Element {
 		this.realY.set(y);
 	}
 
+	public PageRenderer getPage() {
+		return page;
+	}
+	public void setPage(PageRenderer page) {
+		this.page = page;
+	}
 
 	@Override
 	public int getPageNumber() {

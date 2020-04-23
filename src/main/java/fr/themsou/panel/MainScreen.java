@@ -173,10 +173,10 @@ public class MainScreen extends Pane {
 
 		totalHeight = 30;
 
+		status.set(Status.OPEN);
+
 		document.showPages();
 		document.loadEdition();
-
-		status.set(Status.OPEN);
 
 		repaint();
 		Main.footerBar.repaint();

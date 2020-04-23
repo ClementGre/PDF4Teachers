@@ -23,13 +23,6 @@ public class NoteTreeView extends TreeView<String> {
 
     public NoteTreeView(LBNoteTab noteTab){
 
-        Main.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.intValue() == MainScreen.Status.OPEN){
-                if(getRoot() == null) generateRoot();
-            }
-        });
-
-
         disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
         prefHeightProperty().bind(noteTab.pane.heightProperty().subtract(layoutYProperty()));
@@ -77,16 +70,17 @@ public class NoteTreeView extends TreeView<String> {
     }
 
     public void clear(){
-        getRoot().getChildren().clear();
-        setRoot(null);
+        System.out.println("clear");
+        if(getRoot() != null) ((NoteTreeItem)getRoot()).getCore().delete();
         generateRoot();
     }
 
-    private void generateRoot(){
-        if(getRoot() != null) ((NoteTreeItem) getRoot()).getCore().delete();
+    public void generateRoot(){
+        System.out.println("Generate root");
         Main.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
 
         // DEBUG
+        Main.lbNoteTab.newNoteElement("Bonus", -1, 3, 0, "Total");
 
         Main.lbNoteTab.newNoteElement("Exercice 1"   , -1, 10.5, 1, "Total");
         Main.lbNoteTab.newNoteElement("a"            , -1, 3.5, 0, "Total\\Exercice 1");
@@ -98,13 +92,15 @@ public class NoteTreeView extends TreeView<String> {
         Main.lbNoteTab.newNoteElement("b"            , -1, 3, 1, "Total\\Exercice 2");
         Main.lbNoteTab.newNoteElement("c"            , -1, 1.5, 2, "Total\\Exercice 2");
 
-        Main.lbNoteTab.newNoteElement("Bonus", -1, 3, 0, "Total");
+
     }
 
     public void addElement(NoteElement element){
 
+        System.out.println("add element " + element.getName());
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
+            if(getRoot() != null) ((NoteTreeItem) getRoot()).getCore().delete();
             setRoot(element.toNoteTreeItem());
         }else{
             // OTHER
@@ -115,11 +111,11 @@ public class NoteTreeView extends TreeView<String> {
     }
     public void removeElement(NoteElement element){
 
+        System.out.println("remove element " + element.getName());
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             ((NoteTreeItem) getRoot()).deleteChildren();
             setRoot(null);
-            generateRoot();
         }else{
             // OTHER
             NoteTreeItem treeElement = getNoteTreeItem((NoteTreeItem) getRoot(), element);
@@ -127,6 +123,7 @@ public class NoteTreeView extends TreeView<String> {
             NoteTreeItem parent = (NoteTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
             parent.reIndexChildren();
+            parent.makeSum();
         }
     }
 

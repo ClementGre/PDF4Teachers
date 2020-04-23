@@ -1,5 +1,6 @@
 package fr.themsou.document.editions.elements;
 
+import fr.themsou.document.render.PageRenderer;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -23,6 +24,9 @@ public interface Element {
 	int getPageNumber();
 	int getCurrentPageNumber();
 	Element clone();
+
+	PageRenderer getPage();
+	void setPage(PageRenderer page);
 
 	static Font getFont(String family, boolean italic, boolean bold, double size){
 

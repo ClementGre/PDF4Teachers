@@ -249,8 +249,39 @@ public class NoteTreeItem extends TreeItem {
         cell.selectedProperty().addListener(selectedListener);
 
         // DEBUG
-        cell.setTooltip(new Tooltip(core.getParentPath() + "\\" + core.getName() + " - n°" + core.getIndex()));
+        cell.setTooltip(new Tooltip(core.getParentPath() + "\\" + core.getName() + " - n°" + core.getIndex() + "\nPage n°" + core.getCurrentPageNumber()));
 
+    }
+
+    public NoteTreeItem getBeforeItem(){
+        if(isRoot()) return null;
+
+        NoteTreeItem parent = (NoteTreeItem) getParent();
+
+        if(core.getIndex() == 0) return parent;
+
+        // Descend le plus possible dans les enfants du parent pour retrouver le dernier
+        NoteTreeItem newParent = (NoteTreeItem) parent.getChildren().get(core.getIndex()-1);
+        while(newParent.hasSubNote()){
+            newParent = (NoteTreeItem) newParent.getChildren().get(newParent.getChildren().size()-1);
+        }
+        return newParent;
+    }
+    public NoteTreeItem getAfterItem(){
+
+        if(hasSubNote()) return (NoteTreeItem) getChildren().get(0);
+        if(isRoot()) return null;
+
+        NoteTreeItem parent = (NoteTreeItem) getParent();
+        NoteTreeItem children = this;
+
+        // Remonte dans les parents jusqu'a trouver un parent qui as un élément après celui-ci
+        while(children.getCore().getIndex() == parent.getChildren().size()-1){
+            children = parent;
+            if(parent.isRoot()) return null;
+            parent = (NoteTreeItem) parent.getParent();
+        }
+        return (NoteTreeItem) parent.getChildren().get(children.getCore().getIndex()+1);
     }
 
     public void makeSum(){
@@ -289,6 +320,9 @@ public class NoteTreeItem extends TreeItem {
     public boolean hasSubNote(){
         return getChildren().size() != 0;
     }
+    public boolean isRoot(){
+        return Main.lbNoteTab.treeView.getRoot().equals(this);
+    }
 
     public NoteElement getCore() {
         return core;
@@ -320,7 +354,6 @@ public class NoteTreeItem extends TreeItem {
     }
 
     public void deleteChildren() {
-
         while(hasSubNote()){
             NoteTreeItem children = (NoteTreeItem) getChildren().get(0);
             if(children.hasSubNote()) children.deleteChildren();

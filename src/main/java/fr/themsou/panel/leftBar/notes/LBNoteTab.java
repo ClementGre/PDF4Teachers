@@ -67,7 +67,7 @@ public class LBNoteTab extends Tab {
         Main.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()),
-                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page);
+                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page, "newNoteElementAuto");
 
         page.addElement(current, true);
         Main.mainScreen.setSelected(current);
@@ -83,7 +83,7 @@ public class LBNoteTab extends Tab {
         Main.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()),
-                name, value, total, index, parentPath, page);
+                name, value, total, index, parentPath, page, "newNoteElement");
 
         page.addElement(current, true);
         Main.mainScreen.setSelected(current);

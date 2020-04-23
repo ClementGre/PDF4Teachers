@@ -23,6 +23,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import org.apache.pdfbox.text.TextPosition;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -38,18 +39,23 @@ public class NoteElement extends Text implements Element {
     private int index;
     private String parentPath;
 
+    public ContextMenu menu = new ContextMenu();
+
     private IntegerProperty realX = new SimpleIntegerProperty();
     private IntegerProperty realY = new SimpleIntegerProperty();
     private PageRenderer page;
 
-    public ContextMenu menu = new ContextMenu();
-
-    private final int pageNumber;
+    private final int pageNumber; // WARNING : Don't use this value (Only for simpleLoading)
     private int shiftX = 0;
     private int shiftY = 0;
 
-    public NoteElement(int x, int y, String name, double value, double total, int index, String parentPath, PageRenderer page){
+    private int maxY;
+    private int maxYPage = 999999;
+    private int minY = 0;
+    private int minYPage = 0;
 
+    public NoteElement(int x, int y, String name, double value, double total, int index, String parentPath, PageRenderer page, String from){
+        System.out.println("Gen element " + name + " in page " + page.getPage() + " from " + from);
         this.pageNumber = page.getPage();
         this.realX.set(x);
         this.realY.set(y);
@@ -58,13 +64,54 @@ public class NoteElement extends Text implements Element {
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
         this.parentPath = parentPath;
+        this.page = page;
+        this.maxY = (int) page.getHeight();
 
         setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
         setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
-        setTextOrigin(VPos.BOTTOM);
 
-        textProperty().bind(Bindings.createStringBinding(() -> getValue() == -1 ? "" : NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()), this.value, this.total));
+        setBoundsType(TextBoundsType.LOGICAL);
+        setTextOrigin(VPos.BASELINE);
+        setCursor(Cursor.MOVE);
 
+        layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+        layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
+
+        setText((getValue() == -1 ? "" : NoteTreeItem.format.format(getValue())) + "/" + NoteTreeItem.format.format(getTotal()));
+        setVisible(getValue() != -1);
+
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
+        item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
+        item1.setToolTip(TR.tr("suppr"));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
+        item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
+        item2.disableProperty().bind(LBNoteTab.lockRatingScale);
+        menu.getItems().addAll(item1, item2);
+        Builders.setMenuSize(menu);
+
+        item1.setOnAction(e -> {
+            NoteTreeItem treeItemElement;
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+            else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+            treeItemElement.noteField.setText("");
+        });
+        item2.setOnAction(e -> {
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)){
+                // Regenerate Root if this is Root
+                delete();
+                Main.lbNoteTab.treeView.generateRoot();
+            }else delete();
+
+        });
+
+        // Forse to be hide when value == -1
+        visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue && getValue() == -1) setVisible(false);
+        });
+
+        textProperty().addListener((observable, oldValue, newValue) -> {
+            checkLocation(getLayoutX(), getLayoutY());
+        });
         nameProperty().addListener((observable, oldValue, newValue) -> {
             // Check if name is blank
             Edition.setUnsave();
@@ -72,50 +119,48 @@ public class NoteElement extends Text implements Element {
                 setName(TR.tr("Nouvelle note")); return;
             }
 
-            Platform.runLater(() -> {
-                NoteTreeItem treeItemElement;
-                if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
-                else{
-                    treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
-                    // Check if exist twice
-                    if(((NoteTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
-                }
+            NoteTreeItem treeItemElement;
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+            else{
+                treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+                // Check if exist twice
+                if(((NoteTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
+            }
 
-                // ReIndex childrens
-                if(treeItemElement.hasSubNote()) treeItemElement.resetParentPathChildren();
-            });
+            // ReIndex childrens
+            if(treeItemElement.hasSubNote()) treeItemElement.resetParentPathChildren();
         });
-
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)){
-                if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).hasSubNote() && newValue.intValue() == -1) ((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).resetChildrenValues();
-                return;
-            }
-            NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
 
-            Platform.runLater(() -> {
+            if(newValue.intValue() == -1){
+                setVisible(false);
+                setText("/" + NoteTreeItem.format.format(getTotal()));
+            }else{
+                calculateMinAndMaxY();
+                if(oldValue.intValue() == -1) setRealY((int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()));
+
+                setVisible(true);
+                setText(NoteTreeItem.format.format(newValue) + "/" + NoteTreeItem.format.format(getTotal()));
+            }
+
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)){// this is Root
+                if(newValue.intValue() == -1) ((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).resetChildrenValues();
+
+            }else{
+                NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
                 if(treeItemElement.hasSubNote() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
                 ((NoteTreeItem) treeItemElement.getParent()).makeSum();
-            });
+            }
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return;
-            NoteTreeItem treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+            setText(NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()));
 
-            Platform.runLater(() -> ((NoteTreeItem) treeItemElement.getParent()).makeSum());
+            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
+            ((NoteTreeItem) Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this).getParent()).makeSum();
         });
-
-        setBoundsType(TextBoundsType.LOGICAL);
-
-        this.page = page;
-
-        layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
-        layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
-
-        setCursor(Cursor.MOVE);
 
         // enable shadow if this element is selected
         Main.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -131,29 +176,15 @@ public class NoteElement extends Text implements Element {
                 requestFocus();
             }
         });
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
-        item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
-        item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
-        item2.disableProperty().bind(LBNoteTab.lockRatingScale);
-        menu.getItems().addAll(item1, item2);
-        Builders.setMenuSize(menu);
-
-        item1.setOnAction(e -> {
-            NoteTreeItem treeItemElement;
-            if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
-            else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
-            treeItemElement.noteField.setText("");
-        });
-        item2.setOnAction(e -> {
-            delete();
-        });
 
         setOnMousePressed(e -> {
             e.consume();
 
             shiftX = (int) e.getX();
             shiftY = (int) e.getY();
+
+            calculateMinAndMaxY();
+
             menu.hide();
             select();
 
@@ -163,11 +194,12 @@ public class NoteElement extends Text implements Element {
         });
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
-                Main.mainScreen.setSelected(null);
-                delete();
+                NoteTreeItem treeItemElement;
+                if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+                else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+                treeItemElement.noteField.setText("");
             }
         });
-
 
         setOnMouseDragged(e -> {
 
@@ -176,26 +208,22 @@ public class NoteElement extends Text implements Element {
             double itemY = getLayoutY() + e.getY() - shiftY;
 
             boolean changePage = false;
-            if(this.page.mouseY < -30){
+            if(this.page.mouseY < -30  && this.page.getPage() > minYPage){ // Monter d'une page
                 if(this.page.getPage() > 0){
 
                     Main.mainScreen.setSelected(null);
 
-                    this.page.removeElement(this, false);
-                    this.page = Main.mainScreen.document.pages.get(this.page.getPage() -1);
-                    this.page.addElement(this, false);
+                    this.page.switchElementPage(this, Main.mainScreen.document.pages.get(this.page.getPage() -1));
 
                     itemY = this.page.getHeight();
                     changePage = true;
                 }
-            }else if(this.page.mouseY > this.page.getHeight() + 30){
+            }else if(this.page.mouseY > this.page.getHeight() + 30 && this.page.getPage() < maxYPage){ // Descendre d'une page
                 if(this.page.getPage() < Main.mainScreen.document.pages.size()-1){
 
                     Main.mainScreen.setSelected(null);
 
-                    this.page.removeElement(this, false);
-                    this.page = Main.mainScreen.document.pages.get(this.page.getPage() + 1);
-                    this.page.addElement(this, false);
+                    this.page.switchElementPage(this, Main.mainScreen.document.pages.get(this.page.getPage() +1));
 
                     itemY = 0;
                     changePage = true;
@@ -211,23 +239,64 @@ public class NoteElement extends Text implements Element {
             }
 
         });
+    }
 
-        textProperty().addListener((observable, oldValue, newValue) -> {
+    public void calculateMinAndMaxY(){
 
-            if(getLayoutY() < getLayoutBounds().getHeight()){
-                checkLocation(getLayoutX(), getLayoutY());
-            }
-        });
+        NoteTreeItem treeItemElement;
+        if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
+        else treeItemElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
+
+        NoteTreeItem beforeItem = treeItemElement.getBeforeItem();
+        while(beforeItem != null){
+            if(beforeItem.getCore().getValue() != -1) break;
+            beforeItem = beforeItem.getBeforeItem();
+        }
+
+        NoteTreeItem afterItem = treeItemElement.getAfterItem();
+        while(afterItem != null){
+            if(afterItem.getCore().getValue() != -1) break;
+            afterItem = afterItem.getAfterItem();
+        }
+
+        if(beforeItem == null){
+            minYPage = 0;
+            minY = 0;
+        }else{
+            minYPage = beforeItem.getCore().getCurrentPageNumber();
+            minY = (int) beforeItem.getCore().getLayoutY();
+            minY = Math.max(minY, 0);
+        }
+        if(afterItem == null){
+            maxYPage = 999999;
+            maxY = (int) page.getHeight();
+        }else{
+            maxYPage = afterItem.getCore().getCurrentPageNumber();
+            maxY = (int) (afterItem.getCore().getLayoutY() - afterItem.getCore().getLayoutBounds().getHeight());
+            maxY = (int) Math.min(maxY, page.getHeight());
+        }
+
+        //System.out.println((beforeItem == null ? "null" : beforeItem.getCore().getName()) + " < " + getName() + " < " + (afterItem == null ? "null" : afterItem.getCore().getName()));
+        //System.out.println(minYPage + ":" + minY + " < " + getName() + " < " + maxYPage + ":" + maxY);
     }
 
     public void checkLocation(double itemX, double itemY){
 
         setBoundsType(TextBoundsType.VISUAL);
-        double linesHeight = getLayoutBounds().getHeight();
-        if(itemY < linesHeight) itemY = linesHeight;
-        if(itemY > page.getHeight()) itemY = page.getHeight();
+
+        double height = getLayoutBounds().getHeight();
+
+        int minY = page.getPage() > minYPage ? 0 : this.minY;
+        int maxY = page.getPage() < maxYPage ? (int) page.getHeight() : this.maxY;
+
+        //System.out.println("minY = " + minY + "  |  maxY = " + maxY);
+
+        if(itemY > maxY) itemY = maxY;
+        if(itemY < height + minY) itemY = height + minY;
+
         if(itemX < 0) itemX = 0;
         if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
+
         setBoundsType(TextBoundsType.LOGICAL);
 
         realX.set((int) (itemX / page.getWidth() * Element.GRID_WIDTH));
@@ -240,13 +309,14 @@ public class NoteElement extends Text implements Element {
 
         Main.mainScreen.setSelected(this);
         toFront();
-        requestFocus();
 
         // Sélectionne l'élément associé dans l'arbre
         NoteTreeItem noteElement;
         if(getParentPath().isEmpty()) noteElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
         else noteElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
         Main.lbNoteTab.treeView.getSelectionModel().select(noteElement);
+
+        requestFocus();
 
     }
 
@@ -256,6 +326,7 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public void delete(){
+        System.out.println("delete " + getName());
         page.removeElement(this, true);
     }
 
@@ -286,7 +357,7 @@ public class NoteElement extends Text implements Element {
         double total = reader.readDouble();
         String name = reader.readUTF();
 
-        return new NoteElement(x, y, name, value, total, index, parentPath, Main.mainScreen.document.pages.get(page));
+        return new NoteElement(x, y, name, value, total, index, parentPath, Main.mainScreen.document.pages.get(page), "readDataAndGive");
 
     }
     // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
@@ -379,6 +450,13 @@ public class NoteElement extends Text implements Element {
         this.realY.set(y);
     }
 
+    public PageRenderer getPage() {
+        return page;
+    }
+    public void setPage(PageRenderer page) {
+        this.page = page;
+    }
+
     @Override
     public int getPageNumber() {
         return pageNumber;
@@ -390,6 +468,6 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public Element clone() {
-        return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, page);
+        return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, page, "clone");
     }
 }

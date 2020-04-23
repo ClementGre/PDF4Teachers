@@ -42,6 +42,7 @@ public class Edition {
 
         new File(Main.dataFolder + "editions").mkdirs();
 
+        Main.lbNoteTab.treeView.clear();
         try{
             if(editFile.exists()){ //file does not exist
 
@@ -66,6 +67,7 @@ public class Edition {
             }
         }catch (IOException e){ e.printStackTrace(); }
         Main.lbTextTab.updateOnFileElementsList();
+        //if(Main.lbNoteTab.treeView.getRoot() == null) Main.lbNoteTab.treeView.generateRoot();
     }
     public static Element[] simpleLoad(File editFile) throws Exception{
 
@@ -248,6 +250,9 @@ public class Edition {
             }
             editFile.delete();
             Main.mainScreen.setSelected(null);
+
+            Main.lbTextTab.updateOnFileElementsList();
+            Main.lbNoteTab.treeView.clear();
         }
     }
 
