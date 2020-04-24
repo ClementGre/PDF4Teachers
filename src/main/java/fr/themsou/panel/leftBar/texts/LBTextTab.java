@@ -44,8 +44,8 @@ public class LBTextTab extends Tab {
 	// Séparés par ligne
 
 	private HBox combosBox = new HBox();
-	private ComboBox<String> fontCombo; String[] fontNames;
-	private ComboBox<Integer> sizeCombo = new ComboBox<>(FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50));
+	private ComboBox<String> fontCombo = new ComboBox<>(Element.fonts);
+	private ComboBox<Integer> sizeCombo = new ComboBox<>(Element.sizes);
 
 	private HBox colorAndParamsBox = new HBox();
 	private ColorPicker colorPicker = new ColorPicker();
@@ -109,7 +109,6 @@ public class LBTextTab extends Tab {
 
 		optionPane.setMinWidth(200);
 
-		fontCombo = new ComboBox<>(FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Calibri", "Calibri Light", "Roboto", "Times New Roman", "Segoe Print", "Arrows"));
 		fontCombo.setCellFactory((ListView<String> stringListView) -> new ShapeCell());
 		//fontCombo.setEditable(true);
 
@@ -413,7 +412,7 @@ public class LBTextTab extends Tab {
 		return Element.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
 	}
 
-	public class ShapeCell extends ListCell<String>{
+	public static class ShapeCell extends ListCell<String>{
 		@Override
 		public void updateItem(String item, boolean empty){
 			super.updateItem(item, empty);

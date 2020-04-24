@@ -50,7 +50,7 @@ public class TextTreeItem extends TreeItem{
 
 	// Graphics items
 	HBox pane = new HBox();
-	ImageView linkImage = Builders.buildImage(getClass().getResource("/img/link.png")+"", 0, 0);
+	ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
 	Label name = new Label();
 	ContextMenu menu;
 	EventHandler<MouseEvent> onMouseCLick;

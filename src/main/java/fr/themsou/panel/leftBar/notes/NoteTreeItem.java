@@ -70,7 +70,7 @@ public class NoteTreeItem extends TreeItem {
                 totalField.setText(format.format(core.getTotal()));
                 pane.getChildren().clear();
 
-                if(LBNoteTab.lockRatingScale.get()){
+                if(Main.lbNoteTab.isLockRatingScaleProperty().get()){
                     if(hasSubNote()){
                         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
                     }else{
@@ -221,9 +221,9 @@ public class NoteTreeItem extends TreeItem {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         newNote = new Button();
-        newNote.setGraphic(Builders.buildImage(getClass().getResource("/img/more.png")+"", 0, 0));
+        newNote.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/more.png")+"", 0, 0));
         Builders.setPosition(newNote, 0, 0, 30, 30, true);
-        newNote.disableProperty().bind(LBNoteTab.lockRatingScale);
+        newNote.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.lbNoteTab.isLockRatingScaleProperty().get() || NoteTreeView.getElementTier(getCore().getParentPath()) >= 4, Main.lbNoteTab.isLockRatingScaleProperty()));
         newNote.setVisible(false);
 
         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);

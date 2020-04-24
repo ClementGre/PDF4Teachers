@@ -323,9 +323,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		fichier10ExportAll.setOnAction((ActionEvent actionEvent) -> {
 
-			if(Main.mainScreen.hasDocument(false))
-				Main.mainScreen.document.save();
-
+			if(Main.mainScreen.hasDocument(false)) Main.mainScreen.document.save();
 			new ExportWindow(Main.lbFilesTab.files.getItems());
 
 		});

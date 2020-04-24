@@ -54,9 +54,9 @@ public class NoteElement extends Text implements Element {
     private int minY = 0;
     private int minYPage = 0;
 
-    public NoteElement(int x, int y, String name, double value, double total, int index, String parentPath, PageRenderer page, String from){
-        System.out.println("Gen element " + name + " in page " + page.getPage() + " from " + from);
-        this.pageNumber = page.getPage();
+    public NoteElement(int x, int y, String name, double value, double total, int index, String parentPath, int pageNumber, PageRenderer page, String from){
+        System.out.println("Gen element " + name + " in page " + pageNumber + " from " + from);
+        this.pageNumber = pageNumber;
         this.realX.set(x);
         this.realY.set(y);
         this.name = new SimpleStringProperty(name);
@@ -64,28 +64,27 @@ public class NoteElement extends Text implements Element {
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
         this.parentPath = parentPath;
-        this.page = page;
-        this.maxY = (int) page.getHeight();
-
-        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
-        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
 
         setBoundsType(TextBoundsType.LOGICAL);
         setTextOrigin(VPos.BASELINE);
-        setCursor(Cursor.MOVE);
 
+        updateFont();
+
+        if(page == null) return;
+        this.page = page;
+        this.maxY = (int) page.getHeight();
+
+        setCursor(Cursor.MOVE);
+        setVisible(getValue() != -1);
         layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
-
-        setText((getValue() == -1 ? "" : NoteTreeItem.format.format(getValue())) + "/" + NoteTreeItem.format.format(getTotal()));
-        setVisible(getValue() != -1);
 
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
         item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
         item1.setToolTip(TR.tr("suppr"));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
         item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
-        item2.disableProperty().bind(LBNoteTab.lockRatingScale);
+        item2.disableProperty().bind(Main.lbNoteTab.isLockRatingScaleProperty());
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
 
@@ -113,7 +112,9 @@ public class NoteElement extends Text implements Element {
             checkLocation(getLayoutX(), getLayoutY());
         });
         nameProperty().addListener((observable, oldValue, newValue) -> {
-            // Check if name is blank
+
+            setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : NoteTreeItem.format.format(getValue())) + "/" + NoteTreeItem.format.format(getTotal()));
+
             Edition.setUnsave();
             if(newValue.isBlank()){
                 setName(TR.tr("Nouvelle note")); return;
@@ -136,13 +137,13 @@ public class NoteElement extends Text implements Element {
 
             if(newValue.intValue() == -1){
                 setVisible(false);
-                setText("/" + NoteTreeItem.format.format(getTotal()));
+                setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + NoteTreeItem.format.format(getTotal()));
             }else{
                 calculateMinAndMaxY();
                 if(oldValue.intValue() == -1) setRealY((int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()));
 
                 setVisible(true);
-                setText(NoteTreeItem.format.format(newValue) + "/" + NoteTreeItem.format.format(getTotal()));
+                setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + NoteTreeItem.format.format(newValue) + "/" + NoteTreeItem.format.format(getTotal()));
             }
 
             if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)){// this is Root
@@ -156,7 +157,7 @@ public class NoteElement extends Text implements Element {
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            setText(NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()));
+            setText(NoteTreeItem.format.format((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + getValue()) + "/" + NoteTreeItem.format.format(getTotal()));
 
             if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
             ((NoteTreeItem) Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this).getParent()).makeSum();
@@ -304,6 +305,12 @@ public class NoteElement extends Text implements Element {
 
     }
 
+    public void updateFont(){
+        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
+        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
+        setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : NoteTreeItem.format.format(getValue())) + "/" + NoteTreeItem.format.format(getTotal()));
+    }
+
     @Override
     public void select() {
 
@@ -336,7 +343,7 @@ public class NoteElement extends Text implements Element {
         writeData(writer);
     }
     public void writeData(DataOutputStream writer) throws IOException {
-        writer.writeByte(page.getPage());
+        writer.writeByte(page == null ? pageNumber : page.getPage());
         writer.writeShort(getRealX());
         writer.writeShort(getRealY());
         writer.writeInt(index);
@@ -346,7 +353,7 @@ public class NoteElement extends Text implements Element {
         writer.writeUTF(name.getValue());
     }
 
-    public static NoteElement readDataAndGive(DataInputStream reader) throws IOException {
+    public static NoteElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
 
         byte page = reader.readByte();
         short x = reader.readShort();
@@ -357,7 +364,7 @@ public class NoteElement extends Text implements Element {
         double total = reader.readDouble();
         String name = reader.readUTF();
 
-        return new NoteElement(x, y, name, value, total, index, parentPath, Main.mainScreen.document.pages.get(page), "readDataAndGive");
+        return new NoteElement(x, y, name, value, total, index, parentPath, page, hasPage ? Main.mainScreen.document.pages.get(page) : null, "readDataAndGive");
 
     }
     // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
@@ -380,7 +387,7 @@ public class NoteElement extends Text implements Element {
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
 
-        NoteElement element = readDataAndGive(reader);
+        NoteElement element = readDataAndGive(reader, true);
 
         if(Main.mainScreen.document.pages.size() > element.page.getPage())
             Main.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
@@ -468,6 +475,6 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public Element clone() {
-        return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, page, "clone");
+        return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, pageNumber, page, "clone");
     }
 }

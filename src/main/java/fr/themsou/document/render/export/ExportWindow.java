@@ -74,7 +74,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
             HBox filePathPane = new HBox();
-                TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : (files.get(0).getParentFile().getPath() + File.separator)));
+                TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : System.getProperty("user.home") + File.separator));
                 filePath.setPromptText(TR.tr("Chemin du dossier d'exportation"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
@@ -131,7 +131,8 @@ public class ExportWindow {
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Selexionnez un dossier"));
-            chooser.setInitialDirectory(files.get(0).getParentFile());
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
+                    (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
 
             File file = chooser.showDialog(Main.window);
             if(file != null){
@@ -197,7 +198,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
         HBox filePathPane = new HBox();
-        TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : (files.get(0).getParentFile().getPath() + File.separator)));
+        TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : System.getProperty("user.home") + File.separator));
         filePath.setMinWidth(1);
         filePath.setMinHeight(30);
         HBox.setHgrow(filePath, Priority.ALWAYS);
@@ -264,7 +265,8 @@ public class ExportWindow {
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Selexionnez un dossier"));
-            chooser.setInitialDirectory(files.get(0).getParentFile());
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
+                    (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
 
             File file = chooser.showDialog(Main.window);
             if(file != null){

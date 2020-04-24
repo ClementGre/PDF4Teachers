@@ -3,16 +3,14 @@ package fr.themsou.panel.leftBar.files;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.notes.LBNoteTab;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -23,12 +21,12 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
 import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
 
 public class LBFilesListView {
+
 
     public LBFilesListView(ListView listView){
 
@@ -48,8 +46,10 @@ public class LBFilesListView {
                         return;
                     }
                     VBox pane = new VBox();
+                    HBox nameBox = new HBox();
                     Text name = new Text(file.getName().replace(".pdf", ""));
                     name.setFont(Font.font(null, FontWeight.NORMAL, 12));
+
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));
                     setStyle("-fx-padding: 2 15;");
 
@@ -65,6 +65,12 @@ public class LBFilesListView {
                                 path.setText(path.getText() + " | " + NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note);
                                 setTooltip(new Tooltip(NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + NoteTreeItem.format.format(elementsCount[2]) + "/" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + NoteTreeItem.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
 
+                                if(elementsCount[2] == elementsCount[6]){
+                                    ImageView check = Builders.buildImage(getClass().getResource("/img/FilesTab/check.png")+"", 0, 0);
+                                    HBox.setMargin(check, new Insets(0, 4, 0, 0));
+                                    nameBox.getChildren().add(check);
+                                }
+
                             }else{ // Don't have elements
                                 path.setText(path.getText() + " | " + TR.tr("Non édité") + " | " + note);
                                 setTooltip(new Tooltip(TR.tr("Non édité") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
@@ -79,9 +85,9 @@ public class LBFilesListView {
                         setTooltip(new Tooltip(e.getMessage()));
                     }
 
-
                     path.setFont(new Font(10));
-                    pane.getChildren().addAll(name, path);
+                    nameBox.getChildren().add(name);
+                    pane.getChildren().addAll(nameBox, path);
                     setGraphic(pane);
 
                     ContextMenu menu = getNewMenu();
@@ -120,74 +126,44 @@ public class LBFilesListView {
         menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                Platform.runLater(new Runnable() {
-                    public void run() {
-                        Main.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()));
+        item1.setOnAction(e -> Platform.runLater(() -> Main.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()))));
+
+        item2.setOnAction(e -> Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true));
+
+        item3.setOnAction(e -> Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true));
+
+        item4.setOnAction(e -> {
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            new JMetro(alert.getDialogPane(), Style.LIGHT);
+            Builders.secureAlert(alert);
+            alert.setTitle(TR.tr("Confirmation"));
+            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document et son édition ?"));
+            alert.setContentText(TR.tr("Cette action est irréversible."));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.get() == ButtonType.OK){
+                Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
+                Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
+                new File(((MenuItem)e.getSource()).getParentPopup().getId()).delete();
+            }
+
+
+        });
+        item5.setOnAction(e -> {
+            if(new File(((MenuItem)e.getSource()).getParentPopup().getId()).exists()){
+
+                if(Main.mainScreen.hasDocument(false)){
+                    if(Main.mainScreen.document.getFile().getAbsolutePath().equals(((MenuItem)e.getSource()).getParentPopup().getId())){
+                        Main.mainScreen.document.save();
                     }
-                });
-
-
-            }
-        });
-        item2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true);
-
-            }
-        });
-        item3.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true);
-            }
-        });
-        item4.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Confirmation"));
-                alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document et son édition ?"));
-                alert.setContentText(TR.tr("Cette action est irréversible."));
-
-                Optional<ButtonType> result = alert.showAndWait();
-                if(result.get() == ButtonType.OK){
-                    Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
-                    Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
-                    new File(((MenuItem)e.getSource()).getParentPopup().getId()).delete();
                 }
 
-
+                new ExportWindow(Collections.singletonList(new File(((MenuItem)e.getSource()).getParentPopup().getId())));
             }
-        });
-        item5.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                if(new File(((MenuItem)e.getSource()).getParentPopup().getId()).exists()){
 
-                    if(Main.mainScreen.hasDocument(false)){
-                        if(Main.mainScreen.document.getFile().getAbsolutePath().equals(((MenuItem)e.getSource()).getParentPopup().getId())){
-                            Main.mainScreen.document.save();
-                        }
-                    }
-
-                    new ExportWindow(Collections.singletonList(new File(((MenuItem)e.getSource()).getParentPopup().getId())));
-                }
-
-            }
         });
-        item6.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
-                Main.lbFilesTab.clearFiles(true);
-            }
-        });
+        item6.setOnAction(e -> Main.lbFilesTab.clearFiles(true));
         return menu;
 
     }

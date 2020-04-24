@@ -1,6 +1,8 @@
 package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.render.PageRenderer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -8,8 +10,14 @@ import javafx.scene.text.FontWeight;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public interface Element {
+
+	ObservableList<String> fonts = FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Calibri", "Calibri Light", "Roboto", "Times New Roman", "Segoe Print", "Arrows");
+	ObservableList<Integer> sizes = FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50);
 
 	// Size for A4 - 200dpi (Static)
 	float GRID_WIDTH = 1654;

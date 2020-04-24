@@ -85,7 +85,7 @@ public class Edition {
                         elements.add(TextElement.readDataAndGive(reader, false));
                         break;
                     case 2:
-                        elements.add(NoteElement.readDataAndGive(reader));
+                        elements.add(NoteElement.readDataAndGive(reader, false));
                         break;
                     case 3:
 
@@ -94,6 +94,23 @@ public class Edition {
             }
             reader.close();
             return elements.toArray(new Element[elements.size()]);
+        }
+    }
+    public static void simpleAppend(File editFile, Element[] elements) throws Exception {
+
+        try{
+            editFile.createNewFile();
+            DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, true)));
+
+            for(Element element : elements){
+                element.writeSimpleData(writer);
+            }
+
+            writer.flush();
+            writer.close();
+
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
     public static double[] countElements(File editFile) throws Exception{
@@ -226,6 +243,7 @@ public class Edition {
                 }
             }
             Edition.getEditFile(file).delete();
+            Main.lbFilesTab.files.refresh();
         }
     }
 

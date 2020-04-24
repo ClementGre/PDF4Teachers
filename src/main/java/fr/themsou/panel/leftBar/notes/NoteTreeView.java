@@ -80,7 +80,7 @@ public class NoteTreeView extends TreeView<String> {
         Main.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
 
         // DEBUG
-        Main.lbNoteTab.newNoteElement("Bonus", -1, 3, 0, "Total");
+        /*Main.lbNoteTab.newNoteElement("Bonus", -1, 3, 0, "Total");
 
         Main.lbNoteTab.newNoteElement("Exercice 1"   , -1, 10.5, 1, "Total");
         Main.lbNoteTab.newNoteElement("a"            , -1, 3.5, 0, "Total\\Exercice 1");
@@ -90,7 +90,7 @@ public class NoteTreeView extends TreeView<String> {
         Main.lbNoteTab.newNoteElement("Exercice 2"   , -1, 6.5, 2, "Total");
         Main.lbNoteTab.newNoteElement("a"            , -1, 3, 0, "Total\\Exercice 2");
         Main.lbNoteTab.newNoteElement("b"            , -1, 3, 1, "Total\\Exercice 2");
-        Main.lbNoteTab.newNoteElement("c"            , -1, 1.5, 2, "Total\\Exercice 2");
+        Main.lbNoteTab.newNoteElement("c"            , -1, 1.5, 2, "Total\\Exercice 2");*/
 
 
     }
@@ -193,7 +193,6 @@ public class NoteTreeView extends TreeView<String> {
         return parent.getCore().getParentPath() + "\\" + parent.getCore().getName();
     }
     public static int getElementTier(String parentPath){
-        if(parentPath.isEmpty()) return 0;
-        return parentPath.split(Pattern.quote("\\")).length;
+        return Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length;
     }
 }

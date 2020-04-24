@@ -56,13 +56,13 @@ public class Builders {
         if(width == -1){
             HBox.setHgrow(element, Priority.ALWAYS);
             element.setMaxWidth(Double.MAX_VALUE);
-        }else{
+        }else if(width != 0){
             element.setPrefWidth(width);
             element.minWidthProperty().bind(new SimpleDoubleProperty(width));
         }
         if(height == -1){
             VBox.setVgrow(element, Priority.ALWAYS);
-        }else{
+        }else if(height != 0){
             element.setPrefHeight(height);
             element.minHeightProperty().bind(new SimpleDoubleProperty(height));
         }

@@ -1,9 +1,18 @@
 package fr.themsou.main;
 
+import fr.themsou.document.editions.elements.Element;
+import fr.themsou.panel.leftBar.notes.LBNoteTab;
+import fr.themsou.panel.leftBar.notes.NoteSettingsWindow;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class UserData {
 
@@ -14,7 +23,8 @@ public class UserData {
     }
 
     public static File lastOpenDir = new File(System.getProperty("user.home"));
-    public static File lastExportDir = new File(System.getProperty("user.home") + File.separator + "xyz.length");
+    public static File lastExportDir = new File(System.getProperty("user.home"));
+    public static File lastExportDirNotes = new File(System.getProperty("user.home"));
 
     public UserData(){
         loadData();
@@ -38,11 +48,24 @@ public class UserData {
                             try{
                                 lastOpenDir = new File(reader.readUTF());
                                 lastExportDir = new File(reader.readUTF());
+                                lastExportDirNotes = new File(reader.readUTF());
+
+                                // LAST FONTS (TEXT_TAB)
+
                                 Main.lbTextTab.lastFont = reader.readUTF();
                                 Main.lbTextTab.lastFontSize = reader.readInt();
                                 Main.lbTextTab.lastColor = reader.readUTF();
                                 Main.lbTextTab.lastBold = reader.readBoolean();
                                 Main.lbTextTab.lastItalic = reader.readBoolean();
+
+                                // TIERS FONTS (NOTE_TAB)
+
+                                for(int i = 0; i < 5 ; i++){
+                                    LBNoteTab.fontTiers.put(i, Map.entry(
+                                            Font.loadFont(Element.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
+                                            Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
+                                }
+                                Main.lbNoteTab.updateElementsFont();
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
@@ -93,12 +116,30 @@ public class UserData {
 
             writer.writeUTF(lastOpenDir.getAbsolutePath());
             writer.writeUTF(lastExportDir.getAbsolutePath());
+            writer.writeUTF(lastExportDirNotes.getAbsolutePath());
+
+            // LAST FONTS (TEXT_TAB)
 
             writer.writeUTF(Main.lbTextTab.lastFont);
             writer.writeInt(Main.lbTextTab.lastFontSize);
             writer.writeUTF(Main.lbTextTab.lastColor);
             writer.writeBoolean(Main.lbTextTab.lastBold);
             writer.writeBoolean(Main.lbTextTab.lastItalic);
+
+            // TIERS FONTS (NOTE_TAB)
+
+            for(int i = 0; i < 5 ; i++){
+                Map.Entry<Font, Map.Entry<Color, Boolean>> font = LBNoteTab.fontTiers.get(i);
+                Font realFont = font.getKey();
+
+                writer.writeUTF(realFont.getFamily());
+                writer.writeBoolean(Element.getFontPosture(realFont) == FontPosture.ITALIC);
+                writer.writeBoolean(Element.getFontWeight(realFont) == FontWeight.BOLD);
+                writer.writeDouble(realFont.getSize());
+
+                writer.writeUTF(font.getValue().getKey().toString());
+                writer.writeBoolean(font.getValue().getValue());
+            }
 
             writer.flush();
             writer.close();
