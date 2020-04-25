@@ -51,7 +51,7 @@ public class Builders {
         }
     }
 
-    public static void setHBoxPosition(Control element, double width, double height, double margin){
+    public static void setHBoxPosition(Control element, double width, double height, Insets margin){
 
         if(width == -1){
             HBox.setHgrow(element, Priority.ALWAYS);
@@ -66,7 +66,37 @@ public class Builders {
             element.setPrefHeight(height);
             element.minHeightProperty().bind(new SimpleDoubleProperty(height));
         }
-        HBox.setMargin(element, new Insets(margin, margin, margin, margin));
+        HBox.setMargin(element, margin);
+    }
+    public static void setHBoxPosition(Control element, double width, double height, double margin){
+        setHBoxPosition(element, width, height, new Insets(margin, margin, margin, margin));
+    }
+    public static void setHBoxPosition(Control element, double width, double height, double marginLeftRight, double marginTopBottom){
+        setHBoxPosition(element, width, height, new Insets(marginTopBottom, marginLeftRight, marginTopBottom, marginLeftRight));
+    }
+
+    public static void setVBoxPosition(Control element, double width, double height, Insets margin){
+
+        if(width == -1){
+            HBox.setHgrow(element, Priority.ALWAYS);
+            element.setMaxWidth(Double.MAX_VALUE);
+        }else if(width != 0){
+            element.setPrefWidth(width);
+            element.minWidthProperty().bind(new SimpleDoubleProperty(width));
+        }
+        if(height == -1){
+            VBox.setVgrow(element, Priority.ALWAYS);
+        }else if(height != 0){
+            element.setPrefHeight(height);
+            element.minHeightProperty().bind(new SimpleDoubleProperty(height));
+        }
+        VBox.setMargin(element, margin);
+    }
+    public static void setVBoxPosition(Control element, double width, double height, double margin){
+        setVBoxPosition(element, width, height, new Insets(margin, margin, margin, margin));
+    }
+    public static void setVBoxPosition(Control element, double width, double height, double marginLeftRight, double marginTopBottom){
+        setVBoxPosition(element, width, height, new Insets(marginTopBottom, marginLeftRight, marginTopBottom, marginLeftRight));
     }
 
     public static void setMenuSize(Menu menu){

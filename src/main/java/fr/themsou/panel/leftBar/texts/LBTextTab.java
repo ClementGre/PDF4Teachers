@@ -5,6 +5,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen;
 import fr.themsou.utils.*;
 import fr.themsou.utils.SortEvent;
@@ -240,6 +241,8 @@ public class LBTextTab extends Tab {
 			}
 		});
 		newBtn.setOnMouseReleased((MouseEvent mouseEvent) -> {
+
+			System.out.println(UserData.lastExportDirNotes);
 
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
 			if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());

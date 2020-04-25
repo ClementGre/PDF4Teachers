@@ -25,5 +25,9 @@ module fr.themsou {
     exports fr.themsou.document.editions.elements;
     exports fr.themsou.panel;
     exports fr.themsou.panel.leftBar;
+    exports fr.themsou.panel.leftBar.files;
+    exports fr.themsou.panel.leftBar.texts;
+    exports fr.themsou.panel.leftBar.notes;
+    exports fr.themsou.panel.leftBar.notes.export;
     exports fr.themsou.utils;
 }

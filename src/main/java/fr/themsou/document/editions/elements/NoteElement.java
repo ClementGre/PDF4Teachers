@@ -4,6 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
+import fr.themsou.panel.leftBar.notes.NoteRating;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
@@ -45,7 +46,7 @@ public class NoteElement extends Text implements Element {
     private IntegerProperty realY = new SimpleIntegerProperty();
     private PageRenderer page;
 
-    private final int pageNumber; // WARNING : Don't use this value (Only for simpleLoading)
+    private int pageNumber; // WARNING : Don't use this value (Only for simpleLoading)
     private int shiftX = 0;
     private int shiftY = 0;
 
@@ -157,7 +158,7 @@ public class NoteElement extends Text implements Element {
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            setText(NoteTreeItem.format.format((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + getValue()) + "/" + NoteTreeItem.format.format(getTotal()));
+            setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + NoteTreeItem.format.format(getValue()) + "/" + NoteTreeItem.format.format(getTotal()));
 
             if(((NoteTreeItem) Main.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
             ((NoteTreeItem) Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this).getParent()).makeSum();
@@ -476,5 +477,9 @@ public class NoteElement extends Text implements Element {
     @Override
     public Element clone() {
         return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, pageNumber, page, "clone");
+    }
+
+    public NoteRating toNoteRating() {
+        return new NoteRating(total.get(), name.get(), index, parentPath);
     }
 }

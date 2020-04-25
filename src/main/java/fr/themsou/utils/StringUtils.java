@@ -20,4 +20,14 @@ public class StringUtils {
         }
         return "";
     }
+    public static String removeAfterLastRejex(String string, String rejex){
+
+        int index = string.lastIndexOf(rejex);
+
+        if(index == -1) return string;
+        if(index < string.length()){
+            return string.substring(0, index);
+        }
+        return "";
+    }
 }

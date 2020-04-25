@@ -5,6 +5,7 @@ import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.beans.property.BooleanProperty;

@@ -53,6 +53,10 @@ public class UserData {
                                 // LAST FONTS (TEXT_TAB)
 
                                 Main.lbTextTab.lastFont = reader.readUTF();
+                                if(Main.lbTextTab.lastFont.isEmpty()){
+                                    Main.lbTextTab.lastFont = "Arial";
+                                    continue; // Adapt for v1.0.3
+                                }
                                 Main.lbTextTab.lastFontSize = reader.readInt();
                                 Main.lbTextTab.lastColor = reader.readUTF();
                                 Main.lbTextTab.lastBold = reader.readBoolean();

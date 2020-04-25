@@ -66,6 +66,10 @@ public class NoteTreeItem extends TreeItem {
                 newNote.setStyle("-fx-background-color: #0078d7");
 
                 nameField.setText(core.getName());
+                if(!isRoot() && getParent() != null){
+                    if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
+                }
+
                 noteField.setText(core.getValue() == -1 ? "" : format.format(core.getValue()));
                 totalField.setText(format.format(core.getTotal()));
                 pane.getChildren().clear();
@@ -169,6 +173,7 @@ public class NoteTreeItem extends TreeItem {
 
         Text meter = new Text();
         meter.setFont(nameField.getFont());
+
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
             String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
             if(newText.length() >= 20) newText = newText.substring(0, 20);
@@ -321,7 +326,8 @@ public class NoteTreeItem extends TreeItem {
         return getChildren().size() != 0;
     }
     public boolean isRoot(){
-        return Main.lbNoteTab.treeView.getRoot().equals(this);
+        return Builders.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
+        //return Main.lbNoteTab.treeView.getRoot().equals(this);
     }
 
     public NoteElement getCore() {
@@ -349,6 +355,7 @@ public class NoteTreeItem extends TreeItem {
         for(int i = 0; i < getChildren().size(); i++){
             NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
             children.getCore().setParentPath(path);
+            if(children.hasSubNote()) children.resetParentPathChildren();
         }
 
     }
