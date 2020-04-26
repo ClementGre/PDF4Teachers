@@ -2,6 +2,7 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -34,6 +35,7 @@ public class ExportRenderer {
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
 
         TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
+        NoteElementRenderer noteElementRenderer = new NoteElementRenderer(doc);
 
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
@@ -55,11 +57,10 @@ public class ExportRenderer {
 
                 if(element instanceof TextElement){
                     if(textElements) textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight);
-                }/*else if(element instanceof NoteElement){
-                    if(!notesElements) continue;
-
-                }else if(element instanceof DrawElement){
-                    if(!drawElements) continue;
+                }else if(element instanceof NoteElement){
+                    if(notesElements) noteElementRenderer.renderElement((NoteElement) element, contentStream, page, pageWidth, pageHeight);
+                }/*else if(element instanceof DrawElement){
+                    if(drawElements)
 
                 }*/
             }

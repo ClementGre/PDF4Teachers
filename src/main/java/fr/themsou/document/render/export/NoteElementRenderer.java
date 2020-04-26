@@ -1,6 +1,7 @@
 package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
@@ -17,16 +18,18 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TextElementRenderer {
+public class NoteElementRenderer {
 
     HashMap<Map.Entry<String, String>, PDFont> fonts = new HashMap<>();
 
     PDDocument doc;
-    public TextElementRenderer(PDDocument doc){
+    public NoteElementRenderer(PDDocument doc){
         this.doc = doc;
     }
 
-    public void renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight) throws IOException {
+    public void renderElement(NoteElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight) throws IOException {
+
+        if(!element.isVisible()) return;
 
         // COLOR
         Color color = (Color) element.getFill();
@@ -39,11 +42,6 @@ public class TextElementRenderer {
         if (Element.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
         InputStream fontFile = Element.getFontFile(element.getFont().getFamily(), italic, bold);
         element.setFont(Element.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
-
-        // LINE HEIGHT VARIABLES
-        double height = element.getLayoutBounds().getHeight();
-        int lineNumber = element.getText().split("\\n").length;
-        double lineHeight = height / lineNumber;
 
         contentStream.beginText();
 
@@ -68,22 +66,13 @@ public class TextElementRenderer {
             contentStream.setFont(fonts.get(entry), (float) element.getFont().getSize());
         }
 
-
-        contentStream.newLineAtOffset(element.getRealX() / Element.GRID_WIDTH * pageWidth, (float) (pageHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight + height));
-
-        // DRAW LINES
-        for(String text : element.getText().split("\\n")){
-
-            float shiftY = (float) -lineHeight;
-            contentStream.newLineAtOffset(0, shiftY);
-            try{
-                contentStream.showText(text);
-            }catch(IllegalArgumentException e){
-                e.printStackTrace();
-                System.err.println("Erreur : impossible d'écrire la ligne : \"" + text + "\" avec la police " + element.getFont().getFamily());
-                System.err.println("Message d'erreur : " + e.getMessage());
-            }
-
+        contentStream.newLineAtOffset(element.getRealX() / Element.GRID_WIDTH * pageWidth, pageHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
+        try{
+            contentStream.showText(element.getText());
+        }catch(IllegalArgumentException e){
+            e.printStackTrace();
+            System.err.println("Erreur : impossible d'écrire la note : \"" + element.getText() + "\" avec la police " + element.getFont().getFamily());
+            System.err.println("Message d'erreur : " + e.getMessage());
         }
         contentStream.endText();
 

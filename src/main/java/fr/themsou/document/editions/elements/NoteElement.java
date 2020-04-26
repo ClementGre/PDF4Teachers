@@ -70,6 +70,7 @@ public class NoteElement extends Text implements Element {
         setBoundsType(TextBoundsType.LOGICAL);
         setTextOrigin(VPos.BASELINE);
 
+        setVisible(getValue() != -1);
         updateFont();
 
         if(page == null) return;
@@ -77,7 +78,6 @@ public class NoteElement extends Text implements Element {
         this.maxY = (int) page.getHeight();
 
         setCursor(Cursor.MOVE);
-        setVisible(getValue() != -1);
         layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 

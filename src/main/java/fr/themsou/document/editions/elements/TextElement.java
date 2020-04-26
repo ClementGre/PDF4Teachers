@@ -46,7 +46,7 @@ public class TextElement extends Text implements Element {
 
 		setFont(font);
 		setText(text);
-		setTextOrigin(VPos.BOTTOM);
+		setTextOrigin(VPos.BASELINE);
 		setFill(color);
 
 		setStyle("-fx-background-color: black;");
