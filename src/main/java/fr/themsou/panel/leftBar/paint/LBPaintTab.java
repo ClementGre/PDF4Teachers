@@ -1,4 +1,4 @@
-package fr.themsou.panel.leftBar;
+package fr.themsou.panel.leftBar.paint;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;

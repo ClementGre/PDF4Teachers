@@ -1,4 +1,4 @@
-package fr.themsou.utils;
+package fr.themsou.utils.sort;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;

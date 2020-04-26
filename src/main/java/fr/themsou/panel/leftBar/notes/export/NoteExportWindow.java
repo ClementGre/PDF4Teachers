@@ -43,7 +43,7 @@ public class NoteExportWindow extends Stage {
         setScene(scene);
         new JMetro(root, Style.LIGHT);
 
-        Text info = new Text(TR.tr("Exporter les notes dans un tableau CSV"));
+        Text info = new Text(TR.tr("Exporter les notes des fichiers ouverts dans un tableau CSV") + "\n" + TR.tr("Pensez à définir la langue du fichier en Anglais lors du formatage du fichier."));
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
         tabPane.getTabs().addAll(exportAllTab, exportAllSplitTab, exportThisTab);
@@ -52,7 +52,7 @@ public class NoteExportWindow extends Stage {
         show();
     }
 
-    static class ExportPane extends Tab{
+    class ExportPane extends Tab{
 
         public int type;
         NoteExportWindow window;
@@ -268,11 +268,7 @@ public class NoteExportWindow extends Stage {
             VBox.setVgrow(spacer, Priority.ALWAYS);
 
             export.setOnAction(event -> {
-                try{
-                    int result = new NoteExportRenderer(this).start();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                end(new NoteExportRenderer(this).start());
             });
             cancel.setOnAction(event -> {
                 window.close();
@@ -298,5 +294,28 @@ public class NoteExportWindow extends Stage {
 
             return box;
         }
+
+        private void end(int exported){
+
+            close();
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            new JMetro(alert.getDialogPane(), Style.LIGHT);
+            Builders.secureAlert(alert);
+            alert.setTitle(TR.tr("Exportation terminée"));
+
+            if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
+            else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
+            else alert.setHeaderText(exported + TR.tr(" documents ont été exportés !"));
+
+            if(exported != 0){
+                if(type == 1) alert.setContentText(TR.tr("Vous pouvez retrouver les fichiers CSV dans le dossier choisi."));
+                else alert.setContentText(TR.tr("Vous pouvez retrouver le fichier CSV dans le dossier choisi."));
+            }
+
+            alert.show();
+
+        }
+
     }
 }

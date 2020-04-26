@@ -1,7 +1,6 @@
-package fr.themsou.utils;
+package fr.themsou.panel.MainScreen;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.MainScreen;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -13,7 +12,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class AnimatedZoomOperator {
+public class ZoomOperator {
 
     private Timeline timeline;
     private boolean isPlaying = false;
@@ -27,7 +26,7 @@ public class AnimatedZoomOperator {
     private double aimTranslateX = 0;
     private double aimScale = 0;
 
-    public AnimatedZoomOperator(Pane pane, MainScreen mainScreen){
+    public ZoomOperator(Pane pane, MainScreen mainScreen){
 
         this.pane = pane;
 

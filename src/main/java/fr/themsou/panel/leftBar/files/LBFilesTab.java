@@ -9,7 +9,9 @@ import java.util.stream.Collectors;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
-import fr.themsou.utils.SortEvent;
+import fr.themsou.utils.sort.SortEvent;
+import fr.themsou.utils.sort.SortManager;
+import fr.themsou.utils.sort.Sorter;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;

@@ -27,8 +27,6 @@ public class NoteTreeItem extends TreeItem {
 
     private NoteElement core;
 
-    public static DecimalFormat format = new DecimalFormat("0.#");
-
     // JavaFX
     private TreeCell<String> cell;
     private HBox pane;
@@ -70,8 +68,8 @@ public class NoteTreeItem extends TreeItem {
                     if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
                 }
 
-                noteField.setText(core.getValue() == -1 ? "" : format.format(core.getValue()));
-                totalField.setText(format.format(core.getTotal()));
+                noteField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
+                totalField.setText(Main.format.format(core.getTotal()));
                 pane.getChildren().clear();
 
                 if(Main.lbNoteTab.isLockRatingScaleProperty().get()){
@@ -143,11 +141,11 @@ public class NoteTreeItem extends TreeItem {
 
         value.setFont(new Font(14));
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : format.format(core.getValue())), core.valueProperty()));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
 
         total.setFont(new Font(14));
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> format.format(core.getTotal()), core.totalProperty()));
+        total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
 
         // FIELDS
 
@@ -200,7 +198,7 @@ public class NoteTreeItem extends TreeItem {
                 double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
                 if(value > core.getTotal()){
                     core.setValue(core.getTotal());
-                    noteField.setText(format.format(core.getTotal()));
+                    noteField.setText(Main.format.format(core.getTotal()));
                 }else core.setValue(value);
             }catch(NumberFormatException e){
                 core.setValue(-1);

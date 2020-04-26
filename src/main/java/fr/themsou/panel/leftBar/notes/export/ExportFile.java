@@ -61,12 +61,14 @@ public class ExportFile{
     }
 
     public boolean isSameRatingScale(ArrayList<NoteRating> ratingScale){
+        int i = 0;
         for(NoteElement note : notes){
             if(!containsRatingScale(ratingScale, note.toNoteRating())){
                 return false;
             }
+            i++;
         }
-        return true;
+        return i == ratingScale.size();
     }
     public boolean containsRatingScale(ArrayList<NoteRating> array, NoteRating noteRating){
         for(NoteRating element : array){

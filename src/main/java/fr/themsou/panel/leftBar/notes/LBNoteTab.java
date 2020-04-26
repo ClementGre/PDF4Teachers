@@ -4,7 +4,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -92,7 +92,7 @@ public class LBNoteTab extends Tab {
         Main.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()),
-                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page.getPage(), page, "newNoteElementAuto");
+                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page.getPage(), page);
 
         page.addElement(current, true);
         Main.mainScreen.setSelected(current);
@@ -108,7 +108,7 @@ public class LBNoteTab extends Tab {
         Main.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()),
-                name, value, total, index, parentPath, page.getPage(), page, "newNoteElement");
+                name, value, total, index, parentPath, page.getPage(), page);
 
         page.addElement(current, true);
         Main.mainScreen.setSelected(current);

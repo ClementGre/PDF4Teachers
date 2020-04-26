@@ -3,13 +3,14 @@ package fr.themsou.main;
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.text.DecimalFormat;
 
-import fr.themsou.panel.Footerbar;
+import fr.themsou.panel.FooterBar;
 import fr.themsou.panel.leftBar.files.LBFilesTab;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
-import fr.themsou.panel.leftBar.LBPaintTab;
+import fr.themsou.panel.leftBar.paint.LBPaintTab;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
-import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.MenuBar;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.LicenseWindow;
@@ -38,6 +39,8 @@ public class Main extends Application {
 	public static UserData userData;
 
 	public static boolean hasToClose = false;
+
+	public static DecimalFormat format = new DecimalFormat("0.#");
 	
 //		MAIN
 
@@ -54,7 +57,7 @@ public class Main extends Application {
 
 //		FOOTER-HEADER BAR
 	
-	public static Footerbar footerBar;
+	public static FooterBar footerBar;
 	public static MenuBar menuBar;
 
 	public static HostServices hostServices;
@@ -116,7 +119,7 @@ public class Main extends Application {
 		settings = new Settings();
 
 		mainScreen = new MainScreen();
-		footerBar = new Footerbar();
+		footerBar = new FooterBar();
 
 		lbFilesTab = new LBFilesTab();
 		lbTextTab = new LBTextTab();

@@ -73,7 +73,7 @@ public class ExportRenderer {
             if(mkdirs){
                 new File(directory).mkdirs();
             }else{
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                Alert alert = new Alert(Alert.AlertType.WARNING);
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 alert.setTitle(TR.tr("Dossier introuvable"));
                 alert.setHeaderText(TR.tr("Le dossier d'exportation n'est pas existant."));
@@ -97,7 +97,7 @@ public class ExportRenderer {
         }
 
         if(new File(uri).exists() && !erase){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle(TR.tr("Fichier déjà existant"));
             alert.setHeaderText(TR.tr("Le fichier de destination \"") + uri.replace(directory + File.separator, "") + TR.tr("\" existe déjà"));

@@ -82,8 +82,8 @@ public class TextElementRenderer {
                 contentStream.showText(text);
             }catch(IllegalArgumentException e){
                 e.printStackTrace();
-                System.out.println("Erreur : impossible d'écrire la ligne : \"" + text + "\" avec la police " + element.getFont().getFamily());
-                System.out.println("Message d'erreur : " + e.getMessage());
+                System.err.println("Erreur : impossible d'écrire la ligne : \"" + text + "\" avec la police " + element.getFont().getFamily());
+                System.err.println("Message d'erreur : " + e.getMessage());
             }
 
         }

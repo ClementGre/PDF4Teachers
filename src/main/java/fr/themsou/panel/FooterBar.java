@@ -1,27 +1,23 @@
 package fr.themsou.panel;
 
 import fr.themsou.main.Main;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.TR;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
-import javafx.scene.control.Tab;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.util.concurrent.Callable;
-
 @SuppressWarnings("serial")
-public class Footerbar extends AnchorPane {
+public class FooterBar extends AnchorPane {
 
-	Text leftInfo = new Text("");
-	Text middleInfo = new Text("");
-	Text rightInfo = new Text("");
+	public Text leftInfo = new Text("");
+	public Text middleInfo = new Text("");
+	public Text rightInfo = new Text("");
 
-	public Footerbar(){
+	public FooterBar(){
 
 		setup();
 	}

@@ -331,12 +331,12 @@ public class ExportWindow {
         }
         window.close();
 
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         new JMetro(alert.getDialogPane(), Style.LIGHT);
         Builders.secureAlert(alert);
         alert.setTitle(TR.tr("Exportation terminée"));
 
-        if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents ont été exportés !"));
+        if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
         else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
         else alert.setHeaderText(exported + TR.tr(" documents ont été exportés !"));
 

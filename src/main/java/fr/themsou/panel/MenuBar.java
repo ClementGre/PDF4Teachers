@@ -3,6 +3,7 @@ package fr.themsou.panel;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;

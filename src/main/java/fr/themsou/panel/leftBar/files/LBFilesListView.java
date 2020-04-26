@@ -57,13 +57,13 @@ public class LBFilesListView {
                         double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
 
                         if(elementsCount.length > 0){ // has edit file
-                            String note = (elementsCount[4] == -1 ? "?" : NoteTreeItem.format.format(elementsCount[4])) + "/" + NoteTreeItem.format.format(elementsCount[5]);
+                            String note = (elementsCount[4] == -1 ? "?" : Main.format.format(elementsCount[4])) + "/" + Main.format.format(elementsCount[5]);
                             if(elementsCount[0] > 0){ // Has Elements
 
                                 name.setFont(Font.font(null, FontWeight.BOLD, 12));
 
-                                path.setText(path.getText() + " | " + NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note);
-                                setTooltip(new Tooltip(NoteTreeItem.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + NoteTreeItem.format.format(elementsCount[2]) + "/" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + NoteTreeItem.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
+                                path.setText(path.getText() + " | " + Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note);
+                                setTooltip(new Tooltip(Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + note + "\n" + Main.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + Main.format.format(elementsCount[2]) + "/" + Main.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + Main.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
 
                                 if(elementsCount[2] == elementsCount[6]){
                                     ImageView check = Builders.buildImage(getClass().getResource("/img/FilesTab/check.png")+"", 0, 0);
@@ -73,7 +73,7 @@ public class LBFilesListView {
 
                             }else{ // Don't have elements
                                 path.setText(path.getText() + " | " + TR.tr("Non édité") + " | " + note);
-                                setTooltip(new Tooltip(TR.tr("Non édité") + " | " + note + "\n" + NoteTreeItem.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
+                                setTooltip(new Tooltip(TR.tr("Non édité") + " | " + note + "\n" + Main.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
                             }
                         }else{ // don't have edit file
                             path.setText(path.getText() + " | " + TR.tr("Non édité"));

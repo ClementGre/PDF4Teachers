@@ -2,9 +2,8 @@ package fr.themsou.panel.leftBar.notes;
 
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
-import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeCell;
@@ -15,7 +14,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class NoteTreeView extends TreeView<String> {
@@ -70,13 +68,11 @@ public class NoteTreeView extends TreeView<String> {
     }
 
     public void clear(){
-        System.out.println("clear");
         if(getRoot() != null) ((NoteTreeItem)getRoot()).getCore().delete();
         generateRoot();
     }
 
     public void generateRoot(){
-        System.out.println("Generate root");
         Main.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
 
         // DEBUG
@@ -97,7 +93,6 @@ public class NoteTreeView extends TreeView<String> {
 
     public void addElement(NoteElement element){
 
-        System.out.println("add element " + element.getName());
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             if(getRoot() != null) ((NoteTreeItem) getRoot()).getCore().delete();
@@ -111,7 +106,6 @@ public class NoteTreeView extends TreeView<String> {
     }
     public void removeElement(NoteElement element){
 
-        System.out.println("remove element " + element.getName());
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             ((NoteTreeItem) getRoot()).deleteChildren();

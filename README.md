@@ -42,7 +42,7 @@ Ces différents éléments (texte, notes et formes géométriques) ont des class
 
 **Classes pour gérer les documents PDF (``fr.themsou.document``)**
 
-À l'ouverture d'un document, ``fr.themsou.panel.MainScreen`` initialisera :
+À l'ouverture d'un document, ``fr.themsou.panel.MainScreen.MainScreen`` initialisera :
 - ``.document.Document`` qui initialisera sous demande de MainScreen :
 
   - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en Hexadécimal et stoqué dans ``<user.home>/.PDF4Teachers/<nom de l'édition>.edit`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.edit``. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il poura aussi écrire les fichiers lors de la sauvegarde.

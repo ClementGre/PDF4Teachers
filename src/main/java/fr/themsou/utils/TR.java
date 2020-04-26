@@ -56,7 +56,7 @@ public class TR {
 
         }
 
-        NoteTreeItem.format.getDecimalFormatSymbols().setDecimalSeparator('.');
+        Main.format.getDecimalFormatSymbols().setDecimalSeparator('.');
 
         return false;
     }

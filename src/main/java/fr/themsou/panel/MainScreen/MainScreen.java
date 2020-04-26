@@ -1,4 +1,4 @@
-package fr.themsou.panel;
+package fr.themsou.panel.MainScreen;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,10 +7,8 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.utils.AnimatedZoomOperator;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.geometry.Insets;
@@ -27,7 +25,7 @@ public class MainScreen extends Pane {
 
 	public Pane pane = new Pane();
 
-	public AnimatedZoomOperator zoomOperator;
+	public ZoomOperator zoomOperator;
 
 	private int totalHeight = 40;
 	private int pageWidth = 596;
@@ -86,7 +84,7 @@ public class MainScreen extends Pane {
 		info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 		getChildren().add(info);
 
-		zoomOperator = new AnimatedZoomOperator(pane, this);
+		zoomOperator = new ZoomOperator(pane, this);
 
 		addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
 			e.consume();
@@ -224,7 +222,7 @@ public class MainScreen extends Pane {
 
 		if(status.get() != Status.OPEN){
 			if(confirm){
-				Alert alert = new Alert(Alert.AlertType.INFORMATION);
+				Alert alert = new Alert(Alert.AlertType.ERROR);
 				new JMetro(alert.getDialogPane(), Style.LIGHT);
 				Builders.secureAlert(alert);
 				alert.setAlertType(Alert.AlertType.ERROR);

@@ -6,14 +6,15 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
-import fr.themsou.panel.MainScreen;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.*;
-import fr.themsou.utils.SortEvent;
+import fr.themsou.utils.sort.SortEvent;
+import fr.themsou.utils.sort.SortManager;
+import fr.themsou.utils.sort.Sorter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -30,7 +31,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -241,8 +241,6 @@ public class LBTextTab extends Tab {
 			}
 		});
 		newBtn.setOnMouseReleased((MouseEvent mouseEvent) -> {
-
-			System.out.println(UserData.lastExportDirNotes);
 
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
 			if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
