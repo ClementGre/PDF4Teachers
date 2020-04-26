@@ -46,7 +46,7 @@ public class NoteElement extends Text implements Element {
 
     private IntegerProperty realX = new SimpleIntegerProperty();
     private IntegerProperty realY = new SimpleIntegerProperty();
-    private PageRenderer page;
+    public PageRenderer page;
 
     private int pageNumber; // WARNING : Don't use this value (Only for simpleLoading)
     private int shiftX = 0;
@@ -145,7 +145,8 @@ public class NoteElement extends Text implements Element {
                     if(Main.mainScreen.document.getCurrentPage() != -1 && Main.mainScreen.document.getCurrentPage() != this.page.getPage()){
                         this.page.switchElementPage(this, Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage()));
                     }
-                    setRealY((int) (this.page.mouseY * Element.GRID_HEIGHT / this.page.getHeight()));
+                    setRealX((int) ((this.page.getMouseX() <= 60 ? 60 : this.page.getMouseX()) * Element.GRID_WIDTH / this.page.getWidth()));
+                    setRealY((int) (this.page.getMouseY() * Element.GRID_HEIGHT / this.page.getHeight()));
                 }
                 calculateMinAndMaxY();
                 setVisible(true);
@@ -199,7 +200,7 @@ public class NoteElement extends Text implements Element {
                 menu.show(this.page, e.getScreenX(), e.getScreenY());
             }
         });
-        setOnMouseReleased(event -> calculateMinAndMaxY());
+        setOnMouseReleased(event -> NoteTreeView.defineNaNLocations());
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
                 NoteTreeItem treeItemElement;
@@ -216,7 +217,7 @@ public class NoteElement extends Text implements Element {
             double itemY = getLayoutY() + e.getY() - shiftY;
 
             boolean changePage = false;
-            if(this.page.mouseY < -30  && this.page.getPage() > minYPage){ // Monter d'une page
+            if(this.page.getMouseY() < -30  && this.page.getPage() > minYPage){ // Monter d'une page
                 if(this.page.getPage() > 0){
 
                     Main.mainScreen.setSelected(null);
@@ -226,7 +227,7 @@ public class NoteElement extends Text implements Element {
                     itemY = this.page.getHeight();
                     changePage = true;
                 }
-            }else if(this.page.mouseY > this.page.getHeight() + 30 && this.page.getPage() < maxYPage){ // Descendre d'une page
+            }else if(this.page.getMouseY() > this.page.getHeight() + 30 && this.page.getPage() < maxYPage){ // Descendre d'une page
                 if(this.page.getPage() < Main.mainScreen.document.pages.size()-1){
 
                     Main.mainScreen.setSelected(null);
@@ -262,14 +263,6 @@ public class NoteElement extends Text implements Element {
         }
 
         NoteTreeItem afterItem = treeItemElement.getAfterItem();
-        if(afterItem != null){
-            if(afterItem.getCore().getValue() == -1){
-                if(getCurrentPageNumber() != afterItem.getCore().getCurrentPageNumber()){
-                    afterItem.getCore().page.switchElementPage(afterItem.getCore(), page);
-                }
-                afterItem.getCore().setRealY((int) ((getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / page.getHeight()));
-            }
-        }
         while(afterItem != null){
             if(afterItem.getCore().getValue() != -1) break;
             afterItem = afterItem.getAfterItem();

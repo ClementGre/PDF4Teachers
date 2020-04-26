@@ -49,11 +49,11 @@ public class TextTreeItem extends TreeItem{
 	public static final int ONFILE_TYPE = 3;
 
 	// Graphics items
-	HBox pane = new HBox();
-	ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
-	Label name = new Label();
-	ContextMenu menu;
-	EventHandler<MouseEvent> onMouseCLick;
+	public HBox pane = new HBox();
+	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
+	public Label name = new Label();
+	public ContextMenu menu;
+	public EventHandler<MouseEvent> onMouseCLick;
 
 	// Link
 	private TextElement core = null;
@@ -79,6 +79,7 @@ public class TextTreeItem extends TreeItem{
 		this.creationDate = creationDate;
 
 		setup();
+		updateGraphic();
 	}
 	public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
 		this.font.set(font);
@@ -106,7 +107,7 @@ public class TextTreeItem extends TreeItem{
 
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-				addToDocument();
+				addToDocument(true);
 				if(getType() == TextTreeItem.FAVORITE_TYPE){
 					Main.lbTextTab.favoritesTextSortManager.simulateCall();
 				}else if(getType() == TextTreeItem.LAST_TYPE){
@@ -210,6 +211,10 @@ public class TextTreeItem extends TreeItem{
 		return false;
 	}
 
+	public TextTreeItem clone(){
+		return new TextTreeItem(font.get(), text, color.get(), type, uses, creationDate);
+	}
+
 	public void writeData(DataOutputStream writer) throws IOException {
 
 		writer.writeFloat((float) font.get().getSize());
@@ -245,7 +250,7 @@ public class TextTreeItem extends TreeItem{
 
 	}
 
-	public void addToDocument(){
+	public void addToDocument(boolean xAuto){
 
 		if(Main.mainScreen.hasDocument(false)){
 			uses++;
@@ -253,7 +258,9 @@ public class TextTreeItem extends TreeItem{
 			if (Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
-			TextElement realElement = toRealTextElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()), page.getPage());
+			int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
+			int x = (int) ((xAuto ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
+			TextElement realElement = toRealTextElement(x, y, page.getPage());
 			page.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}

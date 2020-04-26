@@ -1,5 +1,6 @@
 package fr.themsou.panel.leftBar.notes;
 
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
@@ -209,6 +210,44 @@ public class NoteTreeView extends TreeView<String> {
             after = items.size() >= i+2 ? items.get(i+1) : null;
         }
         return null;
+    }
+
+    public static void defineNaNLocations(){
+        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot());
+        ArrayList<NoteTreeItem> itemsToSend = new ArrayList<>();
+        int i = 0;
+        for(NoteTreeItem item : items){
+            if(items.size() > i+1){
+                NoteTreeItem afterItem = items.get(i+1);
+
+                if(afterItem.getCore().getValue() == -1){
+                    if(item.getCore().getValue() != -1 || item.hasSubNote()){ // Colle l'élément au précédent
+                        if(afterItem.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
+                            afterItem.getCore().page.switchElementPage(afterItem.getCore(), item.getCore().page);
+                        }
+                        afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().page.getHeight()));
+
+                        // Ramène tous les éléments du dessus
+                        for(NoteTreeItem itemToSend : itemsToSend){
+                            if(itemToSend.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
+                                itemToSend.getCore().page.switchElementPage(itemToSend.getCore(), item.getCore().page);
+                            }
+                            itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().page.getHeight()));
+                        }
+                    }else{ // Envoie l'élément tout à la fin
+                        itemsToSend.add(afterItem);
+                    }
+                }
+            }
+            i++;
+        }
+        // Ramène tous les éléments du dessus
+        for(NoteTreeItem itemToSend : itemsToSend){
+            if(itemToSend.getCore().getCurrentPageNumber() != Main.mainScreen.document.pages.size()-1){
+                itemToSend.getCore().page.switchElementPage(itemToSend.getCore(), Main.mainScreen.document.pages.get(Main.mainScreen.document.pages.size()-1));
+            }
+            itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
+        }
     }
 
     public static ArrayList<NoteTreeItem> getNotesArray(NoteTreeItem root){

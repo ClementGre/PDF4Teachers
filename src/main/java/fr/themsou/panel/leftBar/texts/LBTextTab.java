@@ -264,7 +264,7 @@ public class LBTextTab extends Tab {
 			boldBtn.setSelected(lastBold);
 			itBtn.setSelected(lastItalic);
 
-			TextElement current = new TextElement(30, (int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()), getFont(),
+			TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), getFont(),
 					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
 			page.addElement(current, true);
@@ -565,7 +565,7 @@ public class LBTextTab extends Tab {
 		}
 		return null;
 	}
-	private List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
+	public List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
 
 		if(sortType.equals(TR.tr("Ajout"))){
 			return Sorter.sortElementsByDate(toSort, order);
@@ -583,5 +583,22 @@ public class LBTextTab extends Tab {
 			return Sorter.sortElementsByCorePosition(toSort, order);
 		}
 		return toSort;
+	}
+
+	public static List<TextTreeItem> getMostUseElements(){
+
+		List<TextTreeItem> toSort = new ArrayList<>();
+		for(int i = 0; i < Main.lbTextTab.favoritesText.getChildren().size(); i++){
+			if(Main.lbTextTab.favoritesText.getChildren().get(i) instanceof TextTreeItem){
+				toSort.add((TextTreeItem) Main.lbTextTab.favoritesText.getChildren().get(i));
+			}
+		}
+		for(int i = 0; i < Main.lbTextTab.lastsText.getChildren().size(); i++){
+			if(Main.lbTextTab.lastsText.getChildren().get(i) instanceof TextTreeItem){
+				toSort.add((TextTreeItem) Main.lbTextTab.lastsText.getChildren().get(i));
+			}
+		}
+		return Main.lbTextTab.autoSortList(toSort, TR.tr("Utilisation"), true);
+
 	}
 }

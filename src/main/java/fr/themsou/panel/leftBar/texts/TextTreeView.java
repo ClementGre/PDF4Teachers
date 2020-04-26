@@ -174,7 +174,7 @@ public class TextTreeView {
 
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
-            element.addToDocument();
+            element.addToDocument(true);
             if(element.getType() == TextTreeItem.FAVORITE_TYPE){
                 Main.lbTextTab.favoritesTextSortManager.simulateCall();
             }else if(element.getType() == TextTreeItem.LAST_TYPE){

@@ -7,36 +7,39 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.CallBack;
-import fr.themsou.utils.NodeMenuItem;
-import fr.themsou.utils.TR;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Bounds;
+import javafx.event.EventHandler;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.List;
 
 public class PageRenderer extends Pane {
 
@@ -45,8 +48,8 @@ public class PageRenderer extends Pane {
     private ImageView renderView;
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
-    public double mouseX = 0;
-    public double mouseY = 0;
+    private double mouseX = 0;
+    private double mouseY = 0;
 
     private ProgressBar loader = new ProgressBar();
     ContextMenu menu = new ContextMenu();
@@ -109,14 +112,45 @@ public class PageRenderer extends Pane {
             Main.lbNoteTab.treeView.getSelectionModel().select(null);
             menu.hide();
             menu.getItems().clear();
-
             if(e.getButton() == MouseButton.SECONDARY){
 
+                NoteTreeView.defineNaNLocations();
                 NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
-                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics()));
+                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) Main.lbTextTab.treeView.getWidth()-50)));
+
+                List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
+                for(int i = 0; i <= 3; i++){
+                    TextTreeItem item = mostUsed.get(i);
+
+                    Pane pane = new Pane();
+
+                    Pane sub = new Pane();
+
+                    Text name = new Text(item.name.getText());
+                    name.setTextOrigin(VPos.TOP);
+                    name.setLayoutY(3);
+                    name.setFont(item.name.getFont());
+                    name.setFill(item.name.getTextFill());
+
+                    sub.setOnMouseClicked(event -> item.addToDocument(false));
+
+                    sub.setLayoutY(-6);
+                    sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
+                    sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), Main.lbTextTab.treeView.getWidth() - 50));
+
+                    pane.setPrefHeight(name.getLayoutBounds().getHeight()+7-14);
+
+                    sub.getChildren().add(name);
+                    pane.getChildren().add(sub);
+
+                    CustomMenuItem menuItem = new CustomMenuItem(pane);
+                    menu.getItems().add(menuItem);
+                }
+
+
+
+
                 menu.show(this, e.getScreenX(), e.getScreenY());
-
-
             }
         });
 
@@ -124,22 +158,36 @@ public class PageRenderer extends Pane {
 
     public void updateShowStatus(){
 
+        int firstTest = getShowStatus();
+        Platform.runLater(() -> {
+            if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
+        });
+
+    }
+    public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
         int pageHeight = (int) (getHeight()*Main.mainScreen.pane.getScaleX());
         int upDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX() + pageHeight);
         int downDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX());
 
         if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < Main.mainScreen.getHeight()){
+            return 0;
+        }else{
+            if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > Main.mainScreen.getHeight()) return 2;
+            return 1;
+        }
+    }
+    private void switchVisibleStatus(int showStatus){
+        if(showStatus == 0){
             setVisible(true);
             if(status == PageStatus.HIDE) render();
-        }else{
+        }else if(showStatus >= 1){
+
             setVisible(false);
-            if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > Main.mainScreen.getHeight()){
-                getChildren().remove(renderView);
-                status = PageStatus.HIDE;
-                for(Node node : getChildren()){
-                    node.setVisible(false);
-                }
+            if(showStatus == 2){
+                getChildren().remove(renderView); status = PageStatus.HIDE;
+                for(Node node : getChildren()) node.setVisible(false);
             }
+
         }
 
     }
@@ -241,6 +289,13 @@ public class PageRenderer extends Pane {
             }
 
         }
+    }
+
+    public double getMouseX(){
+        return Math.max(Math.min(mouseX, getWidth()), 0);
+    }
+    public double getMouseY(){
+        return Math.max(Math.min(mouseY, getWidth()), 0);
     }
 
     public int getPage() {

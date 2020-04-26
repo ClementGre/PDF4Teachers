@@ -62,7 +62,7 @@ public class NoteTreeItem extends TreeItem {
         selectedListener = (observable, oldValue, newValue) -> {
             if(newValue){ // Est sélectionné
                 newNote.setVisible(true);
-                newNote.setStyle("-fx-background-color: #0078d7");
+                //newNote.setStyle("-fx-background-color: #0078d7");
 
                 nameField.setText(core.getName());
                 if(!isRoot() && getParent() != null){
@@ -233,7 +233,7 @@ public class NoteTreeItem extends TreeItem {
         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
 
     }
-    public HBox getEditGraphics(){
+    public HBox getEditGraphics(int width){
 
         Region spacer = new Region();
         Text name = new Text();
@@ -297,7 +297,7 @@ public class NoteTreeItem extends TreeItem {
                 });
             }
         }
-
+        pane.setPrefWidth(width);
         return pane;
     }
 
@@ -306,7 +306,6 @@ public class NoteTreeItem extends TreeItem {
         if(cell == null) return;
         if(this.cell != null) this.cell.selectedProperty().removeListener(selectedListener);
         this.cell = cell;
-
         cell.setGraphic(pane);
         cell.setStyle(null);
         cell.setStyle("-fx-padding: 6 6 6 2;");
