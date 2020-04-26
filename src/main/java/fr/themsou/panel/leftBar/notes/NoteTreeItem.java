@@ -11,6 +11,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -29,7 +30,7 @@ public class NoteTreeItem extends TreeItem {
 
     // JavaFX
     private TreeCell<String> cell;
-    private HBox pane;
+    public HBox pane;
 
     Region spacer = new Region();
     private Text name = new Text();
@@ -232,8 +233,72 @@ public class NoteTreeItem extends TreeItem {
         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
 
     }
-    public void updateGraphic(){
+    public HBox getEditGraphics(){
 
+        Region spacer = new Region();
+        Text name = new Text();
+
+        Text value = new Text();
+        Text slash = new Text("/");
+        Text total = new Text();
+
+        HBox pane = new HBox();
+        pane.setAlignment(Pos.CENTER);
+        pane.setPrefHeight(18);
+        pane.setStyle("-fx-padding: -6 -6 -6 0;"); // top - right - bottom - left
+
+        name.setFont(new Font(14));
+        name.textProperty().bind(core.nameProperty());
+        slash.setFont(new Font(14));
+
+        value.setFont(new Font(14));
+        HBox.setMargin(value, new Insets(0, 0, 0, 5));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
+
+        total.setFont(new Font(14));
+        HBox.setMargin(total, new Insets(0, 5, 0, 0));
+        total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
+
+        // SETUP
+
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        noteField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
+        totalField.setText(Main.format.format(core.getTotal()));
+        nameField.setText(core.getName());
+        if(!isRoot() && getParent() != null){
+            if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
+        }
+
+        if(Main.lbNoteTab.isLockRatingScaleProperty().get()){
+            if(hasSubNote()){
+                pane.getChildren().addAll(name, spacer, value, slash, total);
+            }else{
+                pane.getChildren().addAll(name, spacer, noteField, slash, total);
+                Platform.runLater(() -> {
+                    noteField.requestFocus();
+                    noteField.positionCaret(noteField.getText().length());
+                    noteField.selectAll();
+                });
+            }
+        }else{
+            if(hasSubNote()){
+                pane.getChildren().addAll(nameField, spacer, value, slash, total);
+                Platform.runLater(() -> {
+                    nameField.requestFocus();
+                    nameField.positionCaret(nameField.getText().length());
+                });
+            }else{
+                pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField);
+                Platform.runLater(() -> {
+                    noteField.requestFocus();
+                    noteField.positionCaret(noteField.getText().length());
+                    noteField.selectAll();
+                });
+            }
+        }
+
+        return pane;
     }
 
     public void updateCell(TreeCell<String> cell){

@@ -5,7 +5,13 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
+import fr.themsou.panel.leftBar.notes.NoteTreeItem;
+import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.utils.Builders;
 import fr.themsou.utils.CallBack;
+import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -14,9 +20,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TreeItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
@@ -26,6 +36,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class PageRenderer extends Pane {
 
@@ -38,6 +49,7 @@ public class PageRenderer extends Pane {
     public double mouseY = 0;
 
     private ProgressBar loader = new ProgressBar();
+    ContextMenu menu = new ContextMenu();
 
     public PageRenderer(int page){
         this.page = page;
@@ -84,6 +96,28 @@ public class PageRenderer extends Pane {
         // Show Status
         Main.mainScreen.pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             updateShowStatus();
+        });
+
+
+        Builders.setMenuSize(menu);
+
+
+        setOnMousePressed(e -> {
+            e.consume();
+
+            Main.mainScreen.setSelected(null);
+            Main.lbNoteTab.treeView.getSelectionModel().select(null);
+            menu.hide();
+            menu.getItems().clear();
+
+            if(e.getButton() == MouseButton.SECONDARY){
+
+                NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
+                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics()));
+                menu.show(this, e.getScreenX(), e.getScreenY());
+
+
+            }
         });
 
     }

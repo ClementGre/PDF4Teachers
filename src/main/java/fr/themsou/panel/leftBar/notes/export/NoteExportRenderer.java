@@ -209,7 +209,7 @@ public class NoteExportRenderer {
                 int k = -1;
                 while(element != null){
 
-                    if(element.getPageNumber() <= maxPage && element.getRealY() < maxY){
+                    if(element.getPageNumber() == maxPage && element.getRealY() < maxY || element.getPageNumber() < maxPage){
                         k++;
                         if(lines.size() > k){
                             lines.set(k, lines.get(k) + ";" + element.getText().replaceAll(Pattern.quote("\n"), " "));

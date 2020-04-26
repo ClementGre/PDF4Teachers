@@ -15,12 +15,14 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
@@ -139,9 +141,13 @@ public class NoteElement extends Text implements Element {
                 setVisible(false);
                 setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
             }else{
+                if(oldValue.intValue() == -1){ // Deviens visible
+                    if(Main.mainScreen.document.getCurrentPage() != -1 && Main.mainScreen.document.getCurrentPage() != this.page.getPage()){
+                        this.page.switchElementPage(this, Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage()));
+                    }
+                    setRealY((int) (this.page.mouseY * Element.GRID_HEIGHT / this.page.getHeight()));
+                }
                 calculateMinAndMaxY();
-                if(oldValue.intValue() == -1) setRealY((int) (page.mouseY * Element.GRID_HEIGHT / page.getHeight()));
-
                 setVisible(true);
                 setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
             }
@@ -190,9 +196,10 @@ public class NoteElement extends Text implements Element {
             select();
 
             if(e.getButton() == MouseButton.SECONDARY){
-                menu.show(page, e.getScreenX(), e.getScreenY());
+                menu.show(this.page, e.getScreenX(), e.getScreenY());
             }
         });
+        setOnMouseReleased(event -> calculateMinAndMaxY());
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
                 NoteTreeItem treeItemElement;
@@ -255,6 +262,14 @@ public class NoteElement extends Text implements Element {
         }
 
         NoteTreeItem afterItem = treeItemElement.getAfterItem();
+        if(afterItem != null){
+            if(afterItem.getCore().getValue() == -1){
+                if(getCurrentPageNumber() != afterItem.getCore().getCurrentPageNumber()){
+                    afterItem.getCore().page.switchElementPage(afterItem.getCore(), page);
+                }
+                afterItem.getCore().setRealY((int) ((getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / page.getHeight()));
+            }
+        }
         while(afterItem != null){
             if(afterItem.getCore().getValue() != -1) break;
             afterItem = afterItem.getAfterItem();
@@ -276,9 +291,6 @@ public class NoteElement extends Text implements Element {
             maxY = (int) (afterItem.getCore().getLayoutY() - afterItem.getCore().getLayoutBounds().getHeight());
             maxY = (int) Math.min(maxY, page.getHeight());
         }
-
-        //System.out.println((beforeItem == null ? "null" : beforeItem.getCore().getName()) + " < " + getName() + " < " + (afterItem == null ? "null" : afterItem.getCore().getName()));
-        //System.out.println(minYPage + ":" + minY + " < " + getName() + " < " + maxYPage + ":" + maxY);
     }
 
     public void checkLocation(double itemX, double itemY){
@@ -314,6 +326,7 @@ public class NoteElement extends Text implements Element {
     @Override
     public void select() {
 
+        Main.leftBar.getSelectionModel().select(2);
         Main.mainScreen.setSelected(this);
         toFront();
 
@@ -322,8 +335,6 @@ public class NoteElement extends Text implements Element {
         if(getParentPath().isEmpty()) noteElement = (NoteTreeItem) Main.lbNoteTab.treeView.getRoot();
         else noteElement = Main.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) Main.lbNoteTab.treeView.getRoot(), this);
         Main.lbNoteTab.treeView.getSelectionModel().select(noteElement);
-
-        requestFocus();
 
     }
 

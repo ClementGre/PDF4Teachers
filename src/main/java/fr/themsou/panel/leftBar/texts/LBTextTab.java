@@ -231,6 +231,17 @@ public class LBTextTab extends Tab {
 				txtAreaScrollBarListenerIsSetup = true;
 			}
 		});
+		txtArea.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.DELETE){
+				if(txtArea.getCaretPosition() == txtArea.getText().length()){
+					Element element = Main.mainScreen.getSelected();
+					if(element != null){
+						Main.mainScreen.setSelected(null);
+						element.delete();
+					}
+				}
+			}
+		});
 		colorPicker.setOnAction((ActionEvent e) -> {
 			if(Main.mainScreen.getSelected() != null){
 				if(Main.mainScreen.getSelected() instanceof TextElement){
@@ -402,6 +413,7 @@ public class LBTextTab extends Tab {
 					String text = txtArea.getText();
 					txtArea.setText(text);
 					txtArea.positionCaret(txtArea.getText().length());
+					txtArea.requestFocus();
 				});
 			}catch(InterruptedException e){ e.printStackTrace();}
 		}, "selector").start();

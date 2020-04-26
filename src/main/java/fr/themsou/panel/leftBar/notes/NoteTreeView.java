@@ -14,6 +14,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class NoteTreeView extends TreeView<String> {
@@ -180,6 +181,48 @@ public class NoteTreeView extends TreeView<String> {
             }
         }
         parent.getChildren().add(before, element);
+    }
+
+    public static NoteTreeItem getNextNote(int page, int y){
+
+        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot());
+        NoteTreeItem before = null;
+        NoteTreeItem after = items.size() >= 2 ? items.get(1) : null;
+
+        int i = 0;
+        for(NoteTreeItem note : items){
+            int minPage = 0; int minY = 0;
+            if(before != null){
+                minPage = before.getCore().getCurrentPageNumber();
+                minY = (int) before.getCore().getLayoutY();
+            }
+            int maxPage = 999999; int maxY = 999999;
+            if(after != null){
+                maxPage = after.getCore().getCurrentPageNumber();
+                maxY = (int) after.getCore().getLayoutY();
+            }
+            if((page == maxPage && y < maxY || page < maxPage) && (page == minPage && y > minY || page > minPage)){
+                return note;
+            }
+            i++;
+            before = note;
+            after = items.size() >= i+2 ? items.get(i+1) : null;
+        }
+        return null;
+    }
+
+    public static ArrayList<NoteTreeItem> getNotesArray(NoteTreeItem root){
+        ArrayList<NoteTreeItem> items = new ArrayList<>();
+        items.add(root);
+
+        for(int i = 0; i < root.getChildren().size(); i++){
+            if(((NoteTreeItem) root.getChildren().get(i)).hasSubNote()){
+                items.addAll(getNotesArray((NoteTreeItem) root.getChildren().get(i)));
+            }else{
+                items.add((NoteTreeItem) root.getChildren().get(i));
+            }
+        }
+        return items;
     }
 
 

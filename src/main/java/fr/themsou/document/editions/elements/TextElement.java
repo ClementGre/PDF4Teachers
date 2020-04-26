@@ -111,42 +111,9 @@ public class TextElement extends Text implements Element {
 			select();
 
 			if(e.getButton() == MouseButton.SECONDARY){
-				menu.show(page, e.getScreenX(), e.getScreenY());
+				menu.show(this.page, e.getScreenX(), e.getScreenY());
 			}
 		});
-		setOnMouseClicked(e -> {
-			if(e.getClickCount() == 2 && false){
-				TextArea textArea = new TextArea(getText());
-				textArea.setLayoutX(getLayoutX());
-				textArea.setLayoutY(getLayoutY() - getLayoutBounds().getHeight());
-				textArea.setPrefHeight(getLayoutBounds().getHeight());
-				textArea.setPrefWidth(getLayoutBounds().getWidth());
-
-				textArea.setFont(getFont());
-				textArea.setBorder(null);
-
-				textArea.skinProperty().addListener(new ChangeListener<>() {
-					@Override public void changed(ObservableValue<? extends Skin<?>> ov, Skin<?> t, Skin<?> t1){
-						if(t1 != null && t1.getNode() instanceof Region){
-							Region r = (Region) t1.getNode();
-							r.setStyle("-fx-background-color: transparent;");
-							r.getChildrenUnmodifiable().stream().filter(n -> n instanceof Region).map(n -> (Region) n).forEach(n -> n.setStyle("-fx-background-color: transparent;"));
-							r.getChildrenUnmodifiable().stream().filter(n -> n instanceof Control).map(n -> (Control) n).forEach(c -> c.skinProperty().addListener(this));
-						}
-					}
-				});
-
-				page.getChildren().add(textArea);
-				textArea.requestFocus();
-			}
-		});
-		setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.DELETE){
-				Main.mainScreen.setSelected(null);
-				delete();
-			}
-		});
-
 
 		setOnMouseDragged(e -> {
 
@@ -218,10 +185,10 @@ public class TextElement extends Text implements Element {
 	@Override
 	public void select() {
 
+		Main.leftBar.getSelectionModel().select(1);
 		Main.mainScreen.setSelected(this);
 		Main.lbTextTab.selectItem();
 		toFront();
-		requestFocus();
 	}
 
 	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
