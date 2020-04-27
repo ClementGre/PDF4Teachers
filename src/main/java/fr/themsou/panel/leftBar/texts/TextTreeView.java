@@ -66,12 +66,9 @@ public class TextTreeView {
                             HBox.setHgrow(spacer, Priority.ALWAYS);
                             box.getChildren().add(spacer);
 
-                            Pane toggle = new Pane();
-                            box.getChildren().add(toggle);
-
                             if(item.equals("favoritesText")){
                                 name.setText(TR.tr("Éléments Favoris"));
-                                toggle.getChildren().add(Main.lbTextTab.favoritesTextToggleOption);
+                                box.getChildren().addAll(Main.lbTextTab.listsManager.loadListBtn, Main.lbTextTab.listsManager.saveListBtn, Main.lbTextTab.favoritesTextToggleOption);
                                 setContextMenu(getCategoryMenu(true));
                             }if(item.equals("lastsText")){
                                 name.setText(TR.tr("Éléments Précédents"));

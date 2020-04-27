@@ -251,6 +251,10 @@ public class TextTreeItem extends TreeItem{
 
 	}
 
+	public TextListItem toTextItem(){
+		return new TextListItem(font.get(), text, color.get(), uses, creationDate);
+	}
+
 	public void addToDocument(boolean xAuto, boolean link){
 
 		if(Main.mainScreen.hasDocument(false)){

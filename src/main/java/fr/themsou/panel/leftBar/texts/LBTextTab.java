@@ -5,7 +5,6 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortEvent;
@@ -31,6 +30,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -60,6 +60,9 @@ public class LBTextTab extends Tab {
 	private Button newBtn = new Button(TR.tr("Nouveau"));
 
 	// TREE VIEW
+
+	public HashMap<String, ArrayList<TextListItem>> favoriteLists = new HashMap<>();
+	public ListsManager listsManager;
 
 	public TreeView treeView = new TreeView<>();
 	public TreeItem<String> treeViewRoot = new TreeItem<>();
@@ -107,6 +110,8 @@ public class LBTextTab extends Tab {
 	}
 
 	public void setup(){
+
+		listsManager = new ListsManager(this);
 
 		optionPane.setMinWidth(200);
 
@@ -282,7 +287,7 @@ public class LBTextTab extends Tab {
 
 		// TREE VIEW
 		Builders.setPosition(favoritesTextToggleOption, 0, 0, 30, 30, true);
-		favoritesTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
+		favoritesTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
 		favoritesTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				favoritesText.getChildren().add(0, favoritesTextOptionsItem);
@@ -293,7 +298,7 @@ public class LBTextTab extends Tab {
 		});
 
 		Builders.setPosition(lastsTextToggleOption, 0, 0, 30, 30, true);
-		lastsTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
+		lastsTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
 		lastsTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				lastsText.getChildren().add(0, lastsTextOptionsItem);
@@ -304,7 +309,7 @@ public class LBTextTab extends Tab {
 		});
 
 		Builders.setPosition(onFileTextToggleOption, 0, 0, 30, 30, true);
-		onFileTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/sort.png") +"", 0, 0));
+		onFileTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
 		onFileTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				onFileText.getChildren().add(0, onFileTextOptionsItem);

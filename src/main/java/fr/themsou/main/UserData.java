@@ -3,6 +3,7 @@ package fr.themsou.main;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
 import fr.themsou.panel.leftBar.notes.NoteSettingsWindow;
+import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.TR;
 import javafx.scene.control.CheckBox;
@@ -14,8 +15,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class UserData {
 
@@ -23,6 +23,7 @@ public class UserData {
         public static final int SIMPLE_DATA = 0;
         public static final int TEXT_ELEMENT_FAVORITE = 1;
         public static final int TEXT_ELEMENT_LAST = 2;
+        public static final int TEXT_ELEMENT_LIST = 3;
     }
 
     public static File lastOpenDir = new File(System.getProperty("user.home"));
@@ -120,11 +121,21 @@ public class UserData {
                                 Main.lbTextTab.lastsText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.LAST_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
+                        case DataType.TEXT_ELEMENT_LIST: // List TextElement
+                            try{
+                                String listName = reader.readUTF();
+                                ArrayList<TextListItem> list = Main.lbTextTab.favoriteLists.containsKey(listName) ? Main.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
+                                list.add(TextListItem.readDataAndGive(reader));
+                                Main.lbTextTab.favoriteLists.put(listName, list);
+
+                            }catch(Exception e){ e.printStackTrace(); }
+                        break;
                     }
                 }
                 reader.close();
                 Main.lbTextTab.favoritesTextSortManager.simulateCall();
                 Main.lbTextTab.lastsTextSortManager.simulateCall();
+                Main.lbTextTab.listsManager.setupMenu();
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -150,6 +161,14 @@ public class UserData {
                 if(item instanceof TextTreeItem){
                     writer.writeInt(DataType.TEXT_ELEMENT_LAST);
                     ((TextTreeItem) item).writeData(writer);
+                }
+            }
+            for(Map.Entry<String, ArrayList<TextListItem>> list : Main.lbTextTab.favoriteLists.entrySet()){
+                String listName = list.getKey();
+                for(TextListItem item : list.getValue()){
+                    writer.writeInt(DataType.TEXT_ELEMENT_LIST);
+                    writer.writeUTF(listName);
+                    item.writeData(writer);
                 }
             }
 
