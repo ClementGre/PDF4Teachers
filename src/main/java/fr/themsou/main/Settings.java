@@ -92,7 +92,7 @@ public class Settings {
                     String line;
                     while((line = reader.readLine()) != null) {
 
-                        String value = StringUtils.removeBefore(line, '=');
+                        String value = StringUtils.removeBefore(line, "=");
 
                         switch(line.split("=")[0]){
 

@@ -13,7 +13,7 @@ public class TR {
 
     private static ArrayList<String> template = null;
     private static HashMap<String, String> translations;
-    private static final boolean WRITE_TEMPLATE = false;
+    //private static final boolean WRITE_TEMPLATE = false;
 
     public static String tr(String text){
 
@@ -24,9 +24,9 @@ public class TR {
             }
         }
 
-        if(WRITE_TEMPLATE){
+        /*if(WRITE_TEMPLATE){
             writeTemplate(text.replaceAll(Pattern.quote("\n"), Pattern.quote("\\n")));
-        }
+        }*/
 
         return text;
     }
@@ -72,7 +72,7 @@ public class TR {
                 if(line.startsWith("#")) continue;
 
                 String key = line.split(Pattern.quote("="))[0];
-                String value = StringUtils.removeBefore(line, '=');
+                String value = StringUtils.removeBeforeNotEscaped(line, "=");
 
                 if(key != null){
                     if(!key.isBlank() && !value.isBlank()){
@@ -89,7 +89,7 @@ public class TR {
 
     }
 
-    private static void writeTemplate(String text){
+    /*private static void writeTemplate(String text){
 
         File folder = new File(Main.dataFolder + "translations"); folder.mkdirs();
         File file = new File(Main.dataFolder + "translations" + File.separator + "template.yml");
@@ -139,6 +139,6 @@ public class TR {
             e.printStackTrace();
         }
 
-    }
+    }*/
 
 }

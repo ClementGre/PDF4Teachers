@@ -12,6 +12,8 @@ import fr.themsou.panel.leftBar.paint.LBPaintTab;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.MenuBar;
+import fr.themsou.utils.Macro;
+import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.LicenseWindow;
 import fr.themsou.windows.UpdateWindow;
@@ -136,6 +138,7 @@ public class Main extends Application {
 
 		window.show();
 
+
 		mainPane.getItems().addAll(leftBar, mainScreen);
 		mainPane.setDividerPositions(270 / root.getWidth());
 		mainPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
@@ -161,6 +164,8 @@ public class Main extends Application {
 				e.consume();
 			}
 		});
+
+		new Macro(root);
 
 //		THEME
 

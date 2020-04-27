@@ -96,7 +96,7 @@ public class AboutWindow extends Stage {
             gitInfo.setAlignment(Pos.CENTER);
 
             VBox apiInfo = new VBox();
-                Label api = new Label(TR.tr("Dépendances : "));
+                Label api = new Label(TR.tr("Dépendances :"));
 
                 Hyperlink javaFx = new Hyperlink("Java FX 13.0.1");
                 javaFx.setOnAction((ActionEvent t) -> {

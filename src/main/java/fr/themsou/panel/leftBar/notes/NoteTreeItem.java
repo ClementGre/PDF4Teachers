@@ -97,8 +97,6 @@ public class NoteTreeItem extends TreeItem {
                             else noteField.requestFocus();
                         });
                     }
-
-
                 }
 
             }else if(oldValue){ // n'est plus selectionné
@@ -297,8 +295,6 @@ public class NoteTreeItem extends TreeItem {
                 pane.getChildren().addAll(name, spacer, noteField, slash, total);
                 Platform.runLater(() -> {
                     noteField.requestFocus();
-                    noteField.positionCaret(noteField.getText().length());
-                    noteField.selectAll();
                 });
             }
         }else{
@@ -306,16 +302,17 @@ public class NoteTreeItem extends TreeItem {
                 pane.getChildren().addAll(nameField, spacer, value, slash, total);
                 Platform.runLater(() -> {
                     nameField.requestFocus();
-                    nameField.positionCaret(nameField.getText().length());
                 });
             }else{
                 pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField);
                 Platform.runLater(() -> {
-                    noteField.requestFocus();
-                    noteField.positionCaret(noteField.getText().length());
-                    noteField.selectAll();
+                    if(name.getText().contains(TR.tr("Nouvelle note"))) nameField.requestFocus();
+                    else if(total.getText().equals("0")) totalField.requestFocus();
+                    else noteField.requestFocus();
                 });
             }
+
+
         }
         pane.setPrefWidth(width);
         return pane;

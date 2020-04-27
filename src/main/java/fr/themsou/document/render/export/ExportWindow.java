@@ -306,7 +306,7 @@ public class ExportWindow {
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(alert);
                 alert.setTitle(TR.tr("Erreur de rendu"));
-                alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite avec le document : ") + file.getName());
+                alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite avec le document :") + " " + file.getName());
                 alert.setContentText(TR.tr("Choisissez une action."));
 
                 TextArea textArea = new TextArea(e.getMessage());
@@ -338,7 +338,7 @@ public class ExportWindow {
 
         if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
         else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
-        else alert.setHeaderText(exported + TR.tr(" documents ont été exportés !"));
+        else alert.setHeaderText(exported + " " + TR.tr("documents ont été exportés !"));
 
         alert.setContentText(TR.tr("Vous pouvez les retrouver dans le dossier choisi."));
         alert.show();

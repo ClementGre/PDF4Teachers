@@ -101,7 +101,7 @@ public class ExportRenderer {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle(TR.tr("Fichier déjà existant"));
-            alert.setHeaderText(TR.tr("Le fichier de destination \"") + uri.replace(directory + File.separator, "") + TR.tr("\" existe déjà"));
+            alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + uri.replace(directory + File.separator, "") + "\" " +TR.tr("existe déjà"));
             alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
             ButtonType yesButton = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.YES);
             ButtonType yesAlwaysButton = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.YES);

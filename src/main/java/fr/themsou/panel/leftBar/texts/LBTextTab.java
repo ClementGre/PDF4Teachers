@@ -57,7 +57,7 @@ public class LBTextTab extends Tab {
 
 	private HBox btnBox = new HBox();
 	private Button deleteBtn = new Button(TR.tr("Supprimer"));
-	private Button newBtn = new Button(TR.tr("Nouveau"));
+	public Button newBtn = new Button(TR.tr("Nouveau"));
 
 	// TREE VIEW
 
@@ -256,7 +256,7 @@ public class LBTextTab extends Tab {
 
 			}
 		});
-		newBtn.setOnMouseReleased((MouseEvent mouseEvent) -> {
+		newBtn.setOnAction(e -> {
 
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
 			if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
@@ -280,7 +280,7 @@ public class LBTextTab extends Tab {
 			addSavedElement(current.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true));
 			txtArea.requestFocus();
 		});
-		deleteBtn.setOnMouseReleased((MouseEvent mouseEvent) -> {
+		deleteBtn.setOnAction(e -> {
 			Main.mainScreen.getSelected().delete();
 			Main.mainScreen.setSelected(null);
 		});

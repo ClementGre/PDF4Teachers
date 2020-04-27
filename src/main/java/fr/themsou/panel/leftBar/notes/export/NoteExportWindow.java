@@ -326,7 +326,7 @@ public class NoteExportWindow extends Stage {
 
             if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
             else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
-            else alert.setHeaderText(exported + TR.tr(" documents ont été exportés !"));
+            else alert.setHeaderText(exported + " " + TR.tr("documents ont été exportés !"));
 
             if(exported != 0){
                 if(type == 1) alert.setContentText(TR.tr("Vous pouvez retrouver les fichiers CSV dans le dossier choisi."));
