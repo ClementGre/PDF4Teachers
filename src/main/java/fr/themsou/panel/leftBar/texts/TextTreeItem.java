@@ -90,24 +90,25 @@ public class TextTreeItem extends TreeItem{
 		this.creationDate = creationDate;
 		this.core = core;
 
-		// bindings with the core
-		fontProperty().bind(core.fontProperty());
-		core.textProperty().addListener(textChangeListener);
-		core.fillProperty().addListener(colorChangeListener);
-		if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
-
-
 		setup();
 	}
 
 	public void setup(){
+
+		if(core != null){
+			// bindings with the core
+			fontProperty().bind(core.fontProperty());
+			core.textProperty().addListener(textChangeListener);
+			core.fillProperty().addListener(colorChangeListener);
+			if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
+		}
 
 		// Setup les éléments graphiques
 		menu = TextTreeView.getNewMenu(this);
 
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-				addToDocument(true);
+				addToDocument(true, false);
 				if(getType() == TextTreeItem.FAVORITE_TYPE){
 					Main.lbTextTab.favoritesTextSortManager.simulateCall();
 				}else if(getType() == TextTreeItem.LAST_TYPE){
@@ -250,17 +251,30 @@ public class TextTreeItem extends TreeItem{
 
 	}
 
-	public void addToDocument(boolean xAuto){
+	public void addToDocument(boolean xAuto, boolean link){
 
 		if(Main.mainScreen.hasDocument(false)){
 			uses++;
 			PageRenderer page = Main.mainScreen.document.pages.get(0);
-			if (Main.mainScreen.document.getCurrentPage() != -1)
+			if(Main.mainScreen.document.getCurrentPage() != -1)
 				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
 
 			int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
 			int x = (int) ((xAuto ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
 			TextElement realElement = toRealTextElement(x, y, page.getPage());
+
+			if(link){
+				// UnBind with the core
+				if(core != null){
+					fontProperty().unbind();
+					core.textProperty().removeListener(textChangeListener);
+					core.fillProperty().removeListener(colorChangeListener);
+				}
+
+				core = realElement;
+				setup();
+			}
+
 			page.addElement(realElement, true);
 			Main.mainScreen.selectedProperty().setValue(realElement);
 		}
@@ -274,8 +288,7 @@ public class TextTreeItem extends TreeItem{
 		if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(null);
 
 		this.core = null;
-		updateIcon();
-
+		setup();
 	}
 
 	public Font getFont() {

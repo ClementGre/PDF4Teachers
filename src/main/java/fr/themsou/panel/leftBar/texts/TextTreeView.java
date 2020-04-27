@@ -152,8 +152,8 @@ public class TextTreeView {
     public static ContextMenu getNewMenu(TextTreeItem element){
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter"), -1, false);
-        item1.setToolTip(TR.tr("Ajoute cet élément à l'édition du document ouvert."));
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter et lier"), -1, false);
+        item1.setToolTip(TR.tr("Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste."));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
         item2.setToolTip(TR.tr("Retire cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document."));
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux favoris"), -1, false);
@@ -165,16 +165,17 @@ public class TextTreeView {
 
 
         // Ajouter les items en fonction du type
-        menu.getItems().addAll(item1, item2);
+        if(element.getType() != TextTreeItem.ONFILE_TYPE) menu.getItems().add(item1);
+        menu.getItems().add(item2);
         if(element.getType() != TextTreeItem.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
         if(element.getType() == TextTreeItem.ONFILE_TYPE) menu.getItems().add(item4); // onFile
-        if(element.getType() == TextTreeItem.LAST_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
+        if(element.getType() != TextTreeItem.ONFILE_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
 
         Builders.setMenuSize(menu);
 
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
-            element.addToDocument(true);
+            element.addToDocument(true, true);
             if(element.getType() == TextTreeItem.FAVORITE_TYPE){
                 Main.lbTextTab.favoritesTextSortManager.simulateCall();
             }else if(element.getType() == TextTreeItem.LAST_TYPE){

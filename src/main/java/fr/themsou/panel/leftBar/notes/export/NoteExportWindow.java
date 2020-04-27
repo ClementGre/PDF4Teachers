@@ -145,11 +145,10 @@ public class NoteExportWindow extends Stage {
 
             }else{
 
-                fileNameSimple = new TextField(Main.userData.lastExportFileName.isEmpty() ? StringUtils.removeAfterLastRejex(Main.mainScreen.document.getFileName(), ".pdf") + ".csv" : Main.userData.lastExportFileName);
+                fileNameSimple = new TextField(Main.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRejex(Main.mainScreen.document.getFileName(), ".pdf") + ".csv" : Main.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("Nom du document"));
                 Builders.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
-                fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileName = newValue);
-
+                if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileName = newValue);
                 root.getChildren().addAll(info, fileNameSimple);
 
             }

@@ -551,6 +551,17 @@ public class LBTextTab extends Tab {
 				}
 			}
 		}
+		items = favoritesText.getChildren();
+		for(TreeItem<String> item : items){
+			if(item instanceof TextTreeItem){
+				if(((TextTreeItem) item).getCore() != null){
+					if(((TextTreeItem) item).getCore().equals(element)){
+						((TextTreeItem) item).unLink();
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	private ScrollBar getHorizontalSB(final TextArea scrollPane) {

@@ -132,7 +132,7 @@ public class PageRenderer extends Pane {
                     name.setFont(item.name.getFont());
                     name.setFill(item.name.getTextFill());
 
-                    sub.setOnMouseClicked(event -> item.addToDocument(false));
+                    sub.setOnMouseClicked(event -> item.addToDocument(false, false));
 
                     sub.setLayoutY(-6);
                     sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
