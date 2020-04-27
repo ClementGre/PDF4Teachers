@@ -4,6 +4,9 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
 import fr.themsou.panel.leftBar.notes.NoteSettingsWindow;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.utils.TR;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -25,6 +28,23 @@ public class UserData {
     public static File lastOpenDir = new File(System.getProperty("user.home"));
     public static File lastExportDir = new File(System.getProperty("user.home"));
     public static File lastExportDirNotes = new File(System.getProperty("user.home"));
+
+    // Notes ExportParams
+
+    public String lastExportFileName = "";
+    public String lastExportFileNamePrefix = "";
+    public String lastExportFileNameSuffix = "";
+    public String lastExportFileNameReplace = "";
+    public String lastExportFileNameBy = "";
+    public String lastExportStudentNameReplace = "";
+    public String lastExportStudentNameBy = "";
+    public boolean settingsOnlySameRatingScale = true;
+    public boolean settingsOnlyCompleted = false;
+    public boolean settingsOnlySameDir = false;
+    public boolean settingsAttributeTotalLine = false;
+    public boolean settingsAttributeMoyLine = true;
+    public boolean settingsWithTxtElements = false;
+    public int settingsTiersExportSlider = 2;
 
     public UserData(){
         loadData();
@@ -62,7 +82,7 @@ public class UserData {
                                 Main.lbTextTab.lastBold = reader.readBoolean();
                                 Main.lbTextTab.lastItalic = reader.readBoolean();
 
-                                // TIERS FONTS (NOTE_TAB)
+                                // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
 
                                 for(int i = 0; i < 5 ; i++){
                                     LBNoteTab.fontTiers.put(i, Map.entry(
@@ -70,6 +90,23 @@ public class UserData {
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
                                 Main.lbNoteTab.updateElementsFont();
+
+                                Main.lbNoteTab.lockRatingScale.setSelected(reader.readBoolean());
+
+                                lastExportFileName = reader.readUTF();
+                                lastExportFileNameReplace = reader.readUTF();
+                                lastExportFileNameBy = reader.readUTF();
+                                lastExportFileNamePrefix = reader.readUTF();
+                                lastExportFileNameSuffix = reader.readUTF();
+                                lastExportStudentNameReplace = reader.readUTF();
+                                lastExportStudentNameBy = reader.readUTF();
+                                settingsOnlySameRatingScale = reader.readBoolean();
+                                settingsOnlyCompleted = reader.readBoolean();
+                                settingsOnlySameDir = reader.readBoolean();
+                                settingsAttributeTotalLine = reader.readBoolean();
+                                settingsAttributeMoyLine = reader.readBoolean();
+                                settingsWithTxtElements = reader.readBoolean();
+                                settingsTiersExportSlider = reader.readInt();
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
@@ -130,7 +167,7 @@ public class UserData {
             writer.writeBoolean(Main.lbTextTab.lastBold);
             writer.writeBoolean(Main.lbTextTab.lastItalic);
 
-            // TIERS FONTS (NOTE_TAB)
+            // TIERS FONTS (NOTE_TAB) + lock + ExportParams
 
             for(int i = 0; i < 5 ; i++){
                 Map.Entry<Font, Map.Entry<Color, Boolean>> font = LBNoteTab.fontTiers.get(i);
@@ -144,6 +181,23 @@ public class UserData {
                 writer.writeUTF(font.getValue().getKey().toString());
                 writer.writeBoolean(font.getValue().getValue());
             }
+
+            writer.writeBoolean(Main.lbNoteTab.lockRatingScale.isSelected());
+
+            writer.writeUTF(lastExportFileName);
+            writer.writeUTF(lastExportFileNameReplace);
+            writer.writeUTF(lastExportFileNameBy);
+            writer.writeUTF(lastExportFileNameSuffix);
+            writer.writeUTF(lastExportFileNamePrefix);
+            writer.writeUTF(lastExportStudentNameReplace);
+            writer.writeUTF(lastExportStudentNameBy);
+            writer.writeBoolean(settingsOnlySameRatingScale);
+            writer.writeBoolean(settingsOnlyCompleted);
+            writer.writeBoolean(settingsOnlySameDir);
+            writer.writeBoolean(settingsAttributeTotalLine);
+            writer.writeBoolean(settingsAttributeMoyLine);
+            writer.writeBoolean(settingsWithTxtElements);
+            writer.writeInt(settingsTiersExportSlider);
 
             writer.flush();
             writer.close();

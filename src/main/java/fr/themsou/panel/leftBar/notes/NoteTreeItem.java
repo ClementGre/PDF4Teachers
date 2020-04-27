@@ -3,6 +3,7 @@ package fr.themsou.panel.leftBar.notes;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -80,8 +81,6 @@ public class NoteTreeItem extends TreeItem {
                         pane.getChildren().addAll(name, spacer, noteField, slash, total, newNote);
                         Platform.runLater(() -> {
                             noteField.requestFocus();
-                            noteField.positionCaret(noteField.getText().length());
-                            noteField.selectAll();
                         });
                     }
                 }else{
@@ -89,14 +88,13 @@ public class NoteTreeItem extends TreeItem {
                         pane.getChildren().addAll(nameField, spacer, value, slash, total, newNote);
                         Platform.runLater(() -> {
                             nameField.requestFocus();
-                            nameField.positionCaret(nameField.getText().length());
                         });
                     }else{
                         pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField, newNote);
                         Platform.runLater(() -> {
-                            noteField.requestFocus();
-                            noteField.positionCaret(noteField.getText().length());
-                            noteField.selectAll();
+                            if(name.getText().contains(TR.tr("Nouvelle note"))) nameField.requestFocus();
+                            else if(total.getText().equals("0")) totalField.requestFocus();
+                            else noteField.requestFocus();
                         });
                     }
 
@@ -132,12 +130,14 @@ public class NoteTreeItem extends TreeItem {
         pane = new HBox();
         pane.setAlignment(Pos.CENTER);
         pane.setPrefHeight(18);
-        pane.setStyle("-fx-padding: -6 -6 -6 0;"); // top - right - bottom - left
+        pane.setStyle("-fx-padding: -6 -6 -6 -5;"); // top - right - bottom - left
 
         // TEXTS
 
         name.setFont(new Font(14));
+        HBox.setMargin(name, new Insets(0, 0, 0, 5));
         name.textProperty().bind(core.nameProperty());
+
         slash.setFont(new Font(14));
 
         value.setFont(new Font(14));
@@ -173,6 +173,14 @@ public class NoteTreeItem extends TreeItem {
         Text meter = new Text();
         meter.setFont(nameField.getFont());
 
+        nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if(nameField.getCaretPosition() == nameField.getText().length() || nameField.getCaretPosition() == 0) {
+                    nameField.positionCaret(nameField.getText().length());
+                    nameField.selectAll();
+                }
+            });
+        });
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
             String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
             if(newText.length() >= 20) newText = newText.substring(0, 20);
@@ -182,6 +190,12 @@ public class NoteTreeItem extends TreeItem {
             nameField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
 
             core.setName(newText);
+        });
+        noteField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                noteField.positionCaret(noteField.getText().length());
+                noteField.selectAll();
+            });
         });
         noteField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("/")){
@@ -204,6 +218,12 @@ public class NoteTreeItem extends TreeItem {
             }catch(NumberFormatException e){
                 core.setValue(-1);
             }
+        });
+        totalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                totalField.positionCaret(totalField.getText().length());
+                totalField.selectAll();
+            });
         });
         totalField.textProperty().addListener((observable, oldValue, newValue) -> {
             String newText = newValue.replaceAll("[^0123456789.,]", "");

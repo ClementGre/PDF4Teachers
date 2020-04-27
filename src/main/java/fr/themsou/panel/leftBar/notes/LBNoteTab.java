@@ -9,6 +9,8 @@ import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -31,8 +33,8 @@ public class LBNoteTab extends Tab {
 
     public static HashMap<Integer, Map.Entry<Font, Map.Entry<Color, Boolean>>> fontTiers = new HashMap<>();
 
+    public ToggleButton lockRatingScale = new ToggleButton();
     private Button settings = new Button();
-    private ToggleButton lockRatingScale = new ToggleButton();
     private Button link = new Button();
     private Button export = new Button();
 
@@ -54,14 +56,22 @@ public class LBNoteTab extends Tab {
         fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
         fontTiers.put(5, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
 
+        Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
+        lockRatingScale.setCursor(Cursor.HAND);
+        lockRatingScale.setSelected(true);
+        lockRatingScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue){
+                lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas-ferme.png") + "", 0, 0));
+            }else{
+                lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
+            }
+        });
+        lockRatingScale.setSelected(false);
+
         Builders.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/engrenage.png")+"", 0, 0));
         settings.setOnAction((e) -> new NoteSettingsWindow());
-
-        Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
-        lockRatingScale.setCursor(Cursor.HAND);
-        lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png")+"", 0, 0));
 
         Builders.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
@@ -75,9 +85,9 @@ public class LBNoteTab extends Tab {
         export.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new NoteExportWindow());
 
-        optionPane.setStyle("-fx-padding: 5 0;");
+        optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, settings, lockRatingScale, link, export);
+        optionPane.getChildren().addAll(spacer, lockRatingScale, settings, link, export);
 
         treeView = new NoteTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);
