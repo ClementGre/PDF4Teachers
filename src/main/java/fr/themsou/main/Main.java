@@ -15,6 +15,7 @@ import fr.themsou.panel.MenuBar;
 import fr.themsou.utils.Macro;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.LicenseWindow;
 import fr.themsou.windows.UpdateWindow;
 import javafx.application.Application;
@@ -91,7 +92,7 @@ public class Main extends Application {
 		if(System.getProperty("os.name").toLowerCase().contains("win")){
 			dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		}
-		boolean firstLaunch = !new File(dataFolder + File.separator + "Settings.yml").exists();
+		boolean firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 
 		hostServices = getHostServices();
 
@@ -120,6 +121,8 @@ public class Main extends Application {
 
 //		SETUPS
 
+		LanguageWindow.copyFiles();
+
 		settings = new Settings();
 
 		mainScreen = new MainScreen();
@@ -138,7 +141,6 @@ public class Main extends Application {
 //		PANELS
 
 		window.show();
-
 
 		mainPane.getItems().addAll(leftBar, mainScreen);
 		mainPane.setDividerPositions(270 / root.getWidth());

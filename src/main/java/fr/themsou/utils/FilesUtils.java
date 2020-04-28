@@ -1,6 +1,7 @@
 package fr.themsou.utils;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 public class FilesUtils {
 
@@ -25,5 +26,10 @@ public class FilesUtils {
 
         return (float) (octet / 1000) / 1000f;
 
+    }
+
+    public static String getExtension(String fileName){
+        String[] splited = fileName.split(Pattern.quote("."));
+        return splited[splited.length-1];
     }
 }

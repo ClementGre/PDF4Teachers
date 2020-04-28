@@ -1,7 +1,11 @@
 package fr.themsou.main;
 import fr.themsou.utils.StringUtils;
+import fr.themsou.windows.LanguageWindow;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
@@ -21,6 +25,8 @@ public class Settings {
     private BooleanProperty removeElementInPreviousListWhenAddingToFavorites = new SimpleBooleanProperty();
     private BooleanProperty showOnlyStartInTextsList = new SimpleBooleanProperty();
     private BooleanProperty smallFontInTextsList = new SimpleBooleanProperty();
+
+    private StringProperty language = new SimpleStringProperty("");
 
     // OTHER
     private ArrayList<File> openedFiles;
@@ -72,13 +78,19 @@ public class Settings {
             saveSettings();
             if(Main.lbTextTab != null) Main.lbTextTab.updateListsGraphic();
         });
+
+        /////
+
+        languageProperty().addListener((observable, oldValue, newValue) -> {
+            saveSettings();
+        });
     }
     public void loadSettings(){
 
         new Thread(() -> {
 
             new File(Main.dataFolder).mkdirs();
-            File settings = new File(Main.dataFolder + "Settings.yml");
+            File settings = new File(Main.dataFolder + "settings.yml");
             try{
 
                 ArrayList<File> lastFiles = new ArrayList<>();
@@ -92,10 +104,13 @@ public class Settings {
                     String line;
                     while((line = reader.readLine()) != null) {
 
-                        String value = StringUtils.removeBefore(line, "=");
+                        String value = StringUtils.removeBefore(line, ": ");
 
-                        switch(line.split("=")[0]){
+                        switch(line.split(": ")[0]){
 
+                            case "language":
+                                language.set(value);
+                            break;
                             case "restoreLastSession":
                                 try{
                                     restoreLastSession.set(Boolean.parseBoolean(value));
@@ -171,11 +186,15 @@ public class Settings {
                         openedFile = lastFile;
                     }
 
+                    if(getLanguage().isEmpty()){
+                        Platform.runLater(LanguageWindow::new);
+                    }
+
 
                 }
             }catch (IOException e){ e.printStackTrace(); }
 
-        }, "SettingsLoader").start();
+        }, "settingsLoader").start();
     }
 
     public void saveSettings(){
@@ -183,7 +202,7 @@ public class Settings {
         new Thread(() -> {
 
             new File(Main.dataFolder).mkdirs();
-            File settings = new File(Main.dataFolder + "Settings.yml");
+            File settings = new File(Main.dataFolder + "settings.yml");
 
             try{
                 settings.createNewFile();
@@ -191,45 +210,50 @@ public class Settings {
 
                 /////
 
-                writer.write("restoreLastSession=" + restoreLastSession.get());
+
+                writer.write("language: " + language.get());
 
                 writer.newLine();
-                writer.write("openedFiles=");
+                writer.write("restoreLastSession: " + restoreLastSession.get());
+
+                writer.newLine();
+                writer.write("openedFiles: ");
                 for(File file : openedFiles) writer.write(file.getAbsolutePath() + ";/;");
 
                 writer.newLine();
-                if(openedFile != null) writer.write("openedFile=" + openedFile.getAbsolutePath());
-                else writer.write("openedFile=");
+                if(openedFile != null) writer.write("openedFile: " + openedFile.getAbsolutePath());
+                else writer.write("openedFile: ");
 
                 writer.newLine();
-                writer.write("checkUpdates=" + checkUpdates.get());
+                writer.write("checkUpdates: " + checkUpdates.get());
 
                 writer.newLine();
-                writer.write("defaultZoom=" + defaultZoom);
+                writer.write("defaultZoom: " + defaultZoom);
 
                 writer.newLine();
-                writer.write("zoomAnimations=" + zoomAnimations.get());
+                writer.write("zoomAnimations: " + zoomAnimations.get());
 
                 /////
 
                 writer.newLine();
-                writer.write("autoSave=" + autoSave.get());
+                writer.write("autoSave: " + autoSave.get());
 
                 writer.newLine();
-                writer.write("regularSaving=" + regularSaving);
+                writer.write("regularSaving: " + regularSaving);
 
                 /////
 
                 writer.newLine();
-                writer.write("removeElementInPreviousListWhenAddingToFavorites=" + removeElementInPreviousListWhenAddingToFavorites.get());
+                writer.write("removeElementInPreviousListWhenAddingToFavorites: " + removeElementInPreviousListWhenAddingToFavorites.get());
 
                 writer.newLine();
-                writer.write("showOnlyStartInTextsList=" + showOnlyStartInTextsList.get());
+                writer.write("showOnlyStartInTextsList: " + showOnlyStartInTextsList.get());
 
                 writer.newLine();
-                writer.write("smallFontInTextsList=" + smallFontInTextsList.get());
+                writer.write("smallFontInTextsList: " + smallFontInTextsList.get());
 
                 /////
+
 
                 writer.flush();
                 writer.close();
@@ -237,7 +261,7 @@ public class Settings {
             }catch(IOException e){
                 e.printStackTrace();
             }
-        }, "SettingsSaver").start();
+        }, "settingsSaver").start();
 
     }
 
@@ -354,6 +378,17 @@ public class Settings {
     }
     public void setSmallFontInTextsList(boolean smallFontInTextsList) {
         this.smallFontInTextsList.set(smallFontInTextsList);
+        saveSettings();
+    }
+
+    public String getLanguage() {
+        return language.get();
+    }
+    public StringProperty languageProperty() {
+        return language;
+    }
+    public void setLanguage(String language) {
+        this.language.set(language);
         saveSettings();
     }
 }

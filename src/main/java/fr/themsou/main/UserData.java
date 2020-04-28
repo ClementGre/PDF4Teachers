@@ -53,7 +53,7 @@ public class UserData {
     public void loadData(){
 
         new File(Main.dataFolder).mkdirs();
-        File file = new File(Main.dataFolder + "UserData.hex");
+        File file = new File(Main.dataFolder + "userdata.hex");
 
         try{
             if(file.createNewFile()){ //file was created
@@ -145,7 +145,7 @@ public class UserData {
     public void saveData(){
 
         new File(Main.dataFolder).mkdirs();
-        File file = new File(Main.dataFolder + "UserData.hex");
+        File file = new File(Main.dataFolder + "userdata.hex");
 
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, false)));

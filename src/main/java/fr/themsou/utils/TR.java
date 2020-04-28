@@ -31,32 +31,16 @@ public class TR {
         return text;
     }
 
-    public static boolean loadTranslationFile(String fileName, boolean extract){
+    public static boolean loadTranslationFile(String fileName){
 
         translations = null;
+        File file = new File(Main.dataFolder + "translations" + File.separator + fileName + ".txt");
 
-        File folder = new File(Main.dataFolder + "translations");
-        folder.mkdirs();
-
-        File file = new File(Main.dataFolder + "translations" + File.separator + fileName + ".yml");
-
-        if(extract){
-            try{
-                InputStream docRes = Main.class.getResourceAsStream("/translations/" + fileName + ".yml");
-                Files.copy(docRes, file.getAbsoluteFile().toPath());
-                return loadFileTranslationsData(file);
-
-            }catch(IOException e){ e.printStackTrace(); }
-
-        }else if(file.exists()){
+        if(file.exists()){
             try{
                 return loadFileTranslationsData(file);
-
             }catch(IOException e){ e.printStackTrace(); }
-
         }
-
-        Main.format.getDecimalFormatSymbols().setDecimalSeparator('.');
 
         return false;
     }
@@ -92,7 +76,7 @@ public class TR {
     /*private static void writeTemplate(String text){
 
         File folder = new File(Main.dataFolder + "translations"); folder.mkdirs();
-        File file = new File(Main.dataFolder + "translations" + File.separator + "template.yml");
+        File file = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
 
 
         if(template == null){
