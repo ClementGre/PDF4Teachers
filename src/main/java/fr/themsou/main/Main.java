@@ -90,7 +90,7 @@ public class Main extends Application {
 		if(System.getProperty("os.name").toLowerCase().contains("win")){
 			dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		}
-		boolean firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
+		boolean firstLaunch = !new File(dataFolder + File.separator + "Settings.yml").exists();
 
 		hostServices = getHostServices();
 

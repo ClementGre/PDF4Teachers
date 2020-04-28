@@ -231,7 +231,7 @@ public class LicenseWindow extends Stage{
         setTitle(TR.tr("PDF4Teachers - License"));
         setScene(scene);
         setOnCloseRequest((javafx.stage.WindowEvent e) -> {
-            new File(Main.dataFolder + "settings.yml").delete();
+            new File(Main.dataFolder + "Settings.yml").delete();
             close();
             System.exit(0);
         });
@@ -278,7 +278,7 @@ public class LicenseWindow extends Stage{
             close();
         });
         cancel.setOnAction((ActionEvent event) -> {
-            new File(Main.dataFolder + "settings.yml").delete();
+            new File(Main.dataFolder + "Settings.yml").delete();
             close();
             System.exit(0);
         });

@@ -341,7 +341,9 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public void delete(){
-        getPage().removeElement(this, true);
+        if(getPage() != null){
+            if(getPage().getChildren().contains(this)) getPage().removeElement(this, true);
+        }
     }
 
     @Override
@@ -465,7 +467,10 @@ public class NoteElement extends Text implements Element {
     }
 
     public PageRenderer getPage() {
-        return Main.mainScreen.document.pages.get(pageNumber);
+        if(Main.mainScreen.document.pages.size() > pageNumber){
+            return Main.mainScreen.document.pages.get(pageNumber);
+        }
+        return null;
     }
     public void setPage(PageRenderer page) {
         this.pageNumber = page.getPage();
