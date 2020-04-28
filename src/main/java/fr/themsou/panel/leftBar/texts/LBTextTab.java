@@ -101,7 +101,7 @@ public class LBTextTab extends Tab {
 
 		setClosable(false);
 		setContent(pane);
-		setGraphic(Builders.buildImage(getClass().getResource("/img/Text.png")+"", 0, 25));
+		setGraphic(Builders.buildImage(getClass().getResource("/img/text.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(1, this);
 
 		setup();
@@ -149,7 +149,7 @@ public class LBTextTab extends Tab {
 		Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
 		boldBtn.setCursor(Cursor.HAND);
 		boldBtn.setFont(Font.font("Arial", FontWeight.BOLD, 20));
-		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Bold.png")+"", 0, 0));
+		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastBold = newValue;
@@ -158,7 +158,7 @@ public class LBTextTab extends Tab {
 		Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
 		itBtn.setFont(Font.font("Arial", FontPosture.ITALIC, 20));
 		itBtn.setCursor(Cursor.HAND);
-		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Italic.png")+"", 0, 0));
+		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
 		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastItalic = newValue;

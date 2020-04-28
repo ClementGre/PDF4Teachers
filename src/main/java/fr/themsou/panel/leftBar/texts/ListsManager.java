@@ -22,8 +22,8 @@ public class ListsManager {
     public ListsManager(LBTextTab textTab){
         this.textTab = textTab;
 
-        loadListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/List.png") +"", 18, 18));
-        saveListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Save.png") +"", 22, 22));
+        loadListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
+        saveListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/save.png") +"", 22, 22));
 
         Builders.setPosition(loadListBtn, 0, 0, 30, 30, true);
         Builders.setPosition(saveListBtn, 0, 0, 30, 30, true);

@@ -23,7 +23,7 @@ public class LBPaintTab extends Tab {
 
         setClosable(false);
         setContent(pane);
-        setGraphic(Builders.buildImage(getClass().getResource("/img/Paint.png")+"", 0, 25));
+        setGraphic(Builders.buildImage(getClass().getResource("/img/paint.png")+"", 0, 25));
         Main.leftBar.getTabs().add(3, this);
 
         setup();

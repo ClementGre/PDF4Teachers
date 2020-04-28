@@ -32,7 +32,7 @@ public class LBFilesTab extends Tab {
 		setClosable(false);
 		setContent(separator);
 
-		setGraphic(Builders.buildImage(getClass().getResource("/img/PDF-Document.png")+"", 0, 25));
+		setGraphic(Builders.buildImage(getClass().getResource("/img/pdfdocument.png")+"", 0, 25));
 		Main.leftBar.getTabs().add(0, this);
 
 		setup();

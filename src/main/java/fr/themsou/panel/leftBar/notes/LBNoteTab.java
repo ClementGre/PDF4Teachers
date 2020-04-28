@@ -41,7 +41,7 @@ public class LBNoteTab extends Tab {
     public LBNoteTab(){
         setClosable(false);
         setContent(pane);
-        setGraphic(Builders.buildImage(getClass().getResource("/img/Note.png")+"", 0, 25));
+        setGraphic(Builders.buildImage(getClass().getResource("/img/note.png")+"", 0, 25));
         Main.leftBar.getTabs().add(2, this);
 
         setup();

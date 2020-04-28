@@ -102,13 +102,13 @@ public class NoteSettingsWindow extends Stage {
             Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
             boldBtn.setCursor(Cursor.HAND);
             boldBtn.setSelected(Element.getFontWeight(font) == FontWeight.BOLD);
-            boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Bold.png")+"", 0, 0));
+            boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
             boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
             itBtn.setCursor(Cursor.HAND);
             itBtn.setSelected(Element.getFontPosture(font) == FontPosture.ITALIC);
-            itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/Italic.png")+"", 0, 0));
+            itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(showName, 0, 29, 2.5);
