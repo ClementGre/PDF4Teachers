@@ -152,5 +152,10 @@ public class Builders {
         return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
     }
 
+    public static Tooltip genToolTip(String text){
+        return new Tooltip(new TextWrapper(text, null, 350).wrap());
+
+    }
+
 
 }

@@ -247,6 +247,8 @@ public class NoteTreeItem extends TreeItem {
         Builders.setPosition(newNote, 0, 0, 30, 30, true);
         newNote.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.lbNoteTab.isLockRatingScaleProperty().get() || NoteTreeView.getElementTier(getCore().getParentPath()) >= 4, Main.lbNoteTab.isLockRatingScaleProperty()));
         newNote.setVisible(false);
+        newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
+        name.textProperty().addListener((observable, oldValue, newValue) -> newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
 
         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
 
@@ -333,7 +335,7 @@ public class NoteTreeItem extends TreeItem {
         cell.selectedProperty().addListener(selectedListener);
 
         // DEBUG
-        cell.setTooltip(new Tooltip(core.getParentPath() + "\\" + core.getName() + " - n°" + core.getIndex() + "\nPage n°" + core.getCurrentPageNumber()));
+        if(Main.DEBUG) cell.setTooltip(new Tooltip(core.getParentPath() + " - n°" + (core.getIndex()+1) + "\nPage n°" + core.getCurrentPageNumber()));
 
     }
 

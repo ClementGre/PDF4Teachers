@@ -21,8 +21,18 @@ public class Macro {
                 String keyName = e.getText();
                 if(!e.isAltDown()){
                     try{
+                        int i = Integer.parseInt(e.getCode().getChar());
+                        if(i == 0) return;
+
+                        if(Main.lbTextTab.favoritesTextToggleOption.isSelected()) i++;
+                        if(i <= Main.lbTextTab.favoritesText.getChildren().size()){
+                            ((TextTreeItem) Main.lbTextTab.favoritesText.getChildren().get(i-1)).addToDocument(false, false);
+                            return;
+                        }
+
+                    }catch(NumberFormatException ignored){}
+                    try{
                         int i = Integer.parseInt(keyName);
-                        System.out.println(i);
                         if(i == 0) return;
 
                         if(Main.lbTextTab.favoritesTextToggleOption.isSelected()) i++;
@@ -51,6 +61,26 @@ public class Macro {
                         Main.lbNoteTab.treeView.getSelectionModel().select(NoteTreeView.getNextNote(page, y));
                     }
                 }else{
+                    try{
+                        int i = Integer.parseInt(e.getCode().getChar())-1;
+                        if(i == -1){
+                            Main.lbTextTab.listsManager.saveListBtn.fire();
+                            return;
+                        }
+                        if(i < Main.lbTextTab.favoriteLists.size()){
+                            int k = 0;
+                            for(ArrayList<TextListItem> list : Main.lbTextTab.favoriteLists.values()){
+                                if(k == i){
+                                    Main.leftBar.getSelectionModel().select(1);
+                                    Main.lbTextTab.listsManager.loadList(list);
+                                    return;
+                                }
+                                k++;
+                            }
+                            return;
+                        }
+
+                    }catch(NumberFormatException ignored){}
                     try{
                         int i = Integer.parseInt(keyName)-1;
                         if(i == -1){

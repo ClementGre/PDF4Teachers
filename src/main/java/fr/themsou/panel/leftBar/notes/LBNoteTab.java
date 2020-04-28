@@ -8,6 +8,7 @@ import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.TextWrapper;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -60,30 +61,31 @@ public class LBNoteTab extends Tab {
         lockRatingScale.setCursor(Cursor.HAND);
         lockRatingScale.setSelected(true);
         lockRatingScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue){
-                lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas-ferme.png") + "", 0, 0));
-            }else{
-                lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
-            }
+            if(newValue) lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas-ferme.png") + "", 0, 0));
+            else lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
         });
         lockRatingScale.setSelected(false);
+        lockRatingScale.setTooltip(Builders.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
 
         Builders.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/engrenage.png")+"", 0, 0));
         settings.setOnAction((e) -> new NoteSettingsWindow());
+        settings.setTooltip(Builders.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
 
         Builders.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
         link.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/link.png")+"", 0, 0));
         link.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new NoteCopyRatingScaleDialog());
+        link.setTooltip(Builders.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         Builders.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
         export.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/exporter.png")+"", 0, 0));
         export.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new NoteExportWindow());
+        export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichier CSV, il s'agit de tableaux que vous pouvez formater avec LibreOffice calc ou Exel par exemple.")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);

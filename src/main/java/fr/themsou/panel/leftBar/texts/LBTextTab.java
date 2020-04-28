@@ -288,6 +288,7 @@ public class LBTextTab extends Tab {
 		// TREE VIEW
 		Builders.setPosition(favoritesTextToggleOption, 0, 0, 30, 30, true);
 		favoritesTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
+		favoritesTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
 		favoritesTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				favoritesText.getChildren().add(0, favoritesTextOptionsItem);
@@ -299,6 +300,7 @@ public class LBTextTab extends Tab {
 
 		Builders.setPosition(lastsTextToggleOption, 0, 0, 30, 30, true);
 		lastsTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
+		lastsTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
 		lastsTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				lastsText.getChildren().add(0, lastsTextOptionsItem);
@@ -310,6 +312,7 @@ public class LBTextTab extends Tab {
 
 		Builders.setPosition(onFileTextToggleOption, 0, 0, 30, 30, true);
 		onFileTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
+		onFileTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
 		onFileTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(newValue){
 				onFileText.getChildren().add(0, onFileTextOptionsItem);

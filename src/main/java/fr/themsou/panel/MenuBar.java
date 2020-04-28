@@ -441,7 +441,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, Main.mainScreen.statusProperty()));
 		}
 
-		Tooltip toolTipUI = new Tooltip(new TextWrapper(toolTip, null, 350).wrap());
+		Tooltip toolTipUI = Builders.genToolTip(toolTip);
 		toolTipUI.setShowDuration(Duration.INDEFINITE);
 		Tooltip.install(pane, toolTipUI);
 

@@ -67,6 +67,7 @@ public class Main extends Application {
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION_CODE = "010100";
 	public static final String VERSION = "Snapshot 1.1.0";
+	public static final boolean DEBUG = false;
 
 	Thread userDataSaver = new Thread(new Runnable() {
 		@Override public void run() {

@@ -70,7 +70,7 @@ public class NodeMenuItem extends CustomMenuItem {
     }
 
     public void setToolTip(String toolTip){
-        Tooltip toolTipUI = new Tooltip(new TextWrapper(toolTip, null, 350).wrap());
+        Tooltip toolTipUI = Builders.genToolTip(toolTip);
         toolTipUI.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(getContent(), toolTipUI);
     }

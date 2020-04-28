@@ -23,7 +23,9 @@ public class ListsManager {
         this.textTab = textTab;
 
         loadListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
+        loadListBtn.setTooltip(Builders.genToolTip(TR.tr("Afficher les listes d'éléments enregistrés")));
         saveListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/save.png") +"", 22, 22));
+        saveListBtn.setTooltip(Builders.genToolTip(TR.tr("Sauvegarder les éléments favoris en tant qu'une nouvelle liste")));
 
         Builders.setPosition(loadListBtn, 0, 0, 30, 30, true);
         Builders.setPosition(saveListBtn, 0, 0, 30, 30, true);
