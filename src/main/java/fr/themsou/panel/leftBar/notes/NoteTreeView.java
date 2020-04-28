@@ -220,21 +220,29 @@ public class NoteTreeView extends TreeView<String> {
             if(items.size() > i+1){
                 NoteTreeItem afterItem = items.get(i+1);
 
-                if(afterItem.getCore().getValue() == -1){
-                    if(item.getCore().getValue() != -1 || item.hasSubNote()){ // Colle l'élément au précédent
+                if(item.getCore().getValue() == -1){
+
+                    if(item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
+                        if(item.getCore().getCurrentPageNumber() != 0) item.getCore().switchPage(0);
+                        item.getCore().setRealY(0);
+                    }
+                }
+
+                if(afterItem.getCore().getValue() == -1){ // si l'élément d'après n'a pas de valeur
+                    if(item.getCore().getValue() != -1 || item.hasSubNote()){ // Colle l'élément d'après à celui-ci si celui ci a une valeur
                         if(afterItem.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
-                            afterItem.getCore().page.switchElementPage(afterItem.getCore(), item.getCore().page);
+                            afterItem.getCore().switchPage(item.getCore().getCurrentPageNumber());
                         }
-                        afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().page.getHeight()));
+                        afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
 
                         // Ramène tous les éléments du dessus
                         for(NoteTreeItem itemToSend : itemsToSend){
                             if(itemToSend.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
-                                itemToSend.getCore().page.switchElementPage(itemToSend.getCore(), item.getCore().page);
+                                itemToSend.getCore().switchPage(item.getCore().getCurrentPageNumber());
                             }
-                            itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().page.getHeight()));
+                            itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
                         }
-                    }else{ // Envoie l'élément tout à la fin
+                    }else{ // Sinon, demande à envoier l'élément à celui d'après
                         itemsToSend.add(afterItem);
                     }
                 }
@@ -244,7 +252,7 @@ public class NoteTreeView extends TreeView<String> {
         // Ramène tous les éléments du dessus
         for(NoteTreeItem itemToSend : itemsToSend){
             if(itemToSend.getCore().getCurrentPageNumber() != Main.mainScreen.document.pages.size()-1){
-                itemToSend.getCore().page.switchElementPage(itemToSend.getCore(), Main.mainScreen.document.pages.get(Main.mainScreen.document.pages.size()-1));
+                itemToSend.getCore().switchPage(Main.mainScreen.document.pages.size()-1);
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
         }

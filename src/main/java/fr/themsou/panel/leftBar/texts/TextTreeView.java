@@ -113,32 +113,28 @@ public class TextTreeView {
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
 
-        item1.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                if(favorites) Main.lbTextTab.clearSavedFavoritesElements();
-                else Main.lbTextTab.clearSavedLastsElements();
-            }
+        item1.setOnAction(e -> {
+            if(favorites) Main.lbTextTab.clearSavedFavoritesElements();
+            else Main.lbTextTab.clearSavedLastsElements();
         });
-        item2.setOnAction(new EventHandler<ActionEvent>() {
-            @Override public void handle(ActionEvent e) {
-                if(favorites){
-                    for(TreeItem<String> element : Main.lbTextTab.favoritesText.getChildren()){
-                        if(element instanceof TextTreeItem){
-                            ((TextTreeItem) element).setUses(0);
-                        }
+        item2.setOnAction(e -> {
+            if(favorites){
+                for(TreeItem<String> element : Main.lbTextTab.favoritesText.getChildren()){
+                    if(element instanceof TextTreeItem){
+                        ((TextTreeItem) element).setUses(0);
                     }
-                    if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                        Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                }
+                if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                }
+            }else{
+                for(TreeItem<String> element : Main.lbTextTab.lastsText.getChildren()){
+                    if(element instanceof TextTreeItem){
+                        ((TextTreeItem) element).setUses(0);
                     }
-                }else{
-                    for(TreeItem<String> element : Main.lbTextTab.lastsText.getChildren()){
-                        if(element instanceof TextTreeItem){
-                            ((TextTreeItem) element).setUses(0);
-                        }
-                    }
-                    if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                        Main.lbTextTab.lastsTextSortManager.simulateCall();
-                    }
+                }
+                if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    Main.lbTextTab.lastsTextSortManager.simulateCall();
                 }
             }
         });

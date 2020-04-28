@@ -11,6 +11,7 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
@@ -86,6 +87,13 @@ public class MainScreen extends Pane {
 
 		zoomOperator = new ZoomOperator(pane, this);
 
+		// Update show status when scroll level change
+		pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+			if(document != null){
+				document.updateShowsStatus();
+			}
+		});
+
 		addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
 			e.consume();
 			if(getStatus() == Status.OPEN){
@@ -108,7 +116,6 @@ public class MainScreen extends Pane {
 					}else if(e.getDeltaY() > 0){
 						zoomOperator.zoom(1+e.getDeltaY()/200, e.getSceneX(), e.getSceneY());
 					}
-					document.updateShowsStatus();
 				}
 			}else{ // SCROLL
 				ctrlDown = false;
@@ -216,6 +223,7 @@ public class MainScreen extends Pane {
 		Main.footerBar.repaint();
 		if(!Main.hasToClose) Main.settings.setOpenedFile(null);
 
+		System.runFinalization();
 		return true;
 	}
 	public boolean hasDocument(boolean confirm){

@@ -25,6 +25,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -45,11 +46,12 @@ public class PageRenderer extends Pane {
 
     PageStatus status = PageStatus.HIDE;
 
-    private ImageView renderView;
+    private ImageView renderView = new ImageView();
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     private double mouseX = 0;
     private double mouseY = 0;
+    WritableImage img;
 
     private ProgressBar loader = new ProgressBar();
     ContextMenu menu = new ContextMenu();
@@ -65,6 +67,7 @@ public class PageRenderer extends Pane {
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
         getChildren().add(loader);
+        getChildren().add(0, renderView);
 
         // BINDINGS & SIZES SETUP
         PDRectangle pageSize = Main.mainScreen.document.pdfPagesRender.getPageSize(page);
@@ -96,12 +99,6 @@ public class PageRenderer extends Pane {
         });
         setOnMouseEntered(event -> Main.mainScreen.document.setCurrentPage(page));
 
-        // Show Status
-        Main.mainScreen.pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            updateShowStatus();
-        });
-
-
         Builders.setMenuSize(menu);
 
 
@@ -119,37 +116,35 @@ public class PageRenderer extends Pane {
                 if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) Main.lbTextTab.treeView.getWidth()-50)));
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
-                for(int i = 0; i <= 3; i++){
-                    TextTreeItem item = mostUsed.get(i);
+                if(mostUsed.size() != 0){
+                    for(int i = 0; i <= 3; i++){
+                        TextTreeItem item = mostUsed.get(i);
 
-                    Pane pane = new Pane();
+                        Pane pane = new Pane();
 
-                    Pane sub = new Pane();
+                        Pane sub = new Pane();
 
-                    Text name = new Text(item.name.getText());
-                    name.setTextOrigin(VPos.TOP);
-                    name.setLayoutY(3);
-                    name.setFont(item.name.getFont());
-                    name.setFill(item.name.getTextFill());
+                        Text name = new Text(item.name.getText());
+                        name.setTextOrigin(VPos.TOP);
+                        name.setLayoutY(3);
+                        name.setFont(item.name.getFont());
+                        name.setFill(item.name.getTextFill());
 
-                    sub.setOnMouseClicked(event -> item.addToDocument(false, false));
+                        sub.setOnMouseClicked(event -> item.addToDocument(false, false));
 
-                    sub.setLayoutY(-6);
-                    sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
-                    sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), Main.lbTextTab.treeView.getWidth() - 50));
+                        sub.setLayoutY(-6);
+                        sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
+                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), Main.lbTextTab.treeView.getWidth() - 50));
 
-                    pane.setPrefHeight(name.getLayoutBounds().getHeight()+7-14);
+                        pane.setPrefHeight(name.getLayoutBounds().getHeight()+7-14);
 
-                    sub.getChildren().add(name);
-                    pane.getChildren().add(sub);
+                        sub.getChildren().add(name);
+                        pane.getChildren().add(sub);
 
-                    CustomMenuItem menuItem = new CustomMenuItem(pane);
-                    menu.getItems().add(menuItem);
+                        CustomMenuItem menuItem = new CustomMenuItem(pane);
+                        menu.getItems().add(menuItem);
+                    }
                 }
-
-
-
-
                 menu.show(this, e.getScreenX(), e.getScreenY());
             }
         });
@@ -159,10 +154,20 @@ public class PageRenderer extends Pane {
     public void updateShowStatus(){
 
         int firstTest = getShowStatus();
-        Platform.runLater(() -> {
+        switchVisibleStatus(firstTest);
+        /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
-        });
+        });*/
 
+    }
+    public void remove(){
+        switchVisibleStatus(2);
+        renderView = null;
+
+        setOnMouseEntered(null);
+        setOnMousePressed(null);
+        setOnMouseMoved(null);
+        setOnMouseDragged(null);
     }
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
         int pageHeight = (int) (getHeight()*Main.mainScreen.pane.getScaleX());
@@ -179,12 +184,17 @@ public class PageRenderer extends Pane {
     private void switchVisibleStatus(int showStatus){
         if(showStatus == 0){
             setVisible(true);
-            if(status == PageStatus.HIDE) render();
+
+            if(status == PageStatus.HIDE){
+                render();
+            }
         }else if(showStatus >= 1){
 
             setVisible(false);
             if(showStatus == 2){
-                getChildren().remove(renderView); status = PageStatus.HIDE;
+                renderView.setImage(null);
+                img = null;
+                status = PageStatus.HIDE;
                 for(Node node : getChildren()) node.setVisible(false);
             }
 
@@ -199,12 +209,13 @@ public class PageRenderer extends Pane {
         Main.mainScreen.document.pdfPagesRender.renderPage(page, new CallBack<>() {
             @Override public void call(BufferedImage image){
 
-                if(image == null){
+                if(image == null || renderView == null){
                     status = PageStatus.FAIL;
                     return;
                 }
-
-                renderView = new ImageView(SwingFXUtils.toFXImage(image, null));
+                img = SwingFXUtils.toFXImage(image, null);
+                renderView.setImage(img);
+                renderView.setStyle("");
 
                 renderView.fitHeightProperty().bind(heightProperty());
                 renderView.fitWidthProperty().bind(widthProperty());
@@ -215,7 +226,6 @@ public class PageRenderer extends Pane {
 
                 setCursor(Cursor.DEFAULT);
                 loader.setVisible(false);
-                getChildren().add(0, renderView);
                 status = PageStatus.RENDERED;
             }
         });
@@ -296,6 +306,13 @@ public class PageRenderer extends Pane {
     }
     public double getMouseY(){
         return Math.max(Math.min(mouseY, getWidth()), 0);
+    }
+
+    public double getRealMouseX(){
+        return mouseX;
+    }
+    public double getRealMouseY(){
+        return mouseY;
     }
 
     public int getPage() {

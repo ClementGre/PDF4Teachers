@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
 import javafx.application.Platform;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -36,6 +38,13 @@ public class PDFPagesRender {
 					return;
 				}
 			}
+
+			// Return if the renderer is not this
+			if(Main.mainScreen.hasDocument(false)){
+				if(Main.mainScreen.document.pdfPagesRender != null){
+					if(!Main.mainScreen.document.pdfPagesRender.equals(this)) return;
+				}else return;
+			}else return;
 
 			render = true;
 			BufferedImage image = null;

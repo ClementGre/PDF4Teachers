@@ -122,7 +122,7 @@ public class TextElement extends Text implements Element {
 			double itemY = getLayoutY() + e.getY() - shiftY;
 
 			boolean changePage = false;
-			if(this.page.getMouseY() < -30){
+			if(this.page.getRealMouseY() < -30){
 				if(this.page.getPage() > 0){
 
 					Main.mainScreen.setSelected(null);
@@ -134,7 +134,7 @@ public class TextElement extends Text implements Element {
 					itemY = this.page.getHeight();
 					changePage = true;
 				}
-			}else if(this.page.getMouseY() > this.page.getHeight() + 30){
+			}else if(this.page.getRealMouseY() > this.page.getHeight() + 30){
 				if(this.page.getPage() < Main.mainScreen.document.pages.size()-1){
 
 					Main.mainScreen.setSelected(null);

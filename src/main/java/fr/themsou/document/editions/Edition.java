@@ -7,6 +7,8 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
+import fr.themsou.panel.leftBar.notes.NoteTreeItem;
+import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.beans.property.BooleanProperty;
@@ -157,19 +159,22 @@ public class Edition {
             int counter = 0;
             for(PageRenderer page : document.pages){
                 for(int i = 0; i < page.getElements().size(); i++){
-                    page.getElements().get(i).writeSimpleData(writer);
 
-                    // not incrément counter if root value is -1
-                    if(page.getElements().get(i) instanceof NoteElement){
-                        if(Builders.cleanArray(((NoteElement) page.getElements().get(i)).getParentPath().split(Pattern.quote("\\"))).length == 0){ // Element is Root
-                            if(((NoteElement) page.getElements().get(i)).getValue() == -1 && ((NoteElement) page.getElements().get(i)).getTotal() == 20
-                                    && ((NoteElement) page.getElements().get(i)).getName().equals(TR.tr("Total"))){ // Element is default Root
-                                continue;
-                            }
-                        }
-                    }
+                    // Ne sauvegarde pas les notes pour préserver l'ordre des notes : les notes sont sauvegardés après
+                    if(!(page.getElements().get(i) instanceof NoteElement)) page.getElements().get(i).writeSimpleData(writer);
                     counter++;
                 }
+            }
+            for(NoteTreeItem element : NoteTreeView.getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot())){
+                element.getCore().writeSimpleData(writer);
+
+                // not incrément counter if root is default
+                if(Builders.cleanArray(element.getCore().getParentPath().split(Pattern.quote("\\"))).length == 0){ // Element is Root
+                    if(element.getCore().getValue() == -1 && element.getCore().getTotal() == 20 && element.getCore().getName().equals(TR.tr("Total"))){ // Element is default Root
+                        continue;
+                    }
+                }
+                counter++;
             }
             writer.flush();
             writer.close();

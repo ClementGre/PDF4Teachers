@@ -7,6 +7,7 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -83,6 +84,11 @@ public class Document {
     }
     public void close(){
         pdfPagesRender.close();
+        for(int i = 0 ; i < totalPages ; i++){
+            pages.get(i).remove();
+        }
+        pages = new ArrayList<>();
+
     }
 
     public boolean save(){
