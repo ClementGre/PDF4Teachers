@@ -1,9 +1,9 @@
 package fr.themsou.panel.leftBar.paint;
 
-import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -24,7 +24,7 @@ public class LBPaintTab extends Tab {
         setClosable(false);
         setContent(pane);
         setGraphic(Builders.buildImage(getClass().getResource("/img/paint.png")+"", 0, 25));
-        Main.leftBar.getTabs().add(3, this);
+        MainWindow.leftBar.getTabs().add(3, this);
 
         setup();
 

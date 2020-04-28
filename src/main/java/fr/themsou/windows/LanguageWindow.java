@@ -1,11 +1,9 @@
 package fr.themsou.windows;
 
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.FilesUtils;
-import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.*;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -20,6 +18,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
@@ -36,7 +35,10 @@ public class LanguageWindow extends Stage{
 
     public static final String[] LANGUAGES_NAMES = new String[]{};
 
-    public LanguageWindow(){
+
+    CallBack<String> callBack;
+    public LanguageWindow(CallBack<String> callBack){
+        this.callBack = callBack;
 
         VBox root = new VBox();
         Scene scene = new Scene(root, 545, 720);
@@ -46,8 +48,11 @@ public class LanguageWindow extends Stage{
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(545);
         setHeight(720);
-        setTitle(TR.tr("PDF4Teachers - Langage"));
+        setTitle("PDF4Teachers - Language");
         setScene(scene);
+        setOnCloseRequest(event -> {
+            callBack.call("");
+        });
         new JMetro(root, Style.LIGHT);
 
         if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("Français France (Defaut)");
@@ -81,7 +86,7 @@ public class LanguageWindow extends Stage{
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.tr("Choisissez votre language"));
+        Text info = new Text("Select your language");
 
         ListView<HBox> languages = new ListView<>();
         languages.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -89,7 +94,6 @@ public class LanguageWindow extends Stage{
         for(Map.Entry<String, ImageView> language : this.languages.entrySet()){
             HBox box = new HBox();
             box.setStyle("-fx-padding: -5;");
-            System.out.println(language.getKey());
             Label label = new Label(language.getKey());
             label.setFont(new Font(14));
             label.setPrefHeight(50);
@@ -112,7 +116,9 @@ public class LanguageWindow extends Stage{
 
         accept.setOnAction((ActionEvent event) -> {
             Main.settings.setLanguage(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(1)).getText());
+            TR.updateTranslation();
             close();
+            callBack.call("");
         });
 
     }

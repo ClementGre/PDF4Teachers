@@ -3,10 +3,10 @@ package fr.themsou.panel.leftBar.files;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -42,7 +42,7 @@ public class LBFilesListView {
 
                 if(file != null) {
                     if(!file.exists()){
-                        Main.lbFilesTab.removeFile(file, false);
+                        MainWindow.lbFilesTab.removeFile(file, false);
                         return;
                     }
                     VBox pane = new VBox();
@@ -96,7 +96,7 @@ public class LBFilesListView {
 
                     pane.setOnMouseClicked(mouseEvent -> {
                         if(mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2){
-                            Main.mainScreen.openFile(file);
+                            MainWindow.mainScreen.openFile(file);
                         }
                     });
 
@@ -126,9 +126,9 @@ public class LBFilesListView {
         menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
         Builders.setMenuSize(menu);
 
-        item1.setOnAction(e -> Platform.runLater(() -> Main.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()))));
+        item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()))));
 
-        item2.setOnAction(e -> Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true));
+        item2.setOnAction(e -> MainWindow.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true));
 
         item3.setOnAction(e -> Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), true));
 
@@ -143,7 +143,7 @@ public class LBFilesListView {
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){
-                Main.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
+                MainWindow.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
                 Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
                 new File(((MenuItem)e.getSource()).getParentPopup().getId()).delete();
             }
@@ -153,9 +153,9 @@ public class LBFilesListView {
         item5.setOnAction(e -> {
             if(new File(((MenuItem)e.getSource()).getParentPopup().getId()).exists()){
 
-                if(Main.mainScreen.hasDocument(false)){
-                    if(Main.mainScreen.document.getFile().getAbsolutePath().equals(((MenuItem)e.getSource()).getParentPopup().getId())){
-                        Main.mainScreen.document.save();
+                if(MainWindow.mainScreen.hasDocument(false)){
+                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(((MenuItem)e.getSource()).getParentPopup().getId())){
+                        MainWindow.mainScreen.document.save();
                     }
                 }
 
@@ -163,7 +163,7 @@ public class LBFilesListView {
             }
 
         });
-        item6.setOnAction(e -> Main.lbFilesTab.clearFiles(true));
+        item6.setOnAction(e -> MainWindow.lbFilesTab.clearFiles(true));
         return menu;
 
     }

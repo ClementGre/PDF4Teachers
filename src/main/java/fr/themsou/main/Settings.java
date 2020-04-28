@@ -1,12 +1,12 @@
 package fr.themsou.main;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.windows.LanguageWindow;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
 import java.util.ArrayList;
@@ -72,11 +72,11 @@ public class Settings {
         });
         showOnlyStartInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(Main.lbTextTab != null) Main.lbTextTab.updateListsGraphic();
+            if(MainWindow.lbTextTab != null) MainWindow.lbTextTab.updateListsGraphic();
         });
         smallFontInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(Main.lbTextTab != null) Main.lbTextTab.updateListsGraphic();
+            if(MainWindow.lbTextTab != null) MainWindow.lbTextTab.updateListsGraphic();
         });
 
         /////
@@ -185,12 +185,6 @@ public class Settings {
                         openedFiles = lastFiles;
                         openedFile = lastFile;
                     }
-
-                    if(getLanguage().isEmpty()){
-                        Platform.runLater(LanguageWindow::new);
-                    }
-
-
                 }
             }catch (IOException e){ e.printStackTrace(); }
 

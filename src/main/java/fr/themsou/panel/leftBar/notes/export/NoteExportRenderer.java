@@ -2,13 +2,11 @@ package fr.themsou.panel.leftBar.notes.export;
 
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.document.render.export.ExportWindow;
-import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.NoteRating;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import jfxtras.styles.jmetro.JMetro;
@@ -38,7 +36,7 @@ public class NoteExportRenderer {
         this.pane = pane;
         this.exportTier = (int) pane.settingsTiersExportSlider.getValue();
 
-        if(Main.mainScreen.hasDocument(false)) Main.mainScreen.document.save();
+        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
 
     }
 
@@ -252,7 +250,7 @@ public class NoteExportRenderer {
     public boolean getFiles(){
 
         try {
-            ExportFile defaultFile = new ExportFile(Main.mainScreen.document.getFile(), exportTier, pane.settingsWithTxtElements.isSelected());
+            ExportFile defaultFile = new ExportFile(MainWindow.mainScreen.document.getFile(), exportTier, pane.settingsWithTxtElements.isSelected());
 
             ratingScale = defaultFile.generateRatingScale();
             if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())) files.add(defaultFile);
@@ -262,7 +260,7 @@ public class NoteExportRenderer {
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             Builders.secureAlert(alert);
             alert.setTitle(TR.tr("Impossible de lire les notes"));
-            alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite lors de la lecture des notes du document : ") + Main.mainScreen.document.getFileName());
+            alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite lors de la lecture des notes du document : ") + MainWindow.mainScreen.document.getFileName());
             alert.setContentText(TR.tr("Ce document est le document principale de l'exportation, l'exportation ne peut pas continuer."));
 
             TextArea textArea = new TextArea(e.getMessage());
@@ -281,11 +279,11 @@ public class NoteExportRenderer {
 
 
         if(pane.type != 2){
-            for(File file : Main.lbFilesTab.files.getItems()){
+            for(File file : MainWindow.lbFilesTab.files.getItems()){
 
                 try{
-                    if(Main.mainScreen.document.getFile().equals(file)) continue;
-                    if(pane.settingsOnlySameDir.isSelected() && !Main.mainScreen.document.getFile().getParent().equals(file.getParent())) continue;
+                    if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
+                    if(pane.settingsOnlySameDir.isSelected() && !MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())) continue;
 
                     ExportFile exportFile = new ExportFile(file, exportTier, pane.settingsWithTxtElements.isSelected());
 

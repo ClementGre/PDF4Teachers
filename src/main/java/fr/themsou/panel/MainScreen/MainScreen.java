@@ -9,6 +9,7 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -162,7 +163,7 @@ public class MainScreen extends Pane {
 		}
 
 		repaint();
-		Main.footerBar.repaint();
+		MainWindow.footerBar.repaint();
 
 		try{
 			document = new Document(file);
@@ -174,7 +175,7 @@ public class MainScreen extends Pane {
 
 		// FINISH OPEN
 
-		Main.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
+		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		totalHeight = 30;
 
@@ -184,7 +185,7 @@ public class MainScreen extends Pane {
 		document.loadEdition();
 
 		repaint();
-		Main.footerBar.repaint();
+		MainWindow.footerBar.repaint();
 
 	}
 	public void failOpen(){
@@ -192,7 +193,7 @@ public class MainScreen extends Pane {
 		document = null;
 		status.set(Status.ERROR);
 		repaint();
-		Main.footerBar.repaint();
+		MainWindow.footerBar.repaint();
 
 	}
 	public boolean closeFile(boolean confirm){
@@ -220,8 +221,8 @@ public class MainScreen extends Pane {
 		selected.set(null);
 
 		repaint();
-		Main.footerBar.repaint();
-		if(!Main.hasToClose) Main.settings.setOpenedFile(null);
+		MainWindow.footerBar.repaint();
+		if(!MainWindow.hasToClose) Main.settings.setOpenedFile(null);
 
 		System.runFinalization();
 		return true;

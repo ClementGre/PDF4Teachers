@@ -1,8 +1,8 @@
 package fr.themsou.panel;
 
-import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.layout.*;
@@ -24,9 +24,9 @@ public class FooterBar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (Main.mainScreen.pane.getScaleX()*100) + "% (Ctrl+Scroll)", Main.mainScreen.pane.scaleXProperty()));
+		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (MainWindow.mainScreen.pane.getScaleX()*100) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
 
-		switch (Main.leftBar.getSelectionModel().getSelectedIndex()){
+		switch (MainWindow.leftBar.getSelectionModel().getSelectedIndex()){
 			case 0:
 				middleInfo.setText(TR.tr("Mode Fichiers")); break;
 			case 1:
@@ -37,12 +37,12 @@ public class FooterBar extends AnchorPane {
 				middleInfo.setText(TR.tr("Mode Dessin")); break;
 		}
 
-		if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
+		if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
 
-			if(Main.mainScreen.document.getCurrentPage() == -1){
-				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + "?/" + Main.mainScreen.document.totalPages);
+			if(MainWindow.mainScreen.document.getCurrentPage() == -1){
+				rightInfo.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
 			}else{
-				rightInfo.setText(Main.mainScreen.document.getFileName() + " - " + (Main.mainScreen.document.getCurrentPage()+1) + "/" + Main.mainScreen.document.totalPages);
+				rightInfo.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getCurrentPage()+1) + "/" + MainWindow.mainScreen.document.totalPages);
 			}
 		}else{
 			rightInfo.setText(TR.tr("Aucun fichier ouvert"));
@@ -75,7 +75,7 @@ public class FooterBar extends AnchorPane {
 		getChildren().add(middleInfo);
 		getChildren().add(rightInfo);
 
-		Main.leftBar.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> repaint());
+		MainWindow.leftBar.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> repaint());
 
 	}
 }

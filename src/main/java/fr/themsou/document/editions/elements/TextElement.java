@@ -3,26 +3,22 @@ package fr.themsou.document.editions.elements;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
-import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
@@ -62,7 +58,7 @@ public class TextElement extends Text implements Element {
 		setCursor(Cursor.MOVE);
 
 		// enable shadow if this element is selected
-		Main.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+		MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(oldValue == this && newValue != this){
 				setEffect(null);
 				menu.hide();
@@ -89,18 +85,18 @@ public class TextElement extends Text implements Element {
 
 		item1.setOnAction(e -> delete());
 		item2.setOnAction(e -> {
-			PageRenderer page1 = Main.mainScreen.document.pages.get(0);
-			if (Main.mainScreen.document.getCurrentPage() != -1)
-				page1 = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+			PageRenderer page1 = MainWindow.mainScreen.document.pages.get(0);
+			if (MainWindow.mainScreen.document.getCurrentPage() != -1)
+				page1 = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
 			TextElement realElement = (TextElement) this.clone();
 			realElement.setRealX(realElement.getRealX() + 10);
 			realElement.setRealY(realElement.getRealY() + 10);
 			page1.addElement(realElement, true);
-			Main.mainScreen.selectedProperty().setValue(realElement);
+			MainWindow.mainScreen.selectedProperty().setValue(realElement);
 		});
-		item3.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true)));
-		item4.setOnAction(e -> Main.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.FAVORITE_TYPE, true)));
+		item3.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true)));
+		item4.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.FAVORITE_TYPE, true)));
 
 		setOnMousePressed(e -> {
 			e.consume();
@@ -125,22 +121,22 @@ public class TextElement extends Text implements Element {
 			if(this.page.getRealMouseY() < -30){
 				if(this.page.getPage() > 0){
 
-					Main.mainScreen.setSelected(null);
+					MainWindow.mainScreen.setSelected(null);
 
 					this.page.removeElement(this, false);
-					this.page = Main.mainScreen.document.pages.get(this.page.getPage() -1);
+					this.page = MainWindow.mainScreen.document.pages.get(this.page.getPage() -1);
 					this.page.addElement(this, false);
 
 					itemY = this.page.getHeight();
 					changePage = true;
 				}
 			}else if(this.page.getRealMouseY() > this.page.getHeight() + 30){
-				if(this.page.getPage() < Main.mainScreen.document.pages.size()-1){
+				if(this.page.getPage() < MainWindow.mainScreen.document.pages.size()-1){
 
-					Main.mainScreen.setSelected(null);
+					MainWindow.mainScreen.setSelected(null);
 
 					this.page.removeElement(this, false);
-					this.page = Main.mainScreen.document.pages.get(this.page.getPage() + 1);
+					this.page = MainWindow.mainScreen.document.pages.get(this.page.getPage() + 1);
 					this.page.addElement(this, false);
 
 					itemY = 0;
@@ -153,7 +149,7 @@ public class TextElement extends Text implements Element {
 			if(changePage){
 				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
 				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
-				Main.lbTextTab.onFileTextSortManager.simulateCall();
+				MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
 			}
 
 		});
@@ -185,9 +181,9 @@ public class TextElement extends Text implements Element {
 	@Override
 	public void select() {
 
-		Main.leftBar.getSelectionModel().select(1);
-		Main.mainScreen.setSelected(this);
-		Main.lbTextTab.selectItem();
+		MainWindow.leftBar.getSelectionModel().select(1);
+		MainWindow.mainScreen.setSelected(this);
+		MainWindow.lbTextTab.selectItem();
 		toFront();
 	}
 
@@ -235,7 +231,7 @@ public class TextElement extends Text implements Element {
 
 		Font font = Element.getFont(fontName, isItalic, isBold, (int) fontSize);
 
-		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? Main.mainScreen.document.pages.get(page) : null);
+		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
 
 	}
 	public static void consumeData(DataInputStream reader) throws IOException {
@@ -248,8 +244,8 @@ public class TextElement extends Text implements Element {
 
 		TextElement element = readDataAndGive(reader, true);
 
-		if(Main.mainScreen.document.pages.size() > element.page.getPage())
-			Main.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
+		if(MainWindow.mainScreen.document.pages.size() > element.page.getPage())
+			MainWindow.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
 
 	}
 

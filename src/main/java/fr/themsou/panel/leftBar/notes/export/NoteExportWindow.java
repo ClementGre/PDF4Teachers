@@ -5,8 +5,7 @@ import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -73,7 +72,7 @@ public class NoteExportWindow extends Stage {
         public CheckBox settingsAttributeTotalLine = new CheckBox(TR.tr("Ajouter une ligne pour le barème"));
         public CheckBox settingsAttributeMoyLine = new CheckBox(TR.tr("Ajouter une ligne pour la moyenne des notes"));
         public CheckBox settingsWithTxtElements = new CheckBox(TR.tr("Ajouter des lignes pour les commentaires (Éléments textuels)."));
-        public Slider settingsTiersExportSlider = new Slider(1, 5, Main.userData.settingsTiersExportSlider);
+        public Slider settingsTiersExportSlider = new Slider(1, 5, MainWindow.userData.settingsTiersExportSlider);
 
 
         public ExportPane(NoteExportWindow window, String tabName, int type, boolean fileNameCustom, boolean studentNameCustom, boolean multipleFilesCustom, boolean canExportTextElements){
@@ -106,19 +105,19 @@ public class NoteExportWindow extends Stage {
                 HBox fileNamePrefixSuffixBox = new HBox();
                 HBox fileNameReplaceBox = new HBox();
 
-                fileNamePrefix = new TextField(Main.userData.lastExportFileNamePrefix);
+                fileNamePrefix = new TextField(MainWindow.userData.lastExportFileNamePrefix);
                 fileNamePrefix.setPromptText(TR.tr("Préfixe"));
                 Builders.setHBoxPosition(fileNamePrefix, -1, 30, 0, 2.5);
-                fileNamePrefix.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileNamePrefix = newValue);
+                fileNamePrefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
                 TextField fileName = new TextField(TR.tr("Nom du document"));
                 fileName.setDisable(true); fileName.setAlignment(Pos.CENTER);
                 Builders.setHBoxPosition(fileName, 0, 30, 0, 2.5);
 
-                fileNameSuffix = new TextField(Main.userData.lastExportFileNameSuffix);
+                fileNameSuffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
                 fileNameSuffix.setPromptText(TR.tr("Suffixe"));
                 Builders.setHBoxPosition(fileNameSuffix, -1, 30, 0, 2.5);
-                fileNameSuffix.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileNameSuffix = newValue);
+                fileNameSuffix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameSuffix = newValue);
 
                 fileNamePrefixSuffixBox.getChildren().addAll(fileNamePrefix, fileName, fileNameSuffix);
 
@@ -127,17 +126,17 @@ public class NoteExportWindow extends Stage {
                 replaceText.setFont(new Font(14));
                 Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
 
-                fileNameReplace = new TextField(Main.userData.lastExportFileNameReplace);
+                fileNameReplace = new TextField(MainWindow.userData.lastExportFileNameReplace);
                 Builders.setHBoxPosition(fileNameReplace, -1, 30, 0, 2.5);
-                fileNameReplace.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileNameReplace = newValue);
+                fileNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
                 byText.setFont(new Font(14));
                 Builders.setHBoxPosition(byText, 0, 30, 2.5);
 
-                fileNameBy = new TextField(Main.userData.lastExportFileNameBy);
+                fileNameBy = new TextField(MainWindow.userData.lastExportFileNameBy);
                 Builders.setHBoxPosition(fileNameBy, -1, 30, 0, 2.5);
-                fileNameBy.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileNameBy = newValue);
+                fileNameBy.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
 
                 fileNameReplaceBox.getChildren().addAll(replaceText, fileNameReplace, byText, fileNameBy);
 
@@ -145,10 +144,10 @@ public class NoteExportWindow extends Stage {
 
             }else{
 
-                fileNameSimple = new TextField(Main.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRejex(Main.mainScreen.document.getFileName(), ".pdf") + ".csv" : Main.userData.lastExportFileName);
+                fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("Nom du document"));
                 Builders.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
-                if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportFileName = newValue);
+                if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileName = newValue);
                 root.getChildren().addAll(info, fileNameSimple);
 
             }
@@ -165,17 +164,17 @@ public class NoteExportWindow extends Stage {
                 replaceText.setFont(new Font(14));
                 Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
 
-                studentNameReplace = new TextField(Main.userData.lastExportStudentNameReplace);
+                studentNameReplace = new TextField(MainWindow.userData.lastExportStudentNameReplace);
                 Builders.setHBoxPosition(studentNameReplace, -1, 30, 0, 2.5);
-                studentNameReplace.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportStudentNameReplace = newValue);
+                studentNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
                 byText.setFont(new Font(14));
                 Builders.setHBoxPosition(byText, 0, 30, 2.5);
 
-                studentNameBy = new TextField(Main.userData.lastExportStudentNameBy);
+                studentNameBy = new TextField(MainWindow.userData.lastExportStudentNameBy);
                 Builders.setHBoxPosition(studentNameBy, -1, 30, 0, 2.5);
-                studentNameBy.textProperty().addListener((observable, oldValue, newValue) -> Main.userData.lastExportStudentNameBy = newValue);
+                studentNameBy.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameBy = newValue);
 
                 studentNameReplaceBox.getChildren().addAll(replaceText, studentNameReplace, byText, studentNameBy);
 
@@ -183,7 +182,7 @@ public class NoteExportWindow extends Stage {
 
             }else{
 
-                studentNameSimple = new TextField(StringUtils.removeAfterLastRejex(Main.mainScreen.document.getFileName(), ".pdf"));
+                studentNameSimple = new TextField(StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
                 studentNameSimple.setPromptText(TR.tr("Nom de l'élève"));
                 Builders.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
 
@@ -228,7 +227,7 @@ public class NoteExportWindow extends Stage {
             HBox tiersExport = new HBox();
             Label tiersExportLabel = new Label(TR.tr("Niveaux de note exportés :"));
             tiersExport.getChildren().addAll(tiersExportLabel, settingsTiersExportSlider);
-            settingsTiersExportSlider.valueProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsTiersExportSlider = newValue.intValue());
+            settingsTiersExportSlider.valueProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsTiersExportSlider = newValue.intValue());
 
             settingsTiersExportSlider.setSnapToTicks(true);
             settingsTiersExportSlider.setMajorTickUnit(1);
@@ -245,28 +244,28 @@ public class NoteExportWindow extends Stage {
 
             root.getChildren().add(info);
 
-            settingsAttributeTotalLine.setSelected(Main.userData.settingsAttributeTotalLine);
+            settingsAttributeTotalLine.setSelected(MainWindow.userData.settingsAttributeTotalLine);
             if(multipleFilesCustom){
-                settingsOnlySameRatingScale.setSelected(Main.userData.settingsOnlySameRatingScale);
-                settingsOnlyCompleted.setSelected(Main.userData.settingsOnlyCompleted);
-                settingsOnlySameDir.setSelected(Main.userData.settingsOnlySameDir);
-                settingsAttributeMoyLine.setSelected(Main.userData.settingsAttributeMoyLine);
+                settingsOnlySameRatingScale.setSelected(MainWindow.userData.settingsOnlySameRatingScale);
+                settingsOnlyCompleted.setSelected(MainWindow.userData.settingsOnlyCompleted);
+                settingsOnlySameDir.setSelected(MainWindow.userData.settingsOnlySameDir);
+                settingsAttributeMoyLine.setSelected(MainWindow.userData.settingsAttributeMoyLine);
                 root.getChildren().addAll(settingsOnlySameRatingScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeMoyLine);
             }
             else root.getChildren().add(settingsAttributeTotalLine);
 
             if(canExportTextElements){
-                settingsWithTxtElements.setSelected(Main.userData.settingsWithTxtElements);
+                settingsWithTxtElements.setSelected(MainWindow.userData.settingsWithTxtElements);
                 root.getChildren().add(settingsWithTxtElements);
             }
             root.getChildren().add(tiersExport);
 
-            settingsOnlySameRatingScale.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsOnlySameRatingScale = newValue);
-            settingsOnlyCompleted.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsOnlyCompleted = newValue);
-            settingsOnlySameDir.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsOnlySameDir = newValue);
-            settingsAttributeTotalLine.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsAttributeTotalLine = newValue);
-            settingsAttributeMoyLine.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsAttributeMoyLine = newValue);
-            settingsWithTxtElements.selectedProperty().addListener((observable, oldValue, newValue) -> Main.userData.settingsWithTxtElements = newValue);
+            settingsOnlySameRatingScale.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameRatingScale = newValue);
+            settingsOnlyCompleted.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlyCompleted = newValue);
+            settingsOnlySameDir.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameDir = newValue);
+            settingsAttributeTotalLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeTotalLine = newValue);
+            settingsAttributeMoyLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeMoyLine = newValue);
+            settingsWithTxtElements.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsWithTxtElements = newValue);
 
         }
 

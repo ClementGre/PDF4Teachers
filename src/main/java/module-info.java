@@ -30,4 +30,5 @@ module fr.themsou {
     exports fr.themsou.panel.leftBar.paint;
     exports fr.themsou.panel.leftBar.notes.export;
     exports fr.themsou.utils;
+    exports fr.themsou.windows;
 }

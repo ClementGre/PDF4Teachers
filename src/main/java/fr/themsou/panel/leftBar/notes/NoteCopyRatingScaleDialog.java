@@ -3,9 +3,9 @@ package fr.themsou.panel.leftBar.notes;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
-import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -35,17 +35,17 @@ public class NoteCopyRatingScaleDialog {
         int copiedEditions = 0;
         if(option.get() == yes){
             prepareCopyEditions();
-            for(File file : Main.lbFilesTab.files.getItems()){
-                if(Main.mainScreen.document.getFile().equals(file)) continue;
-                if(Main.mainScreen.document.getFile().getParent().equals(file.getParent())){
+            for(File file : MainWindow.lbFilesTab.files.getItems()){
+                if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
+                if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
                     copyToFile(file);
                     copiedEditions++;
                 }
             }
         }else if(option.get() == yesAll){
             prepareCopyEditions();
-            for(File file : Main.lbFilesTab.files.getItems()){
-                if(Main.mainScreen.document.getFile().equals(file)) continue;
+            for(File file : MainWindow.lbFilesTab.files.getItems()){
+                if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 copyToFile(file); copiedEditions++;
             }
         }else return;
@@ -58,7 +58,7 @@ public class NoteCopyRatingScaleDialog {
         alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectés") + ".)");
         alert.show();
 
-        Main.lbFilesTab.files.refresh();
+        MainWindow.lbFilesTab.files.refresh();
 
     }
 
@@ -66,8 +66,8 @@ public class NoteCopyRatingScaleDialog {
     Element[] array = new Element[]{};
     public void prepareCopyEditions(){
 
-        if(Main.mainScreen.hasDocument(false)) Main.mainScreen.document.save();
-        File editFile = Edition.getEditFile(Main.mainScreen.document.getFile());
+        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
+        File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
 
         try {
             Element[] elements = Edition.simpleLoad(editFile);

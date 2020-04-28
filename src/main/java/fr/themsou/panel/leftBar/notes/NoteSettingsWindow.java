@@ -5,6 +5,7 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -125,7 +126,7 @@ public class NoteSettingsWindow extends Stage {
             LBNoteTab.fontTiers.put(tier, Map.entry(
                     Font.loadFont(Element.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
                     Map.entry(colorPicker.getValue(), showName.isSelected()))); // Color + ShowName
-            Main.lbNoteTab.updateElementsFont();
+            MainWindow.lbNoteTab.updateElementsFont();
 
         }
 

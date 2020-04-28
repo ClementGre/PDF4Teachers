@@ -3,6 +3,7 @@ package fr.themsou.windows;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
+import fr.themsou.utils.CallBack;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -217,7 +218,9 @@ public class LicenseWindow extends Stage{
             "   See the License for the specific language governing permissions and\n" +
             "   limitations under the License.";
 
-    public LicenseWindow(){
+    CallBack<String> callBack;
+    public LicenseWindow(CallBack<String> callBack){
+        this.callBack = callBack;
 
         ScrollPane root = new ScrollPane();
         VBox container = new VBox();
@@ -276,6 +279,7 @@ public class LicenseWindow extends Stage{
 
         accept.setOnAction((ActionEvent event) -> {
             close();
+            callBack.call("");
         });
         cancel.setOnAction((ActionEvent event) -> {
             new File(Main.dataFolder + "settings.yml").delete();

@@ -11,6 +11,7 @@ import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
@@ -41,7 +42,7 @@ public class Edition {
 
         new File(Main.dataFolder + "editions").mkdirs();
 
-        Main.lbNoteTab.treeView.clear();
+        MainWindow.lbNoteTab.treeView.clear();
         try{
             if(editFile.exists()){ //file does not exist
 
@@ -65,7 +66,7 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
-        Main.lbTextTab.updateOnFileElementsList();
+        MainWindow.lbTextTab.updateOnFileElementsList();
         //if(Main.lbNoteTab.treeView.getRoot() == null) Main.lbNoteTab.treeView.generateRoot();
     }
     public static Element[] simpleLoad(File editFile) throws Exception{
@@ -165,7 +166,7 @@ public class Edition {
                     counter++;
                 }
             }
-            for(NoteTreeItem element : NoteTreeView.getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot())){
+            for(NoteTreeItem element : NoteTreeView.getNotesArray((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot())){
                 element.getCore().writeSimpleData(writer);
 
                 // not incrément counter if root is default
@@ -187,7 +188,7 @@ public class Edition {
         }
 
         isSave.set(true);
-        Main.lbFilesTab.files.refresh();
+        MainWindow.lbFilesTab.files.refresh();
 
     }
     public static File getEditFile(File file){
@@ -238,14 +239,14 @@ public class Edition {
         }
 
         if(!confirm){
-            if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
-                if(Main.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                    Main.mainScreen.document.edition.clearEdit(false);
+            if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
+                if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                    MainWindow.mainScreen.document.edition.clearEdit(false);
                     return;
                 }
             }
             Edition.getEditFile(file).delete();
-            Main.lbFilesTab.files.refresh();
+            MainWindow.lbFilesTab.files.refresh();
         }
     }
 
@@ -269,10 +270,10 @@ public class Edition {
                 page.clearElements();
             }
             editFile.delete();
-            Main.mainScreen.setSelected(null);
+            MainWindow.mainScreen.setSelected(null);
 
-            Main.lbTextTab.updateOnFileElementsList();
-            Main.lbNoteTab.treeView.clear();
+            MainWindow.lbTextTab.updateOnFileElementsList();
+            MainWindow.lbNoteTab.treeView.clear();
         }
     }
 

@@ -1,8 +1,8 @@
 package fr.themsou.panel.leftBar.texts;
 
-import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.scene.control.*;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -122,9 +122,9 @@ public class ListsManager {
         textTab.favoriteLists.remove(listName);
         for(TreeItem<String> item : textTab.favoritesText.getChildren()){
             if(item instanceof TextTreeItem){
-                ArrayList<TextListItem> list = Main.lbTextTab.favoriteLists.containsKey(listName) ? Main.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
+                ArrayList<TextListItem> list = MainWindow.lbTextTab.favoriteLists.containsKey(listName) ? MainWindow.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
                 list.add(((TextTreeItem) item).toTextItem());
-                Main.lbTextTab.favoriteLists.put(listName, list);
+                MainWindow.lbTextTab.favoriteLists.put(listName, list);
             }
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

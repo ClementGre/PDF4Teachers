@@ -4,12 +4,12 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
-import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortEvent;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -22,7 +22,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -102,7 +101,7 @@ public class LBTextTab extends Tab {
 		setClosable(false);
 		setContent(pane);
 		setGraphic(Builders.buildImage(getClass().getResource("/img/text.png")+"", 0, 25));
-		Main.leftBar.getTabs().add(1, this);
+		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();
 
@@ -123,7 +122,7 @@ public class LBTextTab extends Tab {
 		fontCombo.setCursor(Cursor.HAND);
 		fontCombo.getSelectionModel().select("Arial");
 		fontCombo.setMaxHeight(25);
-		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 		fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastFont = newValue;
 		});
@@ -132,7 +131,7 @@ public class LBTextTab extends Tab {
 		sizeCombo.setStyle("-fx-font-size: 13");
 		sizeCombo.setCursor(Cursor.HAND);
 		sizeCombo.getSelectionModel().select(7);
-		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastFontSize = newValue;
 		});
@@ -141,7 +140,7 @@ public class LBTextTab extends Tab {
 		colorPicker.setStyle("-fx-font-size: 13");
 		colorPicker.setCursor(Cursor.HAND);
 		colorPicker.setValue(Color.BLACK);
-		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 		colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastColor = newValue.toString();
 		});
@@ -150,7 +149,7 @@ public class LBTextTab extends Tab {
 		boldBtn.setCursor(Cursor.HAND);
 		boldBtn.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
-		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastBold = newValue;
 		});
@@ -159,22 +158,22 @@ public class LBTextTab extends Tab {
 		itBtn.setFont(Font.font("Arial", FontPosture.ITALIC, 20));
 		itBtn.setCursor(Cursor.HAND);
 		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
-		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastItalic = newValue;
 		});
 
 		Builders.setHBoxPosition(txtArea, -1, 30, 0);
 		txtArea.setStyle("-fx-font-size: 13");
-		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.getSelected() == null || !(Main.mainScreen.getSelected() instanceof TextElement), Main.mainScreen.selectedProperty()));
+		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 
 		Builders.setHBoxPosition(deleteBtn, -1, 30, 2.5);
 		deleteBtn.setCursor(Cursor.HAND);
-		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.mainScreen.selectedProperty().get() == null, Main.mainScreen.selectedProperty()));
+		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null, MainWindow.mainScreen.selectedProperty()));
 
 		Builders.setHBoxPosition(newBtn, -1, 30, 2.5);
 		newBtn.setCursor(Cursor.HAND);
-		newBtn.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+		newBtn.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 
 		combosBox.getChildren().addAll(fontCombo, sizeCombo);
 		colorAndParamsBox.getChildren().addAll(colorPicker, boldBtn, itBtn);
@@ -187,7 +186,7 @@ public class LBTextTab extends Tab {
 		optionPane.getChildren().addAll(combosBox, colorAndParamsBox, txtArea, btnBox);
 
 
-		Main.mainScreen.selectedProperty().addListener((ObservableValue<? extends Element> observable, Element oldElement, Element newElement) -> {
+		MainWindow.mainScreen.selectedProperty().addListener((ObservableValue<? extends Element> observable, Element oldElement, Element newElement) -> {
 			isNew = false;
 			if(oldElement != null){
 				if(oldElement instanceof TextElement){
@@ -220,8 +219,8 @@ public class LBTextTab extends Tab {
 		});
 		txtArea.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.TAB){
-				if(Main.leftBar.getSelectionModel().getSelectedIndex() == 1) Main.leftBar.getSelectionModel().select(2);
-				else Main.leftBar.getSelectionModel().select(1);
+				if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
+				else MainWindow.leftBar.getSelectionModel().select(1);
 			}
 		});
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
@@ -239,18 +238,18 @@ public class LBTextTab extends Tab {
 		txtArea.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.DELETE){
 				if(txtArea.getCaretPosition() == txtArea.getText().length()){
-					Element element = Main.mainScreen.getSelected();
+					Element element = MainWindow.mainScreen.getSelected();
 					if(element != null){
-						Main.mainScreen.setSelected(null);
+						MainWindow.mainScreen.setSelected(null);
 						element.delete();
 					}
 				}
 			}
 		});
 		colorPicker.setOnAction((ActionEvent e) -> {
-			if(Main.mainScreen.getSelected() != null){
-				if(Main.mainScreen.getSelected() instanceof TextElement){
-					((TextElement) Main.mainScreen.getSelected()).setFill(colorPicker.getValue());
+			if(MainWindow.mainScreen.getSelected() != null){
+				if(MainWindow.mainScreen.getSelected() instanceof TextElement){
+					((TextElement) MainWindow.mainScreen.getSelected()).setFill(colorPicker.getValue());
 					Edition.setUnsave();
 				}
 
@@ -258,10 +257,10 @@ public class LBTextTab extends Tab {
 		});
 		newBtn.setOnAction(e -> {
 
-			PageRenderer page = Main.mainScreen.document.pages.get(0);
-			if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+			PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
+			if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
-			Main.mainScreen.setSelected(null);
+			MainWindow.mainScreen.setSelected(null);
 
 			fontCombo.getSelectionModel().select(lastFont);
 			sizeCombo.getSelectionModel().select((Integer) lastFontSize);
@@ -273,7 +272,7 @@ public class LBTextTab extends Tab {
 					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
 
 			page.addElement(current, true);
-			Main.mainScreen.setSelected(current);
+			MainWindow.mainScreen.setSelected(current);
 			isNew = true;
 
 			txtArea.setText("");
@@ -281,8 +280,8 @@ public class LBTextTab extends Tab {
 			txtArea.requestFocus();
 		});
 		deleteBtn.setOnAction(e -> {
-			Main.mainScreen.getSelected().delete();
-			Main.mainScreen.setSelected(null);
+			MainWindow.mainScreen.getSelected().delete();
+			MainWindow.mainScreen.setSelected(null);
 		});
 
 		// TREE VIEW
@@ -322,7 +321,7 @@ public class LBTextTab extends Tab {
 			}
 		});
 
-		treeView.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+		treeView.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 		treeView.setEditable(true);
 		treeView.setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
 		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(treeView.layoutYProperty()));
@@ -519,8 +518,8 @@ public class LBTextTab extends Tab {
 	public void updateOnFileElementsList(){
 		clearSavedOnFileElements();
 
-		if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
-			for(PageRenderer page : Main.mainScreen.document.pages){
+		if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
+			for(PageRenderer page : MainWindow.mainScreen.document.pages){
 				for(int i = 0; i < page.getElements().size(); i++){
 					if(page.getElements().get(i) instanceof TextElement){
 						TextElement element = (TextElement) page.getElements().get(i);
@@ -607,17 +606,17 @@ public class LBTextTab extends Tab {
 	public static List<TextTreeItem> getMostUseElements(){
 
 		List<TextTreeItem> toSort = new ArrayList<>();
-		for(int i = 0; i < Main.lbTextTab.favoritesText.getChildren().size(); i++){
-			if(Main.lbTextTab.favoritesText.getChildren().get(i) instanceof TextTreeItem){
-				toSort.add((TextTreeItem) Main.lbTextTab.favoritesText.getChildren().get(i));
+		for(int i = 0; i < MainWindow.lbTextTab.favoritesText.getChildren().size(); i++){
+			if(MainWindow.lbTextTab.favoritesText.getChildren().get(i) instanceof TextTreeItem){
+				toSort.add((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i));
 			}
 		}
-		for(int i = 0; i < Main.lbTextTab.lastsText.getChildren().size(); i++){
-			if(Main.lbTextTab.lastsText.getChildren().get(i) instanceof TextTreeItem){
-				toSort.add((TextTreeItem) Main.lbTextTab.lastsText.getChildren().get(i));
+		for(int i = 0; i < MainWindow.lbTextTab.lastsText.getChildren().size(); i++){
+			if(MainWindow.lbTextTab.lastsText.getChildren().get(i) instanceof TextTreeItem){
+				toSort.add((TextTreeItem) MainWindow.lbTextTab.lastsText.getChildren().get(i));
 			}
 		}
-		return Main.lbTextTab.autoSortList(toSort, TR.tr("Utilisation"), true);
+		return MainWindow.lbTextTab.autoSortList(toSort, TR.tr("Utilisation"), true);
 
 	}
 }

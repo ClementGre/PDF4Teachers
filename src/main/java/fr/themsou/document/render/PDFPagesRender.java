@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -40,9 +40,9 @@ public class PDFPagesRender {
 			}
 
 			// Return if the renderer is not this
-			if(Main.mainScreen.hasDocument(false)){
-				if(Main.mainScreen.document.pdfPagesRender != null){
-					if(!Main.mainScreen.document.pdfPagesRender.equals(this)) return;
+			if(MainWindow.mainScreen.hasDocument(false)){
+				if(MainWindow.mainScreen.document.pdfPagesRender != null){
+					if(!MainWindow.mainScreen.document.pdfPagesRender.equals(this)) return;
 				}else return;
 			}else return;
 

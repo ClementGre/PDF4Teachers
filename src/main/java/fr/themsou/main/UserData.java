@@ -2,12 +2,9 @@ package fr.themsou.main;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.panel.leftBar.notes.LBNoteTab;
-import fr.themsou.panel.leftBar.notes.NoteSettingsWindow;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.utils.TR;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Slider;
+import fr.themsou.windows.MainWindow;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -73,15 +70,15 @@ public class UserData {
 
                                 // LAST FONTS (TEXT_TAB)
 
-                                Main.lbTextTab.lastFont = reader.readUTF();
-                                if(Main.lbTextTab.lastFont.isEmpty()){
-                                    Main.lbTextTab.lastFont = "Arial";
+                                MainWindow.lbTextTab.lastFont = reader.readUTF();
+                                if(MainWindow.lbTextTab.lastFont.isEmpty()){
+                                    MainWindow.lbTextTab.lastFont = "Arial";
                                     continue; // Adapt for v1.0.3
                                 }
-                                Main.lbTextTab.lastFontSize = reader.readInt();
-                                Main.lbTextTab.lastColor = reader.readUTF();
-                                Main.lbTextTab.lastBold = reader.readBoolean();
-                                Main.lbTextTab.lastItalic = reader.readBoolean();
+                                MainWindow.lbTextTab.lastFontSize = reader.readInt();
+                                MainWindow.lbTextTab.lastColor = reader.readUTF();
+                                MainWindow.lbTextTab.lastBold = reader.readBoolean();
+                                MainWindow.lbTextTab.lastItalic = reader.readBoolean();
 
                                 // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
 
@@ -90,9 +87,9 @@ public class UserData {
                                             Font.loadFont(Element.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
-                                Main.lbNoteTab.updateElementsFont();
+                                MainWindow.lbNoteTab.updateElementsFont();
 
-                                Main.lbNoteTab.lockRatingScale.setSelected(reader.readBoolean());
+                                MainWindow.lbNoteTab.lockRatingScale.setSelected(reader.readBoolean());
 
                                 lastExportFileName = reader.readUTF();
                                 lastExportFileNameReplace = reader.readUTF();
@@ -113,29 +110,29 @@ public class UserData {
                         break;
                         case DataType.TEXT_ELEMENT_FAVORITE: // Favorite TextElement
                             try{
-                                Main.lbTextTab.favoritesText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.FAVORITE_TYPE));
+                                MainWindow.lbTextTab.favoritesText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.FAVORITE_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LAST: // Last TextElement
                             try{
-                                Main.lbTextTab.lastsText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.LAST_TYPE));
+                                MainWindow.lbTextTab.lastsText.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeItem.LAST_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LIST: // List TextElement
                             try{
                                 String listName = reader.readUTF();
-                                ArrayList<TextListItem> list = Main.lbTextTab.favoriteLists.containsKey(listName) ? Main.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
+                                ArrayList<TextListItem> list = MainWindow.lbTextTab.favoriteLists.containsKey(listName) ? MainWindow.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
                                 list.add(TextListItem.readDataAndGive(reader));
-                                Main.lbTextTab.favoriteLists.put(listName, list);
+                                MainWindow.lbTextTab.favoriteLists.put(listName, list);
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                     }
                 }
                 reader.close();
-                Main.lbTextTab.favoritesTextSortManager.simulateCall();
-                Main.lbTextTab.lastsTextSortManager.simulateCall();
-                Main.lbTextTab.listsManager.setupMenu();
+                MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
+                MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
+                MainWindow.lbTextTab.listsManager.setupMenu();
             }
         }catch(IOException e){
             e.printStackTrace();
@@ -150,20 +147,20 @@ public class UserData {
         try{
             DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, false)));
 
-            for(TreeItem<String> item : Main.lbTextTab.favoritesText.getChildren()){
+            for(TreeItem<String> item : MainWindow.lbTextTab.favoritesText.getChildren()){
                 if(item instanceof TextTreeItem){
                     writer.writeInt(DataType.TEXT_ELEMENT_FAVORITE);
                     ((TextTreeItem) item).writeData(writer);
                 }
             }
 
-            for(TreeItem<String> item : Main.lbTextTab.lastsText.getChildren()){
+            for(TreeItem<String> item : MainWindow.lbTextTab.lastsText.getChildren()){
                 if(item instanceof TextTreeItem){
                     writer.writeInt(DataType.TEXT_ELEMENT_LAST);
                     ((TextTreeItem) item).writeData(writer);
                 }
             }
-            for(Map.Entry<String, ArrayList<TextListItem>> list : Main.lbTextTab.favoriteLists.entrySet()){
+            for(Map.Entry<String, ArrayList<TextListItem>> list : MainWindow.lbTextTab.favoriteLists.entrySet()){
                 String listName = list.getKey();
                 for(TextListItem item : list.getValue()){
                     writer.writeInt(DataType.TEXT_ELEMENT_LIST);
@@ -180,11 +177,11 @@ public class UserData {
 
             // LAST FONTS (TEXT_TAB)
 
-            writer.writeUTF(Main.lbTextTab.lastFont);
-            writer.writeInt(Main.lbTextTab.lastFontSize);
-            writer.writeUTF(Main.lbTextTab.lastColor);
-            writer.writeBoolean(Main.lbTextTab.lastBold);
-            writer.writeBoolean(Main.lbTextTab.lastItalic);
+            writer.writeUTF(MainWindow.lbTextTab.lastFont);
+            writer.writeInt(MainWindow.lbTextTab.lastFontSize);
+            writer.writeUTF(MainWindow.lbTextTab.lastColor);
+            writer.writeBoolean(MainWindow.lbTextTab.lastBold);
+            writer.writeBoolean(MainWindow.lbTextTab.lastItalic);
 
             // TIERS FONTS (NOTE_TAB) + lock + ExportParams
 
@@ -201,7 +198,7 @@ public class UserData {
                 writer.writeBoolean(font.getValue().getValue());
             }
 
-            writer.writeBoolean(Main.lbNoteTab.lockRatingScale.isSelected());
+            writer.writeBoolean(MainWindow.lbNoteTab.lockRatingScale.isSelected());
 
             writer.writeUTF(lastExportFileName);
             writer.writeUTF(lastExportFileNameReplace);

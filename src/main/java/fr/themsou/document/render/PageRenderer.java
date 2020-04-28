@@ -4,40 +4,30 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.CallBack;
-import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
+import fr.themsou.windows.MainWindow;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.event.EventHandler;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextBoundsType;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,17 +60,17 @@ public class PageRenderer extends Pane {
         getChildren().add(0, renderView);
 
         // BINDINGS & SIZES SETUP
-        PDRectangle pageSize = Main.mainScreen.document.pdfPagesRender.getPageSize(page);
+        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
         final double ratio = pageSize.getHeight() / pageSize.getWidth();
 
-        setWidth(Main.mainScreen.getPageWidth());
-        setHeight(Main.mainScreen.getPageWidth() * ratio);
+        setWidth(MainWindow.mainScreen.getPageWidth());
+        setHeight(MainWindow.mainScreen.getPageWidth() * ratio);
 
-        setMaxWidth(Main.mainScreen.getPageWidth());
-        setMinWidth(Main.mainScreen.getPageWidth());
+        setMaxWidth(MainWindow.mainScreen.getPageWidth());
+        setMinWidth(MainWindow.mainScreen.getPageWidth());
 
-        setMaxHeight(Main.mainScreen.getPageWidth() * ratio);
-        setMinHeight(Main.mainScreen.getPageWidth() * ratio);
+        setMaxHeight(MainWindow.mainScreen.getPageWidth() * ratio);
+        setMinHeight(MainWindow.mainScreen.getPageWidth() * ratio);
 
         // BORDER
         DropShadow ds = new DropShadow();
@@ -97,7 +87,7 @@ public class PageRenderer extends Pane {
             mouseX = e.getX();
             mouseY = e.getY();
         });
-        setOnMouseEntered(event -> Main.mainScreen.document.setCurrentPage(page));
+        setOnMouseEntered(event -> MainWindow.mainScreen.document.setCurrentPage(page));
 
         Builders.setMenuSize(menu);
 
@@ -105,15 +95,15 @@ public class PageRenderer extends Pane {
         setOnMousePressed(e -> {
             e.consume();
 
-            Main.mainScreen.setSelected(null);
-            Main.lbNoteTab.treeView.getSelectionModel().select(null);
+            MainWindow.mainScreen.setSelected(null);
+            MainWindow.lbNoteTab.treeView.getSelectionModel().select(null);
             menu.hide();
             menu.getItems().clear();
             if(e.getButton() == MouseButton.SECONDARY){
 
                 NoteTreeView.defineNaNLocations();
                 NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
-                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) Main.lbTextTab.treeView.getWidth()-50)));
+                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50)));
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
 
@@ -135,7 +125,7 @@ public class PageRenderer extends Pane {
 
                         sub.setLayoutY(-6);
                         sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
-                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), Main.lbTextTab.treeView.getWidth() - 50));
+                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.lbTextTab.treeView.getWidth() - 50));
 
                         pane.setPrefHeight(name.getLayoutBounds().getHeight()+7-14);
 
@@ -172,14 +162,14 @@ public class PageRenderer extends Pane {
         setOnMouseDragged(null);
     }
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
-        int pageHeight = (int) (getHeight()*Main.mainScreen.pane.getScaleX());
-        int upDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX() + pageHeight);
-        int downDistance = (int) (Main.mainScreen.pane.getTranslateY() - Main.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()*Main.mainScreen.pane.getScaleX());
+        int pageHeight = (int) (getHeight()* MainWindow.mainScreen.pane.getScaleX());
+        int upDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()* MainWindow.mainScreen.pane.getScaleX() + pageHeight);
+        int downDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()* MainWindow.mainScreen.pane.getScaleX());
 
-        if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < Main.mainScreen.getHeight()){
+        if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < MainWindow.mainScreen.getHeight()){
             return 0;
         }else{
-            if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > Main.mainScreen.getHeight()) return 2;
+            if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > MainWindow.mainScreen.getHeight()) return 2;
             return 1;
         }
     }
@@ -208,7 +198,7 @@ public class PageRenderer extends Pane {
         loader.setVisible(true);
         setCursor(Cursor.WAIT);
 
-        Main.mainScreen.document.pdfPagesRender.renderPage(page, new CallBack<>() {
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, new CallBack<>() {
             @Override public void call(BufferedImage image){
 
                 if(image == null || renderView == null){
@@ -261,7 +251,7 @@ public class PageRenderer extends Pane {
             getChildren().add((Shape) element);
 
             if(element instanceof NoteElement){
-                Main.lbNoteTab.treeView.addElement((NoteElement) element);
+                MainWindow.lbNoteTab.treeView.addElement((NoteElement) element);
             }
 
             if(status != PageStatus.RENDERED){
@@ -278,9 +268,9 @@ public class PageRenderer extends Pane {
             Edition.setUnsave();
 
             if(element instanceof TextElement){
-                if(update) Main.lbTextTab.addOnFileElement((TextElement) element);
+                if(update) MainWindow.lbTextTab.addOnFileElement((TextElement) element);
             }else if(element instanceof NoteElement){
-                Main.lbNoteTab.treeView.addElement((NoteElement) element);
+                MainWindow.lbNoteTab.treeView.addElement((NoteElement) element);
             }
 
             if(status != PageStatus.RENDERED) ((Shape) element).setVisible(false);
@@ -295,9 +285,9 @@ public class PageRenderer extends Pane {
             Edition.setUnsave();
 
             if(element instanceof TextElement){
-                if(update) Main.lbTextTab.removeOnFileElement((TextElement) element);
+                if(update) MainWindow.lbTextTab.removeOnFileElement((TextElement) element);
             }else if(element instanceof NoteElement){
-                Main.lbNoteTab.treeView.removeElement((NoteElement) element);
+                MainWindow.lbNoteTab.treeView.removeElement((NoteElement) element);
             }
 
         }

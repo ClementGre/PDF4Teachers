@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
-import fr.themsou.main.Main;
+import fr.themsou.windows.MainWindow;
 
 @SuppressWarnings("serial")
 public class FileDrop extends DropTarget {
@@ -72,9 +72,9 @@ public class FileDrop extends DropTarget {
 					  if (isFileAcceptable(file)) {
 
 						  if (component == 1) {
-							  Main.mainScreen.openFile(file);
+							  MainWindow.mainScreen.openFile(file);
 						  } else if (component == 2) {
-							  Main.lbFilesTab.openFiles(new File[]{file});
+							  MainWindow.lbFilesTab.openFiles(new File[]{file});
 						  }
 					  }
 

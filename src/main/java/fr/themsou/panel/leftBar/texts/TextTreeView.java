@@ -4,8 +4,7 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import fr.themsou.windows.MainWindow;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -39,15 +38,15 @@ public class TextTreeView {
 
                             if(item.equals("favoritesOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(Main.lbTextTab.favoritesTextOptions);
+                                setGraphic(MainWindow.lbTextTab.favoritesTextOptions);
                                 return;
                             }if(item.equals("lastsOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(Main.lbTextTab.lastsTextOptions);
+                                setGraphic(MainWindow.lbTextTab.lastsTextOptions);
                                 return;
                             }if(item.equals("onFileOptions")){
                                 setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(Main.lbTextTab.onFileTextOptions);
+                                setGraphic(MainWindow.lbTextTab.onFileTextOptions);
                                 return;
                             }
 
@@ -68,15 +67,15 @@ public class TextTreeView {
 
                             if(item.equals("favoritesText")){
                                 name.setText(TR.tr("Éléments Favoris"));
-                                box.getChildren().addAll(Main.lbTextTab.listsManager.loadListBtn, Main.lbTextTab.listsManager.saveListBtn, Main.lbTextTab.favoritesTextToggleOption);
+                                box.getChildren().addAll(MainWindow.lbTextTab.listsManager.loadListBtn, MainWindow.lbTextTab.listsManager.saveListBtn, MainWindow.lbTextTab.favoritesTextToggleOption);
                                 setContextMenu(getCategoryMenu(true));
                             }if(item.equals("lastsText")){
                                 name.setText(TR.tr("Éléments Précédents"));
-                                box.getChildren().add(Main.lbTextTab.lastsTextToggleOption);
+                                box.getChildren().add(MainWindow.lbTextTab.lastsTextToggleOption);
                                 setContextMenu(getCategoryMenu(false));
                             }if(item.equals("onFileText")){
                                 name.setText(TR.tr("Éléments sur ce document"));
-                                box.getChildren().add(Main.lbTextTab.onFileTextToggleOption);
+                                box.getChildren().add(MainWindow.lbTextTab.onFileTextToggleOption);
                             }
                             setGraphic(box);
 
@@ -114,27 +113,27 @@ public class TextTreeView {
         Builders.setMenuSize(menu);
 
         item1.setOnAction(e -> {
-            if(favorites) Main.lbTextTab.clearSavedFavoritesElements();
-            else Main.lbTextTab.clearSavedLastsElements();
+            if(favorites) MainWindow.lbTextTab.clearSavedFavoritesElements();
+            else MainWindow.lbTextTab.clearSavedLastsElements();
         });
         item2.setOnAction(e -> {
             if(favorites){
-                for(TreeItem<String> element : Main.lbTextTab.favoritesText.getChildren()){
+                for(TreeItem<String> element : MainWindow.lbTextTab.favoritesText.getChildren()){
                     if(element instanceof TextTreeItem){
                         ((TextTreeItem) element).setUses(0);
                     }
                 }
-                if(Main.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                if(MainWindow.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
                 }
             }else{
-                for(TreeItem<String> element : Main.lbTextTab.lastsText.getChildren()){
+                for(TreeItem<String> element : MainWindow.lbTextTab.lastsText.getChildren()){
                     if(element instanceof TextTreeItem){
                         ((TextTreeItem) element).setUses(0);
                     }
                 }
-                if(Main.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    Main.lbTextTab.lastsTextSortManager.simulateCall();
+                if(MainWindow.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
                 }
             }
         });
@@ -170,28 +169,28 @@ public class TextTreeView {
         item1.setOnAction((e) -> {
             element.addToDocument(true, true);
             if(element.getType() == TextTreeItem.FAVORITE_TYPE){
-                Main.lbTextTab.favoritesTextSortManager.simulateCall();
+                MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
             }else if(element.getType() == TextTreeItem.LAST_TYPE){
-                Main.lbTextTab.lastsTextSortManager.simulateCall();
+                MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
             }
         });
         item2.setOnAction((e) -> {
             if(element.getType() == TextTreeItem.ONFILE_TYPE){
                 element.getCore().delete();
             }else{
-                Main.lbTextTab.removeSavedElement(element);
+                MainWindow.lbTextTab.removeSavedElement(element);
             }
         });
         item3.setOnAction((e) -> {
-            Main.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
+            MainWindow.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
             if(element.getType() == TextTreeItem.LAST_TYPE){
                 if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
-                    Main.lbTextTab.removeSavedElement(element);
+                    MainWindow.lbTextTab.removeSavedElement(element);
                 }
             }
         });
         item4.setOnAction((e) -> {
-            Main.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+            MainWindow.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.LAST_TYPE, 0, System.currentTimeMillis()/1000));
         });
         item5.setOnAction((e) -> {
             element.unLink();

@@ -2,10 +2,10 @@ package fr.themsou.panel.leftBar.notes;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
-import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
@@ -23,7 +23,7 @@ public class NoteTreeView extends TreeView<String> {
 
     public NoteTreeView(LBNoteTab noteTab){
 
-        disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+        disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
         prefHeightProperty().bind(noteTab.pane.heightProperty().subtract(layoutYProperty()));
         prefWidthProperty().bind(noteTab.pane.widthProperty());
@@ -75,7 +75,7 @@ public class NoteTreeView extends TreeView<String> {
     }
 
     public void generateRoot(){
-        Main.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
+        MainWindow.lbNoteTab.newNoteElement(TR.tr("Total"), -1, 20, 0, "");
 
         // DEBUG
         /*Main.lbNoteTab.newNoteElement("Bonus", -1, 3, 0, "Total");
@@ -186,7 +186,7 @@ public class NoteTreeView extends TreeView<String> {
 
     public static NoteTreeItem getNextNote(int page, int y){
 
-        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot());
+        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot());
         NoteTreeItem before = null;
         NoteTreeItem after = items.size() >= 2 ? items.get(1) : null;
 
@@ -213,7 +213,7 @@ public class NoteTreeView extends TreeView<String> {
     }
 
     public static void defineNaNLocations(){
-        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) Main.lbNoteTab.treeView.getRoot());
+        ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot());
         ArrayList<NoteTreeItem> itemsToSend = new ArrayList<>();
         int i = 0;
         for(NoteTreeItem item : items){
@@ -251,8 +251,8 @@ public class NoteTreeView extends TreeView<String> {
         }
         // Ramène tous les éléments du dessus
         for(NoteTreeItem itemToSend : itemsToSend){
-            if(itemToSend.getCore().getCurrentPageNumber() != Main.mainScreen.document.pages.size()-1){
-                itemToSend.getCore().switchPage(Main.mainScreen.document.pages.size()-1);
+            if(itemToSend.getCore().getCurrentPageNumber() != MainWindow.mainScreen.document.pages.size()-1){
+                itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size()-1);
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
         }

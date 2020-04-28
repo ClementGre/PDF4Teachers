@@ -6,17 +6,14 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,10 +60,10 @@ public class Document {
 
         for(int i = 0 ; i < totalPages ; i++){
             PageRenderer page = new PageRenderer(i);
-            Main.mainScreen.addPage(page);
+            MainWindow.mainScreen.addPage(page);
             pages.add(page);
         }
-        Main.mainScreen.finalizePages();
+        MainWindow.mainScreen.finalizePages();
         Main.settings.setOpenedFile(file);
 
         updateShowsStatus();
@@ -130,6 +127,6 @@ public class Document {
     }
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
-        Main.footerBar.repaint();
+        MainWindow.footerBar.repaint();
     }
 }

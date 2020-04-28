@@ -4,15 +4,14 @@ import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -20,9 +19,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import javax.swing.*;
-import java.text.DecimalFormat;
-import java.util.concurrent.Callable;
 import java.util.regex.Pattern;
 
 public class NoteTreeItem extends TreeItem {
@@ -74,7 +70,7 @@ public class NoteTreeItem extends TreeItem {
                 totalField.setText(Main.format.format(core.getTotal()));
                 pane.getChildren().clear();
 
-                if(Main.lbNoteTab.isLockRatingScaleProperty().get()){
+                if(MainWindow.lbNoteTab.isLockRatingScaleProperty().get()){
                     if(hasSubNote()){
                         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
                     }else{
@@ -118,7 +114,7 @@ public class NoteTreeItem extends TreeItem {
 
         newNote.setOnAction(event -> {
             setExpanded(true);
-            Main.lbNoteTab.newNoteElementAuto(this).select();
+            MainWindow.lbNoteTab.newNoteElementAuto(this).select();
         });
 
     }
@@ -245,7 +241,7 @@ public class NoteTreeItem extends TreeItem {
         newNote = new Button();
         newNote.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/more.png")+"", 0, 0));
         Builders.setPosition(newNote, 0, 0, 30, 30, true);
-        newNote.disableProperty().bind(Bindings.createBooleanBinding(() -> Main.lbNoteTab.isLockRatingScaleProperty().get() || NoteTreeView.getElementTier(getCore().getParentPath()) >= 4, Main.lbNoteTab.isLockRatingScaleProperty()));
+        newNote.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.lbNoteTab.isLockRatingScaleProperty().get() || NoteTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.lbNoteTab.isLockRatingScaleProperty()));
         newNote.setVisible(false);
         newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
         name.textProperty().addListener((observable, oldValue, newValue) -> newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
@@ -290,7 +286,7 @@ public class NoteTreeItem extends TreeItem {
             if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
 
-        if(Main.lbNoteTab.isLockRatingScaleProperty().get()){
+        if(MainWindow.lbNoteTab.isLockRatingScaleProperty().get()){
             if(hasSubNote()){
                 pane.getChildren().addAll(name, spacer, value, slash, total);
             }else{

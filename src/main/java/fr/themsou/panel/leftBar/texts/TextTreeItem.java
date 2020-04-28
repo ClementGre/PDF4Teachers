@@ -7,6 +7,7 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -65,7 +66,7 @@ public class TextTreeItem extends TreeItem{
 	};
 	private EventHandler<MouseEvent> coreMouseReleaseEvent = (MouseEvent e) -> {
 		if(e.getButton() == MouseButton.PRIMARY && getCore() == core){
-			if(Main.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals(TR.tr("Position"))) Main.lbTextTab.onFileTextSortManager.simulateCall();
+			if(MainWindow.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals(TR.tr("Position"))) MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
 		}
 	};
 
@@ -110,9 +111,9 @@ public class TextTreeItem extends TreeItem{
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 				addToDocument(true, false);
 				if(getType() == TextTreeItem.FAVORITE_TYPE){
-					Main.lbTextTab.favoritesTextSortManager.simulateCall();
+					MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
 				}else if(getType() == TextTreeItem.LAST_TYPE){
-					Main.lbTextTab.lastsTextSortManager.simulateCall();
+					MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
 				}
 			}
 		};
@@ -125,7 +126,7 @@ public class TextTreeItem extends TreeItem{
 
 	public void updateGraphic(){ // Re calcule le Text
 
-		int maxWidth = (int) (Main.lbTextTab.treeView.getWidth() - 45);
+		int maxWidth = (int) (MainWindow.lbTextTab.treeView.getWidth() - 45);
 		if(maxWidth < 0) return;
 
 		Font font = getListFont();
@@ -230,7 +231,7 @@ public class TextTreeItem extends TreeItem{
 		writer.writeUTF(text);
 	}
 	public TextElement toRealTextElement(int x, int y, int page){
-		return new TextElement(x, y, font.get(), text, color.get(), page, Main.mainScreen.document.pages.get(page));
+		return new TextElement(x, y, font.get(), text, color.get(), page, MainWindow.mainScreen.document.pages.get(page));
 	}
 	public static TextTreeItem readDataAndGive(DataInputStream reader, int type) throws IOException {
 
@@ -257,11 +258,11 @@ public class TextTreeItem extends TreeItem{
 
 	public void addToDocument(boolean xAuto, boolean link){
 
-		if(Main.mainScreen.hasDocument(false)){
+		if(MainWindow.mainScreen.hasDocument(false)){
 			uses++;
-			PageRenderer page = Main.mainScreen.document.pages.get(0);
-			if(Main.mainScreen.document.getCurrentPage() != -1)
-				page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+			PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
+			if(MainWindow.mainScreen.document.getCurrentPage() != -1)
+				page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
 			int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
 			int x = (int) ((xAuto ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
@@ -280,7 +281,7 @@ public class TextTreeItem extends TreeItem{
 			}
 
 			page.addElement(realElement, true);
-			Main.mainScreen.selectedProperty().setValue(realElement);
+			MainWindow.mainScreen.selectedProperty().setValue(realElement);
 		}
 
 	}

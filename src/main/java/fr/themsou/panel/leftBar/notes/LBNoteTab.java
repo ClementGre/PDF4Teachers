@@ -3,14 +3,12 @@ package fr.themsou.panel.leftBar.notes;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
 import fr.themsou.document.render.PageRenderer;
-import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
-import fr.themsou.utils.TextWrapper;
+import fr.themsou.windows.MainWindow;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -43,7 +41,7 @@ public class LBNoteTab extends Tab {
         setClosable(false);
         setContent(pane);
         setGraphic(Builders.buildImage(getClass().getResource("/img/note.png")+"", 0, 25));
-        Main.leftBar.getTabs().add(2, this);
+        MainWindow.leftBar.getTabs().add(2, this);
 
         setup();
     }
@@ -76,14 +74,14 @@ public class LBNoteTab extends Tab {
         Builders.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
         link.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/link.png")+"", 0, 0));
-        link.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+        link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new NoteCopyRatingScaleDialog());
         link.setTooltip(Builders.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         Builders.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
         export.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/exporter.png")+"", 0, 0));
-        export.disableProperty().bind(Main.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+        export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new NoteExportWindow());
         export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichier CSV, il s'agit de tableaux que vous pouvez formater avec LibreOffice calc ou Exel par exemple.")));
 
@@ -98,32 +96,32 @@ public class LBNoteTab extends Tab {
 
     public NoteElement newNoteElementAuto(NoteTreeItem parent){
 
-        PageRenderer page = Main.mainScreen.document.pages.get(0);
-        if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+        PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
+        if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
-        Main.mainScreen.setSelected(null);
+        MainWindow.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
                 TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page.getPage(), page);
 
         page.addElement(current, true);
-        Main.mainScreen.setSelected(current);
+        MainWindow.mainScreen.setSelected(current);
 
         return current;
     }
 
     public NoteElement newNoteElement(String name, double value, double total, int index, String parentPath){
 
-        PageRenderer page = Main.mainScreen.document.pages.get(0);
-        if(Main.mainScreen.document.getCurrentPage() != -1) page = Main.mainScreen.document.pages.get(Main.mainScreen.document.getCurrentPage());
+        PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
+        if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
-        Main.mainScreen.setSelected(null);
+        MainWindow.mainScreen.setSelected(null);
 
         NoteElement current = new NoteElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
                 name, value, total, index, parentPath, page.getPage(), page);
 
         page.addElement(current, true);
-        Main.mainScreen.setSelected(current);
+        MainWindow.mainScreen.setSelected(current);
 
         return current;
     }

@@ -1,6 +1,7 @@
 package fr.themsou.panel.MainScreen;
 
 import fr.themsou.main.Main;
+import fr.themsou.windows.MainWindow;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -398,14 +399,14 @@ public class ZoomOperator {
     // Renvoie les dimensions de MainScreen sans compter les scrolls bars, si elles sonts visibles.
     // Il est conseillé d'utiliser ces méthodes pour récupérer les dimensions de MainScreen.
     public double getMainScreenWidth(){
-        if(Main.mainScreen == null) return 0;
-        if(!vScrollBar.isVisible()) return Main.mainScreen.getWidth();
-        else return Main.mainScreen.getWidth() - vScrollBar.getWidth();
+        if(MainWindow.mainScreen == null) return 0;
+        if(!vScrollBar.isVisible()) return MainWindow.mainScreen.getWidth();
+        else return MainWindow.mainScreen.getWidth() - vScrollBar.getWidth();
     }
     public double getMainScreenHeight(){
-        if(Main.mainScreen == null) return 0;
-        if(!hScrollBar.isVisible()) return Main.mainScreen.getHeight();
-        else return Main.mainScreen.getHeight() - hScrollBar.getHeight();
+        if(MainWindow.mainScreen == null) return 0;
+        if(!hScrollBar.isVisible()) return MainWindow.mainScreen.getHeight();
+        else return MainWindow.mainScreen.getHeight() - hScrollBar.getHeight();
     }
 
     // Renvoie les dimensions de la partie visible de pane (multiplication par sa Scale pour avoir sa partie visible)

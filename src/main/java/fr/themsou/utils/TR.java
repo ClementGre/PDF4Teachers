@@ -4,6 +4,8 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.NoteTreeItem;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,28 +14,28 @@ import java.util.regex.Pattern;
 public class TR {
 
     private static ArrayList<String> template = null;
-    private static HashMap<String, String> translations;
-    //private static final boolean WRITE_TEMPLATE = false;
+    private static HashMap<String, String> translations = new HashMap<>();
 
     public static String tr(String text){
 
-        if(translations != null){
-            String translated = translations.get(text.replaceAll(Pattern.quote("\n"), Pattern.quote("\\n")));
+        if(translations.size() >= 1){
+
+            String translated = translations.get(text);
             if(translated != null){
                 return translated;
             }
         }
 
-        /*if(WRITE_TEMPLATE){
-            writeTemplate(text.replaceAll(Pattern.quote("\n"), Pattern.quote("\\n")));
-        }*/
-
         return text;
+    }
+
+    public static void updateTranslation(){
+        TR.loadTranslationFile(Main.settings.getLanguage());
     }
 
     public static boolean loadTranslationFile(String fileName){
 
-        translations = null;
+        translations = new HashMap<>();
         File file = new File(Main.dataFolder + "translations" + File.separator + fileName + ".txt");
 
         if(file.exists()){
@@ -42,12 +44,13 @@ public class TR {
             }catch(IOException e){ e.printStackTrace(); }
         }
 
+
         return false;
     }
 
     private static boolean loadFileTranslationsData(File file) throws IOException {
 
-        BufferedReader reader = new BufferedReader(new FileReader(file));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 
         String line; int i = 0;
         while((line = reader.readLine()) != null){
@@ -60,7 +63,7 @@ public class TR {
 
                 if(key != null){
                     if(!key.isBlank() && !value.isBlank()){
-                        translations.put(key.replaceAll(Pattern.quote("\\n"), Pattern.quote("\n")), value.replaceAll(Pattern.quote("\\n"), Pattern.quote("\n")));
+                        translations.put(key.replaceAll(Pattern.quote("\\n"), "\n"), value.replaceAll(Pattern.quote("\\n"), "\n"));
                         i++;
                     }
                 }
@@ -72,57 +75,5 @@ public class TR {
         return i >= 1;
 
     }
-
-    /*private static void writeTemplate(String text){
-
-        File folder = new File(Main.dataFolder + "translations"); folder.mkdirs();
-        File file = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
-
-
-        if(template == null){
-            try{
-                file.createNewFile();
-                BufferedReader reader = new BufferedReader(new FileReader(file));
-                template = new ArrayList<>();
-
-                String line;
-                while((line = reader.readLine()) != null){
-
-                    if(!line.isBlank()){
-                        if(line.startsWith("#")) continue;
-
-                        String key = line.split(Pattern.quote("="))[0];
-                        if(key != null){
-                            if(!key.isBlank()){
-                                template.add(key.replaceAll(Pattern.quote("\\n"), Pattern.quote("\n")));
-                            }
-                        }
-
-                    }
-                }
-                reader.close();
-            }catch(IOException e){  e.printStackTrace(); }
-
-        }
-
-        if(template.contains(text)) return;
-
-        try{
-            file.createNewFile();
-            BufferedWriter writer = new BufferedWriter(new FileWriter(file, true));
-
-            writer.write(text + "=");
-            writer.newLine();
-            template.add(text);
-            System.out.println("Write template \"" + text + "\"");
-
-            writer.flush();
-            writer.close();
-
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-
-    }*/
 
 }

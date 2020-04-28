@@ -12,6 +12,7 @@ import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortEvent;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
+import fr.themsou.windows.MainWindow;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
@@ -33,7 +34,7 @@ public class LBFilesTab extends Tab {
 		setContent(separator);
 
 		setGraphic(Builders.buildImage(getClass().getResource("/img/pdfdocument.png")+"", 0, 25));
-		Main.leftBar.getTabs().add(0, this);
+		MainWindow.leftBar.getTabs().add(0, this);
 
 		setup();
 	}
@@ -158,7 +159,7 @@ public class LBFilesTab extends Tab {
 	private void updateOpenFilesList(){
 
 		ArrayList<File> openedFilesList = new ArrayList<>();
-		for(File file : Main.lbFilesTab.files.getItems()){
+		for(File file : MainWindow.lbFilesTab.files.getItems()){
 			openedFilesList.add(file);
 		}
 		Main.settings.setOpenedFiles(openedFilesList);
