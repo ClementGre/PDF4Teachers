@@ -59,7 +59,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", "Ctrl+W",
 			TR.tr("Ferme le document actuellement ouvert."), true, false, 0);
 
-	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memeNom",
+	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
 			TR.tr("Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction."), true);
 
 	MenuItem fichier8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
