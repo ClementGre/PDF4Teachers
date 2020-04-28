@@ -116,8 +116,9 @@ public class PageRenderer extends Pane {
                 if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) Main.lbTextTab.treeView.getWidth()-50)));
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
-                if(mostUsed.size() != 0){
-                    for(int i = 0; i <= 3; i++){
+
+                for(int i = 0; i <= 3; i++){
+                    if(mostUsed.size() > i){
                         TextTreeItem item = mostUsed.get(i);
 
                         Pane pane = new Pane();
@@ -145,6 +146,7 @@ public class PageRenderer extends Pane {
                         menu.getItems().add(menuItem);
                     }
                 }
+
                 menu.show(this, e.getScreenX(), e.getScreenY());
             }
         });

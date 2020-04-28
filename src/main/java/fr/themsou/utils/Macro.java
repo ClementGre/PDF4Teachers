@@ -18,9 +18,11 @@ public class Macro {
         main.setOnKeyPressed(e -> {
 
             if(e.isShortcutDown()){
-                if(e.isShiftDown()){
+                String keyName = e.getText();
+                if(!e.isAltDown()){
                     try{
-                        int i = Integer.parseInt(e.getCode().getChar());
+                        int i = Integer.parseInt(keyName);
+                        System.out.println(i);
                         if(i == 0) return;
 
                         if(Main.lbTextTab.favoritesTextToggleOption.isSelected()) i++;
@@ -48,10 +50,9 @@ public class Macro {
                         Main.leftBar.getSelectionModel().select(2);
                         Main.lbNoteTab.treeView.getSelectionModel().select(NoteTreeView.getNextNote(page, y));
                     }
-
-                }else if(e.isAltDown()){
+                }else{
                     try{
-                        int i = Integer.parseInt(e.getCode().getChar())-1;
+                        int i = Integer.parseInt(keyName)-1;
                         if(i == -1){
                             Main.lbTextTab.listsManager.saveListBtn.fire();
                             return;
