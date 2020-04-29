@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,7 +27,7 @@ public class PDFPagesRender {
 	private File file;
 
 	private PDDocument document;
-	private PDFRenderer pdfRenderer;
+	ArrayList<Thread> rendersPage = new ArrayList<>();
 
 	private boolean render = false;
 	private boolean close = false;
@@ -36,13 +37,12 @@ public class PDFPagesRender {
 
 		render = true;
 		document = PDDocument.load(file);
-		pdfRenderer = new PDFRenderer(document);
 		render = false;
 	}
 
 	public void renderPage(int pageNumber, CallBack<BufferedImage> callBack){
 
-		new Thread(() -> {
+		Thread renderPage = new Thread(() -> {
 			while(render){
 				try{
 					Thread.sleep(500);
@@ -64,19 +64,9 @@ public class PDFPagesRender {
 			Graphics2D graphics = renderImage.createGraphics();
 			graphics.setBackground(Color.WHITE);
 
-
 			try{
-				if(close){
-					closeDocument();
-					pdfRenderer = null;
-					return;
-				}
+				PDFRenderer pdfRenderer = new PDFRenderer(document);
 				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-				if(close){
-					closeDocument();
-					pdfRenderer = null;
-					return;
-				}
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -84,12 +74,10 @@ public class PDFPagesRender {
 			Platform.runLater(() -> callBack.call(renderImage));
 
 			render = false;
-			if(close) {
-				closeDocument();
-				pdfRenderer = null;
-			}
 
-		}, "Render page " + pageNumber).start();
+		}, "Render page " + pageNumber);
+		renderPage.start();
+		rendersPage.add(renderPage);
 
 	}
 
@@ -119,19 +107,15 @@ public class PDFPagesRender {
 
 	public void close(){
 		close = true;
-		if(!render){
-			closeDocument();
-			pdfRenderer = null;
+		for(Thread renderPage : rendersPage){
+			renderPage.stop();
 		}
-
-	}
-	private void closeDocument(){
-		try{
+		try {
 			document.close();
-			COSName.clearResources();
-		}catch(IOException e){
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	public int getNumberOfPages(){

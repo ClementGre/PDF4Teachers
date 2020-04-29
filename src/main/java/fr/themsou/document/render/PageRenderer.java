@@ -19,6 +19,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
@@ -28,20 +29,22 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PageRenderer extends Pane {
+public class PageRenderer extends Pane{
 
     PageStatus status = PageStatus.HIDE;
 
     private ImageView renderView = new ImageView();
+
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     private double mouseX = 0;
     private double mouseY = 0;
-    WritableImage img;
+    Image img;
 
     private ProgressBar loader = new ProgressBar();
     ContextMenu menu = new ContextMenu();
@@ -154,8 +157,7 @@ public class PageRenderer extends Pane {
     }
     public void remove(){
         switchVisibleStatus(2);
-        img = null;
-        renderView = null;
+        getChildren().remove(renderView);
 
         setOnMouseEntered(null);
         setOnMousePressed(null);
@@ -199,28 +201,26 @@ public class PageRenderer extends Pane {
         loader.setVisible(true);
         setCursor(Cursor.WAIT);
 
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, new CallBack<>() {
-            @Override public void call(BufferedImage image){
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, image -> {
 
-                if(image == null || renderView == null){
-                    status = PageStatus.FAIL;
-                    return;
-                }
-                img = SwingFXUtils.toFXImage(image, null);
-                renderView.setImage(img);
-                renderView.setStyle("");
-
-                renderView.fitHeightProperty().bind(heightProperty());
-                renderView.fitWidthProperty().bind(widthProperty());
-
-                for(Node node : getChildren()){
-                    node.setVisible(true);
-                }
-
-                setCursor(Cursor.DEFAULT);
-                loader.setVisible(false);
-                status = PageStatus.RENDERED;
+            if(image == null || renderView == null){
+                status = PageStatus.FAIL;
+                return;
             }
+            img = SwingFXUtils.toFXImage(image, null);
+            renderView.setImage(img);
+            renderView.setStyle("");
+
+            renderView.fitHeightProperty().bind(heightProperty());
+            renderView.fitWidthProperty().bind(widthProperty());
+
+            for(Node node : getChildren()){
+                node.setVisible(true);
+            }
+
+            setCursor(Cursor.DEFAULT);
+            loader.setVisible(false);
+            status = PageStatus.RENDERED;
         });
     }
 
