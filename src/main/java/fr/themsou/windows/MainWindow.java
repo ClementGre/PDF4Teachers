@@ -24,13 +24,6 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
-
 public class MainWindow extends Stage{
 
     public static boolean hasToClose = false;
@@ -61,7 +54,7 @@ public class MainWindow extends Stage{
     public MainWindow(){
 
         root = new BorderPane();
-        Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth()-100 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth()-100, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
+        Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth()-200 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth()-200, Main.SCREEN_BOUNDS.getHeight()-200 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-200);
 
         setTitle(TR.tr("PDF4Teachers - Aucun document"));
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));

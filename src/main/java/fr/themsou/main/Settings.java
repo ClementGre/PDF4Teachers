@@ -13,6 +13,8 @@ import java.util.ArrayList;
 
 public class Settings {
 
+    private String settingsVersion = "";
+
     // PREFS
     private BooleanProperty restoreLastSession = new SimpleBooleanProperty();
     private BooleanProperty checkUpdates = new SimpleBooleanProperty();
@@ -108,6 +110,9 @@ public class Settings {
 
                         switch(line.split(": ")[0]){
 
+                            case "version":
+                                settingsVersion = value;
+                                break;
                             case "language":
                                 language.set(value);
                             break;
@@ -204,7 +209,9 @@ public class Settings {
 
                 /////
 
+                writer.write("version: " + Main.VERSION);
 
+                writer.newLine();
                 writer.write("language: " + language.get());
 
                 writer.newLine();
@@ -257,6 +264,10 @@ public class Settings {
             }
         }, "settingsSaver").start();
 
+    }
+
+    public String getSettingsVersion() {
+        return settingsVersion;
     }
 
     public boolean isCheckUpdates() {

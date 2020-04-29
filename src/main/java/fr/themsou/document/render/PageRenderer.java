@@ -154,6 +154,7 @@ public class PageRenderer extends Pane {
     }
     public void remove(){
         switchVisibleStatus(2);
+        img = null;
         renderView = null;
 
         setOnMouseEntered(null);

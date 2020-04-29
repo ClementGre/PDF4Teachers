@@ -2,18 +2,28 @@ package fr.themsou.document.render;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import fr.themsou.utils.CallBack;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
+import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.pdfbox.rendering.RenderDestination;
+
+import javax.imageio.ImageIO;
 
 public class PDFPagesRender {
+
+	private File file;
 
 	private PDDocument document;
 	private PDFRenderer pdfRenderer;
@@ -21,12 +31,16 @@ public class PDFPagesRender {
 	private boolean render = false;
 	private boolean close = false;
 
-	public PDFPagesRender(File file) throws IOException {
+	public PDFPagesRender(File file) throws IOException{
+		this.file = file;
+
+		render = true;
 		document = PDDocument.load(file);
 		pdfRenderer = new PDFRenderer(document);
+		render = false;
 	}
 
-	public void renderPage(int page, CallBack<BufferedImage> callBack){
+	public void renderPage(int pageNumber, CallBack<BufferedImage> callBack){
 
 		new Thread(() -> {
 			while(render){
@@ -38,35 +52,48 @@ public class PDFPagesRender {
 					return;
 				}
 			}
-
-			// Return if the renderer is not this
-			if(MainWindow.mainScreen.hasDocument(false)){
-				if(MainWindow.mainScreen.document.pdfPagesRender != null){
-					if(!MainWindow.mainScreen.document.pdfPagesRender.equals(this)) return;
-				}else return;
-			}else return;
-
 			render = true;
-			BufferedImage image = null;
+
+			PDRectangle pageSize = getPageSize(pageNumber);
+
+			int destWidth = 1190; // *1=595 | *1.5=892 |*2=1190
+			int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double)destWidth));
+
+			GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);//configuration.createCompatibleImage(destWidth, destHeight);
+			Graphics2D graphics = renderImage.createGraphics();
+			graphics.setBackground(Color.WHITE);
+
+
 			try{
-				if(close) return;
-				image = scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-				if(close) return;
+				if(close){
+					closeDocument();
+					pdfRenderer = null;
+					return;
+				}
+				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+				if(close){
+					closeDocument();
+					pdfRenderer = null;
+					return;
+				}
 			}catch(Exception e){
 				e.printStackTrace();
 			}
+			graphics.dispose();
+			Platform.runLater(() -> callBack.call(renderImage));
+
 			render = false;
+			if(close) {
+				closeDocument();
+				pdfRenderer = null;
+			}
 
-			final BufferedImage finalImage = image;
-			Platform.runLater(() -> {
-				callBack.call(finalImage);
-			});
-
-		}, "Render page " + page).start();
+		}, "Render page " + pageNumber).start();
 
 	}
 
-	public static BufferedImage scale(BufferedImage img, double width) {
+	public BufferedImage scale(BufferedImage img, double width) {
 
 		if(img.getWidth() < width){
 			return img;
@@ -92,25 +119,39 @@ public class PDFPagesRender {
 
 	public void close(){
 		close = true;
-		new Thread(() -> {
-			try{
-				Thread.sleep(5000);
-				document.close();
-			}catch(IOException | InterruptedException e){ e.printStackTrace(); }
-		}, "Document closer").start();
+		if(!render){
+			closeDocument();
+			pdfRenderer = null;
+		}
+
+	}
+	private void closeDocument(){
+		try{
+			document.close();
+			COSName.clearResources();
+		}catch(IOException e){
+			e.printStackTrace();
+		}
 	}
 
 	public int getNumberOfPages(){
 		return document.getNumberOfPages();
 	}
+	public PDRectangle getPageSize(int pageNumber){
 
-	public PDRectangle getPageSize(int page){
-		if(document.getPage(page).getRotation() == 90 || document.getPage(page).getRotation() == 270){
-			return new PDRectangle(document.getPage(page).getBleedBox().getHeight(), document.getPage(page).getBleedBox().getWidth());
-		}
-		return document.getPage(page).getBleedBox();
+		PDPage page = document.getPage(pageNumber);
+		PDRectangle pageSize;
+		if(page.getRotation() == 90 || page.getRotation() == 270) pageSize = new PDRectangle(page.getBleedBox().getHeight(), page.getBleedBox().getWidth());
+		else pageSize = page.getBleedBox();
+
+		return pageSize;
 	}
+	public PDRectangle getPageCropBox(int pageNumber){
+		PDPage page = document.getPage(pageNumber);
+		PDRectangle pageSize;
+		if(page.getRotation() == 90 || page.getRotation() == 270) pageSize = new PDRectangle(page.getCropBox().getHeight(), page.getCropBox().getWidth());
+		else pageSize = page.getCropBox();
 
-
-
+		return pageSize;
+	}
 }
