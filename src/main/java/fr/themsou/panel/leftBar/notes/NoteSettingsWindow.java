@@ -36,7 +36,7 @@ public class NoteSettingsWindow extends Stage {
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(720);
+        setWidth(750);
         setHeight(390);
         setTitle(TR.tr("PDF4Teachers - Polices et Couleurs des Notes"));
         setScene(scene);
@@ -94,7 +94,7 @@ public class NoteSettingsWindow extends Stage {
             sizeCombo.getSelectionModel().select((Integer) ((int) font.getSize()));
             sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            Builders.setHBoxPosition(colorPicker, 100, 30, 2.5);
+            Builders.setHBoxPosition(colorPicker, 120, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
             colorPicker.setCursor(Cursor.HAND);
             colorPicker.setValue(LBNoteTab.getTierColor(tier));

@@ -194,12 +194,12 @@ public class NoteTreeView extends TreeView<String> {
         for(NoteTreeItem note : items){
             int minPage = 0; int minY = 0;
             if(before != null){
-                minPage = before.getCore().getCurrentPageNumber();
+                minPage = before.getCore().getPageNumber();
                 minY = (int) before.getCore().getLayoutY();
             }
             int maxPage = 999999; int maxY = 999999;
             if(after != null){
-                maxPage = after.getCore().getCurrentPageNumber();
+                maxPage = after.getCore().getPageNumber();
                 maxY = (int) after.getCore().getLayoutY();
             }
             if((page == maxPage && y < maxY || page < maxPage) && (page == minPage && y > minY || page > minPage)){
@@ -223,22 +223,22 @@ public class NoteTreeView extends TreeView<String> {
                 if(item.getCore().getValue() == -1){
 
                     if(item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
-                        if(item.getCore().getCurrentPageNumber() != 0) item.getCore().switchPage(0);
+                        if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
                         item.getCore().setRealY(0);
                     }
                 }
 
                 if(afterItem.getCore().getValue() == -1){ // si l'élément d'après n'a pas de valeur
                     if(item.getCore().getValue() != -1 || item.hasSubNote()){ // Colle l'élément d'après à celui-ci si celui ci a une valeur
-                        if(afterItem.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
-                            afterItem.getCore().switchPage(item.getCore().getCurrentPageNumber());
+                        if(afterItem.getCore().getPageNumber() != item.getCore().getPageNumber()){
+                            afterItem.getCore().switchPage(item.getCore().getPageNumber());
                         }
                         afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
 
                         // Ramène tous les éléments du dessus
                         for(NoteTreeItem itemToSend : itemsToSend){
-                            if(itemToSend.getCore().getCurrentPageNumber() != item.getCore().getCurrentPageNumber()){
-                                itemToSend.getCore().switchPage(item.getCore().getCurrentPageNumber());
+                            if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()){
+                                itemToSend.getCore().switchPage(item.getCore().getPageNumber());
                             }
                             itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
                         }
@@ -251,7 +251,7 @@ public class NoteTreeView extends TreeView<String> {
         }
         // Ramène tous les éléments du dessus
         for(NoteTreeItem itemToSend : itemsToSend){
-            if(itemToSend.getCore().getCurrentPageNumber() != MainWindow.mainScreen.document.pages.size()-1){
+            if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.pages.size()-1){
                 itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size()-1);
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);

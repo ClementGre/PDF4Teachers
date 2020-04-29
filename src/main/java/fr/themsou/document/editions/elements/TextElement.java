@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
+import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
@@ -26,7 +27,6 @@ public class TextElement extends Text implements Element {
 
 	private IntegerProperty realX = new SimpleIntegerProperty();
 	private IntegerProperty realY = new SimpleIntegerProperty();
-	private PageRenderer page;
 
 	ContextMenu menu = new ContextMenu();
 
@@ -50,7 +50,6 @@ public class TextElement extends Text implements Element {
 		setBoundsType(TextBoundsType.LOGICAL);
 
 		if(page == null) return;
-		this.page = page;
 
 		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
 		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
@@ -107,7 +106,7 @@ public class TextElement extends Text implements Element {
 			select();
 
 			if(e.getButton() == MouseButton.SECONDARY){
-				menu.show(this.page, e.getScreenX(), e.getScreenY());
+				menu.show(getPage(), e.getScreenX(), e.getScreenY());
 			}
 		});
 
@@ -118,26 +117,20 @@ public class TextElement extends Text implements Element {
 			double itemY = getLayoutY() + e.getY() - shiftY;
 
 			boolean changePage = false;
-			if(this.page.getRealMouseY() < -30){
-				if(this.page.getPage() > 0){
+			if(getPage().getRealMouseY() < -30){
+				if(getPageNumber() > 0){
 
 					MainWindow.mainScreen.setSelected(null);
+					switchPage(getPageNumber() -1);
 
-					this.page.removeElement(this, false);
-					this.page = MainWindow.mainScreen.document.pages.get(this.page.getPage() -1);
-					this.page.addElement(this, false);
-
-					itemY = this.page.getHeight();
+					itemY = getPage().getHeight();
 					changePage = true;
 				}
-			}else if(this.page.getRealMouseY() > this.page.getHeight() + 30){
-				if(this.page.getPage() < MainWindow.mainScreen.document.pages.size()-1){
+			}else if(getPage().getRealMouseY() > getPage().getHeight() + 30){
+				if(getPageNumber() < MainWindow.mainScreen.document.pages.size()-1){
 
 					MainWindow.mainScreen.setSelected(null);
-
-					this.page.removeElement(this, false);
-					this.page = MainWindow.mainScreen.document.pages.get(this.page.getPage() + 1);
-					this.page.addElement(this, false);
+					switchPage(getPageNumber() +1);
 
 					itemY = 0;
 					changePage = true;
@@ -147,8 +140,8 @@ public class TextElement extends Text implements Element {
 			checkLocation(itemX, itemY);
 
 			if(changePage){
-				layoutXProperty().bind(this.page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
-				layoutYProperty().bind(this.page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
+				layoutXProperty().bind(getPage().widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+				layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 				MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
 			}
 
@@ -163,20 +156,25 @@ public class TextElement extends Text implements Element {
 		});
 	}
 
+	// CHECK LOCATION
+
+	@Override
 	public void checkLocation(double itemX, double itemY){
 
 		setBoundsType(TextBoundsType.VISUAL);
 		double linesHeight = getLayoutBounds().getHeight();
 		if(itemY < linesHeight) itemY = linesHeight;
-		if(itemY > page.getHeight()) itemY = page.getHeight();
+		if(itemY > getPage().getHeight()) itemY = getPage().getHeight();
 		if(itemX < 0) itemX = 0;
-		if(itemX > page.getWidth() - getLayoutBounds().getWidth()) itemX = page.getWidth() - getLayoutBounds().getWidth();
+		if(itemX > getPage().getWidth() - getLayoutBounds().getWidth()) itemX = getPage().getWidth() - getLayoutBounds().getWidth();
 		setBoundsType(TextBoundsType.LOGICAL);
 
-		realX.set((int) (itemX / page.getWidth() * Element.GRID_WIDTH));
-		realY.set((int) (itemY / page.getHeight() * Element.GRID_HEIGHT));
+		realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
+		realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 
 	}
+
+	// SELECT - DELETE - SWITCH PAGE
 
 	@Override
 	public void select() {
@@ -186,23 +184,29 @@ public class TextElement extends Text implements Element {
 		MainWindow.lbTextTab.selectItem();
 		toFront();
 	}
-
-	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
-		if(hasCore) return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
-		else return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
-	}
 	@Override
 	public void delete() {
-		page.removeElement(this, true);
+		getPage().removeElement(this, true);
+
+		/*if(getPage() != null){
+			if(getPage().getChildren().contains(this)) getPage().removeElement(this, true);
+		}*/
 	}
+	@Override
+	public void switchPage(int page){
+		getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+	}
+
+	// READER AND WRITERS
 
 	@Override
 	public void writeSimpleData(DataOutputStream writer) throws IOException {
 		writer.writeByte(1);
 		writeData(writer);
 	}
+	@Override
 	public void writeData(DataOutputStream writer) throws IOException {
-		writer.writeByte(page.getPage());
+		writer.writeByte(getPageNumber());
 		writer.writeShort(getRealX());
 		writer.writeShort(getRealY());
 		writer.writeFloat((float) getFont().getSize());
@@ -230,9 +234,13 @@ public class TextElement extends Text implements Element {
 		String text = reader.readUTF();
 
 		Font font = Element.getFont(fontName, isItalic, isBold, (int) fontSize);
-
 		return new TextElement(x, y, font, text, Color.rgb(colorRed, colorGreen, colorBlue), page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
 
+	}
+	public static void readDataAndCreate(DataInputStream reader) throws IOException {
+		TextElement element = readDataAndGive(reader, true);
+		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
+			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
 	}
 	public static void consumeData(DataInputStream reader) throws IOException {
 		reader.readByte();reader.readShort();reader.readShort();
@@ -240,54 +248,65 @@ public class TextElement extends Text implements Element {
 		reader.readByte();reader.readByte();reader.readByte();
 		reader.readUTF();
 	}
-	public static void readDataAndCreate(DataInputStream reader) throws IOException {
 
-		TextElement element = readDataAndGive(reader, true);
+	// COORDINATES GETTERS ANS SETTERS
 
-		if(MainWindow.mainScreen.document.pages.size() > element.page.getPage())
-			MainWindow.mainScreen.document.pages.get(element.page.getPage()).addElementSimple(element);
-
-	}
-
+	@Override
 	public int getRealX() {
 		return realX.get();
 	}
+	@Override
 	public IntegerProperty RealXProperty() {
 		return realX;
 	}
+	@Override
 	public void setRealX(int x) {
 		this.realX.set(x);
 	}
-
+	@Override
 	public int getRealY() {
 		return realY.get();
 	}
+	@Override
 	public IntegerProperty RealYProperty() {
 		return realY;
 	}
+	@Override
 	public void setRealY(int y) {
 		this.realY.set(y);
 	}
 
-	public PageRenderer getPage() {
-		return page;
-	}
-	public void setPage(PageRenderer page) {
-		this.page = page;
-	}
+	// PAGE GETTERS ANS SETTERS
 
+	@Override
+	public PageRenderer getPage() {
+		if(MainWindow.mainScreen.document.pages.size() > pageNumber){
+			return MainWindow.mainScreen.document.pages.get(pageNumber);
+		}
+		return null;
+	}
 	@Override
 	public int getPageNumber() {
 		return pageNumber;
 	}
 	@Override
-	public int getCurrentPageNumber() {
-		return page.getPage();
+	public void setPage(PageRenderer page) {
+		this.pageNumber = page.getPage();
 	}
+	@Override
+	public void setPage(int pageNumber){
+		this.pageNumber = pageNumber;
+	}
+
+	// TRANSFORMATIONS
 
 	@Override
 	public Element clone() {
-		return new TextElement(getRealX(), getRealY(), getFont(), getText(), (Color) getFill(), pageNumber, page);
+		return new TextElement(getRealX(), getRealY(), getFont(), getText(), (Color) getFill(), pageNumber, getPage());
+	}
+	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
+		if(hasCore) return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000, this);
+		else return new TextTreeItem(getFont(), getText(), (Color) getFill(), type, 0, System.currentTimeMillis()/1000);
 	}
 
 }

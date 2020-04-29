@@ -1,6 +1,7 @@
 package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.render.PageRenderer;
+import javafx.beans.property.IntegerProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
@@ -23,18 +24,35 @@ public interface Element {
 	float GRID_WIDTH = 1654;
 	float GRID_HEIGHT = 2339;
 
-	void writeSimpleData(DataOutputStream writer) throws IOException;
+	void checkLocation(double itemX, double itemY);
 
-
+	// SELECT - DELETE - SWITCH PAGE
 	void select();
 	void delete();
+	void switchPage(int page);
 
+	// READER AND WRITERS
+	void writeSimpleData(DataOutputStream writer) throws IOException;
+	void writeData(DataOutputStream writer) throws IOException;
+
+	// COORDINATES GETTERS ANS SETTERS
+	int getRealX();
+	IntegerProperty RealXProperty();
+	void setRealX(int x);
+	int getRealY();
+	IntegerProperty RealYProperty();
+	void setRealY(int y);
+
+	// PAGE GETTERS ANS SETTERS
+	PageRenderer getPage();
 	int getPageNumber();
-	int getCurrentPageNumber();
+	void setPage(PageRenderer page);
+	void setPage(int pageNumber);
+
+	// TRANSFORMATIONS
 	Element clone();
 
-	PageRenderer getPage();
-	void setPage(PageRenderer page);
+	// STATIC FUNCTIONS
 
 	static Font getFont(String family, boolean italic, boolean bold, double size){
 

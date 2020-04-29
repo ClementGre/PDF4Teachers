@@ -48,12 +48,11 @@ public class LBNoteTab extends Tab {
 
     public void setup(){
 
-        fontTiers.put(0, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 34), Map.entry(Color.RED, true)));
-        fontTiers.put(1, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 22), Map.entry(Color.RED, false)));
-        fontTiers.put(2, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
-        fontTiers.put(3, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
-        fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
-        fontTiers.put(5, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.RED, false)));
+        fontTiers.put(0, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
+        fontTiers.put(1, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
+        fontTiers.put(2, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
+        fontTiers.put(3, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
+        fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
 
         Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
         lockRatingScale.setCursor(Cursor.HAND);

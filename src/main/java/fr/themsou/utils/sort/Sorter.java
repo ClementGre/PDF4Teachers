@@ -112,8 +112,8 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByCorePosition(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
 
-            if(!order) return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999));
-            return (element1.getCore().getCurrentPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getCurrentPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999))*-1;
+            if(!order) return (element1.getCore().getPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999));
+            return (element1.getCore().getPageNumber()-999 + "" + (element1.getCore().getRealY()-999) + "" + (element1.getCore().getRealX()-999)).compareToIgnoreCase(element2.getCore().getPageNumber()-999 + "" + (element2.getCore().getRealY()-999) + "" + (element2.getCore().getRealX()-999))*-1;
 
         });
         return elements;

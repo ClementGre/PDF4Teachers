@@ -209,11 +209,11 @@ public class NoteElement extends Text implements Element {
             double itemY = getLayoutY() + e.getY() - shiftY;
 
             boolean changePage = false;
-            if(getPage().getRealMouseY() < -30  && getPage().getPage() > minYPage){ // Monter d'une page
+            if(getPage().getRealMouseY() < -30 && getPage().getPage() > minYPage){ // Monter d'une page
                 if(getPage().getPage() > 0){
 
                     MainWindow.mainScreen.setSelected(null);
-                    switchPage(getPage().getPage() -1);
+                    switchPage(getPageNumber() -1);
 
                     itemY = getPage().getHeight();
                     changePage = true;
@@ -222,7 +222,7 @@ public class NoteElement extends Text implements Element {
                 if(getPage().getPage() < MainWindow.mainScreen.document.pages.size()-1){
 
                     MainWindow.mainScreen.setSelected(null);
-                    switchPage(getPage().getPage() +1);
+                    switchPage(getPageNumber() +1);
 
                     itemY = 0;
                     changePage = true;
@@ -240,12 +240,7 @@ public class NoteElement extends Text implements Element {
         });
     }
 
-    public void switchPage(int page){
-
-        getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
-        NoteTreeView.defineNaNLocations();
-
-    }
+    // SPECIFIC METHODS
 
     public void calculateMinAndMaxY(){
 
@@ -269,7 +264,7 @@ public class NoteElement extends Text implements Element {
             minYPage = 0;
             minY = 0;
         }else{
-            minYPage = beforeItem.getCore().getCurrentPageNumber();
+            minYPage = beforeItem.getCore().getPageNumber();
             minY = (int) beforeItem.getCore().getLayoutY();
             minY = Math.max(minY, 0);
         }
@@ -277,12 +272,20 @@ public class NoteElement extends Text implements Element {
             maxYPage = 999999;
             maxY = (int) getPage().getHeight();
         }else{
-            maxYPage = afterItem.getCore().getCurrentPageNumber();
+            maxYPage = afterItem.getCore().getPageNumber();
             maxY = (int) (afterItem.getCore().getLayoutY() - afterItem.getCore().getLayoutBounds().getHeight());
             maxY = (int) Math.min(maxY, getPage().getHeight());
         }
     }
+    public void updateFont(){
+        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
+        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
+        setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
+    }
 
+    // CHECK LOCATION
+
+    @Override
     public void checkLocation(double itemX, double itemY){
 
         setBoundsType(TextBoundsType.VISUAL);
@@ -307,11 +310,7 @@ public class NoteElement extends Text implements Element {
 
     }
 
-    public void updateFont(){
-        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
-        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
-        setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
-    }
+    // SELECT - DELETE - SWITCH PAGE
 
     @Override
     public void select() {
@@ -327,25 +326,27 @@ public class NoteElement extends Text implements Element {
         MainWindow.lbNoteTab.treeView.getSelectionModel().select(noteElement);
 
     }
-
-    public NoteTreeItem toNoteTreeItem(){
-        return new NoteTreeItem(this);
-    }
-
     @Override
     public void delete(){
         if(getPage() != null){
             if(getPage().getChildren().contains(this)) getPage().removeElement(this, true);
         }
     }
+    public void switchPage(int page){
+        getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+        NoteTreeView.defineNaNLocations();
+    }
+
+    // READER AND WRITERS
 
     @Override
     public void writeSimpleData(DataOutputStream writer) throws IOException {
         writer.writeByte(2);
         writeData(writer);
     }
+    @Override
     public void writeData(DataOutputStream writer) throws IOException {
-        writer.writeByte(getPage() == null ? pageNumber : getPage().getPage());
+        writer.writeByte(pageNumber);
         writer.writeShort(getRealX());
         writer.writeShort(getRealY());
         writer.writeInt(index);
@@ -367,7 +368,11 @@ public class NoteElement extends Text implements Element {
         String name = reader.readUTF();
 
         return new NoteElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
-
+    }
+    public static void readDataAndCreate(DataInputStream reader) throws IOException {
+        NoteElement element = readDataAndGive(reader, true);
+        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
+            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
     }
     // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
     public static double[] consumeData(DataInputStream reader) throws IOException {
@@ -380,22 +385,11 @@ public class NoteElement extends Text implements Element {
         double total = reader.readDouble();
         reader.readUTF();
 
-        if(Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0){
-            return new double[]{value, total};
-        }else{
-            return new double[]{value};
-        }
-
-    }
-    public static void readDataAndCreate(DataInputStream reader) throws IOException {
-
-        NoteElement element = readDataAndGive(reader, true);
-
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
-
+        if(Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0) return new double[]{value, total};
+        else return new double[]{value};
     }
 
+    // ELEMENT DATA GETTERS ANS SETTERS
 
     public String getName() {
         return name.get();
@@ -439,51 +433,65 @@ public class NoteElement extends Text implements Element {
         Edition.setUnsave();
     }
 
+    // COORDINATES GETTERS ANS SETTERS
+
+    @Override
     public int getRealX() {
         return realX.get();
     }
+    @Override
     public IntegerProperty RealXProperty() {
         return realX;
     }
+    @Override
     public void setRealX(int x) {
         this.realX.set(x);
     }
-
+    @Override
     public int getRealY() {
         return realY.get();
     }
+    @Override
     public IntegerProperty RealYProperty() {
         return realY;
     }
+    @Override
     public void setRealY(int y) {
         this.realY.set(y);
     }
 
+    // PAGE GETTERS ANS SETTERS
+
+    @Override
     public PageRenderer getPage() {
         if(MainWindow.mainScreen.document.pages.size() > pageNumber){
             return MainWindow.mainScreen.document.pages.get(pageNumber);
         }
         return null;
     }
-    public void setPage(PageRenderer page) {
-        this.pageNumber = page.getPage();
-    }
-
     @Override
     public int getPageNumber() {
         return pageNumber;
     }
     @Override
-    public int getCurrentPageNumber() {
-        return pageNumber;
+    public void setPage(PageRenderer page) {
+        this.pageNumber = page.getPage();
     }
+    @Override
+    public void setPage(int pageNumber){
+        this.pageNumber = pageNumber;
+    }
+
+    // TRANSFORMATIONS
 
     @Override
     public Element clone() {
         return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, pageNumber, getPage());
     }
-
-    public NoteRating toNoteRating() {
+    public NoteRating toNoteRating(){
         return new NoteRating(total.get(), name.get(), index, parentPath);
+    }
+    public NoteTreeItem toNoteTreeItem(){
+        return new NoteTreeItem(this);
     }
 }

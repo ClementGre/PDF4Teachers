@@ -172,27 +172,26 @@ public class LanguageWindow extends Stage{
 
         try{
             File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
-            if(!translationsDir.exists()){
-                translationsDir.mkdirs();
+            translationsDir.mkdirs();
 
-                InputStream res = LanguageWindow.class.getResourceAsStream("/translations/template.txt");
-                File dest = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
+            InputStream res = LanguageWindow.class.getResourceAsStream("/translations/template.txt");
+            File dest = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
+            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+
+            res = LanguageWindow.class.getResourceAsStream("/translations/default.png");
+            dest = new File(Main.dataFolder + "translations" + File.separator + "default.png");
+            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+
+            for(String languageName : LANGUAGES_NAMES){
+                res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".txt");
+                dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".txt");
                 Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
 
-                res = LanguageWindow.class.getResourceAsStream("/translations/default.png");
-                dest = new File(Main.dataFolder + "translations" + File.separator + "default.png");
+                res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".png");
+                dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".png");
                 Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-                for(String languageName : LANGUAGES_NAMES){
-                    res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".txt");
-                    dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".txt");
-                    Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-                    res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".png");
-                    dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".png");
-                    Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-                }
             }
+
 
         }catch(IOException e){
             e.printStackTrace();

@@ -331,7 +331,7 @@ public class NoteTreeItem extends TreeItem {
         cell.selectedProperty().addListener(selectedListener);
 
         // DEBUG
-        if(Main.DEBUG) cell.setTooltip(new Tooltip(core.getParentPath() + " - n°" + (core.getIndex()+1) + "\nPage n°" + core.getCurrentPageNumber()));
+        if(Main.DEBUG) cell.setTooltip(new Tooltip(core.getParentPath() + " - n°" + (core.getIndex()+1) + "\nPage n°" + core.getPageNumber()));
 
     }
 
