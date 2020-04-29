@@ -418,16 +418,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		////////// OTHER //////////
 
 		aide1Doc.setOnAction((ActionEvent actionEvent) -> {
-
-			try{
-				InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
-				File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
-				if(!doc.exists()) Files.copy(docRes, doc.getAbsoluteFile().toPath());
-
-				doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
-				MainWindow.mainScreen.openFile(doc);
-
-			}catch(IOException ex){ ex.printStackTrace(); }
+			MainWindow.mainScreen.openFile(LanguageWindow.getDocFile());
 		});
 		aide2Probleme.setOnAction((ActionEvent actionEvent) -> {
 			try{

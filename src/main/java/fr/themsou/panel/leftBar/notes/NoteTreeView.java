@@ -215,41 +215,51 @@ public class NoteTreeView extends TreeView<String> {
     public static void defineNaNLocations(){
         ArrayList<NoteTreeItem> items = getNotesArray((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot());
         ArrayList<NoteTreeItem> itemsToSend = new ArrayList<>();
+
+        boolean afterItemHaveToDropDown = false;
         int i = 0;
         for(NoteTreeItem item : items){
+
+            if(item.getCore().getValue() == -1 && item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
+                if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
+                item.getCore().setRealY(0);
+            }
+
+            // Drop down notes if item is visible
+            if(item.getCore().getValue() != -1){
+                // Ramène tous les éléments au niveau de celui-ci
+                for(NoteTreeItem itemToSend : itemsToSend){
+                    if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()) itemToSend.getCore().switchPage(item.getCore().getPageNumber());
+                    itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
+                }
+                itemsToSend = new ArrayList<>();
+            }
+
             if(items.size() > i+1){
                 NoteTreeItem afterItem = items.get(i+1);
 
-                if(item.getCore().getValue() == -1){
-
-                    if(item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
-                        if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
-                        item.getCore().setRealY(0);
-                    }
-                }
-
                 if(afterItem.getCore().getValue() == -1){ // si l'élément d'après n'a pas de valeur
-                    if(item.getCore().getValue() != -1 || item.hasSubNote()){ // Colle l'élément d'après à celui-ci si celui ci a une valeur
+                    if((item.getCore().getValue() != -1 || item.hasSubNote()) && !afterItemHaveToDropDown){
+                        // Cas 1 : Ramène l'élément d'après à celui-ci
+
                         if(afterItem.getCore().getPageNumber() != item.getCore().getPageNumber()){
                             afterItem.getCore().switchPage(item.getCore().getPageNumber());
                         }
                         afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
 
-                        // Ramène tous les éléments du dessus
-                        for(NoteTreeItem itemToSend : itemsToSend){
-                            if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()){
-                                itemToSend.getCore().switchPage(item.getCore().getPageNumber());
-                            }
-                            itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
-                        }
-                    }else{ // Sinon, demande à envoier l'élément à celui d'après
+                        afterItemHaveToDropDown = false;
+                    }else{
+                        // Cas 2 : Demande a envoyer plus bas l'élément d'après
                         itemsToSend.add(afterItem);
+                        afterItemHaveToDropDown = true;
                     }
+                }else{
+                    afterItemHaveToDropDown = false;
                 }
             }
             i++;
         }
-        // Ramène tous les éléments du dessus
+        // Drop down all others items in the dropDown array
         for(NoteTreeItem itemToSend : itemsToSend){
             if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.pages.size()-1){
                 itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size()-1);
