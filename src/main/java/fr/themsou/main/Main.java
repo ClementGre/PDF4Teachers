@@ -65,10 +65,10 @@ public class Main extends Application {
 				if(!value.isEmpty()) {
 					Main.settings.setLanguage(value);
 				}
+				TR.updateTranslation();
 				if(liscenceAsk()){
 					startMainWindow();
 				}
-				TR.updateTranslation();
 			});
 			return false;
 		}

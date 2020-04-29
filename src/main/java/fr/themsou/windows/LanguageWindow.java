@@ -34,7 +34,10 @@ public class LanguageWindow extends Stage{
 
     HashMap<String, ImageView> languages = new HashMap<>();
 
-    public static final String[] LANGUAGES_NAMES = new String[]{"English"};
+    public static final String[] TO_COPY_FILES = new String[]{
+            "Français France (Defaut).txt", "Français France (Defaut).png", "Français France (Defaut).pdf", "Français France (Defaut).odt",
+            "English.txt", "English.png", "English.pdf", "English.odt"
+    };
 
 
     CallBack<String> callBack;
@@ -68,13 +71,12 @@ public class LanguageWindow extends Stage{
 
         try{
             File dir = new File(Main.dataFolder + "translations" + File.separator);
-            languages.put("Français France (Defaut)", Builders.buildImage(getClass().getResource("/translations/default.png")+"", 0, 50));
 
             for(File file : dir.listFiles()){
-                if(FilesUtils.getExtension(file.getName()).equals("txt") && !file.getName().equals("template.txt")){
+                if(FilesUtils.getExtension(file.getName()).equals("txt")){
                     ImageView image = new ImageView();
                     if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png").exists()) {
-                        image = Builders.buildImage(new FileInputStream(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png")), 0, 50);
+                        image = Builders.buildImage(new FileInputStream(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png")), 88, 50);
                     }
                     languages.put(StringUtils.removeAfterLastRejex(file.getName(), ".txt"), image);
                 }
@@ -132,9 +134,13 @@ public class LanguageWindow extends Stage{
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             alert.setTitle(TR.tr("Télécharger le fichier de traduction"));
-            alert.setHeaderText(TR.tr("Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue"));
-            alert.setContentText(TR.tr("Vous pourez ensuite déposer ce fichier dans AppData/Roaming/PDF4Teachers/translations/ sous Windows ou Dossier_D'utilisateur/.PDF4Teachers/translations/ sous OSX et Linux pour voir la traduction dans la liste des langues." +
-                    " Vous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application."));
+
+            alert.setHeaderText(TR.tr("Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue." +
+                    "\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation"));
+
+            alert.setContentText(TR.tr("Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\n" +
+                    "Vous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application."));
+
             ButtonType originFile = new ButtonType(TR.tr("Enregistrer le fichier"), ButtonBar.ButtonData.YES);
             ButtonType englishFile = new ButtonType(TR.tr("Enregistrer le fichier déjà traduit en Anglais"), ButtonBar.ButtonData.NO);
             ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -142,11 +148,11 @@ public class LanguageWindow extends Stage{
             Builders.secureAlert(alert);
             Optional<ButtonType> option = alert.showAndWait();
 
-            File file;
+            String name = "";
             if(option.get() == originFile){
-                file = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
+                name = "Français France (Defaut)";
             }else if(option.get() == englishFile){
-                file = new File(Main.dataFolder + "translations" + File.separator + "Anglais.txt");
+                name = "English";
             }else{
                 return;
             }
@@ -158,7 +164,8 @@ public class LanguageWindow extends Stage{
             File dir = chooser.showDialog(Main.window);
             if(dir != null) {
                 try {
-                    Files.copy(file.toPath(), new File(dir.getAbsoluteFile() + File.separator + file.getName()).toPath(), REPLACE_EXISTING);
+                    Files.copy(new File(Main.dataFolder + "translations" + File.separator + name + ".txt").toPath(), new File(dir.getAbsoluteFile() + File.separator + name + ".txt").toPath(), REPLACE_EXISTING);
+                    Files.copy(new File(Main.dataFolder + "translations" + File.separator + name + ".odt").toPath(), new File(dir.getAbsoluteFile() + File.separator + name + ".odt").toPath(), REPLACE_EXISTING);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -169,33 +176,25 @@ public class LanguageWindow extends Stage{
     }
 
     public static void copyFiles(){
-
         try{
             File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
             translationsDir.mkdirs();
 
-            InputStream res = LanguageWindow.class.getResourceAsStream("/translations/template.txt");
-            File dest = new File(Main.dataFolder + "translations" + File.separator + "template.txt");
-            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-            res = LanguageWindow.class.getResourceAsStream("/translations/default.png");
-            dest = new File(Main.dataFolder + "translations" + File.separator + "default.png");
-            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-            for(String languageName : LANGUAGES_NAMES){
-                res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".txt");
-                dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".txt");
-                Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-                res = LanguageWindow.class.getResourceAsStream("/translations/" + languageName + ".png");
-                dest = new File(Main.dataFolder + "translations" + File.separator + languageName + ".png");
+            for(String fileName : TO_COPY_FILES){
+                InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
+                File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
                 Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
             }
+        }catch(IOException e){ e.printStackTrace(); }
+    }
 
+    public static File getDocFile(){
 
-        }catch(IOException e){
-            e.printStackTrace();
+        File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.getLanguage() + ".pdf");
+        if(!doc.exists()){
+            return new File(Main.dataFolder + "translations" + File.separator + "Français France (Defaut).pdf");
         }
+        return doc;
 
     }
 

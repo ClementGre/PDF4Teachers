@@ -148,13 +148,8 @@ public class MainWindow extends Stage{
 
 //      COPY DESC
 
-        File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
-        try{
-            InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
-            Files.copy(docRes, doc.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-        }catch(IOException e){  System.err.println("Can't write the documentation : " + e.getMessage()); }
-        if(Main.firstLaunch && doc.exists()){
-            mainScreen.openFile(doc);
+        if(Main.firstLaunch){
+            mainScreen.openFile(LanguageWindow.getDocFile());
         }
 
         // load data

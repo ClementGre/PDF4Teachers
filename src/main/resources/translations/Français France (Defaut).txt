@@ -319,8 +319,8 @@ Choisissez votre langage=
 Créer une nouvelle traduction=
 Valider=
 Télécharger le fichier de traduction=
-Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue=
-Vous pourez ensuite déposer ce fichier dans AppData/Roaming/PDF4Teachers/translations/ sous Windows ou Dossier_D'utilisateur/.PDF4Teachers/translations/ sous OSX et Linux pour voir la traduction dans la liste des langues.=
+Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue.\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation=
+Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=
 Enregistrer le fichier=
 Enregistrer le fichier déjà traduit en Anglais=
 # LicenseWindow

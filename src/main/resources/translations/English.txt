@@ -225,7 +225,7 @@ Aucun document n'est ouvert !=
 Cette action est censé s'éxécuter sur un document ouvert.=
 # ZoomOperator
 # MenuBar
-Fichier=File
+Fichier=
 Ouvrir un·des fichiers=
 Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=
 Ouvrir un dossier=
@@ -245,8 +245,8 @@ Exporter (Regénérer le PDF)=
 Créee un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments ajoutés.=
 Tout exporter=
 Créee des nouveau fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition.=
-Préférences=Settings
-Langage=Language
+Préférences=
+Langage=
 Définis la langue de l'interface=
 Toujours restaurer la session précédente=
 Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application.=
@@ -266,7 +266,7 @@ N'afficher que le début des éléments textuels=
 Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément.=
 Réduire la taille des éléments dans les listes=
 Dans les liste des éléments textuels, affiche les éléments en plus petit.=
-Aide=Help
+Aide=
 Charger le document d'aide=
 Demander de l'aide ou signaler un Bug=
 Fichier PDF=
@@ -293,7 +293,7 @@ Activer=
 Sauvegarde régulière=
 Définir le nombre de minutes entre deux sauvegardes automatiques.=
 OK=
-À propos=About
+À propos=
 # Builders
 # CallBack
 # FileDrop
@@ -319,8 +319,8 @@ Choisissez votre langage=
 Créer une nouvelle traduction=
 Valider=
 Télécharger le fichier de traduction=
-Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue=
-Vous pourez ensuite déposer ce fichier dans AppData/Roaming/PDF4Teachers/translations/ sous Windows ou Dossier_D'utilisateur/.PDF4Teachers/translations/ sous OSX et Linux pour voir la traduction dans la liste des langues.=
+Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue.\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation=
+Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=
 Enregistrer le fichier=
 Enregistrer le fichier déjà traduit en Anglais=
 # LicenseWindow
