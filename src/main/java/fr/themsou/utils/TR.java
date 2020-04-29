@@ -43,8 +43,6 @@ public class TR {
                 return loadFileTranslationsData(file);
             }catch(IOException e){ e.printStackTrace(); }
         }
-
-
         return false;
     }
 

@@ -38,13 +38,13 @@ public class MainWindow extends Stage{
 
 
     public static BorderPane root;
-    public static SplitPane mainPane = new SplitPane();
+    public static SplitPane mainPane;
 
     public static MainScreen mainScreen;
     public static FooterBar footerBar;
     public static MenuBar menuBar;
 
-    public static TabPane leftBar = new TabPane();
+    public static TabPane leftBar;
     public static LBFilesTab lbFilesTab;
     public static LBTextTab lbTextTab;
     public static LBNoteTab lbNoteTab;
@@ -61,7 +61,7 @@ public class MainWindow extends Stage{
     public MainWindow(){
 
         root = new BorderPane();
-        Scene scene = new Scene(root, 1200, 675);
+        Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth()-100 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth()-100, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
 
         setTitle(TR.tr("PDF4Teachers - Aucun document"));
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
@@ -72,8 +72,9 @@ public class MainWindow extends Stage{
         setScene(scene);
 
         setOnCloseRequest(e -> {
+            if(e.getSource().equals(menuBar)) return;
             hasToClose = true;
-            if (!mainScreen.closeFile(!Main.settings.isAutoSave())) {
+            if(!mainScreen.closeFile(!Main.settings.isAutoSave())) {
                 userData.saveData();
                 e.consume();
                 hasToClose = false;
@@ -86,6 +87,9 @@ public class MainWindow extends Stage{
     public void setup(){
 
         //		SETUPS
+
+        mainPane = new SplitPane();
+        leftBar = new TabPane();
 
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
@@ -144,17 +148,14 @@ public class MainWindow extends Stage{
 
 //      COPY DESC
 
+        File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
         try{
-            File doc = new File(Main.dataFolder + "Documentation - PDF4Teachers.pdf");
             InputStream docRes = getClass().getResourceAsStream("/Documentation - PDF4Teachers.pdf");
             Files.copy(docRes, doc.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-
-            if(Main.firstLaunch){
-                mainScreen.openFile(doc);
-            }
-        }catch(IOException e){ e.printStackTrace(); }
-
-
+        }catch(IOException e){  System.err.println("Can't write the documentation : " + e.getMessage()); }
+        if(Main.firstLaunch && doc.exists()){
+            mainScreen.openFile(doc);
+        }
 
         // load data
         userData = new UserData();

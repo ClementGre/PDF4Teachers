@@ -224,7 +224,7 @@ public class LicenseWindow extends Stage{
 
         ScrollPane root = new ScrollPane();
         VBox container = new VBox();
-        Scene scene = new Scene(root, 545, 720);
+        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);

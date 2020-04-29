@@ -9,6 +9,9 @@ import fr.themsou.windows.LicenseWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.geometry.Bounds;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class Main extends Application {
@@ -26,6 +29,7 @@ public class Main extends Application {
 	public static final boolean DEBUG = false;
 
 	public static boolean firstLaunch;
+	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
 
 	public static void main(String[] args){
 		launch(args);
@@ -55,10 +59,16 @@ public class Main extends Application {
 
 	public boolean languageAsk(){
 		if(settings.getLanguage().isEmpty()){
+			Main.settings.setLanguage("English");
+			TR.updateTranslation();
 			new LanguageWindow(value -> {
+				if(!value.isEmpty()) {
+					Main.settings.setLanguage(value);
+				}
 				if(liscenceAsk()){
 					startMainWindow();
 				}
+				TR.updateTranslation();
 			});
 			return false;
 		}
@@ -76,7 +86,7 @@ public class Main extends Application {
 		}
 	}
 
-	public void startMainWindow(){
+	public static void startMainWindow(){
 		window = new MainWindow();
 		window.setup();
 	}

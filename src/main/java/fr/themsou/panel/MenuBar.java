@@ -7,7 +7,9 @@ import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
+import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -75,35 +77,38 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	Menu preferences = new Menu(TR.tr("Préférences"));
 
-	NodeRadioMenuItem preferences1Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+	NodeMenuItem preferences1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", "",
+			TR.tr("Définis la langue de l'interface"), 30);
+
+	NodeRadioMenuItem preferences2Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences2Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
+	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarage si une nouvelle version est disponible. Même si cette option est désactivé, l'application vérifira si une nouvelle version est disponible et mettra le menu À propos en couleur."), true);
 
-	NodeMenuItem preferences3Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
+	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
 			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document. Vous pouvez aussi zoomer avec Ctrl+Molette"), 30);
 
-	NodeRadioMenuItem preferences4Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
+	NodeRadioMenuItem preferences5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
 			TR.tr("Fait des transitions fluides lors du zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur a du mal a zoomer. Cette option est déconseillé aux utilisateurs de TrackPad."), true);
 
 
 
-	NodeRadioMenuItem preferences5Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+	NodeRadioMenuItem preferences6Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
 			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	NodeRadioMenuItem preferences6Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+	NodeRadioMenuItem preferences7Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
 			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
 
 
-	NodeRadioMenuItem preferences7RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	NodeRadioMenuItem preferences8RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem preferences8ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	NodeRadioMenuItem preferences9ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem preferences9SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	NodeRadioMenuItem preferences10SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
@@ -130,30 +135,32 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		////////// PREFS //////////
 
 		// DEFINE DEFAULT STATE
-		preferences1Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
-		preferences2Update.selectedProperty().set(Main.settings.isCheckUpdates());
-		preferences4Animation.selectedProperty().set(Main.settings.isZoomAnimations());
+		preferences2Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
+		preferences3Update.selectedProperty().set(Main.settings.isCheckUpdates());
+		preferences5Animation.selectedProperty().set(Main.settings.isZoomAnimations());
 
-		preferences5Save.selectedProperty().set(Main.settings.isAutoSave());
-		preferences6Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
+		preferences6Save.selectedProperty().set(Main.settings.isAutoSave());
+		preferences7Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
 
-		preferences7RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-		preferences8ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-		preferences9SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
+		preferences8RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+		preferences9ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+		preferences10SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
 
 		// BIND
-		Main.settings.restoreLastSessionProperty().bind(preferences1Restore.selectedProperty());
-		Main.settings.checkUpdatesProperty().bind(preferences2Update.selectedProperty());
-		Main.settings.zoomAnimationsProperty().bind(preferences4Animation.selectedProperty());
+		Main.settings.restoreLastSessionProperty().bind(preferences2Restore.selectedProperty());
+		Main.settings.checkUpdatesProperty().bind(preferences3Update.selectedProperty());
+		Main.settings.zoomAnimationsProperty().bind(preferences5Animation.selectedProperty());
 
-		Main.settings.autoSavingProperty().bind(preferences5Save.selectedProperty());
+		Main.settings.autoSavingProperty().bind(preferences6Save.selectedProperty());
 
-		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences7RemoveWhenAdd.selectedProperty());
-		Main.settings.showOnlyStartInTextsListProperty().bind(preferences8ShowStart.selectedProperty());
-		Main.settings.smallFontInTextsListProperty().bind(preferences9SmallFont.selectedProperty());
+		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences8RemoveWhenAdd.selectedProperty());
+		Main.settings.showOnlyStartInTextsListProperty().bind(preferences9ShowStart.selectedProperty());
+		Main.settings.smallFontInTextsListProperty().bind(preferences10SmallFont.selectedProperty());
 
 		// ADD
-		preferences.getItems().addAll(preferences1Restore, preferences2Update, preferences3Zoom, preferences4Animation, new SeparatorMenuItem(), preferences5Save, preferences6Regular, new SeparatorMenuItem(), preferences7RemoveWhenAdd, preferences8ShowStart, preferences9SmallFont);
+		preferences.getItems().addAll(preferences1Language, preferences2Restore, preferences3Update, preferences4Zoom, preferences5Animation,
+				new SeparatorMenuItem(), preferences6Save, preferences7Regular,
+				new SeparatorMenuItem(), preferences8RemoveWhenAdd, preferences9ShowStart, preferences10SmallFont);
 
 		////////// OTHER //////////
 
@@ -332,7 +339,23 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// PREFS //////////
 
-		preferences3Zoom.setOnAction((ActionEvent actionEvent) -> {
+		preferences1Language.setOnAction(e -> {
+			new LanguageWindow(value -> {
+				if(!value.isEmpty()){
+					Main.settings.setLanguage(value);
+					TR.updateTranslation();
+
+					MainWindow.hasToClose = true;
+					if(MainWindow.mainScreen.closeFile(true)){
+						Main.window.close();
+						MainWindow.hasToClose = false;
+						Platform.runLater(Main::startMainWindow);
+					}
+					MainWindow.hasToClose = false;
+				}
+			});
+		});
+		preferences4Zoom.setOnAction((ActionEvent actionEvent) -> {
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
 			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
@@ -348,7 +371,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 
 		});
-		preferences6Regular.setOnAction((ActionEvent actionEvent) -> {
+		preferences7Regular.setOnAction((ActionEvent actionEvent) -> {
 
 			Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
 
@@ -381,10 +404,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(option.get() == ok){
 				if(activated.isSelected()){
 					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					preferences6Regular.setSelected(true);
+					preferences7Regular.setSelected(true);
 				}else{
 					Main.settings.setRegularSaving(-1);
-					preferences6Regular.setSelected(false);
+					preferences7Regular.setSelected(false);
 				}
 
 			}
