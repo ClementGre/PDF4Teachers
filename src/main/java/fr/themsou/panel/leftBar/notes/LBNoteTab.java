@@ -56,12 +56,19 @@ public class LBNoteTab extends Tab {
 
         Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
         lockRatingScale.setCursor(Cursor.HAND);
-        lockRatingScale.setSelected(true);
+        lockRatingScale.setSelected(false);
+        lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
         lockRatingScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             if(newValue) lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas-ferme.png") + "", 0, 0));
             else lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
+
+            // Update the selected cell
+            if(treeView.getSelectionModel().getSelectedItem() != null){
+                int selected = treeView.getSelectionModel().getSelectedIndex();
+                treeView.getSelectionModel().select(null);
+                treeView.getSelectionModel().select(selected);
+            }
         });
-        lockRatingScale.setSelected(false);
         lockRatingScale.setTooltip(Builders.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
 
         Builders.setHBoxPosition(settings, 45, 35, 0);

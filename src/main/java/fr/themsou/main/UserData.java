@@ -21,6 +21,7 @@ public class UserData {
         public static final int TEXT_ELEMENT_FAVORITE = 1;
         public static final int TEXT_ELEMENT_LAST = 2;
         public static final int TEXT_ELEMENT_LIST = 3;
+        public static final int VERSION = 4;
     }
 
     public static File lastOpenDir = new File(System.getProperty("user.home"));
@@ -52,16 +53,18 @@ public class UserData {
         new File(Main.dataFolder).mkdirs();
         File file = new File(Main.dataFolder + "userdata.hex");
 
-        try{
-            if(file.createNewFile()){ //file was created
+        if(Main.settings.getSettingsVersion().isEmpty()) return;
 
-            }else{ // file already exist
+        try{
+            if(!file.createNewFile()){ // file already exist
                 DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 
                 while(reader.available() != 0){
                     int dataType = reader.readInt();
 
                     switch(dataType){
+                        case DataType.VERSION: // Last TextElement
+
                         case DataType.SIMPLE_DATA: // Last TextElement
                             try{
                                 lastOpenDir = new File(reader.readUTF());
@@ -71,10 +74,6 @@ public class UserData {
                                 // LAST FONTS (TEXT_TAB)
 
                                 MainWindow.lbTextTab.lastFont = reader.readUTF();
-                                if(MainWindow.lbTextTab.lastFont.isEmpty()){
-                                    MainWindow.lbTextTab.lastFont = "Arial";
-                                    continue; // Adapt for v1.0.3
-                                }
                                 MainWindow.lbTextTab.lastFontSize = reader.readInt();
                                 MainWindow.lbTextTab.lastColor = reader.readUTF();
                                 MainWindow.lbTextTab.lastBold = reader.readBoolean();

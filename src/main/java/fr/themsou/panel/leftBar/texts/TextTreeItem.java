@@ -14,10 +14,12 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.skin.SliderSkin;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +28,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -51,7 +54,7 @@ public class TextTreeItem extends TreeItem{
 
 	// Graphics items
 	public HBox pane = new HBox();
-	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
+	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 15, 15);
 	public Label name = new Label();
 	public ContextMenu menu;
 	public EventHandler<MouseEvent> onMouseCLick;
@@ -169,17 +172,23 @@ public class TextTreeItem extends TreeItem{
 		pane.getChildren().clear();
 
 		if(core != null){
-			Pane spacer = new Pane(); spacer.setPrefWidth(20);
+			Pane spacer = new Pane(); spacer.setPrefWidth(15);
 			spacer.getChildren().add(linkImage);
-			spacer.setStyle("-fx-padding: 1.5 0;");
-			spacer.setPrefHeight(18);
+			spacer.setPrefHeight(15);
+			HBox.setMargin(spacer, new Insets(1.5, 0, 1.5, 0));
 			pane.getChildren().add(spacer);
 		}else{
-			Region spacer = new Region(); spacer.setPrefWidth(20);
+			Region spacer = new Region(); spacer.setPrefWidth(15);
 			spacer.setPrefHeight(18);
 			pane.getChildren().add(spacer);
 		}
-		pane.getChildren().add(name);
+
+		Circle circle = new Circle();
+		circle.setFill(Color.BLACK);
+		circle.setRadius(2);
+		HBox.setMargin(circle, new Insets(7, 3, 7, 3));
+
+		pane.getChildren().addAll(circle, name);
 
 	}
 	public void updateCell(TreeCell<String> cell){ // Réatribue une cell à la pane
@@ -189,7 +198,7 @@ public class TextTreeItem extends TreeItem{
 
 		cell.setGraphic(pane);
 		cell.setStyle(null);
-		cell.setStyle("-fx-padding: 0 -30;");
+		cell.setStyle("-fx-padding: 0 -35;");
 		cell.setContextMenu(menu);
 		cell.setOnMouseClicked(onMouseCLick);
 
