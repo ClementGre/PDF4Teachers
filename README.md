@@ -16,7 +16,7 @@ Vous pouvez définir un barème pour une série de copies puis entrer les notes 
 
 ## Les APIs
 
-L'application à été développé sous Java SE 8 (avec Swing) puis passée sous Java SE 11 avec JavaFX et enfin sous Java SE 13.
+L'application a été développée sous Java SE 8 (avec Swing) puis elle est passé sous JavaFX avec Java SE 11, Java SE 13 et enfin, Java SE 14.
 
 - J'utilise l'API PDF BOX pour générer des images à partir d'un fichier PDF puis pour régénérer un fichier PDF, ainsi que commons-logging et Font BOX qui lui sont nécessaires.
 - L'application, initialement basé sur Swing, a migré vers JavaFx pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings, etc.).
@@ -24,7 +24,7 @@ L'application à été développé sous Java SE 8 (avec Swing) puis passée sous
 - Jackson Streaming API permet d'interpréder des donnés Json, il me permet de faire des requêtes à GitHub pour vérifier si une nouvelle version est disponible.
 - J'ai choisi Gradle pour gérer les dépendances, vous pouvez donc exécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. Vous devrez bien sur auparavant avoir installé un JDK 13 et avoir donné son chemin d'accès dans votre variable d'environment ``JAVA_HOME``.
 
-Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink pour votre système d'exploitation.
+Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink et JPackager pour votre système d'exploitation.
 
 ## L'organisation du code
 

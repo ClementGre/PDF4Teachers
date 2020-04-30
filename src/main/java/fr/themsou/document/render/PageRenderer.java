@@ -186,12 +186,16 @@ public class PageRenderer extends Pane{
         }else if(showStatus >= 1){
 
             setVisible(false);
-            if(showStatus == 2){
+
+            // Disable since the image of the ImageView always stay in the Heap (JavaFX Memory Leak)
+            // So deleting the imageView is completely useless.
+            /*if(showStatus == 2){
                 renderView.setImage(null);
                 img = null;
                 status = PageStatus.HIDE;
                 for(Node node : getChildren()) node.setVisible(false);
-            }
+            }*/
+
 
         }
 

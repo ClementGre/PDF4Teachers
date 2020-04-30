@@ -30,7 +30,6 @@ public class PDFPagesRender {
 	ArrayList<Thread> rendersPage = new ArrayList<>();
 
 	private boolean render = false;
-	private boolean close = false;
 
 	public PDFPagesRender(File file) throws IOException{
 		this.file = file;
@@ -43,7 +42,7 @@ public class PDFPagesRender {
 	public void renderPage(int pageNumber, CallBack<BufferedImage> callBack){
 
 		Thread renderPage = new Thread(() -> {
-			while(render){
+			/*while(render){
 				try{
 					Thread.sleep(500);
 				}catch(InterruptedException e){
@@ -52,21 +51,22 @@ public class PDFPagesRender {
 					return;
 				}
 			}
-			render = true;
+			render = true;*/
 
 			PDRectangle pageSize = getPageSize(pageNumber);
 
 			int destWidth = 1190; // *1=595 | *1.5=892 |*2=1190
 			int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double)destWidth));
 
-			GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);//configuration.createCompatibleImage(destWidth, destHeight);
+			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
 			Graphics2D graphics = renderImage.createGraphics();
 			graphics.setBackground(Color.WHITE);
 
 			try{
+				PDDocument document = PDDocument.load(file);
 				PDFRenderer pdfRenderer = new PDFRenderer(document);
 				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+				document.close();
 			}catch(Exception e){
 				e.printStackTrace();
 			}
@@ -106,10 +106,6 @@ public class PDFPagesRender {
 	}
 
 	public void close(){
-		close = true;
-		for(Thread renderPage : rendersPage){
-			renderPage.stop();
-		}
 		try {
 			document.close();
 		} catch (IOException e) {

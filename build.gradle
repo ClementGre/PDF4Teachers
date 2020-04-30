@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
-    id 'org.beryx.jlink' version '2.16.4'
+    id 'org.beryx.jlink' version '2.17.9'
 }
 repositories{
     mavenCentral()
@@ -15,7 +15,7 @@ dependencies{
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.3'
 }
 javafx {
-    version = "13.0.1"
+    version = '14'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -23,32 +23,20 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 mainClassName = "fr.themsou.main.Main"
 
-task javaPackager(type: Exec){
+version = "1.1.0"
+description = "Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs."
+
+task packageMsi(type: Exec){
     workingDir project.projectDir
-    commandLine = [
-            'jpackage'
-    ]
-    commandLine = [
-            './jpackager',
-            'create-installer', 'pkg',
-            '--class', 'fr.themsou.Main',
-            '--name', "PDF4Teachers",
-            '--app-image', "${buildDir}/image/PDF4Teachers-lin",
-            '--input', "${buildDir}/image/PDF4Teachers-lin",
-            '--output', "${buildDir}/packagement"
-    ]
+    commandLine = ["gradlew.bat", "jpackage", "-PinstallerType=msi"]
 }
-task javaPackagerImage(type: Exec){
+task packageDmg(type: Exec){
     workingDir project.projectDir
-    commandLine = [
-            './jpackager',
-            'create-image',
-            '--name', 'PDF4Teachers',
-            '-j','PDF4Teachers.jar',
-            '-c', 'fr.themsou.Main',
-            '--input', "${buildDir}",
-            '--output', "${buildDir}/packagement"
-    ]
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=dmg"]
+}
+task packageDeb(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
 }
 
 jlink {
@@ -56,9 +44,50 @@ jlink {
     launcher {
         name = 'PDF4Teachers'
     }
-    targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-13.0.1.9-hotspot')
+    targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
     //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13/')
     //targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home/')
+
+    jpackage {
+        installerOptions = [
+                '--description', project.description,
+                '--copyright', 'Copyrigth 2019 Clément G.',
+                '--app-version', project.version,
+                '--vendor', "Clément G."
+        ] as List<String>
+
+        installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
+
+        if(installerType == 'msi'){
+            imageOptions += ['--icon', 'src/main/resources/logo.ico']
+            installerOptions += [
+                    '--win-dir-chooser',
+                    '--win-menu',
+                    '--win-shortcut',
+                    '--win-menu-group', ''
+            ]
+        }else if(installerType == 'pkg'){
+            imageOptions += ['--icon', 'src/main/resources/logo.icns']
+            installerOptions += [
+                    "--mac-package-name", "PDF4Teachers"
+            ]
+
+        }else if(installerType in ['deb', 'rpm']){
+            imageOptions += ['--icon', 'src/main/resources/logo.png']
+            installerOptions += [
+                    '--linux-menu-group', 'Office',
+                    '--linux-shortcut'
+            ]
+        }else if (installerType == 'deb'){
+            installerOptions += [
+                    '--linux-deb-maintainer', 'themsou.ldv@gmail.com'
+            ]
+        }else if (installerType == 'rpm'){
+            installerOptions += [
+                    '--linux-rpm-license-type', 'Apache-2.0'
+            ]
+        }
+    }
 }
 
 
