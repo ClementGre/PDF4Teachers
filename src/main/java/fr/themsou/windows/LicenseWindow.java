@@ -231,7 +231,7 @@ public class LicenseWindow extends Stage{
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(545);
         setHeight(720);
-        setTitle(TR.tr("PDF4Teachers - License"));
+        setTitle(TR.tr("PDF4Teachers - Licence"));
         setScene(scene);
         setOnCloseRequest((javafx.stage.WindowEvent e) -> {
             new File(Main.dataFolder + "settings.yml").delete();
@@ -254,7 +254,7 @@ public class LicenseWindow extends Stage{
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.tr("Vous devez accepter la license pour accéder à l'application."));
+        Text info = new Text(TR.tr("Vous devez accepter la licence pour accéder à l'application"));
 
         Label license = new Label(LICENSE);
         license.setFont(Element.getFont("Arial", false, false, 12));

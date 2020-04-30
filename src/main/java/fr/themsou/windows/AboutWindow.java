@@ -26,21 +26,17 @@ public class AboutWindow extends Stage {
     public AboutWindow(){
 
         VBox root = new VBox();
-        Scene scene = new Scene(root, 400, 600);
+        Scene scene = new Scene(root, 400, 720);
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(400);
-        setHeight(600);
-        setMinWidth(400);
-        setMinHeight(600);
+        setHeight(670);
         setTitle(TR.tr("PDF4Teachers - À Propos"));
         setResizable(false);
         setScene(scene);
-        setOnCloseRequest(new EventHandler<WindowEvent>() {
-            public void handle(javafx.stage.WindowEvent e){ close(); }
-        });
+        setOnCloseRequest(e -> close());
         new JMetro(root, Style.LIGHT);
 
         setupUi(root);
@@ -60,13 +56,13 @@ public class AboutWindow extends Stage {
             name.setFont(new Font(23));
             name.setAlignment(Pos.CENTER);
 
-            Label version = new Label(TR.tr("Version ") + Main.VERSION);
+            Label version = new Label(TR.tr("Version") + " " + Main.VERSION);
             version.setFont(new Font(15));
             version.setAlignment(Pos.CENTER);
 
             Button newVersion = null;
             if(UpdateWindow.newVersion){
-                newVersion = new Button("Nouvelle Version disponible");
+                newVersion = new Button(TR.tr("Une nouvelle version est disponible !"));
                 newVersion.setAlignment(Pos.CENTER);
                 newVersion.setStyle("-fx-background-color: #ba6800;");
 
@@ -79,11 +75,29 @@ public class AboutWindow extends Stage {
                 Label dev = new Label(TR.tr("Développeur :") + " ");
                 dev.setFont(new Font(17));
 
-                Hyperlink devName = new Hyperlink("Clément Gre.");
+                Hyperlink devName = new Hyperlink("Clément G.");
                 devName.setFont(new Font(17));
                 devName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/themsou"));
             devInfo.getChildren().addAll(dev, devName);
             devInfo.setAlignment(Pos.CENTER);
+
+            HBox consInfo = new HBox();
+                Label cons = new Label(TR.tr("Concepteur :") + " ");
+                cons.setFont(new Font(17));
+
+                Hyperlink consName = new Hyperlink("Vincent G.");
+                consName.setFont(new Font(17));
+                consName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/grensv"));
+                consInfo.getChildren().addAll(cons, consName);
+            consInfo.setAlignment(Pos.CENTER);
+
+            HBox transInfo = new HBox();
+                if(!TR.tr("Traducteur : <Votre nom>").equals("Traducteur : <Votre nom>")){
+                    Label trans = new Label(TR.tr("Traducteur : <Votre nom>"));
+                    trans.setFont(new Font(17));
+                    transInfo.getChildren().add(trans);
+                }
+            transInfo.setAlignment(Pos.CENTER);
 
             HBox gitInfo = new HBox();
                 Label git = new Label(TR.tr("Projet GitHub :") + " ");
@@ -126,11 +140,8 @@ public class AboutWindow extends Stage {
 
         vBox.getChildren().addAll(logo, name, version);
         if(newVersion != null) vBox.getChildren().add(newVersion);
-        vBox.getChildren().addAll(devInfo, gitInfo, issueInfo, apiInfo);
+        vBox.getChildren().addAll(devInfo, consInfo, transInfo, gitInfo, issueInfo, apiInfo);
         vBox.setAlignment(Pos.CENTER);
-
-
-
 
         VBox.setMargin(logo, new Insets(20, 0, 0, 0));
         VBox.setMargin(name, new Insets(5, 0, 0, 0));

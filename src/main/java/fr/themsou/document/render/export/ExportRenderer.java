@@ -77,8 +77,8 @@ public class ExportRenderer {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 alert.setTitle(TR.tr("Dossier introuvable"));
-                alert.setHeaderText(TR.tr("Le dossier d'exportation n'est pas existant."));
-                alert.setContentText(TR.tr("Voulez-vous en le créer ou modifier la destination ?"));
+                alert.setHeaderText(TR.tr("Le dossier d'exportation n'existe pas"));
+                alert.setContentText(TR.tr("Créer le dossier, ou modifier la destination ?"));
                 ButtonType yesButton = new ButtonType(TR.tr("Créer le dossier"), ButtonBar.ButtonData.YES);
                 ButtonType cancelButton = new ButtonType(TR.tr("Modifier la destination"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 alert.getButtonTypes().setAll(yesButton, cancelButton);

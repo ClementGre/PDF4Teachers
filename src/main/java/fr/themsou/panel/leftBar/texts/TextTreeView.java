@@ -147,13 +147,13 @@ public class TextTreeView {
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter et lier"), -1, false);
         item1.setToolTip(TR.tr("Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste."));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
-        item2.setToolTip(TR.tr("Retire cet élément de la liste. Si l'élément est lié, l'élément lié ne sera supprimé que si vous êtes dans la catégorie des éléments sur ce document."));
+        item2.setToolTip(TR.tr("Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité"));
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux favoris"), -1, false);
         item3.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments précédents."));
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), -1, false);
         item4.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments favoris."));
         NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Dé-lier l'élément"), -1, false);
-        item5.setToolTip(TR.tr("Dé-lie l'élément : l'élément de sera plus synchronisé avec l'élément du document."));
+        item5.setToolTip(TR.tr("L'élément de la liste ne sera plus synchronisé avec l'élément du document"));
 
 
         // Ajouter les items en fonction du type

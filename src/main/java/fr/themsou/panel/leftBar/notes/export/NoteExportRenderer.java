@@ -69,7 +69,7 @@ public class NoteExportRenderer {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Erreur de rendu"));
+                alert.setTitle(TR.tr("Erreur d'exportation"));
                 alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document"));
                 alert.setContentText(TR.tr("Impossible d'exporter."));
 
@@ -82,7 +82,7 @@ public class NoteExportRenderer {
                 expContent.add(textArea, 0, 1);
                 alert.getDialogPane().setExpandableContent(expContent);
 
-                alert.getButtonTypes().setAll(new ButtonType(TR.tr("Ok"), ButtonBar.ButtonData.OK_DONE));
+                alert.getButtonTypes().setAll(new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE));
                 alert.showAndWait();
                 return exported;
             }
@@ -107,8 +107,8 @@ public class NoteExportRenderer {
                     Alert alert = new Alert(Alert.AlertType.ERROR);
                     new JMetro(alert.getDialogPane(), Style.LIGHT);
                     Builders.secureAlert(alert);
-                    alert.setTitle(TR.tr("Erreur de rendu"));
-                    alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document " + file.file.getName()));
+                    alert.setTitle(TR.tr("Erreur d'exportation"));
+                    alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
                     TextArea textArea = new TextArea(e.getMessage());
@@ -260,8 +260,8 @@ public class NoteExportRenderer {
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             Builders.secureAlert(alert);
             alert.setTitle(TR.tr("Impossible de lire les notes"));
-            alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite lors de la lecture des notes du document : ") + MainWindow.mainScreen.document.getFileName());
-            alert.setContentText(TR.tr("Ce document est le document principale de l'exportation, l'exportation ne peut pas continuer."));
+            alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
+            alert.setContentText(TR.tr("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
 
             TextArea textArea = new TextArea(e.getMessage());
             textArea.setEditable(false);
@@ -272,7 +272,7 @@ public class NoteExportRenderer {
             expContent.add(textArea, 0, 1);
             alert.getDialogPane().setExpandableContent(expContent);
 
-            alert.getButtonTypes().add(new ButtonType(TR.tr("Ok"), ButtonBar.ButtonData.CANCEL_CLOSE));
+            alert.getButtonTypes().add(new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.CANCEL_CLOSE));
             alert.showAndWait();
             return false;
         }
@@ -297,7 +297,7 @@ public class NoteExportRenderer {
                     new JMetro(alert.getDialogPane(), Style.LIGHT);
                     Builders.secureAlert(alert);
                     alert.setTitle(TR.tr("Impossible de lire les notes"));
-                    alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite lors de la lecture des notes du document : ") + file.getName());
+                    alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
                     TextArea textArea = new TextArea(e.getMessage());

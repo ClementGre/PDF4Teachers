@@ -45,52 +45,52 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
 	NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", "Ctrl+Shift+O",
-			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers;"));
+			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
 	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", "Ctrl+Shift+W",
 			TR.tr("Vide la liste des fichiers"), false, true, 0);
 
 	NodeMenuItem fichier4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", "Ctrl+S",
-			TR.tr("Sauvegarde les éléments d'édition du document ouvert. (Mais ne modifie pas le fichier PDF pré-existant)"), true, false, 0);
+			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, 0);
 
 	NodeMenuItem fichier5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", "",
-			TR.tr("Supprime les éléments d'édition du document ouvert."), true, false, 0);
+			TR.tr("Supprime les éléments d'édition du document courant"), true, false, 0);
 
-	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouvert"), "supprimer", "",
-			TR.tr("Supprime les éditions de tous les fichiers ouverts."));
+	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", "",
+			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
 	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", "Ctrl+W",
-			TR.tr("Ferme le document actuellement ouvert."), true, false, 0);
+			TR.tr("Ferme la vue du document courant"), true, false, 0);
 
 	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
-			TR.tr("Intervertis l'édition de ce document avec celle d'un autre document qui porte le même nom. Cette option peut être utilisé lorsqu'un fichier PDF est déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction."), true);
+			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
 
 	MenuItem fichier8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
 	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", "Ctrl+E",
-			TR.tr("Créee un nouveau fichier PDF à partir de celui ouvert, avec tous les éléments ajoutés."), true, false, 0);
+			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, 0);
 
 	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", "Ctrl+Shift+E",
-			TR.tr("Créee des nouveau fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition."), false, true, 0);
+			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, 0);
 
 	////////// PREFS //////////
 
 	Menu preferences = new Menu(TR.tr("Préférences"));
 
 	NodeMenuItem preferences1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", "",
-			TR.tr("Définis la langue de l'interface"), 30);
+			TR.tr("Définit la langue de l'interface"), 30);
 
 	NodeRadioMenuItem preferences2Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
 	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
-			TR.tr("Fait apparaître une fenêtre à chaque démarage si une nouvelle version est disponible. Même si cette option est désactivé, l'application vérifira si une nouvelle version est disponible et mettra le menu À propos en couleur."), true);
+			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
 	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
-			TR.tr("Définis le zoom par défaut lors de l'ouverture d'un document. Vous pouvez aussi zoomer avec Ctrl+Molette"), 30);
+			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), 30);
 
 	NodeRadioMenuItem preferences5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
-			TR.tr("Fait des transitions fluides lors du zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur a du mal a zoomer. Cette option est déconseillé aux utilisateurs de TrackPad."), true);
+			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
 
 
 
@@ -306,7 +306,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 										Alert alert = new Alert(Alert.AlertType.ERROR);
 										new JMetro(alert.getDialogPane(), Style.LIGHT);
 										alert.setTitle(TR.tr("Fichier introuvable"));
-										alert.setHeaderText(TR.tr("Le fichier correspondant à") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
+										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
 										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
 										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);

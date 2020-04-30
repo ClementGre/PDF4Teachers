@@ -98,7 +98,7 @@ public class ExportWindow {
             CheckBox erase = new CheckBox(TR.tr("Toujours écraser"));
             CheckBox folders = new CheckBox(TR.tr("Créer les dossiers manquants"));
             folders.setSelected(true);
-            CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés le rendu"));
+            CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
         settings.getChildren().addAll(erase, folders, delEdit);
 
         HBox btns = new HBox();
@@ -130,7 +130,7 @@ public class ExportWindow {
         changePath.setOnAction(event -> {
 
             final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("Selexionnez un dossier"));
+            chooser.setTitle(TR.tr("Sélectionner un dossier"));
             chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
                     (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
 
@@ -223,7 +223,7 @@ public class ExportWindow {
         folders.setSelected(true);
         CheckBox onlyEdited = new CheckBox(TR.tr("Exporter uniquement les documents édités"));
         onlyEdited.setSelected(true);
-        CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés le rendu"));
+        CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
         settings.getChildren().addAll(erase, folders, onlyEdited, delEdit);
 
         HBox btns = new HBox();
@@ -264,7 +264,7 @@ public class ExportWindow {
         changePath.setOnAction(event -> {
 
             final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("Selexionnez un dossier"));
+            chooser.setTitle(TR.tr("Sélectionner un dossier"));
             chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
                     (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
 
@@ -305,8 +305,8 @@ public class ExportWindow {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 new JMetro(alert.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Erreur de rendu"));
-                alert.setHeaderText(TR.tr("Une erreur de rendu s'est produite avec le document :") + " " + file.getName());
+                alert.setTitle(TR.tr("Erreur d'exportation"));
+                alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName());
                 alert.setContentText(TR.tr("Choisissez une action."));
 
                 TextArea textArea = new TextArea(e.getMessage());
@@ -336,11 +336,11 @@ public class ExportWindow {
         Builders.secureAlert(alert);
         alert.setTitle(TR.tr("Exportation terminée"));
 
-        if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
-        else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
+        if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
+        else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));
         else alert.setHeaderText(exported + " " + TR.tr("documents ont été exportés !"));
 
-        alert.setContentText(TR.tr("Vous pouvez les retrouver dans le dossier choisi."));
+        alert.setContentText(TR.tr("Les documents exportés se trouvent dans le dossier choisi"));
         alert.show();
 
     }

@@ -82,7 +82,7 @@ public class LBNoteTab extends Tab {
         export.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/exporter.png")+"", 0, 0));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new NoteExportWindow());
-        export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichier CSV, il s'agit de tableaux que vous pouvez formater avec LibreOffice calc ou Exel par exemple.")));
+        export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);

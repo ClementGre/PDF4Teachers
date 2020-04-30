@@ -36,7 +36,8 @@ public class LanguageWindow extends Stage{
 
     public static final String[] TO_COPY_FILES = new String[]{
             "Français France (Defaut).txt", "Français France (Defaut).png", "Français France (Defaut).pdf", "Français France (Defaut).odt",
-            "English.txt", "English.png", "English.pdf", "English.odt"
+            "English US.txt", "English US.png", //"English US.pdf", "English US.odt"
+            "English GB.png"
     };
 
 
@@ -59,7 +60,7 @@ public class LanguageWindow extends Stage{
         });
         new JMetro(root, Style.LIGHT);
 
-        if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("English");
+        if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("English US");
         
         setupLanguages();
         setupPanel(root);
@@ -141,8 +142,8 @@ public class LanguageWindow extends Stage{
             alert.setContentText(TR.tr("Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\n" +
                     "Vous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application."));
 
-            ButtonType originFile = new ButtonType(TR.tr("Enregistrer le fichier"), ButtonBar.ButtonData.YES);
-            ButtonType englishFile = new ButtonType(TR.tr("Enregistrer le fichier déjà traduit en Anglais"), ButtonBar.ButtonData.NO);
+            ButtonType originFile = new ButtonType(TR.tr("Enregistrer les fichiers"), ButtonBar.ButtonData.YES);
+            ButtonType englishFile = new ButtonType(TR.tr("Enregistrer les fichiers déjà traduits en Anglais"), ButtonBar.ButtonData.NO);
             ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(originFile, englishFile, cancelButton);
             Builders.secureAlert(alert);
@@ -152,7 +153,7 @@ public class LanguageWindow extends Stage{
             if(option.get() == originFile){
                 name = "Français France (Defaut)";
             }else if(option.get() == englishFile){
-                name = "English";
+                name = "English US";
             }else{
                 return;
             }

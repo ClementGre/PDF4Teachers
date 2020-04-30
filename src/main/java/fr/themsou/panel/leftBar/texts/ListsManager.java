@@ -88,7 +88,7 @@ public class ListsManager {
                     Builders.secureAlert(alert);
                     alert.setTitle(TR.tr("Actions de listes"));
                     alert.setHeaderText(TR.tr("Choisissez une action a effectuer avec la liste d'éléments.") + "\n" + TR.tr("Ces actions sont irréversibles."));
-                    alert.setContentText(TR.tr("- Charger remplecera la liste des éléments favoris par celle ci.") + "\n" + TR.tr("- Supprimer supprimera la liste de la base de donnée."));
+                    alert.setContentText(TR.tr("- Charger remplacera la liste des éléments favoris par celle ci") + "\n" + TR.tr("- Supprimer supprimera la liste de la base de donnée"));
 
                     ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType load = new ButtonType(TR.tr("Charger"), ButtonBar.ButtonData.OK_DONE);
@@ -102,7 +102,7 @@ public class ListsManager {
                 });
             }
         }else{
-            menu.getItems().add(new MenuItem(TR.tr("Aucune liste sauvegardé")));
+            menu.getItems().add(new MenuItem(TR.tr("Aucune liste sauvegardée")));
         }
     }
 
@@ -132,8 +132,8 @@ public class ListsManager {
         Builders.secureAlert(alert);
         alert.setTitle(TR.tr("Liste sauvegardée"));
 
-        alert.setHeaderText(TR.tr("Votre liste a bien été sauvegardé !"));
-        alert.setContentText(TR.tr("Vous pourez la charger via le bouton Importer."));
+        alert.setHeaderText(TR.tr("La liste a bien été sauvegardée !"));
+        alert.setContentText(TR.tr("La liste pourra être chargée via le bouton importer"));
         alert.show();
 
         setupMenu();
@@ -146,7 +146,7 @@ public class ListsManager {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         new JMetro(alert.getDialogPane(), Style.LIGHT);
         Builders.secureAlert(alert);
-        alert.setTitle(TR.tr("Liste supprimé"));
+        alert.setTitle(TR.tr("Liste supprimée"));
 
         alert.setHeaderText(TR.tr("La liste") + " \"" + listName + "\" " + TR.tr("a bien été supprimé."));
         alert.show();

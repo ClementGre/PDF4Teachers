@@ -59,7 +59,7 @@ public class Main extends Application {
 
 	public boolean languageAsk(){
 		if(settings.getLanguage().isEmpty()){
-			Main.settings.setLanguage("English");
+			Main.settings.setLanguage("English US");
 			TR.updateTranslation();
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()) {

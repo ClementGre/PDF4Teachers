@@ -48,7 +48,7 @@ public class NoteSettingsWindow extends Stage {
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.tr("Configurez les polices pour chaque catégorie de note.") + "\n" + TR.tr("Ces paramètres sonts indépendants de l'édition du document."));
+        Text info = new Text(TR.tr("Configuration des polices pour chaque catégorie de note") + "\n" + TR.tr("Ces paramètres sonts indépendants de l'édition du document."));
         VBox.setMargin(info, new Insets(40, 0, 40, 0));
 
         root.setStyle("-fx-padding: 10;");

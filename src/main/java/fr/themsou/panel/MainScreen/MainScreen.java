@@ -237,7 +237,7 @@ public class MainScreen extends Pane {
 				alert.setAlertType(Alert.AlertType.ERROR);
 				alert.setTitle(TR.tr("Erreur"));
 				alert.setHeaderText(TR.tr("Aucun document n'est ouvert !"));
-				alert.setContentText(TR.tr("Cette action est censé s'éxécuter sur un document ouvert."));
+				alert.setContentText(TR.tr("Cette action est censée s'éxécuter sur un document ouvert"));
 
 				alert.showAndWait();
 			}

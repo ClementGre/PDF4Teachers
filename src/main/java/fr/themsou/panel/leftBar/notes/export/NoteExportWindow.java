@@ -44,7 +44,7 @@ public class NoteExportWindow extends Stage {
         setScene(scene);
         new JMetro(root, Style.LIGHT);
 
-        Text info = new Text(TR.tr("Exporter les notes des fichiers ouverts dans un tableau CSV") + "\n" + TR.tr("Pensez à définir la langue du fichier en Anglais lors du formatage du fichier."));
+        Text info = new Text(TR.tr("Exporter les notes des fichiers ouverts dans un tableau CSV") + "\n" + TR.tr("Lors de l'importation dans un tableur, la langue du fichier sera à régler sur Anglais"));
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
         tabPane.getTabs().addAll(exportAllTab, exportAllSplitTab, exportThisTab);
@@ -66,9 +66,9 @@ public class NoteExportWindow extends Stage {
         public TextField studentNameSimple, studentNameReplace, studentNameBy;
         public TextField filePath;
 
-        public CheckBox settingsOnlySameRatingScale = new CheckBox(TR.tr("Exporter uniquement les documents avec le même barème."));
-        public CheckBox settingsOnlyCompleted = new CheckBox(TR.tr("Exporter uniquement les documents avec toutes les notes remplies."));
-        public CheckBox settingsOnlySameDir = new CheckBox(TR.tr("Exporter uniquement les documents du même dossier"));
+        public CheckBox settingsOnlySameRatingScale = new CheckBox(TR.tr("Exporter uniquement les notes des documents avec le même barème"));
+        public CheckBox settingsOnlyCompleted = new CheckBox(TR.tr("Exporter uniquement les notes des documents avec toutes les notes remplies"));
+        public CheckBox settingsOnlySameDir = new CheckBox(TR.tr("Exporter uniquement les notes des documents du même dossier"));
         public CheckBox settingsAttributeTotalLine = new CheckBox(TR.tr("Ajouter une ligne pour le barème"));
         public CheckBox settingsAttributeMoyLine = new CheckBox(TR.tr("Ajouter une ligne pour la moyenne des notes"));
         public CheckBox settingsWithTxtElements = new CheckBox(TR.tr("Ajouter des lignes pour les commentaires (Éléments textuels)."));
@@ -211,7 +211,7 @@ public class NoteExportWindow extends Stage {
             changePath.setOnAction(event -> {
 
                 final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(TR.tr("Selexionnez un dossier"));
+                chooser.setTitle(TR.tr("Sélectionner un dossier"));
                 chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
                         (UserData.lastExportDirNotes.exists() ? UserData.lastExportDirNotes : new File(System.getProperty("user.home")))));
 
@@ -323,8 +323,8 @@ public class NoteExportWindow extends Stage {
             Builders.secureAlert(alert);
             alert.setTitle(TR.tr("Exportation terminée"));
 
-            if(exported == 0) alert.setHeaderText(TR.tr("Aucun documents n'a été exportés !"));
-            else if(exported == 1) alert.setHeaderText(TR.tr("Votre document a bien été exporté !"));
+            if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
+            else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));
             else alert.setHeaderText(exported + " " + TR.tr("documents ont été exportés !"));
 
             if(exported != 0){
