@@ -10,6 +10,7 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -91,7 +92,7 @@ public class MainScreen extends Pane {
 		// Update show status when scroll level change
 		pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
 			if(document != null){
-				document.updateShowsStatus();
+				Platform.runLater(() -> document.updateShowsStatus());
 			}
 		});
 

@@ -186,11 +186,9 @@ public class TextElement extends Text implements Element {
 	}
 	@Override
 	public void delete() {
-		getPage().removeElement(this, true);
-
-		/*if(getPage() != null){
-			if(getPage().getChildren().contains(this)) getPage().removeElement(this, true);
-		}*/
+		if(getPage() != null){
+			getPage().removeElement(this, true);
+		}
 	}
 	@Override
 	public void switchPage(int page){
@@ -280,6 +278,7 @@ public class TextElement extends Text implements Element {
 
 	@Override
 	public PageRenderer getPage() {
+		if(MainWindow.mainScreen.document == null) return null;
 		if(MainWindow.mainScreen.document.pages.size() > pageNumber){
 			return MainWindow.mainScreen.document.pages.get(pageNumber);
 		}

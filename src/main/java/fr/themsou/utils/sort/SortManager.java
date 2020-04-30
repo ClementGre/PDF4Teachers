@@ -56,9 +56,9 @@ public class SortManager {
             }else button.setStyle("-fx-background-color: " + idleColor);
 
             // Image de l'ordre
-            order.addListener(new ChangeListener<Boolean>() {
-                @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder){
-                    button.setGraphic(Builders.buildImage(getClass().getResource(newOrder ? "/img/Sort/down.png" : "/img/Sort/up.png")+"", 0, 0));
+            order.addListener(new ChangeListener<>() {
+                @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder) {
+                    button.setGraphic(Builders.buildImage(getClass().getResource(newOrder ? "/img/Sort/down.png" : "/img/Sort/up.png") + "", 0, 0));
                 }
             });
 

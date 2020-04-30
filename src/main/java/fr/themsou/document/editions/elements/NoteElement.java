@@ -333,10 +333,8 @@ public class NoteElement extends Text implements Element {
         }
     }
     public void switchPage(int page){
-        if(true){
-            getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
-            NoteTreeView.defineNaNLocations();
-        }
+        getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+        NoteTreeView.defineNaNLocations();
     }
 
     // READER AND WRITERS
@@ -466,6 +464,7 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public PageRenderer getPage() {
+        if(MainWindow.mainScreen.document == null) return null;
         if(MainWindow.mainScreen.document.pages.size() > pageNumber){
             return MainWindow.mainScreen.document.pages.get(pageNumber);
         }

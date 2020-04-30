@@ -74,7 +74,7 @@ public class UserData {
                                 // LAST FONTS (TEXT_TAB)
 
                                 MainWindow.lbTextTab.lastFont = reader.readUTF();
-                                MainWindow.lbTextTab.lastFontSize = reader.readInt();
+                                MainWindow.lbTextTab.lastFontSize =reader.readInt();
                                 MainWindow.lbTextTab.lastColor = reader.readUTF();
                                 MainWindow.lbTextTab.lastBold = reader.readBoolean();
                                 MainWindow.lbTextTab.lastItalic = reader.readBoolean();

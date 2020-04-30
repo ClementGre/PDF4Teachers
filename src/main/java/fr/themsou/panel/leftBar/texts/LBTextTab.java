@@ -262,9 +262,9 @@ public class LBTextTab extends Tab {
 
 			MainWindow.mainScreen.setSelected(null);
 
-			fontCombo.getSelectionModel().select(lastFont);
+			fontCombo.getSelectionModel().select(lastFont.isEmpty() ? "Arial" : lastFont);
 			sizeCombo.getSelectionModel().select((Integer) lastFontSize);
-			colorPicker.setValue(Color.valueOf(lastColor));
+			colorPicker.setValue(Color.valueOf(lastColor.isEmpty() ? "#000000" : lastColor));
 			boldBtn.setSelected(lastBold);
 			itBtn.setSelected(lastItalic);
 
@@ -341,50 +341,44 @@ public class LBTextTab extends Tab {
 
 		new TextTreeView(treeView);
 
-		favoritesTextSortManager = new SortManager(new SortEvent(){
-			@Override public void call(String sortType, boolean order){
+		favoritesTextSortManager = new SortManager((sortType, order) -> {
 
-				List<TextTreeItem> toSort = new ArrayList<>();
-				for(int i = 0; i < favoritesText.getChildren().size(); i++){
-					if(favoritesText.getChildren().get(i) instanceof TextTreeItem){
-						toSort.add((TextTreeItem) favoritesText.getChildren().get(i));
-					}
+			List<TextTreeItem> toSort = new ArrayList<>();
+			for(int i = 0; i < favoritesText.getChildren().size(); i++){
+				if(favoritesText.getChildren().get(i) instanceof TextTreeItem){
+					toSort.add((TextTreeItem) favoritesText.getChildren().get(i));
 				}
-				clearSavedFavoritesElements();
-				for(TextTreeItem item : autoSortList(toSort, sortType, order)) favoritesText.getChildren().add(item);
 			}
+			clearSavedFavoritesElements();
+			for(TextTreeItem item : autoSortList(toSort, sortType, order)) favoritesText.getChildren().add(item);
 		}, null, null);
 		favoritesTextSortManager.setup(favoritesTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
-		lastsTextSortManager = new SortManager(new SortEvent(){
-			@Override public void call(String sortType, boolean order){
+		lastsTextSortManager = new SortManager((sortType, order) -> {
 
-				List<TextTreeItem> toSort = new ArrayList<>();
-				for(int i = 0; i < lastsText.getChildren().size(); i++){
-					if(lastsText.getChildren().get(i) instanceof TextTreeItem){
-						toSort.add((TextTreeItem) lastsText.getChildren().get(i));
-					}
+			List<TextTreeItem> toSort = new ArrayList<>();
+			for(int i = 0; i < lastsText.getChildren().size(); i++){
+				if(lastsText.getChildren().get(i) instanceof TextTreeItem){
+					toSort.add((TextTreeItem) lastsText.getChildren().get(i));
 				}
-				clearSavedLastsElements();
-				for(TextTreeItem item : autoSortList(toSort, sortType, order)) lastsText.getChildren().add(item);
-
 			}
+			clearSavedLastsElements();
+			for(TextTreeItem item : autoSortList(toSort, sortType, order)) lastsText.getChildren().add(item);
+
 		}, null, null);
 		lastsTextSortManager.setup(lastsTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
-		onFileTextSortManager = new SortManager(new SortEvent(){
-			@Override public void call(String sortType, boolean order){
+		onFileTextSortManager = new SortManager((sortType, order) -> {
 
-				List<TextTreeItem> toSort = new ArrayList<>();
-				for(int i = 0; i < onFileText.getChildren().size(); i++){
-					if(onFileText.getChildren().get(i) instanceof TextTreeItem){
-						toSort.add((TextTreeItem) onFileText.getChildren().get(i));
-					}
+			List<TextTreeItem> toSort = new ArrayList<>();
+			for(int i = 0; i < onFileText.getChildren().size(); i++){
+				if(onFileText.getChildren().get(i) instanceof TextTreeItem){
+					toSort.add((TextTreeItem) onFileText.getChildren().get(i));
 				}
-				clearSavedOnFileElements();
-				for(TextTreeItem item : autoSortList(toSort, sortType, order)) onFileText.getChildren().add(item);
-
 			}
+			clearSavedOnFileElements();
+			for(TextTreeItem item : autoSortList(toSort, sortType, order)) onFileText.getChildren().add(item);
+
 		}, null, null);
 		onFileTextSortManager.setup(onFileTextOptions, TR.tr("Position"), TR.tr("Position"), TR.tr("Nom"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
 
@@ -469,14 +463,23 @@ public class LBTextTab extends Tab {
 			if(!lastsText.getChildren().contains(element)){
 
 				if(lastsText.getChildren().size() > 49){
+
+					// SORT BY DATE
 					List<TextTreeItem> toSort = new ArrayList<>();
 					for(int i = 0; i < lastsText.getChildren().size(); i++){
 						if(lastsText.getChildren().get(i) instanceof TextTreeItem){
 							toSort.add((TextTreeItem) lastsText.getChildren().get(i));
 						}
 					}
-					List<TextTreeItem> sorted = Sorter.sortElementsByUtils(toSort, true);
-					removeSavedElement(sorted.get(sorted.size()-1));
+					List<TextTreeItem> sorted = Sorter.sortElementsByDate(toSort, false);
+
+					// SORT THE
+					toSort = new ArrayList<>();
+					for(int i = 0; i < 20; i++){
+						toSort.add(sorted.get(i));
+					}
+					sorted = Sorter.sortElementsByUtils(toSort, false);
+					removeSavedElement(sorted.get(0));
 				}
 				lastsText.getChildren().add(element);
 				lastsTextSortManager.simulateCall();
