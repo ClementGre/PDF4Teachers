@@ -65,15 +65,13 @@ public class MainWindow extends Stage{
         setScene(scene);
 
         setOnCloseRequest(e -> {
+            userData.saveData();
             if(e.getSource().equals(menuBar)) return;
             hasToClose = true;
+
             if(!mainScreen.closeFile(!Main.settings.isAutoSave())) {
-                userData.saveData();
-                e.consume();
-                hasToClose = false;
-                return;
+                e.consume(); hasToClose = false; return;
             }
-            userData.saveData();
             System.exit(0);
         });
     }
