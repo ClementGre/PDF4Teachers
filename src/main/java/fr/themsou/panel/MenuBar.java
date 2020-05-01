@@ -1,6 +1,5 @@
 package fr.themsou.panel;
 
-import com.sun.javafx.PlatformUtil;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
@@ -32,7 +31,6 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -480,7 +478,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, double leftMargin){
 
-		if(PlatformUtil.isMac()){
+		if(System.getProperty("os.name").toLowerCase().contains("mac")){
 			accelerator = accelerator.replace(Pattern.quote("Ctrl"), "Meta");
 		}
 
