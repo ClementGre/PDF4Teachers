@@ -57,7 +57,7 @@ public class UpdateWindow extends Stage {
 
                 }else if("body".equals(fieldname)){
                     jParser.nextToken();
-                    parsedDesc = jParser.getText().split(Pattern.quote("\r"))[0];
+                    parsedDesc = jParser.getText().split(Pattern.quote("\r\n\r\n\r\n"))[0];
                     break;
                 }
             }
