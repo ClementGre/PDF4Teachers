@@ -32,6 +32,7 @@ public class LBNoteTab extends Tab {
 
     public static HashMap<Integer, Map.Entry<Font, Map.Entry<Color, Boolean>>> fontTiers = new HashMap<>();
 
+    public ToggleButton lockRatingPotitions = new ToggleButton();
     public ToggleButton lockRatingScale = new ToggleButton();
     private Button settings = new Button();
     private Button link = new Button();
@@ -53,6 +54,8 @@ public class LBNoteTab extends Tab {
         fontTiers.put(2, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
         fontTiers.put(3, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
         fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
+
+        lockRatingPotitions.setSelected(false);
 
         Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
         lockRatingScale.setCursor(Cursor.HAND);
