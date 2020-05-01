@@ -286,7 +286,7 @@ public class ZoomOperator {
 
     }
 
-    public void scrollDown(int factor){
+    public void scrollDown(int factor, boolean removeTransition){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -298,7 +298,7 @@ public class ZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations() && factor > 25){
+        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), aimTranslateY))
@@ -312,7 +312,7 @@ public class ZoomOperator {
         }
     }
 
-    public void scrollUp(int factor){
+    public void scrollUp(int factor, boolean removeTransition){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -324,7 +324,7 @@ public class ZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations() && factor > 25){
+        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY))
@@ -337,7 +337,7 @@ public class ZoomOperator {
         }
     }
 
-    public void scrollRight(int factor){
+    public void scrollRight(int factor, boolean removeTransition){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -349,7 +349,7 @@ public class ZoomOperator {
 
         aimTranslateX = newTranslateX;
 
-        if(Main.settings.isZoomAnimations() && factor > 25){
+        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), newTranslateX))
@@ -361,7 +361,7 @@ public class ZoomOperator {
             pane.setTranslateX(newTranslateX);
         }
     }
-    public void scrollLeft(int factor){
+    public void scrollLeft(int factor, boolean removeTransition){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -373,7 +373,7 @@ public class ZoomOperator {
 
         aimTranslateX = newTranslateX;
 
-        if(Main.settings.isZoomAnimations() && factor > 25){
+        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), aimTranslateX))

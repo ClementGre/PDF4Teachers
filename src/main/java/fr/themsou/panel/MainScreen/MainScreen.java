@@ -46,6 +46,9 @@ public class MainScreen extends Pane {
 		public static final int ERROR = 2;
 	}
 
+	double dragStartX;
+	double dragStartY;
+
 	public MainScreen(){
 
 		setup();
@@ -125,17 +128,17 @@ public class MainScreen extends Pane {
 
 				if(e.getDeltaY() != 0){
 					if(e.getDeltaY() > 0){
-						zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5));
+						zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false);
 					}else{
-						zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5));
+						zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5), false);
 					}
 				}
 
 				if(e.getDeltaX() != 0){
 					if(e.getDeltaX() > 0){
-						zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5));
+						zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false);
 					}else{
-						zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5));
+						zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false);
 					}
 				}
 
@@ -144,6 +147,26 @@ public class MainScreen extends Pane {
 			}
 
 		});
+		setOnMouseDragged(e -> {
+				double distY = e.getSceneY() - dragStartY;
+				double distX = e.getSceneX() - dragStartX;
+
+				if(distY > 0){
+					zoomOperator.scrollUp((int) distY, true);
+				}else if(distY < 0){
+					zoomOperator.scrollDown((int) -distY, true);
+				}
+
+				if(distX > 0){
+					zoomOperator.scrollLeft((int) distX, true);
+				}else if(distX < 0){
+					zoomOperator.scrollRight((int) -distX, true);
+				}
+
+
+			dragStartY = e.getSceneY();
+			dragStartX = e.getSceneX();
+		});
 
 		setOnMouseMoved(e -> ctrlDown = e.isControlDown());
 
@@ -151,6 +174,8 @@ public class MainScreen extends Pane {
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
 
 		setOnMousePressed(e -> {
+			dragStartX = e.getSceneX();
+			dragStartY = e.getSceneY();
 			if(!(e.getTarget() instanceof Element)){
 				setSelected(null);
 			}

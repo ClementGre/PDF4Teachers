@@ -96,7 +96,6 @@ public class PageRenderer extends Pane{
 
 
         setOnMousePressed(e -> {
-            e.consume();
 
             MainWindow.mainScreen.setSelected(null);
             MainWindow.lbNoteTab.treeView.getSelectionModel().select(null);

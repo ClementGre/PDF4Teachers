@@ -111,6 +111,7 @@ public class TextElement extends Text implements Element {
 		});
 
 		setOnMouseDragged(e -> {
+			e.consume();
 
 			Edition.setUnsave();
 			double itemX = getLayoutX() + e.getX() - shiftX;

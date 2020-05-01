@@ -2,7 +2,6 @@ package fr.themsou.document.render;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,17 +9,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.themsou.utils.CallBack;
-import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
-import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
-
-import javax.imageio.ImageIO;
 
 public class PDFPagesRender {
 
