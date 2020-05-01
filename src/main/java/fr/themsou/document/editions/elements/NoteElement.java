@@ -11,17 +11,19 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.event.Event;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -192,7 +194,7 @@ public class NoteElement extends Text implements Element {
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
         });
-        setOnMouseReleased(event -> NoteTreeView.defineNaNLocations());
+        setOnMouseReleased(e -> NoteTreeView.defineNaNLocations());
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
                 NoteTreeItem treeItemElement;
@@ -202,28 +204,42 @@ public class NoteElement extends Text implements Element {
             }
         });
 
+
         setOnMouseDragged(e -> {
-            e.consume();
 
             Edition.setUnsave();
             double itemX = getLayoutX() + e.getX() - shiftX;
             double itemY = getLayoutY() + e.getY() - shiftY;
 
             boolean changePage = false;
-            if(getPage().getRealMouseY() < -30 && getPage().getPage() > minYPage){ // Monter d'une page
+            if(getPage().getRealMouseY() < -30){ //&& getPage().getPage() > minYPage){ // Monter d'une page
                 if(getPage().getPage() > 0){
+
+
 
                     MainWindow.mainScreen.setSelected(null);
                     switchPage(getPageNumber() -1);
+                    try{
+                        Robot robot = new java.awt.Robot();
+                        robot.mouseRelease(16);
+                        robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()-getLayoutBounds().getHeight()/2));
+                        robot.mousePress(16);
+                    }catch(AWTException ex){ ex.printStackTrace(); }
 
                     itemY = getPage().getHeight();
                     changePage = true;
                 }
-            }else if(getPage().getRealMouseY() > getPage().getHeight() + 30 && getPage().getPage() < maxYPage){ // Descendre d'une page
+            }else if(getPage().getRealMouseY() > getPage().getHeight() + 30){// && getPage().getPage() < maxYPage){ // Descendre d'une page
                 if(getPage().getPage() < MainWindow.mainScreen.document.pages.size()-1){
 
                     MainWindow.mainScreen.setSelected(null);
                     switchPage(getPageNumber() +1);
+                    try{
+                        Robot robot = new java.awt.Robot();
+                        robot.mouseRelease(16);
+                        robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()+getLayoutBounds().getHeight()/2));
+                        robot.mousePress(16);
+                    }catch(AWTException ex){ ex.printStackTrace(); }
 
                     itemY = 0;
                     changePage = true;
@@ -237,7 +253,6 @@ public class NoteElement extends Text implements Element {
                 layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
                 MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
             }
-
         });
     }
 
@@ -293,8 +308,11 @@ public class NoteElement extends Text implements Element {
 
         double height = getLayoutBounds().getHeight();
 
-        int minY = getPageNumber() > minYPage ? 0 : this.minY;
-        int maxY = getPageNumber() < maxYPage ? (int) getPage().getHeight() : this.maxY;
+        //int minY = getPageNumber() > minYPage ? 0 : this.minY;
+        //int maxY = getPageNumber() < maxYPage ? (int) getPage().getHeight() : this.maxY;
+
+        int minY = 0;
+        int maxY = (int) getPage().getHeight();
 
         //System.out.println("minY = " + minY + "  |  maxY = " + maxY);
 

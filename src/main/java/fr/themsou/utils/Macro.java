@@ -16,7 +16,6 @@ public class Macro {
     public Macro(Pane main){
 
         main.setOnKeyPressed(e -> {
-
             if(e.isShortcutDown()){
                 String keyName = e.getText();
                 if(!e.isAltDown()){

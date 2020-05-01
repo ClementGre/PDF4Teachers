@@ -1,5 +1,6 @@
 package fr.themsou.document.editions.elements;
 
+import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -22,6 +23,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
+import javafx.scene.text.Font;
 
 public class TextElement extends Text implements Element {
 
@@ -111,7 +113,6 @@ public class TextElement extends Text implements Element {
 		});
 
 		setOnMouseDragged(e -> {
-			e.consume();
 
 			Edition.setUnsave();
 			double itemX = getLayoutX() + e.getX() - shiftX;
@@ -123,6 +124,12 @@ public class TextElement extends Text implements Element {
 
 					MainWindow.mainScreen.setSelected(null);
 					switchPage(getPageNumber() -1);
+					try{
+						Robot robot = new java.awt.Robot();
+						robot.mouseRelease(16);
+						robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()-getLayoutBounds().getHeight()/2));
+						robot.mousePress(16);
+					}catch(AWTException ex){ ex.printStackTrace(); }
 
 					itemY = getPage().getHeight();
 					changePage = true;
@@ -132,6 +139,12 @@ public class TextElement extends Text implements Element {
 
 					MainWindow.mainScreen.setSelected(null);
 					switchPage(getPageNumber() +1);
+					try{
+						Robot robot = new java.awt.Robot();
+						robot.mouseRelease(16);
+						robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()+getLayoutBounds().getHeight()/2));
+						robot.mousePress(16);
+					}catch(AWTException ex){ ex.printStackTrace(); }
 
 					itemY = 0;
 					changePage = true;

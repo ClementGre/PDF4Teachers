@@ -286,32 +286,15 @@ public class NoteTreeItem extends TreeItem {
             if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
 
-        if(MainWindow.lbNoteTab.isLockRatingScaleProperty().get()){
-            if(hasSubNote()){
-                pane.getChildren().addAll(name, spacer, value, slash, total);
-            }else{
-                pane.getChildren().addAll(name, spacer, noteField, slash, total);
-                Platform.runLater(() -> {
-                    noteField.requestFocus();
-                });
-            }
+        if(hasSubNote()){
+            pane.getChildren().addAll(name, spacer, value, slash, total);
         }else{
-            if(hasSubNote()){
-                pane.getChildren().addAll(nameField, spacer, value, slash, total);
-                Platform.runLater(() -> {
-                    nameField.requestFocus();
-                });
-            }else{
-                pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField);
-                Platform.runLater(() -> {
-                    if(name.getText().contains(TR.tr("Nouvelle note"))) nameField.requestFocus();
-                    else if(total.getText().equals("0")) totalField.requestFocus();
-                    else noteField.requestFocus();
-                });
-            }
-
-
+            pane.getChildren().addAll(name, spacer, noteField, slash, total);
+            Platform.runLater(() -> {
+                noteField.requestFocus();
+            });
         }
+
         pane.setPrefWidth(width);
         return pane;
     }

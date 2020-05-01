@@ -86,7 +86,6 @@ public class PageRenderer extends Pane{
             mouseY = e.getY();
         });
         setOnMouseDragged(e -> {
-
             mouseX = e.getX();
             mouseY = e.getY();
         });
@@ -103,13 +102,15 @@ public class PageRenderer extends Pane{
             menu.getItems().clear();
             if(e.getButton() == MouseButton.SECONDARY){
 
-                NoteTreeView.defineNaNLocations();
-                NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
-                if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50)));
+                if(MainWindow.lbNoteTab.treeView.getRoot().getChildren().size() != 0){
+                    NoteTreeView.defineNaNLocations();
+                    NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
+                    if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50)));
+                }
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
 
-                for(int i = 0; i <= 3; i++){
+                for(int i = 0; i <= 5; i++){
                     if(mostUsed.size() > i){
                         TextTreeItem item = mostUsed.get(i);
 
@@ -301,7 +302,7 @@ public class PageRenderer extends Pane{
         return Math.max(Math.min(mouseX, getWidth()), 0);
     }
     public double getMouseY(){
-        return Math.max(Math.min(mouseY, getWidth()), 0);
+        return Math.max(Math.min(mouseY, getHeight()), 0);
     }
 
     public double getRealMouseX(){

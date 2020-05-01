@@ -31,9 +31,9 @@ import java.awt.*;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -345,6 +345,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					Main.settings.setLanguage(value);
 					TR.updateTranslation();
 
+					MainWindow.userData.saveData();
 					MainWindow.hasToClose = true;
 					if(MainWindow.mainScreen.closeFile(true)){
 						Main.window.close();
@@ -476,6 +477,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	}
 	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, double leftMargin){
+
+		if(System.getProperty("os.name").toLowerCase().contains("mac")){
+			accelerator = accelerator.replace(Pattern.quote("Ctrl"), "Meta");
+		}
 
 		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text, 400, true);
 

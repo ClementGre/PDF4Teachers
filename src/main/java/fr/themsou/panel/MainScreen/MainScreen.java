@@ -148,6 +148,7 @@ public class MainScreen extends Pane {
 
 		});
 		setOnMouseDragged(e -> {
+			if(!(e.getTarget() instanceof Element)){
 				double distY = e.getSceneY() - dragStartY;
 				double distX = e.getSceneX() - dragStartX;
 
@@ -162,7 +163,7 @@ public class MainScreen extends Pane {
 				}else if(distX < 0){
 					zoomOperator.scrollRight((int) -distX, true);
 				}
-
+			}
 
 			dragStartY = e.getSceneY();
 			dragStartX = e.getSceneX();
