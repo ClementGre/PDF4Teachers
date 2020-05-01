@@ -11,6 +11,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
+import java.util.regex.Pattern;
 
 public class NodeMenuItem extends CustomMenuItem {
 
@@ -61,7 +62,7 @@ public class NodeMenuItem extends CustomMenuItem {
 
     public void setAccelerator(String accelerator){
 
-        Label acceleratorLabel = new Label(accelerator);
+        Label acceleratorLabel = new Label(accelerator.replaceAll(Pattern.quote("Meta"), "Cmd"));
         if(fat) acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 2 10 2 0;"); // top - right - bottom - left
         else acceleratorLabel.setStyle("-fx-font-size: 13;");
         getNode().getChildren().set(4, acceleratorLabel);

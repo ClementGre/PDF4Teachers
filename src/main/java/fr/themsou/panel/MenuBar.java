@@ -479,7 +479,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, double leftMargin){
 
 		if(System.getProperty("os.name").toLowerCase().contains("mac")){
-			accelerator = accelerator.replace(Pattern.quote("Ctrl"), "Meta");
+			accelerator = accelerator.replaceAll(Pattern.quote("Ctrl"), "Meta");
 		}
 
 		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text, 400, true);
