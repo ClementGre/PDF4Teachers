@@ -3,9 +3,24 @@
 
 ## PDF4Teachers
 
+**This app is specifically designed for teachers, it allows to annotate assessments returned in PDF with a very good productivity **
+
+Since V1.1.0, PDF4Teachers is fully translated in English. Welcome to English speaking teachers !
+
+PDF4Teachers is a free and open-source application.
+
+PDF4Teachers offers tools for a productive edit of PDF files, during the annotation / correction of assessments. Edits are saved separately from PDF files, lists of previous and favorites annotations allow quick insertion of recurrent advices and corrections. Documents are managed as a set. when job is done, all documents can be exported as new PDF files with annotations on it.
+
+PDF4Teachers includes special functionalities for annotation of grades and offers a tool for grading scale (marking scheme). When using numerical grading system, the tool computes the total and sub-totals, and exports the grades of a whole set of corrected documents as a .csv spreadsheet.
+
+PDF4Teachers is available for Windows, Linux, OSX. Go to the download section with the release button above.
+
+Teachers speaking other languages than French and English : help us translate PDF4Teachers, check in the language settings on how to do it !
+
+
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 
-Elle est basée sur un système d'édition, vous pouvez éditer votre document et sauvegarder l'édition pour reprendre votre travail plus tard. Vous pouvez ensuite exporter le document sous la forme d'un nouveau fichier PDF.
+Elle est basée sur un système d'édition rapide des documents PDF. L'édition peut être sauvée pour reprendre le travail plus tard. Lorsque les éditions sont terminées, le document peut être exporté sous la forme d'un nouveau fichier PDF.
 Les éditions sont composées de plusieurs éléments : Les commentaires (Texte), les Notes et les formes géométriques (Carrés, ronds, etc.)
 
 Vous pouvez définir un barème pour une série de copies puis entrer les notes dans chaque copie. La somme des notes se calcule automatiquement. Une fois terminé, vous pouvez exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichiers CSV (Tableaux de donnés formatable par LibreOffice Calc ou Excel).
