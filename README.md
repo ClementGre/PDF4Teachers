@@ -3,7 +3,7 @@
 
 ## PDF4Teachers
 
-**This app is specifically designed for teachers, it allows to annotate assessments returned in PDF with a very good productivity **
+**This app is specifically designed for teachers, it allows to annotate assessments returned in PDF with a very good productivity**
 
 Since V1.1.0, PDF4Teachers is fully translated in English. Welcome to English speaking teachers !
 
@@ -17,6 +17,7 @@ PDF4Teachers is available for Windows, Linux, OSX. Go to the download section wi
 
 Teachers speaking other languages than French and English : help us translate PDF4Teachers, check in the language settings on how to do it !
 
+---------------------------------------------------------------------------------------------------
 
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 
