@@ -1,7 +1,9 @@
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red)](LICENSE)
 [![Release](https://img.shields.io/github/release/themsou/PDF4Teachers.svg)](https://github.com/themsou/PDF4Teachers/releases/)
 
-## PDF4Teachers
+[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/bug?color=d73a4a)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
+[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.0%22+label%3A%22enhancement%22+)
 
 **This app is specifically designed for teachers, it allows to annotate assessments returned in PDF with a very good productivity**
 
@@ -18,6 +20,7 @@ PDF4Teachers is available for Windows, Linux, OSX. Go to the download section wi
 Teachers speaking other languages than French and English : help us translate PDF4Teachers, check in the language settings on how to do it !
 
 ---------------------------------------------------------------------------------------------------
+
 
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 

@@ -112,7 +112,7 @@ public class AboutWindow extends Stage {
             VBox apiInfo = new VBox();
                 Label api = new Label(TR.tr("Dépendances :"));
 
-                Hyperlink javaFx = new Hyperlink("Java FX 13.0.1");
+                Hyperlink javaFx = new Hyperlink("Java FX 14");
                 javaFx.setOnAction((ActionEvent t) -> {
                     Main.hostServices.showDocument("https://openjfx.io/");
                 });

@@ -100,7 +100,7 @@ public class NoteElement extends Text implements Element {
 
         // Forse to be hide when value == -1
         visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && getValue() == -1) setVisible(false);
+            if(newValue && getValue() == -1) setVisible(true);
         });
 
         textProperty().addListener((observable, oldValue, newValue) -> {
@@ -132,7 +132,7 @@ public class NoteElement extends Text implements Element {
             Edition.setUnsave();
 
             if(newValue.intValue() == -1){
-                setVisible(false);
+                //setVisible(false);
                 setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
             }else{
                 if(oldValue.intValue() == -1){ // Deviens visible
