@@ -14,9 +14,13 @@ import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 public class NoteCopyRatingScaleDialog {
+
+    ArrayList<NoteRating> ratings = new ArrayList<>();
 
     public NoteCopyRatingScaleDialog(){
 
@@ -62,10 +66,7 @@ public class NoteCopyRatingScaleDialog {
 
     }
 
-    ArrayList<NoteElement> notes = new ArrayList<>();
-    Element[] array = new Element[]{};
     public void prepareCopyEditions(){
-
         if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
         File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
 
@@ -73,22 +74,41 @@ public class NoteCopyRatingScaleDialog {
             Element[] elements = Edition.simpleLoad(editFile);
             for(Element element : elements){
                 if(element instanceof NoteElement){
-                    NoteElement note = ((NoteElement) element);
-                    note.setValue(-1);
-                    notes.add(note);
+                    ratings.add(((NoteElement) element).toNoteRating());
                 }
             }
-            array = new Element[notes.size()];
-            array = notes.toArray(array);
-
         }catch(Exception e){ e.printStackTrace(); }
     }
 
     public void copyToFile(File file){
         try{
-
             File editFile = Edition.getEditFile(file);
-            Edition.simpleAppend(editFile, array);
+
+            Element[] elementsArray = Edition.simpleLoad(editFile);
+            ArrayList<NoteElement> noteElements = new ArrayList<>();
+            List<Element> otherElements = new ArrayList<>();
+            for(Element element : elementsArray){
+                if(element instanceof NoteElement) noteElements.add((NoteElement) element);
+                else otherElements.add(element);
+            }
+
+            for(NoteRating rating : ratings){
+                NoteElement element = rating.getSamePathIn(noteElements);
+                if(element != null){
+                    otherElements.add(rating.toNoteElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
+                }else{
+                    otherElements.add(rating.toNoteElement());
+                }
+            }
+
+            otherElements.sort((o1, o2) -> {
+                if(o1 instanceof NoteElement && o2 instanceof NoteElement){
+                    return NoteTreeView.getElementTier(((NoteElement) o1).getParentPath()) - NoteTreeView.getElementTier(((NoteElement) o2).getParentPath());
+                }
+                return 0;
+            });
+
+            Edition.simpleSave(editFile, otherElements.toArray(new Element[0]));
 
         }catch(Exception e){
             e.printStackTrace();

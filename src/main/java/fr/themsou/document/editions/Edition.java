@@ -96,18 +96,31 @@ public class Edition {
             return elements.toArray(new Element[elements.size()]);
         }
     }
-    public static void simpleAppend(File editFile, Element[] elements) throws Exception {
+    public static void simpleSave(File editFile, Element[] elements) throws Exception {
 
         try{
             editFile.createNewFile();
-            DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, true)));
+            DataOutputStream writer = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(editFile, false)));
 
-            for(Element element : elements){
+            int counter = 0;
+            for(Element element : elements) {
+
+
                 element.writeSimpleData(writer);
-            }
 
+                if(element instanceof NoteElement){
+                    // not incrément counter if root is default
+                    if(Builders.cleanArray(((NoteElement) element).getParentPath().split(Pattern.quote("\\"))).length == 0){ // Element is Root
+                        if(((NoteElement) element).getValue() == -1 && ((NoteElement) element).getTotal() == 20 && ((NoteElement) element).getName().equals(TR.tr("Total"))){ // Element is default Root
+                            continue;
+                }}}
+                counter++;
+            }
             writer.flush();
             writer.close();
+
+            // delete edit file if edition is empty
+            if(counter == 0) editFile.delete();
 
         }catch (IOException e) {
             e.printStackTrace();
