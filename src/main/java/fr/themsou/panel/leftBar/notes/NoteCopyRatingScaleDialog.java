@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class NoteCopyRatingScaleDialog {
 
@@ -42,15 +43,16 @@ public class NoteCopyRatingScaleDialog {
             for(File file : MainWindow.lbFilesTab.files.getItems()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
-                    copyToFile(file);
-                    copiedEditions++;
+                    if(copyToFile(file)) copiedEditions++;
+                    else break;
                 }
             }
         }else if(option.get() == yesAll){
             prepareCopyEditions();
             for(File file : MainWindow.lbFilesTab.files.getItems()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
-                copyToFile(file); copiedEditions++;
+                if(copyToFile(file)) copiedEditions++;
+                else break;
             }
         }else return;
 
@@ -80,7 +82,7 @@ public class NoteCopyRatingScaleDialog {
         }catch(Exception e){ e.printStackTrace(); }
     }
 
-    public void copyToFile(File file){
+    public boolean copyToFile(File file){
         try{
             File editFile = Edition.getEditFile(file);
 
@@ -96,8 +98,34 @@ public class NoteCopyRatingScaleDialog {
                 NoteElement element = rating.getSamePathIn(noteElements);
                 if(element != null){
                     otherElements.add(rating.toNoteElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
+                    noteElements.remove(element);
                 }else{
                     otherElements.add(rating.toNoteElement());
+                }
+            }
+
+            if(noteElements.size() >= 1){
+                String notes = "";
+                for(NoteElement note : noteElements){
+                    notes += "\n" + note.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + note.getName();
+                }
+
+                Alert dialog = new Alert(Alert.AlertType.WARNING);
+                new JMetro(dialog.getDialogPane(), Style.LIGHT);
+                Builders.secureAlert(dialog);
+                dialog.setTitle(TR.tr("Écraser les notes non correspondantes"));
+                dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + notes + "\n" + TR.tr("Dans le document") + " : " + file.getName());
+
+                ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.tr("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.tr("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getButtonTypes().setAll(ignore, stop, stopAll);
+
+                Optional<ButtonType> option = dialog.showAndWait();
+                if(option.get() == stop){
+                    return true;
+                }else if(option.get() == stopAll){
+                    return false;
                 }
             }
 
@@ -109,9 +137,11 @@ public class NoteCopyRatingScaleDialog {
             });
 
             Edition.simpleSave(editFile, otherElements.toArray(new Element[0]));
+            return true;
 
         }catch(Exception e){
             e.printStackTrace();
+            return true;
         }
     }
 
