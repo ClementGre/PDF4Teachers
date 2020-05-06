@@ -1,6 +1,7 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -86,6 +87,16 @@ public class Document {
         }
         pages = new ArrayList<>();
 
+    }
+
+    public PageRenderer getPreciseMouseCurrentPage(){
+        for(PageRenderer page : pages){
+            double bottomY = page.getBottomY();
+            if(MainWindow.mainScreen.paneMouseY < bottomY){
+                return page;
+            }
+        }
+        return null;
     }
 
     public boolean save(){

@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
+import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
@@ -33,6 +34,7 @@ public class TextElement extends Text implements Element {
 	ContextMenu menu = new ContextMenu();
 
 	private int pageNumber;
+	private int pageDragNumber;
 	private int shiftX = 0;
 	private int shiftY = 0;
 
@@ -112,61 +114,39 @@ public class TextElement extends Text implements Element {
 			}
 		});
 
-		setOnMouseDragged(e -> {
-
+		setOnMouseReleased(e -> {
 			Edition.setUnsave();
 			double itemX = getLayoutX() + e.getX() - shiftX;
 			double itemY = getLayoutY() + e.getY() - shiftY;
 
-			boolean changePage = false;
-			if(getPage().getRealMouseY() < -30){
-				if(getPageNumber() > 0){
+			checkSwitchLocation(itemX, itemY);
 
+			PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
+			if(newPage != null){
+				if(newPage.getPage() != getPageNumber()){
 					MainWindow.mainScreen.setSelected(null);
-					switchPage(getPageNumber() -1);
-					try{
-						Robot robot = new java.awt.Robot();
-						robot.mouseRelease(16);
-						robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()-getLayoutBounds().getHeight()/2));
-						robot.mousePress(16);
-					}catch(AWTException ex){ ex.printStackTrace(); }
 
-					itemY = getPage().getHeight();
-					changePage = true;
-				}
-			}else if(getPage().getRealMouseY() > getPage().getHeight() + 30){
-				if(getPageNumber() < MainWindow.mainScreen.document.pages.size()-1){
+					switchPage(newPage.getPage());
+					itemY = newPage.getPreciseMouseY() - shiftY;
+					checkSwitchLocation(itemX, itemY);
 
-					MainWindow.mainScreen.setSelected(null);
-					switchPage(getPageNumber() +1);
-					try{
-						Robot robot = new java.awt.Robot();
-						robot.mouseRelease(16);
-						robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()+getLayoutBounds().getHeight()/2));
-						robot.mousePress(16);
-					}catch(AWTException ex){ ex.printStackTrace(); }
+					layoutXProperty().bind(getPage().widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+					layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 
-					itemY = 0;
-					changePage = true;
+					MainWindow.mainScreen.setSelected(this);
 				}
 			}
 
-			checkLocation(itemX, itemY);
+			checkLocation(getLayoutX(), getLayoutY());
+			MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
 
-			if(changePage){
-				layoutXProperty().bind(getPage().widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
-				layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
-				MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
-			}
-
+			if(Main.DEBUG) Tooltip.install(this, new Tooltip("p: " + getPageNumber() + "\nx: " + getRealX() + "\ny: " + getRealY()));
 		});
+		setOnMouseDragged(e -> {
+			double itemX = getLayoutX() + e.getX() - shiftX;
+			double itemY = getLayoutY() + e.getY() - shiftY;
 
-		textProperty().addListener((observable, oldValue, newValue) -> {
-			Edition.setUnsave();
-
-			if(getLayoutY() < getLayoutBounds().getHeight()){
-				checkLocation(getLayoutX(), getLayoutY());
-			}
+			checkSwitchLocation(itemX, itemY);
 		});
 	}
 
@@ -177,15 +157,36 @@ public class TextElement extends Text implements Element {
 
 		setBoundsType(TextBoundsType.VISUAL);
 		double linesHeight = getLayoutBounds().getHeight();
+
 		if(itemY < linesHeight) itemY = linesHeight;
 		if(itemY > getPage().getHeight()) itemY = getPage().getHeight();
+
 		if(itemX < 0) itemX = 0;
 		if(itemX > getPage().getWidth() - getLayoutBounds().getWidth()) itemX = getPage().getWidth() - getLayoutBounds().getWidth();
+
 		setBoundsType(TextBoundsType.LOGICAL);
 
 		realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
 		realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 
+	}
+	@Override
+	public void checkSwitchLocation(double itemX, double itemY){
+
+
+		setBoundsType(TextBoundsType.VISUAL);
+		double linesHeight = getLayoutBounds().getHeight();
+
+		if(getPageNumber() == 0) if(itemY < linesHeight) itemY = linesHeight;
+		if(getPageNumber() == MainWindow.mainScreen.document.totalPages-1) if(itemY > getPage().getHeight()) itemY = getPage().getHeight();
+
+		if(itemX < 0) itemX = 0;
+		if(itemX > getPage().getWidth() - getLayoutBounds().getWidth()) itemX = getPage().getWidth() - getLayoutBounds().getWidth();
+
+		setBoundsType(TextBoundsType.LOGICAL);
+
+		realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
+		realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 	}
 
 	// SELECT - DELETE - SWITCH PAGE
@@ -197,6 +198,7 @@ public class TextElement extends Text implements Element {
 		MainWindow.mainScreen.setSelected(this);
 		MainWindow.lbTextTab.selectItem();
 		toFront();
+		getPage().toFront();
 	}
 	@Override
 	public void delete() {

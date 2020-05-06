@@ -17,6 +17,7 @@ import javafx.event.Event;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -42,7 +43,7 @@ public class NoteElement extends Text implements Element {
     private IntegerProperty realX = new SimpleIntegerProperty();
     private IntegerProperty realY = new SimpleIntegerProperty();
 
-    private int pageNumber; // WARNING : Don't use this value (Only for simpleLoading)
+    private int pageNumber;
     private int shiftX = 0;
     private int shiftY = 0;
 
@@ -73,6 +74,8 @@ public class NoteElement extends Text implements Element {
         setCursor(Cursor.MOVE);
         layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
+
+        checkLocation(getLayoutX(), getLayoutY());
 
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
         item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
@@ -184,9 +187,7 @@ public class NoteElement extends Text implements Element {
 
             shiftX = (int) e.getX();
             shiftY = (int) e.getY();
-
             calculateMinAndMaxY();
-
             menu.hide();
             select();
 
@@ -194,7 +195,6 @@ public class NoteElement extends Text implements Element {
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
         });
-        setOnMouseReleased(e -> NoteTreeView.defineNaNLocations());
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
                 NoteTreeItem treeItemElement;
@@ -203,56 +203,41 @@ public class NoteElement extends Text implements Element {
                 treeItemElement.noteField.setText("");
             }
         });
-
-
-        setOnMouseDragged(e -> {
-
+        setOnMouseReleased(e -> {
             Edition.setUnsave();
             double itemX = getLayoutX() + e.getX() - shiftX;
             double itemY = getLayoutY() + e.getY() - shiftY;
 
-            boolean changePage = false;
-            if(getPage().getRealMouseY() < -30){ //&& getPage().getPage() > minYPage){ // Monter d'une page
-                if(getPage().getPage() > 0){
+            checkSwitchLocation(itemX, itemY);
 
-
-
-                    MainWindow.mainScreen.setSelected(null);
-                    switchPage(getPageNumber() -1);
-                    try{
-                        Robot robot = new java.awt.Robot();
-                        robot.mouseRelease(16);
-                        robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()-getLayoutBounds().getHeight()/2));
-                        robot.mousePress(16);
-                    }catch(AWTException ex){ ex.printStackTrace(); }
-
-                    itemY = getPage().getHeight();
-                    changePage = true;
-                }
-            }else if(getPage().getRealMouseY() > getPage().getHeight() + 30){// && getPage().getPage() < maxYPage){ // Descendre d'une page
-                if(getPage().getPage() < MainWindow.mainScreen.document.pages.size()-1){
+            PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
+            if(newPage != null){
+                if(newPage.getPage() != getPageNumber()){
 
                     MainWindow.mainScreen.setSelected(null);
-                    switchPage(getPageNumber() +1);
-                    try{
-                        Robot robot = new java.awt.Robot();
-                        robot.mouseRelease(16);
-                        robot.mouseMove((int) e.getScreenX(), (int) (e.getScreenY()+getLayoutBounds().getHeight()/2));
-                        robot.mousePress(16);
-                    }catch(AWTException ex){ ex.printStackTrace(); }
 
-                    itemY = 0;
-                    changePage = true;
+                    switchPage(newPage.getPage());
+
+                    itemY = newPage.getPreciseMouseY() - shiftY;
+                    checkSwitchLocation(itemX, itemY);
+
+                    layoutXProperty().bind(getPage().widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
+                    layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
+
+                    MainWindow.mainScreen.setSelected(this);
                 }
             }
 
-            checkLocation(itemX, itemY);
+            checkLocation(getLayoutX(), getLayoutY());
+            NoteTreeView.defineNaNLocations();
 
-            if(changePage){
-                layoutXProperty().bind(getPage().widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
-                layoutYProperty().bind(getPage().heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
-                MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
-            }
+            if(Main.DEBUG) Tooltip.install(this, new Tooltip("p: " + getPageNumber() + "\nx: " + getRealX() + "\ny: " + getRealY()));
+        });
+        setOnMouseDragged(e -> {
+            double itemX = getLayoutX() + e.getX() - shiftX;
+            double itemY = getLayoutY() + e.getY() - shiftY;
+
+            checkSwitchLocation(itemX, itemY);
         });
     }
 
@@ -328,6 +313,31 @@ public class NoteElement extends Text implements Element {
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 
     }
+    @Override
+    public void checkSwitchLocation(double itemX, double itemY){
+
+        setBoundsType(TextBoundsType.VISUAL);
+        double height = getLayoutBounds().getHeight();
+        double width = getLayoutBounds().getWidth();
+
+        //int minY = getPageNumber() > minYPage ? 0 : this.minY;
+        //int maxY = getPageNumber() < maxYPage ? (int) getPage().getHeight() : this.maxY;
+
+        int minY = 0;
+        int maxY = (int) getPage().getHeight();
+
+        if(getPageNumber() == MainWindow.mainScreen.document.totalPages-1) if(itemY > maxY) itemY = maxY;
+        if(getPageNumber() == 0) if(itemY < height + minY) itemY = height + minY;
+
+        if(itemX < 0) itemX = 0;
+        if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
+
+        setBoundsType(TextBoundsType.LOGICAL);
+
+        realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
+        realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
+
+    }
 
     // SELECT - DELETE - SWITCH PAGE
 
@@ -337,6 +347,7 @@ public class NoteElement extends Text implements Element {
         MainWindow.leftBar.getSelectionModel().select(2);
         MainWindow.mainScreen.setSelected(this);
         toFront();
+        getPage().toFront();
 
         // Sélectionne l'élément associé dans l'arbre
         NoteTreeItem noteElement;

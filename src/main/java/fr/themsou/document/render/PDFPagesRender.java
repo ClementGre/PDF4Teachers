@@ -59,7 +59,8 @@ public class PDFPagesRender {
 			try{
 				PDDocument document = PDDocument.load(file);
 				PDFRenderer pdfRenderer = new PDFRenderer(document);
-				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);
+				//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
 				document.close();
 			}catch(Exception e){
 				e.printStackTrace();

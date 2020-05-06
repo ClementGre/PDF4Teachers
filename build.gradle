@@ -8,7 +8,7 @@ repositories{
     jcenter()
 }
 dependencies{
-    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.17'
+    compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.19'
     compile (group: 'org.jfxtras', name: 'jmetro', version: '11.5.10'){
         exclude group: 'org.openjfx'
     }

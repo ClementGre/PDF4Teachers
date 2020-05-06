@@ -23,7 +23,6 @@ import javafx.scene.text.Font;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-
 public class MainScreen extends Pane {
 
 	public Pane pane = new Pane();
@@ -33,12 +32,17 @@ public class MainScreen extends Pane {
 	private int totalHeight = 40;
 	private int pageWidth = 596;
 
+	public double paneMouseX = 0;
+	public double paneMouseY = 0;
+
+	public double mouseX = 0;
+	public double mouseY = 0;
+
 	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 	public Document document;
 
 	private Label info = new Label();
-	public boolean ctrlDown = false;
 
 	public static class Status {
 		public static final int CLOSED = 0;
@@ -100,7 +104,6 @@ public class MainScreen extends Pane {
 		});
 
 		addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
-			e.consume();
 			if(getStatus() == Status.OPEN){
 				zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY());
 			}
@@ -108,11 +111,7 @@ public class MainScreen extends Pane {
 
 		addEventFilter(ScrollEvent.SCROLL, e -> {
 
-			e.consume();
-
 			if(e.isControlDown()){ // ZOOM
-				ctrlDown = true;
-
 
 				if(getStatus() == Status.OPEN){
 
@@ -123,8 +122,6 @@ public class MainScreen extends Pane {
 					}
 				}
 			}else{ // SCROLL
-				ctrlDown = false;
-
 
 				if(e.getDeltaY() != 0){
 					if(e.getDeltaY() > 0){
@@ -141,8 +138,6 @@ public class MainScreen extends Pane {
 						zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false);
 					}
 				}
-
-
 
 			}
 
@@ -167,9 +162,23 @@ public class MainScreen extends Pane {
 
 			dragStartY = e.getSceneY();
 			dragStartX = e.getSceneX();
+
+			mouseY = e.getSceneY();
+			mouseX = e.getSceneX();
 		});
 
-		setOnMouseMoved(e -> ctrlDown = e.isControlDown());
+		setOnMouseMoved(e -> {
+			mouseY = e.getSceneY();
+			mouseX = e.getSceneX();
+		});
+		pane.setOnMouseMoved(e -> {
+			paneMouseY = e.getSceneY();
+			paneMouseX = e.getSceneX();
+		});
+		pane.setOnMouseDragged(e -> {
+			paneMouseY = e.getSceneY();
+			paneMouseX = e.getSceneX();
+		});
 
 		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));

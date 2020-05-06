@@ -117,7 +117,7 @@ public class AboutWindow extends Stage {
                     Main.hostServices.showDocument("https://openjfx.io/");
                 });
 
-                Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.17");
+                Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.19");
                 pdfBox.setOnAction((ActionEvent t) -> {
                     Main.hostServices.showDocument("https://pdfbox.apache.org/");
                 });

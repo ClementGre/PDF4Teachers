@@ -24,6 +24,7 @@ public interface Element {
 	float GRID_WIDTH = 1654;
 	float GRID_HEIGHT = 2339;
 
+	void checkSwitchLocation(double itemX, double itemY);
 	void checkLocation(double itemX, double itemY);
 
 	// SELECT - DELETE - SWITCH PAGE
@@ -117,6 +118,4 @@ public interface Element {
 
 		return FontPosture.REGULAR;
 	}
-
-
 }

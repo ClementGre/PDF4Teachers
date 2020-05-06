@@ -67,11 +67,6 @@ public class TextTreeItem extends TreeItem{
 	private ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
 		setColor((Color) newValue);
 	};
-	private EventHandler<MouseEvent> coreMouseReleaseEvent = (MouseEvent e) -> {
-		if(e.getButton() == MouseButton.PRIMARY && getCore() == core){
-			if(MainWindow.lbTextTab.onFileTextSortManager.getSelectedButton().getText().equals(TR.tr("Position"))) MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
-		}
-	};
 
 
 	public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate) {
@@ -104,7 +99,6 @@ public class TextTreeItem extends TreeItem{
 			fontProperty().bind(core.fontProperty());
 			core.textProperty().addListener(textChangeListener);
 			core.fillProperty().addListener(colorChangeListener);
-			if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(coreMouseReleaseEvent);
 		}
 
 		// Setup les éléments graphiques
@@ -299,7 +293,6 @@ public class TextTreeItem extends TreeItem{
 		fontProperty().unbind();
 		core.textProperty().removeListener(textChangeListener);
 		core.fillProperty().removeListener(colorChangeListener);
-		if(type == TextTreeItem.ONFILE_TYPE) core.setOnMouseReleased(null);
 
 		this.core = null;
 		setup();

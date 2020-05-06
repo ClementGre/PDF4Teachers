@@ -185,6 +185,12 @@ public class PageRenderer extends Pane{
             }
         }else if(showStatus >= 1){
 
+            if(MainWindow.mainScreen.getSelected() != null){
+                if(MainWindow.mainScreen.getSelected().getPageNumber() == getPage()){
+                    return;
+                }
+            }
+
             setVisible(false);
 
             // Disable since the image of the ImageView always stay in the Heap (JavaFX Memory Leak)
@@ -195,7 +201,6 @@ public class PageRenderer extends Pane{
                 status = PageStatus.HIDE;
                 for(Node node : getChildren()) node.setVisible(false);
             }*/
-
 
         }
 
@@ -227,6 +232,19 @@ public class PageRenderer extends Pane{
             status = PageStatus.RENDERED;
         });
     }
+
+    // COORDINATES
+
+    // Bottom of the page coordinates in the Pane of MainScreen
+    public double getBottomY(){
+        return MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + getTranslateY())* MainWindow.mainScreen.pane.getScaleX() + 45;
+    }
+
+    public double getPreciseMouseY(){
+        return (MainWindow.mainScreen.paneMouseY - (getBottomY() - 15 - getHeight()*MainWindow.mainScreen.pane.getScaleX()))/MainWindow.mainScreen.pane.getScaleX();
+    }
+
+    // ELEMENTS
 
     public void clearElements(){
         getChildren().clear();
