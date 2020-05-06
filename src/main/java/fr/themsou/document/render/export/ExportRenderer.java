@@ -43,12 +43,12 @@ public class ExportRenderer {
             PDPage page = doc.getPage(pageNumber);
             PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
 
-            float pageHeight = page.getBleedBox().getHeight();
-            float pageWidth = page.getBleedBox().getWidth();
+            float pageHeight = page.getCropBox().getHeight();
+            float pageWidth = page.getCropBox().getWidth();
             // ROTATE PAGES ADAPT
             if(page.getRotation() == 90 || page.getRotation() == 270){
-                pageHeight = page.getBleedBox().getWidth();
-                pageWidth = page.getBleedBox().getHeight();
+                pageHeight = page.getCropBox().getWidth();
+                pageWidth = page.getCropBox().getHeight();
             }
 
             for(Element element : elements){

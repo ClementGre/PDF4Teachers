@@ -113,12 +113,13 @@ public class PDFPagesRender {
 	}
 	public PDRectangle getPageSize(int pageNumber){
 
-		PDPage page = document.getPage(pageNumber);
+		return getPageCropBox(pageNumber);
+		/*PDPage page = document.getPage(pageNumber);
 		PDRectangle pageSize;
 		if(page.getRotation() == 90 || page.getRotation() == 270) pageSize = new PDRectangle(page.getBleedBox().getHeight(), page.getBleedBox().getWidth());
 		else pageSize = page.getBleedBox();
 
-		return pageSize;
+		return pageSize;*/
 	}
 	public PDRectangle getPageCropBox(int pageNumber){
 		PDPage page = document.getPage(pageNumber);
