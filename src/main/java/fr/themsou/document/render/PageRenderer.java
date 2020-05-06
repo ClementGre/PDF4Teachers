@@ -237,11 +237,11 @@ public class PageRenderer extends Pane{
 
     // Bottom of the page coordinates in the Pane of MainScreen
     public double getBottomY(){
-        return MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + getTranslateY())* MainWindow.mainScreen.pane.getScaleX() + 45;
+        return MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + 15 + getTranslateY())* MainWindow.mainScreen.pane.getScaleX();
     }
 
     public double getPreciseMouseY(){
-        return (MainWindow.mainScreen.paneMouseY - (getBottomY() - 15 - getHeight()*MainWindow.mainScreen.pane.getScaleX()))/MainWindow.mainScreen.pane.getScaleX();
+        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight()*MainWindow.mainScreen.pane.getScaleX()))/MainWindow.mainScreen.pane.getScaleX() + 15;
     }
 
     // ELEMENTS

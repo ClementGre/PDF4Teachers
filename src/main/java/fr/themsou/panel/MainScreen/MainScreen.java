@@ -15,6 +15,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.print.PageLayout;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -26,7 +27,6 @@ import jfxtras.styles.jmetro.Style;
 public class MainScreen extends Pane {
 
 	public Pane pane = new Pane();
-
 	public ZoomOperator zoomOperator;
 
 	private int totalHeight = 40;
@@ -50,6 +50,7 @@ public class MainScreen extends Pane {
 		public static final int ERROR = 2;
 	}
 
+	int dragNScrollFactor = 0;
 	double dragStartX;
 	double dragStartY;
 
@@ -105,7 +106,7 @@ public class MainScreen extends Pane {
 
 		addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
 			if(getStatus() == Status.OPEN){
-				zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY());
+				zoomOperator.zoom(e.getZoomFactor(), e.getX(), e.getY());
 			}
 		});
 
@@ -114,7 +115,6 @@ public class MainScreen extends Pane {
 			if(e.isControlDown()){ // ZOOM
 
 				if(getStatus() == Status.OPEN){
-
 					if(e.getDeltaY() < 0){
 						zoomOperator.zoom(1+e.getDeltaY()/200, e.getSceneX(), e.getSceneY());
 					}else if(e.getDeltaY() > 0){
@@ -142,10 +142,11 @@ public class MainScreen extends Pane {
 			}
 
 		});
+
 		setOnMouseDragged(e -> {
 			if(!(e.getTarget() instanceof Element)){
-				double distY = e.getSceneY() - dragStartY;
-				double distX = e.getSceneX() - dragStartX;
+				double distY = e.getY() - dragStartY;
+				double distX = e.getX() - dragStartX;
 
 				if(distY > 0){
 					zoomOperator.scrollUp((int) distY, true);
@@ -158,26 +159,53 @@ public class MainScreen extends Pane {
 				}else if(distX < 0){
 					zoomOperator.scrollRight((int) -distX, true);
 				}
+			}else{
+				double y = Math.max(1, Math.min(getHeight(), e.getY()));
+				if(y < 75){
+					dragNScrollFactor = (int) (y*-1);
+				}else if(getHeight() - y < 75){
+					dragNScrollFactor = (int) ((getHeight()-y)*-1 + 75);;
+				}else{
+					dragNScrollFactor = 0;
+				}
+
+				if(dragNScrollFactor != 0){
+					new Thread(() -> {
+						while(dragNScrollFactor != 0){
+							Platform.runLater(() -> {
+								if(dragNScrollFactor < 0){
+									zoomOperator.scrollUp((dragNScrollFactor+75)/10, true);
+								}else if(dragNScrollFactor > 0){
+									zoomOperator.scrollDown(dragNScrollFactor/10, true);
+								}
+							});
+							try{ Thread.sleep(100); }catch(InterruptedException ex){ ex.printStackTrace(); }
+						}
+
+					}, "DragNScroll").start();
+				}
 			}
 
-			dragStartY = e.getSceneY();
-			dragStartX = e.getSceneX();
+			dragStartY = e.getY();
+			dragStartX = e.getX();
 
-			mouseY = e.getSceneY();
-			mouseX = e.getSceneX();
+			mouseY = e.getY();
+			mouseX = e.getX();
 		});
-
+		setOnMouseReleased(e -> {
+			dragNScrollFactor = 0;
+		});
 		setOnMouseMoved(e -> {
-			mouseY = e.getSceneY();
-			mouseX = e.getSceneX();
+			mouseY = e.getY();
+			mouseX = e.getX();
 		});
 		pane.setOnMouseMoved(e -> {
-			paneMouseY = e.getSceneY();
-			paneMouseX = e.getSceneX();
+			paneMouseY = e.getY();
+			paneMouseX = e.getX();
 		});
 		pane.setOnMouseDragged(e -> {
-			paneMouseY = e.getSceneY();
-			paneMouseX = e.getSceneX();
+			paneMouseY = e.getY();
+			paneMouseX = e.getX();
 		});
 
 		// bind window's name
@@ -185,7 +213,7 @@ public class MainScreen extends Pane {
 
 		setOnMousePressed(e -> {
 			dragStartX = e.getSceneX();
-			dragStartY = e.getSceneY();
+			dragStartY = e.getY();
 			if(!(e.getTarget() instanceof Element)){
 				setSelected(null);
 			}

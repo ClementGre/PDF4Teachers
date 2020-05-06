@@ -92,7 +92,7 @@ public class Document {
     public PageRenderer getPreciseMouseCurrentPage(){
         for(PageRenderer page : pages){
             double bottomY = page.getBottomY();
-            if(MainWindow.mainScreen.paneMouseY < bottomY){
+            if(MainWindow.mainScreen.mouseY < bottomY){
                 return page;
             }
         }
