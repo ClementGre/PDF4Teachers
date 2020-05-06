@@ -42,7 +42,7 @@ public class SortManager {
             }
 
             Button button = new Button(buttonName);
-            button.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/down.png")+"", 0, 0));
+            button.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/up.png")+"", 0, 0));
             button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
             GridPane.setHgrow(button, Priority.ALWAYS);
@@ -58,7 +58,7 @@ public class SortManager {
             // Image de l'ordre
             order.addListener(new ChangeListener<>() {
                 @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder) {
-                    button.setGraphic(Builders.buildImage(getClass().getResource(newOrder ? "/img/Sort/down.png" : "/img/Sort/up.png") + "", 0, 0));
+                    button.setGraphic(Builders.buildImage(getClass().getResource(newOrder ? "/img/Sort/up.png" : "/img/Sort/down.png") + "", 0, 0));
                 }
             });
 

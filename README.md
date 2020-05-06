@@ -1,6 +1,6 @@
-## Fast shortcuts
+## Shortcuts
 
-[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=read%20license)](LICENSE)
+[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/)
 
 ## Before opening new issue, see :
