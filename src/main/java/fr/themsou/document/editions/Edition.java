@@ -120,10 +120,10 @@ public class Edition {
         }else{ // file already exist
             DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
 
-            double[] totalNote = new double[]{-1, 0};
+            double[] totalNote = new double[]{-1, 0}; // Root note value and total
             int text = 0;
-            int allNotes = 0;
-            int notes = 0;
+            int allNotes = 0; // All note element count
+            int notes = 0; // All entered note
             int draw = 0;
             while(reader.available() != 0){
                 byte elementType = reader.readByte();
@@ -134,10 +134,12 @@ public class Edition {
                         TextElement.consumeData(reader);
                     break;
                     case 2:
-                        allNotes++;
                         double[] data = NoteElement.consumeData(reader);
-                        if(data.length == 2) totalNote = data;
+
+                        if(data.length == 2) totalNote = data; // get the root note value and the root note total
+
                         if(data[0] != -1) notes++;
+                        allNotes++;
                     break;
                     case 3:
                         draw++;

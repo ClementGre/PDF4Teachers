@@ -69,6 +69,10 @@ public class LBFilesListView {
                                     ImageView check = Builders.buildImage(getClass().getResource("/img/FilesTab/check.png")+"", 0, 0);
                                     HBox.setMargin(check, new Insets(0, 4, 0, 0));
                                     nameBox.getChildren().add(check);
+                                }else if(elementsCount[2] > 1){
+                                    ImageView check = Builders.buildImage(getClass().getResource("/img/FilesTab/check_low.png")+"", 0, 0);
+                                    HBox.setMargin(check, new Insets(0, 4, 0, 0));
+                                    nameBox.getChildren().add(check);
                                 }
 
                             }else{ // Don't have elements
