@@ -25,7 +25,7 @@ public class Macro {
 
                         if(MainWindow.lbTextTab.favoritesTextToggleOption.isSelected()) i++;
                         if(i <= MainWindow.lbTextTab.favoritesText.getChildren().size()){
-                            ((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i-1)).addToDocument(false, false);
+                            ((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i-1)).addToDocument(false);
                             return;
                         }
 
@@ -36,7 +36,7 @@ public class Macro {
 
                         if(MainWindow.lbTextTab.favoritesTextToggleOption.isSelected()) i++;
                         if(i <= MainWindow.lbTextTab.favoritesText.getChildren().size()){
-                            ((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i-1)).addToDocument(false, false);
+                            ((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i-1)).addToDocument(false);
                             return;
                         }
 

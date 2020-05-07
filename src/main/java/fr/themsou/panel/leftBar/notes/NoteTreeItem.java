@@ -8,6 +8,7 @@ import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,6 +41,8 @@ public class NoteTreeItem extends TreeItem {
     private TextArea nameField = new TextArea("☺");
     public TextArea noteField = new TextArea("☺");
     private TextArea totalField = new TextArea("☺");
+
+    private ContextMenu pageContextMenu = null;
 
     // EVENTS
     private EventHandler<MouseEvent> mouseEnteredEvent;
@@ -176,6 +179,12 @@ public class NoteTreeItem extends TreeItem {
             });
         });
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.contains("\n")){
+                NoteTreeItem afterItem = getAfterItem();
+                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
+                if(afterItem != null) Platform.runLater(() -> afterItem.nameField.requestFocus());
+            }
+
             String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
             if(newText.length() >= 20) newText = newText.substring(0, 20);
 
@@ -195,6 +204,15 @@ public class NoteTreeItem extends TreeItem {
             if(newValue.contains("/")){
                 totalField.requestFocus();
                 totalField.positionCaret(totalField.getText().length());
+            }
+            if(newValue.contains("\n")){ // Enter : Switch to the next note
+                if(pageContextMenu != null){
+                    pageContextMenu.hide();
+                    pageContextMenu.getItems().clear();
+                }
+                NoteTreeItem afterItem = getAfterChildItem();
+                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
+                if(afterItem != null) Platform.runLater(() -> afterItem.noteField.requestFocus());
             }
             String newText = newValue.replaceAll("[^0123456789.,]", "");
             if(newText.length() >= 5) newText = newText.substring(0, 5);
@@ -220,6 +238,12 @@ public class NoteTreeItem extends TreeItem {
             });
         });
         totalField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.contains("\n")){ // Enter : Switch to the next note
+                NoteTreeItem afterItem = getAfterChildItem();
+                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
+                if(afterItem != null) Platform.runLater(() -> afterItem.totalField.requestFocus());
+            }
+
             String newText = newValue.replaceAll("[^0123456789.,]", "");
             if(newText.length() >= 5) newText = newText.substring(0, 5);
 
@@ -249,7 +273,7 @@ public class NoteTreeItem extends TreeItem {
         pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
 
     }
-    public HBox getEditGraphics(int width){
+    public HBox getEditGraphics(int width, ContextMenu menu){
 
         Region spacer = new Region();
         Text name = new Text();
@@ -280,8 +304,6 @@ public class NoteTreeItem extends TreeItem {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         noteField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
-        totalField.setText(Main.format.format(core.getTotal()));
-        nameField.setText(core.getName());
         if(!isRoot() && getParent() != null){
             if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
@@ -295,6 +317,11 @@ public class NoteTreeItem extends TreeItem {
             });
         }
 
+        pageContextMenu = menu;
+
+        pane.setOnMouseEntered(e -> {
+            noteField.requestFocus();
+        });
         pane.setPrefWidth(width);
         return pane;
     }
@@ -347,6 +374,27 @@ public class NoteTreeItem extends TreeItem {
             parent = (NoteTreeItem) parent.getParent();
         }
         return (NoteTreeItem) parent.getChildren().get(children.getCore().getIndex()+1);
+    }
+
+    public NoteTreeItem getBeforeChildItem(){
+        NoteTreeItem beforeItem = getBeforeItem();
+        while(beforeItem != null){
+            NoteTreeItem beforeAfterItem = beforeItem.getBeforeItem();
+            if(!beforeItem.hasSubNote()) return beforeItem;
+            if(beforeAfterItem == null) return null;
+            beforeItem = beforeAfterItem;
+        }
+        return null;
+    }
+    public NoteTreeItem getAfterChildItem(){
+        NoteTreeItem afterItem = getAfterItem();
+        while(afterItem != null){
+            NoteTreeItem afterAfterItem = afterItem.getAfterItem();
+            if(!afterItem.hasSubNote()) return afterItem;
+            if(afterAfterItem == null) return null;
+            afterItem = afterAfterItem;
+        }
+        return null;
     }
 
     public void makeSum(){

@@ -106,7 +106,7 @@ public class TextTreeItem extends TreeItem{
 
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-				addToDocument(true, false);
+				addToDocument(false);
 				if(getType() == TextTreeItem.FAVORITE_TYPE){
 					MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
 				}else if(getType() == TextTreeItem.LAST_TYPE){
@@ -259,7 +259,7 @@ public class TextTreeItem extends TreeItem{
 		return new TextListItem(font.get(), text, color.get(), uses, creationDate);
 	}
 
-	public void addToDocument(boolean xAuto, boolean link){
+	public void addToDocument(boolean link){
 
 		if(MainWindow.mainScreen.hasDocument(false)){
 			uses++;
@@ -268,7 +268,7 @@ public class TextTreeItem extends TreeItem{
 				page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
 			int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
-			int x = (int) ((xAuto ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
+			int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
 			TextElement realElement = toRealTextElement(x, y, page.getPage());
 
 			if(link){

@@ -45,20 +45,20 @@ jlink {
         name = 'PDF4Teachers'
     }
     targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
-    //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-13/')
-    //targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-13.jdk/Contents/Home/')
+    //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-14/')
+    //targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home/')
 
     jpackage {
         installerOptions = [
                 '--description', project.description,
-                '--copyright', 'Copyrigth 2019 Clément G.',
+                //'--copyright', 'Copyrigth 2019 Clément G.',
                 '--app-version', project.version,
                 '--vendor', "Clément G."
         ] as List<String>
 
         installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
 
-        if(installerType == 'msi'){
+        if(installerType == 'msi'){ // WINDOWS
             imageOptions += ['--icon', 'src/main/resources/logo.ico']
             installerOptions += [
                     '--win-dir-chooser',
@@ -66,26 +66,22 @@ jlink {
                     '--win-shortcut',
                     '--win-menu-group', ''
             ]
-        }else if(installerType == 'pkg'){
+        }else if(installerType == 'dmg'){ // MAC
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
                     "--mac-package-name", "PDF4Teachers"
             ]
-
-        }else if(installerType in ['deb', 'rpm']){
+        }else if(installerType in ['deb', 'rpm']){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
                     '--linux-menu-group', 'Office',
                     '--linux-shortcut'
             ]
-        }else if (installerType == 'deb'){
-            installerOptions += [
-                    '--linux-deb-maintainer', 'themsou.ldv@gmail.com'
-            ]
-        }else if (installerType == 'rpm'){
-            installerOptions += [
-                    '--linux-rpm-license-type', 'Apache-2.0'
-            ]
+            if(installerType == 'deb'){
+                installerOptions += ['--linux-deb-maintainer', 'themsou.ldv@gmail.com']
+            }else if(installerType == 'rpm'){
+                installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
+            }
         }
     }
 }

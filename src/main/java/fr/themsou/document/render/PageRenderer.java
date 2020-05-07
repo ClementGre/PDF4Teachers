@@ -105,7 +105,7 @@ public class PageRenderer extends Pane{
                 if(MainWindow.lbNoteTab.treeView.getRoot().getChildren().size() != 0){
                     NoteTreeView.defineNaNLocations();
                     NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
-                    if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50)));
+                    if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
                 }
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
@@ -124,7 +124,7 @@ public class PageRenderer extends Pane{
                         name.setFont(item.name.getFont());
                         name.setFill(item.name.getTextFill());
 
-                        sub.setOnMouseClicked(event -> item.addToDocument(false, false));
+                        sub.setOnMouseClicked(event -> item.addToDocument(false));
 
                         sub.setLayoutY(-6);
                         sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);

@@ -142,7 +142,7 @@ public class NoteElement extends Text implements Element {
                     if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getCurrentPage());
                     }
-                    setRealX((int) ((getPage().getMouseX() <= 60 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
+                    setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
                     setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
                 }
                 calculateMinAndMaxY();
