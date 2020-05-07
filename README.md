@@ -1,8 +1,10 @@
 ## Shortcuts
 
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/)
+[![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/latest)
 
+[![TotalDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
+[![LatestDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/latest/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
 ## Before opening new issue, see :
 
 [![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/bug?color=d73a4a)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
