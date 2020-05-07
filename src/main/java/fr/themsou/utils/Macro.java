@@ -71,7 +71,7 @@ public class Macro {
                             for(ArrayList<TextListItem> list : MainWindow.lbTextTab.favoriteLists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
-                                    MainWindow.lbTextTab.listsManager.loadList(list);
+                                    MainWindow.lbTextTab.listsManager.loadList(list, true);
                                     return;
                                 }
                                 k++;
@@ -91,7 +91,7 @@ public class Macro {
                             for(ArrayList<TextListItem> list : MainWindow.lbTextTab.favoriteLists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
-                                    MainWindow.lbTextTab.listsManager.loadList(list);
+                                    MainWindow.lbTextTab.listsManager.loadList(list, true);
                                     return;
                                 }
                                 k++;

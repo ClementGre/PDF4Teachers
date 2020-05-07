@@ -88,15 +88,19 @@ public class ListsManager {
                     Builders.secureAlert(alert);
                     alert.setTitle(TR.tr("Actions de listes"));
                     alert.setHeaderText(TR.tr("Choisissez une action a effectuer avec la liste d'éléments.") + "\n" + TR.tr("Ces actions sont irréversibles."));
-                    alert.setContentText(TR.tr("- Charger remplacera la liste des éléments favoris par celle ci") + "\n" + TR.tr("- Supprimer supprimera la liste de la base de donnée"));
+                    alert.setContentText(TR.tr("- Vider et charger remplacera la liste des éléments favoris par celle ci") + "\n" +
+                                         TR.tr("- Charger ajoutera cette liste d'éléments à la liste des éléments favoris") + "\n" +
+                                         TR.tr("- Supprimer supprimera la liste de la base de donnée"));
 
                     ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType load = new ButtonType(TR.tr("Charger"), ButtonBar.ButtonData.OK_DONE);
+                    ButtonType loadReplace = new ButtonType(TR.tr("Vider et charger"), ButtonBar.ButtonData.OK_DONE);
                     ButtonType delete = new ButtonType(TR.tr("Supprimer"), ButtonBar.ButtonData.OTHER);
-                    alert.getButtonTypes().setAll(cancel, load, delete);
+                    alert.getButtonTypes().setAll(cancel, loadReplace, load, delete);
 
                     Optional<ButtonType> result = alert.showAndWait();
-                    if(result.get() == load) loadList(list.getValue());
+                    if(result.get() == load) loadList(list.getValue(), false);
+                    else if(result.get() == loadReplace) loadList(list.getValue(), true);
                     else if(result.get() == delete) deleteList(list.getKey());
 
                 });
@@ -106,9 +110,9 @@ public class ListsManager {
         }
     }
 
-    public void loadList(ArrayList<TextListItem> items){
+    public void loadList(ArrayList<TextListItem> items, boolean replace){
 
-        textTab.clearSavedFavoritesElements();
+        if(replace) textTab.clearSavedFavoritesElements();
 
         for(TextListItem item : items){
             textTab.favoritesText.getChildren().add(item.toTextTreeItem(TextTreeItem.FAVORITE_TYPE));
