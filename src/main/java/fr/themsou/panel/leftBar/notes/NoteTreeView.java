@@ -99,6 +99,7 @@ public class NoteTreeView extends TreeView<String> {
             // ELEMENT IS ROOT
             if(getRoot() != null) ((NoteTreeItem) getRoot()).getCore().delete();
             setRoot(element.toNoteTreeItem());
+            getSelectionModel().select(getRoot());
         }else{
             // OTHER
             NoteTreeItem treeElement = element.toNoteTreeItem();

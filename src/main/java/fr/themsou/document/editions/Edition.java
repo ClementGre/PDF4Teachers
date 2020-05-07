@@ -177,15 +177,17 @@ public class Edition {
                 for(int i = 0; i < page.getElements().size(); i++){
 
                     // Ne sauvegarde pas les notes pour préserver l'ordre des notes : les notes sont sauvegardés après
-                    if(!(page.getElements().get(i) instanceof NoteElement)) page.getElements().get(i).writeSimpleData(writer);
-                    counter++;
+                    if(!(page.getElements().get(i) instanceof NoteElement)){
+                        page.getElements().get(i).writeSimpleData(writer);
+                        counter++;
+                    }
                 }
             }
             for(NoteTreeItem element : NoteTreeView.getNotesArray((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot())){
                 element.getCore().writeSimpleData(writer);
 
                 // not incrément counter if root is default
-                if(Builders.cleanArray(element.getCore().getParentPath().split(Pattern.quote("\\"))).length == 0){ // Element is Root
+                if(element.isRoot()){ // Element is Root
                     if(element.getCore().getValue() == -1 && element.getCore().getTotal() == 20 && element.getCore().getName().equals(TR.tr("Total"))){ // Element is default Root
                         continue;
                     }

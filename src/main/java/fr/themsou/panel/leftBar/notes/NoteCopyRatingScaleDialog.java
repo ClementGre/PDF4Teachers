@@ -3,6 +3,7 @@ package fr.themsou.panel.leftBar.notes;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
@@ -17,11 +18,15 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public class NoteCopyRatingScaleDialog {
 
     ArrayList<NoteRating> ratings = new ArrayList<>();
+
+    boolean ignoreAlreadyExist = false;
+    boolean ignoreErase = false;
 
     public NoteCopyRatingScaleDialog(){
 
@@ -43,16 +48,18 @@ public class NoteCopyRatingScaleDialog {
             for(File file : MainWindow.lbFilesTab.files.getItems()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
-                    if(copyToFile(file)) copiedEditions++;
-                    else break;
+                    int result = copyToFile(file);
+                    if(result == 0) copiedEditions++;
+                    else if(result == 2) break;
                 }
             }
         }else if(option.get() == yesAll){
             prepareCopyEditions();
             for(File file : MainWindow.lbFilesTab.files.getItems()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
-                if(copyToFile(file)) copiedEditions++;
-                else break;
+                int result = copyToFile(file);
+                if(result == 0) copiedEditions++;
+                else if(result == 2) break;
             }
         }else return;
 
@@ -82,20 +89,45 @@ public class NoteCopyRatingScaleDialog {
         }catch(Exception e){ e.printStackTrace(); }
     }
 
-    public boolean copyToFile(File file){
+    // 0 : Copied | 1 : Canceled | 2 : Cancel All
+    public int copyToFile(File file){
         try{
             File editFile = Edition.getEditFile(file);
 
             Element[] elementsArray = Edition.simpleLoad(editFile);
-            ArrayList<NoteElement> noteElements = new ArrayList<>();
+            List<NoteElement> noteElements = new ArrayList<>();
             List<Element> otherElements = new ArrayList<>();
             for(Element element : elementsArray){
                 if(element instanceof NoteElement) noteElements.add((NoteElement) element);
                 else otherElements.add(element);
             }
 
+            if(noteElements.size() >= 1 && !ignoreAlreadyExist){
+                Alert dialog = new Alert(Alert.AlertType.WARNING);
+                new JMetro(dialog.getDialogPane(), Style.LIGHT);
+                Builders.secureAlert(dialog);
+                dialog.setTitle(TR.tr("Barème déjà présent"));
+                dialog.setHeaderText(TR.tr("L'édition du fichier") + " " + file.getName() + " " + TR.tr("contient déjà un barème"));
+                dialog.setContentText(TR.tr("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les ajouter au nouveau barème.") + "\n" + TR.tr("Vous serez avertis si une note va être écrasée."));
+
+                ButtonType ignore = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.tr("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.tr("Tout annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+
+                Optional<ButtonType> option = dialog.showAndWait();
+                if(option.get() == stop){
+                    return 1;
+                }else if(option.get() == stopAll){
+                    return 2;
+                }else if(option.get() == ignoreAll){
+                    ignoreAlreadyExist= true;
+                }
+            }
+
             for(NoteRating rating : ratings){
-                NoteElement element = rating.getSamePathIn(noteElements);
+                NoteElement element = rating.getSamePathIn((ArrayList<NoteElement>) noteElements);
                 if(element != null){
                     otherElements.add(rating.toNoteElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
                     noteElements.remove(element);
@@ -104,10 +136,10 @@ public class NoteCopyRatingScaleDialog {
                 }
             }
 
-            if(noteElements.size() >= 1){
+            if(noteElements.size() >= 1 && !ignoreErase){
                 String notes = "";
                 for(NoteElement note : noteElements){
-                    notes += "\n" + note.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + note.getName();
+                    notes += "\n" + note.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + note.getName() + "  (" + Main.format.format(note.getValue()).replaceAll("-1", "?") + "/" + Main.format.format(note.getTotal()) + ")";
                 }
 
                 Alert dialog = new Alert(Alert.AlertType.WARNING);
@@ -116,16 +148,19 @@ public class NoteCopyRatingScaleDialog {
                 dialog.setTitle(TR.tr("Écraser les notes non correspondantes"));
                 dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + notes + "\n" + TR.tr("Dans le document") + " : " + file.getName());
 
-                ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignore = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType stop = new ButtonType(TR.tr("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 ButtonType stopAll = new ButtonType(TR.tr("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                dialog.getButtonTypes().setAll(ignore, stop, stopAll);
+                dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
 
                 Optional<ButtonType> option = dialog.showAndWait();
                 if(option.get() == stop){
-                    return true;
+                    return 1;
                 }else if(option.get() == stopAll){
-                    return false;
+                    return 2;
+                }else if(option.get() == ignoreAll){
+                    ignoreErase = true;
                 }
             }
 
@@ -137,11 +172,11 @@ public class NoteCopyRatingScaleDialog {
             });
 
             Edition.simpleSave(editFile, otherElements.toArray(new Element[0]));
-            return true;
+            return 0;
 
         }catch(Exception e){
             e.printStackTrace();
-            return true;
+            return 1;
         }
     }
 
