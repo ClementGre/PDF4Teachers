@@ -42,11 +42,22 @@ public class ExportRenderer {
 
             PDPage page = doc.getPage(pageNumber);
             PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
+            page.setBleedBox(page.getCropBox());
 
+            float startX = page.getBleedBox().getLowerLeftX();
+            float startY = page.getBleedBox().getLowerLeftY();
+            float pageRealHeight = page.getBleedBox().getHeight();
+            float pageRealWidth = page.getBleedBox().getWidth();
             float pageHeight = page.getCropBox().getHeight();
             float pageWidth = page.getCropBox().getWidth();
             // ROTATE PAGES ADAPT
             if(page.getRotation() == 90 || page.getRotation() == 270){
+                startY = page.getBleedBox().getLowerLeftX();
+                startX = page.getBleedBox().getLowerLeftY();
+
+                pageRealHeight = page.getBleedBox().getWidth();
+                pageRealWidth = page.getBleedBox().getHeight();
+
                 pageHeight = page.getCropBox().getWidth();
                 pageWidth = page.getCropBox().getHeight();
             }
@@ -56,9 +67,9 @@ public class ExportRenderer {
                 if(element.getPageNumber() != pageNumber) continue;
 
                 if(element instanceof TextElement){
-                    if(textElements) textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight);
+                    if(textElements) textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }else if(element instanceof NoteElement){
-                    if(notesElements) noteElementRenderer.renderElement((NoteElement) element, contentStream, page, pageWidth, pageHeight);
+                    if(notesElements) noteElementRenderer.renderElement((NoteElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }/*else if(element instanceof DrawElement){
                     if(drawElements)
 

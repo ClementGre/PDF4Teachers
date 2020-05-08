@@ -26,7 +26,7 @@ public class TextElementRenderer {
         this.doc = doc;
     }
 
-    public void renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight) throws IOException {
+    public void renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
 
         // COLOR
         Color color = (Color) element.getFill();
@@ -49,11 +49,11 @@ public class TextElementRenderer {
 
         // ROTATE PAGES ADAPT
         switch(page.getRotation()){
-            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageHeight, 0));
+            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
                 break;
-            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageWidth, pageHeight));
+            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
                 break;
-            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageWidth));
+            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
                 break;
         }
         // CUSTOM STREAM
@@ -68,14 +68,12 @@ public class TextElementRenderer {
             contentStream.setFont(fonts.get(entry), (float) element.getFont().getSize());
         }
 
-
-        contentStream.newLineAtOffset(element.getRealX() / Element.GRID_WIDTH * pageWidth, (float) (pageHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight + height));
+        float bottomMargin = pageRealHeight-pageHeight-startY;
+        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, bottomMargin + pageRealHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
 
         // DRAW LINES
         for(String text : element.getText().split("\\n")){
 
-            float shiftY = (float) -lineHeight;
-            contentStream.newLineAtOffset(0, shiftY);
             try{
                 contentStream.showText(text);
             }catch(IllegalArgumentException e){
@@ -83,7 +81,7 @@ public class TextElementRenderer {
                 System.err.println("Erreur : impossible d'écrire la ligne : \"" + text + "\" avec la police " + element.getFont().getFamily());
                 System.err.println("Message d'erreur : " + e.getMessage());
             }
-
+            contentStream.newLineAtOffset(0, (float) -lineHeight);
         }
         contentStream.endText();
 

@@ -27,7 +27,7 @@ public class NoteElementRenderer {
         this.doc = doc;
     }
 
-    public void renderElement(NoteElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight) throws IOException {
+    public void renderElement(NoteElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
 
         if(!element.isVisible()) return;
 
@@ -47,11 +47,11 @@ public class NoteElementRenderer {
 
         // ROTATE PAGES ADAPT
         switch(page.getRotation()){
-            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageHeight, 0));
+            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
                 break;
-            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageWidth, pageHeight));
+            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
                 break;
-            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageWidth));
+            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
                 break;
         }
         // CUSTOM STREAM
@@ -66,7 +66,8 @@ public class NoteElementRenderer {
             contentStream.setFont(fonts.get(entry), (float) element.getFont().getSize());
         }
 
-        contentStream.newLineAtOffset(element.getRealX() / Element.GRID_WIDTH * pageWidth, pageHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
+        float bottomMargin = pageRealHeight-pageHeight-startY;
+        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, bottomMargin + pageRealHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
         try{
             contentStream.showText(element.getText());
         }catch(IllegalArgumentException e){
