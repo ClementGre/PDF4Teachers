@@ -157,9 +157,11 @@ public class TextElement extends Text implements Element {
 
 		setBoundsType(TextBoundsType.VISUAL);
 		double linesHeight = getLayoutBounds().getHeight();
+		double lineHeight = getBaselineOffset();
+		double bottomLinesHeight = linesHeight - lineHeight;
 
-		if(itemY < linesHeight) itemY = linesHeight;
-		if(itemY > getPage().getHeight()) itemY = getPage().getHeight();
+		if(itemY < lineHeight) itemY = lineHeight;
+		if(itemY > getPage().getHeight()-bottomLinesHeight) itemY = getPage().getHeight()-bottomLinesHeight;
 
 		if(itemX < 0) itemX = 0;
 		if(itemX > getPage().getWidth() - getLayoutBounds().getWidth()) itemX = getPage().getWidth() - getLayoutBounds().getWidth();
@@ -176,9 +178,11 @@ public class TextElement extends Text implements Element {
 
 		setBoundsType(TextBoundsType.VISUAL);
 		double linesHeight = getLayoutBounds().getHeight();
+		double lineHeight = getBaselineOffset();
+		double bottomLinesHeight = linesHeight - lineHeight;
 
-		if(getPageNumber() == 0) if(itemY < linesHeight) itemY = linesHeight;
-		if(getPageNumber() == MainWindow.mainScreen.document.totalPages-1) if(itemY > getPage().getHeight()) itemY = getPage().getHeight();
+		if(getPageNumber() == 0) if(itemY < lineHeight) itemY = lineHeight;
+		if(getPageNumber() == MainWindow.mainScreen.document.totalPages-1) if(itemY > getPage().getHeight()-bottomLinesHeight) itemY = getPage().getHeight()-bottomLinesHeight;
 
 		if(itemX < 0) itemX = 0;
 		if(itemX > getPage().getWidth() - getLayoutBounds().getWidth()) itemX = getPage().getWidth() - getLayoutBounds().getWidth();
