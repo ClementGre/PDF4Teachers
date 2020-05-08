@@ -176,7 +176,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			final FileChooser chooser = new FileChooser();
 			chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
-			chooser.setTitle(TR.tr("Selectionner un ou plusieurs fichier"));
+			chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
 			chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
 
 			List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -194,7 +194,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier2OpenDir.setOnAction((ActionEvent actionEvent) -> {
 
 			final DirectoryChooser chooser = new DirectoryChooser();
-			chooser.setTitle(TR.tr("Selectionner un dossier"));
+			chooser.setTitle(TR.tr("Sélectionner un dossier"));
 			chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
 
 			File file = chooser.showDialog(Main.window);

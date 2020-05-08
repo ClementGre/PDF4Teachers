@@ -159,7 +159,7 @@ public class LanguageWindow extends Stage{
             }
 
             final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("Selectionner un dossier"));
+            chooser.setTitle(TR.tr("Sélectionner un dossier"));
             chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
 
             File dir = chooser.showDialog(Main.window);

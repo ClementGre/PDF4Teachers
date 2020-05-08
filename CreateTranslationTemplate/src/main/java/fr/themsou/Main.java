@@ -8,18 +8,21 @@ import java.util.regex.Pattern;
 
 public class Main {
 
-    static ArrayList<String> texts = new ArrayList<>();
-    static HashMap<String, ArrayList<String>> filesTexts = new HashMap<>();
+    static ArrayList<String> codeKeys = new ArrayList<>();
+    static HashMap<String, ArrayList<String>> codeFilesKeys = new HashMap<>();
 
-    static HashMap<String, String> existingTranslations = new HashMap<>();
+    static ArrayList<String> existingKeys = new ArrayList<>();
+    static HashMap<String, HashMap<String, String>> existingFilesTranslations = new HashMap<>();
 
     public static boolean READ_EXISTING_FILE = true;
+    public static String PROJECT_PATH = "C:\\Users\\Clement\\Developpement\\Java\\PDF4Teachers";
+    public static String ALREADY_TRANSLATED_FILE_NAME = "English US.txt";
 
     public static void main(String[] args) {
 
-        File in = new File("C:\\Users\\Clement\\Developpement\\Java\\PDF4Teachers\\src\\main\\resources\\translations\\English US.txt");
-        File dir = new File("C:\\Users\\Clement\\Developpement\\Java\\PDF4Teachers\\src\\main\\java\\fr\\themsou");
-        File out = new File("C:\\Users\\Clement\\Downloads\\template.txt");
+        File in = new File(PROJECT_PATH + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "translations" + File.separator + ALREADY_TRANSLATED_FILE_NAME);
+        File dir = new File(PROJECT_PATH + File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator + "fr" + File.separator + "themsou");
+        File out = new File(PROJECT_PATH + File.separator + "template.txt");
 
         if(READ_EXISTING_FILE){
             System.out.println("-------------------------");
@@ -45,29 +48,28 @@ public class Main {
         try{
             BufferedReader reader = new BufferedReader(new FileReader(file));
 
-            ArrayList<String> fileTexts = new ArrayList<>();
+            HashMap<String, String> translationsToAdd = new HashMap<>();
             String fileName = null;
             String line;
             while((line = reader.readLine()) != null){
                 if(line.startsWith("# ")){
                     if(fileName != null){
-                        filesTexts.put(fileName, fileTexts);
-                        fileTexts = new ArrayList<>();
+                        existingFilesTranslations.put(fileName, translationsToAdd);
+                        translationsToAdd = new HashMap<>();
                     }
                     fileName = line.replaceFirst(Pattern.quote("# "), "");
                 }else{
-                    String text = removeAfterNotEscaped(line, "=");
+                    String key = removeAfterNotEscaped(line, "=");
                     String value = removeBeforeNotEscaped(line, "=");
-                    if(!texts.contains(text)){
-                        texts.add(text);
-                        fileTexts.add(text);
-                        if(!value.isEmpty()){
-                            existingTranslations.put(text, value);
-                        }else System.err.println("WARNING : " + text + " don't have translation in the existing file");
-                    }else System.err.println("WARNING : " + text + " is twice in the existing file");
+                    if(!existingKeys.contains(key)){
+                        existingKeys.add(key);
+                        translationsToAdd.put(key, value);
+
+                        if(value.isEmpty()) System.out.println("WARNING : no translations in the existing file for : " + key);
+                    }else System.out.println("WARNING : a key is twice in the existing file : " + key);
                 }
             }
-            if(fileName != null) filesTexts.put(fileName, fileTexts);
+            if(fileName != null) existingFilesTranslations.put(fileName, translationsToAdd);
 
         }catch (IOException e){ e.printStackTrace(); }
     }
@@ -101,27 +103,19 @@ public class Main {
                     .replaceAll(Pattern.quote("\"+\""), "")
                     .split(Pattern.quote("TR.tr(\""));
 
-            ArrayList textsToAdd = new ArrayList();
+            ArrayList<String> textsToAdd = new ArrayList<>();
             int i = 0;
             for(String trStart : trStarts){
                 if(i != 0){
-                    String text = removeAfter(trStart, "\"");
-                    if(!texts.contains(text)){
-                        texts.add(text);
-                        textsToAdd.add(text);
-                        System.out.println("Add translation line to : " + text);
+                    String key = removeAfter(trStart, "\"");
+                    if(!codeKeys.contains(key)){
+                        codeKeys.add(key);
+                        textsToAdd.add(key);
                     }
                 }
                 i++;
             }
-
-            if(filesTexts.containsKey(fileName)){
-                ArrayList<String> newTexts = filesTexts.get(fileName);
-                newTexts.addAll(textsToAdd);
-                filesTexts.put(fileName, newTexts);
-            }else{
-                filesTexts.put(fileName, textsToAdd);
-            }
+            codeFilesKeys.put(fileName, textsToAdd);
 
         }catch (IOException e){ e.printStackTrace(); }
 
@@ -132,14 +126,39 @@ public class Main {
         try{
             BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
 
-            for(Map.Entry<String, ArrayList<String>> fileTexts : filesTexts.entrySet()){
-                writer.write("# " + fileTexts.getKey());
+            for(Map.Entry<String, HashMap<String, String>> fileTranslations : existingFilesTranslations.entrySet()){
+                if(codeFilesKeys.containsKey(fileTranslations.getKey())) {
+                    writer.write("# " + fileTranslations.getKey());
+                    writer.newLine();
+                    for(Map.Entry<String, String> translations : fileTranslations.getValue().entrySet()){
+                        if(codeFilesKeys.get(fileTranslations.getKey()).contains(translations.getKey())){
+                            writer.write(translations.getKey() + "=" + translations.getValue());
+                            writer.newLine();
+                            codeFilesKeys.get(fileTranslations.getKey()).remove(translations.getKey());
+                        }else{
+                            System.out.println("Remove existing translation from file (unused) : " + translations.getKey() + "=" + translations.getValue());
+                        }
+                    }
+
+                    for(String key : codeFilesKeys.get(fileTranslations.getKey())){
+                        writer.write(key + "=");
+                        System.out.println("Add translation line to : " + key);
+                        writer.newLine();
+                    }
+                    codeFilesKeys.remove(fileTranslations.getKey());
+
+                }else{
+                    System.out.println("Remove existing translation file from file (unused) : # " + fileTranslations.getKey());
+                }
+            }
+
+            for(Map.Entry<String, ArrayList<String>> fileKeys : codeFilesKeys.entrySet()){
+                writer.write("# " + fileKeys.getKey());
+                System.out.println("Add file : # " + fileKeys.getKey());
                 writer.newLine();
-                for(String text : fileTexts.getValue()){
-                    writer.write(text + "=");
-                    if(existingTranslations.containsKey(text)){
-                        writer.write(existingTranslations.get(text));
-                    }else System.out.println("No translation for : " + text);
+                for(String key : fileKeys.getValue()){
+                    writer.write(key + "=");
+                    System.out.println("Add translation line to : " + key);
                     writer.newLine();
                 }
             }
