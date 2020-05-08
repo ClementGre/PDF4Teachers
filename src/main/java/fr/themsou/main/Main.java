@@ -24,8 +24,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION_CODE = "010100";
-	public static final String VERSION = "1.1.0";
+	public static final String VERSION = "Snapshot 1.1.1";
 	public static final boolean DEBUG = true;
 
 	public static boolean firstLaunch;

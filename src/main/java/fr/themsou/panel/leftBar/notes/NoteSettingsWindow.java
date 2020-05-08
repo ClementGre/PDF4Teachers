@@ -83,20 +83,17 @@ public class NoteSettingsWindow extends Stage {
 
             Builders.setHBoxPosition(fontCombo, 150, 30, 2.5);
             fontCombo.setStyle("-fx-font-size: 13");
-            fontCombo.setCursor(Cursor.HAND);
             fontCombo.getSelectionModel().select(font.getFamily());
             fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
             fontCombo.setCellFactory((ListView<String> stringListView) -> new LBTextTab.ShapeCell());
 
             Builders.setHBoxPosition(sizeCombo, 60, 30, 2.5);
             sizeCombo.setStyle("-fx-font-size: 13");
-            sizeCombo.setCursor(Cursor.HAND);
             sizeCombo.getSelectionModel().select((Integer) ((int) font.getSize()));
             sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(colorPicker, 120, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
-            colorPicker.setCursor(Cursor.HAND);
             colorPicker.setValue(LBNoteTab.getTierColor(tier));
             colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 

@@ -119,7 +119,6 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(fontCombo, -1, 30, 2.5);
 		fontCombo.setStyle("-fx-font-size: 13");
-		fontCombo.setCursor(Cursor.HAND);
 		fontCombo.getSelectionModel().select("Arial");
 		fontCombo.setMaxHeight(25);
 		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -129,7 +128,6 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(sizeCombo, 95, 30, 2.5);
 		sizeCombo.setStyle("-fx-font-size: 13");
-		sizeCombo.setCursor(Cursor.HAND);
 		sizeCombo.getSelectionModel().select(7);
 		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -138,7 +136,6 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(colorPicker, -1, 30, 2.5);
 		colorPicker.setStyle("-fx-font-size: 13");
-		colorPicker.setCursor(Cursor.HAND);
 		colorPicker.setValue(Color.BLACK);
 		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -168,11 +165,9 @@ public class LBTextTab extends Tab {
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 
 		Builders.setHBoxPosition(deleteBtn, -1, 30, 2.5);
-		deleteBtn.setCursor(Cursor.HAND);
 		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 
 		Builders.setHBoxPosition(newBtn, -1, 30, 2.5);
-		newBtn.setCursor(Cursor.HAND);
 		newBtn.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 
 		combosBox.getChildren().addAll(fontCombo, sizeCombo);

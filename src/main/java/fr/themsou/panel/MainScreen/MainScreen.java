@@ -8,6 +8,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
@@ -16,6 +17,7 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.print.PageLayout;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -53,6 +55,25 @@ public class MainScreen extends Pane {
 	int dragNScrollFactor = 0;
 	double dragStartX;
 	double dragStartY;
+
+	public Thread dragNScrollThread = new Thread(() -> {
+		while(true){
+			if(dragNScrollFactor != 0){
+				Platform.runLater(() -> {
+					if(dragNScrollFactor < 0){
+						zoomOperator.scrollUp((dragNScrollFactor+50)/2, true);
+					}else if(dragNScrollFactor > 0){
+						zoomOperator.scrollDown(dragNScrollFactor/2, true);
+					}
+				});
+				try{ Thread.sleep(20); }catch(InterruptedException ex){ ex.printStackTrace(); }
+			}else{
+				try{ Thread.sleep(200); }catch(InterruptedException ex){ ex.printStackTrace(); }
+			}
+
+		}
+
+	}, "DragNScroll");
 
 	public MainScreen(){
 
@@ -144,7 +165,7 @@ public class MainScreen extends Pane {
 		});
 
 		setOnMouseDragged(e -> {
-			if(!(e.getTarget() instanceof Element)){
+			if(!(e.getTarget() instanceof Element)){ // GrabNScroll
 				double distY = e.getY() - dragStartY;
 				double distX = e.getX() - dragStartX;
 
@@ -159,30 +180,14 @@ public class MainScreen extends Pane {
 				}else if(distX < 0){
 					zoomOperator.scrollRight((int) -distX, true);
 				}
-			}else{
+			}else{ // DragNScroll with an Element
 				double y = Math.max(1, Math.min(getHeight(), e.getY()));
-				if(y < 75){
+				if(y < 50){
 					dragNScrollFactor = (int) (y*-1);
-				}else if(getHeight() - y < 75){
-					dragNScrollFactor = (int) ((getHeight()-y)*-1 + 75);;
+				}else if(getHeight() - y < 50){
+					dragNScrollFactor = (int) ((getHeight()-y)*-1 + 50);
 				}else{
 					dragNScrollFactor = 0;
-				}
-
-				if(dragNScrollFactor != 0){
-					new Thread(() -> {
-						while(dragNScrollFactor != 0){
-							Platform.runLater(() -> {
-								if(dragNScrollFactor < 0){
-									zoomOperator.scrollUp((dragNScrollFactor+75)/10, true);
-								}else if(dragNScrollFactor > 0){
-									zoomOperator.scrollDown(dragNScrollFactor/10, true);
-								}
-							});
-							try{ Thread.sleep(100); }catch(InterruptedException ex){ ex.printStackTrace(); }
-						}
-
-					}, "DragNScroll").start();
 				}
 			}
 
@@ -192,8 +197,15 @@ public class MainScreen extends Pane {
 			mouseY = e.getY();
 			mouseX = e.getX();
 		});
+		setOnMousePressed(e -> {
+			dragStartX = e.getX();
+			dragStartY = e.getY();
+			setSelected(null);
+			setCursor(Cursor.CLOSED_HAND);
+		});
 		setOnMouseReleased(e -> {
 			dragNScrollFactor = 0;
+			setCursor(Cursor.DEFAULT);
 		});
 		setOnMouseMoved(e -> {
 			mouseY = e.getY();
@@ -211,13 +223,8 @@ public class MainScreen extends Pane {
 		// bind window's name
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
 
-		setOnMousePressed(e -> {
-			dragStartX = e.getSceneX();
-			dragStartY = e.getY();
-			if(!(e.getTarget() instanceof Element)){
-				setSelected(null);
-			}
-		});
+		// Start the Drag and Scroll Thread
+		dragNScrollThread.start();
 
 	}
 	public void openFile(File file){

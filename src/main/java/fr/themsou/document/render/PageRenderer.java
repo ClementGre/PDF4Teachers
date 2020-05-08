@@ -89,11 +89,10 @@ public class PageRenderer extends Pane{
             mouseX = e.getX();
             mouseY = e.getY();
         });
+
         setOnMouseEntered(event -> MainWindow.mainScreen.document.setCurrentPage(page));
 
         Builders.setMenuSize(menu);
-
-
         setOnMousePressed(e -> {
 
             MainWindow.mainScreen.setSelected(null);
@@ -141,7 +140,12 @@ public class PageRenderer extends Pane{
                 }
 
                 menu.show(this, e.getScreenX(), e.getScreenY());
+            }else{
+                setCursor(Cursor.CLOSED_HAND);
             }
+        });
+        setOnMouseReleased(e -> {
+            setCursor(Cursor.DEFAULT);
         });
 
     }
