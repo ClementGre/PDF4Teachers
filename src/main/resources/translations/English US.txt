@@ -292,7 +292,6 @@ Choisir un pourcentage :=Select ratio
 Activer=Activate
 Sauvegarde régulière=Periodic save
 Définir le nombre de minutes entre deux sauvegardes automatiques.=Define minutes interval between autosaves
-OK=OK
 À propos=About
 # Builders
 # CallBack
