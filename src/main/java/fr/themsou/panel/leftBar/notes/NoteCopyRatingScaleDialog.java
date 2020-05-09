@@ -108,7 +108,7 @@ public class NoteCopyRatingScaleDialog {
                 Builders.secureAlert(dialog);
                 dialog.setTitle(TR.tr("Barème déjà présent"));
                 dialog.setHeaderText(TR.tr("L'édition du fichier") + " " + file.getName() + " " + TR.tr("contient déjà un barème"));
-                dialog.setContentText(TR.tr("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les ajouter au nouveau barème.") + "\n" + TR.tr("Vous serez avertis si une note va être écrasée."));
+                dialog.setContentText(TR.tr("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.tr("Vous serez avertis si une note va être écrasée."));
 
                 ButtonType ignore = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType ignoreAll = new ButtonType(TR.tr("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
