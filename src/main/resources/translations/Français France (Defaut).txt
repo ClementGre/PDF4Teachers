@@ -79,7 +79,7 @@ Fichier déjà existant=
 Le fichier de destination=
 existe déjà=
 Voulez-vous l'écraser ?=
-Renomer=
+Renommer=
 Tout Arrêter=
 # ZoomOperator
 # NoteRating
