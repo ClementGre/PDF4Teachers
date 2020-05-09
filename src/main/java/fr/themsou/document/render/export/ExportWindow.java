@@ -5,6 +5,7 @@ import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -74,7 +75,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
             HBox filePathPane = new HBox();
-                TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : System.getProperty("user.home") + File.separator));
+                TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
                 filePath.setPromptText(TR.tr("Chemin du dossier d'exportation"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
@@ -131,8 +132,7 @@ public class ExportWindow {
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Sélectionner un dossier"));
-            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
-                    (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
 
             File file = chooser.showDialog(Main.window);
             if(file != null){
@@ -156,23 +156,25 @@ public class ExportWindow {
 
         HBox name = new HBox();
 
-            TextField prefix = new TextField();
+            TextField prefix = new TextField(MainWindow.userData.lastExportFileNamePrefix);
             prefix.setPromptText(TR.tr("Préfixe"));
             prefix.setMinWidth(1);
             //prefix.setAlignment(Pos.CENTER_RIGHT);
             HBox.setHgrow(prefix, Priority.ALWAYS);
             prefix.setMinHeight(30);
+            prefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
             TextField fileName = new TextField(TR.tr("Nom du document"));
             fileName.setDisable(true);
             fileName.setAlignment(Pos.CENTER);
             fileName.setMinHeight(30);
 
-            TextField suffix = new TextField();
+            TextField suffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
             suffix.setPromptText(TR.tr("Suffixe"));
             suffix.setMinWidth(1);
             HBox.setHgrow(suffix, Priority.ALWAYS);
             suffix.setMinHeight(30);
+            suffix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameSuffix = newValue);
 
         name.getChildren().addAll(prefix, fileName, suffix);
 
@@ -181,24 +183,26 @@ public class ExportWindow {
             Label replaceText = new Label(TR.tr("Remplacer"));
             replaceText.setFont(new Font(14));
 
-            TextField replaceInput = new TextField();
+            TextField replaceInput = new TextField(MainWindow.userData.lastExportFileNameReplace);
             replaceInput.setMinWidth(1);
             HBox.setHgrow(replaceInput, Priority.ALWAYS);
             replaceInput.setMinHeight(30);
+            replaceInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
             Label byText = new Label(TR.tr("par"));
             byText.setFont(new Font(14));
 
-            TextField byInput = new TextField();
+            TextField byInput = new TextField(MainWindow.userData.lastExportFileNameBy);
             byInput.setMinWidth(1);
             HBox.setHgrow(byInput, Priority.ALWAYS);
             byInput.setMinHeight(30);
+            byInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
 
         replace.getChildren().addAll(replaceText, replaceInput, byText, byInput);
 
         HBox path = new HBox();
         HBox filePathPane = new HBox();
-        TextField filePath = new TextField((UserData.lastExportDir.exists() ? UserData.lastExportDir.getAbsolutePath() : System.getProperty("user.home") + File.separator));
+        TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
         filePath.setMinWidth(1);
         filePath.setMinHeight(30);
         HBox.setHgrow(filePath, Priority.ALWAYS);
@@ -265,8 +269,7 @@ public class ExportWindow {
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Sélectionner un dossier"));
-            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
-                    (UserData.lastExportDir.exists() ? UserData.lastExportDir : new File(System.getProperty("user.home")))));
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
 
             File file = chooser.showDialog(Main.window);
             if(file != null){
@@ -282,7 +285,6 @@ public class ExportWindow {
 
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
                                  boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
-        UserData.lastExportDir = directory;
         erase = eraseFile;
         int exported = 0;
 

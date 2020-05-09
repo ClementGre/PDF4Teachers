@@ -21,12 +21,9 @@ public class UserData {
         public static final int TEXT_ELEMENT_FAVORITE = 1;
         public static final int TEXT_ELEMENT_LAST = 2;
         public static final int TEXT_ELEMENT_LIST = 3;
-        public static final int VERSION = 4;
     }
 
     public static File lastOpenDir = new File(System.getProperty("user.home"));
-    public static File lastExportDir = new File(System.getProperty("user.home"));
-    public static File lastExportDirNotes = new File(System.getProperty("user.home"));
 
     // Notes ExportParams
 
@@ -63,13 +60,11 @@ public class UserData {
                     int dataType = reader.readInt();
 
                     switch(dataType){
-                        case DataType.VERSION: // Last TextElement
-
                         case DataType.SIMPLE_DATA: // Last TextElement
                             try{
                                 lastOpenDir = new File(reader.readUTF());
-                                lastExportDir = new File(reader.readUTF());
-                                lastExportDirNotes = new File(reader.readUTF());
+                                 reader.readUTF(); // lastExportDir
+                                 reader.readUTF(); // lastExportDirNotes
 
                                 // LAST FONTS (TEXT_TAB)
 
@@ -171,8 +166,8 @@ public class UserData {
             writer.writeInt(DataType.SIMPLE_DATA);
 
             writer.writeUTF(lastOpenDir.getAbsolutePath());
-            writer.writeUTF(lastExportDir.getAbsolutePath());
-            writer.writeUTF(lastExportDirNotes.getAbsolutePath());
+            writer.writeUTF("lastExportDir.getAbsolutePath()");
+            writer.writeUTF("lastExportDirNotes.getAbsolutePath()");
 
             // LAST FONTS (TEXT_TAB)
 

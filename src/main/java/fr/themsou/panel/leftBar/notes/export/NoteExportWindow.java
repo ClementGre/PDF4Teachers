@@ -197,9 +197,8 @@ public class NoteExportWindow extends Stage {
 
             HBox filePathBox = new HBox();
 
-            filePath = new TextField((UserData.lastExportDirNotes.exists() ? UserData.lastExportDirNotes.getAbsolutePath() : System.getProperty("user.home") + File.separator));
+            filePath = new TextField(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator);
             Builders.setHBoxPosition(filePath, -1, 30, 0, 2.5);
-            filePath.textProperty().addListener((observable, oldValue, newValue) -> UserData.lastExportDirNotes = new File(newValue));
 
             Button changePath = new Button(TR.tr("Parcourir"));
             Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
@@ -212,8 +211,7 @@ public class NoteExportWindow extends Stage {
 
                 final DirectoryChooser chooser = new DirectoryChooser();
                 chooser.setTitle(TR.tr("Sélectionner un dossier"));
-                chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) :
-                        (UserData.lastExportDirNotes.exists() ? UserData.lastExportDirNotes : new File(System.getProperty("user.home")))));
+                chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator)));
 
                 File file = chooser.showDialog(Main.window);
                 if(file != null) filePath.setText(file.getAbsolutePath() + File.separator);
