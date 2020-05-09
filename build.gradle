@@ -23,7 +23,7 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 mainClassName = "fr.themsou.main.Main"
 
-version = "1.1.0"
+version = "1.1.1"
 description = "Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs."
 
 task packageMsi(type: Exec){

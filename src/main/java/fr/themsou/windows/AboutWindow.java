@@ -31,8 +31,8 @@ public class AboutWindow extends Stage {
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(400);
-        setHeight(670);
+        setWidth(420);
+        setHeight(700);
         setTitle(TR.tr("PDF4Teachers - À Propos"));
         setResizable(false);
         setScene(scene);
@@ -109,6 +109,23 @@ public class AboutWindow extends Stage {
             gitInfo.getChildren().addAll(git, gitName);
             gitInfo.setAlignment(Pos.CENTER);
 
+            HBox twitterInfo = new HBox();
+                Label twitter = new Label("Twitter : ");
+                twitter.setFont(new Font(17));
+
+                Hyperlink twitterName = new Hyperlink("@PDF4Teachers");
+                twitterName.setFont(new Font(17));
+                twitterName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
+            twitterInfo.getChildren().addAll(twitter, twitterName);
+            twitterInfo.setAlignment(Pos.CENTER);
+
+            HBox issueInfo = new HBox();
+                Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide ou signaler un Bug"));
+                issueName.setFont(new Font(17));
+                issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
+                issueInfo.getChildren().addAll(issueName);
+            issueInfo.setAlignment(Pos.CENTER);
+
             VBox apiInfo = new VBox();
                 Label api = new Label(TR.tr("Dépendances :"));
 
@@ -131,16 +148,9 @@ public class AboutWindow extends Stage {
             apiInfo.getChildren().addAll(api, javaFx, pdfBox, jMetro, json);
             apiInfo.setAlignment(Pos.CENTER);
 
-            HBox issueInfo = new HBox();
-                Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide ou signaler un Bug"));
-                issueName.setFont(new Font(17));
-                issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
-            issueInfo.getChildren().addAll(issueName);
-            issueInfo.setAlignment(Pos.CENTER);
-
         vBox.getChildren().addAll(logo, name, version);
         if(newVersion != null) vBox.getChildren().add(newVersion);
-        vBox.getChildren().addAll(devInfo, consInfo, transInfo, gitInfo, issueInfo, apiInfo);
+        vBox.getChildren().addAll(devInfo, consInfo, transInfo, gitInfo, twitterInfo, issueInfo, apiInfo);
         vBox.setAlignment(Pos.CENTER);
 
         VBox.setMargin(logo, new Insets(20, 0, 0, 0));

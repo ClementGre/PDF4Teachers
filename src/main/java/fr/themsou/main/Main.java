@@ -24,8 +24,8 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "Snapshot 1.1.1";
-	public static final boolean DEBUG = true;
+	public static final String VERSION = "1.1.1";
+	public static final boolean DEBUG = false;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -45,7 +45,6 @@ public class Main extends Application {
 
 		settings = new Settings();
 		LanguageWindow.copyFiles();
-
 
 		if(languageAsk()){
 			if(liscenceAsk()){
