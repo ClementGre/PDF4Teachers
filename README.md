@@ -2,13 +2,15 @@
 [![TotalDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
 [![LatestDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/latest/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
 
-## Shortcuts
-[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/latest)
+![Star](https://img.shields.io/github/stars/themsou/PDF4Teachers?label=Star&style=social)
+[![GitHubFolowers](https://img.shields.io/github/followers/themsou?label=Follow%20themsou&style=social)](https://github.com/themsou)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
 
+####Shortcuts :
+[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/latest)
 
-## Before opening new issue, see :
+#### Before opening new issue, see :
 [![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/bug?color=d73a4a)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
 [![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
 [![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.0%22+label%3A%22enhancement%22+)
