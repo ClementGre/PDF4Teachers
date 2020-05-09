@@ -1,11 +1,13 @@
+[![Java CI with Gradle](https://github.com/themsou/PDF4Teachers/workflows/build/badge.svg)](https://github.com/themsou/PDF4Teachers/actions?query=workflow%3Abuild)
+[![TotalDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
+[![LatestDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/latest/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
+
 ## Shortcuts
 
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/latest)
-
-[![TotalDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
-[![LatestDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/latest/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
+
 
 ## Before opening new issue, see :
 
