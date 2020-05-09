@@ -5,6 +5,7 @@ import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
@@ -47,7 +48,7 @@ public class LBFilesListView {
                     }
                     VBox pane = new VBox();
                     HBox nameBox = new HBox();
-                    Text name = new Text(file.getName().replace(".pdf", ""));
+                    Text name = new Text(StringUtils.removeAfterLastRejex(file.getName(), ".pdf"));
                     name.setFont(Font.font(null, FontWeight.NORMAL, 12));
 
                     Text path = new Text(file.getAbsolutePath().replace(System.getProperty("user.home"),"~").replace(file.getName(), ""));

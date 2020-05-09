@@ -94,13 +94,13 @@ public class FileDrop extends DropTarget {
         
         if(component == 1){
         	
-        	if(ext.equals("pdf")){
+        	if(ext.equalsIgnoreCase("pdf")){
         		return true;
         	}
         	
         }else if(component == 2){
         	
-        	if(ext.equals("pdf")){
+        	if(ext.equalsIgnoreCase("pdf")){
         		return true;
         		
         	}else if(file.isDirectory()){

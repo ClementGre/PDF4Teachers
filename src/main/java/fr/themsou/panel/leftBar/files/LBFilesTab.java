@@ -153,7 +153,7 @@ public class LBFilesTab extends Tab {
         if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) 
         	ext = fileName.substring(fileName.lastIndexOf(".") + 1);
 
-		return ext.equals("pdf");
+		return ext.equalsIgnoreCase("pdf");
 	}
 
 	private void updateOpenFilesList(){
