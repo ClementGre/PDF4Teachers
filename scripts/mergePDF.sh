@@ -6,6 +6,6 @@ if   [ $ans = 'Q' ] || [ $ans = 'q' ]
 then
 	echo "bye"
 else
-	"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o "$ans" *.pdf
+	"/System/Library/Automator/Combine PDF Pages.action/Contents/Resources/join.py" -o "$ans" *.pdf *.PDF
 	echo terminé
 fi

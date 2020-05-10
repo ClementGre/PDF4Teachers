@@ -6,7 +6,8 @@ if   [ $ans = 'Q' ] || [ $ans = 'q' ]
 then
 	echo "bye"
 else
-	FILES='ls *.pdf'
-	LIST=${FILES:2}
+	FILESpdf='ls *.pdf'
+	FILESPDF='ls *.PDF'
+	LIST=${FILESpdf:2}${FILESPDF:2}
 	gs -dNOPAUSE -sDEVICE=pdfwrite -sOUTPUTFILE=$ans -dBATCH $LIST
 fi
