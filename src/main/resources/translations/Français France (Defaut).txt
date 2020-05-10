@@ -1,7 +1,7 @@
 # PageRenderer
 # CallBack
 # PageStatus
-# NoteTreeItem
+# GradeTreeItem
 Nouvelle note=
 Créer une nouvelle sous-note de=
 # NodeMenuItem
@@ -21,7 +21,7 @@ Les documents exportés se trouvent dans le dossier choisi=
 Édition non sauvegardée=
 L'édition du document n'est pas enregistrée.=
 Voulez-vous l'enregistrer ?=
-# NoteElementRenderer
+# GradeElementRenderer
 # TextElementRenderer
 # SortManager
 # LBPaintTab
@@ -33,7 +33,7 @@ Le dossier d'exportation n'existe pas=
 Créer le dossier, ou modifier la destination ?=
 Créer le dossier=
 Modifier la destination=
-# NoteCopyRatingScaleDialog
+# GradeCopyGradeScaleDialog
 Copier le barème sur d'autres éditions=
 Cette action va copier le barème entré dans cette édition sur d'autres éditions.=
 Copier sur les documents\nouverts du même dossier.=
@@ -58,10 +58,10 @@ Arrêter=
 Tout arrêter=
 # MainWindow
 # Sorter
-# NoteTreeView
+# GradeTreeView
 Total=
 # Settings
-# NoteExportRenderer
+# GradeExportRenderer
 Erreur d'exportation=
 Une erreur s'est produite lors de la génération du document=
 Impossible d'exporter.=
@@ -82,7 +82,7 @@ Voulez-vous l'écraser ?=
 Renommer=
 Tout Arrêter=
 # ZoomOperator
-# NoteRating
+# GradeRating
 # Edition
 Êtes vous sûr de vouloir supprimer l'édition de ce document ?=
 # SortEvent
@@ -146,7 +146,7 @@ Dé-lier l'élément=
 L'élément de la liste ne sera plus synchronisé avec l'élément du document=
 # PDFPagesRender
 # TextListItem
-# NoteExportWindow
+# GradeExportWindow
 Tout exporter ensemble=
 Tout exporter séparément=
 Exporter uniquement ce fichier=
@@ -308,7 +308,7 @@ Crée un second élément identique à celui-ci.=
 Ajouter aux éléments Favoris=
 # TextTreeItem
 # StringUtils
-# NoteSettingsWindow
+# GradeSettingsWindow
 PDF4Teachers - Polices et Couleurs des Notes=
 Configuration des polices pour chaque catégorie de note=
 Ces paramètres sonts indépendants de l'édition du document.=
@@ -332,12 +332,12 @@ Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas suppri
 Confirmation=
 Êtes vous sûr de vouloir supprimer le document et son édition ?=
 Cette action est irréversible.=
-# LBNoteTab
+# LBGradeTab
 Vérouiller le barème, il ne pourra plus être modifié.=
 Modifier les polices, couleurs et préfixe de chaque niveau de notes.=
 Envoyer le barème sur d'autres éditions.=
 Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=
-# NoteElement
+# GradeElement
 Réinitialiser=
 Réinitialise la note entrée et toutes ses sous-notes.=
 suppr=

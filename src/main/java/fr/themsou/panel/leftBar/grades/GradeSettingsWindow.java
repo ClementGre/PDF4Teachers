@@ -1,4 +1,4 @@
-package fr.themsou.panel.leftBar.notes;
+package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
@@ -23,9 +23,9 @@ import jfxtras.styles.jmetro.Style;
 
 import java.util.Map;
 
-public class NoteSettingsWindow extends Stage {
+public class GradeSettingsWindow extends Stage {
 
-    public NoteSettingsWindow(){
+    public GradeSettingsWindow(){
 
         ScrollPane scroller = new ScrollPane();
         VBox root = new VBox();
@@ -75,7 +75,7 @@ public class NoteSettingsWindow extends Stage {
             this.tier = tier;
 
             setStyle("-fx-padding: 2.5;");
-            Font font = LBNoteTab.getTierFont(tier);
+            Font font = LBGradeTab.getTierFont(tier);
 
             Label name = new Label(TR.tr("Niveau") + " " + (tier+1) + " :");
             name.setStyle("-fx-font-size: 13");
@@ -94,7 +94,7 @@ public class NoteSettingsWindow extends Stage {
 
             Builders.setHBoxPosition(colorPicker, 120, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
-            colorPicker.setValue(LBNoteTab.getTierColor(tier));
+            colorPicker.setValue(LBGradeTab.getTierColor(tier));
             colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
@@ -110,7 +110,7 @@ public class NoteSettingsWindow extends Stage {
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(showName, 0, 29, 2.5);
-            showName.setSelected(LBNoteTab.getTierShowName(tier));
+            showName.setSelected(LBGradeTab.getTierShowName(tier));
             showName.setCursor(Cursor.HAND);
             showName.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
@@ -120,10 +120,10 @@ public class NoteSettingsWindow extends Stage {
 
         private void updateFont(){
 
-            LBNoteTab.fontTiers.put(tier, Map.entry(
+            LBGradeTab.fontTiers.put(tier, Map.entry(
                     Font.loadFont(Element.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
                     Map.entry(colorPicker.getValue(), showName.isSelected()))); // Color + ShowName
-            MainWindow.lbNoteTab.updateElementsFont();
+            MainWindow.lbGradeTab.updateElementsFont();
 
         }
 

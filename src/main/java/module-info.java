@@ -35,9 +35,9 @@ module fr.themsou {
     exports fr.themsou.panel;
     exports fr.themsou.panel.leftBar.files;
     exports fr.themsou.panel.leftBar.texts;
-    exports fr.themsou.panel.leftBar.notes;
+    exports fr.themsou.panel.leftBar.grades;
     exports fr.themsou.panel.leftBar.paint;
-    exports fr.themsou.panel.leftBar.notes.export;
+    exports fr.themsou.panel.leftBar.grades.export;
     exports fr.themsou.utils;
     exports fr.themsou.windows;
 }

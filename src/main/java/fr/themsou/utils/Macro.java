@@ -3,7 +3,7 @@ package fr.themsou.utils;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.windows.MainWindow;
@@ -57,7 +57,7 @@ public class Macro {
                         int y = (int) MainWindow.mainScreen.document.pages.get(page).getMouseY();
 
                         MainWindow.leftBar.getSelectionModel().select(2);
-                        MainWindow.lbNoteTab.treeView.getSelectionModel().select(NoteTreeView.getNextNote(page, y));
+                        MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextGrade(page, y));
                     }
                 }else{
                     try{

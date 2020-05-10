@@ -34,19 +34,6 @@ public class TextListItem {
         return new TextTreeItem(font, text, color, type, uses, creationDate);
     }
 
-    public void writeData(DataOutputStream writer) throws IOException {
-
-        writer.writeFloat((float) font.getSize());
-        writer.writeBoolean(Element.getFontWeight(font) == FontWeight.BOLD);
-        writer.writeBoolean(Element.getFontPosture(font) == FontPosture.ITALIC);
-        writer.writeUTF(font.getFamily());
-        writer.writeByte((int) (color.getRed() * 255.0 - 128));
-        writer.writeByte((int) (color.getGreen() * 255.0 - 128));
-        writer.writeByte((int) (color.getBlue() * 255.0 - 128));
-        writer.writeLong(uses);
-        writer.writeLong(creationDate);
-        writer.writeUTF(text);
-    }
     public HashMap<Object, Object> getYAMLData(){
         HashMap<Object, Object> data = new HashMap<>();
         data.put("color", color.toString());

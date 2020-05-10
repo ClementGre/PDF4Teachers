@@ -1,8 +1,7 @@
 package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
-import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -18,16 +17,16 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NoteElementRenderer {
+public class GradeElementRenderer {
 
     HashMap<Map.Entry<String, String>, PDFont> fonts = new HashMap<>();
 
     PDDocument doc;
-    public NoteElementRenderer(PDDocument doc){
+    public GradeElementRenderer(PDDocument doc){
         this.doc = doc;
     }
 
-    public void renderElement(NoteElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
+    public void renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
 
         if(!element.isVisible()) return;
 

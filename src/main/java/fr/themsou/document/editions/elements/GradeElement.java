@@ -3,17 +3,16 @@ package fr.themsou.document.editions.elements;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.notes.LBNoteTab;
-import fr.themsou.panel.leftBar.notes.NoteRating;
-import fr.themsou.panel.leftBar.notes.NoteTreeItem;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.grades.LBGradeTab;
+import fr.themsou.panel.leftBar.grades.GradeRating;
+import fr.themsou.panel.leftBar.grades.GradeTreeItem;
+import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
-import javafx.application.Platform;
+import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
-import javafx.event.Event;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
@@ -24,13 +23,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.*;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
-public class NoteElement extends Text implements Element {
+public class GradeElement extends Text implements Element {
 
     private StringProperty name;
     private DoubleProperty value;
@@ -52,7 +51,7 @@ public class NoteElement extends Text implements Element {
     private int minY = 0;
     private int minYPage = 0;
 
-    public NoteElement(int x, int y, String name, double value, double total, int index, String parentPath, int pageNumber, PageRenderer page){
+    public GradeElement(int x, int y, String name, double value, double total, int index, String parentPath, int pageNumber, PageRenderer page){
         this.pageNumber = pageNumber;
         this.realX.set(x);
         this.realY.set(y);
@@ -82,21 +81,21 @@ public class NoteElement extends Text implements Element {
         item1.setToolTip(TR.tr("suppr"));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
         item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
-        item2.disableProperty().bind(MainWindow.lbNoteTab.isLockRatingScaleProperty());
+        item2.disableProperty().bind(MainWindow.lbGradeTab.isLockGradeScaleProperty());
         menu.getItems().addAll(item1, item2);
         Builders.setMenuSize(menu);
 
         item1.setOnAction(e -> {
-            NoteTreeItem treeItemElement;
-            if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot();
-            else treeItemElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
-            treeItemElement.noteField.setText("");
+            GradeTreeItem treeItemElement;
+            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+            else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
+            treeItemElement.gradeField.setText("");
         });
         item2.setOnAction(e -> {
-            if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)){
+            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 delete();
-                MainWindow.lbNoteTab.treeView.generateRoot();
+                MainWindow.lbGradeTab.treeView.generateRoot();
             }else delete();
 
         });
@@ -111,7 +110,7 @@ public class NoteElement extends Text implements Element {
         });
         nameProperty().addListener((observable, oldValue, newValue) -> {
 
-            setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
+            setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
 
             Edition.setUnsave();
             if(newValue.isBlank()){
@@ -119,16 +118,16 @@ public class NoteElement extends Text implements Element {
                 return;
             }
 
-            NoteTreeItem treeItemElement;
-            if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot();
+            GradeTreeItem treeItemElement;
+            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
             else{
-                treeItemElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
+                treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
                 // Check if exist twice
-                if(((NoteTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
+                if(((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
             }
 
             // ReIndex childrens
-            if(treeItemElement.hasSubNote()) treeItemElement.resetParentPathChildren();
+            if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
         });
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -136,7 +135,7 @@ public class NoteElement extends Text implements Element {
 
             if(newValue.intValue() == -1){
                 setVisible(false);
-                setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
+                setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
             }else{
                 if(oldValue.intValue() == -1){ // Deviens visible
                     if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
@@ -147,24 +146,24 @@ public class NoteElement extends Text implements Element {
                 }
                 calculateMinAndMaxY();
                 setVisible(true);
-                setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
+                setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
             }
 
-            if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)){// this is Root
-                if(newValue.intValue() == -1) ((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).resetChildrenValues();
+            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)){// this is Root
+                if(newValue.intValue() == -1) ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).resetChildrenValues();
 
             }else{
-                NoteTreeItem treeItemElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
-                if(treeItemElement.hasSubNote() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
-                ((NoteTreeItem) treeItemElement.getParent()).makeSum();
+                GradeTreeItem treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
+                if(treeItemElement.hasSubGrade() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
+                ((GradeTreeItem) treeItemElement.getParent()).makeSum();
             }
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(getValue()) + "/" + Main.format.format(getTotal()));
+            setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(getValue()) + "/" + Main.format.format(getTotal()));
 
-            if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
-            ((NoteTreeItem) MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this).getParent()).makeSum();
+            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
+            ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this).getParent()).makeSum();
         });
 
         // enable shadow if this element is selected
@@ -197,10 +196,10 @@ public class NoteElement extends Text implements Element {
         });
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
-                NoteTreeItem treeItemElement;
-                if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot();
-                else treeItemElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
-                treeItemElement.noteField.setText("");
+                GradeTreeItem treeItemElement;
+                if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+                else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
+                treeItemElement.gradeField.setText("");
             }
         });
         setOnMouseReleased(e -> {
@@ -229,7 +228,7 @@ public class NoteElement extends Text implements Element {
             }
 
             checkLocation(getLayoutX(), getLayoutY());
-            NoteTreeView.defineNaNLocations();
+            GradeTreeView.defineNaNLocations();
 
             if(Main.DEBUG) Tooltip.install(this, new Tooltip("p: " + getPageNumber() + "\nx: " + getRealX() + "\ny: " + getRealY()));
         });
@@ -245,17 +244,17 @@ public class NoteElement extends Text implements Element {
 
     public void calculateMinAndMaxY(){
 
-        NoteTreeItem treeItemElement;
-        if(((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot();
-        else treeItemElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
+        GradeTreeItem treeItemElement;
+        if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+        else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
 
-        NoteTreeItem beforeItem = treeItemElement.getBeforeItem();
+        GradeTreeItem beforeItem = treeItemElement.getBeforeItem();
         while(beforeItem != null){
             if(beforeItem.getCore().getValue() != -1) break;
             beforeItem = beforeItem.getBeforeItem();
         }
 
-        NoteTreeItem afterItem = treeItemElement.getAfterItem();
+        GradeTreeItem afterItem = treeItemElement.getAfterItem();
         while(afterItem != null){
             if(afterItem.getCore().getValue() != -1) break;
             afterItem = afterItem.getAfterItem();
@@ -279,9 +278,9 @@ public class NoteElement extends Text implements Element {
         }
     }
     public void updateFont(){
-        setFont(LBNoteTab.getTierFont(NoteTreeView.getElementTier(parentPath)));
-        setFill(LBNoteTab.getTierColor(NoteTreeView.getElementTier(parentPath)));
-        setText((LBNoteTab.getTierShowName(NoteTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
+        setFont(LBGradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
+        setFill(LBGradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
+        setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
     }
 
     // CHECK LOCATION
@@ -350,10 +349,10 @@ public class NoteElement extends Text implements Element {
         getPage().toFront();
 
         // Sélectionne l'élément associé dans l'arbre
-        NoteTreeItem noteElement;
-        if(getParentPath().isEmpty()) noteElement = (NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot();
-        else noteElement = MainWindow.lbNoteTab.treeView.getNoteTreeItem((NoteTreeItem) MainWindow.lbNoteTab.treeView.getRoot(), this);
-        MainWindow.lbNoteTab.treeView.getSelectionModel().select(noteElement);
+        GradeTreeItem gradeElement;
+        if(getParentPath().isEmpty()) gradeElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+        else gradeElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
+        MainWindow.lbGradeTab.treeView.getSelectionModel().select(gradeElement);
 
     }
     @Override
@@ -364,29 +363,42 @@ public class NoteElement extends Text implements Element {
     }
     public void switchPage(int page){
         getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
-        NoteTreeView.defineNaNLocations();
+        GradeTreeView.defineNaNLocations();
     }
 
     // READER AND WRITERS
 
-    @Override
-    public void writeSimpleData(DataOutputStream writer) throws IOException {
-        writer.writeByte(2);
-        writeData(writer);
+    public HashMap<Object, Object> getYAMLData(){
+        HashMap<Object, Object> data = new HashMap<>();
+        data.put("x", getRealX());
+        data.put("y", getRealY());
+        data.put("index", index);
+        data.put("parentPath", parentPath);
+        data.put("value", value.getValue());
+        data.put("total", total.getValue());
+        data.put("name", name.getValue());
+
+        return data;
     }
-    @Override
-    public void writeData(DataOutputStream writer) throws IOException {
-        writer.writeByte(pageNumber);
-        writer.writeShort(getRealX());
-        writer.writeShort(getRealY());
-        writer.writeInt(index);
-        writer.writeUTF(parentPath);
-        writer.writeDouble(value.getValue());
-        writer.writeDouble(total.getValue());
-        writer.writeUTF(name.getValue());
+    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
+
+        int x = (int) Config.getLong(data, "x");
+        int y = (int) Config.getLong(data, "y");
+        int index = (int) Config.getLong(data, "index");
+        String parentPath = Config.getString(data, "parentPath");
+        double value = (int) Config.getLong(data, "value");
+        double total = (int) Config.getLong(data, "total");
+        String name = Config.getString(data, "name");
+
+        return new GradeElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
+    }
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
+        GradeElement element = readYAMLDataAndGive(data, true, page);
+        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
+            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
     }
 
-    public static NoteElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
+    public static GradeElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
 
         byte page = reader.readByte();
         short x = reader.readShort();
@@ -397,23 +409,18 @@ public class NoteElement extends Text implements Element {
         double total = reader.readDouble();
         String name = reader.readUTF();
 
-        return new NoteElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
+        return new GradeElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
-        NoteElement element = readDataAndGive(reader, true);
+        GradeElement element = readDataAndGive(reader, true);
         if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
             MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
     }
     // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
-    public static double[] consumeData(DataInputStream reader) throws IOException {
-        reader.readByte();
-        reader.readShort();
-        reader.readShort();
-        reader.readInt();
-        String parentPath = reader.readUTF();
-        double value = reader.readDouble();
-        double total = reader.readDouble();
-        reader.readUTF();
+    public static double[] getYAMLDataStats(HashMap<String, Object> data){
+        String parentPath = "";
+        double value = 0;
+        double total = 0;
 
         if(Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0) return new double[]{value, total};
         else return new double[]{value};
@@ -517,12 +524,12 @@ public class NoteElement extends Text implements Element {
 
     @Override
     public Element clone() {
-        return new NoteElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, pageNumber, getPage());
+        return new GradeElement(getRealX(), getRealY(), name.getValue(), value.getValue(), total.getValue(), index, parentPath, pageNumber, getPage());
     }
-    public NoteRating toNoteRating(){
-        return new NoteRating(total.get(), name.get(), index, parentPath);
+    public GradeRating toGradeRating(){
+        return new GradeRating(total.get(), name.get(), index, parentPath);
     }
-    public NoteTreeItem toNoteTreeItem(){
-        return new NoteTreeItem(this);
+    public GradeTreeItem toGradeTreeItem(){
+        return new GradeTreeItem(this);
     }
 }

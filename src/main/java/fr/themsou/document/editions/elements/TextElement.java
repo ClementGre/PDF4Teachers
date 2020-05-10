@@ -4,8 +4,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
-
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -14,6 +12,7 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import fr.themsou.yaml.Config;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.VPos;
@@ -217,38 +216,32 @@ public class TextElement extends Text implements Element {
 
 	// READER AND WRITERS
 
-	@Override
-	public void writeSimpleData(DataOutputStream writer) throws IOException {
-		writer.writeByte(1);
-		writeData(writer);
-	}
-	@Override
-	public void writeData(DataOutputStream writer) throws IOException {
-		writer.writeByte(getPageNumber());
-		writer.writeShort(getRealX());
-		writer.writeShort(getRealY());
-		writer.writeFloat((float) getFont().getSize());
-		writer.writeBoolean(Element.getFontWeight(getFont()) == FontWeight.BOLD);
-		writer.writeBoolean(Element.getFontPosture(getFont()) == FontPosture.ITALIC);
-		writer.writeUTF(getFont().getFamily());
-		writer.writeByte((int) (((Color) getFill()).getRed() * 255.0 - 128));
-		writer.writeByte((int) (((Color) getFill()).getGreen() * 255.0 - 128));
-		writer.writeByte((int) (((Color) getFill()).getBlue() * 255.0 - 128));
-		writer.writeUTF(getText());
-	}
+	public HashMap<Object, Object> getYAMLData(){
+		HashMap<Object, Object> data = new HashMap<>();
+		data.put("x", getRealX());
+		data.put("y", getRealY());
+		data.put("color", getFill().toString());
+		data.put("font", getFont().getFamily());
+		data.put("size", getFont().getSize());
+		data.put("bold", Element.getFontWeight(getFont()) == FontWeight.BOLD);
+		data.put("italic", Element.getFontPosture(getFont()) == FontPosture.ITALIC);
+		data.put("text", getText());
 
-	public void writeYAML(List<Object> pageTexts){
-		HashMap<String, Object> data = new HashMap<>();
-		data.put("x", 589);
-		data.put("y", 1895.5);
-		data.put("color", "5fc9d5");
-		data.put("font", "Arial");
-		data.put("size", 42);
-		data.put("bold", true);
-		data.put("italic", false);
-		data.put("text", "");
+		return data;
+	}
+	public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
 
-		pageTexts.add(data);
+		int x = (int) Config.getLong(data, "x");
+		int y = (int) Config.getLong(data, "y");
+		double fontSize = Config.getDouble(data, "size");
+		boolean isBold = Config.getBoolean(data, "bold");
+		boolean isItalic = Config.getBoolean(data, "italic");
+		String fontName = Config.getString(data, "font");
+		Color color = Color.valueOf(Config.getString(data, "color"));
+		String text = Config.getString(data, "text");
+
+		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+		return new TextElement(x, y, font, text, color, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
 	}
 
 	public static TextElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
@@ -274,14 +267,13 @@ public class TextElement extends Text implements Element {
 		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
 			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
 	}
-	public static void consumeData(DataInputStream reader) throws IOException {
-		reader.readByte();reader.readShort();reader.readShort();
-		reader.readFloat();reader.readBoolean();reader.readBoolean();reader.readUTF();
-		reader.readByte();reader.readByte();reader.readByte();
-		reader.readUTF();
+	public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
+		TextElement element = readYAMLDataAndGive(data, true, page);
+		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
+			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
 	}
 
-	// COORDINATES GETTERS ANS SETTERS
+	// COORDINATES GETTERS AND SETTERS
 
 	@Override
 	public int getRealX() {

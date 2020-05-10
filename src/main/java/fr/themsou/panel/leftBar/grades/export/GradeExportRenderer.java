@@ -1,8 +1,8 @@
-package fr.themsou.panel.leftBar.notes.export;
+package fr.themsou.panel.leftBar.grades.export;
 
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.notes.NoteRating;
+import fr.themsou.panel.leftBar.grades.GradeRating;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
@@ -19,11 +19,11 @@ import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class NoteExportRenderer {
+public class GradeExportRenderer {
 
     String text = "";
 
-    public ArrayList<NoteRating> ratingScale;
+    public ArrayList<GradeRating> gradeScale;
     ArrayList<ExportFile> files = new ArrayList<>();
     int exportTier;
 
@@ -31,8 +31,8 @@ public class NoteExportRenderer {
     boolean mkdirs = true;
     boolean erase = false;
 
-    NoteExportWindow.ExportPane pane;
-    public NoteExportRenderer(NoteExportWindow.ExportPane pane){
+    GradeExportWindow.ExportPane pane;
+    public GradeExportRenderer(GradeExportWindow.ExportPane pane){
         this.pane = pane;
         this.exportTier = (int) pane.settingsTiersExportSlider.getValue();
 
@@ -50,7 +50,7 @@ public class NoteExportRenderer {
             try{
                 if(pane.settingsAttributeTotalLine.isSelected()){
                     generateNamesLine(false);
-                    generateRatingScaleLine();
+                    generateGradeScaleLine();
                 }else{
                     generateNamesLine(true);
                 }
@@ -92,7 +92,7 @@ public class NoteExportRenderer {
                 try{
                     if(pane.settingsAttributeTotalLine.isSelected()){
                         generateNamesLine(false);
-                        generateRatingScaleLine();
+                        generateGradeScaleLine();
                     }else{
                         generateNamesLine(true);
 
@@ -137,20 +137,20 @@ public class NoteExportRenderer {
 
     // GENERATORS
 
-    public void generateNamesLine(boolean includeRatingScale){
+    public void generateNamesLine(boolean includeGradeScale){
 
         text += TR.tr("Parties");
 
-        for(NoteRating rating : ratingScale){
-            text += ";" + rating.name + (includeRatingScale ? " /" + rating.total : "");
+        for(GradeRating rating : gradeScale){
+            text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
         }
         text += "\n";
     }
-    public void generateRatingScaleLine(){
+    public void generateGradeScaleLine(){
 
         text += TR.tr("Barème");
 
-        for(NoteRating rating : ratingScale){
+        for(GradeRating rating : gradeScale){
             text += ";" + rating.total;
         }
         text += "\n";
@@ -164,7 +164,7 @@ public class NoteExportRenderer {
 
         text += TR.tr("Moyenne");
 
-        for(NoteRating rating : ratingScale){
+        for(GradeRating rating : gradeScale){
             text += ";=AVERAGE(" + x + startY + ":" + x + endY + ")";
             x++;
         }
@@ -178,8 +178,8 @@ public class NoteExportRenderer {
             text += StringUtils.removeAfterLastRejex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
         }
 
-        for(NoteElement note : file.notes){
-            text += ";" + (note.getValue() == -1 ? "" : note.getValue());
+        for(GradeElement grade : file.grades){
+            text += ";" + (grade.getValue() == -1 ? "" : grade.getValue());
         }
         text += "\n";
 
@@ -198,10 +198,10 @@ public class NoteExportRenderer {
                     (element2.getPageNumber()-9999 + "" + (element2.getRealY()-9999) + "" + (element2.getRealX()-9999))
                             .compareToIgnoreCase(element1.getPageNumber()-9999 + "" + (element1.getRealY()-9999) + "" + (element1.getRealX()-9999)));
 
-            for(int i = 1 ; i < file.notes.size(); i++){
-                NoteElement note = file.notes.get(i);
-                int maxPage = note.getPageNumber();
-                int maxY = note.getRealY();
+            for(int i = 1 ; i < file.grades.size(); i++){
+                GradeElement grade = file.grades.get(i);
+                int maxPage = grade.getPageNumber();
+                int maxY = grade.getRealY();
 
                 TextElement element = file.comments.size() > 0 ? file.comments.get(0) : null;
                 int k = -1;
@@ -252,7 +252,7 @@ public class NoteExportRenderer {
         try {
             ExportFile defaultFile = new ExportFile(MainWindow.mainScreen.document.getFile(), exportTier, pane.settingsWithTxtElements.isSelected());
 
-            ratingScale = defaultFile.generateRatingScale();
+            gradeScale = defaultFile.generateGradeScale();
             if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())) files.add(defaultFile);
         }catch(Exception e){
             e.printStackTrace();
@@ -287,7 +287,7 @@ public class NoteExportRenderer {
 
                     ExportFile exportFile = new ExportFile(file, exportTier, pane.settingsWithTxtElements.isSelected());
 
-                    if(pane.settingsOnlySameRatingScale.isSelected() && !exportFile.isSameRatingScale(ratingScale)) continue;
+                    if(pane.settingsOnlySameGradeScale.isSelected() && !exportFile.isSameGradeScale(gradeScale)) continue;
                     if(pane.settingsOnlyCompleted.isSelected() && !exportFile.isCompleted()) continue;
                     files.add(exportFile);
 

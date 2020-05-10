@@ -2,7 +2,7 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 public class ExportRenderer {
 
     public int exportFile(File file, String directory, String prefix, String suffix, String replace, String by, String customName,
-                          Boolean erase, boolean mkdirs, boolean onlyEdited, boolean textElements, boolean notesElements, boolean drawElements) throws Exception {
+                          Boolean erase, boolean mkdirs, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception {
 
         File editFile = Edition.getEditFile(file);
 
@@ -35,7 +35,7 @@ public class ExportRenderer {
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
 
         TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
-        NoteElementRenderer noteElementRenderer = new NoteElementRenderer(doc);
+        GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc);
 
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0 ; pageNumber < doc.getNumberOfPages() ; pageNumber++){
@@ -68,8 +68,8 @@ public class ExportRenderer {
 
                 if(element instanceof TextElement){
                     if(textElements) textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
-                }else if(element instanceof NoteElement){
-                    if(notesElements) noteElementRenderer.renderElement((NoteElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }else if(element instanceof GradeElement){
+                    if(gradesElements) gradeElementRenderer.renderElement((GradeElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }/*else if(element instanceof DrawElement){
                     if(drawElements)
 

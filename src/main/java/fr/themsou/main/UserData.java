@@ -1,8 +1,7 @@
 package fr.themsou.main;
 
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.notes.LBNoteTab;
+import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.windows.MainWindow;
@@ -27,7 +26,7 @@ public class UserData {
 
     public static File lastOpenDir = new File(System.getProperty("user.home"));
 
-    // Notes ExportParams
+    // Grades ExportParams
 
     public String lastExportFileName = "";
     public String lastExportFileNamePrefix = "";
@@ -36,7 +35,7 @@ public class UserData {
     public String lastExportFileNameBy = "";
     public String lastExportStudentNameReplace = "";
     public String lastExportStudentNameBy = "";
-    public boolean settingsOnlySameRatingScale = true;
+    public boolean settingsOnlySameGradeScale = true;
     public boolean settingsOnlyCompleted = false;
     public boolean settingsOnlySameDir = false;
     public boolean settingsAttributeTotalLine = false;
@@ -102,13 +101,13 @@ public class UserData {
 
             // TIERS FONTS (NOTE_TAB) + lock
 
-            HashMap<String, Object> notes = config.getSection("notes");
+            HashMap<String, Object> grades = config.getSection("grades");
 
             int i = 0;
-            for(Object font : Config.getSection(notes, "tiersFont").values()){
+            for(Object font : Config.getSection(grades, "tiersFont").values()){
                 if(font instanceof Map){
                     HashMap<String, Object> data = (HashMap<String, Object>) font;
-                    LBNoteTab.fontTiers.put(i, Map.entry(
+                    LBGradeTab.fontTiers.put(i, Map.entry(
                             Font.loadFont(
                                     Element.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
                                     Config.getDouble(data, "size")), // Font + Size
@@ -121,7 +120,7 @@ public class UserData {
             }
 
 
-            MainWindow.lbNoteTab.lockRatingScale.setSelected(Config.getBoolean(notes, "lockRatingScale"));
+            MainWindow.lbGradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
 
             // ExportParams
 
@@ -138,7 +137,7 @@ public class UserData {
             lastExportStudentNameBy = Config.getString(exportFields, "studentNameBy");
 
             HashMap<String, Object> exportSettings = Config.getSection(exportParams, "settings");
-            settingsOnlySameRatingScale = Config.getBoolean(exportSettings, "onlySameRatingScale");
+            settingsOnlySameGradeScale = Config.getBoolean(exportSettings, "onlySameGradeScale");
             settingsOnlyCompleted = Config.getBoolean(exportSettings, "onlyCompleted");
             settingsOnlySameDir = Config.getBoolean(exportSettings, "onlySameDir");
             settingsAttributeTotalLine = Config.getBoolean(exportSettings, "attributeTotalLine");
@@ -172,7 +171,7 @@ public class UserData {
                             try{
                                 lastOpenDir = new File(reader.readUTF());
                                  reader.readUTF(); // lastExportDir
-                                 reader.readUTF(); // lastExportDirNotes
+                                 reader.readUTF(); // lastExportDirGrades
 
                                 // LAST FONTS (TEXT_TAB)
 
@@ -185,13 +184,13 @@ public class UserData {
                                 // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
 
                                 for(int i = 0; i < 5 ; i++){
-                                    LBNoteTab.fontTiers.put(i, Map.entry(
+                                    LBGradeTab.fontTiers.put(i, Map.entry(
                                             Font.loadFont(Element.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
-                                MainWindow.lbNoteTab.updateElementsFont();
+                                MainWindow.lbGradeTab.updateElementsFont();
 
-                                MainWindow.lbNoteTab.lockRatingScale.setSelected(reader.readBoolean());
+                                MainWindow.lbGradeTab.lockGradeScale.setSelected(reader.readBoolean());
 
                                 lastExportFileName = reader.readUTF();
                                 lastExportFileNameReplace = reader.readUTF();
@@ -200,7 +199,7 @@ public class UserData {
                                 lastExportFileNameSuffix = reader.readUTF();
                                 lastExportStudentNameReplace = reader.readUTF();
                                 lastExportStudentNameBy = reader.readUTF();
-                                settingsOnlySameRatingScale = reader.readBoolean();
+                                settingsOnlySameGradeScale = reader.readBoolean();
                                 settingsOnlyCompleted = reader.readBoolean();
                                 settingsOnlySameDir = reader.readBoolean();
                                 settingsAttributeTotalLine = reader.readBoolean();
@@ -279,7 +278,6 @@ public class UserData {
             }
             texts.put("lists", lists);
 
-
             HashMap<Object, Object> lastTextFont = new HashMap<>();
             lastTextFont.put("font", MainWindow.lbTextTab.lastFont);
             lastTextFont.put("size", MainWindow.lbTextTab.lastFontSize);
@@ -297,9 +295,9 @@ public class UserData {
             // TIERS FONTS (NOTE_TAB) + lock
 
             int i = 0;
-            HashMap<Object, Object> notes = new HashMap<>();
-            HashMap<Object, Object> noteTiersFont = new HashMap<>();
-            for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : LBNoteTab.fontTiers.values()){
+            HashMap<Object, Object> grades = new HashMap<>();
+            HashMap<Object, Object> gradeTiersFont = new HashMap<>();
+            for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : LBGradeTab.fontTiers.values()){
                 Font realFont = font.getKey();
                 HashMap<Object, Object> data = new HashMap<>();
 
@@ -311,13 +309,13 @@ public class UserData {
                 data.put("color", font.getValue().getKey().toString());
                 data.put("showName", font.getValue().getValue());
 
-                noteTiersFont.put(i+"", data);
+                gradeTiersFont.put(i+"", data);
                 i++;
             }
-            notes.put("tiersFont", noteTiersFont);
-            notes.put("lockRatingScale", MainWindow.lbNoteTab.lockRatingScale.isSelected());
+            grades.put("tiersFont", gradeTiersFont);
+            grades.put("lockGradeScale", MainWindow.lbGradeTab.lockGradeScale.isSelected());
 
-            config.base.put("notes", notes);
+            config.base.put("grades", grades);
 
             // ExportParams
 
@@ -334,7 +332,7 @@ public class UserData {
             exportParams.put("fields", exportFields);
 
             HashMap<Object, Object> exportSettings = new HashMap<>();
-            exportSettings.put("onlySameRatingScale", settingsOnlySameRatingScale);
+            exportSettings.put("onlySameGradeScale", settingsOnlySameGradeScale);
             exportSettings.put("onlyCompleted", settingsOnlyCompleted);
             exportSettings.put("onlySameDir", settingsOnlySameDir);
             exportSettings.put("attributeTotalLine", settingsAttributeTotalLine);

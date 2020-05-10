@@ -1,7 +1,6 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.PDFPagesRender;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;

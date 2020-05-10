@@ -88,11 +88,11 @@ public class ExportWindow {
         HBox types = new HBox();
             CheckBox textElements = new CheckBox(TR.tr("Texte"));
             textElements.setSelected(true);
-            CheckBox notesElements = new CheckBox(TR.tr("Notes"));
-            notesElements.setSelected(true);
+            CheckBox gradesElements = new CheckBox(TR.tr("Notes"));
+            gradesElements.setSelected(true);
             CheckBox drawElements = new CheckBox(TR.tr("Dessins"));
             drawElements.setSelected(true);
-        types.getChildren().addAll(textElements, notesElements, drawElements);
+        types.getChildren().addAll(textElements, gradesElements, drawElements);
 
 
         VBox settings = new VBox();
@@ -118,7 +118,7 @@ public class ExportWindow {
         HBox.setMargin(changePath, new Insets(5, 10, 0, 5));
 
         HBox.setMargin(textElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(notesElements, new Insets(20, 10, 0, 10));
+        HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
         HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
 
         VBox.setMargin(erase, new Insets(20, 10, 5, 10));
@@ -145,7 +145,7 @@ public class ExportWindow {
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
 
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  notesElements.isSelected(), drawElements.isSelected());
+                    erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  gradesElements.isSelected(), drawElements.isSelected());
         });
         cancel.setOnAction(event -> window.close());
 
@@ -214,11 +214,11 @@ public class ExportWindow {
         HBox types = new HBox();
         CheckBox textElements = new CheckBox(TR.tr("Texte"));
         textElements.setSelected(true);
-        CheckBox notesElements = new CheckBox(TR.tr("Notes"));
-        notesElements.setSelected(true);
+        CheckBox gradesElements = new CheckBox(TR.tr("Notes"));
+        gradesElements.setSelected(true);
         CheckBox drawElements = new CheckBox(TR.tr("Dessins"));
         drawElements.setSelected(true);
-        types.getChildren().addAll(textElements, notesElements, drawElements);
+        types.getChildren().addAll(textElements, gradesElements, drawElements);
 
 
         VBox settings = new VBox();
@@ -254,7 +254,7 @@ public class ExportWindow {
         HBox.setMargin(changePath, new Insets(5, 10, 0, 5));
 
         HBox.setMargin(textElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(notesElements, new Insets(20, 10, 0, 10));
+        HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
         HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
 
         VBox.setMargin(erase, new Insets(20, 10, 5, 10));
@@ -278,19 +278,19 @@ public class ExportWindow {
         });
 
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), notesElements.isSelected(), drawElements.isSelected()));
+                erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
         cancel.setOnAction(event -> window.close());
 
     }
 
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
-                                 boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean notesElements, boolean drawElements){
+                                 boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
         erase = eraseFile;
         int exported = 0;
 
         for(File file : files){
             try{
-                int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, notesElements, drawElements);
+                int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, gradesElements, drawElements);
                 if(result == 0){
                     return;
                 }else if(result == 1){

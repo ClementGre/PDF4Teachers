@@ -74,7 +74,7 @@ Enfin, Main va appeler (``.windows.MainWindow``) qui va tout initialiser et pré
 
 Chaque classe ou package du package ``fr.themsou.panel`` et ``fr.themsou.panel.leftBar`` représentent un élément graphique de l'écran, elle etendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
 
-On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et quelques classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans MainWindow (``LBFilesTab``, ``LBTextTab``, ``LBNoteTab``, ``LBPaintTab``). Ces classes sont accompagnés d'autres classes dont les ``xxxTreeView`` ou ``xxxTreeView`` qui représentent un arbre ou une liste JavaFX. On retrouve aussi les ``xxxTreeItem`` qui représentent un élément de l'arbre. Ces classes ont généralement une variable ``core``, qui représentent l'élément de ``.document.editions.elements`` qui leurs correspond.
+On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et quelques classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans MainWindow (``LBFilesTab``, ``LBTextTab``, ``LBGradeTab``, ``LBPaintTab``). Ces classes sont accompagnés d'autres classes dont les ``xxxTreeView`` ou ``xxxTreeView`` qui représentent un arbre ou une liste JavaFX. On retrouve aussi les ``xxxTreeItem`` qui représentent un élément de l'arbre. Ces classes ont généralement une variable ``core``, qui représentent l'élément de ``.document.editions.elements`` qui leurs correspond.
 
 **Classes des éléments (``fr.themsou.document.editions.elements``)**
 
@@ -85,7 +85,7 @@ Ces différents éléments (texte, notes et formes géométriques) ont des class
 À l'ouverture d'un document, ``fr.themsou.panel.MainScreen.MainScreen`` initialisera :
 - ``.document.Document`` qui initialisera sous demande de MainScreen :
 
-  - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en Hexadécimal et stoqué dans ``<user.home>/.PDF4Teachers/<nom de l'édition>.edit`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.edit``. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il pourra aussi écrire les fichiers lors de la sauvegarde.
+  - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en Hexadécimal et stoqué dans ``<user.home>/.PDF4Teachers/<nom de l'édition>.yml`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.edit``. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il pourra aussi écrire les fichiers lors de la sauvegarde.
   
   - ``.document.render.PageRenderer`` pour chacune des pages en passant en paramètre le numéro de la page correspondant. PageRenderer stoquera touts les Elements dans une ``ArrayList<Element>``. Chaque ``PageRenderer`` fera un rendu sous forme d'image de la page du fichier PDF qui lui est assigné, avec ``.document.render.PDFPagesRender``. Le rendu se lancera lorsque la page sera proche de la zone visible de la ScrollPane.
 

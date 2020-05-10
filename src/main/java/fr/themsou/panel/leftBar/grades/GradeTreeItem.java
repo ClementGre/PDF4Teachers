@@ -1,6 +1,6 @@
-package fr.themsou.panel.leftBar.notes;
+package fr.themsou.panel.leftBar.grades;
 
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -8,7 +8,6 @@ import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -22,9 +21,9 @@ import javafx.scene.text.Text;
 
 import java.util.regex.Pattern;
 
-public class NoteTreeItem extends TreeItem {
+public class GradeTreeItem extends TreeItem {
 
-    private NoteElement core;
+    private GradeElement core;
 
     // JavaFX
     private TreeCell<String> cell;
@@ -36,10 +35,10 @@ public class NoteTreeItem extends TreeItem {
     private Text slash = new Text("/");
     private Text total = new Text();
 
-    private Button newNote;
+    private Button newGrade;
 
     private TextArea nameField = new TextArea("☺");
-    public TextArea noteField = new TextArea("☺");
+    public TextArea gradeField = new TextArea("☺");
     private TextArea totalField = new TextArea("☺");
 
     private ContextMenu pageContextMenu = null;
@@ -49,7 +48,7 @@ public class NoteTreeItem extends TreeItem {
     private EventHandler<MouseEvent> mouseExitedEvent;
     private ChangeListener<Boolean> selectedListener;
 
-    public NoteTreeItem(NoteElement core){
+    public GradeTreeItem(GradeElement core){
 
         this.core = core;
 
@@ -61,63 +60,63 @@ public class NoteTreeItem extends TreeItem {
         
         selectedListener = (observable, oldValue, newValue) -> {
             if(newValue){ // Est sélectionné
-                newNote.setVisible(true);
-                //newNote.setStyle("-fx-background-color: #0078d7");
+                newGrade.setVisible(true);
+                //newGrade.setStyle("-fx-background-color: #0078d7");
 
                 nameField.setText(core.getName());
                 if(!isRoot() && getParent() != null){
-                    if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
+                    if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
                 }
 
-                noteField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
+                gradeField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
                 totalField.setText(Main.format.format(core.getTotal()));
                 pane.getChildren().clear();
 
-                if(MainWindow.lbNoteTab.isLockRatingScaleProperty().get()){
-                    if(hasSubNote()){
-                        pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
+                if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+                    if(hasSubGrade()){
+                        pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
                     }else{
-                        pane.getChildren().addAll(name, spacer, noteField, slash, total, newNote);
+                        pane.getChildren().addAll(name, spacer, gradeField, slash, total, newGrade);
                         Platform.runLater(() -> {
-                            noteField.requestFocus();
+                            gradeField.requestFocus();
                         });
                     }
                 }else{
-                    if(hasSubNote()){
-                        pane.getChildren().addAll(nameField, spacer, value, slash, total, newNote);
+                    if(hasSubGrade()){
+                        pane.getChildren().addAll(nameField, spacer, value, slash, total, newGrade);
                         Platform.runLater(() -> {
                             nameField.requestFocus();
                         });
                     }else{
-                        pane.getChildren().addAll(nameField, spacer, noteField, slash, totalField, newNote);
+                        pane.getChildren().addAll(nameField, spacer, gradeField, slash, totalField, newGrade);
                         Platform.runLater(() -> {
                             if(name.getText().contains(TR.tr("Nouvelle note"))) nameField.requestFocus();
                             else if(total.getText().equals("0")) totalField.requestFocus();
-                            else noteField.requestFocus();
+                            else gradeField.requestFocus();
                         });
                     }
                 }
 
             }else if(oldValue){ // n'est plus selectionné
-                newNote.setVisible(false);
-                newNote.setStyle(null);
+                newGrade.setVisible(false);
+                newGrade.setStyle(null);
 
                 pane.getChildren().clear();
-                pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
+                pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
             }
         };
 
         mouseEnteredEvent = event -> {
-            if(!cell.isFocused()) newNote.setVisible(true);
+            if(!cell.isFocused()) newGrade.setVisible(true);
         };
 
         mouseExitedEvent = event -> {
-            if(!cell.isFocused()) newNote.setVisible(false);
+            if(!cell.isFocused()) newGrade.setVisible(false);
         };
 
-        newNote.setOnAction(event -> {
+        newGrade.setOnAction(event -> {
             setExpanded(true);
-            MainWindow.lbNoteTab.newNoteElementAuto(this).select();
+            MainWindow.lbGradeTab.newGradeElementAuto(this).select();
         });
 
     }
@@ -153,12 +152,12 @@ public class NoteTreeItem extends TreeItem {
         nameField.setMaxHeight(29);
         nameField.setMinWidth(29);
 
-        noteField.setStyle("-fx-font-size: 13;");
-        noteField.setFont(new Font(13));
-        noteField.setMinHeight(29);
-        noteField.setMaxHeight(29);
-        noteField.setMinWidth(29);
-        HBox.setMargin(noteField, new Insets(0, 0, 0, 5));
+        gradeField.setStyle("-fx-font-size: 13;");
+        gradeField.setFont(new Font(13));
+        gradeField.setMinHeight(29);
+        gradeField.setMaxHeight(29);
+        gradeField.setMinWidth(29);
+        HBox.setMargin(gradeField, new Insets(0, 0, 0, 5));
 
         totalField.setStyle("-fx-font-size: 13;");
         totalField.setFont(new Font(13));
@@ -180,8 +179,8 @@ public class NoteTreeItem extends TreeItem {
         });
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){
-                NoteTreeItem afterItem = getAfterItem();
-                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
+                GradeTreeItem afterItem = getAfterItem();
+                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.nameField.requestFocus());
             }
 
@@ -194,38 +193,38 @@ public class NoteTreeItem extends TreeItem {
 
             core.setName(newText);
         });
-        noteField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+        gradeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
-                noteField.positionCaret(noteField.getText().length());
-                noteField.selectAll();
+                gradeField.positionCaret(gradeField.getText().length());
+                gradeField.selectAll();
             });
         });
-        noteField.textProperty().addListener((observable, oldValue, newValue) -> {
+        gradeField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("/")){
                 totalField.requestFocus();
                 totalField.positionCaret(totalField.getText().length());
             }
-            if(newValue.contains("\n")){ // Enter : Switch to the next note
+            if(newValue.contains("\n")){ // Enter : Switch to the next grade
                 if(pageContextMenu != null){
                     pageContextMenu.hide();
                     pageContextMenu.getItems().clear();
                 }
-                NoteTreeItem afterItem = getAfterChildItem();
-                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) Platform.runLater(() -> afterItem.noteField.requestFocus());
+                GradeTreeItem afterItem = getAfterChildItem();
+                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
+                if(afterItem != null) Platform.runLater(() -> afterItem.gradeField.requestFocus());
             }
             String newText = newValue.replaceAll("[^0123456789.,]", "");
             if(newText.length() >= 5) newText = newText.substring(0, 5);
 
-            noteField.setText(newText);
+            gradeField.setText(newText);
             meter.setText(newText);
-            noteField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
+            gradeField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
 
             try{
                 double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
                 if(value > core.getTotal()){
                     core.setValue(core.getTotal());
-                    noteField.setText(Main.format.format(core.getTotal()));
+                    gradeField.setText(Main.format.format(core.getTotal()));
                 }else core.setValue(value);
             }catch(NumberFormatException e){
                 core.setValue(-1);
@@ -238,9 +237,9 @@ public class NoteTreeItem extends TreeItem {
             });
         });
         totalField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.contains("\n")){ // Enter : Switch to the next note
-                NoteTreeItem afterItem = getAfterChildItem();
-                MainWindow.lbNoteTab.treeView.getSelectionModel().select(afterItem);
+            if(newValue.contains("\n")){ // Enter : Switch to the next grade
+                GradeTreeItem afterItem = getAfterChildItem();
+                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.totalField.requestFocus());
             }
 
@@ -262,15 +261,15 @@ public class NoteTreeItem extends TreeItem {
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        newNote = new Button();
-        newNote.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/more.png")+"", 0, 0));
-        Builders.setPosition(newNote, 0, 0, 30, 30, true);
-        newNote.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.lbNoteTab.isLockRatingScaleProperty().get() || NoteTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.lbNoteTab.isLockRatingScaleProperty()));
-        newNote.setVisible(false);
-        newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
-        name.textProperty().addListener((observable, oldValue, newValue) -> newNote.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
+        newGrade = new Button();
+        newGrade.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/more.png")+"", 0, 0));
+        Builders.setPosition(newGrade, 0, 0, 30, 30, true);
+        newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.lbGradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.lbGradeTab.isLockGradeScaleProperty()));
+        newGrade.setVisible(false);
+        newGrade.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
+        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
 
-        pane.getChildren().addAll(name, spacer, value, slash, total, newNote);
+        pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
 
     }
     public HBox getEditGraphics(int width, ContextMenu menu){
@@ -303,24 +302,24 @@ public class NoteTreeItem extends TreeItem {
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        noteField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
+        gradeField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
         if(!isRoot() && getParent() != null){
-            if(((NoteTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
+            if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
 
-        if(hasSubNote()){
+        if(hasSubGrade()){
             pane.getChildren().addAll(name, spacer, value, slash, total);
         }else{
-            pane.getChildren().addAll(name, spacer, noteField, slash, total);
+            pane.getChildren().addAll(name, spacer, gradeField, slash, total);
             Platform.runLater(() -> {
-                noteField.requestFocus();
+                gradeField.requestFocus();
             });
         }
 
         pageContextMenu = menu;
 
         pane.setOnMouseEntered(e -> {
-            noteField.requestFocus();
+            gradeField.requestFocus();
         });
         pane.setPrefWidth(width);
         return pane;
@@ -345,52 +344,52 @@ public class NoteTreeItem extends TreeItem {
 
     }
 
-    public NoteTreeItem getBeforeItem(){
+    public GradeTreeItem getBeforeItem(){
         if(isRoot()) return null;
 
-        NoteTreeItem parent = (NoteTreeItem) getParent();
+        GradeTreeItem parent = (GradeTreeItem) getParent();
 
         if(core.getIndex() == 0) return parent;
 
         // Descend le plus possible dans les enfants du parent pour retrouver le dernier
-        NoteTreeItem newParent = (NoteTreeItem) parent.getChildren().get(core.getIndex()-1);
-        while(newParent.hasSubNote()){
-            newParent = (NoteTreeItem) newParent.getChildren().get(newParent.getChildren().size()-1);
+        GradeTreeItem newParent = (GradeTreeItem) parent.getChildren().get(core.getIndex()-1);
+        while(newParent.hasSubGrade()){
+            newParent = (GradeTreeItem) newParent.getChildren().get(newParent.getChildren().size()-1);
         }
         return newParent;
     }
-    public NoteTreeItem getAfterItem(){
+    public GradeTreeItem getAfterItem(){
 
-        if(hasSubNote()) return (NoteTreeItem) getChildren().get(0);
+        if(hasSubGrade()) return (GradeTreeItem) getChildren().get(0);
         if(isRoot()) return null;
 
-        NoteTreeItem parent = (NoteTreeItem) getParent();
-        NoteTreeItem children = this;
+        GradeTreeItem parent = (GradeTreeItem) getParent();
+        GradeTreeItem children = this;
 
         // Remonte dans les parents jusqu'a trouver un parent qui as un élément après celui-ci
         while(children.getCore().getIndex() == parent.getChildren().size()-1){
             children = parent;
             if(parent.isRoot()) return null;
-            parent = (NoteTreeItem) parent.getParent();
+            parent = (GradeTreeItem) parent.getParent();
         }
-        return (NoteTreeItem) parent.getChildren().get(children.getCore().getIndex()+1);
+        return (GradeTreeItem) parent.getChildren().get(children.getCore().getIndex()+1);
     }
 
-    public NoteTreeItem getBeforeChildItem(){
-        NoteTreeItem beforeItem = getBeforeItem();
+    public GradeTreeItem getBeforeChildItem(){
+        GradeTreeItem beforeItem = getBeforeItem();
         while(beforeItem != null){
-            NoteTreeItem beforeAfterItem = beforeItem.getBeforeItem();
-            if(!beforeItem.hasSubNote()) return beforeItem;
+            GradeTreeItem beforeAfterItem = beforeItem.getBeforeItem();
+            if(!beforeItem.hasSubGrade()) return beforeItem;
             if(beforeAfterItem == null) return null;
             beforeItem = beforeAfterItem;
         }
         return null;
     }
-    public NoteTreeItem getAfterChildItem(){
-        NoteTreeItem afterItem = getAfterItem();
+    public GradeTreeItem getAfterChildItem(){
+        GradeTreeItem afterItem = getAfterItem();
         while(afterItem != null){
-            NoteTreeItem afterAfterItem = afterItem.getAfterItem();
-            if(!afterItem.hasSubNote()) return afterItem;
+            GradeTreeItem afterAfterItem = afterItem.getAfterItem();
+            if(!afterItem.hasSubGrade()) return afterItem;
             if(afterAfterItem == null) return null;
             afterItem = afterAfterItem;
         }
@@ -404,7 +403,7 @@ public class NoteTreeItem extends TreeItem {
         double total = 0;
 
         for(int i = 0; i < getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
 
             total += children.getCore().getTotal();
             if(children.getCore().getValue() >= 0){
@@ -418,30 +417,30 @@ public class NoteTreeItem extends TreeItem {
         core.setTotal(total);
 
         if(getParent() != null){
-            ((NoteTreeItem) getParent()).makeSum();
+            ((GradeTreeItem) getParent()).makeSum();
         }
     }
 
     public void resetChildrenValues(){
 
         for(int i = 0; i < getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setValue(-1);
         }
     }
 
-    public boolean hasSubNote(){
+    public boolean hasSubGrade(){
         return getChildren().size() != 0;
     }
     public boolean isRoot(){
         return Builders.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
-        //return Main.lbNoteTab.treeView.getRoot().equals(this);
+        //return Main.lbGradeTab.treeView.getRoot().equals(this);
     }
 
-    public NoteElement getCore() {
+    public GradeElement getCore() {
         return core;
     }
-    public void setCore(NoteElement core) {
+    public void setCore(GradeElement core) {
         this.core = core;
     }
     public TreeCell<String> getCell() {
@@ -451,27 +450,27 @@ public class NoteTreeItem extends TreeItem {
     public void reIndexChildren() {
 
         for(int i = 0; i < getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setIndex(i);
         }
 
     }
     public void resetParentPathChildren() {
 
-        String path = NoteTreeView.getElementPath(this);
+        String path = GradeTreeView.getElementPath(this);
 
         for(int i = 0; i < getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setParentPath(path);
-            if(children.hasSubNote()) children.resetParentPathChildren();
+            if(children.hasSubGrade()) children.resetParentPathChildren();
         }
 
     }
 
     public void deleteChildren() {
-        while(hasSubNote()){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(0);
-            if(children.hasSubNote()) children.deleteChildren();
+        while(hasSubGrade()){
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(0);
+            if(children.hasSubGrade()) children.deleteChildren();
             children.getCore().delete();
         }
 
@@ -480,7 +479,7 @@ public class NoteTreeItem extends TreeItem {
     public boolean isExistTwice(String name){
         int k = 0;
         for(int i = 0; i < getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             if(children.getCore().getName().equals(name)) k++;
         }
 

@@ -1,10 +1,10 @@
-package fr.themsou.panel.leftBar.notes;
+package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.panel.leftBar.notes.export.NoteExportWindow;
+import fr.themsou.panel.leftBar.grades.export.GradeExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
@@ -23,25 +23,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public class LBNoteTab extends Tab {
+public class LBGradeTab extends Tab {
 
     public VBox pane = new VBox();
     public HBox optionPane = new HBox();
 
-    public NoteTreeView treeView;
+    public GradeTreeView treeView;
 
     public static HashMap<Integer, Map.Entry<Font, Map.Entry<Color, Boolean>>> fontTiers = new HashMap<>();
 
     public ToggleButton lockRatingPotitions = new ToggleButton();
-    public ToggleButton lockRatingScale = new ToggleButton();
+    public ToggleButton lockGradeScale = new ToggleButton();
     private Button settings = new Button();
     private Button link = new Button();
     private Button export = new Button();
 
-    public LBNoteTab(){
+    public LBGradeTab(){
         setClosable(false);
         setContent(pane);
-        setGraphic(Builders.buildImage(getClass().getResource("/img/note.png")+"", 0, 25));
+        setGraphic(Builders.buildImage(getClass().getResource("/img/grade.png")+"", 0, 25));
         MainWindow.leftBar.getTabs().add(2, this);
 
         setup();
@@ -57,13 +57,13 @@ public class LBNoteTab extends Tab {
 
         lockRatingPotitions.setSelected(false);
 
-        Builders.setHBoxPosition(lockRatingScale, 45, 35, 0);
-        lockRatingScale.setCursor(Cursor.HAND);
-        lockRatingScale.setSelected(false);
-        lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
-        lockRatingScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas-ferme.png") + "", 0, 0));
-            else lockRatingScale.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/cadenas.png") + "", 0, 0));
+        Builders.setHBoxPosition(lockGradeScale, 45, 35, 0);
+        lockGradeScale.setCursor(Cursor.HAND);
+        lockGradeScale.setSelected(false);
+        lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas.png") + "", 0, 0));
+        lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue) lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas-ferme.png") + "", 0, 0));
+            else lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas.png") + "", 0, 0));
 
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
@@ -72,46 +72,46 @@ public class LBNoteTab extends Tab {
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockRatingScale.setTooltip(Builders.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
+        lockGradeScale.setTooltip(Builders.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
 
         Builders.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
-        settings.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/engrenage.png")+"", 0, 0));
-        settings.setOnAction((e) -> new NoteSettingsWindow());
-        settings.setTooltip(Builders.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
+        settings.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/engrenage.png")+"", 0, 0));
+        settings.setOnAction((e) -> new GradeSettingsWindow());
+        settings.setTooltip(Builders.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
 
         Builders.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
-        link.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/link.png")+"", 0, 0));
+        link.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/link.png")+"", 0, 0));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        link.setOnAction((e) -> new NoteCopyRatingScaleDialog());
+        link.setOnAction((e) -> new GradeCopyGradeScaleDialog());
         link.setTooltip(Builders.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         Builders.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
-        export.setGraphic(Builders.buildImage(getClass().getResource("/img/NoteTab/exporter.png")+"", 0, 0));
+        export.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/exporter.png")+"", 0, 0));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        export.setOnAction((e) -> new NoteExportWindow());
+        export.setOnAction((e) -> new GradeExportWindow());
         export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, lockRatingScale, settings, link, export);
+        optionPane.getChildren().addAll(spacer, lockGradeScale, settings, link, export);
 
-        treeView = new NoteTreeView(this);
+        treeView = new GradeTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);
 
     }
 
-    public NoteElement newNoteElementAuto(NoteTreeItem parent){
+    public GradeElement newGradeElementAuto(GradeTreeItem parent){
 
         PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
         if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
         MainWindow.mainScreen.setSelected(null);
 
-        NoteElement current = new NoteElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
-                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), NoteTreeView.getElementPath(parent), page.getPage(), page);
+        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
+                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), page.getPage(), page);
 
         page.addElement(current, true);
         MainWindow.mainScreen.setSelected(current);
@@ -119,14 +119,14 @@ public class LBNoteTab extends Tab {
         return current;
     }
 
-    public NoteElement newNoteElement(String name, double value, double total, int index, String parentPath){
+    public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath){
 
         PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
         if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
         MainWindow.mainScreen.setSelected(null);
 
-        NoteElement current = new NoteElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
+        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
                 name, value, total, index, parentPath, page.getPage(), page);
 
         page.addElement(current, true);
@@ -137,18 +137,18 @@ public class LBNoteTab extends Tab {
 
     public void updateElementsFont(){
         if(treeView.getRoot() != null){
-            NoteTreeItem root = ((NoteTreeItem) treeView.getRoot());
-            if(root.hasSubNote()) updateElementFont(root);
+            GradeTreeItem root = ((GradeTreeItem) treeView.getRoot());
+            if(root.hasSubGrade()) updateElementFont(root);
             root.getCore().updateFont();
         }
     }
-    private void updateElementFont(NoteTreeItem parent){
+    private void updateElementFont(GradeTreeItem parent){
 
         for(int i = 0; i < parent.getChildren().size(); i++){
-            NoteTreeItem children = (NoteTreeItem) parent.getChildren().get(i);
+            GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
 
             children.getCore().updateFont();
-            if(children.hasSubNote()) updateElementFont(children);
+            if(children.hasSubGrade()) updateElementFont(children);
         }
     }
 
@@ -162,7 +162,7 @@ public class LBNoteTab extends Tab {
         return fontTiers.get(index).getValue().getValue();
     }
 
-    public BooleanProperty isLockRatingScaleProperty(){
-        return lockRatingScale.selectedProperty();
+    public BooleanProperty isLockGradeScaleProperty(){
+        return lockGradeScale.selectedProperty();
     }
 }

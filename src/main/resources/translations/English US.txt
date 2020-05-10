@@ -1,7 +1,7 @@
 # PageRenderer
 # CallBack
 # PageStatus
-# NoteTreeItem
+# GradeTreeItem
 Créer une nouvelle sous-note de=Add new sub-grade
 # FilesUtils
 # NodeMenuItem
@@ -61,7 +61,7 @@ Renommer=Rename
 Fichier déjà existant=File already existing
 Écraser=Overwrite
 Toujours écraser=Always overwrite
-# NoteCopyRatingScaleDialog
+# GradeCopyGradeScaleDialog
 Copier sur tous les\ndocuments ouverts=Copy on all\nopened documents
 Copier le barème sur d'autres éditions=Copy grade scale on other documents edits
 Votre barème a bien été copié.=Grade scale copy successfull
@@ -85,8 +85,8 @@ Tout arrêter=Stop all
 Une nouvelle version est disponible !=New version available !
 # Sorter
 # Settings
-# NoteTreeView
-# NoteExportRenderer
+# GradeTreeView
+# GradeExportRenderer
 Parties=Parts
 Une erreur s'est produite lors de la génération du document=An error occured while generating document
 Barème=Grade scale
@@ -97,7 +97,7 @@ Impossible d'exporter.=Impossible to export
 Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer=This is the main document in this export, export must stop
 OK=OK
 # ZoomOperator
-# NoteRating
+# GradeRating
 # Edition
 Total=Total
 Êtes vous sûr de vouloir supprimer l'édition de ce document ?=Do you really want to delete this document editings ?
@@ -159,7 +159,7 @@ Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui d
 Ajouter et lier=Add and link
 # PDFPagesRender
 # TextListItem
-# NoteExportWindow
+# GradeExportWindow
 Tout exporter ensemble=Export all together
 Exporter uniquement les notes des documents avec toutes les notes remplies=Only export documents with all grades filled in
 Nom de l'élève=Learner name
@@ -306,7 +306,7 @@ Ajouter aux éléments Favoris=Add to favorites elements
 # NodeRadioMenuItem
 # TextTreeItem
 # StringUtils
-# NoteSettingsWindow
+# GradeSettingsWindow
 Afficher le nom de la note=Display grade name
 Niveau=Level
 Ces paramètres sonts indépendants de l'édition du document.=These settings are not related to comment edits
@@ -331,12 +331,12 @@ Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.=Remove
 Éléments=Elements
 Retirer=Remove
 Ouvrir=Open
-# LBNoteTab
+# LBGradeTab
 Envoyer le barème sur d'autres éditions.=Send grade scale on other edits
 Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=Export grades of one or several documents, in one or several CSV files. This allows grades import in spreadsheet application
 Vérouiller le barème, il ne pourra plus être modifié.=Lock grade scale : disables its modification
 Modifier les polices, couleurs et préfixe de chaque niveau de notes.=Set fonts, colors, and prefix of each grade hierachical level
-# NoteElement
+# GradeElement
 Réinitialiser=Reset
 Nouvelle note=New grade
 Supprime cet élément du barème et de l'édition.=Deletes this element from grading scale and edit

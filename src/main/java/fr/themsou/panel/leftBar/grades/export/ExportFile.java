@@ -1,11 +1,11 @@
-package fr.themsou.panel.leftBar.notes.export;
+package fr.themsou.panel.leftBar.grades.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.notes.NoteRating;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.grades.GradeRating;
+import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.utils.Builders;
 
 import java.io.File;
@@ -18,7 +18,7 @@ public class ExportFile{
 
     public File file;
 
-    public List<NoteElement> notes = new ArrayList<>();
+    public List<GradeElement> grades = new ArrayList<>();
     public List<TextElement> comments;
 
     public ExportFile(File file, int exportTier, boolean comments) throws Exception {
@@ -29,8 +29,8 @@ public class ExportFile{
 
         Element[] elements = Edition.simpleLoad(editFile);
         for(Element element : elements){
-            if(element instanceof NoteElement){
-                notes.add(((NoteElement) element));
+            if(element instanceof GradeElement){
+                grades.add(((GradeElement) element));
 
             }else if(comments && element instanceof TextElement){
                 this.comments.add(((TextElement) element));
@@ -38,17 +38,17 @@ public class ExportFile{
 
         }
 
-        notes.removeIf(note -> NoteTreeView.getElementTier(note.getParentPath()) >= exportTier);
+        grades.removeIf(grade -> GradeTreeView.getElementTier(grade.getParentPath()) >= exportTier);
 
-        notes.sort(Comparator.comparing(note -> {
+        grades.sort(Comparator.comparing(grade -> {
 
-            String[] parentPath = Builders.cleanArray(note.getParentPath().split(Pattern.quote("\\")));
-            String lastParentPath = note.getParentPath();
+            String[] parentPath = Builders.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
+            String lastParentPath = grade.getParentPath();
 
-            StringBuilder indexes = new StringBuilder(note.getIndex() + "");
+            StringBuilder indexes = new StringBuilder(grade.getIndex() + "");
 
             while(parentPath.length != 0){
-                for(NoteElement parent : notes){
+                for(GradeElement parent : grades){
                     if((parent.getParentPath() + "\\" + parent.getName()).equals(lastParentPath)){
                         indexes.insert(0, parent.getIndex());
                         lastParentPath = "\\" + String.join("\\", parentPath);
@@ -60,30 +60,30 @@ public class ExportFile{
         }));
     }
 
-    public boolean isSameRatingScale(ArrayList<NoteRating> ratingScale){
+    public boolean isSameGradeScale(ArrayList<GradeRating> gradeScale){
         int i = 0;
-        for(NoteElement note : notes){
-            if(!note.toNoteRating().containsIn(ratingScale)){
+        for(GradeElement grade : grades){
+            if(!grade.toGradeRating().containsIn(gradeScale)){
                 return false;
             }
             i++;
         }
-        return i == ratingScale.size();
+        return i == gradeScale.size();
     }
 
-    public ArrayList<NoteRating> generateRatingScale(){
+    public ArrayList<GradeRating> generateGradeScale(){
 
-        ArrayList<NoteRating> notesRating = new ArrayList<>();
-        for(NoteElement note : notes){
-            notesRating.add(note.toNoteRating());
+        ArrayList<GradeRating> gradesRating = new ArrayList<>();
+        for(GradeElement grade : grades){
+            gradesRating.add(grade.toGradeRating());
         }
-        return notesRating;
+        return gradesRating;
     }
 
     public boolean isCompleted() {
 
-        for(NoteElement note : notes){
-            if(note.getValue() == -1) return false;
+        for(GradeElement grade : grades){
+            if(grade.getValue() == -1) return false;
         }
         return true;
 

@@ -220,19 +220,6 @@ public class TextTreeItem extends TreeItem{
 		return new TextTreeItem(font.get(), text, color.get(), type, uses, creationDate);
 	}
 
-	public void writeData(DataOutputStream writer) throws IOException {
-
-		writer.writeFloat((float) font.get().getSize());
-		writer.writeBoolean(Element.getFontWeight(font.get()) == FontWeight.BOLD);
-		writer.writeBoolean(Element.getFontPosture(font.get()) == FontPosture.ITALIC);
-		writer.writeUTF(font.get().getFamily());
-		writer.writeByte((int) (color.get().getRed() * 255.0 - 128));
-		writer.writeByte((int) (color.get().getGreen() * 255.0 - 128));
-		writer.writeByte((int) (color.get().getBlue() * 255.0 - 128));
-		writer.writeLong(uses);
-		writer.writeLong(creationDate);
-		writer.writeUTF(text);
-	}
 	public HashMap<Object, Object> getYAMLData(){
 		HashMap<Object, Object> data = new HashMap<>();
 		data.put("color", color.get().toString());

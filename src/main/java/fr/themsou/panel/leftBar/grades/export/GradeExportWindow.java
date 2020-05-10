@@ -1,7 +1,6 @@
-package fr.themsou.panel.leftBar.notes.export;
+package fr.themsou.panel.leftBar.grades.export;
 
 import fr.themsou.main.Main;
-import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
@@ -21,7 +20,7 @@ import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 import java.io.File;
 
-public class NoteExportWindow extends Stage {
+public class GradeExportWindow extends Stage {
 
     TabPane tabPane = new TabPane();
 
@@ -29,7 +28,7 @@ public class NoteExportWindow extends Stage {
     ExportPane exportAllSplitTab = new ExportPane(this, TR.tr("Tout exporter séparément"), 1, true, true, true, true);
     ExportPane exportThisTab = new ExportPane(this, TR.tr("Exporter uniquement ce fichier"), 2, false, false, false, true);
 
-    public NoteExportWindow(){
+    public GradeExportWindow(){
 
         VBox root = new VBox();
         Scene scene = new Scene(root);
@@ -56,7 +55,7 @@ public class NoteExportWindow extends Stage {
     class ExportPane extends Tab{
 
         public int type;
-        NoteExportWindow window;
+        GradeExportWindow window;
 
         boolean fileNameCustom, studentNameCustom, multipleFilesCustom, canExportTextElements;
 
@@ -66,7 +65,7 @@ public class NoteExportWindow extends Stage {
         public TextField studentNameSimple, studentNameReplace, studentNameBy;
         public TextField filePath;
 
-        public CheckBox settingsOnlySameRatingScale = new CheckBox(TR.tr("Exporter uniquement les notes des documents avec le même barème"));
+        public CheckBox settingsOnlySameGradeScale = new CheckBox(TR.tr("Exporter uniquement les notes des documents avec le même barème"));
         public CheckBox settingsOnlyCompleted = new CheckBox(TR.tr("Exporter uniquement les notes des documents avec toutes les notes remplies"));
         public CheckBox settingsOnlySameDir = new CheckBox(TR.tr("Exporter uniquement les notes des documents du même dossier"));
         public CheckBox settingsAttributeTotalLine = new CheckBox(TR.tr("Ajouter une ligne pour le barème"));
@@ -75,7 +74,7 @@ public class NoteExportWindow extends Stage {
         public Slider settingsTiersExportSlider = new Slider(1, 5, MainWindow.userData.settingsTiersExportSlider);
 
 
-        public ExportPane(NoteExportWindow window, String tabName, int type, boolean fileNameCustom, boolean studentNameCustom, boolean multipleFilesCustom, boolean canExportTextElements){
+        public ExportPane(GradeExportWindow window, String tabName, int type, boolean fileNameCustom, boolean studentNameCustom, boolean multipleFilesCustom, boolean canExportTextElements){
 
             super(tabName);
             this.window = window;
@@ -231,7 +230,7 @@ public class NoteExportWindow extends Stage {
             settingsTiersExportSlider.setMajorTickUnit(1);
             settingsTiersExportSlider.setMinorTickCount(0);
 
-            Builders.setHBoxPosition(settingsOnlySameRatingScale, 0, 30, 0, 2.5);
+            Builders.setHBoxPosition(settingsOnlySameGradeScale, 0, 30, 0, 2.5);
             Builders.setHBoxPosition(settingsOnlyCompleted, 0, 30, 0, 2.5);
             Builders.setHBoxPosition(settingsOnlySameDir, 0, 30, 0, 2.5);
             Builders.setHBoxPosition(settingsAttributeTotalLine, 0, 30, 0, 2.5);
@@ -244,11 +243,11 @@ public class NoteExportWindow extends Stage {
 
             settingsAttributeTotalLine.setSelected(MainWindow.userData.settingsAttributeTotalLine);
             if(multipleFilesCustom){
-                settingsOnlySameRatingScale.setSelected(MainWindow.userData.settingsOnlySameRatingScale);
+                settingsOnlySameGradeScale.setSelected(MainWindow.userData.settingsOnlySameGradeScale);
                 settingsOnlyCompleted.setSelected(MainWindow.userData.settingsOnlyCompleted);
                 settingsOnlySameDir.setSelected(MainWindow.userData.settingsOnlySameDir);
                 settingsAttributeMoyLine.setSelected(MainWindow.userData.settingsAttributeMoyLine);
-                root.getChildren().addAll(settingsOnlySameRatingScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeMoyLine);
+                root.getChildren().addAll(settingsOnlySameGradeScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeMoyLine);
             }
             else root.getChildren().add(settingsAttributeTotalLine);
 
@@ -258,7 +257,7 @@ public class NoteExportWindow extends Stage {
             }
             root.getChildren().add(tiersExport);
 
-            settingsOnlySameRatingScale.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameRatingScale = newValue);
+            settingsOnlySameGradeScale.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameGradeScale = newValue);
             settingsOnlyCompleted.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlyCompleted = newValue);
             settingsOnlySameDir.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameDir = newValue);
             settingsAttributeTotalLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeTotalLine = newValue);
@@ -285,7 +284,7 @@ public class NoteExportWindow extends Stage {
             VBox.setVgrow(spacer, Priority.ALWAYS);
 
             export.setOnAction(event -> {
-                end(new NoteExportRenderer(this).start());
+                end(new GradeExportRenderer(this).start());
             });
             cancel.setOnAction(event -> {
                 window.close();

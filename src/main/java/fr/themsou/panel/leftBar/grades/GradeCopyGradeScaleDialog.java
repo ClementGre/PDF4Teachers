@@ -1,8 +1,8 @@
-package fr.themsou.panel.leftBar.notes;
+package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -15,20 +15,18 @@ import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-public class NoteCopyRatingScaleDialog {
+public class GradeCopyGradeScaleDialog {
 
-    ArrayList<NoteRating> ratings = new ArrayList<>();
+    ArrayList<GradeRating> ratings = new ArrayList<>();
 
     boolean ignoreAlreadyExist = false;
     boolean ignoreErase = false;
 
-    public NoteCopyRatingScaleDialog(){
+    public GradeCopyGradeScaleDialog(){
 
         Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
         new JMetro(dialog.getDialogPane(), Style.LIGHT);
@@ -82,8 +80,8 @@ public class NoteCopyRatingScaleDialog {
         try {
             Element[] elements = Edition.simpleLoad(editFile);
             for(Element element : elements){
-                if(element instanceof NoteElement){
-                    ratings.add(((NoteElement) element).toNoteRating());
+                if(element instanceof GradeElement){
+                    ratings.add(((GradeElement) element).toGradeRating());
                 }
             }
         }catch(Exception e){ e.printStackTrace(); }
@@ -95,14 +93,14 @@ public class NoteCopyRatingScaleDialog {
             File editFile = Edition.getEditFile(file);
 
             Element[] elementsArray = Edition.simpleLoad(editFile);
-            List<NoteElement> noteElements = new ArrayList<>();
+            List<GradeElement> gradeElements = new ArrayList<>();
             List<Element> otherElements = new ArrayList<>();
             for(Element element : elementsArray){
-                if(element instanceof NoteElement) noteElements.add((NoteElement) element);
+                if(element instanceof GradeElement) gradeElements.add((GradeElement) element);
                 else otherElements.add(element);
             }
 
-            if(noteElements.size() >= 1 && !ignoreAlreadyExist){
+            if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
                 Alert dialog = new Alert(Alert.AlertType.WARNING);
                 new JMetro(dialog.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(dialog);
@@ -126,27 +124,27 @@ public class NoteCopyRatingScaleDialog {
                 }
             }
 
-            for(NoteRating rating : ratings){
-                NoteElement element = rating.getSamePathIn((ArrayList<NoteElement>) noteElements);
+            for(GradeRating rating : ratings){
+                GradeElement element = rating.getSamePathIn((ArrayList<GradeElement>) gradeElements);
                 if(element != null){
-                    otherElements.add(rating.toNoteElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
-                    noteElements.remove(element);
+                    otherElements.add(rating.toGradeElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
+                    gradeElements.remove(element);
                 }else{
-                    otherElements.add(rating.toNoteElement());
+                    otherElements.add(rating.toGradeElement());
                 }
             }
 
-            if(noteElements.size() >= 1 && !ignoreErase){
-                String notes = "";
-                for(NoteElement note : noteElements){
-                    notes += "\n" + note.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + note.getName() + "  (" + Main.format.format(note.getValue()).replaceAll("-1", "?") + "/" + Main.format.format(note.getTotal()) + ")";
+            if(gradeElements.size() >= 1 && !ignoreErase){
+                String grades = "";
+                for(GradeElement grade : gradeElements){
+                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + Main.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + Main.format.format(grade.getTotal()) + ")";
                 }
 
                 Alert dialog = new Alert(Alert.AlertType.WARNING);
                 new JMetro(dialog.getDialogPane(), Style.LIGHT);
                 Builders.secureAlert(dialog);
                 dialog.setTitle(TR.tr("Écraser les notes non correspondantes"));
-                dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + notes + "\n" + TR.tr("Dans le document") + " : " + file.getName());
+                dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.tr("Dans le document") + " : " + file.getName());
 
                 ButtonType ignore = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType ignoreAll = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
@@ -165,8 +163,8 @@ public class NoteCopyRatingScaleDialog {
             }
 
             otherElements.sort((o1, o2) -> {
-                if(o1 instanceof NoteElement && o2 instanceof NoteElement){
-                    return NoteTreeView.getElementTier(((NoteElement) o1).getParentPath()) - NoteTreeView.getElementTier(((NoteElement) o2).getParentPath());
+                if(o1 instanceof GradeElement && o2 instanceof GradeElement){
+                    return GradeTreeView.getElementTier(((GradeElement) o1).getParentPath()) - GradeTreeView.getElementTier(((GradeElement) o2).getParentPath());
                 }
                 return 0;
             });

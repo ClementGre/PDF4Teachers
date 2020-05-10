@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public interface Element {
@@ -33,8 +34,7 @@ public interface Element {
 	void switchPage(int page);
 
 	// READER AND WRITERS
-	void writeSimpleData(DataOutputStream writer) throws IOException;
-	void writeData(DataOutputStream writer) throws IOException;
+	HashMap<Object, Object> getYAMLData();
 
 	// COORDINATES GETTERS ANS SETTERS
 	int getRealX();

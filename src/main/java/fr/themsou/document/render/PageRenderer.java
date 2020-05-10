@@ -2,14 +2,13 @@ package fr.themsou.document.render;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.NoteElement;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.notes.NoteTreeItem;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
+import fr.themsou.panel.leftBar.grades.GradeTreeItem;
+import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.CallBack;
 import fr.themsou.windows.MainWindow;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.VPos;
@@ -21,7 +20,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -29,8 +27,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,15 +92,15 @@ public class PageRenderer extends Pane{
         setOnMousePressed(e -> {
 
             MainWindow.mainScreen.setSelected(null);
-            MainWindow.lbNoteTab.treeView.getSelectionModel().select(null);
+            MainWindow.lbGradeTab.treeView.getSelectionModel().select(null);
             menu.hide();
             menu.getItems().clear();
             if(e.getButton() == MouseButton.SECONDARY){
 
-                if(MainWindow.lbNoteTab.treeView.getRoot().getChildren().size() != 0){
-                    NoteTreeView.defineNaNLocations();
-                    NoteTreeItem note = NoteTreeView.getNextNote(page, (int) e.getY());
-                    if(note != null) menu.getItems().add(new CustomMenuItem(note.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+                if(MainWindow.lbGradeTab.treeView.getRoot().getChildren().size() != 0){
+                    GradeTreeView.defineNaNLocations();
+                    GradeTreeItem grade = GradeTreeView.getNextGrade(page, (int) e.getY());
+                    if(grade != null) menu.getItems().add(new CustomMenuItem(grade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
                 }
 
                 List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
@@ -277,8 +273,8 @@ public class PageRenderer extends Pane{
             elements.add(element);
             getChildren().add((Shape) element);
 
-            if(element instanceof NoteElement){
-                MainWindow.lbNoteTab.treeView.addElement((NoteElement) element);
+            if(element instanceof GradeElement){
+                MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
 
             if(status != PageStatus.RENDERED){
@@ -296,8 +292,8 @@ public class PageRenderer extends Pane{
 
             if(element instanceof TextElement){
                 if(update) MainWindow.lbTextTab.addOnFileElement((TextElement) element);
-            }else if(element instanceof NoteElement){
-                MainWindow.lbNoteTab.treeView.addElement((NoteElement) element);
+            }else if(element instanceof GradeElement){
+                MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
 
             if(status != PageStatus.RENDERED) ((Shape) element).setVisible(false);
@@ -313,8 +309,8 @@ public class PageRenderer extends Pane{
 
             if(element instanceof TextElement){
                 if(update) MainWindow.lbTextTab.removeOnFileElement((TextElement) element);
-            }else if(element instanceof NoteElement){
-                MainWindow.lbNoteTab.treeView.removeElement((NoteElement) element);
+            }else if(element instanceof GradeElement){
+                MainWindow.lbGradeTab.treeView.removeElement((GradeElement) element);
             }
 
         }
