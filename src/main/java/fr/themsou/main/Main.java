@@ -2,9 +2,7 @@ package fr.themsou.main;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.HashMap;
 
-import fr.themsou.yaml.FileConfiguration;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.LicenseWindow;
@@ -41,20 +39,6 @@ public class Main extends Application {
 		}
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
-
-		FileConfiguration config = new FileConfiguration(new File("C:\\Users\\Clement\\Downloads\\test.yml"));
-		HashMap<String, Object> data = new HashMap<>();
-		data.put("x", 589);
-		data.put("y", 1895.5);
-		data.put("color", "5fc9d5");
-		data.put("fontName", "Arial");
-		data.put("fontSize", 42);
-		data.put("fontBold", true);
-		data.put("fontItalic", false);
-		config.getSectionSecure("texts.page1").put("6", data);
-		config.save();
-
-		System.exit(0);
 
 		// PREPARATION
 

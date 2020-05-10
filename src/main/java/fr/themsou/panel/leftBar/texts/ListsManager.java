@@ -137,7 +137,7 @@ public class ListsManager {
         alert.setTitle(TR.tr("Liste sauvegardée"));
 
         alert.setHeaderText(TR.tr("La liste a bien été sauvegardée !"));
-        alert.setContentText(TR.tr("La liste pourra être chargée via le bouton importer"));
+        alert.setContentText(TR.tr("La liste pourra être chargée via le bouton de liste"));
         alert.show();
 
         setupMenu();

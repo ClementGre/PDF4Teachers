@@ -1,14 +1,14 @@
 package fr.themsou.document.editions.elements;
 
-import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.notes.NoteTreeView;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
@@ -235,6 +235,20 @@ public class TextElement extends Text implements Element {
 		writer.writeByte((int) (((Color) getFill()).getGreen() * 255.0 - 128));
 		writer.writeByte((int) (((Color) getFill()).getBlue() * 255.0 - 128));
 		writer.writeUTF(getText());
+	}
+
+	public void writeYAML(List<Object> pageTexts){
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("x", 589);
+		data.put("y", 1895.5);
+		data.put("color", "5fc9d5");
+		data.put("font", "Arial");
+		data.put("size", 42);
+		data.put("bold", true);
+		data.put("italic", false);
+		data.put("text", "");
+
+		pageTexts.add(data);
 	}
 
 	public static TextElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {

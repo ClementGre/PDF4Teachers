@@ -5,9 +5,9 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import fr.themsou.windows.MainWindow;
+import fr.themsou.yaml.Config;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -19,7 +19,6 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
-import javafx.scene.control.skin.SliderSkin;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -36,6 +35,7 @@ import javafx.scene.text.FontWeight;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
 public class TextTreeItem extends TreeItem{
@@ -233,6 +233,19 @@ public class TextTreeItem extends TreeItem{
 		writer.writeLong(creationDate);
 		writer.writeUTF(text);
 	}
+	public HashMap<Object, Object> getYAMLData(){
+		HashMap<Object, Object> data = new HashMap<>();
+		data.put("color", color.get().toString());
+		data.put("font", font.get().getFamily());
+		data.put("size", font.get().getSize());
+		data.put("bold", Element.getFontWeight(font.get()) == FontWeight.BOLD);
+		data.put("italic", Element.getFontPosture(font.get()) == FontPosture.ITALIC);
+		data.put("uses", uses);
+		data.put("date", creationDate);
+		data.put("text", text);
+
+		return data;
+	}
 	public TextElement toRealTextElement(int x, int y, int page){
 		return new TextElement(x, y, font.get(), text, color.get(), page, MainWindow.mainScreen.document.pages.get(page));
 	}
@@ -252,7 +265,21 @@ public class TextTreeItem extends TreeItem{
 		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
 
 		return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
+	}
+	public static TreeItem<String> readYAMLDataAndGive(HashMap<String, Object> data, int type){
 
+		double fontSize = Config.getDouble(data, "size");
+		boolean isBold = Config.getBoolean(data, "bold");
+		boolean isItalic = Config.getBoolean(data, "italic");
+		String fontName = Config.getString(data, "font");
+		Color color = Color.valueOf(Config.getString(data, "color"));
+		long uses = Config.getLong(data, "uses");
+		long creationDate = Config.getLong(data, "date");
+		String text = Config.getString(data, "text");
+
+		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+
+		return new TextTreeItem(font, text, color, type, uses, creationDate);
 	}
 
 	public TextListItem toTextItem(){
@@ -343,5 +370,4 @@ public class TextTreeItem extends TreeItem{
 	public TextElement getCore() {
 		return core;
 	}
-
 }

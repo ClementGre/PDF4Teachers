@@ -12,13 +12,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class FileConfiguration {
+public class Config {
 
     public HashMap<String, Object> base = new HashMap<>();
 
     private Yaml yaml;
     private File file;
-    public FileConfiguration(File file){
+    public Config(File file){
         this.file = file;
         yaml = new Yaml(new SafeConstructor());
     }
@@ -26,9 +26,11 @@ public class FileConfiguration {
     public void load() throws FileNotFoundException {
         InputStream input = new FileInputStream(file);
         base = (HashMap<String, Object>) yaml.load(input);
+
+        if(base == null) base = new HashMap<>();
     }
-    public void save() throws FileNotFoundException {
-        yaml.dump(base, new OutputStreamWriter(new FileOutputStream(file)));
+    public void save() throws FileNotFoundException, UnsupportedEncodingException {
+        yaml.dump(base, new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
     }
 
     // GET VALUE
@@ -36,8 +38,8 @@ public class FileConfiguration {
     public String getString(String path){
         return getValue(base, path).toString();
     }
-    public int getInt(String path){
-        return StringUtils.getAlwaysInt(getValue(base, path).toString());
+    public long getLong(String path){
+        return StringUtils.getAlwaysLong(getValue(base, path).toString());
     }
     public double getDouble(String path){
         return StringUtils.getAlwaysDouble(getValue(base, path).toString());
@@ -45,29 +47,38 @@ public class FileConfiguration {
     public boolean getBoolean(String path){
         return Boolean.parseBoolean(getValue(base, path).toString());
     }
-    public List<Object> getList(String path){
+    public ArrayList<Object> getList(String path){
         return getList(base, path);
     }
 
-    public String getString(HashMap<String, Object> base, String path){
+    public static String getString(HashMap<String, Object> base, String path){
         return getValue(base, path).toString();
     }
-    public int getInt(HashMap<String, Object> base, String path){
-        return StringUtils.getAlwaysInt(getValue(base, path).toString());
+    public static long getLong(HashMap<String, Object> base, String path){
+        return StringUtils.getAlwaysLong(getValue(base, path).toString());
     }
-    public double getDouble(HashMap<String, Object> base, String path){
+    public static double getDouble(HashMap<String, Object> base, String path){
         return StringUtils.getAlwaysDouble(getValue(base, path).toString());
     }
-    public boolean getBoolean(HashMap<String, Object> base, String path){
+    public static boolean getBoolean(HashMap<String, Object> base, String path){
         return Boolean.parseBoolean(getValue(base, path).toString());
     }
-    public List<Object> getList(HashMap<String, Object> base, String path){
+    public static ArrayList<Object> getList(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof List) return (List<Object>) value;
+        if(value instanceof List) return (ArrayList<Object>) value;
         return new ArrayList<>();
     }
 
-    public Object getValue(HashMap<String, Object> base, String path){
+    public static ArrayList<Object> castList(Object list){
+        if(list instanceof List) return (ArrayList<Object>) list;
+        return new ArrayList<>();
+    }
+    public static HashMap<String, Object> castSection(Object list){
+        if(list instanceof Map) return (HashMap<String, Object>) list;
+        return new HashMap<>();
+    }
+
+    public static Object getValue(HashMap<String, Object> base, String path){
 
         String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
         HashMap<String, Object> section = base;
@@ -93,14 +104,15 @@ public class FileConfiguration {
         createSection(path);
         return getSection(base, path);
     }
-    public HashMap<String, Object> getSectionSecure(HashMap<String, Object> base, String path){
+    public static HashMap<String, Object> getSectionSecure(HashMap<String, Object> base, String path){
         createSection(base, path);
         return getSection(base, path);
     }
+
     public HashMap<String, Object> getSection(String path){
         return getSection(base, path);
     }
-    public HashMap<String, Object> getSection(HashMap<String, Object> base, String path){
+    public static HashMap<String, Object> getSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
         if(value instanceof Map) return (HashMap<String, Object>) value;
         return new HashMap<>();
@@ -111,7 +123,7 @@ public class FileConfiguration {
     public void createSection(String path){
         createSection(base, path);
     }
-    public void createSection(HashMap<String, Object> base, String path){
+    public static void createSection(HashMap<String, Object> base, String path){
         String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
 
         HashMap<String, Object> section = base;
@@ -131,7 +143,7 @@ public class FileConfiguration {
     public boolean exist(String path){
         return exist(base, path);
     }
-    public boolean exist(HashMap<String, Object> base, String path){
+    public static boolean exist(HashMap<String, Object> base, String path){
         String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
 
         HashMap<String, Object> section = base;
