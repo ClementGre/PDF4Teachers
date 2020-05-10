@@ -2,14 +2,15 @@ package fr.themsou.main;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.HashMap;
 
+import fr.themsou.yaml.FileConfiguration;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.LicenseWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -24,8 +25,8 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "1.1.1";
-	public static final boolean DEBUG = false;
+	public static final String VERSION = "Snapshot 1.2.0";
+	public static final boolean DEBUG = true;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -40,6 +41,20 @@ public class Main extends Application {
 		}
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
+
+		FileConfiguration config = new FileConfiguration(new File("C:\\Users\\Clement\\Downloads\\test.yml"));
+		HashMap<String, Object> data = new HashMap<>();
+		data.put("x", 589);
+		data.put("y", 1895.5);
+		data.put("color", "5fc9d5");
+		data.put("fontName", "Arial");
+		data.put("fontSize", 42);
+		data.put("fontBold", true);
+		data.put("fontItalic", false);
+		config.getSectionSecure("texts.page1").put("6", data);
+		config.save();
+
+		System.exit(0);
 
 		// PREPARATION
 

@@ -1,12 +1,18 @@
 module fr.themsou {
 
+    // OTHER DEPENDENCIES
+
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
 
     requires org.jfxtras.styles.jmetro;
 
+    requires snakeyaml;
+
     requires com.fasterxml.jackson.core;
+
+    // JAVAFX
 
     requires javafx.graphics;
     requires javafx.controls;
@@ -16,7 +22,10 @@ module fr.themsou {
     requires java.xml;
     requires java.desktop;
 
+    // JAVA
+
     requires jdk.crypto.ec;
+    requires java.sql;
 
     exports fr.themsou.main;
     exports fr.themsou.document;

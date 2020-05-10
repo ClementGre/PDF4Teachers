@@ -1,5 +1,7 @@
 package fr.themsou.utils;
 
+import javafx.beans.property.BooleanProperty;
+
 public class StringUtils {
 
     public static String removeBefore(String string, String rejex){
@@ -61,6 +63,35 @@ public class StringUtils {
     }
     public static int clamp(int val, int min, int max) {
         return Math.max(min, Math.min(max, val));
+    }
+
+    public static Integer getInt(String text){
+        try{
+            return Integer.parseInt(text);
+        }catch (NumberFormatException e){
+            return null;
+        }
+    }
+    public static int getAlwaysInt(String text){
+        try{
+            return Integer.parseInt(text);
+        }catch (NumberFormatException e){
+            return 0;
+        }
+    }
+    public static Double getDouble(String text){
+        try{
+            return Double.parseDouble(text);
+        }catch (NumberFormatException e){
+            return null;
+        }
+    }
+    public static double getAlwaysDouble(String text){
+        try{
+            return Double.parseDouble(text);
+        }catch (NumberFormatException e){
+            return 0;
+        }
     }
 
 

@@ -89,3 +89,13 @@ Ces différents éléments (texte, notes et formes géométriques) ont des class
   
   - ``.document.render.PageRenderer`` pour chacune des pages en passant en paramètre le numéro de la page correspondant. PageRenderer stoquera touts les Elements dans une ``ArrayList<Element>``. Chaque ``PageRenderer`` fera un rendu sous forme d'image de la page du fichier PDF qui lui est assigné, avec ``.document.render.PDFPagesRender``. Le rendu se lancera lorsque la page sera proche de la zone visible de la ScrollPane.
 
+## Statistiques :
+
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1.msi)
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1-BIN.zip)
+
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1.dmg)
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1-BIN.zip)
+
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1.deb)
+![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1-BIN.tar.gz)

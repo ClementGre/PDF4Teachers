@@ -13,6 +13,8 @@ dependencies{
         exclude group: 'org.openjfx'
     }
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.3'
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+
 }
 javafx {
     version = '14'
