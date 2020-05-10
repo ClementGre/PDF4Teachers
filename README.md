@@ -39,6 +39,8 @@ Les éditions sont composées de plusieurs éléments : Les commentaires (Texte)
 
 Vous pouvez définir un barème pour une série de copies puis entrer les notes dans chaque copie. La somme des notes se calcule automatiquement. Une fois terminé, vous pouvez exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichiers CSV (Tableaux de donnés formatable par LibreOffice Calc ou Excel).
 
+PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichiers exportés sont stockés en local, les seuls accès réseau de l'application concernent la vérification des mises à jour.
+
 *Prévisualisation de l'interface :*
 
 ![Preview](https://raw.githubusercontent.com/themsou/PDF4Teachers/master/preview.png)
