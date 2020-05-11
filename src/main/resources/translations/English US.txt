@@ -124,7 +124,7 @@ PDF4Teachers - À Propos=PDF4Teachers - About
 Version=Version
 Projet GitHub :=GitHub project :
 Dépendances :=Dependencies :
-Traducteur : <Votre nom>=Translator : Vincent G.
+Traducteur : <Votre nom>=Translator : Vincent Grennerat
 # LanguageWindow
 PDF4Teachers - Langage=PDF4Teachers - Language
 Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=These files must then be copied to <AppData>/Roaming/PDF4Teachers/translations/ (Win10) or in\n<User home folder>/.PDF4Teachers/translations/ (OSX and Linux) in order to make translation available in language listing.\nYou should also add an icon flag in .png format. All files must have the same name (except extension).\nYou may also send the files on GitHub so this new language can be added to releases.

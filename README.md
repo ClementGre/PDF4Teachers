@@ -1,18 +1,18 @@
-[![Java CI with Gradle](https://github.com/themsou/PDF4Teachers/workflows/build/badge.svg)](https://github.com/themsou/PDF4Teachers/actions?query=workflow%3Abuild)
-[![TotalDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
-[![LatestDownloads](https://img.shields.io/github/downloads/themsou/PDF4Teachers/latest/total)](https://github.com/themsou/PDF4Teachers/releases/latest)
-![Star](https://img.shields.io/github/stars/themsou/PDF4Teachers?label=Star&style=social)
-[![GitHubFolowers](https://img.shields.io/github/followers/themsou?label=Follow%20themsou&style=social)](https://github.com/themsou)
+[![Java CI with Gradle](https://github.com/clementgre/PDF4Teachers/workflows/build/badge.svg)](https://github.com/clementgre/PDF4Teachers/actions?query=workflow%3Abuild)
+[![TotalDownloads](https://img.shields.io/github/downloads/clementgre/PDF4Teachers/total)](https://github.com/clementgre/PDF4Teachers/releases/latest)
+[![LatestDownloads](https://img.shields.io/github/downloads/clementgre/PDF4Teachers/latest/total)](https://github.com/clementgre/PDF4Teachers/releases/latest)
+[![Star](https://img.shields.io/github/stars/clementgre/PDF4Teachers?label=Star&style=social)]()
+[![GitHubFolowers](https://img.shields.io/github/followers/clementgre?label=Follow%20clementgre&style=social)](https://github.com/clementgre)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
 
 #### Shortcuts :
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/themsou/PDF4Teachers?label=Download%20version)](https://github.com/themsou/PDF4Teachers/releases/latest)
+[![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest)
 
 #### Before opening new issue, see :
-[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/bug?color=d73a4a)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
-[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
-[![GitHub labels](https://img.shields.io/github/issues/themsou/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/themsou/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+label%3A%22enhancement%22+)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+label%3A%22enhancement%22+)
 
 ## PDF4Teachers [EN]
 
@@ -43,7 +43,7 @@ PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichie
 
 *Prévisualisation de l'interface :*
 
-![Preview](https://raw.githubusercontent.com/themsou/PDF4Teachers/master/preview.png)
+![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/preview.png)
 
 ## Les APIs
 
@@ -54,7 +54,7 @@ L'application a été développée sous Java SE 8 (avec Swing) puis elle est pas
 - L'API **JMetro**, est un thème JavaFX qui m'a permis de vous offrir une interface plus confortable à regarder que celle par défaut de JavaFx.
 - **Jackson Streaming API** permet d'interpréder des donnés Json, il me permet de faire des requêtes à GitHub pour vérifier si une nouvelle version est disponible.
 - J'ai choisi **Gradle** pour gérer les dépendances, vous pouvez donc exécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. Vous devrez bien sur auparavant avoir installé un JDK 14 et avoir donné son chemin d'accès dans votre variable d'environment ``JAVA_HOME``.
-- Les fichiers de traductions ont été générés grace à **[TranslationFileGenerator](https://github.com/themsou/TranslationFileGenerator)**
+- Les fichiers de traductions ont été générés grace à **[TranslationFileGenerator](https://github.com/clementgre/TranslationFileGenerator)**
 
 Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink et JPackager pour votre système d'exploitation.
 
@@ -91,11 +91,11 @@ Ces différents éléments (texte, notes et formes géométriques) ont des class
 
 ## Statistiques :
 
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1.msi)
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1-BIN.zip)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1.msi)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1-BIN.zip)
 
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1.dmg)
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1-BIN.zip)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1.dmg)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1-BIN.zip)
 
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1.deb)
-![](https://img.shields.io/github/downloads-pre/themsou/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1-BIN.tar.gz)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1.deb)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1-BIN.tar.gz)

@@ -53,9 +53,9 @@ jlink {
     jpackage {
         installerOptions = [
                 '--description', project.description,
-                //'--copyright', 'Copyrigth 2019 Clément G.',
+                //'--copyright', 'Copyrigth 2019 Clément Grennerat',
                 '--app-version', project.version,
-                '--vendor', "Clément G."
+                '--vendor', "Clément Grennerat"
         ] as List<String>
 
         installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
@@ -80,7 +80,7 @@ jlink {
                     '--linux-shortcut'
             ]
             if(installerType == 'deb'){
-                installerOptions += ['--linux-deb-maintainer', 'themsou.ldv@gmail.com']
+                installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
             }else if(installerType == 'rpm'){
                 installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
             }

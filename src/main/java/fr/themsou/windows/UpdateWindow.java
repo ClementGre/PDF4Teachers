@@ -36,7 +36,7 @@ public class UpdateWindow extends Stage {
 
         try{
 
-            URL url = new URL("https://api.github.com/repos/themsou/PDF4Teachers/releases/latest");
+            URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/releases/latest");
 
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
@@ -110,7 +110,7 @@ public class UpdateWindow extends Stage {
 
 
         Button maj = new Button(TR.tr("Faire la mise à jour"));
-        maj.setOnAction(t -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/releases/latest"));
+        maj.setOnAction(t -> Main.hostServices.showDocument("https://github.com/clementgre/PDF4Teachers/releases/latest"));
         maj.setStyle("-fx-background-color: #ba6800;");
         maj.setAlignment(Pos.BASELINE_CENTER);
 

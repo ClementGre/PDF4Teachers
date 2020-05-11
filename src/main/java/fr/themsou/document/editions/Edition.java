@@ -260,7 +260,7 @@ public class Edition {
                         //TextElement.consumeData(reader);
                     break;
                     case 2:
-                        double[] data = GradeElement.getYAMLDataStats(reader);
+                        double[] data = GradeElement.getYAMLDataStats(new HashMap<>());
 
                         if(data.length == 2) totalGrade = data; // get the root grade value and the root grade total
 

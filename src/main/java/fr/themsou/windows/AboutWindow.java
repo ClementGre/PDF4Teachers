@@ -75,9 +75,9 @@ public class AboutWindow extends Stage {
                 Label dev = new Label(TR.tr("Développeur :") + " ");
                 dev.setFont(new Font(17));
 
-                Hyperlink devName = new Hyperlink("Clément G.");
+                Hyperlink devName = new Hyperlink("Clément Grennerat");
                 devName.setFont(new Font(17));
-                devName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/themsou"));
+                devName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/clementgre"));
             devInfo.getChildren().addAll(dev, devName);
             devInfo.setAlignment(Pos.CENTER);
 
@@ -85,7 +85,7 @@ public class AboutWindow extends Stage {
                 Label cons = new Label(TR.tr("Concepteur :") + " ");
                 cons.setFont(new Font(17));
 
-                Hyperlink consName = new Hyperlink("Vincent G.");
+                Hyperlink consName = new Hyperlink("Vincent Grennerat");
                 consName.setFont(new Font(17));
                 consName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/grensv"));
                 consInfo.getChildren().addAll(cons, consName);
@@ -103,9 +103,9 @@ public class AboutWindow extends Stage {
                 Label git = new Label(TR.tr("Projet GitHub :") + " ");
                 git.setFont(new Font(17));
 
-                Hyperlink gitName = new Hyperlink("themsou/PDF4Teachers");
+                Hyperlink gitName = new Hyperlink("ClementGre/PDF4Teachers");
                 gitName.setFont(new Font(17));
-                gitName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers"));
+                gitName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/clementgre/PDF4Teachers"));
             gitInfo.getChildren().addAll(git, gitName);
             gitInfo.setAlignment(Pos.CENTER);
 
@@ -122,7 +122,7 @@ public class AboutWindow extends Stage {
             HBox issueInfo = new HBox();
                 Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide ou signaler un Bug"));
                 issueName.setFont(new Font(17));
-                issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/themsou/PDF4Teachers/issues/new"));
+                issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/clementgre/PDF4Teachers/issues/new"));
                 issueInfo.getChildren().addAll(issueName);
             issueInfo.setAlignment(Pos.CENTER);
 

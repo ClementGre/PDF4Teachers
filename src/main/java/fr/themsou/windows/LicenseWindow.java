@@ -204,7 +204,7 @@ public class LicenseWindow extends Stage{
             "\n" +
             "   END OF TERMS AND CONDITIONS\n" +
             "\n" +
-            "   Copyright 2019 themsou\n" +
+            "   Copyright 2019 Clément Grennerat\n" +
             "\n" +
             "   Licensed under the Apache License, Version 2.0 (the \"License\");\n" +
             "   you may not use this file except in compliance with the License.\n" +
