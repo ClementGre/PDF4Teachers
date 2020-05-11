@@ -262,7 +262,7 @@ public class GradeTreeItem extends TreeItem {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         newGrade = new Button();
-        newGrade.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/more.png")+"", 0, 0));
+        newGrade.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/more.png")+"", 0, 0));
         Builders.setPosition(newGrade, 0, 0, 30, 30, true);
         newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.lbGradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.lbGradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);

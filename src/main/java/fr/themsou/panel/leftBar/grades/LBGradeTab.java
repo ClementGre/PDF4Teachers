@@ -60,10 +60,10 @@ public class LBGradeTab extends Tab {
         Builders.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
         lockGradeScale.setSelected(false);
-        lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas.png") + "", 0, 0));
+        lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas-ferme.png") + "", 0, 0));
-            else lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/cadenas.png") + "", 0, 0));
+            if(newValue) lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0));
+            else lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
 
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
@@ -76,20 +76,20 @@ public class LBGradeTab extends Tab {
 
         Builders.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
-        settings.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/engrenage.png")+"", 0, 0));
+        settings.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0));
         settings.setOnAction((e) -> new GradeSettingsWindow());
         settings.setTooltip(Builders.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
 
         Builders.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
-        link.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/link.png")+"", 0, 0));
+        link.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog());
         link.setTooltip(Builders.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         Builders.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
-        export.setGraphic(Builders.buildImage(getClass().getResource("/img/GradeTab/exporter.png")+"", 0, 0));
+        export.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
         export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
