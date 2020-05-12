@@ -380,6 +380,7 @@ public class GradeElement extends Text implements Element {
         LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
         data.put("x", getRealX());
         data.put("y", getRealY());
+        data.put("page", getPageNumber());
         data.put("index", index);
         data.put("parentPath", parentPath);
         data.put("value", value.getValue());
@@ -388,10 +389,11 @@ public class GradeElement extends Text implements Element {
 
         return data;
     }
-    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
+    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage){
 
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
+        int page = (int) Config.getLong(data, "page");
         int index = (int) Config.getLong(data, "index");
         String parentPath = Config.getString(data, "parentPath");
         double value = Config.getDouble(data, "value");
@@ -400,8 +402,8 @@ public class GradeElement extends Text implements Element {
 
         return new GradeElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
     }
-    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
-        GradeElement element = readYAMLDataAndGive(data, true, page);
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data){
+        GradeElement element = readYAMLDataAndGive(data, true);
         if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
             MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
     }

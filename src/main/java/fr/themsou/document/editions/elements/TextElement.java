@@ -17,6 +17,8 @@ import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -35,7 +37,6 @@ public class TextElement extends Text implements Element {
 	ContextMenu menu = new ContextMenu();
 
 	private int pageNumber;
-	private int pageDragNumber;
 	private int shiftX = 0;
 	private int shiftY = 0;
 
@@ -47,19 +48,21 @@ public class TextElement extends Text implements Element {
 
 		setFont(font);
 		setText(text);
-		setTextOrigin(VPos.BASELINE);
 		setFill(color);
 
-		setStyle("-fx-background-color: black;");
-
 		setBoundsType(TextBoundsType.LOGICAL);
+		setTextOrigin(VPos.BASELINE);
 
 		if(page == null) return;
 
+		setCursor(Cursor.MOVE);
 		layoutXProperty().bind(page.widthProperty().multiply(this.realX.divide(Element.GRID_WIDTH)));
 		layoutYProperty().bind(page.heightProperty().multiply(this.realY.divide(Element.GRID_HEIGHT)));
 
-		setCursor(Cursor.MOVE);
+		checkLocation(getLayoutX(), getLayoutY());
+		textProperty().addListener((observable, oldValue, newValue) -> {
+			checkLocation(getLayoutX(), getLayoutY());
+		});
 
 		// enable shadow if this element is selected
 		MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -75,6 +78,9 @@ public class TextElement extends Text implements Element {
 				requestFocus();
 			}
 		});
+
+		// MENU
+
 		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), -1, false);
 		item1.setAccelerator("Suppr");
 		item1.setToolTip(TR.tr("Supprime cet élément. Il sera donc retiré de l'édition."));
@@ -101,6 +107,8 @@ public class TextElement extends Text implements Element {
 		});
 		item3.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true)));
 		item4.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.FAVORITE_TYPE, true)));
+
+		// MOUSE EVENT
 
 		setOnMousePressed(e -> {
 			e.consume();

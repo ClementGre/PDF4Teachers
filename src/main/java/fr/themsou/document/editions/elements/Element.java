@@ -73,8 +73,8 @@ public interface Element {
 				else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) fileFontName = "bold";
 				else fileFontName = "regular";
 			}else{
-				System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
-				return null;
+				System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " ) : Chargement du Font Arial classique");
+				return TextElement.class.getResourceAsStream("/fonts/Arial/regular.ttf");
 			}
 
 			fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");

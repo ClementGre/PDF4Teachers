@@ -69,13 +69,8 @@ public class Edition {
                 }
             }
 
-            for(Map.Entry<String, Object> pageData : config.getSection("grades").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
-
-                for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, page);
-                }
+            for(Object data : config.getList("grades")){
+                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data);
             }
 
         }catch (IOException e){ e.printStackTrace(); }
@@ -89,7 +84,7 @@ public class Edition {
             Config config = new Config(editFile);
 
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
-            LinkedHashMap<String, ArrayList<Object>> grades = new LinkedHashMap<>();
+            ArrayList<Object> grades = new ArrayList<>();
 
             // TEXTS ELEMENTS
             int counter = 0; int i = 0;
@@ -108,13 +103,7 @@ public class Edition {
 
             // GRADES ELEMENTS
             for(GradeTreeItem element : GradeTreeView.getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot())){
-
-                if(grades.containsKey("page"+element.getCore().getPageNumber())){
-                    grades.get("page"+element.getCore().getPageNumber()).add(element.getCore().getYAMLData());
-                }else{
-                    grades.put("page"+element.getCore().getPageNumber(), new ArrayList<>(Collections.singletonList(element.getCore().getYAMLData())));
-                }
-
+                grades.add(element.getCore().getYAMLData());
                 if(!element.getCore().isDefaultRoot()) counter++;
             }
 
@@ -181,14 +170,8 @@ public class Edition {
                 }
             }
 
-            for(Map.Entry<String, Object> pageData : config.getSection("grades").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
-
-                for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    if(data instanceof Map)
-                        elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, page));
-                }
+            for(Object data : config.getList("grades")){
+                if(data instanceof Map) elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false));
             }
 
             return elements.toArray(new Element[elements.size()]);
@@ -201,7 +184,7 @@ public class Edition {
             Config config = new Config(editFile);
 
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
-            LinkedHashMap<String, ArrayList<Object>> grades = new LinkedHashMap<>();
+            ArrayList<Object> grades = new ArrayList<>();
 
             int counter = 0;
             for(Element element : elements){
@@ -211,16 +194,10 @@ public class Edition {
                         texts.get("page"+element.getPageNumber()).add(element.getYAMLData());
                     }else{
                         texts.put("page"+element.getPageNumber(),  new ArrayList<>(Collections.singletonList(element.getYAMLData())));
-                    }
-                    counter++;
+                    } counter++;
 
                 }else if(element instanceof GradeElement){
-                    if(grades.containsKey("page"+element.getPageNumber())){
-                        grades.get("page"+element.getPageNumber()).add(element.getYAMLData());
-                    }else{
-                        grades.put("page"+element.getPageNumber(),  new ArrayList<>(Collections.singletonList(element.getYAMLData())));
-                    }
-
+                    grades.add(((GradeElement) element).getYAMLData());
                     if(!((GradeElement) element).isDefaultRoot()) counter++;
                 }
             }
@@ -257,18 +234,13 @@ public class Edition {
                 text += ((List<Object>) pageData.getValue()).size();
             }
 
-            for(Map.Entry<String, Object> pageData : config.getSection("grades").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
+            for(Object data : config.getList("grades")){
+                if(data instanceof Map){
+                    double[] stats = GradeElement.getYAMLDataStats((HashMap<String, Object>) data);
 
-                for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    if(data instanceof Map){
-                        double[] stats = GradeElement.getYAMLDataStats((HashMap<String, Object>) data);
-
-                        if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
-                        if(stats[0] != -1) grades++;
-                        allGrades++;
-                    }
+                    if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
+                    if(stats[0] != -1) grades++;
+                    allGrades++;
                 }
             }
 
@@ -353,14 +325,14 @@ public class Edition {
         }
 
         if(!confirm){
+            MainWindow.mainScreen.setSelected(null);
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
-            editFile.delete();
-            MainWindow.mainScreen.setSelected(null);
-
             MainWindow.lbTextTab.updateOnFileElementsList();
             MainWindow.lbGradeTab.treeView.clear();
+
+            Edition.setUnsave();
         }
     }
 

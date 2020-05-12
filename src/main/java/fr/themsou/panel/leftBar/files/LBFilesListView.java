@@ -139,7 +139,7 @@ public class LBFilesListView {
 
         item4.setOnAction(e -> {
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
             new JMetro(alert.getDialogPane(), Style.LIGHT);
             Builders.secureAlert(alert);
             alert.setTitle(TR.tr("Confirmation"));
@@ -152,7 +152,6 @@ public class LBFilesListView {
                 Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);
                 new File(((MenuItem)e.getSource()).getParentPopup().getId()).delete();
             }
-
 
         });
         item5.setOnAction(e -> {

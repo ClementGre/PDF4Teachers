@@ -21,6 +21,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
@@ -43,11 +44,13 @@ public class MainScreen extends Pane {
 	public Document document;
 
 	private Label info = new Label();
+	private Hyperlink infoLink = new Hyperlink();
 
 	public static class Status {
 		public static final int CLOSED = 0;
 		public static final int OPEN = 1;
 		public static final int ERROR = 2;
+		public static final int ERROR_EDITION = 3;
 	}
 
 	int dragNScrollFactor = 0;
@@ -82,19 +85,28 @@ public class MainScreen extends Pane {
 
 	public void repaint(){
 
-		if(status.get() == Status.CLOSED || status.get() == Status.ERROR) {
+		if(status.get() != Status.OPEN) {
 			info.setVisible(true);
 
 			if(status.get() == Status.CLOSED){
 				info.setText(TR.tr("Aucun document ouvert"));
+				infoLink.setVisible(false);
 			}else if(status.get() == Status.ERROR){
-				info.setText(TR.tr("Impossible de charger ce document"));
+				info.setText(TR.tr("Impossible de charger ce document") + "\n\n" +
+						TR.tr("Vérifiez que le fichier n'est pas corrompus") + "\n" +
+						TR.tr("et que PDF4Teachers a les droites de lecture sur ce fichier."));
+				infoLink.setVisible(false);
+			}else if(status.get() == Status.ERROR_EDITION){
+				infoLink.setVisible(true);
+				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
+						TR.tr("Supprimez l'édition ou modifiez la en modifiant son fichier YAML dans :"));
+				infoLink.setText(Main.dataFolder + "editions" + File.separator);
+				infoLink.setOnAction(e -> Main.hostServices.showDocument(Main.dataFolder + "editions" + File.separator));
 			}
-
 		}else{
 			info.setVisible(false);
+			infoLink.setVisible(false);
 		}
-
 	}
 	public void setup(){
 
@@ -109,10 +121,20 @@ public class MainScreen extends Pane {
 
 		info.setFont(new Font("FreeSans", 22));
 		info.setStyle("-fx-text-fill: white;");
+		info.setTextAlignment(TextAlignment.CENTER);
 
 		info.translateXProperty().bind(widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
 		info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 		getChildren().add(info);
+
+		infoLink.setFont(new Font("FreeSans", 22));
+		infoLink.setStyle("-fx-text-fill: white;");
+		infoLink.setLayoutY(60);
+		infoLink.setTextAlignment(TextAlignment.CENTER);
+
+		infoLink.translateXProperty().bind(widthProperty().divide(2).subtract(infoLink.widthProperty().divide(2)));
+		infoLink.translateYProperty().bind(heightProperty().divide(2).subtract(infoLink.heightProperty().divide(2)));
+		getChildren().add(infoLink);
 
 		zoomOperator = new ZoomOperator(pane, this);
 
@@ -199,7 +221,7 @@ public class MainScreen extends Pane {
 			dragStartX = e.getX();
 			dragStartY = e.getY();
 			setSelected(null);
-			setCursor(Cursor.CLOSED_HAND);
+			if(hasDocument(false)) setCursor(Cursor.CLOSED_HAND);
 		});
 		setOnMouseReleased(e -> {
 			dragNScrollFactor = 0;
@@ -251,11 +273,18 @@ public class MainScreen extends Pane {
 		status.set(Status.OPEN);
 
 		document.showPages();
-		document.loadEdition();
+
+		try{
+			document.loadEdition();
+		}catch(Exception e){
+			System.err.println("ERREUR : Impossible de changer l'édition");
+			e.printStackTrace();
+			closeFile(false);
+			status.set(Status.ERROR_EDITION);
+		}
 
 		repaint();
 		MainWindow.footerBar.repaint();
-
 	}
 	public void failOpen(){
 

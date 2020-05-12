@@ -24,14 +24,17 @@ public class Config {
         yaml = new Yaml(new SafeConstructor());
     }
 
-    public void load() throws FileNotFoundException {
+    public void load() throws IOException {
         InputStream input = new FileInputStream(file);
         base = (HashMap<String, Object>) yaml.load(input);
+        input.close();
 
         if(base == null) base = new HashMap<>();
     }
-    public void save() throws FileNotFoundException{
-        yaml.dump(base, new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
+    public void save() throws IOException {
+        Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+        yaml.dump(base, output);
+        output.close();
     }
 
     // GET VALUE

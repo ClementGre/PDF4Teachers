@@ -380,7 +380,7 @@ public class UserData {
             config.base.put("lastOpenDir", lastOpenDir.getAbsolutePath());
 
             config.save();
-        }catch(FileNotFoundException e){
+        }catch(IOException e) {
             e.printStackTrace();
         }
 
