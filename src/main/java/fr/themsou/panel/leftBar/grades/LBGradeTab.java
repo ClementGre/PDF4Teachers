@@ -6,6 +6,7 @@ import fr.themsou.document.render.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.export.GradeExportWindow;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.beans.property.BooleanProperty;
@@ -49,11 +50,11 @@ public class LBGradeTab extends Tab {
 
     public void setup(){
 
-        fontTiers.put(0, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
-        fontTiers.put(1, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
-        fontTiers.put(2, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
-        fontTiers.put(3, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
-        fontTiers.put(4, Map.entry(Font.loadFont(Element.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
+        fontTiers.put(0, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
+        fontTiers.put(1, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
+        fontTiers.put(2, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
+        fontTiers.put(3, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
+        fontTiers.put(4, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
 
         lockRatingPotitions.setSelected(false);
 
@@ -110,8 +111,8 @@ public class LBGradeTab extends Tab {
 
         MainWindow.mainScreen.setSelected(null);
 
-        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
-                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), page.getPage(), page);
+        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), true);
 
         page.addElement(current, true);
         MainWindow.mainScreen.setSelected(current);
@@ -126,8 +127,8 @@ public class LBGradeTab extends Tab {
 
         if(update) MainWindow.mainScreen.setSelected(null);
 
-        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
-                name, value, total, index, parentPath, page.getPage(), page);
+        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+                name, value, total, index, parentPath, true);
 
         page.addElement(current, update);
         if(update) MainWindow.mainScreen.setSelected(current);

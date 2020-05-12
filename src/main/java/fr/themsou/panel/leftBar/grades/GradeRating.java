@@ -22,7 +22,7 @@ public class GradeRating {
         return toGradeElement(-1, 0, 0, 0);
     }
     public GradeElement toGradeElement(double value, int x, int y, int page){
-        return new GradeElement(x, y, name, value, total, index, parentPath, page, null);
+        return new GradeElement(x, y, page, name, value, total, index, parentPath, false);
     }
 
     public boolean equals(GradeRating gradeRating){

@@ -6,7 +6,6 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.*;
-import fr.themsou.utils.sort.SortEvent;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
@@ -44,8 +43,8 @@ public class LBTextTab extends Tab {
 	// Séparés par ligne
 
 	private HBox combosBox = new HBox();
-	private ComboBox<String> fontCombo = new ComboBox<>(Element.fonts);
-	private ComboBox<Integer> sizeCombo = new ComboBox<>(Element.sizes);
+	private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
+	private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
 
 	private HBox colorAndParamsBox = new HBox();
 	private ColorPicker colorPicker = new ColorPicker();
@@ -201,9 +200,9 @@ public class LBTextTab extends Tab {
 					TextElement current = (TextElement) newElement;
 
 					txtArea.setText(current.getText());
-					boldBtn.setSelected(Element.getFontWeight(current.getFont()) == FontWeight.BOLD);
-					itBtn.setSelected(Element.getFontPosture(current.getFont()) == FontPosture.ITALIC);
-					colorPicker.setValue((Color) current.getFill());
+					boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
+					itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
+					colorPicker.setValue(current.getColor());
 					fontCombo.getSelectionModel().select(current.getFont().getFamily());
 					sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
 
@@ -244,7 +243,7 @@ public class LBTextTab extends Tab {
 		colorPicker.setOnAction((ActionEvent e) -> {
 			if(MainWindow.mainScreen.getSelected() != null){
 				if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-					((TextElement) MainWindow.mainScreen.getSelected()).setFill(colorPicker.getValue());
+					((TextElement) MainWindow.mainScreen.getSelected()).setColor(colorPicker.getValue());
 					Edition.setUnsave();
 				}
 
@@ -263,8 +262,8 @@ public class LBTextTab extends Tab {
 			boldBtn.setSelected(lastBold);
 			itBtn.setSelected(lastItalic);
 
-			TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), getFont(),
-					txtArea.getText(), colorPicker.getValue(), page.getPage(), page);
+			TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+					getFont(), txtArea.getText(), colorPicker.getValue(), true);
 
 			page.addElement(current, true);
 			MainWindow.mainScreen.setSelected(current);
@@ -418,7 +417,7 @@ public class LBTextTab extends Tab {
 
 	private Font getFont(){
 
-		return Element.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
+		return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
 	}
 
 	public static class ShapeCell extends ListCell<String>{

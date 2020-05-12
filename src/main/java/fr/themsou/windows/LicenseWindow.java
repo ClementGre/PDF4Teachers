@@ -1,13 +1,11 @@
 package fr.themsou.windows;
 
-import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,10 +14,8 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
@@ -257,7 +253,7 @@ public class LicenseWindow extends Stage{
         Text info = new Text(TR.tr("Vous devez accepter la licence pour accéder à l'application"));
 
         Label license = new Label(LICENSE);
-        license.setFont(Element.getFont("Arial", false, false, 12));
+        license.setFont(FontUtils.getFont("Arial", false, false, 12));
         license.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 

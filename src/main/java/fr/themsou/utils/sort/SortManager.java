@@ -77,15 +77,11 @@ public class SortManager {
             buttons.keySet().iterator().next().setStyle("-fx-background-color: " + selectedColor);
         }
 
-
-
         // Couleurs des boutons
-        selectedButton.addListener(new ChangeListener<Button>() {
-            @Override public void changed(ObservableValue<? extends Button> observableValue, Button lastSelected, Button newSelected){
-                lastSelected.setStyle("-fx-background-color: " + idleColor);
-                newSelected.setStyle("-fx-background-color: " + selectedColor);
-                updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
-            }
+        selectedButton.addListener((observableValue, lastSelected, newSelected) -> {
+            lastSelected.setStyle("-fx-background-color: " + idleColor);
+            newSelected.setStyle("-fx-background-color: " + selectedColor);
+            updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
         });
     }
 

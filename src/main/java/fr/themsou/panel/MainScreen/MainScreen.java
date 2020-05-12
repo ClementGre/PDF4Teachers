@@ -16,6 +16,7 @@ import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
@@ -185,7 +186,7 @@ public class MainScreen extends Pane {
 		});
 
 		setOnMouseDragged(e -> {
-			if(!(e.getTarget() instanceof Element)){ // GrabNScroll
+			if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)){ // GrabNScroll
 				double distY = e.getY() - dragStartY;
 				double distX = e.getX() - dragStartX;
 
@@ -314,6 +315,9 @@ public class MainScreen extends Pane {
 
 		pane.setScaleX(Main.settings.getDefaultZoom()/100.0);
 		pane.setScaleY(Main.settings.getDefaultZoom()/100.0);
+
+		pane.setPrefHeight(1);
+		pane.setPrefWidth(1);
 
 		status.set(Status.CLOSED);
 		selected.set(null);

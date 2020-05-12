@@ -1,9 +1,9 @@
 package fr.themsou.main;
 
-import fr.themsou.document.editions.elements.Element;
 import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.application.Platform;
@@ -125,7 +125,7 @@ public class UserData {
                         HashMap<String, Object> data = (HashMap<String, Object>) font;
                         LBGradeTab.fontTiers.put(i, Map.entry(
                                 Font.loadFont(
-                                        Element.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
+                                        FontUtils.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
                                         Config.getDouble(data, "size")), // Font + Size
                                 Map.entry(
                                         Color.valueOf(Config.getString(data, "color")),
@@ -209,7 +209,7 @@ public class UserData {
 
                                 for(int i = 0; i < 5 ; i++){
                                     LBGradeTab.fontTiers.put(i, Map.entry(
-                                            Font.loadFont(Element.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
+                                            Font.loadFont(FontUtils.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
                                 MainWindow.lbGradeTab.updateElementsFont();
@@ -334,8 +334,8 @@ public class UserData {
                 LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
 
                 data.put("font", realFont.getFamily());
-                data.put("italic", Element.getFontPosture(realFont) == FontPosture.ITALIC);
-                data.put("bold", Element.getFontWeight(realFont) == FontWeight.BOLD);
+                data.put("italic", FontUtils.getFontPosture(realFont) == FontPosture.ITALIC);
+                data.put("bold", FontUtils.getFontWeight(realFont) == FontWeight.BOLD);
                 data.put("size", realFont.getSize());
 
                 data.put("color", font.getValue().getKey().toString());

@@ -1,15 +1,13 @@
 package fr.themsou.panel.leftBar.texts;
 
-import fr.themsou.document.editions.elements.Element;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.yaml.Config;
-import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,8 +38,8 @@ public class TextListItem {
         data.put("color", color.toString());
         data.put("font", font.getFamily());
         data.put("size", font.getSize());
-        data.put("bold", Element.getFontWeight(font) == FontWeight.BOLD);
-        data.put("italic", Element.getFontPosture(font) == FontPosture.ITALIC);
+        data.put("bold", FontUtils.getFontWeight(font) == FontWeight.BOLD);
+        data.put("italic", FontUtils.getFontPosture(font) == FontPosture.ITALIC);
         data.put("uses", uses);
         data.put("date", creationDate);
         data.put("text", text);
@@ -62,7 +60,7 @@ public class TextListItem {
         long creationDate = reader.readLong();
         String text = reader.readUTF();
 
-        Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+        Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
 
         return new TextListItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), uses, creationDate);
     }
@@ -77,7 +75,7 @@ public class TextListItem {
         long creationDate = Config.getLong(data, "date");
         String text = Config.getString(data, "text");
 
-        Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+        Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
 
         return new TextListItem(font, text, color, uses, creationDate);
     }

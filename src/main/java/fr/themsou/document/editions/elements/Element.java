@@ -1,121 +1,236 @@
 package fr.themsou.document.editions.elements;
 
+import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
+import fr.themsou.main.Main;
+import fr.themsou.utils.FontUtils;
+import fr.themsou.windows.MainWindow;
+import fr.themsou.yaml.Config;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Tooltip;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
 
-import java.io.DataOutputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 
-public interface Element {
-
-	ObservableList<String> fonts = FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Calibri", "Calibri Light", "Roboto", "Times New Roman", "Segoe Print", "Arrows");
-	ObservableList<Integer> sizes = FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50);
+public abstract class Element extends Region {
 
 	// Size for A4 - 200dpi (Static)
-	float GRID_WIDTH = 1654;
-	float GRID_HEIGHT = 2339;
+	public static float GRID_WIDTH = 1654;
+	public static float GRID_HEIGHT = 2339;
 
-	void checkSwitchLocation(double itemX, double itemY);
-	void checkLocation(double itemX, double itemY);
+	// ATTRIBUTES
 
-	// SELECT - DELETE - SWITCH PAGE
-	void select();
-	void delete();
-	void switchPage(int page);
+	protected IntegerProperty realX = new SimpleIntegerProperty();
+	protected IntegerProperty realY = new SimpleIntegerProperty();
+
+	protected int pageNumber;
+	protected int shiftX = 0;
+	protected int shiftY = 0;
+
+	public ContextMenu menu = new ContextMenu();
+
+	public Element(int x, int y, int pageNumber){
+		this.pageNumber = pageNumber;
+		this.realX.set(x);
+		this.realY.set(y);
+	}
+
+	// SETUP / EVENTS CALLBACK
+
+	protected void setupGeneral(Node... components){
+		getChildren().addAll(components);
+
+		// SELECT EVENT
+		MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+			if(oldValue == this && newValue != this){
+				setEffect(null);
+				//setBorder(null);
+				menu.hide();
+			}else if(oldValue != this && newValue == this){
+				DropShadow ds = new DropShadow();
+				ds.setOffsetY(3.0f);
+				ds.setColor(Color.color(0f, 0f, 0f));
+				setEffect(ds);
+				setCache(true);
+				requestFocus();
+				//setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.DOTTED, new CornerRadii(3), new BorderWidths(0.8))));
+			}
+		});
+
+		layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
+		layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
+
+		checkLocation(getLayoutX(), getLayoutY(), false);
+		setCursor(Cursor.MOVE);
+
+		//////////////////////////// EVENTS ///////////////////////////////////
+
+		setOnMouseReleased(e -> {
+			Edition.setUnsave();
+			double itemX = getLayoutX() + e.getX() - shiftX;
+			double itemY = getLayoutY() + e.getY() - shiftY;
+
+			checkLocation(itemX, itemY, true);
+
+			PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
+			if(newPage != null){
+				if(newPage.getPage() != getPageNumber()){
+					MainWindow.mainScreen.setSelected(null);
+
+					switchPage(newPage.getPage());
+					itemY = newPage.getPreciseMouseY() - shiftY;
+					checkLocation(itemX, itemY, true);
+
+					layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
+					layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
+
+					MainWindow.mainScreen.setSelected(this);
+				}
+			}
+			checkLocation(false);
+			onMouseRelease();
+		});
+
+		setOnMousePressed(e -> {
+			e.consume();
+
+			shiftX = (int) e.getX();
+			shiftY = (int) e.getY();
+			menu.hide();
+			select();
+
+			if(e.getButton() == MouseButton.SECONDARY){
+				menu.show(getPage(), e.getScreenX(), e.getScreenY());
+			}
+		});
+		setOnMouseDragged(e -> {
+			double itemX = getLayoutX() + e.getX() - shiftX;
+			double itemY = getLayoutY() + e.getY() - shiftY;
+
+			checkLocation(itemX, itemY, true);
+		});
+
+		/////////////////////////////////////////////////////////////////////////
+
+		setupBindings();
+		setupMenu();
+	}
+	protected abstract void setupBindings();
+	protected abstract void setupMenu();
+	protected abstract void onMouseRelease();
+
+	// CHECKS
+
+	public void checkLocation(boolean allowSwitchPage){
+		checkLocation(getLayoutX(), getLayoutY(), allowSwitchPage);
+	}
+	public void checkLocation(double itemX, double itemY, boolean allowSwitchPage){
+		double height = getHeight();
+		double width = getWidth();
+
+		if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
+		if(getPageNumber() == MainWindow.mainScreen.document.totalPages-1 || !allowSwitchPage) if(itemY > getPage().getHeight()-height) itemY = getPage().getHeight()-height;
+
+		if(itemX < 0) itemX = 0;
+		if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
+
+		realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
+		realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
+	}
+
+	// ACTIONS
+
+	public abstract void select();
+	protected void selectPartial(){
+		MainWindow.mainScreen.setSelected(this);
+		toFront();
+		getPage().toFront();
+	}
+	public void delete(){
+		if(getPage() != null){
+			getPage().removeElement(this, true);
+		}
+	}
+	public void switchPage(int page){
+		getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+	}
 
 	// READER AND WRITERS
-	HashMap<Object, Object> getYAMLData();
 
-	// COORDINATES GETTERS ANS SETTERS
-	int getRealX();
-	IntegerProperty RealXProperty();
-	void setRealX(int x);
-	int getRealY();
-	IntegerProperty RealYProperty();
-	void setRealY(int y);
+	public abstract LinkedHashMap<Object, Object> getYAMLData();
+	protected LinkedHashMap<Object, Object> getYAMLPartialData(){
+		LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
+		data.put("x", getRealX());
+		data.put("y", getRealY());
+		return data;
+	}
 
-	// PAGE GETTERS ANS SETTERS
-	PageRenderer getPage();
-	int getPageNumber();
-	void setPage(PageRenderer page);
-	void setPage(int pageNumber);
+	// GETTERS AND SETTERS
+
+	public abstract float getAlwaysHeight();
+
+	// COORDINATES GETTERS AND SETTERS
+
+	public int getRealX() {
+		return realX.get();
+	}
+	public IntegerProperty RealXProperty() {
+		return realX;
+	}
+	public void setRealX(int x) {
+		this.realX.set(x);
+	}
+	public int getRealY() {
+		return realY.get();
+	}
+	public IntegerProperty RealYProperty() {
+		return realY;
+	}
+	public void setRealY(int y) {
+		this.realY.set(y);
+	}
+
+	// PAGE GETTERS AND SETTERS
+
+	public PageRenderer getPage() {
+		if(MainWindow.mainScreen.document == null) return null;
+		if(MainWindow.mainScreen.document.pages.size() > pageNumber){
+			return MainWindow.mainScreen.document.pages.get(pageNumber);
+		}
+		return null;
+	}
+	public int getPageNumber() {
+		return pageNumber;
+	}
+	public void setPage(PageRenderer page) {
+		this.pageNumber = page.getPage();
+	}
+	public void setPage(int pageNumber){
+		this.pageNumber = pageNumber;
+	}
 
 	// TRANSFORMATIONS
-	Element clone();
 
-	// STATIC FUNCTIONS
-
-	static Font getFont(String family, boolean italic, boolean bold, double size){
-
-		return Font.loadFont(getFontFile(family, italic, bold), size);
-	}
-	static InputStream getFontFile(String family, boolean italic, boolean bold){
-
-		String fileFontName = getFontFileName(italic, bold);
-
-		InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
-
-		while(fontFile == null){
-			if(fileFontName.equals("bold") || fileFontName.equals("italic")){
-				fileFontName = "regular";
-			}else if(fileFontName.equals("bolditalic")){
-				if(TextElement.class.getResourceAsStream("/fonts/" + family + "/italic.ttf") != null) fileFontName = "italic";
-				else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) fileFontName = "bold";
-				else fileFontName = "regular";
-			}else{
-				System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " ) : Chargement du Font Arial classique");
-				return TextElement.class.getResourceAsStream("/fonts/Arial/regular.ttf");
-			}
-
-			fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
-		}
-
-		return fontFile;
-	}
-	static String getFontFileName(boolean italic, boolean bold){
-
-		String fileName = "";
-		if(bold) fileName += "bold";
-		if(italic) fileName += "italic";
-		if(fileName.isEmpty()) fileName = "regular";
-
-		return fileName;
+	public abstract Element clone();
+	public void cloneOnDocument(){
+		Element element = clone();
+		element.setRealX(getRealX() + 50);
+		element.setRealY(getRealY() + 50);
+		element.getPage().addElement(element, true);
+		element.select();
 	}
 
-	static FontWeight getFontWeight(Font font) {
-
-		String[] style = font.getStyle().split(" ");
-		if(style.length >= 1){
-			if(style[0].equals("Bold")){
-				return FontWeight.BOLD;
-			}
-		}
-
-		return FontWeight.NORMAL;
-	}
-	static FontPosture getFontPosture(Font font) {
-
-		String[] style = font.getStyle().split(" ");
-		if(style.length == 1){
-			if(style[0].equals("Italic")){
-				return FontPosture.ITALIC;
-			}
-		}else if(style.length == 2){
-			if(style[1].equals("Italic")){
-				return FontPosture.ITALIC;
-			}
-		}
-
-		return FontPosture.REGULAR;
-	}
 }

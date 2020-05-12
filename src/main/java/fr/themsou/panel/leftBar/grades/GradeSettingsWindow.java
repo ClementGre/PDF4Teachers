@@ -1,9 +1,9 @@
 package fr.themsou.panel.leftBar.grades;
 
-import fr.themsou.document.editions.elements.Element;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
@@ -64,10 +64,10 @@ public class GradeSettingsWindow extends Stage {
 
         private final int tier;
 
-        private ComboBox<String> fontCombo = new ComboBox<>(Element.fonts);
+        private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
-        private ComboBox<Integer> sizeCombo = new ComboBox<>(Element.sizes);
+        private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
         private ColorPicker colorPicker = new ColorPicker();
         private CheckBox showName = new CheckBox(TR.tr("Afficher le nom de la note"));
 
@@ -99,13 +99,13 @@ public class GradeSettingsWindow extends Stage {
 
             Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
             boldBtn.setCursor(Cursor.HAND);
-            boldBtn.setSelected(Element.getFontWeight(font) == FontWeight.BOLD);
+            boldBtn.setSelected(FontUtils.getFontWeight(font) == FontWeight.BOLD);
             boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
             boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
             itBtn.setCursor(Cursor.HAND);
-            itBtn.setSelected(Element.getFontPosture(font) == FontPosture.ITALIC);
+            itBtn.setSelected(FontUtils.getFontPosture(font) == FontPosture.ITALIC);
             itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
@@ -121,7 +121,7 @@ public class GradeSettingsWindow extends Stage {
         private void updateFont(){
 
             LBGradeTab.fontTiers.put(tier, Map.entry(
-                    Font.loadFont(Element.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
+                    Font.loadFont(FontUtils.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
                     Map.entry(colorPicker.getValue(), showName.isSelected()))); // Color + ShowName
             MainWindow.lbGradeTab.updateElementsFont();
 

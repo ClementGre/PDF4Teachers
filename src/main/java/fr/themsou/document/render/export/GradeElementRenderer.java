@@ -2,6 +2,7 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
+import fr.themsou.utils.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -31,16 +32,16 @@ public class GradeElementRenderer {
         if(!element.isVisible()) return;
 
         // COLOR
-        Color color = (Color) element.getFill();
+        Color color = element.getColor();
         contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
 
         // FONT
         boolean bold = false;
-        if (Element.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
+        if (FontUtils.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
         boolean italic = false;
-        if (Element.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
-        InputStream fontFile = Element.getFontFile(element.getFont().getFamily(), italic, bold);
-        element.setFont(Element.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
+        if (FontUtils.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
+        InputStream fontFile = FontUtils.getFontFile(element.getFont().getFamily(), italic, bold);
+        element.setFont(FontUtils.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
 
         contentStream.beginText();
 
@@ -55,7 +56,7 @@ public class GradeElementRenderer {
         }
         // CUSTOM STREAM
 
-        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), Element.getFontFileName(italic, bold));
+        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
 
         if(!fonts.containsKey(entry)){
             PDFont font = PDTrueTypeFont.loadTTF(doc, fontFile);
@@ -66,7 +67,7 @@ public class GradeElementRenderer {
         }
 
         float bottomMargin = pageRealHeight-pageHeight-startY;
-        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, bottomMargin + pageRealHeight - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
+        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, bottomMargin + pageRealHeight - element.getBaseLineY() - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
         try{
             contentStream.showText(element.getText());
         }catch(IllegalArgumentException e){

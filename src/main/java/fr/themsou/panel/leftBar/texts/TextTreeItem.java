@@ -5,6 +5,7 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TextWrapper;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
@@ -33,7 +34,6 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -200,7 +200,7 @@ public class TextTreeItem extends TreeItem{
 	}
 
 	private Font getListFont(){
-		return Element.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
+		return FontUtils.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
 	}
 
 	@Override
@@ -226,8 +226,8 @@ public class TextTreeItem extends TreeItem{
 		data.put("color", color.get().toString());
 		data.put("font", font.get().getFamily());
 		data.put("size", font.get().getSize());
-		data.put("bold", Element.getFontWeight(font.get()) == FontWeight.BOLD);
-		data.put("italic", Element.getFontPosture(font.get()) == FontPosture.ITALIC);
+		data.put("bold", FontUtils.getFontWeight(font.get()) == FontWeight.BOLD);
+		data.put("italic", FontUtils.getFontPosture(font.get()) == FontPosture.ITALIC);
 		data.put("uses", uses);
 		data.put("date", creationDate);
 		data.put("text", text);
@@ -235,7 +235,7 @@ public class TextTreeItem extends TreeItem{
 		return data;
 	}
 	public TextElement toRealTextElement(int x, int y, int page){
-		return new TextElement(x, y, font.get(), text, color.get(), page, MainWindow.mainScreen.document.pages.get(page));
+		return new TextElement(x, y, page, font.get(), text, color.get(), true);
 	}
 	public static TextTreeItem readDataAndGive(DataInputStream reader, int type) throws IOException {
 
@@ -250,7 +250,7 @@ public class TextTreeItem extends TreeItem{
 		long creationDate = reader.readLong();
 		String text = reader.readUTF();
 
-		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
 
 		return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
 	}
@@ -265,7 +265,7 @@ public class TextTreeItem extends TreeItem{
 		long creationDate = Config.getLong(data, "date");
 		String text = Config.getString(data, "text");
 
-		Font font = Element.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
 
 		return new TextTreeItem(font, text, color, type, uses, creationDate);
 	}
