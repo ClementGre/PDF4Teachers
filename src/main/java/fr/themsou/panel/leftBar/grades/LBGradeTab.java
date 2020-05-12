@@ -119,18 +119,18 @@ public class LBGradeTab extends Tab {
         return current;
     }
 
-    public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath){
+    public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
 
         PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
         if(MainWindow.mainScreen.document.getCurrentPage() != -1) page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
-        MainWindow.mainScreen.setSelected(null);
+        if(update) MainWindow.mainScreen.setSelected(null);
 
         GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()),
                 name, value, total, index, parentPath, page.getPage(), page);
 
-        page.addElement(current, true);
-        MainWindow.mainScreen.setSelected(current);
+        page.addElement(current, update);
+        if(update) MainWindow.mainScreen.setSelected(current);
 
         return current;
     }

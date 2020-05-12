@@ -12,6 +12,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class TextListItem {
 
@@ -34,8 +35,8 @@ public class TextListItem {
         return new TextTreeItem(font, text, color, type, uses, creationDate);
     }
 
-    public HashMap<Object, Object> getYAMLData(){
-        HashMap<Object, Object> data = new HashMap<>();
+    public LinkedHashMap<Object, Object> getYAMLData(){
+        LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
         data.put("color", color.toString());
         data.put("font", font.getFamily());
         data.put("size", font.getSize());

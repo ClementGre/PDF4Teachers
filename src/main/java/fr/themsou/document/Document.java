@@ -64,7 +64,6 @@ public class Document {
             pages.add(page);
         }
         MainWindow.mainScreen.finalizePages();
-        Main.settings.setOpenedFile(file);
 
         updateShowsStatus();
     }
@@ -76,7 +75,6 @@ public class Document {
     }
     public void loadEdition(){
         this.edition = new Edition(file, this);
-        Edition.isSaveProperty().set(true);
         if(!documentSaver.isAlive()) documentSaver.start();
     }
     public void close(){

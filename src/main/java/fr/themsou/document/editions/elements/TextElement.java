@@ -4,6 +4,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
@@ -216,8 +218,8 @@ public class TextElement extends Text implements Element {
 
 	// READER AND WRITERS
 
-	public HashMap<Object, Object> getYAMLData(){
-		HashMap<Object, Object> data = new HashMap<>();
+	public LinkedHashMap<Object, Object> getYAMLData(){
+		LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
 		data.put("x", getRealX());
 		data.put("y", getRealY());
 		data.put("color", getFill().toString());

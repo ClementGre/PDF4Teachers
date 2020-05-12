@@ -143,17 +143,10 @@ public class MainWindow extends Stage{
             mainScreen.openFile(LanguageWindow.getDocFile());
         }
 
-        // load data
-        userData = new UserData();
-
-//      OPEN THE LAST FILE
-//      AND CHECK FOR UPDATES
+//      CHECK UPDATES
         new Thread(() -> {
-            Platform.runLater(() -> {
-                if(Main.settings.getOpenedFile() != null){
-                    mainScreen.openFile(Main.settings.getOpenedFile());
-                }
-            });
+
+            userData = new UserData();
 
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {

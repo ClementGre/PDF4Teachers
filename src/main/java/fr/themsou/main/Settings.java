@@ -9,6 +9,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class Settings {
@@ -30,13 +32,9 @@ public class Settings {
 
     private StringProperty language = new SimpleStringProperty("");
 
-    // OTHER
-    private ArrayList<File> openedFiles;
-    private File openedFile;
-
     public Settings(){
 
-        restoreLastSession.set(true); openedFiles = new ArrayList<>(); openedFile = null;
+        restoreLastSession.set(true);
         checkUpdates.set(true);
         defaultZoom = 130;
         if(System.getProperty("os.name").equals("Mac OS X")) zoomAnimations.set(false);
@@ -89,111 +87,87 @@ public class Settings {
     }
     public void loadSettings(){
 
-        new Thread(() -> {
+        new File(Main.dataFolder).mkdirs();
+        File settings = new File(Main.dataFolder + "settings.yml");
+        try{
 
-            new File(Main.dataFolder).mkdirs();
-            File settings = new File(Main.dataFolder + "settings.yml");
-            try{
+            ArrayList<File> lastFiles = new ArrayList<>();
+            File lastFile = null;
 
-                ArrayList<File> lastFiles = new ArrayList<>();
-                File lastFile = null;
+            if(settings.createNewFile()){ //file was created
+                saveSettings();
+            }else{ // file already exist
+                BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(settings), StandardCharsets.UTF_8));
 
-                if(settings.createNewFile()){ //file was created
-                    saveSettings();
-                }else{ // file already exist
-                    BufferedReader reader = new BufferedReader(new FileReader(settings));
+                String line;
+                while((line = reader.readLine()) != null) {
 
-                    String line;
-                    while((line = reader.readLine()) != null) {
+                    String value = StringUtils.removeBefore(line, ": ");
 
-                        String value = StringUtils.removeBefore(line, ": ");
+                    switch(line.split(": ")[0]){
 
-                        switch(line.split(": ")[0]){
-
-                            case "version":
-                                settingsVersion = value;
-                                break;
-                            case "language":
-                                language.set(value);
+                        case "version":
+                            settingsVersion = value;
                             break;
-                            case "restoreLastSession":
-                                try{
-                                    restoreLastSession.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                            case "openedFiles":
-                                try{
-                                    for(String filePath : value.split(";/;")){
-                                        if(new File(filePath).exists()){
-                                            lastFiles.add(new File(filePath));
-                                        }
-                                    }
+                        case "language":
+                            language.set(value);
+                        break;
+                        case "restoreLastSession":
+                            try{
+                                restoreLastSession.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
+                        case "checkUpdates":
+                            try{
+                                checkUpdates.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
+                        case "defaultZoom":
+                            try{
+                                defaultZoom = Integer.parseInt(value);
+                            }catch(Exception ignored){}
+                        break;
+                        case "zoomAnimations":
+                            try{
+                                zoomAnimations.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
 
-                                }catch(Exception ignored){}
-                                break;
-                            case "openedFile":
-                                try{
-                                    if(new File(value).exists()) lastFile = new File(value);
-                                }catch(Exception ignored){}
-                            break;
-                            case "checkUpdates":
-                                try{
-                                    checkUpdates.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                            case "defaultZoom":
-                                try{
-                                    defaultZoom = Integer.parseInt(value);
-                                }catch(Exception ignored){}
-                            break;
-                            case "zoomAnimations":
-                                try{
-                                    zoomAnimations.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
+                            /////
 
-                                /////
+                        case "autoSave":
+                            try{
+                                autoSave.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
+                        case "regularSaving":
+                            try{
+                                regularSaving = Integer.parseInt(value);
+                            }catch(Exception ignored){}
+                        break;
 
-                            case "autoSave":
-                                try{
-                                    autoSave.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                            case "regularSaving":
-                                try{
-                                    regularSaving = Integer.parseInt(value);
-                                }catch(Exception ignored){}
-                            break;
+                            /////
 
-                                /////
-
-                            case "removeElementInPreviousListWhenAddingToFavorites":
-                                try{
-                                    removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                            case "showOnlyStartInTextsList":
-                                try{
-                                    showOnlyStartInTextsList.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                            case "smallFontInTextsList":
-                                try{
-                                    smallFontInTextsList.set(Boolean.parseBoolean(value));
-                                }catch(Exception ignored){}
-                            break;
-                        }
-                    }
-                    reader.close();
-
-                    if(restoreLastSession.get()){
-                        openedFiles = lastFiles;
-                        openedFile = lastFile;
+                        case "removeElementInPreviousListWhenAddingToFavorites":
+                            try{
+                                removeElementInPreviousListWhenAddingToFavorites.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
+                        case "showOnlyStartInTextsList":
+                            try{
+                                showOnlyStartInTextsList.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
+                        case "smallFontInTextsList":
+                            try{
+                                smallFontInTextsList.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
                     }
                 }
-            }catch (IOException e){ e.printStackTrace(); }
-
-        }, "settingsLoader").start();
+                reader.close();
+            }
+        }catch (IOException e){ e.printStackTrace(); }
     }
 
     public void saveSettings(){
@@ -205,7 +179,7 @@ public class Settings {
 
             try{
                 settings.createNewFile();
-                BufferedWriter writer = new BufferedWriter(new FileWriter(settings, false));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(settings), StandardCharsets.UTF_8));
 
                 /////
 
@@ -216,14 +190,6 @@ public class Settings {
 
                 writer.newLine();
                 writer.write("restoreLastSession: " + restoreLastSession.get());
-
-                writer.newLine();
-                writer.write("openedFiles: ");
-                for(File file : openedFiles) writer.write(file.getAbsolutePath() + ";/;");
-
-                writer.newLine();
-                if(openedFile != null) writer.write("openedFile: " + openedFile.getAbsolutePath());
-                else writer.write("openedFile: ");
 
                 writer.newLine();
                 writer.write("checkUpdates: " + checkUpdates.get());
@@ -327,29 +293,6 @@ public class Settings {
     }
     public void setRestoreLastSession(boolean restoreLastSession) {
         this.restoreLastSession.set(restoreLastSession);
-        saveSettings();
-    }
-
-    public ArrayList<File> getOpenedFiles() {
-        return openedFiles;
-    }
-    public void setOpenedFiles(ArrayList<File> openedFiles) {
-        this.openedFiles = openedFiles;
-        saveSettings();
-    }
-    public void addOpenedFiles(File file) {
-        openedFiles.add(file);
-        saveSettings();
-    }
-    public void removeOpenedFiles(File file) {
-        openedFiles.remove(file);
-        saveSettings();
-    }
-    public File getOpenedFile() {
-        return openedFile;
-    }
-    public void setOpenedFile(File openedFile) {
-        this.openedFile = openedFile;
         saveSettings();
     }
 

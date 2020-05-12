@@ -6,6 +6,7 @@ import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
+import javafx.application.Platform;
 import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -47,112 +48,135 @@ public class UserData {
 
         if(Main.settings.getSettingsVersion().isEmpty()){
             return;
-        }else if(Main.settings.getSettingsVersion().equals("1.2.0") ||
-                Main.settings.getSettingsVersion().equals("Snapshot 1.2.0")){
-            loadDataFromYAML();
-        }else{
+        }else if(new File(Main.dataFolder + "userdata.hex").exists()){
             loadDataFromHEX();
+        }else{
+            loadDataFromYAML();
         }
     }
 
     private void loadDataFromYAML(){
 
-        try {
-            new File(Main.dataFolder).mkdirs();
-            File file = new File(Main.dataFolder + "userdata.yml");
-            if(file.createNewFile()) return; // File does not exist or can't create it
+        new Thread(() -> {
 
-            Config config = new Config(file);
-            config.load();
+            try {
+                new File(Main.dataFolder).mkdirs();
+                File file = new File(Main.dataFolder + "userdata.yml");
+                if(file.createNewFile()) return; // File does not exist or can't create it
 
-            // Text Elements Lists & lastFont
+                Config config = new Config(file);
+                config.load();
 
-            HashMap<String, Object> texts = config.getSection("texts");
+                // FILES
 
-            for(Object data : Config.getList(texts, "favorites")){
-                if(data instanceof Map) MainWindow.lbTextTab.favoritesText.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeItem.FAVORITE_TYPE));
-            }
+                HashMap<String, Object> files = config.getSection("files");
 
-            for(Object data : Config.getList(texts, "lasts")){
-                if(data instanceof Map) MainWindow.lbTextTab.lastsText.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeItem.LAST_TYPE));
-            }
-
-            for(Map.Entry<String, Object> list : Config.getSection(texts, "lists").entrySet()){
-                if(list.getValue() instanceof List){
-                    ArrayList<TextListItem> listTexts = new ArrayList<>();
-                    for(Object data : ((List<Object>) list.getValue())){
-                        listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
+                if(Main.settings.isRestoreLastSession()){
+                    for(Object filePath : Config.getList(files, "lastFiles")){
+                        File lastFile = new File(filePath.toString());
+                        if(lastFile.exists()) MainWindow.lbFilesTab.originalFiles.add(lastFile);
+                        MainWindow.lbFilesTab.backOpenFilesList(false);
                     }
-                    MainWindow.lbTextTab.favoriteLists.put(list.getKey(), listTexts);
+                    File lastFile = new File(Config.getString(files, "lastFile"));
+                    if(lastFile.exists()){
+                        Platform.runLater(() -> MainWindow.mainScreen.openFile(lastFile));
+                    }
                 }
+
+                // TEXTS
+
+                HashMap<String, Object> texts = config.getSection("texts");
+
+                Platform.runLater(() -> {
+                    for(Object data : Config.getList(texts, "favorites")){
+                        if(data instanceof Map) MainWindow.lbTextTab.favoritesText.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeItem.FAVORITE_TYPE));
+                    }
+
+                    for(Object data : Config.getList(texts, "lasts")){
+                        if(data instanceof Map) MainWindow.lbTextTab.lastsText.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeItem.LAST_TYPE));
+                    }
+
+                    for(Map.Entry<String, Object> list : Config.getSection(texts, "lists").entrySet()){
+                        if(list.getValue() instanceof List){
+                            ArrayList<TextListItem> listTexts = new ArrayList<>();
+                            for(Object data : ((List<Object>) list.getValue())){
+                                listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
+                            }
+                            MainWindow.lbTextTab.favoriteLists.put(list.getKey(), listTexts);
+                        }
+                    }
+                });
+
+                HashMap<String, Object> lastTextFont = Config.getSection(texts, "lastFont");
+                if(lastTextFont.size() != 5) return;
+                MainWindow.lbTextTab.lastFont = Config.getString(lastTextFont, "font");
+                MainWindow.lbTextTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
+                MainWindow.lbTextTab.lastColor = Config.getString(lastTextFont, "color");
+                MainWindow.lbTextTab.lastBold = Config.getBoolean(lastTextFont, "bold");
+                MainWindow.lbTextTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+
+                // NOTES
+
+                HashMap<String, Object> grades = config.getSection("grades");
+
+                int i = 0;
+                for(Object font : Config.getSection(grades, "tiersFont").values()){
+                    if(font instanceof Map){
+                        HashMap<String, Object> data = (HashMap<String, Object>) font;
+                        LBGradeTab.fontTiers.put(i, Map.entry(
+                                Font.loadFont(
+                                        Element.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
+                                        Config.getDouble(data, "size")), // Font + Size
+                                Map.entry(
+                                        Color.valueOf(Config.getString(data, "color")),
+                                        Config.getBoolean(data, "showName")
+                                ))); // Color + ShowName
+                    }
+                    i++;
+                }
+
+                Platform.runLater(() -> {
+                    MainWindow.lbGradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
+                });
+
+                // EXPORT
+
+                HashMap<String, Object> exportParams = config.getSection("export");
+
+                HashMap<String, Object> exportFields = Config.getSection(exportParams, "fields");
+                lastExportFileName = Config.getString(exportFields, "fileName");
+                lastExportFileName = Config.getString(exportFields, "fileName");
+                lastExportFileNameReplace = Config.getString(exportFields, "fileNameReplace");
+                lastExportFileNameBy = Config.getString(exportFields, "fileNameBy");
+                lastExportFileNameSuffix = Config.getString(exportFields, "fileNameSuffix");
+                lastExportFileNamePrefix = Config.getString(exportFields, "fileNamePrefix");
+                lastExportStudentNameReplace = Config.getString(exportFields, "studentNameReplace");
+                lastExportStudentNameBy = Config.getString(exportFields, "studentNameBy");
+
+                HashMap<String, Object> exportSettings = Config.getSection(exportParams, "settings");
+                settingsOnlySameGradeScale = Config.getBoolean(exportSettings, "onlySameGradeScale");
+                settingsOnlyCompleted = Config.getBoolean(exportSettings, "onlyCompleted");
+                settingsOnlySameDir = Config.getBoolean(exportSettings, "onlySameDir");
+                settingsAttributeTotalLine = Config.getBoolean(exportSettings, "attributeTotalLine");
+                settingsAttributeMoyLine = Config.getBoolean(exportSettings, "attributeMoyLine");
+                settingsWithTxtElements = Config.getBoolean(exportSettings, "withTxtElements");
+                settingsTiersExportSlider = (int) Config.getLong(exportSettings, "tiersExportSlider");
+
+                // SINGLE
+
+                lastOpenDir = new File(config.getString("lastOpenDir"));
+
+            }catch(IOException e) {
+                e.printStackTrace();
             }
 
-            HashMap<String, Object> lastTextFont = Config.getSection(texts, "lastFont");
-            if(lastTextFont.size() != 5) return;
-            MainWindow.lbTextTab.lastFont = Config.getString(lastTextFont, "font");
-            MainWindow.lbTextTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
-            MainWindow.lbTextTab.lastColor = Config.getString(lastTextFont, "color");
-            MainWindow.lbTextTab.lastBold = Config.getBoolean(lastTextFont, "bold");
-            MainWindow.lbTextTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+            Platform.runLater(() -> {
+                MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
+                MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
+                MainWindow.lbTextTab.listsManager.setupMenu();
+            });
 
-            // Single Data
-
-            lastOpenDir = new File(config.getString("lastOpenDir"));
-
-            // TIERS FONTS (NOTE_TAB) + lock
-
-            HashMap<String, Object> grades = config.getSection("grades");
-
-            int i = 0;
-            for(Object font : Config.getSection(grades, "tiersFont").values()){
-                if(font instanceof Map){
-                    HashMap<String, Object> data = (HashMap<String, Object>) font;
-                    LBGradeTab.fontTiers.put(i, Map.entry(
-                            Font.loadFont(
-                                    Element.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
-                                    Config.getDouble(data, "size")), // Font + Size
-                            Map.entry(
-                                    Color.valueOf(Config.getString(data, "color")),
-                                    Config.getBoolean(data, "showName")
-                            ))); // Color + ShowName
-                }
-                i++;
-            }
-
-
-            MainWindow.lbGradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
-
-            // ExportParams
-
-            HashMap<String, Object> exportParams = config.getSection("export");
-
-            HashMap<String, Object> exportFields = Config.getSection(exportParams, "fields");
-            lastExportFileName = Config.getString(exportFields, "fileName");
-            lastExportFileName = Config.getString(exportFields, "fileName");
-            lastExportFileNameReplace = Config.getString(exportFields, "fileNameReplace");
-            lastExportFileNameBy = Config.getString(exportFields, "fileNameBy");
-            lastExportFileNameSuffix = Config.getString(exportFields, "fileNameSuffix");
-            lastExportFileNamePrefix = Config.getString(exportFields, "fileNamePrefix");
-            lastExportStudentNameReplace = Config.getString(exportFields, "studentNameReplace");
-            lastExportStudentNameBy = Config.getString(exportFields, "studentNameBy");
-
-            HashMap<String, Object> exportSettings = Config.getSection(exportParams, "settings");
-            settingsOnlySameGradeScale = Config.getBoolean(exportSettings, "onlySameGradeScale");
-            settingsOnlyCompleted = Config.getBoolean(exportSettings, "onlyCompleted");
-            settingsOnlySameDir = Config.getBoolean(exportSettings, "onlySameDir");
-            settingsAttributeTotalLine = Config.getBoolean(exportSettings, "attributeTotalLine");
-            settingsAttributeMoyLine = Config.getBoolean(exportSettings, "attributeMoyLine");
-            settingsWithTxtElements = Config.getBoolean(exportSettings, "withTxtElements");
-            settingsTiersExportSlider = (int) Config.getLong(exportSettings, "tiersExportSlider");
-
-        }catch(IOException e) {
-            e.printStackTrace();
-        }
-
-        MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
-        MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
-        MainWindow.lbTextTab.listsManager.setupMenu();
-
+        }).start();
     }
     private void loadDataFromHEX(){
 
@@ -160,7 +184,7 @@ public class UserData {
         File file = new File(Main.dataFolder + "userdata.hex");
 
         try{
-            if(!file.createNewFile()){ // file exist
+            if(file.exists()){ // file exist
                 DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 
                 while(reader.available() != 0){
@@ -244,14 +268,26 @@ public class UserData {
 
     public void saveData(){
 
-        new File(Main.dataFolder).mkdirs();
-        Config config = new Config(new File(Main.dataFolder + "userdata.yml"));
-
         try{
+            new File(Main.dataFolder).mkdirs();
+            Config config = new Config(new File(Main.dataFolder + "userdata.yml"));
 
-            // Text Elements Lists & LastFont
+            // FILES
 
-            HashMap<Object, Object> texts = new HashMap<>();
+            LinkedHashMap<Object, Object> files = new LinkedHashMap<>();
+
+            ArrayList<String> lastFiles = new ArrayList<>();
+            for(File file : MainWindow.lbFilesTab.originalFiles){
+                lastFiles.add(file.getAbsolutePath());
+            }
+            files.put("lastFiles", lastFiles);
+            files.put("lastFile", MainWindow.mainScreen.hasDocument(false) ? MainWindow.mainScreen.document.getFile().getAbsolutePath() : "");
+
+            config.base.put("files", files);
+
+            // TEXTS
+
+            LinkedHashMap<Object, Object> texts = new LinkedHashMap<>();
             List<Object> favoriteTexts = new ArrayList<>();
             for(TreeItem<String> item : MainWindow.lbTextTab.favoritesText.getChildren()){
                 if(item instanceof TextTreeItem){
@@ -260,7 +296,7 @@ public class UserData {
             }
             texts.put("favorites", favoriteTexts);
 
-            List<Object> lastTexts = new ArrayList<>();
+            ArrayList<Object> lastTexts = new ArrayList<>();
             for(TreeItem<String> item : MainWindow.lbTextTab.lastsText.getChildren()){
                 if(item instanceof TextTreeItem){
                     lastTexts.add(((TextTreeItem) item).getYAMLData());
@@ -268,7 +304,7 @@ public class UserData {
             }
             texts.put("lasts", lastTexts);
 
-            HashMap<Object, Object> lists = new HashMap<>();
+            LinkedHashMap<Object, Object> lists = new LinkedHashMap<>();
             for(Map.Entry<String, ArrayList<TextListItem>> list : MainWindow.lbTextTab.favoriteLists.entrySet()){
                 List<Object> listTexts = new ArrayList<>();
                 for(TextListItem item : list.getValue()){
@@ -278,7 +314,7 @@ public class UserData {
             }
             texts.put("lists", lists);
 
-            HashMap<Object, Object> lastTextFont = new HashMap<>();
+            LinkedHashMap<Object, Object> lastTextFont = new LinkedHashMap<>();
             lastTextFont.put("font", MainWindow.lbTextTab.lastFont);
             lastTextFont.put("size", MainWindow.lbTextTab.lastFontSize);
             lastTextFont.put("color", MainWindow.lbTextTab.lastColor);
@@ -288,18 +324,14 @@ public class UserData {
 
             config.base.put("texts", texts);
 
-            // Single Data
-
-            config.base.put("lastOpenDir", lastOpenDir.getAbsolutePath());
-
-            // TIERS FONTS (NOTE_TAB) + lock
+            // GRADES
 
             int i = 0;
             HashMap<Object, Object> grades = new HashMap<>();
-            HashMap<Object, Object> gradeTiersFont = new HashMap<>();
+            LinkedHashMap<Object, Object> gradeTiersFont = new LinkedHashMap<>();
             for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : LBGradeTab.fontTiers.values()){
                 Font realFont = font.getKey();
-                HashMap<Object, Object> data = new HashMap<>();
+                LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
 
                 data.put("font", realFont.getFamily());
                 data.put("italic", Element.getFontPosture(realFont) == FontPosture.ITALIC);
@@ -317,11 +349,11 @@ public class UserData {
 
             config.base.put("grades", grades);
 
-            // ExportParams
+            // EXPORT
 
             HashMap<Object, Object> exportParams = new HashMap<>();
 
-            HashMap<Object, Object> exportFields = new HashMap<>();
+            LinkedHashMap<Object, Object> exportFields = new LinkedHashMap<>();
             exportFields.put("fileName", lastExportFileName);
             exportFields.put("fileNameReplace", lastExportFileNameReplace);
             exportFields.put("fileNameBy", lastExportFileNameBy);
@@ -331,7 +363,7 @@ public class UserData {
             exportFields.put("studentNameBy", lastExportStudentNameBy);
             exportParams.put("fields", exportFields);
 
-            HashMap<Object, Object> exportSettings = new HashMap<>();
+            LinkedHashMap<Object, Object> exportSettings = new LinkedHashMap<>();
             exportSettings.put("onlySameGradeScale", settingsOnlySameGradeScale);
             exportSettings.put("onlyCompleted", settingsOnlyCompleted);
             exportSettings.put("onlySameDir", settingsOnlySameDir);
@@ -343,8 +375,12 @@ public class UserData {
 
             config.base.put("export", exportParams);
 
+            // SINGLE
+
+            config.base.put("lastOpenDir", lastOpenDir.getAbsolutePath());
+
             config.save();
-        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+        }catch(FileNotFoundException e){
             e.printStackTrace();
         }
 

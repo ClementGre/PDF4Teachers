@@ -16,6 +16,8 @@ import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import jfxtras.styles.jmetro.JMetro;
@@ -36,6 +38,7 @@ public class Edition {
         this.document = document;
         this.file = file;
         this.editFile = getEditFile(file);
+
         load();
     }
 
@@ -79,54 +82,49 @@ public class Edition {
         MainWindow.lbTextTab.updateOnFileElementsList();
     }
     public void save(){
-
         if(Edition.isSave()) return;
 
         try{
             editFile.createNewFile();
+            Config config = new Config(editFile);
 
-            Config config = new Config(file);
+            LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> grades = new LinkedHashMap<>();
 
             // TEXTS ELEMENTS
-
-            HashMap<String, List<Object>> texts = new HashMap<>();
             int counter = 0; int i = 0;
             for(PageRenderer page : document.pages){
                 ArrayList<Object> pageData = new ArrayList<>();
 
                 for(Element element : page.getElements()){
                     if(element instanceof TextElement){
-                        pageData.add(((TextElement) element).getYAMLData());
+                        pageData.add(element.getYAMLData());
                         counter++;
                     }
                 }
-                texts.put("page"+i, pageData); i++;
+                if(pageData.size() >= 1) texts.put("page"+i, pageData);
+                i++;
             }
-            config.base.put("texts", texts);
 
-            // NOTE ELEMENTS
-
-            HashMap<String, List<Object>> grades = new HashMap<>();
+            // GRADES ELEMENTS
             for(GradeTreeItem element : GradeTreeView.getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot())){
 
                 if(grades.containsKey("page"+element.getCore().getPageNumber())){
                     grades.get("page"+element.getCore().getPageNumber()).add(element.getCore().getYAMLData());
                 }else{
-                    grades.put("page"+element.getCore().getPageNumber(), Collections.singletonList(element.getCore().getYAMLData()));
+                    grades.put("page"+element.getCore().getPageNumber(), new ArrayList<>(Collections.singletonList(element.getCore().getYAMLData())));
                 }
 
-                // not incrément counter if root is default
-                if(element.isRoot()){ // Element is Root
-                    if(element.getCore().getValue() == -1 && element.getCore().getTotal() == 20 && element.getCore().getName().equals(TR.tr("Total"))){ // Element is default Root
-                        continue;
-                    }
-                }
-                counter++;
+                if(!element.getCore().isDefaultRoot()) counter++;
             }
 
             // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
-            else config.save();
+            else{
+                config.base.put("texts", texts);
+                config.base.put("grades", grades);
+                config.save();
+            }
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -168,8 +166,6 @@ public class Edition {
         if(!editFile.exists()){ //file does not exist
             return new Element[0];
         }else{ // file exist
-            new File(Main.dataFolder + "editions").mkdirs();
-
             Config config = new Config(editFile);
             config.load();
 
@@ -204,8 +200,8 @@ public class Edition {
             editFile.createNewFile();
             Config config = new Config(editFile);
 
-            HashMap<String, List<Object>> texts = new HashMap<>();
-            HashMap<String, List<Object>> grades = new HashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> grades = new LinkedHashMap<>();
 
             int counter = 0;
             for(Element element : elements){
@@ -214,7 +210,7 @@ public class Edition {
                     if(texts.containsKey("page"+element.getPageNumber())){
                         texts.get("page"+element.getPageNumber()).add(element.getYAMLData());
                     }else{
-                        texts.put("page"+element.getPageNumber(), Collections.singletonList(element.getYAMLData()));
+                        texts.put("page"+element.getPageNumber(),  new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                     }
                     counter++;
 
@@ -222,18 +218,19 @@ public class Edition {
                     if(grades.containsKey("page"+element.getPageNumber())){
                         grades.get("page"+element.getPageNumber()).add(element.getYAMLData());
                     }else{
-                        grades.put("page"+element.getPageNumber(), Collections.singletonList(element.getYAMLData()));
+                        grades.put("page"+element.getPageNumber(),  new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                     }
 
-                    if(Builders.cleanArray(((GradeElement) element).getParentPath().split(Pattern.quote("\\"))).length == 0){ // not incrément counter if root is default
-                        if(((GradeElement) element).getValue() == -1 && ((GradeElement) element).getTotal() == 20 && ((GradeElement) element).getName().equals(TR.tr("Total"))) continue;
-                    }
-                    counter++;
+                    if(!((GradeElement) element).isDefaultRoot()) counter++;
                 }
             }
             // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
-            else config.save();
+            else{
+                config.base.put("texts", texts);
+                config.base.put("grades", grades);
+                config.save();
+            }
 
         }catch (IOException e) {
             e.printStackTrace();
@@ -244,39 +241,40 @@ public class Edition {
         if(!editFile.exists()){ //file does not exist
             return new double[0];
         }else{ // file already exist
-            DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(editFile)));
 
             double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
             int text = 0;
             int allGrades = 0; // All grade element count
             int grades = 0; // All entered grade
             int draw = 0;
-            while(reader.available() != 0){
-                byte elementType = reader.readByte();
 
-                switch (elementType){
-                    case 1:
-                        text++;
-                        //TextElement.consumeData(reader);
-                    break;
-                    case 2:
-                        double[] data = GradeElement.getYAMLDataStats(new HashMap<>());
+            Config config = new Config(editFile);
+            config.load();
 
-                        if(data.length == 2) totalGrade = data; // get the root grade value and the root grade total
+            for(Map.Entry<String, Object> pageData : config.getSection("texts").entrySet()){
+                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+                if(page == null || !(pageData.getValue() instanceof List)) break;
+                text += ((List<Object>) pageData.getValue()).size();
+            }
 
-                        if(data[0] != -1) grades++;
+            for(Map.Entry<String, Object> pageData : config.getSection("grades").entrySet()){
+                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+                if(page == null || !(pageData.getValue() instanceof List)) break;
+
+                for(Object data : ((ArrayList<Object>) pageData.getValue())){
+                    if(data instanceof Map){
+                        double[] stats = GradeElement.getYAMLDataStats((HashMap<String, Object>) data);
+
+                        if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
+                        if(stats[0] != -1) grades++;
                         allGrades++;
-                    break;
-                    case 3:
-                        draw++;
-                    break;
+                    }
                 }
             }
-            reader.close();
+
             return new double[]{text+grades+draw, text, grades, draw, totalGrade[0], totalGrade[1], allGrades};
         }
     }
-
 
     // get YAML file from PDF file
     public static File getEditFile(File file){

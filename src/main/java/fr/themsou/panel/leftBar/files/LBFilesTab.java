@@ -26,7 +26,9 @@ public class LBFilesTab extends Tab {
 	private SortManager sortManager;
 	private VBox separator = new VBox();
 	private GridPane options = new GridPane();
+
 	public ListView<File> files = new ListView<>();
+	public ArrayList<File> originalFiles = new ArrayList<>();
 
 	public LBFilesTab(){
 
@@ -97,10 +99,6 @@ public class LBFilesTab extends Tab {
 		}, null, null);
 		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
-		// import last session files
-		if(Main.settings.getOpenedFiles() != null){
-			files.getItems().addAll(Main.settings.getOpenedFiles());
-		}
 		separator.getChildren().addAll(options, files);
 
 	}
@@ -110,14 +108,14 @@ public class LBFilesTab extends Tab {
 		if(!file.isDirectory()){
 			if(isFilePdf(file) && !files.getItems().contains(file)){
 				files.getItems().add(file);
-				addOpenFilesList(file);
+				originalFiles.add(file);
 				sortManager.simulateCall();
 			}
 		}else{
 			for(File VFile : Objects.requireNonNull(file.listFiles())){
 				if(isFilePdf(VFile) && !files.getItems().contains(VFile)){
 					files.getItems().add(VFile);
-					addOpenFilesList(VFile);
+					originalFiles.add(VFile);
 				}
 			}
 			sortManager.simulateCall();
@@ -144,7 +142,7 @@ public class LBFilesTab extends Tab {
 			}
 		}*/
 		files.getItems().remove(file);
-		removeOpenFilesList(file);
+		originalFiles.remove(file);
 	}
 	
 	private boolean isFilePdf(File file) {
@@ -158,29 +156,18 @@ public class LBFilesTab extends Tab {
 
 	private void updateOpenFilesList(){
 
-		ArrayList<File> openedFilesList = new ArrayList<>();
-		for(File file : MainWindow.lbFilesTab.files.getItems()){
-			openedFilesList.add(file);
-		}
-		Main.settings.setOpenedFiles(openedFilesList);
+		originalFiles.clear();
+		originalFiles.addAll(MainWindow.lbFilesTab.files.getItems());
 
 	}
-	private void backOpenFilesList(boolean reverse){
+	public void backOpenFilesList(boolean reverse){
 
 		files.getItems().clear();
-		ArrayList<File> openedFilesList = (ArrayList<File>) Main.settings.getOpenedFiles().clone();
+		ArrayList<File> openedFilesList = (ArrayList<File>) originalFiles.clone();
 		if(reverse) Collections.reverse(openedFilesList);
 		for(File file : openedFilesList){
 			files.getItems().add(file);
 		}
 	}
-	private void addOpenFilesList(File file){
-		Main.settings.addOpenedFiles(file);
-	}
-	private void removeOpenFilesList(File file){
-		Main.settings.removeOpenedFiles(file);
-	}
-
-	
 
 }

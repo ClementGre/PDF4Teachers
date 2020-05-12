@@ -27,6 +27,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 public class GradeElement extends Text implements Element {
@@ -95,7 +96,7 @@ public class GradeElement extends Text implements Element {
             if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 delete();
-                MainWindow.lbGradeTab.treeView.generateRoot();
+                MainWindow.lbGradeTab.treeView.generateRoot(true);
             }else delete();
 
         });
@@ -119,7 +120,7 @@ public class GradeElement extends Text implements Element {
             }
 
             GradeTreeItem treeItemElement;
-            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+            if(getParentPath().isEmpty()) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
             else{
                 treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
                 // Check if exist twice
@@ -358,7 +359,7 @@ public class GradeElement extends Text implements Element {
     @Override
     public void delete(){
         if(getPage() != null){
-            if(getPage().getChildren().contains(this)) getPage().removeElement(this, true);
+            if(getPage().getChildren().contains(this)) getPage().removeElement(this, !isDefaultRoot());
         }
     }
     public void switchPage(int page){
@@ -366,10 +367,17 @@ public class GradeElement extends Text implements Element {
         GradeTreeView.defineNaNLocations();
     }
 
+    public boolean isDefaultRoot(){
+        if(getParentPath().isEmpty()){
+            return (getValue() == -1 && getTotal() == 20 && getName().equals(TR.tr("Total")));
+        }
+        return false;
+    }
+
     // READER AND WRITERS
 
-    public HashMap<Object, Object> getYAMLData(){
-        HashMap<Object, Object> data = new HashMap<>();
+    public LinkedHashMap<Object, Object> getYAMLData(){
+        LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
         data.put("x", getRealX());
         data.put("y", getRealY());
         data.put("index", index);
@@ -386,8 +394,8 @@ public class GradeElement extends Text implements Element {
         int y = (int) Config.getLong(data, "y");
         int index = (int) Config.getLong(data, "index");
         String parentPath = Config.getString(data, "parentPath");
-        double value = (int) Config.getLong(data, "value");
-        double total = (int) Config.getLong(data, "total");
+        double value = Config.getDouble(data, "value");
+        double total = Config.getDouble(data, "total");
         String name = Config.getString(data, "name");
 
         return new GradeElement(x, y, name, value, total, index, parentPath, page, hasPage ? MainWindow.mainScreen.document.pages.get(page) : null);
@@ -418,9 +426,9 @@ public class GradeElement extends Text implements Element {
     }
     // 2args (Root) : [0] => Value [1] => Total  |  1args (Other) : [0] => Value
     public static double[] getYAMLDataStats(HashMap<String, Object> data){
-        String parentPath = "";
-        double value = 0;
-        double total = 0;
+        String parentPath = Config.getString(data, "parentPath");
+        double value = Config.getDouble(data, "value");
+        double total = Config.getDouble(data, "total");
 
         if(Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0) return new double[]{value, total};
         else return new double[]{value};

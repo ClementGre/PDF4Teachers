@@ -36,6 +36,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 public class TextTreeItem extends TreeItem{
@@ -220,8 +221,8 @@ public class TextTreeItem extends TreeItem{
 		return new TextTreeItem(font.get(), text, color.get(), type, uses, creationDate);
 	}
 
-	public HashMap<Object, Object> getYAMLData(){
-		HashMap<Object, Object> data = new HashMap<>();
+	public LinkedHashMap<Object, Object> getYAMLData(){
+		LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
 		data.put("color", color.get().toString());
 		data.put("font", font.get().getFamily());
 		data.put("size", font.get().getSize());

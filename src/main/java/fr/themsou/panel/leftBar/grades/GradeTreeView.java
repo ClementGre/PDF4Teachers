@@ -71,11 +71,11 @@ public class GradeTreeView extends TreeView<String> {
 
     public void clear(){
         if(getRoot() != null) ((GradeTreeItem)getRoot()).getCore().delete();
-        generateRoot();
+        generateRoot(false);
     }
 
-    public void generateRoot(){
-        MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 20, 0, "");
+    public void generateRoot(boolean update){
+        MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 20, 0, "", update);
 
         // DEBUG
         /*Main.lbGradeTab.newGradeElement("Bonus", -1, 3, 0, "Total");

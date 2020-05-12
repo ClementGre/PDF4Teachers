@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,8 +30,8 @@ public class Config {
 
         if(base == null) base = new HashMap<>();
     }
-    public void save() throws FileNotFoundException, UnsupportedEncodingException {
-        yaml.dump(base, new OutputStreamWriter(new FileOutputStream(file), "UTF-8"));
+    public void save() throws FileNotFoundException{
+        yaml.dump(base, new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
     }
 
     // GET VALUE
@@ -92,10 +93,10 @@ public class Config {
                 else section = (HashMap<String, Object>) value; // Continue loop
                 i--;
             }else{
-                System.out.println("WARNING: section " + key + " does not exist in " + section); return "";
+                return "";
             }
         }
-        System.out.println("WARNING: for loop return anything"); return "";
+        System.err.println("WARNING: for loop return anything"); return "";
     }
 
     // GET KEY (SECTION)

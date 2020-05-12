@@ -182,9 +182,11 @@ public class LanguageWindow extends Stage{
             translationsDir.mkdirs();
 
             for(String fileName : TO_COPY_FILES){
-                InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
                 File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
-                Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+                if(!dest.exists()){
+                    InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
+                    Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+                }
             }
         }catch(IOException e){ e.printStackTrace(); }
     }

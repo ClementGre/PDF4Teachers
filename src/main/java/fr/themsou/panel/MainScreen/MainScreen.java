@@ -291,7 +291,6 @@ public class MainScreen extends Pane {
 
 		repaint();
 		MainWindow.footerBar.repaint();
-		if(!MainWindow.hasToClose) Main.settings.setOpenedFile(null);
 
 		System.runFinalization();
 		return true;

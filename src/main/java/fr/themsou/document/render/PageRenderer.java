@@ -277,9 +277,7 @@ public class PageRenderer extends Pane{
                 MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
 
-            if(status != PageStatus.RENDERED){
-                ((Shape) element).setVisible(false);
-            }
+            if(status != PageStatus.RENDERED) ((Shape) element).setVisible(false);
         }
     }
     public void addElement(Element element, boolean update){
@@ -288,7 +286,7 @@ public class PageRenderer extends Pane{
 
             elements.add(element);
             getChildren().add((Shape) element);
-            Edition.setUnsave();
+            if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
                 if(update) MainWindow.lbTextTab.addOnFileElement((TextElement) element);
@@ -297,7 +295,6 @@ public class PageRenderer extends Pane{
             }
 
             if(status != PageStatus.RENDERED) ((Shape) element).setVisible(false);
-
         }
     }
     public void removeElement(Element element, boolean update){
@@ -305,14 +302,13 @@ public class PageRenderer extends Pane{
         if(element != null){
             elements.remove(element);
             getChildren().remove((Shape) element);
-            Edition.setUnsave();
+            if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
                 if(update) MainWindow.lbTextTab.removeOnFileElement((TextElement) element);
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.removeElement((GradeElement) element);
             }
-
         }
     }
 
