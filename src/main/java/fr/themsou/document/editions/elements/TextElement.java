@@ -2,8 +2,7 @@ package fr.themsou.document.editions.elements;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;

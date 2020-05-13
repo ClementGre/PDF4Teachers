@@ -1,15 +1,20 @@
 package fr.themsou.main;
 
-import java.io.File;
+import java.io.*;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.LicenseWindow;
+import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.scilab.forge.jlatexmath.TeXFormula;
@@ -30,6 +35,8 @@ public class Main extends Application {
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
 
+	String text = "";
+
 	public static void main(String[] args){
 		launch(args);
 	}
@@ -45,6 +52,7 @@ public class Main extends Application {
 		// PREPARATION
 
 		settings = new Settings();
+		LogWindow.copyLogs();
 		LanguageWindow.copyFiles();
 
 		if(languageAsk()){

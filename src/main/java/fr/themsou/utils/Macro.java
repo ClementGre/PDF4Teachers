@@ -6,6 +6,7 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
@@ -59,7 +60,12 @@ public class Macro {
                         MainWindow.leftBar.getSelectionModel().select(2);
                         MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextGrade(page, y));
                     }
-                }else{
+                }else{ // SHORTCUT + ALT
+                    if(e.getCode() == KeyCode.C){
+                        new LogWindow();
+                        return;
+                    }
+
                     try{
                         int i = Integer.parseInt(e.getCode().getChar())-1;
                         if(i == -1){
