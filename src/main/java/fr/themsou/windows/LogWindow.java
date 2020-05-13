@@ -5,19 +5,15 @@ import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.VPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-
-import javax.swing.*;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
@@ -74,7 +70,7 @@ public class LogWindow extends Stage {
         text.setFont(FontUtils.getFont("Arial", false, false, 14));
         text.setStyle("-fx-color: white; -fx-padding: 10;");
         text.setWrapText(true);
-        text.prefWidthProperty().bind(root.widthProperty().subtract(20));
+        text.prefWidthProperty().bind(root.widthProperty());
         text.minHeight(Double.MAX_VALUE);
 
         root.getChildren().add(text);

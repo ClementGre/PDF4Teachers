@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
@@ -13,7 +15,7 @@ dependencies{
         exclude group: 'org.openjfx'
     }
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.3'
-    compile group: 'org.yaml', name: 'snakeyaml', version: '1.8'
+    compile group: 'org.yaml', name: 'snakeyaml', version: '1.26'
     compile group: 'org.scilab.forge', name: 'jlatexmath', version: '1.0.7'
 
 }
@@ -24,7 +26,7 @@ javafx {
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-mainClassName = "fr.themsou.main.Main"
+mainClassName = "fr.themsou/fr.themsou.main.Main"
 
 version = "1.1.1"
 description = "Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs."
@@ -47,9 +49,16 @@ jlink {
     launcher {
         name = 'PDF4Teachers'
     }
-    targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
-    //targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-14/')
-    //targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home/')
+    if(Os.isFamily(Os.FAMILY_WINDOWS)){
+        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
+    }else if(Os.isFamily(Os.FAMILY_MAC)){
+        targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home/')
+    }else if(Os.isFamily(Os.FAMILY_UNIX)){
+        targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-14/')
+    }
+
+
+
 
     jpackage {
         installerOptions = [

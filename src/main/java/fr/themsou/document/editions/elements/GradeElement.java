@@ -176,6 +176,12 @@ public class GradeElement extends Element {
         MainWindow.lbGradeTab.treeView.getSelectionModel().select(getGradeTreeItem());
 
     }
+    @Override
+    public void delete(){
+        if(getPage() != null){
+            getPage().removeElement(this, !isDefaultRoot());
+        }
+    }
 
     // READER AND WRITERS
 

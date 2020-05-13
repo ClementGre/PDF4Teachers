@@ -1,6 +1,8 @@
 package fr.themsou.main;
 
 import java.io.*;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;
@@ -10,14 +12,9 @@ import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import org.scilab.forge.jlatexmath.TeXFormula;
 
 public class Main extends Application {
 
@@ -42,6 +39,9 @@ public class Main extends Application {
 	}
 	@Override
 	public void start(Stage window) throws Exception {
+		LogWindow.copyLogs();
+		System.out.println("Starting PDF4Teachers...");
+
 		if(System.getProperty("os.name").toLowerCase().contains("win")){
 			dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		}
@@ -52,7 +52,6 @@ public class Main extends Application {
 		// PREPARATION
 
 		settings = new Settings();
-		LogWindow.copyLogs();
 		LanguageWindow.copyFiles();
 
 		if(languageAsk()){

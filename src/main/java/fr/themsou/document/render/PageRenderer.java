@@ -285,7 +285,6 @@ public class PageRenderer extends Pane{
         if(element != null){
 
             elements.add(element);
-            getChildren().add(element);
             if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
@@ -302,6 +301,7 @@ public class PageRenderer extends Pane{
         if(element != null){
             elements.remove(element);
             getChildren().remove(element);
+
             if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
