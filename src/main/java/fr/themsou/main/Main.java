@@ -12,6 +12,7 @@ import javafx.application.HostServices;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import org.scilab.forge.jlatexmath.TeXFormula;
 
 public class Main extends Application {
 
@@ -39,6 +40,7 @@ public class Main extends Application {
 		}
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
+
 
 		// PREPARATION
 

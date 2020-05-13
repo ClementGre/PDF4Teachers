@@ -1,58 +1,74 @@
 package fr.themsou.document.editions.elements;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
 
-import fr.themsou.document.editions.Edition;
-import fr.themsou.document.render.PageRenderer;
-import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.NodeMenuItem;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.*;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
-import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.*;
 import javafx.scene.text.Font;
+import org.scilab.forge.jlatexmath.ParseException;
+import org.scilab.forge.jlatexmath.TeXConstants;
+import org.scilab.forge.jlatexmath.TeXFormula;
+import org.scilab.forge.jlatexmath.TeXIcon;
+
+import javax.swing.*;
 
 public class TextElement extends Element {
 
 	private Text text = new Text();
+	private ImageView image = new ImageView();
 
 	public TextElement(int x, int y, int pageNumber, Font font, String text, Color color, boolean hasPage){
 		super(x, y, pageNumber);
 
 		this.text.setFont(font);
-		this.text.setText(text);
 		this.text.setFill(color);
+		this.text.setText(text);
+		updateLaTeX();
 
 		this.text.setBoundsType(TextBoundsType.LOGICAL);
 		this.text.setTextOrigin(VPos.TOP);
 
-		if(hasPage && getPage() != null) setupGeneral(this.text);
+		if(hasPage && getPage() != null) setupGeneral(this.text.getText().startsWith("$") ? this.image : this.text);
 	}
 
 	// SETUP / EVENT CALL BACK
 
 	@Override
 	protected void setupBindings(){
-		this.text.textProperty().addListener((observable, oldValue, newValue) -> checkLocation(getLayoutX(), getLayoutY(), false));
+		this.text.textProperty().addListener((observable, oldValue, newValue) -> {
+			updateLaTeX();
+			checkLocation(getLayoutX(), getLayoutY(), false);
+		});
+		this.text.fillProperty().addListener((observable, oldValue, newValue) -> {
+			updateLaTeX();
+		});
+		this.text.fontProperty().addListener((observable, oldValue, newValue) -> {
+			updateLaTeX();
+		});
 	}
+	@Override
 	protected void onMouseRelease(){
 		MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
 	}
@@ -153,6 +169,57 @@ public class TextElement extends Element {
 		return (float) text.getLayoutBounds().getHeight();
 	}
 
+	public void updateLaTeX(){
+		if(text.getText().startsWith("$")){ // LaTeX
+
+			if(getChildren().contains(text)){
+				getChildren().remove(text);
+				getChildren().add(image);
+			}
+			Image render = renderLatex(text.getText().replaceFirst(Pattern.quote("$"), ""));
+			image.setImage(render);
+			image.setFitWidth(render.getWidth()/2);
+			image.setFitHeight(render.getHeight()/2);
+
+		}else{ // Lambda Text
+
+			if(getChildren().contains(image)){
+				getChildren().remove(image);
+				getChildren().add(text);
+				image.setImage(null);
+			}
+		}
+	}
+
+	public WritableImage renderLatex(String text){
+		try {
+
+			TeXFormula formula = new TeXFormula(text);
+			formula.setColor(new java.awt.Color((float) getColor().getRed(),
+												(float) getColor().getGreen(),
+												(float) getColor().getBlue(),
+												(float) getColor().getOpacity()));
+
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, (float) getFont().getSize()*2);
+			icon.setInsets(new Insets((int) -getFont().getSize()/3, (int) -getFont().getSize()/3, (int) -getFont().getSize()/3, (int) -getFont().getSize()/3));
+
+			BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g = image.createGraphics();
+			g.setBackground(new java.awt.Color(0f, 0f, 0f, 1f));
+			icon.paintIcon(null, g, 0, 0);
+
+			return SwingFXUtils.toFXImage(image, new WritableImage(icon.getIconWidth(), icon.getIconHeight()));
+
+		}catch(ParseException ex){
+			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
+				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + " \\\\ " +
+						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula: "), ""));
+			}else{
+				return renderLatex("$" + TR.tr("Erreur~:") + " \\\\ " + ex.getMessage());
+			}
+		}
+	}
+
 	// ELEMENT DATA GETTERS AND SETTERS
 
 	public String getText(){
@@ -165,7 +232,7 @@ public class TextElement extends Element {
 		this.text.setText(text);
 	}
 	public void setColor(Color color){
-		text.setFill(color);
+		this.text.setFill(color);
 	}
 	public ObjectProperty<Paint> fillProperty(){
 		return text.fillProperty();

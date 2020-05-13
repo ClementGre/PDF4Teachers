@@ -162,6 +162,7 @@ public class LBTextTab extends Tab {
 		Builders.setHBoxPosition(txtArea, -1, 30, 0);
 		txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
+		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));
 
 		Builders.setHBoxPosition(deleteBtn, -1, 30, 2.5);
 		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));

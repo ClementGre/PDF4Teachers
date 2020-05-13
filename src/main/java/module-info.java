@@ -12,6 +12,8 @@ module fr.themsou {
 
     requires com.fasterxml.jackson.core;
 
+    requires jlatexmath;
+
     // JAVAFX
 
     requires javafx.graphics;
