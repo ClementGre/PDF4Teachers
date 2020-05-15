@@ -69,28 +69,19 @@ public class GradeTreeView extends TreeView<String> {
         });
     }
 
+    // Clear without removing elements from pages
+    public void hardClear(){
+        setRoot(null);
+        generateRoot(false);
+    }
+    // Clear and removingf element from pages
     public void clear(){
-        if(getRoot() != null) ((GradeTreeItem)getRoot()).getCore().delete();
+        if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
         generateRoot(false);
     }
 
     public void generateRoot(boolean update){
         MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 20, 0, "", update);
-
-        // DEBUG
-        /*Main.lbGradeTab.newGradeElement("Bonus", -1, 3, 0, "Total");
-
-        Main.lbGradeTab.newGradeElement("Exercice 1"   , -1, 10.5, 1, "Total");
-        Main.lbGradeTab.newGradeElement("a"            , -1, 3.5, 0, "Total\\Exercice 1");
-        Main.lbGradeTab.newGradeElement("b"            , -1, 3, 1, "Total\\Exercice 1");
-        Main.lbGradeTab.newGradeElement("c"            , -1, 4, 2, "Total\\Exercice 1");
-
-        Main.lbGradeTab.newGradeElement("Exercice 2"   , -1, 6.5, 2, "Total");
-        Main.lbGradeTab.newGradeElement("a"            , -1, 3, 0, "Total\\Exercice 2");
-        Main.lbGradeTab.newGradeElement("b"            , -1, 3, 1, "Total\\Exercice 2");
-        Main.lbGradeTab.newGradeElement("c"            , -1, 1.5, 2, "Total\\Exercice 2");*/
-
-
     }
 
     public void addElement(GradeElement element){

@@ -179,7 +179,7 @@ public class GradeElement extends Element {
     @Override
     public void delete(){
         if(getPage() != null){
-            getPage().removeElement(this, !isDefaultRoot());
+            getPage().removeElement(this, !isRoot());
         }
     }
 
@@ -258,10 +258,13 @@ public class GradeElement extends Element {
         return treeItemElement;
     }
     public boolean isDefaultRoot(){
-        if(getParentPath().isEmpty()){
+        if(isRoot()){
             return (getValue() == -1 && getTotal() == 20 && getName().equals(TR.tr("Total")));
         }
         return false;
+    }
+    public boolean isRoot(){
+        return getParentPath().isEmpty();
     }
 
     public float getBaseLineY(){

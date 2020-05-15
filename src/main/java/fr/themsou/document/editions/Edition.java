@@ -43,20 +43,17 @@ public class Edition {
     }
 
     public void load(){
-
         File lastEditFile = new File(StringUtils.removeAfterLastRejex(editFile.getAbsolutePath(), ".yml") + ".edit");
         if(lastEditFile.exists()){
             loadHEX(lastEditFile);
             lastEditFile.delete();
             return;
         }
-
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.lbGradeTab.treeView.clear();
+        MainWindow.lbGradeTab.treeView.hardClear();
 
         try{
             if(!editFile.exists()) return; // File does not exist
-
             Config config = new Config(editFile);
             config.load();
 
@@ -124,7 +121,6 @@ public class Edition {
 
     }
     public void loadHEX(File file){
-
         MainWindow.lbGradeTab.treeView.clear();
         try{
             if(file.exists()){ //file does not exist

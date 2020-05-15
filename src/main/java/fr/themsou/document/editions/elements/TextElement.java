@@ -28,10 +28,14 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
+import javax.imageio.ImageIO;
+
 public class TextElement extends Element {
 
 	private Text text = new Text();
 	private ImageView image = new ImageView();
+
+	public static final float imageFactor = 2.5f;
 
 	public TextElement(int x, int y, int pageNumber, Font font, String text, Color color, boolean hasPage){
 		super(x, y, pageNumber);
@@ -43,8 +47,11 @@ public class TextElement extends Element {
 		this.text.setBoundsType(TextBoundsType.LOGICAL);
 		this.text.setTextOrigin(VPos.TOP);
 
-		if(hasPage && getPage() != null) setupGeneral(isLaTeX() ? this.image : this.text);
-		updateLaTeX();
+		if(hasPage && getPage() != null){
+			setupGeneral(isLaTeX() ? this.image : this.text);
+			updateLaTeX();
+		}
+
 	}
 
 	// SETUP / EVENT CALL BACK
@@ -184,10 +191,13 @@ public class TextElement extends Element {
 			}
 			Image render = renderLatex();
 			image.setImage(render);
-			image.setFitWidth(render.getWidth()/2);
-			image.setFitHeight(render.getHeight()/2);
+			image.setVisible(true);
+			image.setFitWidth(render.getWidth()/imageFactor);
+			image.setFitHeight(render.getHeight()/imageFactor);
 
 		}else{ // Lambda Text
+
+			text.setVisible(true);
 
 			if(getChildren().contains(image)){
 				getChildren().remove(image);
@@ -203,6 +213,11 @@ public class TextElement extends Element {
 		return SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null)));
 	}
 	public BufferedImage renderAwtLatex(){
+		try {
+			ImageIO.write(renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize()), "png", new File("C:\\Users\\Clement\\Downloads\\latex.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize());
 	}
 
@@ -212,8 +227,8 @@ public class TextElement extends Element {
 			TeXFormula formula = new TeXFormula(text);
 			formula.setColor(color);
 
-			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, (float) size*2);
-			icon.setInsets(new Insets((int) -size/3, (int) -size/3, (int) -size/3, (int) -size/3));
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size*imageFactor);
+			icon.setInsets(new Insets((int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7)));
 
 			BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = image.createGraphics();

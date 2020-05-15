@@ -45,15 +45,6 @@ public class GradeElementRenderer {
 
         contentStream.beginText();
 
-        // ROTATE PAGES ADAPT
-        switch(page.getRotation()){
-            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
-                break;
-            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
-                break;
-            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
-                break;
-        }
         // CUSTOM STREAM
 
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));

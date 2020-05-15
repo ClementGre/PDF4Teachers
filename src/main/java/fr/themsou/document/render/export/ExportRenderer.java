@@ -63,15 +63,16 @@ public class ExportRenderer {
                 pageHeight = page.getCropBox().getWidth();
                 pageWidth = page.getCropBox().getHeight();
             }
+
+            // ROTATE PAGES ADAPT
             switch(page.getRotation()){
-                case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
+                case 90: contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
                     break;
-                case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
+                case 180: contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
                     break;
-                case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
+                case 270: contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
                     break;
             }
-            // // // //
 
             for(Element element : elements){
 

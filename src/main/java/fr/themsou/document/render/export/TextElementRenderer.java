@@ -6,6 +6,7 @@ import fr.themsou.utils.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -46,8 +47,11 @@ public class TextElementRenderer {
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, element.getLaTeXText());
 
             float bottomMargin = pageRealHeight-pageHeight-startY;
-            contentStream.drawImage(pdImage, startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
-                    (float) (bottomMargin + pageRealHeight - (pdImage.getHeight()/2f) - element.getRealY() / Element.GRID_HEIGHT * pageHeight), pdImage.getWidth()/2f, pdImage.getHeight()/2f);
+            contentStream.drawImage(pdImage,
+                    startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
+                    (float) (bottomMargin + pageRealHeight - ((pdImage.getHeight()/TextElement.imageFactor) / 596.0 * pageWidth) - element.getRealY() / Element.GRID_HEIGHT * pageHeight),
+                    (float) ((pdImage.getWidth()/TextElement.imageFactor) / 596.0 * pageWidth),
+                    (float) ((pdImage.getHeight()/TextElement.imageFactor) / 596.0 * pageWidth));
 
             return;
         }
@@ -72,7 +76,6 @@ public class TextElementRenderer {
         contentStream.beginText();
 
         // CUSTOM STREAM
-
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
 
         if(!fonts.containsKey(entry)){

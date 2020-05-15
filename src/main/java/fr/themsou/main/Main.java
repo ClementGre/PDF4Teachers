@@ -28,26 +28,23 @@ public class Main extends Application {
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "Snapshot 1.2.0";
 	public static final boolean DEBUG = true;
+	public static final boolean COPY_CONSOLE = false;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
 
-	String text = "";
-
 	public static void main(String[] args){
+		if(COPY_CONSOLE) LogWindow.copyLogs();
+		System.out.println("Starting PDF4Teachers...");
 		launch(args);
 	}
 	@Override
-	public void start(Stage window) throws Exception {
-		LogWindow.copyLogs();
-		System.out.println("Starting PDF4Teachers...");
+	public void start(Stage window){
 
-		if(System.getProperty("os.name").toLowerCase().contains("win")){
-			dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
-		}
+		if(System.getProperty("os.name").toLowerCase().contains("win")) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
+
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
-
 
 		// PREPARATION
 
