@@ -16,6 +16,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDStream;
+import org.apache.pdfbox.util.Matrix;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.*;
@@ -61,6 +63,15 @@ public class ExportRenderer {
                 pageHeight = page.getCropBox().getWidth();
                 pageWidth = page.getCropBox().getHeight();
             }
+            switch(page.getRotation()){
+                case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
+                    break;
+                case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
+                    break;
+                case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
+                    break;
+            }
+            // // // //
 
             for(Element element : elements){
 

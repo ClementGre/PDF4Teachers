@@ -11,8 +11,14 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.RenderedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -29,9 +35,26 @@ public class TextElementRenderer {
 
     public void renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
 
+        ////////// LATEX RENDER
+
+        if(element.isLaTeX()) {
+
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            ImageIO.write(element.renderAwtLatex(), "png", bos);
+            byte[] data = bos.toByteArray();
+
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, element.getLaTeXText());
+
+            float bottomMargin = pageRealHeight-pageHeight-startY;
+            contentStream.drawImage(pdImage, startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
+                    (float) (bottomMargin + pageRealHeight - (pdImage.getHeight()/2f) - element.getRealY() / Element.GRID_HEIGHT * pageHeight), pdImage.getWidth()/2f, pdImage.getHeight()/2f);
+
+            return;
+        }
+        ////////// TEXT RENDER
+
         // COLOR
-        Color color = element.getColor();
-        contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
+        contentStream.setNonStrokingColor(element.getAwtColor());
 
         // FONT
         boolean bold = false;
@@ -48,15 +71,6 @@ public class TextElementRenderer {
 
         contentStream.beginText();
 
-        // ROTATE PAGES ADAPT
-        switch(page.getRotation()){
-            case 90: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
-                break;
-            case 180: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
-                break;
-            case 270: contentStream.setTextMatrix(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
-                break;
-        }
         // CUSTOM STREAM
 
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
@@ -70,7 +84,8 @@ public class TextElementRenderer {
         }
 
         float bottomMargin = pageRealHeight-pageHeight-startY;
-        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, (float) (bottomMargin + pageRealHeight - element.getBaseLineY() - element.getRealY() / Element.GRID_HEIGHT * pageHeight));
+        contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
+                bottomMargin + pageRealHeight - element.getBaseLineY() - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
 
         // DRAW LINES
         for(String text : element.getText().split("\\n")){

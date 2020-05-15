@@ -1,6 +1,7 @@
 package fr.themsou.windows;
 
 import fr.themsou.main.Main;
+import fr.themsou.utils.CustomPrintStream;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import javafx.application.Platform;
@@ -14,14 +15,14 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 public class LogWindow extends Stage {
 
-    public static PrintStream console = System.out;
-    public static PrintStream errConsole = System.err;
-    public static StringBuilder consoleText = new StringBuilder();
+    public static StringBuffer logs = new StringBuffer();
+
+    public static PrintStream newConsole = new CustomPrintStream(System.out, logs);
+    public static PrintStream newErrConsole = new CustomPrintStream(System.err, logs);
 
     public LogWindow(){
 
@@ -53,15 +54,15 @@ public class LogWindow extends Stage {
         show();
     }
 
-    private Label text = new Label(consoleText.toString());
+    private Label text = new Label(logs.toString());
     private Thread updater = new Thread(() -> {
         while(true){
             try {
-                Thread.sleep(500);
+                Thread.sleep(200);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            Platform.runLater(() -> text.setText(consoleText.toString()));
+            Platform.runLater(() -> text.setText(logs.toString()));
         }
     });
 
@@ -81,21 +82,8 @@ public class LogWindow extends Stage {
     }
 
     public static void copyLogs() {
-
-        OutputStream newConsole = new OutputStream() {
-            @Override public void write(int b){
-                consoleText.append((char) b);
-                console.print((char) b);
-            }
-        };
-        OutputStream newErrConsole = new OutputStream() {
-            @Override public void write(int b){
-                consoleText.append((char) b);
-                errConsole.print((char) b);
-            }
-        };
-        System.setOut(new PrintStream(newConsole));
-        System.setErr(new PrintStream(newErrConsole));
+        System.setOut(newConsole);
+        System.setErr(newErrConsole);
     }
 
 }

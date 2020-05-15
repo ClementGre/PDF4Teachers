@@ -12,10 +12,7 @@ import fr.themsou.utils.*;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
@@ -31,8 +28,6 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 
-import javax.swing.*;
-
 public class TextElement extends Element {
 
 	private Text text = new Text();
@@ -44,12 +39,12 @@ public class TextElement extends Element {
 		this.text.setFont(font);
 		this.text.setFill(color);
 		this.text.setText(text);
-		updateLaTeX();
 
 		this.text.setBoundsType(TextBoundsType.LOGICAL);
 		this.text.setTextOrigin(VPos.TOP);
 
-		if(hasPage && getPage() != null) setupGeneral(this.text.getText().startsWith("$") ? this.image : this.text);
+		if(hasPage && getPage() != null) setupGeneral(isLaTeX() ? this.image : this.text);
+		updateLaTeX();
 	}
 
 	// SETUP / EVENT CALL BACK
@@ -168,14 +163,26 @@ public class TextElement extends Element {
 		return (float) text.getLayoutBounds().getHeight();
 	}
 
+	public boolean isLaTeX(){
+		return text.getText().startsWith("$");
+	}
+	public String getLaTeXText(){
+		return text.getText().replaceFirst(Pattern.quote("$"), "");
+	}
+	public java.awt.Color getAwtColor(){
+		return new java.awt.Color((float) getColor().getRed(),
+				(float) getColor().getGreen(),
+				(float) getColor().getBlue(),
+				(float) getColor().getOpacity());
+	}
 	public void updateLaTeX(){
-		if(text.getText().startsWith("$")){ // LaTeX
+		if(isLaTeX()){ // LaTeX
 
 			if(getChildren().contains(text)){
 				getChildren().remove(text);
 				getChildren().add(image);
 			}
-			Image render = renderLatex(text.getText().replaceFirst(Pattern.quote("$"), ""));
+			Image render = renderLatex();
 			image.setImage(render);
 			image.setFitWidth(render.getWidth()/2);
 			image.setFitHeight(render.getHeight()/2);
@@ -190,31 +197,37 @@ public class TextElement extends Element {
 		}
 	}
 
-	public WritableImage renderLatex(String text){
+	public WritableImage renderLatex(){
+
+		BufferedImage render = renderAwtLatex();
+		return SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null)));
+	}
+	public BufferedImage renderAwtLatex(){
+		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize());
+	}
+
+	public static BufferedImage renderLatex(String text, java.awt.Color color, int size){
 		try {
 
 			TeXFormula formula = new TeXFormula(text);
-			formula.setColor(new java.awt.Color((float) getColor().getRed(),
-												(float) getColor().getGreen(),
-												(float) getColor().getBlue(),
-												(float) getColor().getOpacity()));
+			formula.setColor(color);
 
-			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, (float) getFont().getSize()*2);
-			icon.setInsets(new Insets((int) -getFont().getSize()/3, (int) -getFont().getSize()/3, (int) -getFont().getSize()/3, (int) -getFont().getSize()/3));
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, (float) size*2);
+			icon.setInsets(new Insets((int) -size/3, (int) -size/3, (int) -size/3, (int) -size/3));
 
 			BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g = image.createGraphics();
 			g.setBackground(new java.awt.Color(0f, 0f, 0f, 1f));
 			icon.paintIcon(null, g, 0, 0);
 
-			return SwingFXUtils.toFXImage(image, new WritableImage(icon.getIconWidth(), icon.getIconHeight()));
+			return image;
 
 		}catch(ParseException ex){
 			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
 				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + " \\\\ " +
-						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula: "), ""));
+						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula: "), ""), color, size);
 			}else{
-				return renderLatex("$" + TR.tr("Erreur~:") + " \\\\ " + ex.getMessage());
+				return renderLatex("$" + TR.tr("Erreur~:") + " \\\\ " + ex.getMessage(), color, size);
 			}
 		}
 	}
