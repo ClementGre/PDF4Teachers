@@ -4,10 +4,16 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.PlatformTools;
+import fr.themsou.utils.ReturnCallBack;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -22,6 +28,7 @@ import jfxtras.styles.jmetro.Style;
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
 
 public class ExportWindow {
 
@@ -283,54 +290,101 @@ public class ExportWindow {
 
     }
 
+    Alert loadingAlert;
+    private int exported;
+    private int total;
     public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
                                  boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
+
         erase = eraseFile;
-        int exported = 0;
+        loadingAlert = new Alert(Alert.AlertType.INFORMATION);
+        exported = 0;
+        total = 0;
 
-        for(File file : files){
-            try{
-                int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, gradesElements, drawElements);
-                if(result == 0){
-                    return;
-                }else if(result == 1){
-                    exported++;
-                }
+        // Wait Dialog
 
-                if(deleteEdit){
-                    Edition.getEditFile(file).delete();
-                }
+        loadingAlert.setWidth(600);
+        new JMetro(loadingAlert.getDialogPane(), Style.LIGHT);
+        Builders.secureAlert(loadingAlert);
+        loadingAlert.setTitle(TR.tr("Exportation..."));
+        loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
 
-            }catch(Exception e){
-                e.printStackTrace();
+        VBox pane = new VBox();
+        Label currentDocument = new Label();
+        ProgressBar loadingBar = new ProgressBar();
+        loadingBar.setMinHeight(10);
+        VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
+        pane.getChildren().addAll(currentDocument, loadingBar);
+        loadingAlert.getDialogPane().setContent(pane);
+        loadingAlert.show();
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Erreur d'exportation"));
-                alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName());
-                alert.setContentText(TR.tr("Choisissez une action."));
+        // Export Thread
 
-                TextArea textArea = new TextArea(e.getMessage());
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
-                GridPane expContent = new GridPane();
-                expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
-                expContent.add(textArea, 0, 1);
-                alert.getDialogPane().setExpandableContent(expContent);
+        new Thread(() -> {
+            for(File file : files){
 
-                ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
-                alert.getButtonTypes().setAll(stopAll, continueRender);
+                // Update Wait dialog
+                Platform.runLater(() -> {
+                    currentDocument.setText(file.getName());
+                    loadingBar.setProgress(total/((float)files.size()));
+                });
+                total++;
 
-                Optional<ButtonType> option = alert.showAndWait();
-                if(option.get() == stopAll){
-                    window.close();
-                    return;
+
+                try{
+                    // Export the file
+                    int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, gradesElements, drawElements);
+                    // Exportation canceled, return
+                    if(result == 0){ Platform.runLater(() -> loadingAlert.close()); return; }
+                    // GOOD !
+                    else if(result == 1) exported++;
+                    // Delete edition option
+                    if(deleteEdit) Edition.getEditFile(file).delete();
+                }catch(Exception e){
+                    e.printStackTrace();
+
+                    // Error dialog
+                    if(PlatformTools.runAndWait(() -> {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        new JMetro(alert.getDialogPane(), Style.LIGHT);
+                        Builders.secureAlert(alert);
+                        alert.setTitle(TR.tr("Erreur d'exportation"));
+                        alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName());
+                        alert.setContentText(TR.tr("Choisissez une action."));
+
+                        TextArea textArea = new TextArea(e.getMessage());
+                        textArea.setEditable(false);
+                        textArea.setWrapText(true);
+                        GridPane expContent = new GridPane();
+                        expContent.setMaxWidth(Double.MAX_VALUE);
+                        expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                        expContent.add(textArea, 0, 1);
+                        alert.getDialogPane().setExpandableContent(expContent);
+
+                        ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                        ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+                        alert.getButtonTypes().setAll(stopAll, continueRender);
+
+                        Optional<ButtonType> option = alert.showAndWait();
+                        if(option.get() == stopAll){
+                            window.close();
+                            return true; // Return true to ask to cancel exportation
+                        }
+                        return false;
+                    })){
+                        // If callback return true (cancel exportation), return
+                        Platform.runLater(() -> loadingAlert.close());
+                        return;
+                    }
                 }
             }
-        }
+            // Open the end window
+            Platform.runLater(this::endExportations);
+            return;
+        }, "exportation").start();
+    }
+    private void endExportations(){
+        loadingAlert.close();
         window.close();
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -344,7 +398,6 @@ public class ExportWindow {
 
         alert.setContentText(TR.tr("Les documents exportés se trouvent dans le dossier choisi"));
         alert.show();
-
+        return;
     }
-
 }
