@@ -49,11 +49,15 @@ PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichie
 
 L'application a été développée sous Java SE 8 (avec Swing) puis elle est passé sous JavaFX avec Java SE 11, Java SE 13 et enfin, Java SE 14.
 
-- J'utilise l'API **PDF BOX** pour générer des images à partir d'un fichier PDF puis pour régénérer un fichier PDF, ainsi que commons-logging et Font BOX qui lui sont nécessaires.
-- L'application, initialement basé sur Swing, a migré vers **JavaFx** pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings, etc.).
-- L'API **JMetro**, est un thème JavaFX qui m'a permis de vous offrir une interface plus confortable à regarder que celle par défaut de JavaFx.
-- **Jackson Streaming API** permet d'interpréder des donnés Json, il me permet de faire des requêtes à GitHub pour vérifier si une nouvelle version est disponible.
-- J'ai choisi **Gradle** pour gérer les dépendances, vous pouvez donc exécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. Vous devrez bien sur auparavant avoir installé un JDK 14 et avoir donné son chemin d'accès dans votre variable d'environment ``JAVA_HOME``.
+- L'application, initialement basé sur Swing, a migré vers **[JavaFx 14](https://openjfx.io/)** pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings, etc.).
+- **[Apache PDF BOX 2.0.19](https://pdfbox.apache.org/)** est utilisé pour générer des images à partir d'un fichier PDF puis pour régénérer un nouveau fichier PDF avec divers éléments (exportation). **Commons Logging** et **Font BOX** lui sont nécessaires.
+- **[JMetro 11.5.10](https://pixelduke.com/java-javafx-theme-jmetro/)**, est un thème JavaFX qui m'a permis de vous offrir une interface plus confortable à regarder que celle par défaut de JavaFx.
+- **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** permet de générer des images à partir de commandes LaTeX (Possibilité de faire des éléments textuels écrits en LaTeX).
+- **[SnakeYAML 1.26](https://bitbucket.org/asomov/snakeyaml/src/master/)** permet de lire et d'écrire les fichiers .yml (éditions et donnés utilisateurs) plus facilement : il convertis l'YAML en ``HashMap<String, Object>`` et inversement.
+- **[Jackson Streaming API 2.10.3](https://github.com/FasterXML/jackson-core)** permet d'interpréder des donnés Json, il me permet de faire des requêtes à GitHub pour vérifier si une nouvelle version est disponible.
+
+
+- J'ai choisi **[Gradle 6.3](https://gradle.org/)** pour gérer les dépendances, vous pouvez donc exécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. Vous devrez bien sur auparavant avoir installé un JDK 14 et avoir donné son chemin d'accès dans votre variable d'environment ``JAVA_HOME``.
 - Les fichiers de traductions ont été générés grace à **[TranslationFileGenerator](https://github.com/clementgre/TranslationFileGenerator)**
 
 Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink et JPackager pour votre système d'exploitation.

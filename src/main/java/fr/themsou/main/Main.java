@@ -28,7 +28,7 @@ public class Main extends Application {
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "Snapshot 1.2.0";
 	public static final boolean DEBUG = false;
-	public static final boolean COPY_CONSOLE = false;
+	public static final boolean COPY_CONSOLE = true;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();

@@ -24,7 +24,6 @@ public class TextTreeOnFile extends TextTreeSection {
 
     public void updateElementsList(){
         clearElements();
-        System.out.println("update onFile list");
 
         // GET ALL ELEMENTS In THE DOCUMENT
         if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){

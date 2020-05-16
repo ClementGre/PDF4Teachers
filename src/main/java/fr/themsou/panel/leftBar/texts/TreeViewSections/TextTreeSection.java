@@ -107,7 +107,6 @@ public abstract class TextTreeSection extends TreeItem {
     }
 
     public void updateChildrendGraphics(){
-        System.out.println("update children graphics for " + sectionName);
         for(Object item : getChildren()){
             if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
         }

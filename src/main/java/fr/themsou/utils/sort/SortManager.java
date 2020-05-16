@@ -84,7 +84,6 @@ public class SortManager {
     }
 
     public void simulateCall(){
-        System.out.println("simulating sort call");
         updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
     }
 

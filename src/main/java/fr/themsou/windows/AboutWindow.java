@@ -12,6 +12,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -26,13 +27,11 @@ public class AboutWindow extends Stage {
     public AboutWindow(){
 
         VBox root = new VBox();
-        Scene scene = new Scene(root, 400, 720);
+        Scene scene = new Scene(root, 400, 640);
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(420);
-        setHeight(700);
         setTitle(TR.tr("PDF4Teachers - À Propos"));
         setResizable(false);
         setScene(scene);
@@ -129,23 +128,33 @@ public class AboutWindow extends Stage {
             VBox apiInfo = new VBox();
                 Label api = new Label(TR.tr("Dépendances :"));
 
-                Hyperlink javaFx = new Hyperlink("Java FX 14");
-                javaFx.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://openjfx.io/");
-                });
+                GridPane apis = new GridPane();
 
-                Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.19");
-                pdfBox.setOnAction((ActionEvent t) -> {
-                    Main.hostServices.showDocument("https://pdfbox.apache.org/");
-                });
+                    Hyperlink javaFx = new Hyperlink("Java FX 14");
+                    javaFx.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://openjfx.io/"));
 
-                Hyperlink jMetro = new Hyperlink("JMetro 11.5.10");
-                jMetro.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pixelduke.com/java-javafx-theme-jmetro/"));
+                    Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.19");
+                    pdfBox.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdfbox.apache.org/"));
 
-                Hyperlink json = new Hyperlink("Jackson Streaming API 2.10.3");
-                json.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/FasterXML/jackson-core"));
+                    Hyperlink jMetro = new Hyperlink("JMetro 11.5.10");
+                    jMetro.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pixelduke.com/java-javafx-theme-jmetro/"));
 
-            apiInfo.getChildren().addAll(api, javaFx, pdfBox, jMetro, json);
+                    Hyperlink latex = new Hyperlink("JLatexMath 1.0.7");
+                    latex.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/opencollab/jlatexmath"));
+
+                    Hyperlink yaml = new Hyperlink("SnakeYAML 1.26");
+                    yaml.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://bitbucket.org/asomov/snakeyaml/src/master/"));
+
+                    Hyperlink json = new Hyperlink("Jackson Streaming API 2.10.3");
+                    json.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/FasterXML/jackson-core"));
+
+                apis.add(javaFx, 0, 0); apis.add(pdfBox, 1, 0);
+                apis.add(jMetro, 0, 1); apis.add(latex, 1, 1);
+                apis.add(yaml, 0, 2); apis.add(json, 1, 2);
+                apis.setAlignment(Pos.CENTER);
+                apis.setHgap(20);
+
+            apiInfo.getChildren().addAll(api, apis);
             apiInfo.setAlignment(Pos.CENTER);
 
         vBox.getChildren().addAll(logo, name, version);

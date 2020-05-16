@@ -157,7 +157,6 @@ public class ExportRenderer {
                 }
                 return -1;
             });
-            System.out.println("alert clicked");
             if(i != -1) return i;
 
         }

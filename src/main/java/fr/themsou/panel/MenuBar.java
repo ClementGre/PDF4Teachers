@@ -83,7 +83,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeRadioMenuItem preferences2Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une nouvelle version est disponible"), "wifi",
+	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
 	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
@@ -116,8 +116,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu apropos = new Menu();
 	Menu aide = new Menu(TR.tr("Aide"));
-	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide") + "     ");
-	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug") + "     ");
+	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide"));
+	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
+	MenuItem aide3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
 
 	public MenuBar(){
 		setup();
@@ -166,7 +167,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
 		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0));
-		aide.getItems().addAll(aide1Doc, aide2Probleme);
+		aide3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0));
+		aide.getItems().addAll(aide1Doc, aide2Probleme, aide3Twitter);
 
 		/////////////////////////////
 
@@ -426,6 +428,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDF4Teachers/issues/new"));
 			}catch(IOException | URISyntaxException e){ e.printStackTrace(); }
 		});
+		aide3Twitter.setOnAction((ActionEvent t) -> {
+			Main.hostServices.showDocument("https://twitter.com/PDF4Teachers");
+		});
 
 		Label name = new Label(TR.tr("À propos"));
 		name.setAlignment(Pos.CENTER_LEFT);
@@ -439,7 +444,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		for(Menu menu : getMenus()){
 			Builders.setMenuSize(menu);
 		}
-
 	}
 
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
