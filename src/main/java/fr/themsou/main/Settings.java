@@ -1,4 +1,5 @@
 package fr.themsou.main;
+import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.MainWindow;
@@ -72,11 +73,11 @@ public class Settings {
         });
         showOnlyStartInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(MainWindow.lbTextTab != null) MainWindow.lbTextTab.updateListsGraphic();
+            if(MainWindow.lbTextTab != null) TextTreeView.updateListsGraphic();
         });
         smallFontInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(MainWindow.lbTextTab != null) MainWindow.lbTextTab.updateListsGraphic();
+            if(MainWindow.lbTextTab != null) TextTreeView.updateListsGraphic();
         });
 
         /////

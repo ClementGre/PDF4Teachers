@@ -204,7 +204,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		});
 		fichier3Clear.setOnAction((ActionEvent actionEvent) -> {
-			MainWindow.lbFilesTab.clearFiles(true);
+			MainWindow.lbFilesTab.clearFiles();
 		});
 		fichier4Save.setOnAction((ActionEvent actionEvent) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){

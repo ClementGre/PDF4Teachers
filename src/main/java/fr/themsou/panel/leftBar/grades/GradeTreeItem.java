@@ -108,6 +108,11 @@ public class GradeTreeItem extends TreeItem {
 
         mouseEnteredEvent = event -> {
             if(!cell.isFocused()) newGrade.setVisible(true);
+            if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+                if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("Cliquez sur le cadenas pour pouvoir éditer le barème")));
+            }else if(cell.getTooltip() != null){
+                cell.setTooltip(null);
+            }
         };
 
         mouseExitedEvent = event -> {
@@ -338,6 +343,12 @@ public class GradeTreeItem extends TreeItem {
         cell.setOnMouseExited(mouseExitedEvent);
 
         cell.selectedProperty().addListener(selectedListener);
+
+        if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+            if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("Cliquez sur le cadenas pour pouvoir éditer le barème")));
+        }else if(cell.getTooltip() != null){
+            cell.setTooltip(null);
+        }
 
         // DEBUG
         if(Main.DEBUG) cell.setTooltip(new Tooltip(core.getParentPath() + " - n°" + (core.getIndex()+1) + "\nPage n°" + core.getPageNumber()));

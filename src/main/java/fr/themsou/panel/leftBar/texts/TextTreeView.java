@@ -1,143 +1,139 @@
 package fr.themsou.panel.leftBar.texts;
 
+import fr.themsou.document.editions.Edition;
+import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.panel.MainScreen.MainScreen;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeFavorites;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeLasts;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeOnFile;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
-import javafx.geometry.Pos;
+import javafx.application.Platform;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
+import javafx.scene.paint.Color;
 
-public class TextTreeView {
+import java.util.ArrayList;
+import java.util.List;
 
+public class TextTreeView extends TreeView<String>{
 
-    public TextTreeView(TreeView treeView){
+    public static TreeItem<String> treeViewRoot = new TreeItem<>();
 
-        treeView.setCellFactory(new Callback<TreeView, TreeCell>() {
-            @Override public TreeCell call(TreeView param) {
-                return new TreeCell<String>() {
-                    @Override protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
+    public static TextTreeFavorites favoritesSection = new TextTreeFavorites();
+    public static TextTreeLasts lastsSection = new TextTreeLasts();
+    public static TextTreeOnFile onFileSection = new TextTreeOnFile();
 
-                        // Null
-                        if(empty){
-                            setGraphic(null);
-                            setStyle(null);
-                            setContextMenu(null);
-                            setOnMouseClicked(null);
-                            return;
-                        }
-                        // Category or Sort Options
-                        if(item != null){
-                            setContextMenu(null);
-                            setOnMouseClicked(null);
+    public TextTreeView(Pane pane){
 
-                            if(item.equals("favoritesOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(MainWindow.lbTextTab.favoritesTextOptions);
-                                return;
-                            }if(item.equals("lastsOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(MainWindow.lbTextTab.lastsTextOptions);
-                                return;
-                            }if(item.equals("onFileOptions")){
-                                setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: #cccccc;");
-                                setGraphic(MainWindow.lbTextTab.onFileTextOptions);
-                                return;
-                            }
+        setMaxWidth(400);
+        setShowRoot(false);
+        setEditable(true);
+        setRoot(treeViewRoot);
+        treeViewRoot.getChildren().addAll(favoritesSection, lastsSection, onFileSection);
 
-                            HBox box = new HBox();
-                            box.setAlignment(Pos.CENTER);
-                            setMaxHeight(30);
-                            box.setPrefHeight(18);
-                            setStyle("-fx-padding: 6 6 6 2; -fx-background-color: #cccccc;");
-                            box.setStyle("-fx-padding: -6 -6 -6 0;");
+        disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+        setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
 
-                            Text name = new Text();
-                            name.setFont(new Font(14));
-                            box.getChildren().add(name);
-
-                            Region spacer = new Region();
-                            HBox.setHgrow(spacer, Priority.ALWAYS);
-                            box.getChildren().add(spacer);
-
-                            if(item.equals("favoritesText")){
-                                name.setText(TR.tr("Éléments Favoris"));
-                                box.getChildren().addAll(MainWindow.lbTextTab.listsManager.loadListBtn, MainWindow.lbTextTab.listsManager.saveListBtn, MainWindow.lbTextTab.favoritesTextToggleOption);
-                                setContextMenu(getCategoryMenu(true));
-                            }if(item.equals("lastsText")){
-                                name.setText(TR.tr("Éléments Précédents"));
-                                box.getChildren().add(MainWindow.lbTextTab.lastsTextToggleOption);
-                                setContextMenu(getCategoryMenu(false));
-                            }if(item.equals("onFileText")){
-                                name.setText(TR.tr("Éléments sur ce document"));
-                                box.getChildren().add(MainWindow.lbTextTab.onFileTextToggleOption);
-                            }
-                            setGraphic(box);
-
-                            return;
-                        }
-                        // TextElement
-                        if(getTreeItem() instanceof TextTreeItem){
-                            ((TextTreeItem) getTreeItem()).updateCell(this);
-                            return;
-                        }
-
-                        // Other
-                        setStyle(null);
-                        setGraphic(null);
-                        setContextMenu(null);
-                        setOnMouseClicked(null);
-
-                    }
-                };
-            }
+        prefHeightProperty().bind(pane.heightProperty().subtract(layoutYProperty()));
+        prefWidthProperty().bind(pane.widthProperty());
+        widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            // Update element's graphic only if it is the last width value
+            new Thread(() -> {
+                try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+                Platform.runLater(() -> {
+                    if(getWidth() == newValue.longValue()) updateListsGraphic();
+                });
+            }).start();
         });
 
+        setCellFactory((TreeView<String> param) -> new TreeCell<>() {
+            @Override protected void updateItem(String item, boolean empty) {
+
+                super.updateItem(item, empty);
+
+                // Null
+                if(empty){
+                    setGraphic(null);
+                    setStyle(null);
+                    setContextMenu(null);
+                    setOnMouseClicked(null);
+                    return;
+                }
+
+                // TextElement
+                if(getTreeItem() instanceof TextTreeItem){
+                    ((TextTreeItem) getTreeItem()).updateCell(this);
+                    return;
+                }
+                // TreeSection
+                if(getTreeItem() instanceof TextTreeSection){
+                    ((TextTreeSection) getTreeItem()).updateCell(this);
+                    return;
+                }
+                // SortPanel
+                if(getTreeItem() instanceof SortPanelTreeItem){
+                    ((SortPanelTreeItem) getTreeItem()).updateCell(this);
+                    return;
+                }
+
+                // Other
+                setStyle(null);
+                setGraphic(null);
+                setContextMenu(null);
+                setOnMouseClicked(null);
+            }
+        });
     }
 
-    public static ContextMenu getCategoryMenu(boolean favorites){
-
+    public static ContextMenu getCategoryMenu(TextTreeSection section){
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
-        item1.setToolTip(TR.tr("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer les donnés d'utilisation"), -1, false);
-        item2.setToolTip(TR.tr("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
 
-        menu.getItems().addAll(item1, item2);
+
+        if(section.sectionType == TextTreeSection.ONFILE_TYPE){
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer tous les éléments textuels"), -1, false);
+            item3.setToolTip(TR.tr("Supprime tous les éléments textuels ajoutés au document, cela va donc supprimer une partie de l'édition."));
+            menu.getItems().addAll(item3);
+
+            item3.setOnAction(e -> {
+                for(PageRenderer page : MainWindow.mainScreen.document.pages){
+                    page.clearTextElements();
+                }
+                TextTreeView.onFileSection.updateElementsList();
+                Edition.setUnsave();
+            });
+        }else{
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+            item1.setToolTip(TR.tr("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer les donnés d'utilisation"), -1, false);
+            item2.setToolTip(TR.tr("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
+            menu.getItems().addAll(item1, item2);
+
+            item1.setOnAction(e -> {
+                section.clearElements();
+            });
+            item2.setOnAction(e -> {
+                for(Object element : section.getChildren()){
+                    if(element instanceof TextTreeItem){
+                        ((TextTreeItem) element).setUses(0);
+                    }
+                }
+                if(section.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    section.sortManager.simulateCall();
+                }
+            });
+        }
         Builders.setMenuSize(menu);
-
-        item1.setOnAction(e -> {
-            if(favorites) MainWindow.lbTextTab.clearSavedFavoritesElements();
-            else MainWindow.lbTextTab.clearSavedLastsElements();
-        });
-        item2.setOnAction(e -> {
-            if(favorites){
-                for(TreeItem<String> element : MainWindow.lbTextTab.favoritesText.getChildren()){
-                    if(element instanceof TextTreeItem){
-                        ((TextTreeItem) element).setUses(0);
-                    }
-                }
-                if(MainWindow.lbTextTab.favoritesTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
-                }
-            }else{
-                for(TreeItem<String> element : MainWindow.lbTextTab.lastsText.getChildren()){
-                    if(element instanceof TextTreeItem){
-                        ((TextTreeItem) element).setUses(0);
-                    }
-                }
-                if(MainWindow.lbTextTab.lastsTextSortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
-                }
-            }
-        });
-
         return menu;
     }
 
@@ -157,40 +153,44 @@ public class TextTreeView {
 
 
         // Ajouter les items en fonction du type
-        if(element.getType() != TextTreeItem.ONFILE_TYPE) menu.getItems().add(item1);
+        if(element.getType() != TextTreeSection.ONFILE_TYPE) menu.getItems().add(item1);
         menu.getItems().add(item2);
-        if(element.getType() != TextTreeItem.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
-        if(element.getType() == TextTreeItem.ONFILE_TYPE) menu.getItems().add(item4); // onFile
-        if(element.getType() != TextTreeItem.ONFILE_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
+        if(element.getType() != TextTreeSection.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
+        if(element.getType() == TextTreeSection.ONFILE_TYPE) menu.getItems().add(item4); // onFile
+        if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
 
         Builders.setMenuSize(menu);
 
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
             element.addToDocument(true);
-            if(element.getType() == TextTreeItem.FAVORITE_TYPE){
-                MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
-            }else if(element.getType() == TextTreeItem.LAST_TYPE){
-                MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
+            if(element.getType() == TextTreeSection.FAVORITE_TYPE){
+                if(TextTreeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    TextTreeView.favoritesSection.sortManager.simulateCall();
+                }
+            }else if(element.getType() == TextTreeSection.LAST_TYPE){
+                if(TextTreeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    TextTreeView.lastsSection.sortManager.simulateCall();
+                }
             }
         });
         item2.setOnAction((e) -> {
-            if(element.getType() == TextTreeItem.ONFILE_TYPE){
+            if(element.getType() == TextTreeSection.ONFILE_TYPE){
                 element.getCore().delete();
             }else{
-                MainWindow.lbTextTab.removeSavedElement(element);
+                removeSavedElement(element);
             }
         });
         item3.setOnAction((e) -> {
-            MainWindow.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
-            if(element.getType() == TextTreeItem.LAST_TYPE){
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
+            if(element.getType() == TextTreeSection.LAST_TYPE){
                 if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
-                    MainWindow.lbTextTab.removeSavedElement(element);
+                    removeSavedElement(element);
                 }
             }
         });
         item4.setOnAction((e) -> {
-            MainWindow.lbTextTab.addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeItem.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis()/1000));
         });
         item5.setOnAction((e) -> {
             element.unLink();
@@ -199,6 +199,63 @@ public class TextTreeView {
 
     }
 
+    public static void updateListsGraphic(){
+        favoritesSection.updateChildrendGraphics();
+        lastsSection.updateChildrendGraphics();
+        onFileSection.updateChildrendGraphics();
+    }
+
+    public static void addSavedElement(TextTreeItem element){
+        if(element.getType() == TextTreeSection.FAVORITE_TYPE){
+            favoritesSection.addElement(element);
+        }else if(element.getType() == TextTreeSection.LAST_TYPE){
+            lastsSection.addElement(element);
+        }
+    }
+    public static void removeSavedElement(TextTreeItem element){
+        if(element.getType() == TextTreeSection.FAVORITE_TYPE){
+            favoritesSection.removeElement(element);
+        }else if(element.getType() == TextTreeSection.LAST_TYPE){
+            lastsSection.removeElement(element);
+        }
+    }
+
+    public static List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
+
+        if(sortType.equals(TR.tr("Ajout"))){
+            return Sorter.sortElementsByDate(toSort, order);
+        }else if(sortType.equals(TR.tr("Nom"))){
+            return Sorter.sortElementsByName(toSort, order);
+        }else if(sortType.equals(TR.tr("Utilisation"))){
+            return Sorter.sortElementsByUtils(toSort, order);
+        }else if(sortType.equals(TR.tr("Police"))){
+            return Sorter.sortElementsByPolice(toSort, order);
+        }else if(sortType.equals(TR.tr("Taille"))){
+            return Sorter.sortElementsBySize(toSort, order);
+        }else if(sortType.equals(TR.tr("Couleur"))){
+            return Sorter.sortElementsByColor(toSort, order);
+        }else if(sortType.equals(TR.tr("Position"))){
+            return Sorter.sortElementsByCorePosition(toSort, order);
+        }
+        return toSort;
+    }
+
+    public static List<TextTreeItem> getMostUseElements(){
+
+        List<TextTreeItem> toSort = new ArrayList<>();
+        for(int i = 0; i < favoritesSection.getChildren().size(); i++){
+            if(favoritesSection.getChildren().get(i) instanceof TextTreeItem){
+                toSort.add((TextTreeItem) favoritesSection.getChildren().get(i));
+            }
+        }
+        for(int i = 0; i < lastsSection.getChildren().size(); i++){
+            if(lastsSection.getChildren().get(i) instanceof TextTreeItem){
+                toSort.add((TextTreeItem) lastsSection.getChildren().get(i));
+            }
+        }
+        return autoSortList(toSort, TR.tr("Utilisation"), true);
+
+    }
 }
 
 

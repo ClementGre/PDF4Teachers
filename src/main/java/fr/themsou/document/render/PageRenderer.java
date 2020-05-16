@@ -8,6 +8,7 @@ import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.windows.MainWindow;
 import javafx.embed.swing.SwingFXUtils;
@@ -103,7 +104,7 @@ public class PageRenderer extends Pane{
                     if(grade != null) menu.getItems().add(new CustomMenuItem(grade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
                 }
 
-                List<TextTreeItem> mostUsed = LBTextTab.getMostUseElements();
+                List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
 
                 for(int i = 0; i <= 5; i++){
                     if(mostUsed.size() > i){
@@ -253,6 +254,16 @@ public class PageRenderer extends Pane{
         }
         elements = new ArrayList<>();
     }
+    public void clearTextElements() {
+        ArrayList<TextElement> toRemove = new ArrayList<>();
+        for(Object children : getChildren()){
+            if(children instanceof TextElement) toRemove.add((TextElement) children);
+        }
+        for(TextElement element : toRemove){
+            getChildren().remove(element);
+            elements.remove(element);
+        }
+    }
 
     public void switchElementPage(Element element, PageRenderer page){
 
@@ -289,7 +300,7 @@ public class PageRenderer extends Pane{
             if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
-                if(update) MainWindow.lbTextTab.addOnFileElement((TextElement) element);
+                if(update) TextTreeView.onFileSection.addElement((TextElement) element);
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
@@ -307,7 +318,7 @@ public class PageRenderer extends Pane{
 
 
             if(element instanceof TextElement){
-                if(update) MainWindow.lbTextTab.removeOnFileElement((TextElement) element);
+                if(update) TextTreeView.onFileSection.removeElement((TextElement) element);
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.removeElement((GradeElement) element);
             }

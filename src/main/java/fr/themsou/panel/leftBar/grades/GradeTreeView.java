@@ -35,20 +35,13 @@ public class GradeTreeView extends TreeView<String> {
                     @Override protected void updateItem(String item, boolean empty){
                         super.updateItem(item, empty);
 
-                        // Null
-                        if(empty){
+                        // Enpty cell or String Data
+                        if(empty || item != null){
                             setGraphic(null);
                             setStyle(null);
                             setContextMenu(null);
                             setOnMouseClicked(null);
-                            return;
-                        }
-                        // String Data
-                        if(item != null){
-                            setGraphic(null);
-                            setStyle(null);
-                            setContextMenu(null);
-                            setOnMouseClicked(null);
+                            setTooltip(null);
                             return;
                         }
                         // TreeGradeData
@@ -56,13 +49,12 @@ public class GradeTreeView extends TreeView<String> {
                             ((GradeTreeItem) getTreeItem()).updateCell(this);
                             return;
                         }
-
                         // Other
                         setStyle(null);
                         setGraphic(null);
                         setContextMenu(null);
                         setOnMouseClicked(null);
-
+                        setTooltip(null);
                     }
                 };
             }

@@ -4,8 +4,10 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.FontUtils;
+import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
@@ -48,10 +50,6 @@ public class TextTreeItem extends TreeItem{
 	private int type;
 	private long uses;
 	private long creationDate;
-
-	public static final int FAVORITE_TYPE = 1;
-	public static final int LAST_TYPE = 2;
-	public static final int ONFILE_TYPE = 3;
 
 	// Graphics items
 	public HBox pane = new HBox();
@@ -108,10 +106,15 @@ public class TextTreeItem extends TreeItem{
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
 				addToDocument(false);
-				if(getType() == TextTreeItem.FAVORITE_TYPE){
-					MainWindow.lbTextTab.favoritesTextSortManager.simulateCall();
-				}else if(getType() == TextTreeItem.LAST_TYPE){
-					MainWindow.lbTextTab.lastsTextSortManager.simulateCall();
+				// Update the sorting if is sort by utils
+				if(getType() == TextTreeSection.FAVORITE_TYPE){
+					if(TextTreeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						TextTreeView.favoritesSection.sortManager.simulateCall();
+					}
+				}else if(getType() == TextTreeSection.LAST_TYPE){
+					if(TextTreeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						TextTreeView.lastsSection.sortManager.simulateCall();
+					}
 				}
 			}
 		};

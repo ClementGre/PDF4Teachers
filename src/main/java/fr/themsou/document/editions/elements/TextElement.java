@@ -8,6 +8,8 @@ import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
+import fr.themsou.panel.leftBar.texts.TextTreeView;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
@@ -71,7 +73,7 @@ public class TextElement extends Element {
 	}
 	@Override
 	protected void onMouseRelease(){
-		MainWindow.lbTextTab.onFileTextSortManager.simulateCall();
+		TextTreeView.onFileSection.sortManager.simulateCall();
 	}
 	@Override
 	protected void setupMenu(){
@@ -90,8 +92,8 @@ public class TextElement extends Element {
 
 		item1.setOnAction(e -> delete());
 		item2.setOnAction(e -> cloneOnDocument());
-		item3.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true)));
-		item4.setOnAction(e -> MainWindow.lbTextTab.addSavedElement(this.toNoDisplayTextElement(TextTreeItem.FAVORITE_TYPE, true)));
+		item3.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true)));
+		item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));
 	}
 
 	// ACTIONS

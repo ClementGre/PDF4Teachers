@@ -5,9 +5,8 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
-import fr.themsou.utils.sort.SortManager;
-import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -27,9 +26,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -57,31 +53,7 @@ public class LBTextTab extends Tab {
 	private Button deleteBtn = new Button(TR.tr("Supprimer"));
 	public Button newBtn = new Button(TR.tr("Nouveau"));
 
-	// TREE VIEW
-
-	public HashMap<String, ArrayList<TextListItem>> favoriteLists = new HashMap<>();
-	public ListsManager listsManager;
-
-	public TreeView treeView = new TreeView<>();
-	public TreeItem<String> treeViewRoot = new TreeItem<>();
-
-	public TreeItem<String> favoritesText = new TreeItem<>("favoritesText");
-	public TreeItem<String> favoritesTextOptionsItem = new TreeItem("favoritesOptions");
-	public ToggleButton favoritesTextToggleOption = new ToggleButton("");
-	public GridPane favoritesTextOptions = new GridPane();
-	public SortManager favoritesTextSortManager;
-
-	public TreeItem<String> lastsText = new TreeItem<>("lastsText");
-	public TreeItem<String> lastsTextOptionsItem = new TreeItem("lastsOptions");
-	public ToggleButton lastsTextToggleOption = new ToggleButton("");
-	public GridPane lastsTextOptions = new GridPane();
-	public SortManager lastsTextSortManager;
-
-	public TreeItem<String> onFileText = new TreeItem<>("onFileText");
-	public TreeItem<String> onFileTextOptionsItem = new TreeItem("onFileOptions");
-	public ToggleButton onFileTextToggleOption = new ToggleButton("");
-	public GridPane onFileTextOptions = new GridPane();
-	public SortManager onFileTextSortManager;
+	// FIELDS
 
 	public boolean isNew = false;
 
@@ -90,6 +62,9 @@ public class LBTextTab extends Tab {
 	public String lastColor = "#000000";
 	public boolean lastBold = false;
 	public boolean lastItalic = false;
+
+	// TREEVIEW
+	public TextTreeView treeView;
 
 	// OTHER
 
@@ -109,10 +84,9 @@ public class LBTextTab extends Tab {
 
 	public void setup(){
 
-		listsManager = new ListsManager(this);
+		treeView = new TextTreeView(pane);
 
 		optionPane.setMinWidth(200);
-
 		fontCombo.setCellFactory((ListView<String> stringListView) -> new ShapeCell());
 		//fontCombo.setEditable(true);
 
@@ -192,9 +166,6 @@ public class LBTextTab extends Tab {
 					if(((TextElement) oldElement).getText().isBlank()){
 						oldElement.delete();
 					}
-
-					lastsTextSortManager.simulateCall();
-					onFileTextSortManager.simulateCall();
 				}
 			}if(newElement != null){
 				if(newElement instanceof TextElement){
@@ -271,119 +242,13 @@ public class LBTextTab extends Tab {
 			isNew = true;
 
 			txtArea.setText("");
-			addSavedElement(current.toNoDisplayTextElement(TextTreeItem.LAST_TYPE, true));
+			TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
 			txtArea.requestFocus();
 		});
 		deleteBtn.setOnAction(e -> {
 			MainWindow.mainScreen.getSelected().delete();
 			MainWindow.mainScreen.setSelected(null);
 		});
-
-		// TREE VIEW
-		Builders.setPosition(favoritesTextToggleOption, 0, 0, 30, 30, true);
-		favoritesTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
-		favoritesTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
-		favoritesTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue){
-				favoritesText.getChildren().add(0, favoritesTextOptionsItem);
-				favoritesText.setExpanded(true);
-			}else{
-				favoritesText.getChildren().remove(0);
-			}
-		});
-
-		Builders.setPosition(lastsTextToggleOption, 0, 0, 30, 30, true);
-		lastsTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
-		lastsTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
-		lastsTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue){
-				lastsText.getChildren().add(0, lastsTextOptionsItem);
-				lastsText.setExpanded(true);
-			}else{
-				lastsText.getChildren().remove(0);
-			}
-		});
-
-		Builders.setPosition(onFileTextToggleOption, 0, 0, 30, 30, true);
-		onFileTextToggleOption.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
-		onFileTextToggleOption.setTooltip(Builders.genToolTip(TR.tr("Trier")));
-		onFileTextToggleOption.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue){
-				onFileText.getChildren().add(0, onFileTextOptionsItem);
-				onFileText.setExpanded(true);
-			}else{
-				onFileText.getChildren().remove(0);
-			}
-		});
-
-		treeView.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-		treeView.setEditable(true);
-		treeView.setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
-		treeView.prefHeightProperty().bind(pane.heightProperty().subtract(treeView.layoutYProperty()));
-		treeView.prefWidthProperty().bind(pane.widthProperty());
-		treeView.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-			// Update element's graphic only if it is the last width value
-			new Thread(() -> {
-				try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
-				Platform.runLater(() -> {
-					if(treeView.getWidth() == newValue.longValue()) updateListsGraphic();
-				});
-			}).start();
-		});
-		treeView.setMaxWidth(400);
-		treeView.setShowRoot(false);
-		treeView.setRoot(treeViewRoot);
-
-		new TextTreeView(treeView);
-
-		favoritesTextSortManager = new SortManager((sortType, order) -> {
-
-			List<TextTreeItem> toSort = new ArrayList<>();
-			for(int i = 0; i < favoritesText.getChildren().size(); i++){
-				if(favoritesText.getChildren().get(i) instanceof TextTreeItem){
-					toSort.add((TextTreeItem) favoritesText.getChildren().get(i));
-				}
-			}
-			clearSavedFavoritesElements();
-			for(TextTreeItem item : autoSortList(toSort, sortType, order)) favoritesText.getChildren().add(item);
-		}, null, null);
-		favoritesTextSortManager.setup(favoritesTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
-
-		lastsTextSortManager = new SortManager((sortType, order) -> {
-
-			List<TextTreeItem> toSort = new ArrayList<>();
-			for(int i = 0; i < lastsText.getChildren().size(); i++){
-				if(lastsText.getChildren().get(i) instanceof TextTreeItem){
-					toSort.add((TextTreeItem) lastsText.getChildren().get(i));
-				}
-			}
-			clearSavedLastsElements();
-			for(TextTreeItem item : autoSortList(toSort, sortType, order)) lastsText.getChildren().add(item);
-
-		}, null, null);
-		lastsTextSortManager.setup(lastsTextOptions, TR.tr("Ajout"), TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
-
-		onFileTextSortManager = new SortManager((sortType, order) -> {
-
-			List<TextTreeItem> toSort = new ArrayList<>();
-			for(int i = 0; i < onFileText.getChildren().size(); i++){
-				if(onFileText.getChildren().get(i) instanceof TextTreeItem){
-					toSort.add((TextTreeItem) onFileText.getChildren().get(i));
-				}
-			}
-			clearSavedOnFileElements();
-			for(TextTreeItem item : autoSortList(toSort, sortType, order)) onFileText.getChildren().add(item);
-
-		}, null, null);
-		onFileTextSortManager.setup(onFileTextOptions, TR.tr("Position"), TR.tr("Position"), TR.tr("Nom"), "\n", TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
-
-		favoritesText.setExpanded(true);
-		lastsText.setExpanded(true);
-		onFileText.setExpanded(true);
-		treeViewRoot.getChildren().addAll(favoritesText, lastsText, onFileText);
-
-
-
 	}
 
 	public void updateHeightAndYLocations(boolean sbIsVisible){
@@ -435,139 +300,7 @@ public class LBTextTab extends Tab {
 			}
 		}
 	}
-	public void updateListsGraphic(){
 
-		for(TreeItem<String> item : favoritesText.getChildren()){
-			if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
-		}
-		for(TreeItem<String> item : lastsText.getChildren()){
-			if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
-		}
-		for(TreeItem<String> item : onFileText.getChildren()){
-			if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
-		}
-
-	}
-	public void addSavedElement(TextTreeItem element){
-		if(element.getType() == TextTreeItem.FAVORITE_TYPE){
-			if(!favoritesText.getChildren().contains(element)){
-				favoritesText.getChildren().add(element);
-				favoritesTextSortManager.simulateCall();
-			}
-		}else if(element.getType() == TextTreeItem.LAST_TYPE){
-			if(!lastsText.getChildren().contains(element)){
-
-				if(lastsText.getChildren().size() > 49){
-
-					// SORT BY DATE
-					List<TextTreeItem> toSort = new ArrayList<>();
-					for(int i = 0; i < lastsText.getChildren().size(); i++){
-						if(lastsText.getChildren().get(i) instanceof TextTreeItem){
-							toSort.add((TextTreeItem) lastsText.getChildren().get(i));
-						}
-					}
-					List<TextTreeItem> sorted = Sorter.sortElementsByDate(toSort, false);
-
-					// SORT THE
-					toSort = new ArrayList<>();
-					for(int i = 0; i < 20; i++){
-						toSort.add(sorted.get(i));
-					}
-					sorted = Sorter.sortElementsByUtils(toSort, false);
-					removeSavedElement(sorted.get(0));
-				}
-				lastsText.getChildren().add(element);
-				lastsTextSortManager.simulateCall();
-			}
-		}
-	}
-	public void removeSavedElement(TextTreeItem element){
-		if(element.getType() == TextTreeItem.FAVORITE_TYPE){
-			favoritesText.getChildren().remove(element);
-		}else{
-			lastsText.getChildren().remove(element);
-		}
-	}
-	public void clearSavedFavoritesElements(){
-		List<TreeItem<String>> items = favoritesText.getChildren();
-		for(int i = items.size()-1; i >= 0; i--){
-			if(items.get(i) instanceof TextTreeItem){
-				items.remove(i);
-			}
-		}
-	}
-	public void clearSavedLastsElements(){
-		List<TreeItem<String>> items = lastsText.getChildren();
-		for(int i = items.size()-1; i >= 0; i--){
-			if(items.get(i) instanceof TextTreeItem){
-				items.remove(i);
-			}
-		}
-	}
-	public void clearSavedOnFileElements(){
-		List<TreeItem<String>> items = onFileText.getChildren();
-		for(int i = items.size()-1; i >= 0; i--){
-			if(items.get(i) instanceof TextTreeItem){
-				items.remove(i);
-			}
-		}
-	}
-
-	public void updateOnFileElementsList(){
-		clearSavedOnFileElements();
-
-		if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
-			for(PageRenderer page : MainWindow.mainScreen.document.pages){
-				for(int i = 0; i < page.getElements().size(); i++){
-					if(page.getElements().get(i) instanceof TextElement){
-						TextElement element = (TextElement) page.getElements().get(i);
-						onFileText.getChildren().add(element.toNoDisplayTextElement(TextTreeItem.ONFILE_TYPE, true));
-					}
-				}
-			}
-		}
-		onFileTextSortManager.simulateCall();
-	}
-	public void addOnFileElement(TextElement element){
-
-		onFileText.getChildren().add(element.toNoDisplayTextElement(TextTreeItem.ONFILE_TYPE, true));
-		onFileTextSortManager.simulateCall();
-
-	}
-	public void removeOnFileElement(TextElement element){
-
-		List<TreeItem<String>> items = onFileText.getChildren();
-		for(TreeItem<String> item : items){
-			if(item instanceof TextTreeItem){
-				if(((TextTreeItem) item).getCore().equals(element)){
-					items.remove(item);
-					break;
-				}
-			}
-		}
-		items = lastsText.getChildren();
-		for(TreeItem<String> item : items){
-			if(item instanceof TextTreeItem){
-				if(((TextTreeItem) item).getCore() != null){
-					if(((TextTreeItem) item).getCore().equals(element)){
-						items.remove(item);
-						break;
-					}
-				}
-			}
-		}
-		items = favoritesText.getChildren();
-		for(TreeItem<String> item : items){
-			if(item instanceof TextTreeItem){
-				if(((TextTreeItem) item).getCore() != null){
-					if(((TextTreeItem) item).getCore().equals(element)){
-						((TextTreeItem) item).unLink();
-						break;
-					}
-				}
-			}
-		}
-	}
 
 	private ScrollBar getHorizontalSB(final TextArea scrollPane) {
 		Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
@@ -580,41 +313,5 @@ public class LBTextTab extends Tab {
 			}
 		}
 		return null;
-	}
-	public List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
-
-		if(sortType.equals(TR.tr("Ajout"))){
-			return Sorter.sortElementsByDate(toSort, order);
-		}else if(sortType.equals(TR.tr("Nom"))){
-			return Sorter.sortElementsByName(toSort, order);
-		}else if(sortType.equals(TR.tr("Utilisation"))){
-			return Sorter.sortElementsByUtils(toSort, order);
-		}else if(sortType.equals(TR.tr("Police"))){
-			return Sorter.sortElementsByPolice(toSort, order);
-		}else if(sortType.equals(TR.tr("Taille"))){
-			return Sorter.sortElementsBySize(toSort, order);
-		}else if(sortType.equals(TR.tr("Couleur"))){
-			return Sorter.sortElementsByColor(toSort, order);
-		}else if(sortType.equals(TR.tr("Position"))){
-			return Sorter.sortElementsByCorePosition(toSort, order);
-		}
-		return toSort;
-	}
-
-	public static List<TextTreeItem> getMostUseElements(){
-
-		List<TextTreeItem> toSort = new ArrayList<>();
-		for(int i = 0; i < MainWindow.lbTextTab.favoritesText.getChildren().size(); i++){
-			if(MainWindow.lbTextTab.favoritesText.getChildren().get(i) instanceof TextTreeItem){
-				toSort.add((TextTreeItem) MainWindow.lbTextTab.favoritesText.getChildren().get(i));
-			}
-		}
-		for(int i = 0; i < MainWindow.lbTextTab.lastsText.getChildren().size(); i++){
-			if(MainWindow.lbTextTab.lastsText.getChildren().get(i) instanceof TextTreeItem){
-				toSort.add((TextTreeItem) MainWindow.lbTextTab.lastsText.getChildren().get(i));
-			}
-		}
-		return MainWindow.lbTextTab.autoSortList(toSort, TR.tr("Utilisation"), true);
-
 	}
 }

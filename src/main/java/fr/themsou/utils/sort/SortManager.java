@@ -63,13 +63,11 @@ public class SortManager {
             });
 
             // Change selectedButton lors du clic ET update l'ordre
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override public void handle(ActionEvent actionEvent) {
-                    if(selectedButton.get() == button){
-                        order.set(!order.get());
-                        updateSort.call(button.getText(), order.get());
-                    }else selectedButton.set(button);
-                }
+            button.setOnAction(actionEvent -> {
+                if(selectedButton.get() == button){
+                    order.set(!order.get());
+                    updateSort.call(button.getText(), order.get());
+                }else selectedButton.set(button);
             });
         }
         if(selectedButton.get() == null){
@@ -86,6 +84,7 @@ public class SortManager {
     }
 
     public void simulateCall(){
+        System.out.println("simulating sort call");
         updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
     }
 

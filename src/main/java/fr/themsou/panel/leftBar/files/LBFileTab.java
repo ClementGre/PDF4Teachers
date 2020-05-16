@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import fr.themsou.main.Main;
 import fr.themsou.utils.*;
-import fr.themsou.utils.sort.SortEvent;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
@@ -18,19 +16,18 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-public class LBFilesTab extends Tab {
+public class LBFileTab extends Tab {
 
 	private SortManager sortManager;
 	private VBox separator = new VBox();
 	private GridPane options = new GridPane();
 
-	public ListView<File> files = new ListView<>();
+	public FileListView files = new FileListView();
 	public ArrayList<File> originalFiles = new ArrayList<>();
 
-	public LBFilesTab(){
+	public LBFileTab(){
 
 		setClosable(false);
 		setContent(separator);
@@ -42,10 +39,6 @@ public class LBFilesTab extends Tab {
 	}
 
 	public void setup(){
-		files.setStyle("-fx-border-width: 0px;");
-		files.setMaxHeight(Double.MAX_VALUE);
-		VBox.setVgrow(files, Priority.ALWAYS);
-		new LBFilesListView(files);
 
 		files.setOnDragOver((DragEvent e) -> {
 			Dragboard db = e.getDragboard();
@@ -77,25 +70,23 @@ public class LBFilesTab extends Tab {
 			e.consume();
 		});
 
-		sortManager = new SortManager(new SortEvent() {
-			@Override public void call(String sortType, boolean order) {
-				if(sortType.equals(TR.tr("Nom"))){
-					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
-					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
-				}else if(sortType.equals(TR.tr("Dossier"))){
-					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
-					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
-				}else if(sortType.equals(TR.tr("Édition"))){
-					List<File> toSort = files.getItems().stream().collect(Collectors.toList());
-					files.getItems().clear();
-					files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
-				}else if(sortType.equals(TR.tr("Date d'Ajout"))){
-					backOpenFilesList(!order);
-				}
-
+		sortManager = new SortManager((sortType, order) -> {
+			if(sortType.equals(TR.tr("Nom"))){
+				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+				files.getItems().clear();
+				files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
+			}else if(sortType.equals(TR.tr("Dossier"))){
+				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+				files.getItems().clear();
+				files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
+			}else if(sortType.equals(TR.tr("Édition"))){
+				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+				files.getItems().clear();
+				files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
+			}else if(sortType.equals(TR.tr("Date d'Ajout"))){
+				backOpenFilesList(!order);
 			}
+
 		}, null, null);
 		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
@@ -126,21 +117,11 @@ public class LBFilesTab extends Tab {
 			openFile(file);
 		}
 	}
-	public void clearFiles(boolean confirm){
-		/*if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
-			if(files.getItems().contains(Main.mainScreen.document.getFile())){
-				if(!Main.mainScreen.closeFile(confirm)) return;
-			}
-		}*/
+	public void clearFiles(){
 		files.getItems().clear();
 		updateOpenFilesList();
 	}
-	public void removeFile(File file, boolean confirm){
-		/*if(Main.mainScreen.getStatus() == MainScreen.Status.OPEN){
-			if(files.getItems().contains(Main.mainScreen.document.getFile())){
-				if(!Main.mainScreen.closeFile(confirm)) return;
-			}
-		}*/
+	public void removeFile(File file){
 		files.getItems().remove(file);
 		originalFiles.remove(file);
 	}
@@ -155,13 +136,10 @@ public class LBFilesTab extends Tab {
 	}
 
 	private void updateOpenFilesList(){
-
 		originalFiles.clear();
 		originalFiles.addAll(MainWindow.lbFilesTab.files.getItems());
-
 	}
 	public void backOpenFilesList(boolean reverse){
-
 		files.getItems().clear();
 		ArrayList<File> openedFilesList = (ArrayList<File>) originalFiles.clone();
 		if(reverse) Collections.reverse(openedFilesList);

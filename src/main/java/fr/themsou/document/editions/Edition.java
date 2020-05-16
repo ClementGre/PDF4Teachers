@@ -9,6 +9,7 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
+import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
@@ -71,7 +72,7 @@ public class Edition {
             }
 
         }catch (IOException e){ e.printStackTrace(); }
-        MainWindow.lbTextTab.updateOnFileElementsList();
+        TextTreeView.onFileSection.updateElementsList();
     }
     public void save(){
         if(Edition.isSave()) return;
@@ -141,7 +142,7 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
-        MainWindow.lbTextTab.updateOnFileElementsList();
+        TextTreeView.onFileSection.updateElementsList();
     }
 
     // STATIC
@@ -325,7 +326,7 @@ public class Edition {
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
-            MainWindow.lbTextTab.updateOnFileElementsList();
+            TextTreeView.onFileSection.updateElementsList();
             MainWindow.lbGradeTab.treeView.clear();
 
             Edition.setUnsave();

@@ -1,8 +1,9 @@
 package fr.themsou.panel.leftBar.texts;
 
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeFavorites;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
 import javafx.scene.control.*;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
@@ -17,10 +18,10 @@ public class ListsManager {
 
     ContextMenu menu = new ContextMenu();
 
-    LBTextTab textTab;
+    TextTreeFavorites favoritesSection;
 
-    public ListsManager(LBTextTab textTab){
-        this.textTab = textTab;
+    public ListsManager(TextTreeFavorites favoritesSection){
+        this.favoritesSection = favoritesSection;
 
         loadListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
         loadListBtn.setTooltip(Builders.genToolTip(TR.tr("Afficher les listes d'éléments enregistrés")));
@@ -48,7 +49,7 @@ public class ListsManager {
             Optional<String> result = alert.showAndWait();
             if(result.isPresent()){
                 if(!result.get().isEmpty()){
-                    if(textTab.favoriteLists.containsKey(result.get())){
+                    if(favoritesSection.favoriteLists.containsKey(result.get())){
                         Alert alert2 = new Alert(Alert.AlertType.WARNING);
                         new JMetro(alert2.getDialogPane(), Style.LIGHT);
                         Builders.secureAlert(alert2);
@@ -77,8 +78,8 @@ public class ListsManager {
         menu.setMinWidth(400);
         menu.setPrefWidth(400);
 
-        if(textTab.favoriteLists.size() >= 1){
-            for(Map.Entry<String, ArrayList<TextListItem>> list : textTab.favoriteLists.entrySet()){
+        if(favoritesSection.favoriteLists.size() >= 1){
+            for(Map.Entry<String, ArrayList<TextListItem>> list : favoritesSection.favoriteLists.entrySet()){
                 MenuItem menuItem = new MenuItem(list.getKey());
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
@@ -112,23 +113,23 @@ public class ListsManager {
 
     public void loadList(ArrayList<TextListItem> items, boolean replace){
 
-        if(replace) textTab.clearSavedFavoritesElements();
+        if(replace) favoritesSection.clearElements();
 
         for(TextListItem item : items){
-            textTab.favoritesText.getChildren().add(item.toTextTreeItem(TextTreeItem.FAVORITE_TYPE));
+            favoritesSection.getChildren().add(item.toTextTreeItem(TextTreeSection.FAVORITE_TYPE));
         }
-        textTab.favoritesTextSortManager.simulateCall();
+        favoritesSection.sortManager.simulateCall();
 
     }
 
     public void saveList(String listName){
 
-        textTab.favoriteLists.remove(listName);
-        for(TreeItem<String> item : textTab.favoritesText.getChildren()){
+        favoritesSection.favoriteLists.remove(listName);
+        for(Object item : favoritesSection.getChildren()){
             if(item instanceof TextTreeItem){
-                ArrayList<TextListItem> list = MainWindow.lbTextTab.favoriteLists.containsKey(listName) ? MainWindow.lbTextTab.favoriteLists.get(listName) : new ArrayList<>();
+                ArrayList<TextListItem> list = favoritesSection.favoriteLists.containsKey(listName) ? favoritesSection.favoriteLists.get(listName) : new ArrayList<>();
                 list.add(((TextTreeItem) item).toTextItem());
-                MainWindow.lbTextTab.favoriteLists.put(listName, list);
+                favoritesSection.favoriteLists.put(listName, list);
             }
         }
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -145,7 +146,7 @@ public class ListsManager {
 
     public void deleteList(String listName){
 
-        textTab.favoriteLists.remove(listName);
+        favoritesSection.favoriteLists.remove(listName);
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         new JMetro(alert.getDialogPane(), Style.LIGHT);

@@ -5,7 +5,7 @@ import fr.themsou.main.UserData;
 import fr.themsou.panel.FooterBar;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.MenuBar;
-import fr.themsou.panel.leftBar.files.LBFilesTab;
+import fr.themsou.panel.leftBar.files.LBFileTab;
 import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.paint.LBPaintTab;
 import fr.themsou.panel.leftBar.texts.LBTextTab;
@@ -38,7 +38,7 @@ public class MainWindow extends Stage{
     public static MenuBar menuBar;
 
     public static TabPane leftBar;
-    public static LBFilesTab lbFilesTab;
+    public static LBFileTab lbFilesTab;
     public static LBTextTab lbTextTab;
     public static LBGradeTab lbGradeTab;
     public static LBPaintTab lbPaintTab;
@@ -85,7 +85,7 @@ public class MainWindow extends Stage{
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
 
-        lbFilesTab = new LBFilesTab();
+        lbFilesTab = new LBFileTab();
         lbTextTab = new LBTextTab();
         lbGradeTab = new LBGradeTab();
         lbPaintTab = new LBPaintTab();

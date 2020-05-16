@@ -86,7 +86,6 @@ public class ExportRenderer {
                     if(gradesElements) gradeElementRenderer.renderElement((GradeElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }/*else if(element instanceof DrawElement){
                     if(drawElements)
-
                 }*/
             }
 
