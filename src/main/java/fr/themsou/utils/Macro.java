@@ -18,6 +18,13 @@ public class Macro {
     public Macro(Pane main){
 
         main.setOnKeyPressed(e -> {
+
+            if(e.getCode() == KeyCode.TAB){
+                if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
+                else MainWindow.leftBar.getSelectionModel().select(1);
+                return;
+            }
+
             if(e.isShortcutDown()){
                 String keyName = e.getText();
                 if(!e.isAltDown()){

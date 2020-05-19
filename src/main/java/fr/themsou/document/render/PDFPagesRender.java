@@ -16,6 +16,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
 
+import javax.imageio.ImageIO;
+
 public class PDFPagesRender {
 
 	private File file;
@@ -52,7 +54,7 @@ public class PDFPagesRender {
 			int destWidth = 1190; // *1=595 | *1.5=892 |*2=1190
 			int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double)destWidth));
 
-			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_RGB);
+			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_ARGB);
 			Graphics2D graphics = renderImage.createGraphics();
 			graphics.setBackground(Color.WHITE);
 
