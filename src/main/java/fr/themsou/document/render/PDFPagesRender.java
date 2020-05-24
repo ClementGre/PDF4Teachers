@@ -51,7 +51,7 @@ public class PDFPagesRender {
 
 			PDRectangle pageSize = getPageSize(pageNumber);
 
-			int destWidth = (int) (714*size); // *1=595 | *1.5=892 |*2=1190
+			int destWidth = (int) (595*1.4*size); // *1=595 | *1.5=892 |*2=1190
 			int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double)destWidth));
 
 			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_ARGB);

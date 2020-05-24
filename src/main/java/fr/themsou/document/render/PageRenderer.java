@@ -157,6 +157,12 @@ public class PageRenderer extends Pane{
         });*/
 
     }
+    public void updateZoom(){
+        if(lastShowStatus != 0) return;
+        if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
+            render();
+        }
+    }
     public void remove(){
         switchVisibleStatus(2);
         getChildren().remove(loader);
@@ -194,6 +200,10 @@ public class PageRenderer extends Pane{
                 setCursor(Cursor.WAIT);
 
                 render();
+            }else{
+                if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
+                    render();
+                }
             }
         }else if(showStatus >= 1){
 
@@ -212,18 +222,12 @@ public class PageRenderer extends Pane{
 
         }
     }
-    public void updateZoom(){
-        if(lastShowStatus != 0) return;
-        if(Math.abs(renderedZoomFactor - getNewRenderedZopomFactor()) > 0.2){
-            render();
-        }
-    }
-    private double getNewRenderedZopomFactor(){
-        return Math.min(Math.max(MainWindow.mainScreen.getZoomFactor(), 0.1), 2.5);
+    private double getNewRenderedZoomFactor(){
+        return Math.min(MainWindow.mainScreen.getZoomFactor(), 3);
     }
     private void render(){
 
-        renderedZoomFactor = getNewRenderedZopomFactor();
+        renderedZoomFactor = getNewRenderedZoomFactor();
 
         MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, (image) -> {
 
