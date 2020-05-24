@@ -85,7 +85,6 @@ public class MainScreen extends Pane {
 	}
 
 	public void repaint(){
-
 		if(status.get() != Status.OPEN) {
 			info.setVisible(true);
 
@@ -153,7 +152,6 @@ public class MainScreen extends Pane {
 		});
 
 		addEventFilter(ScrollEvent.SCROLL, e -> {
-
 			if(e.isControlDown()){ // ZOOM
 
 				if(getStatus() == Status.OPEN){

@@ -82,8 +82,7 @@ public class Document {
         for(int i = 0 ; i < totalPages ; i++){
             pages.get(i).remove();
         }
-        pages = new ArrayList<>();
-
+        pages.clear();
     }
 
     public PageRenderer getPreciseMouseCurrentPage(){

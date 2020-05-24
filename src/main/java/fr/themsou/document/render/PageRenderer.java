@@ -12,6 +12,7 @@ import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.windows.MainWindow;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -29,22 +30,20 @@ import javafx.scene.text.Text;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PageRenderer extends Pane{
 
-    PageStatus status = PageStatus.HIDE;
-
-    private ImageView renderView = new ImageView();
+    private PageStatus status = PageStatus.HIDE;
 
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     private double mouseX = 0;
     private double mouseY = 0;
-    Image img;
 
     private ProgressBar loader = new ProgressBar();
-    ContextMenu menu = new ContextMenu();
+    private ContextMenu menu = new ContextMenu();
 
     public PageRenderer(int page){
         this.page = page;
@@ -57,7 +56,6 @@ public class PageRenderer extends Pane{
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
         getChildren().add(loader);
-        getChildren().add(0, renderView);
 
         // BINDINGS & SIZES SETUP
         PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
@@ -158,12 +156,16 @@ public class PageRenderer extends Pane{
     }
     public void remove(){
         switchVisibleStatus(2);
-        getChildren().remove(renderView);
+        getChildren().remove(loader);
 
         setOnMouseEntered(null);
+
         setOnMousePressed(null);
+        setOnMouseReleased(null);
         setOnMouseMoved(null);
         setOnMouseDragged(null);
+
+        setBackground(null);
     }
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
         int pageHeight = (int) (getHeight()* MainWindow.mainScreen.pane.getScaleX());
@@ -194,14 +196,10 @@ public class PageRenderer extends Pane{
 
             setVisible(false);
 
-            // Disable since the image of the ImageView always stay in the Heap (JavaFX Memory Leak)
-            // So deleting the imageView is completely useless.
-            /*if(showStatus == 2){
-                renderView.setImage(null);
-                img = null;
+            if(showStatus == 2){
+                setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                 status = PageStatus.HIDE;
-                for(Node node : getChildren()) node.setVisible(false);
-            }*/
+            }
 
         }
 
@@ -213,16 +211,24 @@ public class PageRenderer extends Pane{
 
         MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, image -> {
 
-            if(image == null || renderView == null){
+            if(image == null){
                 status = PageStatus.FAIL;
                 return;
             }
-            img = SwingFXUtils.toFXImage(image, null);
-            renderView.setImage(img);
-            renderView.setStyle("");
 
-            renderView.fitHeightProperty().bind(heightProperty());
-            renderView.fitWidthProperty().bind(widthProperty());
+            setBackground(
+                    new Background(
+                            Collections.singletonList(new BackgroundFill(
+                                    Color.WHITE,
+                                    CornerRadii.EMPTY,
+                                    Insets.EMPTY)),
+                            Collections.singletonList(new BackgroundImage(
+                                    SwingFXUtils.toFXImage(image, null),
+                                    BackgroundRepeat.NO_REPEAT,
+                                    BackgroundRepeat.NO_REPEAT,
+                                    BackgroundPosition.CENTER,
+                                    new BackgroundSize(getWidth(), getHeight(), false, false, false, true)))));
+
 
             for(Node node : getChildren()){
                 node.setVisible(true);
@@ -249,9 +255,6 @@ public class PageRenderer extends Pane{
 
     public void clearElements(){
         getChildren().clear();
-        if(status == PageStatus.RENDERED){
-            getChildren().add(renderView);
-        }
         elements = new ArrayList<>();
     }
     public void clearTextElements() {

@@ -215,11 +215,6 @@ public class TextElement extends Element {
 		return SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null)));
 	}
 	public BufferedImage renderAwtLatex(){
-		try {
-			ImageIO.write(renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize()), "png", new File("C:\\Users\\Clement\\Downloads\\latex.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize());
 	}
 
