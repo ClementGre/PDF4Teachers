@@ -68,9 +68,13 @@ public class Document {
         updateShowsStatus();
     }
     public void updateShowsStatus(){
-
         for(PageRenderer page : pages){
             page.updateShowStatus();
+        }
+    }
+    public void updateZoom(){
+        for(PageRenderer page : pages){
+            page.updateZoom();
         }
     }
     public void loadEdition(){

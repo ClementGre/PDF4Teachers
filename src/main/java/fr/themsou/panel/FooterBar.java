@@ -24,7 +24,7 @@ public class FooterBar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (MainWindow.mainScreen.pane.getScaleX()*100) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
+		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (MainWindow.mainScreen.getZoomPercent()) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
 
 		switch (MainWindow.leftBar.getSelectionModel().getSelectedIndex()){
 			case 0:

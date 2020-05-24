@@ -13,6 +13,7 @@ import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -142,6 +143,11 @@ public class MainScreen extends Pane {
 		pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
 			if(document != null){
 				Platform.runLater(() -> document.updateShowsStatus());
+			}
+		});
+		pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
+			if(document != null){
+				Platform.runLater(() -> document.updateZoom());
 			}
 		});
 
@@ -357,6 +363,13 @@ public class MainScreen extends Pane {
 	}
 	public int getStatus(){
 		return this.status.get();
+	}
+
+	public double getZoomFactor(){
+		return pane.getScaleX();
+	}
+	public double getZoomPercent(){
+		return getZoomFactor()*100;
 	}
 
 	public int getPageWidth() {

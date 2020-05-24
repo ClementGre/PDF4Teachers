@@ -35,7 +35,7 @@ public class PDFPagesRender {
 		render = false;
 	}
 
-	public void renderPage(int pageNumber, CallBack<BufferedImage> callBack){
+	public void renderPage(int pageNumber, double size, CallBack<BufferedImage> callBack){
 
 		Thread renderPage = new Thread(() -> {
 			/*while(render){
@@ -51,7 +51,7 @@ public class PDFPagesRender {
 
 			PDRectangle pageSize = getPageSize(pageNumber);
 
-			int destWidth = 1190; // *1=595 | *1.5=892 |*2=1190
+			int destWidth = (int) (714*size); // *1=595 | *1.5=892 |*2=1190
 			int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double)destWidth));
 
 			BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_ARGB);

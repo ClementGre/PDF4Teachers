@@ -45,6 +45,9 @@ public class PageRenderer extends Pane{
     private ProgressBar loader = new ProgressBar();
     private ContextMenu menu = new ContextMenu();
 
+    private int lastShowStatus = 1; // default status is hide (1)
+    private double renderedZoomFactor;
+
     public PageRenderer(int page){
         this.page = page;
         setStyle("-fx-background-color: white;");
@@ -172,7 +175,8 @@ public class PageRenderer extends Pane{
         int upDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()* MainWindow.mainScreen.pane.getScaleX() + pageHeight);
         int downDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY()* MainWindow.mainScreen.pane.getScaleX());
 
-        if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < MainWindow.mainScreen.getHeight()){
+        //if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < MainWindow.mainScreen.getHeight()){ // one page of space
+        if((upDistance) > 0 && (downDistance) < MainWindow.mainScreen.getHeight()){ // pil poil
             return 0;
         }else{
             if((upDistance + pageHeight*10) < 0 || (downDistance - pageHeight*10) > MainWindow.mainScreen.getHeight()) return 2;
@@ -180,10 +184,15 @@ public class PageRenderer extends Pane{
         }
     }
     private void switchVisibleStatus(int showStatus){
+        lastShowStatus = showStatus;
         if(showStatus == 0){
             setVisible(true);
 
             if(status == PageStatus.HIDE){
+                status = PageStatus.RENDERING;
+                loader.setVisible(true);
+                setCursor(Cursor.WAIT);
+
                 render();
             }
         }else if(showStatus >= 1){
@@ -202,14 +211,21 @@ public class PageRenderer extends Pane{
             }
 
         }
-
+    }
+    public void updateZoom(){
+        if(lastShowStatus != 0) return;
+        if(Math.abs(renderedZoomFactor - getNewRenderedZopomFactor()) > 0.2){
+            render();
+        }
+    }
+    private double getNewRenderedZopomFactor(){
+        return Math.min(Math.max(MainWindow.mainScreen.getZoomFactor(), 0.1), 2.5);
     }
     private void render(){
-        status = PageStatus.RENDERING;
-        loader.setVisible(true);
-        setCursor(Cursor.WAIT);
 
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, image -> {
+        renderedZoomFactor = getNewRenderedZopomFactor();
+
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, (image) -> {
 
             if(image == null){
                 status = PageStatus.FAIL;
@@ -228,11 +244,6 @@ public class PageRenderer extends Pane{
                                     BackgroundRepeat.NO_REPEAT,
                                     BackgroundPosition.CENTER,
                                     new BackgroundSize(getWidth(), getHeight(), false, false, false, true)))));
-
-
-            for(Node node : getChildren()){
-                node.setVisible(true);
-            }
 
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);
