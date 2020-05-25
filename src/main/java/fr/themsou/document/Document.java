@@ -1,6 +1,8 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.display.PDFPagesRender;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
@@ -97,6 +99,35 @@ public class Document {
             }
         }
         return null;
+    }
+
+    public void removePage(PageRenderer page){
+
+        int pageNumber = page.getPage();
+        int pageTrY = (int) page.getTranslateY();
+
+        while(page.getElements().size() != 0){
+            if(page.getElements().get(0) instanceof GradeElement){
+                GradeElement grade = (GradeElement) page.getElements().get(0);
+                grade.setValue(-1);
+                grade.switchPage(pageNumber == 0 ? 1 : pageNumber-1);
+                grade.setPage(pageNumber == 0 ? 0 : pageNumber-1);
+            }else{
+                page.getElements().get(0).delete();
+            }
+        }
+        Edition.setUnsave();
+
+        page.remove();
+        totalPages--;
+        pages.remove(pageNumber);
+        MainWindow.mainScreen.pane.getChildren().remove(page);
+
+
+        for(int i = 0 ; i < totalPages ; i++) pages.get(i).setPage(i);
+        // update coordinates of the next page
+        if(totalPages == pageNumber) Platform.runLater(() -> pages.get(pageNumber-1).updatePosition(-1)); // lastPage
+        else Platform.runLater(() -> pages.get(pageNumber).updatePosition(pageTrY)); // another page
     }
 
     public boolean save(){

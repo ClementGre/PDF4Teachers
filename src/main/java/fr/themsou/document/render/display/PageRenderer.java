@@ -47,6 +47,9 @@ public class PageRenderer extends Pane{
 
     public PageRenderer(int page){
         this.page = page;
+        setup();
+    }
+    private void setup(){
         setStyle("-fx-background-color: white;");
 
         // LOADER
@@ -137,9 +140,9 @@ public class PageRenderer extends Pane{
         setOnMouseReleased(e -> {
             setCursor(Cursor.DEFAULT);
         });
-
     }
     public void updatePosition(int totalHeight){
+        if(totalHeight == -1) totalHeight = (int) getTranslateY();
 
         PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
         final double ratio = pageSize.getHeight() / pageSize.getWidth();
@@ -330,8 +333,6 @@ public class PageRenderer extends Pane{
             if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
-
-            if(status != PageStatus.RENDERED) (element).setVisible(false);
         }
     }
     public void addElement(Element element, boolean update){
@@ -347,8 +348,6 @@ public class PageRenderer extends Pane{
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
-
-            if(status != PageStatus.RENDERED) (element).setVisible(false);
         }
     }
     public void removeElement(Element element, boolean update){
@@ -385,7 +384,12 @@ public class PageRenderer extends Pane{
     public int getPage() {
         return page;
     }
+    public void setPage(int page){
+        this.page = page;
+    }
     public ArrayList<Element> getElements() {
         return elements;
     }
+
+
 }
