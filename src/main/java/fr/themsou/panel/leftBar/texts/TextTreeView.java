@@ -1,8 +1,7 @@
 package fr.themsou.panel.leftBar.texts;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.document.render.PageRenderer;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeFavorites;
@@ -15,7 +14,6 @@ import fr.themsou.utils.TR;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;

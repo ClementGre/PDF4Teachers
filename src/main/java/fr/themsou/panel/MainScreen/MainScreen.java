@@ -5,9 +5,10 @@ import java.io.IOException;
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.render.PageRenderer;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.PlatformTools;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
@@ -32,7 +33,6 @@ public class MainScreen extends Pane {
 	public Pane pane = new Pane();
 	public ZoomOperator zoomOperator;
 
-	private int totalHeight = 40;
 	private int pageWidth = 596;
 
 	public double paneMouseX = 0;
@@ -188,6 +188,11 @@ public class MainScreen extends Pane {
 			}
 
 		});
+		heightProperty().addListener((observable, oldValue, newValue) -> {
+			if(document != null){
+				Platform.runLater(() -> document.updateShowsStatus());
+			}
+		});
 
 		setOnMouseDragged(e -> {
 			if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)){ // GrabNScroll
@@ -272,7 +277,6 @@ public class MainScreen extends Pane {
 		// FINISH OPEN
 		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
-		totalHeight = 30;
 		status.set(Status.OPEN);
 
 		document.showPages();
@@ -287,6 +291,7 @@ public class MainScreen extends Pane {
 
 		repaint();
 		MainWindow.footerBar.repaint();
+		Platform.runLater(() -> zoomOperator.updatePaneHeight(0, 0.5));
 	}
 	public void failOpen(){
 
@@ -377,16 +382,11 @@ public class MainScreen extends Pane {
 	}
 
 	public void addPage(PageRenderer page){
-		page.setTranslateX(30);
-		page.setTranslateY(totalHeight);
-
-		totalHeight += 30 + page.getHeight();
-
 		pane.getChildren().add(page);
 	}
-	public void finalizePages(){
+	public void updateSize(int totalHeight){
+
 		pane.setPrefWidth(pageWidth + 60.0);
 		pane.setPrefHeight(totalHeight);
-
 	}
 }

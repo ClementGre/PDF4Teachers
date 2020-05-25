@@ -6,6 +6,8 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
@@ -163,46 +165,50 @@ public class ZoomOperator {
             }
         });
 
-        // refais toutes les vérifications lorsque les dimensions de pane changent.
-        // Ce listener est appelé lorsque un nouveau document est chargé.
         pane.heightProperty().addListener((observable, oldValue, newValue) -> {
-
-            aimScale = pane.getScaleX();
-
-            vScrollBar.setValue(1);
-            hScrollBar.setValue(1);
-
-            if(getScrollableHeight() <= 0){
-                vScrollBar.setVisible(false);
-                pane.setTranslateY(centerTranslationY());
-                aimTranslateY = pane.getTranslateY();
-            }else{
-                vScrollBar.setVisible(true);
-                double vValue = (-newValue.doubleValue() + getPaneShiftY()) / getScrollableHeight();
-                if(vValue != vScrollBar.getValue()){
-                    vScrollBar.setValue(vValue);
-                }
-            }
-            if(getScrollableWidth() <= 0){
-                hScrollBar.setVisible(false);
-                pane.setTranslateX(centerTranslationX());
-                aimTranslateX = pane.getTranslateX();
-            }else{
-                hScrollBar.setVisible(true);
-                double hValue = (-newValue.doubleValue() + getPaneShiftX()) / getScrollableWidth();
-                if(hValue != hScrollBar.getValue()){
-                    hScrollBar.setValue(hValue);
-                }
-            }
-
-            vScrollBar.setValue(0);
-            hScrollBar.setValue(0.5);
-
-            vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight()*pane.getScaleX()));
-            hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth()*pane.getScaleX()));
-
+            updatePaneHeight(vScrollBar.getValue(), hScrollBar.getValue());
         });
 
+
+    }
+    public void updatePaneHeight(double newVValue, double newHValue){
+        aimScale = pane.getScaleX();
+
+        // Définis sur 1 pour actualiser avant de donner la vraie valeur
+        vScrollBar.setValue(1);
+        hScrollBar.setValue(1);
+
+        // Update le système
+        // Copie du code du listener de translateYProperty et de translateXProperty
+        if(getScrollableHeight() <= 0){
+            vScrollBar.setVisible(false);
+            pane.setTranslateY(centerTranslationY());
+            aimTranslateY = pane.getTranslateY();
+        }else{
+            vScrollBar.setVisible(true);
+            double vValue = (-pane.getHeight() + getPaneShiftY()) / getScrollableHeight();
+            if(vValue != vScrollBar.getValue()){
+                vScrollBar.setValue(vValue);
+            }
+        }
+        if(getScrollableWidth() <= 0){
+            hScrollBar.setVisible(false);
+            pane.setTranslateX(centerTranslationX());
+            aimTranslateX = pane.getTranslateX();
+        }else{
+            hScrollBar.setVisible(true);
+            double hValue = (-pane.getHeight() + getPaneShiftX()) / getScrollableWidth();
+            if(hValue != hScrollBar.getValue()){
+                hScrollBar.setValue(hValue);
+            }
+        }
+
+        // Repasse les bonnes valeurs
+        vScrollBar.setValue(newVValue);
+        hScrollBar.setValue(newHValue);
+
+        vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight()*pane.getScaleX()));
+        hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth()*pane.getScaleX()));
     }
 
     public void zoom(double factor, double x, double y) {

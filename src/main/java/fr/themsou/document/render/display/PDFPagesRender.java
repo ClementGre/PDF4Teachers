@@ -1,4 +1,4 @@
-package fr.themsou.document.render;
+package fr.themsou.document.render.display;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -22,6 +22,7 @@ public class PDFPagesRender {
 
 	private File file;
 
+	public PDFPagesEditor editor;
 	private PDDocument document;
 	ArrayList<Thread> rendersPage = new ArrayList<>();
 
@@ -32,6 +33,7 @@ public class PDFPagesRender {
 
 		render = true;
 		document = PDDocument.load(file);
+		editor = new PDFPagesEditor(document, file);
 		render = false;
 	}
 

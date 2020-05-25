@@ -1,4 +1,4 @@
-package fr.themsou.document.render;
+package fr.themsou.document.render.display;
 
 public enum PageStatus {
     HIDE,

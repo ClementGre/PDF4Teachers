@@ -1,29 +1,18 @@
 package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.render.PageRenderer;
-import fr.themsou.main.Main;
-import fr.themsou.utils.FontUtils;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.windows.MainWindow;
-import fr.themsou.yaml.Config;
-import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 public abstract class Element extends Region {

@@ -36,7 +36,8 @@ module fr.themsou {
     exports fr.themsou.yaml;
     exports fr.themsou.main;
     exports fr.themsou.document;
-    exports fr.themsou.document.render;
+    exports fr.themsou.document.render.display;
+    exports fr.themsou.document.render.export;
     exports fr.themsou.document.editions;
     exports fr.themsou.document.editions.elements;
     exports fr.themsou.panel;

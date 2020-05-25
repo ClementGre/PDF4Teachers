@@ -1,4 +1,4 @@
-package fr.themsou.document.render;
+package fr.themsou.document.render.display;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
@@ -6,7 +6,6 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
-import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
@@ -15,17 +14,13 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -48,6 +43,8 @@ public class PageRenderer extends Pane{
     private int lastShowStatus = 1; // default status is hide (1)
     private double renderedZoomFactor;
 
+    private PageEditPane pageEditPane;
+
     public PageRenderer(int page){
         this.page = page;
         setStyle("-fx-background-color: white;");
@@ -59,19 +56,6 @@ public class PageRenderer extends Pane{
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
         getChildren().add(loader);
-
-        // BINDINGS & SIZES SETUP
-        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
-        final double ratio = pageSize.getHeight() / pageSize.getWidth();
-
-        setWidth(MainWindow.mainScreen.getPageWidth());
-        setHeight(MainWindow.mainScreen.getPageWidth() * ratio);
-
-        setMaxWidth(MainWindow.mainScreen.getPageWidth());
-        setMinWidth(MainWindow.mainScreen.getPageWidth());
-
-        setMaxHeight(MainWindow.mainScreen.getPageWidth() * ratio);
-        setMinHeight(MainWindow.mainScreen.getPageWidth() * ratio);
 
         // BORDER
         DropShadow ds = new DropShadow();
@@ -88,7 +72,15 @@ public class PageRenderer extends Pane{
             mouseY = e.getY();
         });
 
-        setOnMouseEntered(event -> MainWindow.mainScreen.document.setCurrentPage(page));
+        setOnMouseEntered(e -> {
+            MainWindow.mainScreen.document.setCurrentPage(page);
+            if(pageEditPane == null) pageEditPane = new PageEditPane(this);
+            else pageEditPane.setVisible(true);
+        });
+        setOnMouseExited(e -> {
+            if(pageEditPane == null) pageEditPane = new PageEditPane(this);
+            pageEditPane.setVisible(false);
+        });
 
         Builders.setMenuSize(menu);
         setOnMousePressed(e -> {
@@ -147,7 +139,34 @@ public class PageRenderer extends Pane{
         });
 
     }
+    public void updatePosition(int totalHeight){
 
+        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
+        final double ratio = pageSize.getHeight() / pageSize.getWidth();
+
+        setWidth(MainWindow.mainScreen.getPageWidth());
+        setHeight(MainWindow.mainScreen.getPageWidth() * ratio);
+
+        setMaxWidth(MainWindow.mainScreen.getPageWidth());
+        setMinWidth(MainWindow.mainScreen.getPageWidth());
+
+        setMaxHeight(MainWindow.mainScreen.getPageWidth() * ratio);
+        setMinHeight(MainWindow.mainScreen.getPageWidth() * ratio);
+
+        setTranslateX(30);
+        setTranslateY(totalHeight);
+
+        totalHeight = (int) (totalHeight + getHeight() + 30);
+
+        if(MainWindow.mainScreen.document.totalPages > page+1){
+            MainWindow.mainScreen.document.pages.get(page + 1).updatePosition(totalHeight);
+        }else{
+            MainWindow.mainScreen.updateSize(totalHeight);
+        }
+
+        if(pageEditPane != null) pageEditPane.updatePosition();
+
+    }
     public void updateShowStatus(){
 
         int firstTest = getShowStatus();
@@ -155,7 +174,6 @@ public class PageRenderer extends Pane{
         /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
         });*/
-
     }
     public void updateZoom(){
         if(lastShowStatus != 0) return;
@@ -163,11 +181,16 @@ public class PageRenderer extends Pane{
             render();
         }
     }
+    public void updateRender(){
+        setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        render();
+    }
     public void remove(){
         switchVisibleStatus(2);
         getChildren().remove(loader);
 
         setOnMouseEntered(null);
+        setOnMouseExited(null);
 
         setOnMousePressed(null);
         setOnMouseReleased(null);
@@ -201,20 +224,22 @@ public class PageRenderer extends Pane{
 
                 render();
             }else{
+                // Update zoom render
                 if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
                     render();
                 }
             }
         }else if(showStatus >= 1){
 
+            // don't disable this page if the selected element is on this page.
             if(MainWindow.mainScreen.getSelected() != null){
                 if(MainWindow.mainScreen.getSelected().getPageNumber() == getPage()){
                     return;
                 }
             }
-
             setVisible(false);
 
+            // Hard hide, delete render
             if(showStatus == 2){
                 setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
                 status = PageStatus.HIDE;

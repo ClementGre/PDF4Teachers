@@ -1,8 +1,8 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.render.PDFPagesRender;
-import fr.themsou.document.render.PageRenderer;
+import fr.themsou.document.render.display.PDFPagesRender;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -63,7 +63,7 @@ public class Document {
             MainWindow.mainScreen.addPage(page);
             pages.add(page);
         }
-        MainWindow.mainScreen.finalizePages();
+        pages.get(0).updatePosition(30);
 
         updateShowsStatus();
     }

@@ -1,7 +1,6 @@
 package fr.themsou.document.editions.elements;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.render.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.grades.GradeRating;
@@ -14,10 +13,6 @@ import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
 import javafx.geometry.VPos;
-import javafx.scene.Cursor;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Tooltip;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -25,7 +20,6 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.*;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

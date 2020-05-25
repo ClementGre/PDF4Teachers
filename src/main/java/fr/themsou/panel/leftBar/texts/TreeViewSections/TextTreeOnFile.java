@@ -1,7 +1,7 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.document.render.PageRenderer;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.TR;

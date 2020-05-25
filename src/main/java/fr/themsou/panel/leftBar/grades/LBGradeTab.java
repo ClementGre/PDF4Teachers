@@ -2,7 +2,7 @@ package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
-import fr.themsou.document.render.PageRenderer;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.export.GradeExportWindow;
 import fr.themsou.utils.Builders;
