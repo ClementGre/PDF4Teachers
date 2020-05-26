@@ -174,6 +174,7 @@ public class PageRenderer extends Pane{
 
         int firstTest = getShowStatus();
         switchVisibleStatus(firstTest);
+        if(pageEditPane != null) pageEditPane.updateVisibility();
         /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
         });*/
@@ -358,7 +359,6 @@ public class PageRenderer extends Pane{
 
             if(update) Edition.setUnsave();
 
-
             if(element instanceof TextElement){
                 if(update) TextTreeView.onFileSection.removeElement((TextElement) element);
             }else if(element instanceof GradeElement){
@@ -385,7 +385,17 @@ public class PageRenderer extends Pane{
         return page;
     }
     public void setPage(int page){
-        this.page = page;
+        if(this.page != page){
+            this.page = page;
+            if(pageEditPane != null) pageEditPane.updateVisibility();
+            updateElementsPage();
+        }
+    }
+    public void updateElementsPage(){
+        for(Element element : elements){
+            element.setPage(page);
+            Edition.setUnsave();
+        }
     }
     public ArrayList<Element> getElements() {
         return elements;

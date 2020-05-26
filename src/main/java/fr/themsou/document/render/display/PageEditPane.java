@@ -17,36 +17,36 @@ public class PageEditPane extends HBox {
     private static final Image deleteImage = new Image(PageEditPane.class.getResource("/img/Pages/delete.png")+"");
     private static final Image newImage = new Image(PageEditPane.class.getResource("/img/Pages/new.png")+"");
 
+    Button ascendButton = getCustomButton(ascendImage, "Monte cette page au dessus de la page précédente");
+    Button descendButton = getCustomButton(descendImage, "Descend cette page au dessous de la page suivante");
+    Button rotateLeftButton = getCustomButton(rotateLeftImage, "Tourne la page de 90° vers la gauche");
+    Button rotateRightButton = getCustomButton(rotateRightImage, "Tourne la page de 90° vers la droite");
+    Button deleteButton = getCustomButton(deleteImage, "Supprime cette page");
+    Button newButton = getCustomButton(newImage, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
+
+
     private PageRenderer page;
-    private int buttonNumber = 4;
+    private int buttonNumber = 6;
     public PageEditPane(PageRenderer page){
         this.page = page;
 
-        if(page.getPage() != 0){
-            Button ascendButton = getCustomButton(ascendImage, "Monte cette page au dessus de la page précédente");
-            ascendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.ascendPage(page));
-            getChildren().add(ascendButton); buttonNumber++;
 
-        }if(page.getPage() != MainWindow.mainScreen.document.totalPages-1){
-            Button descendButton = getCustomButton(descendImage, "Descend cette page au dessous de la page suivante");
-            descendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(page));
-            getChildren().add(descendButton); buttonNumber++;
-        }
 
-        Button rotateLeftButton = getCustomButton(rotateLeftImage, "Tourne la page de 90° vers la gauche");
+        ascendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.ascendPage(page));
+
+        descendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(page));
+
         rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(page));
 
-        Button rotateRightButton = getCustomButton(rotateRightImage, "Tourne la page de 90° vers la droite");
         rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(page));
 
-        Button deleteButton = getCustomButton(deleteImage, "Supprime cette page");
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
 
-        Button newButton = getCustomButton(newImage, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
         newButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPage(page.getPage()+1));
 
-        getChildren().addAll(rotateLeftButton, rotateRightButton, deleteButton, newButton);
+        getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton);
 
+        updateVisibility();
         updatePosition();
         page.getChildren().add(this);
 
@@ -67,5 +67,11 @@ public class PageEditPane extends HBox {
         setLayoutX(page.getWidth() - 30*buttonNumber + 30*buttonNumber/4D);
         setScaleX(0.5);
         setScaleY(0.5);
+    }
+
+    public void updateVisibility() {
+        ascendButton.setDisable(page.getPage() == 0);
+        descendButton.setDisable(page.getPage() == MainWindow.mainScreen.document.totalPages - 1);
+        deleteButton.setDisable(MainWindow.mainScreen.document.totalPages == 1);
     }
 }
