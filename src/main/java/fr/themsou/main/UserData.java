@@ -46,6 +46,12 @@ public class UserData {
     public boolean settingsWithTxtElements = false;
     public int settingsTiersExportSlider = 2;
 
+    // ConvertParams
+
+    public String lastConvertSrcDir = System.getProperty("user.home");
+    public String lastConvertFileName = ".pdf";
+    public boolean settingsConvertAloneImages = true;
+
     public UserData(){
 
         if(Main.settings.getSettingsVersion().isEmpty()){
@@ -110,12 +116,14 @@ public class UserData {
                 });
 
                 HashMap<String, Object> lastTextFont = Config.getSection(texts, "lastFont");
-                if(lastTextFont.size() != 5) return;
-                MainWindow.lbTextTab.lastFont = Config.getString(lastTextFont, "font");
-                MainWindow.lbTextTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
-                MainWindow.lbTextTab.lastColor = Config.getString(lastTextFont, "color");
-                MainWindow.lbTextTab.lastBold = Config.getBoolean(lastTextFont, "bold");
-                MainWindow.lbTextTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+                if(lastTextFont.size() == 5){
+                    MainWindow.lbTextTab.lastFont = Config.getString(lastTextFont, "font");
+                    MainWindow.lbTextTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
+                    MainWindow.lbTextTab.lastColor = Config.getString(lastTextFont, "color");
+                    MainWindow.lbTextTab.lastBold = Config.getBoolean(lastTextFont, "bold");
+                    MainWindow.lbTextTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+                }
+
 
                 // NOTES
 
@@ -163,6 +171,17 @@ public class UserData {
                 settingsAttributeMoyLine = Config.getBoolean(exportSettings, "attributeMoyLine");
                 settingsWithTxtElements = Config.getBoolean(exportSettings, "withTxtElements");
                 settingsTiersExportSlider = (int) Config.getLong(exportSettings, "tiersExportSlider");
+
+                // CONVERT
+
+                HashMap<String, Object> convertParams = config.getSection("convert");
+
+                HashMap<String, Object> convertFields = Config.getSection(convertParams, "fields");
+                lastConvertSrcDir = Config.getString(convertFields, "srcDir");
+                lastConvertFileName = Config.getString(convertFields, "outFileName");
+
+                HashMap<String, Object> convertSettings = Config.getSection(convertParams, "settings");
+                settingsConvertAloneImages = Config.getBoolean(convertSettings, "convertAloneImages");
 
                 // SINGLE
 
@@ -379,6 +398,21 @@ public class UserData {
             exportParams.put("settings", exportSettings);
 
             config.base.put("export", exportParams);
+
+            // CONVERT
+
+            HashMap<String, Object> convertParams = config.getSection("convert");
+
+            LinkedHashMap<Object, Object> convertFields = new LinkedHashMap<>();
+            convertFields.put("srcDir", lastConvertSrcDir);
+            convertFields.put("outFileName", lastConvertFileName);
+            convertParams.put("fields", convertFields);
+
+            LinkedHashMap<Object, Object> convertSettings = new LinkedHashMap<>();
+            convertSettings.put("convertAloneImages", settingsConvertAloneImages);
+            convertParams.put("settings", convertSettings);
+
+            config.base.put("export", convertParams);
 
             // SINGLE
 

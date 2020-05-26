@@ -5,6 +5,8 @@ import java.io.IOException;
 import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
+import fr.themsou.document.render.convert.ConvertDocument;
+import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
@@ -90,13 +92,17 @@ public class MainScreen extends Pane {
 			info.setVisible(true);
 
 			if(status.get() == Status.CLOSED){
+				infoLink.setVisible(true);
 				info.setText(TR.tr("Aucun document ouvert"));
-				infoLink.setVisible(false);
+				infoLink.setText(TR.tr("Convertir des images en documents PDF"));
+				infoLink.setOnAction(e -> new ConvertDocument());
+
 			}else if(status.get() == Status.ERROR){
 				info.setText(TR.tr("Impossible de charger ce document") + "\n\n" +
 						TR.tr("Vérifiez que le fichier n'est pas corrompus") + "\n" +
 						TR.tr("et que PDF4Teachers a les droites de lecture sur ce fichier."));
 				infoLink.setVisible(false);
+
 			}else if(status.get() == Status.ERROR_EDITION){
 				infoLink.setVisible(true);
 				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
@@ -128,7 +134,7 @@ public class MainScreen extends Pane {
 		info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 		getChildren().add(info);
 
-		infoLink.setFont(new Font("FreeSans", 22));
+		infoLink.setFont(new Font("FreeSans", 15));
 		infoLink.setStyle("-fx-text-fill: white;");
 		infoLink.setLayoutY(60);
 		infoLink.setTextAlignment(TextAlignment.CENTER);

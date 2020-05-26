@@ -1,8 +1,6 @@
 package fr.themsou.main;
 
 import java.io.*;
-import java.sql.Date;
-import java.sql.Timestamp;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;
@@ -49,7 +47,8 @@ public class Main extends Application {
 		// PREPARATION
 
 		settings = new Settings();
-		LanguageWindow.copyFiles();
+		// force to re-copy all files only if version has changed
+		LanguageWindow.copyFiles(!settings.getSettingsVersion().equals(VERSION));
 
 		if(languageAsk()){
 			if(liscenceAsk()){

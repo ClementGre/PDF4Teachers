@@ -7,16 +7,22 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import fr.themsou.document.render.convert.ConvertDocument;
+import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
+import javafx.geometry.VPos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
 public class LBFileTab extends Tab {
 
@@ -90,8 +96,27 @@ public class LBFileTab extends Tab {
 		}, null, null);
 		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
-		separator.getChildren().addAll(options, files);
+		// Convert button
 
+		Pane convert = new Pane();
+
+		Text label = new Text("Convertir");
+		label.setFont(FontUtils.getFont("Lato", false, false, 18));
+		label.setFill(Color.WHITE);
+		label.translateXProperty().bind(convert.widthProperty().divide(2).subtract(label.getLayoutBounds().getWidth()/2));
+		label.translateYProperty().bind(convert.heightProperty().divide(2).add(label.getLayoutBounds().getHeight()/2));
+		label.setTextOrigin(VPos.BOTTOM);
+		label.setTextAlignment(TextAlignment.CENTER);
+
+		convert.setCursor(Cursor.HAND);
+		convert.setStyle("-fx-background-color: #0078d7;");
+		convert.setOnMouseEntered((e) -> convert.setStyle("-fx-background-color: #006bc0;"));
+		convert.setOnMouseExited((e) -> convert.setStyle("-fx-background-color: #0078d7;"));
+		convert.setOnMouseClicked((e) -> new ConvertDocument());
+		convert.getChildren().add(label);
+		convert.setMinHeight(30);
+
+		separator.getChildren().addAll(options, files, convert);
 	}
 
 	private void openFile(File file){
@@ -146,6 +171,12 @@ public class LBFileTab extends Tab {
 		for(File file : openedFilesList){
 			files.getItems().add(file);
 		}
+	}
+
+	public File getCurrentDir(){
+		if(MainWindow.mainScreen.hasDocument(false)) return MainWindow.mainScreen.document.getFile().getParentFile();
+		if(files.getItems().size() != 0) return files.getItems().get(0);
+		return null;
 	}
 
 }

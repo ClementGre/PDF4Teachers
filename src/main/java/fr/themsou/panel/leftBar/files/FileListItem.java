@@ -2,7 +2,6 @@ package fr.themsou.panel.leftBar.files;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
@@ -15,8 +14,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -44,7 +42,6 @@ public class FileListItem extends ListCell<File>{
     }
 
     public void setupGraphic(){
-        setStyle("-fx-padding: 2 15;");
 
         pane = new VBox();
         nameBox = new HBox();
@@ -56,19 +53,21 @@ public class FileListItem extends ListCell<File>{
 
         path.setFont(new Font(10));
         pane.getChildren().addAll(nameBox, path);
-        setGraphic(pane);
 
         menu = FileListView.getNewMenu();
+        setStyle("-fx-padding: 2 15;");
     }
 
     @Override
     public void updateItem(File file, boolean empty) {
         super.updateItem(file, empty);
 
-        if(empty || getItem() == null){
+        if(empty){
             setGraphic(null);
             setTooltip(null);
             setContextMenu(null);
+            setOnMouseClicked(null);
+
         }else{
 
             path.setText(getItem().getAbsolutePath().replace(System.getProperty("user.home"), "~").replace(getItem().getName(), ""));
@@ -116,7 +115,6 @@ public class FileListItem extends ListCell<File>{
             }
 
             nameBox.getChildren().add(name);
-
             setGraphic(pane);
             setContextMenu(menu);
             setOnMouseClicked(onClick);

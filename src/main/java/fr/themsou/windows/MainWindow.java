@@ -54,6 +54,8 @@ public class MainWindow extends Stage{
     public MainWindow(){
 
         root = new BorderPane();
+        new JMetro(root, Style.LIGHT);
+
         Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth()-200 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth()-200, Main.SCREEN_BOUNDS.getHeight()-200 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-200);
 
         setTitle(TR.tr("PDF4Teachers - Aucun document"));
@@ -74,6 +76,7 @@ public class MainWindow extends Stage{
             }
             System.exit(0);
         });
+
     }
     public void setup(){
 
@@ -91,6 +94,7 @@ public class MainWindow extends Stage{
         lbPaintTab = new LBPaintTab();
 
         menuBar = new MenuBar();
+        new JMetro(menuBar, Style.DARK);
 
         mainScreen.repaint();
         footerBar.repaint();
@@ -127,11 +131,6 @@ public class MainWindow extends Stage{
 
         new Macro(root);
 
-//		THEME
-
-        new JMetro(root, Style.LIGHT);
-        new JMetro(menuBar, Style.DARK);
-
 //		SHOWING
 
         userDataSaver.start();
@@ -159,6 +158,7 @@ public class MainWindow extends Stage{
                 });
             }
         }).start();
+
 
 
     }

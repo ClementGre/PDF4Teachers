@@ -29,13 +29,9 @@ import java.util.Optional;
 
 public class FileListView extends ListView<File>{
 
-
     public FileListView(){
 
-        setStyle("-fx-border-width: 0px;");
-        setMaxHeight(Double.MAX_VALUE);
-        VBox.setVgrow(this, Priority.ALWAYS);
-
+        VBox.setVgrow(this, Priority.SOMETIMES);
         setOnMouseClicked((MouseEvent event) -> {
             refresh();
         });

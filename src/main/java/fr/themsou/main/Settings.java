@@ -167,6 +167,8 @@ public class Settings {
                     }
                 }
                 reader.close();
+
+                if(!settingsVersion.equals(Main.VERSION)) saveSettings();
             }
         }catch (IOException e){ e.printStackTrace(); }
     }

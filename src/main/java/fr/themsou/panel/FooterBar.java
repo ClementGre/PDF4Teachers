@@ -9,6 +9,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 @SuppressWarnings("serial")
 public class FooterBar extends AnchorPane {
@@ -18,7 +20,7 @@ public class FooterBar extends AnchorPane {
 	public Text rightInfo = new Text("");
 
 	public FooterBar(){
-
+		new JMetro(this, Style.DARK);
 		setup();
 	}
 
@@ -52,7 +54,6 @@ public class FooterBar extends AnchorPane {
 	public void setup(){
 
 		setPrefHeight(20);
-
 		setBackground(new Background(new BackgroundFill(Color.rgb(43, 43, 43), CornerRadii.EMPTY, Insets.EMPTY)));
 
 		AnchorPane.setLeftAnchor(leftInfo, 10.0);

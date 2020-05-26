@@ -176,14 +176,14 @@ public class LanguageWindow extends Stage{
 
     }
 
-    public static void copyFiles(){
+    public static void copyFiles(boolean force){
         try{
             File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
             translationsDir.mkdirs();
 
             for(String fileName : TO_COPY_FILES){
                 File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
-                if(!dest.exists()){
+                if(!dest.exists() || force){
                     InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
                     Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
                 }
