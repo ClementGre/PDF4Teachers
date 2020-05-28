@@ -1,12 +1,17 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.panel.leftBar.texts.SortPanelTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.sort.SortManager;
+import fr.themsou.utils.style.StyleManager;
+import fr.themsou.windows.MainWindow;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ToggleButton;
@@ -67,7 +72,7 @@ public abstract class TextTreeSection extends TreeItem {
             }
             clearElements();
             for(TextTreeItem item : TextTreeView.autoSortList(toSort, sortType, order)) getChildren().add(item);
-        }, null, null);
+        }, null);
 
         setupSortManager();
         setExpanded(true);
@@ -80,12 +85,18 @@ public abstract class TextTreeSection extends TreeItem {
         sortToggleBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
         sortToggleBtn.setTooltip(Builders.genToolTip(TR.tr("Trier")));
 
+        if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
+        else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+        sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) sortToggleBtn.setStyle("");
+            else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+        });
+
         pane.setAlignment(Pos.CENTER);
         pane.setPrefHeight(18);
         pane.setStyle("-fx-padding: -6 -6 -6 0;");
 
         Text name = new Text(sectionName);
-        name.setFont(new Font(14));
         pane.getChildren().add(name);
 
         Region spacer = new Region();
@@ -96,17 +107,25 @@ public abstract class TextTreeSection extends TreeItem {
 
         menu = TextTreeView.getCategoryMenu(this);
     }
+    public void updateGraphics(){
+        if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
+        else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+
+        sortManager.updateGraphics();
+
+        MainWindow.lbTextTab.treeView.refresh();
+    }
     public void updateCell(TreeCell cell){
         cell.setOnMouseClicked(null);
 
         cell.setMaxHeight(30);
-        cell.setStyle("-fx-padding: 6 6 6 2; -fx-background-color: #cccccc;");
+        cell.setStyle("-fx-padding: 6 6 6 2; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
         cell.setContextMenu(menu);
 
         cell.setGraphic(pane);
     }
 
-    public void updateChildrendGraphics(){
+    public void updateChildrenGraphics(){
         for(Object item : getChildren()){
             if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
         }

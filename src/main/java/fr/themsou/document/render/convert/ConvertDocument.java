@@ -5,8 +5,6 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.control.Alert;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
@@ -30,10 +28,7 @@ public class ConvertDocument {
 
                 MainWindow.lbFilesTab.openFiles(new File[]{file.file});
 
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Conversion terminée"));
+                Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
 
                 if(convertedFiles.size() == 0) alert.setHeaderText(TR.tr("Aucun document n'a été convertis !"));
                 else if(convertedFiles.size() == 1) alert.setHeaderText(TR.tr("Le document a bien été créé !"));

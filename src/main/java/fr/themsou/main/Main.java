@@ -4,6 +4,7 @@ import java.io.*;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.LicenseWindow;
 import fr.themsou.windows.LogWindow;
@@ -47,8 +48,10 @@ public class Main extends Application {
 		// PREPARATION
 
 		settings = new Settings();
+
 		// force to re-copy all files only if version has changed
 		LanguageWindow.copyFiles(!settings.getSettingsVersion().equals(VERSION));
+		StyleManager.setup();
 
 		if(languageAsk()){
 			if(liscenceAsk()){

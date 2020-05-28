@@ -2,6 +2,8 @@ package fr.themsou.windows;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -20,7 +22,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 public class AboutWindow extends Stage {
 
@@ -36,7 +37,7 @@ public class AboutWindow extends Stage {
         setResizable(false);
         setScene(scene);
         setOnCloseRequest(e -> close());
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         setupUi(root);
 
@@ -52,11 +53,11 @@ public class AboutWindow extends Stage {
             logo.setPreserveRatio(true);
 
             Label name = new Label("PDF4Teachers");
-            name.setFont(new Font(23));
+            name.setStyle("-fx-font-size: 23;");
             name.setAlignment(Pos.CENTER);
 
             Label version = new Label(TR.tr("Version") + " " + Main.VERSION);
-            version.setFont(new Font(15));
+            version.setStyle("-fx-font-size: 15;");
             version.setAlignment(Pos.CENTER);
 
             Button newVersion = null;
@@ -72,20 +73,20 @@ public class AboutWindow extends Stage {
 
             HBox devInfo = new HBox();
                 Label dev = new Label(TR.tr("Développeur :") + " ");
-                dev.setFont(new Font(17));
+                dev.setStyle("-fx-font-size: 17;");
 
                 Hyperlink devName = new Hyperlink("Clément Grennerat");
-                devName.setFont(new Font(17));
+                devName.setStyle("-fx-font-size: 17;");
                 devName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/clementgre"));
             devInfo.getChildren().addAll(dev, devName);
             devInfo.setAlignment(Pos.CENTER);
 
             HBox consInfo = new HBox();
                 Label cons = new Label(TR.tr("Concepteur :") + " ");
-                cons.setFont(new Font(17));
+                cons.setStyle("-fx-font-size: 17;");
 
                 Hyperlink consName = new Hyperlink("Vincent Grennerat");
-                consName.setFont(new Font(17));
+                consName.setStyle("-fx-font-size: 17;");
                 consName.setOnAction(t -> Main.hostServices.showDocument("https://github.com/grensv"));
                 consInfo.getChildren().addAll(cons, consName);
             consInfo.setAlignment(Pos.CENTER);
@@ -93,34 +94,34 @@ public class AboutWindow extends Stage {
             HBox transInfo = new HBox();
                 if(!TR.tr("Traducteur : <Votre nom>").equals("Traducteur : <Votre nom>")){
                     Label trans = new Label(TR.tr("Traducteur : <Votre nom>"));
-                    trans.setFont(new Font(17));
+                    trans.setStyle("-fx-font-size: 17;");
                     transInfo.getChildren().add(trans);
                 }
             transInfo.setAlignment(Pos.CENTER);
 
             HBox gitInfo = new HBox();
                 Label git = new Label(TR.tr("Projet GitHub :") + " ");
-                git.setFont(new Font(17));
+                git.setStyle("-fx-font-size: 17;");
 
                 Hyperlink gitName = new Hyperlink("ClementGre/PDF4Teachers");
-                gitName.setFont(new Font(17));
+                gitName.setStyle("-fx-font-size: 17;");
                 gitName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/clementgre/PDF4Teachers"));
             gitInfo.getChildren().addAll(git, gitName);
             gitInfo.setAlignment(Pos.CENTER);
 
             HBox twitterInfo = new HBox();
                 Label twitter = new Label("Twitter : ");
-                twitter.setFont(new Font(17));
+                twitter.setStyle("-fx-font-size: 17;");
 
                 Hyperlink twitterName = new Hyperlink("@PDF4Teachers");
-                twitterName.setFont(new Font(17));
+                twitterName.setStyle("-fx-font-size: 17;");
                 twitterName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
             twitterInfo.getChildren().addAll(twitter, twitterName);
             twitterInfo.setAlignment(Pos.CENTER);
 
             HBox issueInfo = new HBox();
                 Hyperlink issueName = new Hyperlink(TR.tr("Demander de l'aide ou signaler un Bug"));
-                issueName.setFont(new Font(17));
+                issueName.setStyle("-fx-font-size: 17;");
                 issueName.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://github.com/clementgre/PDF4Teachers/issues/new"));
                 issueInfo.getChildren().addAll(issueName);
             issueInfo.setAlignment(Pos.CENTER);
@@ -136,7 +137,7 @@ public class AboutWindow extends Stage {
                     Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.19");
                     pdfBox.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdfbox.apache.org/"));
 
-                    Hyperlink jMetro = new Hyperlink("JMetro 11.5.11");
+                    Hyperlink jMetro = new Hyperlink("JMetro 11.6.11");
                     jMetro.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pixelduke.com/java-javafx-theme-jmetro/"));
 
                     Hyperlink latex = new Hyperlink("JLatexMath 1.0.7");

@@ -2,18 +2,15 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
-import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.PlatformTools;
-import fr.themsou.utils.ReturnCallBack;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -23,12 +20,10 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.File;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
 
 public class ExportWindow {
 
@@ -57,7 +52,7 @@ public class ExportWindow {
         window.setTitle("PDF4Teachers - " + TR.tr("Exporter") + " (" + files.size() + " " + TR.tr("documents)"));
         window.setScene(scene);
         window.setOnCloseRequest(e -> window.close());
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         if(files.size() == 1){
             setupSimplePanel(root);
@@ -188,7 +183,6 @@ public class ExportWindow {
         HBox replace = new HBox();
 
             Label replaceText = new Label(TR.tr("Remplacer"));
-            replaceText.setFont(new Font(14));
 
             TextField replaceInput = new TextField(MainWindow.userData.lastExportFileNameReplace);
             replaceInput.setMinWidth(1);
@@ -197,7 +191,6 @@ public class ExportWindow {
             replaceInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
             Label byText = new Label(TR.tr("par"));
-            byText.setFont(new Font(14));
 
             TextField byInput = new TextField(MainWindow.userData.lastExportFileNameBy);
             byInput.setMinWidth(1);
@@ -297,16 +290,13 @@ public class ExportWindow {
                                  boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
 
         erase = eraseFile;
-        loadingAlert = new Alert(Alert.AlertType.INFORMATION);
+        loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
         exported = 0;
         total = 0;
 
         // Wait Dialog
 
         loadingAlert.setWidth(600);
-        new JMetro(loadingAlert.getDialogPane(), Style.LIGHT);
-        Builders.secureAlert(loadingAlert);
-        loadingAlert.setTitle(TR.tr("Exportation..."));
         loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
 
         VBox pane = new VBox();
@@ -345,10 +335,7 @@ public class ExportWindow {
 
                     // Error dialog
                     if(PlatformTools.runAndWait(() -> {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
-                        new JMetro(alert.getDialogPane(), Style.LIGHT);
-                        Builders.secureAlert(alert);
-                        alert.setTitle(TR.tr("Erreur d'exportation"));
+                        Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
                         alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName());
                         alert.setContentText(TR.tr("Choisissez une action."));
 
@@ -387,10 +374,7 @@ public class ExportWindow {
         loadingAlert.close();
         window.close();
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        new JMetro(alert.getDialogPane(), Style.LIGHT);
-        Builders.secureAlert(alert);
-        alert.setTitle(TR.tr("Exportation terminée"));
+        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
 
         if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
         else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));

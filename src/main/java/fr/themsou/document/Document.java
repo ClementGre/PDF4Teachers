@@ -1,10 +1,9 @@
 package fr.themsou.document;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.display.PDFPagesRender;
 import fr.themsou.document.render.display.PageRenderer;
+import fr.themsou.document.render.display.PageStatus;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -13,8 +12,6 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +75,13 @@ public class Document {
             page.updateZoom();
         }
     }
+    public void updateBackgrounds(){
+        for(PageRenderer page : pages){
+            page.setStatus(PageStatus.HIDE);
+        }
+        updateShowsStatus();
+    }
+
     public void loadEdition(){
         this.edition = new Edition(file, this);
         if(!documentSaver.isAlive()) documentSaver.start();
@@ -109,16 +113,14 @@ public class Document {
         if(Main.settings.isAutoSave()){
             edition.save();
         }else{
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            alert.setTitle(TR.tr("Édition non sauvegardée"));
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Édition non sauvegardée"));
             alert.setHeaderText(TR.tr("L'édition du document n'est pas enregistrée."));
             alert.setContentText(TR.tr("Voulez-vous l'enregistrer ?"));
             ButtonType yesButton = new ButtonType(TR.tr("Oui"), ButtonBar.ButtonData.YES);
             ButtonType noButton = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.NO);
             ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
-            Builders.secureAlert(alert);
+
             Optional<ButtonType> option = alert.showAndWait();
             if(option.get() == yesButton){
                 edition.save(); return true;

@@ -4,6 +4,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -16,8 +18,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.File;
 
 public class GradeExportWindow extends Stage {
@@ -41,7 +42,7 @@ public class GradeExportWindow extends Stage {
         setResizable(false);
         setTitle(TR.tr("PDF4Teachers - Exporter les notes"));
         setScene(scene);
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         Text info = new Text(TR.tr("Exporter les notes des fichiers ouverts dans un tableau CSV") + "\n" + TR.tr("Lors de l'importation dans un tableur, la langue du fichier sera à régler sur Anglais"));
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
@@ -122,7 +123,6 @@ public class GradeExportWindow extends Stage {
 
 
                 Label replaceText = new Label(TR.tr("Remplacer"));
-                replaceText.setFont(new Font(14));
                 Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 fileNameReplace = new TextField(MainWindow.userData.lastExportFileNameReplace);
@@ -130,7 +130,6 @@ public class GradeExportWindow extends Stage {
                 fileNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
-                byText.setFont(new Font(14));
                 Builders.setHBoxPosition(byText, 0, 30, 2.5);
 
                 fileNameBy = new TextField(MainWindow.userData.lastExportFileNameBy);
@@ -160,7 +159,6 @@ public class GradeExportWindow extends Stage {
                 HBox studentNameReplaceBox = new HBox();
 
                 Label replaceText = new Label(TR.tr("Remplacer"));
-                replaceText.setFont(new Font(14));
                 Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 studentNameReplace = new TextField(MainWindow.userData.lastExportStudentNameReplace);
@@ -168,7 +166,6 @@ public class GradeExportWindow extends Stage {
                 studentNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
-                byText.setFont(new Font(14));
                 Builders.setHBoxPosition(byText, 0, 30, 2.5);
 
                 studentNameBy = new TextField(MainWindow.userData.lastExportStudentNameBy);
@@ -304,7 +301,6 @@ public class GradeExportWindow extends Stage {
             }
 
             Label info = new Label(text);
-            info.setFont(new Font(14));
             Builders.setVBoxPosition(info, 0, 0, 2.5);
             box.getChildren().add(info);
 
@@ -315,10 +311,7 @@ public class GradeExportWindow extends Stage {
 
             close();
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Exportation terminée"));
+            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
 
             if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
             else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));

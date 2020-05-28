@@ -1,6 +1,7 @@
 package fr.themsou.utils.sort;
 
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.style.StyleManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectPropertyBase;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -15,19 +16,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class SortManager {
 
     private HashMap<Button, BooleanProperty> buttons = new HashMap<>();
     private ObjectPropertyBase<Button> selectedButton = new SimpleObjectProperty<>();
 
-    public String idleColor = "#cccccc";
     public String selectedColor = "#0078d7";
 
     private SortEvent updateSort;
 
-    public SortManager(SortEvent updateSort, String idleColor, String selectedColor){
-        if(idleColor != null) this.idleColor = idleColor;
+    public SortManager(SortEvent updateSort, String selectedColor){
         if(selectedColor != null) this.selectedColor = selectedColor;
         this.updateSort = updateSort;
     }
@@ -52,8 +52,8 @@ public class SortManager {
 
             if(selectedButtonName.equals(buttonName)){
                 selectedButton.set(button);
-                button.setStyle("-fx-background-color: " + selectedColor);
-            }else button.setStyle("-fx-background-color: " + idleColor);
+                button.setStyle("-fx-background-color: " + selectedColor + ";");
+            }else button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
 
             // Image de l'ordre
             order.addListener(new ChangeListener<>() {
@@ -77,10 +77,14 @@ public class SortManager {
 
         // Couleurs des boutons
         selectedButton.addListener((observableValue, lastSelected, newSelected) -> {
-            lastSelected.setStyle("-fx-background-color: " + idleColor);
-            newSelected.setStyle("-fx-background-color: " + selectedColor);
+            lastSelected.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            newSelected.setStyle("-fx-background-color: " + selectedColor + ";");
             updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
         });
+    }
+    public void updateGraphics(){
+        for(Button button : buttons.keySet())
+            if(button != selectedButton.get()) button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
     }
 
     public void simulateCall(){

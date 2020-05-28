@@ -9,6 +9,7 @@ import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
@@ -27,7 +28,7 @@ import java.util.regex.Pattern;
 
 public class GradeElement extends Element {
 
-    private Text text = new Text();
+    private ScratchText text = new ScratchText();
 
     private StringProperty name;
     private DoubleProperty value;

@@ -32,6 +32,11 @@ public class TextTreeFavorites extends TextTreeSection {
 
         pane.getChildren().add(pane.getChildren().size()-1, listsManager.saveListBtn);
         pane.getChildren().add(pane.getChildren().size()-1, listsManager.loadListBtn);
+    }
 
+    @Override
+    public void updateGraphics(){
+        super.updateGraphics();
+        listsManager.updateGraphics();
     }
 }

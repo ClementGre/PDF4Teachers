@@ -4,6 +4,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.CallBack;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -17,7 +19,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 
@@ -234,7 +235,7 @@ public class LicenseWindow extends Stage{
             close();
             System.exit(0);
         });
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         root.setContent(container);
         setupPanel(container);
@@ -253,9 +254,8 @@ public class LicenseWindow extends Stage{
         Text info = new Text(TR.tr("Vous devez accepter la licence pour accéder à l'application"));
 
         Label license = new Label(LICENSE);
-        license.setFont(FontUtils.getFont("Arial", false, false, 12));
         license.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-
+        license.setStyle("-fx-font-size: 12; -fx-padding: 10;");
 
         HBox btns = new HBox();
         Button cancel = new Button(TR.tr("Refuser"));
@@ -268,8 +268,6 @@ public class LicenseWindow extends Stage{
         root.setStyle("-fx-padding: 10;");
 
         VBox.setMargin(info, new Insets(40, 10, 40, 0));
-        license.setStyle("-fx-padding: 10;");
-
         HBox.setMargin(cancel, new Insets(20, 5, 0, 0));
         HBox.setMargin(accept, new Insets(20, 0, 0, 5));
 

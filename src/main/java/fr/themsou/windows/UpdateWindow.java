@@ -7,6 +7,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -19,7 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -91,7 +93,7 @@ public class UpdateWindow extends Stage {
         setResizable(false);
         setTitle(TR.tr("PDF4Teachers - Nouvelle Version"));
         setScene(scene);
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         setupPanel(root);
         show();
@@ -103,8 +105,8 @@ public class UpdateWindow extends Stage {
 
         Text version = new Text(TR.tr("Vous utilisez la version") + " " + Main.VERSION + " " + TR.tr("et la version") + " " + UpdateWindow.version + " " + TR.tr("est disponible.") + "\n\n" + TR.tr("Description :"));
 
-        Label desc = new Label(new TextWrapper(UpdateWindow.description, FontUtils.getFont("Arial", false, false, 12),490).wrap());
-        desc.setFont(FontUtils.getFont("Arial", false, false, 12));
+        Label desc = new Label(new TextWrapper(UpdateWindow.description, FontUtils.getFont("Arial", false, false, 12.5),490).wrap());
+        desc.setStyle("-fx-padding: 10; -fx-font-size: 12.5;");
         desc.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 
@@ -119,7 +121,6 @@ public class UpdateWindow extends Stage {
         VBox.setMargin(info, new Insets(40, 0, 40, 0));
         VBox.setMargin(version, new Insets(0, 0, 5, 0));
 
-        desc.setStyle("-fx-padding: 10;");
         VBox.setMargin(maj, new Insets(20, 0, 0, 0));
 
     }

@@ -9,6 +9,7 @@ import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -22,6 +23,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
@@ -110,11 +113,11 @@ public class PageRenderer extends Pane{
 
                         Pane sub = new Pane();
 
-                        Text name = new Text(item.name.getText());
+                        ScratchText name = new ScratchText(item.name.getText());
                         name.setTextOrigin(VPos.TOP);
                         name.setLayoutY(3);
                         name.setFont(item.name.getFont());
-                        name.setFill(item.name.getTextFill());
+                        name.setFill(item.name.getFill());
 
                         sub.setOnMouseClicked(event -> item.addToDocument(false));
 
@@ -401,5 +404,8 @@ public class PageRenderer extends Pane{
         return elements;
     }
 
+    public void setStatus(PageStatus status){
+        this.status = status;
+    }
 
 }

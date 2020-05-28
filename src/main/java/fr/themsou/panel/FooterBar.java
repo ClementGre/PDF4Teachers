@@ -2,15 +2,13 @@ package fr.themsou.panel;
 
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.beans.binding.Bindings;
-import javafx.geometry.Insets;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 @SuppressWarnings("serial")
 public class FooterBar extends AnchorPane {
@@ -20,7 +18,7 @@ public class FooterBar extends AnchorPane {
 	public Text rightInfo = new Text("");
 
 	public FooterBar(){
-		new JMetro(this, Style.DARK);
+		StyleManager.putStyle(this, Style.ACCENT);
 		setup();
 	}
 
@@ -54,7 +52,7 @@ public class FooterBar extends AnchorPane {
 	public void setup(){
 
 		setPrefHeight(20);
-		setBackground(new Background(new BackgroundFill(Color.rgb(43, 43, 43), CornerRadii.EMPTY, Insets.EMPTY)));
+		//setBackground(new Background(new BackgroundFill(Color.rgb(43, 43, 43), CornerRadii.EMPTY, Insets.EMPTY)));
 
 		AnchorPane.setLeftAnchor(leftInfo, 10.0);
 		AnchorPane.setRightAnchor(rightInfo, 10.0);
@@ -63,14 +61,11 @@ public class FooterBar extends AnchorPane {
 		AnchorPane.setBottomAnchor(middleInfo, 3.0);
 		AnchorPane.setBottomAnchor(rightInfo, 3.0);
 
-		leftInfo.setFill(Color.WHITE);
-		middleInfo.setFill(Color.WHITE);
-		rightInfo.setFill(Color.WHITE);
 		middleInfo.translateXProperty().bind(widthProperty().divide(2).subtract(leftInfo.getLayoutBounds().getWidth()));
 
-		leftInfo.setFont(new Font("FreeSans", 15));
-		middleInfo.setFont(new Font("FreeSans", 15));
-		rightInfo.setFont(new Font("FreeSans", 15));
+		leftInfo.setStyle("-fx-font-size: 15;");
+		middleInfo.setStyle("-fx-font-size: 15;");
+		rightInfo.setStyle("-fx-font-size: 15;");
 
 		getChildren().add(leftInfo);
 		getChildren().add(middleInfo);

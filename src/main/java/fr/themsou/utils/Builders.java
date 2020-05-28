@@ -1,10 +1,10 @@
 package fr.themsou.utils;
 
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -155,32 +155,34 @@ public class Builders {
         }
     }
 
-    public static void secureAlert(Dialog alert){
-        ((Stage) alert.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Builders.class.getResource("/logo.png")+""));
-        alert.setOnShowing(new EventHandler<DialogEvent>() {
-            @Override public void handle(DialogEvent e) {
-                new Thread(new Runnable() {
-                    @Override  public void run() {
+    public static Alert getAlert(Alert.AlertType type, String title){
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
 
-                        try{
-                            Thread.sleep(400);
-                        }catch(InterruptedException ex){ ex.printStackTrace();  }
+        setupDialog(alert);
+        return alert;
+    }
+    public static void setupDialog(Dialog dialog){
 
-                        Platform.runLater(new Runnable(){
-                            @Override public void run(){
-                                if(alert.isShowing()){
-                                    if(alert.getDialogPane().getScene().getWindow().getWidth() < 100){
-                                        alert.getDialogPane().getScene().getWindow().setWidth(500);
-                                        alert.getDialogPane().getScene().getWindow().setHeight(200);
-                                    }
-                                }
-                            }
-                        });
+        ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(Builders.class.getResource("/logo.png")+""));
+        StyleManager.putStyle(dialog.getDialogPane(), Style.DEFAULT);
 
+        dialog.setOnShowing(e -> new Thread(() -> {
+
+            try{
+                Thread.sleep(400);
+            }catch(InterruptedException ex){ ex.printStackTrace();  }
+
+            Platform.runLater(() -> {
+                if(dialog.isShowing()){
+                    if(dialog.getDialogPane().getScene().getWindow().getWidth() < 100){
+                        dialog.getDialogPane().getScene().getWindow().setWidth(500);
+                        dialog.getDialogPane().getScene().getWindow().setHeight(200);
                     }
-                }, "AlertResizer").start();
-            }
-        });
+                }
+            });
+
+        }, "AlertResizer").start());
     }
 
     public static String[] cleanArray(String[] array) {

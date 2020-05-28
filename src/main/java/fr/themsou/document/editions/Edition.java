@@ -19,8 +19,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.*;
 import java.util.*;
 
@@ -278,10 +277,7 @@ public class Edition {
     public static void clearEdit(File file, boolean confirm){
 
         if(confirm){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Confirmation"));
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
@@ -305,10 +301,7 @@ public class Edition {
 
     public void clearEdit(boolean confirm){
         if(confirm){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Confirmation"));
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 

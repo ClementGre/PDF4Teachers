@@ -11,6 +11,7 @@ import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
+import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.ObjectProperty;
@@ -34,7 +35,7 @@ import javax.imageio.ImageIO;
 
 public class TextElement extends Element {
 
-	private Text text = new Text();
+	private ScratchText text = new ScratchText();
 	private ImageView image = new ImageView();
 
 	public static final float imageFactor = 2.5f;

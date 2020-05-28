@@ -3,10 +3,10 @@ package fr.themsou.windows;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -18,9 +18,6 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -58,7 +55,7 @@ public class LanguageWindow extends Stage{
         setOnCloseRequest(event -> {
             callBack.call("");
         });
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("English US");
         
@@ -99,7 +96,6 @@ public class LanguageWindow extends Stage{
             HBox box = new HBox();
             box.setStyle("-fx-padding: -5;");
             Label label = new Label(language.getKey());
-            label.setFont(new Font(14));
             label.setPrefHeight(50);
             HBox.setMargin(label, new Insets(0, 0, 0, 10));
             box.getChildren().addAll(language.getValue(), label);
@@ -132,9 +128,7 @@ public class LanguageWindow extends Stage{
         });
         newTrans.setOnAction((ActionEvent event) -> {
 
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            alert.setTitle(TR.tr("Télécharger le fichier de traduction"));
+            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Télécharger les fichier de traduction"));
 
             alert.setHeaderText(TR.tr("Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue." +
                     "\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation"));
@@ -146,7 +140,7 @@ public class LanguageWindow extends Stage{
             ButtonType englishFile = new ButtonType(TR.tr("Enregistrer les fichiers déjà traduits en Anglais"), ButtonBar.ButtonData.NO);
             ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(originFile, englishFile, cancelButton);
-            Builders.secureAlert(alert);
+
             Optional<ButtonType> option = alert.showAndWait();
 
             String name = "";

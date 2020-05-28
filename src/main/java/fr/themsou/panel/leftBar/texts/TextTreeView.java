@@ -198,9 +198,9 @@ public class TextTreeView extends TreeView<String>{
     }
 
     public static void updateListsGraphic(){
-        favoritesSection.updateChildrendGraphics();
-        lastsSection.updateChildrendGraphics();
-        onFileSection.updateChildrendGraphics();
+        favoritesSection.updateChildrenGraphics();
+        lastsSection.updateChildrenGraphics();
+        onFileSection.updateChildrenGraphics();
     }
 
     public static void addSavedElement(TextTreeItem element){

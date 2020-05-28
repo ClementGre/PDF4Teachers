@@ -6,17 +6,14 @@ import fr.themsou.document.Document;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.convert.ConvertDocument;
-import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.PlatformTools;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -27,8 +24,6 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 public class MainScreen extends Pane {
 
@@ -126,16 +121,14 @@ public class MainScreen extends Pane {
 		pane.setBorder(Border.EMPTY);
 		getChildren().add(pane);
 
-		info.setFont(new Font("FreeSans", 22));
-		info.setStyle("-fx-text-fill: white;");
+		info.setStyle("-fx-text-fill: white; -fx-font-size: 22;");
 		info.setTextAlignment(TextAlignment.CENTER);
 
 		info.translateXProperty().bind(widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
 		info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
 		getChildren().add(info);
 
-		infoLink.setFont(new Font("FreeSans", 15));
-		infoLink.setStyle("-fx-text-fill: white;");
+		infoLink.setStyle("-fx-text-fill: white; -fx-font-size: 15;");
 		infoLink.setLayoutY(60);
 		infoLink.setTextAlignment(TextAlignment.CENTER);
 
@@ -344,11 +337,7 @@ public class MainScreen extends Pane {
 
 		if(status.get() != Status.OPEN){
 			if(confirm){
-				Alert alert = new Alert(Alert.AlertType.ERROR);
-				new JMetro(alert.getDialogPane(), Style.LIGHT);
-				Builders.secureAlert(alert);
-				alert.setAlertType(Alert.AlertType.ERROR);
-				alert.setTitle(TR.tr("Erreur"));
+				Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur"));
 				alert.setHeaderText(TR.tr("Aucun document n'est ouvert !"));
 				alert.setContentText(TR.tr("Cette action est censée s'éxécuter sur un document ouvert"));
 

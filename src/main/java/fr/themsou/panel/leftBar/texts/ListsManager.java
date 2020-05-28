@@ -4,9 +4,9 @@ import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeFavorites;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.StyleManager;
 import javafx.scene.control.*;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +31,8 @@ public class ListsManager {
         Builders.setPosition(loadListBtn, 0, 0, 30, 30, true);
         Builders.setPosition(saveListBtn, 0, 0, 30, 30, true);
 
+        updateGraphics();
+
         setupMenu();
         loadListBtn.setOnMouseClicked(e -> {
             menu.show(loadListBtn, e.getScreenX(), e.getScreenY());
@@ -39,8 +41,7 @@ public class ListsManager {
         saveListBtn.setOnAction(event -> {
 
             TextInputDialog alert = new TextInputDialog(TR.tr("Nouvelle liste"));
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
+            Builders.setupDialog(alert);
 
             alert.setTitle(TR.tr("Enregistrer les éléments favoris"));
             alert.setHeaderText(TR.tr("Vous allez enregistrer les éléments favoris dans une nouvelle liste."));
@@ -50,10 +51,7 @@ public class ListsManager {
             if(result.isPresent()){
                 if(!result.get().isEmpty()){
                     if(favoritesSection.favoriteLists.containsKey(result.get())){
-                        Alert alert2 = new Alert(Alert.AlertType.WARNING);
-                        new JMetro(alert2.getDialogPane(), Style.LIGHT);
-                        Builders.secureAlert(alert2);
-                        alert2.setTitle(TR.tr("Liste déjà existante"));
+                        Alert alert2 = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Liste déjà existante"));
                         alert2.setHeaderText(TR.tr("Une liste du même nom existe déjà."));
                         alert2.setContentText(TR.tr("Choisissez une action."));
 
@@ -73,6 +71,11 @@ public class ListsManager {
         });
     }
 
+    public void updateGraphics(){
+        loadListBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+        saveListBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+    }
+
     public void setupMenu(){
         menu.getItems().clear();
         menu.setMinWidth(400);
@@ -84,10 +87,7 @@ public class ListsManager {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
 
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    new JMetro(alert.getDialogPane(), Style.LIGHT);
-                    Builders.secureAlert(alert);
-                    alert.setTitle(TR.tr("Actions de listes"));
+                    Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Actions de listes"));
                     alert.setHeaderText(TR.tr("Choisissez une action a effectuer avec la liste d'éléments.") + "\n" + TR.tr("Ces actions sont irréversibles."));
                     alert.setContentText(TR.tr("- Vider et charger remplacera la liste des éléments favoris par celle ci") + "\n" +
                                          TR.tr("- Charger ajoutera cette liste d'éléments à la liste des éléments favoris") + "\n" +
@@ -132,11 +132,7 @@ public class ListsManager {
                 favoritesSection.favoriteLists.put(listName, list);
             }
         }
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        new JMetro(alert.getDialogPane(), Style.LIGHT);
-        Builders.secureAlert(alert);
-        alert.setTitle(TR.tr("Liste sauvegardée"));
-
+        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste sauvegardée"));
         alert.setHeaderText(TR.tr("La liste a bien été sauvegardée !"));
         alert.setContentText(TR.tr("La liste pourra être chargée via le bouton de liste"));
         alert.show();
@@ -148,10 +144,7 @@ public class ListsManager {
 
         favoritesSection.favoriteLists.remove(listName);
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        new JMetro(alert.getDialogPane(), Style.LIGHT);
-        Builders.secureAlert(alert);
-        alert.setTitle(TR.tr("Liste supprimée"));
+        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste supprimée"));
 
         alert.setHeaderText(TR.tr("La liste") + " \"" + listName + "\" " + TR.tr("a bien été supprimé."));
         alert.show();

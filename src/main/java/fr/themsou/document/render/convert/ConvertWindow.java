@@ -6,6 +6,8 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.CallBack;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,22 +17,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
-import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ConvertWindow extends Stage {
@@ -60,7 +56,7 @@ public class ConvertWindow extends Stage {
         setResizable(false);
         setTitle(TR.tr("PDF4Teachers - Convertir"));
         setScene(scene);
-        new JMetro(root, Style.LIGHT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         Text info;
 
@@ -245,7 +241,6 @@ public class ConvertWindow extends Stage {
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
             Builders.setHBoxPosition(definition, -1, 30, 2.5);
-            definition.setStyle("-fx-font-size: 13");
             definition.getSelectionModel().select("2.07Mp (Full HD / A4 150dpi)");
             definitionColumn.getChildren().add(definition);
 
@@ -255,11 +250,9 @@ public class ConvertWindow extends Stage {
             format = new ComboBox<>(formats);
             format.setEditable(true);
             Builders.setHBoxPosition(format, -1, 30, 2.5);
-            format.setStyle("-fx-font-size: 13");
             format.getSelectionModel().select("594:841 (A4 " + TR.tr("Portrait") + ")");
             formatColumn.getChildren().add(format);
 
-            
             // SIZE COLUMN
 
             GridPane sizeColumn = new GridPane();
@@ -323,6 +316,7 @@ public class ConvertWindow extends Stage {
 
             columns.getChildren().addAll(definitionColumn, formatColumn, sizeColumn);
             root.getChildren().addAll(separator, columns);
+
         }
         private void updateWidthAndHeight(){
             int width = (int) Math.sqrt((mp*1000000) / (heightFactor / ((double) widthFactor)));
@@ -408,7 +402,6 @@ public class ConvertWindow extends Stage {
             }
 
             Label info = new Label(text);
-            info.setFont(new Font(14));
             Builders.setVBoxPosition(info, 0, 0, 2.5);
             box.getChildren().add(info);
 

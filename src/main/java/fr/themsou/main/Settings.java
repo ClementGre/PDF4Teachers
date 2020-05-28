@@ -23,6 +23,7 @@ public class Settings {
     private BooleanProperty checkUpdates = new SimpleBooleanProperty();
     private int defaultZoom;
     private BooleanProperty zoomAnimations = new SimpleBooleanProperty();
+    private BooleanProperty darkTheme = new SimpleBooleanProperty();
 
     private BooleanProperty autoSave = new SimpleBooleanProperty();
     private int regularSaving;
@@ -40,6 +41,7 @@ public class Settings {
         defaultZoom = 130;
         if(System.getProperty("os.name").equals("Mac OS X")) zoomAnimations.set(false);
         else zoomAnimations.set(true);
+        darkTheme.set(false);
 
         autoSave.set(false);
         regularSaving = -1;
@@ -57,6 +59,9 @@ public class Settings {
             saveSettings();
         });
         zoomAnimationsProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
+            saveSettings();
+        });
+        darkThemeProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
         });
 
@@ -133,6 +138,11 @@ public class Settings {
                                 zoomAnimations.set(Boolean.parseBoolean(value));
                             }catch(Exception ignored){}
                         break;
+                        case "darkTheme":
+                            try{
+                                darkTheme.set(Boolean.parseBoolean(value));
+                            }catch(Exception ignored){}
+                        break;
 
                             /////
 
@@ -203,6 +213,9 @@ public class Settings {
                 writer.newLine();
                 writer.write("zoomAnimations: " + zoomAnimations.get());
 
+                writer.newLine();
+                writer.write("darkTheme: " + darkTheme.get());
+
                 /////
 
                 writer.newLine();
@@ -247,7 +260,6 @@ public class Settings {
     }
     public void setCheckUpdates(boolean checkUpdates) {
         this.checkUpdates.set(checkUpdates);
-        saveSettings();
     }
 
     public boolean isZoomAnimations() {
@@ -256,9 +268,14 @@ public class Settings {
     public BooleanProperty zoomAnimationsProperty() {
         return zoomAnimations;
     }
-    public void setZoomAnimations(boolean zoomAnimations) {
-        this.zoomAnimations.set(zoomAnimations);
-        saveSettings();
+    public boolean isDarkTheme() {
+        return darkTheme.get();
+    }
+    public BooleanProperty darkThemeProperty() {
+        return darkTheme;
+    }
+    public void setDarkTheme(boolean darkTheme) {
+        this.darkTheme.set(darkTheme);
     }
 
     public int getDefaultZoom(){
@@ -274,7 +291,6 @@ public class Settings {
 
     public void setAutoSaving(boolean autoSave){
         this.autoSave.set(autoSave);
-        saveSettings();
     }
     public BooleanProperty autoSavingProperty(){
         return this.autoSave;
@@ -296,7 +312,6 @@ public class Settings {
     }
     public void setRestoreLastSession(boolean restoreLastSession) {
         this.restoreLastSession.set(restoreLastSession);
-        saveSettings();
     }
 
     public boolean isRemoveElementInPreviousListWhenAddingToFavorites() {
@@ -307,7 +322,6 @@ public class Settings {
     }
     public void setRemoveElementInPreviousListWhenAddingToFavorites(boolean removeElementInPreviousListWhenAddingToFavorites) {
         this.removeElementInPreviousListWhenAddingToFavorites.set(removeElementInPreviousListWhenAddingToFavorites);
-        saveSettings();
     }
 
     public boolean isShowOnlyStartInTextsList() {
@@ -318,7 +332,6 @@ public class Settings {
     }
     public void setShowOnlyStartInTextsList(boolean showOnlyStartInTextsList) {
         this.showOnlyStartInTextsList.set(showOnlyStartInTextsList);
-        saveSettings();
     }
 
     public boolean isSmallFontInTextsList() {
@@ -329,7 +342,6 @@ public class Settings {
     }
     public void setSmallFontInTextsList(boolean smallFontInTextsList) {
         this.smallFontInTextsList.set(smallFontInTextsList);
-        saveSettings();
     }
 
     public String getLanguage() {
@@ -340,6 +352,5 @@ public class Settings {
     }
     public void setLanguage(String language) {
         this.language.set(language);
-        saveSettings();
     }
 }

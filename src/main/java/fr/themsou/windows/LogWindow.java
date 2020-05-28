@@ -4,6 +4,8 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.CustomPrintStream;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,7 +16,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.PrintStream;
 
 public class LogWindow extends Stage {
@@ -37,7 +39,7 @@ public class LogWindow extends Stage {
             updater.stop();
             close();
         });
-        new JMetro(scene, Style.DARK);
+        StyleManager.putStyle(scene, Style.DEFAULT);
 
         Pane pane = new Pane();
         root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -68,7 +70,7 @@ public class LogWindow extends Stage {
 
     private void setupUi(Pane root){
 
-        text.setFont(FontUtils.getFont("Arial", false, false, 14));
+        text.setStyle("-fx-font-size: 14;");
         text.setStyle("-fx-color: white; -fx-padding: 10;");
         text.setWrapText(true);
         text.prefWidthProperty().bind(root.widthProperty());

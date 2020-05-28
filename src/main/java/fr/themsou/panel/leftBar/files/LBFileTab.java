@@ -13,6 +13,7 @@ import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
@@ -26,7 +27,7 @@ import javafx.scene.text.TextAlignment;
 
 public class LBFileTab extends Tab {
 
-	private SortManager sortManager;
+	public SortManager sortManager;
 	private VBox separator = new VBox();
 	private GridPane options = new GridPane();
 
@@ -93,20 +94,18 @@ public class LBFileTab extends Tab {
 				backOpenFilesList(!order);
 			}
 
-		}, null, null);
+		}, null);
 		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
 		// Convert button
 
 		Pane convert = new Pane();
 
-		Text label = new Text("Convertir");
-		label.setFont(FontUtils.getFont("Lato", false, false, 18));
-		label.setFill(Color.WHITE);
-		label.translateXProperty().bind(convert.widthProperty().divide(2).subtract(label.getLayoutBounds().getWidth()/2));
-		label.translateYProperty().bind(convert.heightProperty().divide(2).add(label.getLayoutBounds().getHeight()/2));
-		label.setTextOrigin(VPos.BOTTOM);
-		label.setTextAlignment(TextAlignment.CENTER);
+		Label label = new Label("Convertir");
+		label.setStyle("-fx-font-size: 18; -fx-text-fill: white;");
+		label.prefWidthProperty().bind(convert.widthProperty());
+		label.prefHeightProperty().bind(convert.heightProperty());
+		label.setAlignment(Pos.CENTER);
 
 		convert.setCursor(Cursor.HAND);
 		convert.setStyle("-fx-background-color: #0078d7;");

@@ -10,8 +10,6 @@ import fr.themsou.utils.TR;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -99,15 +97,14 @@ public class ExportRenderer {
                 new File(directory).mkdirs();
             }else{
                 if(PlatformTools.runAndWait(() -> {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    new JMetro(alert.getDialogPane(), Style.LIGHT);
-                    alert.setTitle(TR.tr("Dossier introuvable"));
+                    Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Dossier introuvable"));
                     alert.setHeaderText(TR.tr("Le dossier d'exportation n'existe pas"));
                     alert.setContentText(TR.tr("Créer le dossier, ou modifier la destination ?"));
+
                     ButtonType yesButton = new ButtonType(TR.tr("Créer le dossier"), ButtonBar.ButtonData.YES);
                     ButtonType cancelButton = new ButtonType(TR.tr("Modifier la destination"), ButtonBar.ButtonData.CANCEL_CLOSE);
                     alert.getButtonTypes().setAll(yesButton, cancelButton);
-                    Builders.secureAlert(alert);
+
                     Optional<ButtonType> option = alert.showAndWait();
                     if(option.get() == yesButton){
                         new File(directory).mkdirs();
@@ -127,18 +124,17 @@ public class ExportRenderer {
 
         if(new File(uri).exists() && !erase){
             int i = PlatformTools.runAndWait(() -> {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                alert.setTitle(TR.tr("Fichier déjà existant"));
+                Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
                 alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + uri.replace(directory + File.separator, "") + "\" " +TR.tr("existe déjà"));
                 alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
+
                 ButtonType yesButton = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.YES);
                 ButtonType yesAlwaysButton = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.YES);
                 ButtonType renameButton = new ButtonType(TR.tr("Renommer"), ButtonBar.ButtonData.OTHER);
                 ButtonType cancelButton = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 ButtonType cancelAllButton = new ButtonType(TR.tr("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
-                Builders.secureAlert(alert);
+
                 Optional<ButtonType> option = alert.showAndWait();
                 if(option.get() == cancelAllButton){
                     return 0;

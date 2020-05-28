@@ -9,8 +9,6 @@ import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -66,10 +64,7 @@ public class GradeExportRenderer {
             }catch(Exception e){
                 e.printStackTrace();
 
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                new JMetro(alert.getDialogPane(), Style.LIGHT);
-                Builders.secureAlert(alert);
-                alert.setTitle(TR.tr("Erreur d'exportation"));
+                Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
                 alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document"));
                 alert.setContentText(TR.tr("Impossible d'exporter."));
 
@@ -104,10 +99,7 @@ public class GradeExportRenderer {
                 }catch(Exception e){
                     e.printStackTrace();
 
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    new JMetro(alert.getDialogPane(), Style.LIGHT);
-                    Builders.secureAlert(alert);
-                    alert.setTitle(TR.tr("Erreur d'exportation"));
+                    Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
                     alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
@@ -256,10 +248,7 @@ public class GradeExportRenderer {
             if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())) files.add(defaultFile);
         }catch(Exception e){
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Impossible de lire les notes"));
+            Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
             alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
             alert.setContentText(TR.tr("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
 
@@ -293,10 +282,7 @@ public class GradeExportRenderer {
 
                 }catch(Exception e) {
                     e.printStackTrace();
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
-                    new JMetro(alert.getDialogPane(), Style.LIGHT);
-                    Builders.secureAlert(alert);
-                    alert.setTitle(TR.tr("Impossible de lire les notes"));
+                    Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
                     alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
@@ -371,18 +357,17 @@ public class GradeExportRenderer {
 
     public int fileAlreadyExist(File file){
 
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        new JMetro(alert.getDialogPane(), Style.LIGHT);
-        alert.setTitle(TR.tr("Fichier déjà existant"));
+        Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
         alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + file.getAbsolutePath() + "\" " + TR.tr("existe déjà"));
         alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
+
         ButtonType yesButton = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.YES);
         ButtonType yesAlwaysButton = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.YES);
         ButtonType renameButton = new ButtonType(TR.tr("Renommer"), ButtonBar.ButtonData.OTHER);
         ButtonType cancelButton = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType cancelAllButton = new ButtonType(TR.tr("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
-        Builders.secureAlert(alert);
+
         Optional<ButtonType> option = alert.showAndWait();
         if(option.get() == cancelAllButton){
             return 2;

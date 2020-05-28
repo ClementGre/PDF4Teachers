@@ -4,6 +4,8 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
@@ -25,8 +27,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.awt.*;
 import java.io.*;
 import java.net.URI;
@@ -92,29 +93,31 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeRadioMenuItem preferences5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
 			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
 
+	NodeRadioMenuItem preferences6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
+			TR.tr("Change les couleurs de l'interface vers un thème plus sombre."), true);
 
 
-	NodeRadioMenuItem preferences6Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+	NodeRadioMenuItem preferences7Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
 			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	NodeRadioMenuItem preferences7Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+	NodeRadioMenuItem preferences8Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
 			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
 
-
-	NodeRadioMenuItem preferences8RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	NodeRadioMenuItem preferences9RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem preferences9ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	NodeRadioMenuItem preferences10ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem preferences10SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	NodeRadioMenuItem preferences11SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
 	////////// OTHER //////////
 
 	public Menu apropos = new Menu();
+
 	Menu aide = new Menu(TR.tr("Aide"));
 	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide"));
 	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
@@ -139,29 +142,31 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		preferences2Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
 		preferences3Update.selectedProperty().set(Main.settings.isCheckUpdates());
 		preferences5Animation.selectedProperty().set(Main.settings.isZoomAnimations());
+		preferences6DarkTheme.selectedProperty().set(Main.settings.isDarkTheme());
 
-		preferences6Save.selectedProperty().set(Main.settings.isAutoSave());
-		preferences7Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
+		preferences7Save.selectedProperty().set(Main.settings.isAutoSave());
+		preferences8Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
 
-		preferences8RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-		preferences9ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-		preferences10SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
+		preferences9RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+		preferences10ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+		preferences11SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
 
 		// BIND
 		Main.settings.restoreLastSessionProperty().bind(preferences2Restore.selectedProperty());
 		Main.settings.checkUpdatesProperty().bind(preferences3Update.selectedProperty());
 		Main.settings.zoomAnimationsProperty().bind(preferences5Animation.selectedProperty());
+		Main.settings.darkThemeProperty().bind(preferences6DarkTheme.selectedProperty());
 
-		Main.settings.autoSavingProperty().bind(preferences6Save.selectedProperty());
+		Main.settings.autoSavingProperty().bind(preferences7Save.selectedProperty());
 
-		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences8RemoveWhenAdd.selectedProperty());
-		Main.settings.showOnlyStartInTextsListProperty().bind(preferences9ShowStart.selectedProperty());
-		Main.settings.smallFontInTextsListProperty().bind(preferences10SmallFont.selectedProperty());
+		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences9RemoveWhenAdd.selectedProperty());
+		Main.settings.showOnlyStartInTextsListProperty().bind(preferences10ShowStart.selectedProperty());
+		Main.settings.smallFontInTextsListProperty().bind(preferences11SmallFont.selectedProperty());
 
 		// ADD
-		preferences.getItems().addAll(preferences1Language, preferences2Restore, preferences3Update, preferences4Zoom, preferences5Animation,
-				new SeparatorMenuItem(), preferences6Save, preferences7Regular,
-				new SeparatorMenuItem(), preferences8RemoveWhenAdd, preferences9ShowStart, preferences10SmallFont);
+		preferences.getItems().addAll(preferences1Language, preferences2Restore, preferences3Update, preferences4Zoom, preferences5Animation, preferences6DarkTheme,
+				new SeparatorMenuItem(), preferences7Save, preferences8Regular,
+				new SeparatorMenuItem(), preferences9RemoveWhenAdd, preferences10ShowStart, preferences11SmallFont);
 
 		////////// OTHER //////////
 
@@ -219,10 +224,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		});
 		fichier6DeleteAll.setOnAction((ActionEvent e) -> {
-			Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
-			new JMetro(dialog.getDialogPane(), Style.LIGHT);
-			Builders.secureAlert(dialog);
-			dialog.setTitle(TR.tr("Supprimer les éditions"));
+			Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
 			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
 
@@ -254,10 +256,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				size = yesButSize;
 			}else return;
 
-			Alert alert = new Alert(Alert.AlertType.INFORMATION);
-			new JMetro(alert.getDialogPane(), Style.LIGHT);
-			Builders.secureAlert(alert);
-			alert.setTitle(TR.tr("Supression terminée"));
+			Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Supression terminée"));
 			alert.setHeaderText(TR.tr("Vos éditions ont bien été supprimés."));
 			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
@@ -275,10 +274,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				MenuItem item = new MenuItem(file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
 				fichier8SameName.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
-					Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
-					new JMetro(dialog.getDialogPane(), Style.LIGHT);
-					Builders.secureAlert(dialog);
-					dialog.setTitle(TR.tr("Charger une autre édition"));
+					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
 					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
 
 					ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -305,14 +301,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 									if(fromEditFile.exists()){
 										Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
 									}else{
-										Alert alert = new Alert(Alert.AlertType.ERROR);
-										new JMetro(alert.getDialogPane(), Style.LIGHT);
-										alert.setTitle(TR.tr("Fichier introuvable"));
+										Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier introuvable"));
 										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
 										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
 										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);
-										Builders.secureAlert(alert);
+
 										Optional<ButtonType> option2 = alert.showAndWait();
 										if(option2.get() == cancelAll) return;
 									}
@@ -360,10 +354,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		preferences4Zoom.setOnAction((ActionEvent actionEvent) -> {
 
+
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
 			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
-			new JMetro(dialog.getDialogPane(), Style.LIGHT);
-			Builders.secureAlert(dialog);
+			Builders.setupDialog(dialog);
+
 			dialog.setTitle(TR.tr("Zoom par défaut"));
 			dialog.setHeaderText(TR.tr("Zoom par défaut lors de l'ouverture d'un document"));
 			dialog.setContentText(TR.tr("Choisir un pourcentage :"));
@@ -374,9 +369,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 
 		});
-		preferences7Regular.setOnAction((ActionEvent actionEvent) -> {
+		preferences8Regular.setOnAction((ActionEvent actionEvent) -> {
 
-			Alert dialog = new Alert(Alert.AlertType.CONFIRMATION);
+			Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
 
 			HBox pane = new HBox();
 			ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
@@ -390,11 +385,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			HBox.setMargin(combo, new Insets(0, 0, 0, 30));
 
 			combo.disableProperty().bind(activated.selectedProperty().not());
-
-			new JMetro(dialog.getDialogPane(), Style.LIGHT);
-			Builders.secureAlert(dialog);
-
-			dialog.setTitle(TR.tr("Sauvegarde régulière"));
 			dialog.setHeaderText(TR.tr("Définir le nombre de minutes entre deux sauvegardes automatiques."));
 
 			dialog.getDialogPane().setContent(pane);
@@ -407,10 +397,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(option.get() == ok){
 				if(activated.isSelected()){
 					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					preferences7Regular.setSelected(true);
+					preferences8Regular.setSelected(true);
 				}else{
 					Main.settings.setRegularSaving(-1);
-					preferences7Regular.setSelected(false);
+					preferences8Regular.setSelected(false);
 				}
 
 			}
@@ -432,13 +422,19 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Main.hostServices.showDocument("https://twitter.com/PDF4Teachers");
 		});
 
+		fichier.setStyle("-fx-font-size: 12;");
+		preferences.setStyle("-fx-font-size: 12;");
+		aide.setStyle("-fx-font-size: 12;");
+
 		Label name = new Label(TR.tr("À propos"));
+		name.setStyle("-fx-font-size: 12;");
 		name.setAlignment(Pos.CENTER_LEFT);
 		name.setOnMouseClicked(event -> new AboutWindow());
 		apropos.setGraphic(name);
 
 		// UI Style
-		setStyle("-fx-background-color: #2B2B2B;");
+		setStyle("");
+		StyleManager.putStyle(this, Style.ACCENT);
 		getMenus().addAll(fichier, preferences, apropos, aide);
 
 		for(Menu menu : getMenus()){

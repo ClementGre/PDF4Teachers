@@ -9,6 +9,8 @@ import fr.themsou.utils.Builders;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
+import fr.themsou.utils.components.ScratchText;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.binding.Bindings;
@@ -19,7 +21,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
@@ -31,9 +32,11 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -54,7 +57,7 @@ public class TextTreeItem extends TreeItem{
 	// Graphics items
 	public HBox pane = new HBox();
 	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 15, 15);
-	public Label name = new Label();
+	public ScratchText name = new ScratchText();
 	public ContextMenu menu;
 	public EventHandler<MouseEvent> onMouseCLick;
 
@@ -118,8 +121,11 @@ public class TextTreeItem extends TreeItem{
 				}
 			}
 		};
+		name.setFill(StyleManager.convertColor(color.get()));
+		colorProperty().addListener((observable, oldValue, newValue) -> {
+			name.setFill(StyleManager.convertColor(newValue));
+		});
 
-		name.textFillProperty().bind(colorProperty());
 		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.smallFontInTextsListProperty()));
 
 		updateIcon();
@@ -158,13 +164,14 @@ public class TextTreeItem extends TreeItem{
 			}
 		}
 
-
-		name.setMinHeight(18);
 		name.setStyle("-fx-padding: 0;");
 		name.setText(wrappedText);
+		name.setFill(StyleManager.convertColor(color.get()));
+
 		pane.setStyle("-fx-padding: " + (Main.settings.isSmallFontInTextsList() ? 0 : 1) + " 0;");
 
 	}
+	Rectangle rect = new Rectangle();
 	public void updateIcon(){ // Re définis les children de la pane
 
 		pane.getChildren().clear();
@@ -181,18 +188,22 @@ public class TextTreeItem extends TreeItem{
 			pane.getChildren().add(spacer);
 		}
 
-		Circle circle = new Circle();
-		circle.setFill(Color.BLACK);
-		circle.setRadius(2);
-		HBox.setMargin(circle, new Insets(7, 3, 7, 3));
 
-		pane.getChildren().addAll(circle, name);
+		rect.setWidth(4);
+		rect.setHeight(4);
+		rect.setFill(StyleManager.convertColor(Color.WHITE));
+		HBox.setMargin(rect, new Insets(7, 3, 7, 3));
+
+		pane.getChildren().addAll(rect, name);
 
 	}
 	public void updateCell(TreeCell<String> cell){ // Réatribue une cell à la pane
 
 		if(cell == null) return;
 		if(name.getText().isEmpty()) updateGraphic();
+
+		name.setFill(StyleManager.convertColor(color.get()));
+		rect.setFill(StyleManager.convertColor(Color.WHITE));
 
 		cell.setGraphic(pane);
 		cell.setStyle(null);

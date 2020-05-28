@@ -5,6 +5,8 @@ import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.Style;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -19,7 +21,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.util.Map;
 
@@ -40,7 +41,7 @@ public class GradeSettingsWindow extends Stage {
         setHeight(390);
         setTitle(TR.tr("PDF4Teachers - Polices et Couleurs des Notes"));
         setScene(scene);
-        new JMetro(scene, Style.LIGHT);
+        StyleManager.putStyle(scene, Style.DEFAULT);
 
         setupPanel(root);
         show();

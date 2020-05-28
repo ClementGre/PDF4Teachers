@@ -2,27 +2,17 @@ package fr.themsou.panel.leftBar.files;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
-import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.NodeMenuItem;
-import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.util.Callback;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.Optional;
@@ -66,14 +56,12 @@ public class FileListView extends ListView<File>{
 
         item4.setOnAction(e -> {
 
-            Alert alert = new Alert(Alert.AlertType.WARNING);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Confirmation"));
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document et son édition ?"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
+            if(result.isEmpty()) return;
             if(result.get() == ButtonType.OK){
                 MainWindow.lbFilesTab.removeFile(new File(((MenuItem)e.getSource()).getParentPopup().getId()));
                 Edition.clearEdit(new File(((MenuItem)e.getSource()).getParentPopup().getId()), false);

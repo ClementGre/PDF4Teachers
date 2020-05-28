@@ -8,6 +8,7 @@ import fr.themsou.windows.MainWindow;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -26,8 +27,8 @@ public class FileListItem extends ListCell<File>{
 
     VBox pane;
     HBox nameBox;
-    Text name;
-    Text path;
+    Label name;
+    Label path;
 
     ImageView check = new ImageView();
     ImageView checkLow = new ImageView();
@@ -45,13 +46,13 @@ public class FileListItem extends ListCell<File>{
 
         pane = new VBox();
         nameBox = new HBox();
-        name = new Text();
-        path = new Text();
+        name = new Label();
+        path = new Label();
 
         HBox.setMargin(checkLow, new Insets(0, 4, 0, 0));
         HBox.setMargin(check, new Insets(0, 4, 0, 0));
 
-        path.setFont(new Font(10));
+        path.setStyle("-fx-font-size: 9;");
         pane.getChildren().addAll(nameBox, path);
 
         menu = FileListView.getNewMenu();
@@ -71,10 +72,9 @@ public class FileListItem extends ListCell<File>{
         }else{
 
             path.setText(getItem().getAbsolutePath().replace(System.getProperty("user.home"), "~").replace(getItem().getName(), ""));
-            path.setFill(Color.BLACK);
 
             name.setText(StringUtils.removeAfterLastRejex(file.getName(), ".pdf"));
-            name.setFont(Font.font(null, FontWeight.NORMAL, 12));
+            name.setStyle("-fx-font-size: 13;");
 
             nameBox.getChildren().clear();
             menu.setId(file.getAbsolutePath());
@@ -87,7 +87,7 @@ public class FileListItem extends ListCell<File>{
 
                     if(elementsCount[0] > 0){ // Has Elements
 
-                        name.setFont(Font.font(null, FontWeight.BOLD, 12));
+                        name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
 
                         path.setText(path.getText() + " | " + Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade);
                         setTooltip(new Tooltip(Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade + "\n" + Main.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + Main.format.format(elementsCount[2]) + "/" + Main.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + Main.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
@@ -109,7 +109,6 @@ public class FileListItem extends ListCell<File>{
                     setTooltip(new Tooltip(TR.tr("Non édité")));
                 }
             }catch(Exception e){
-                path.setFill(Color.RED);
                 path.setText(path.getText() + " | " + TR.tr("Impossible de récupérer les informations"));
                 setTooltip(new Tooltip(e.getMessage()));
             }

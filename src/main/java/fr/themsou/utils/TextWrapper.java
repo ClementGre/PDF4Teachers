@@ -1,4 +1,5 @@
 package fr.themsou.utils;
+import fr.themsou.utils.components.ScratchText;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -84,7 +85,7 @@ public class TextWrapper {
     }
 
     private boolean test(String line){
-        Text toTest = new Text(line); toTest.setFont(font);
+        ScratchText toTest = new ScratchText(line); toTest.setFont(font);
         return toTest.getBoundsInParent().getWidth() < maxWidth;
     }
 

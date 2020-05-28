@@ -4,6 +4,7 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -135,43 +136,35 @@ public class GradeTreeItem extends TreeItem {
 
         // TEXTS
 
-        name.setFont(new Font(14));
         HBox.setMargin(name, new Insets(0, 0, 0, 5));
         name.textProperty().bind(core.nameProperty());
 
-        slash.setFont(new Font(14));
-
-        value.setFont(new Font(14));
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
         value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
 
-        total.setFont(new Font(14));
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
         total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
 
         // FIELDS
 
         nameField.setStyle("-fx-font-size: 13;");
-        nameField.setFont(new Font(13));
         nameField.setMinHeight(29);
         nameField.setMaxHeight(29);
         nameField.setMinWidth(29);
 
         gradeField.setStyle("-fx-font-size: 13;");
-        gradeField.setFont(new Font(13));
         gradeField.setMinHeight(29);
         gradeField.setMaxHeight(29);
         gradeField.setMinWidth(29);
         HBox.setMargin(gradeField, new Insets(0, 0, 0, 5));
 
         totalField.setStyle("-fx-font-size: 13;");
-        totalField.setFont(new Font(13));
         totalField.setMinHeight(29);
         totalField.setMaxHeight(29);
         totalField.setMinWidth(29);
         HBox.setMargin(totalField, new Insets(0, 5, 0, 0));
 
-        Text meter = new Text();
+        ScratchText meter = new ScratchText();
         meter.setFont(nameField.getFont());
 
         nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
@@ -291,15 +284,11 @@ public class GradeTreeItem extends TreeItem {
         pane.setPrefHeight(18);
         pane.setStyle("-fx-padding: -6 -6 -6 0;"); // top - right - bottom - left
 
-        name.setFont(new Font(14));
         name.textProperty().bind(core.nameProperty());
-        slash.setFont(new Font(14));
 
-        value.setFont(new Font(14));
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
         value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
 
-        total.setFont(new Font(14));
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
         total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
 

@@ -117,7 +117,6 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
 		boldBtn.setCursor(Cursor.HAND);
-		boldBtn.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -125,7 +124,6 @@ public class LBTextTab extends Tab {
 		});
 
 		Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
-		itBtn.setFont(Font.font("Arial", FontPosture.ITALIC, 20));
 		itBtn.setCursor(Cursor.HAND);
 		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));

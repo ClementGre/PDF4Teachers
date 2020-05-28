@@ -6,11 +6,8 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
@@ -91,10 +88,7 @@ public class PDFPagesEditor{
     public void deletePage(PageRenderer page){
 
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            new JMetro(alert.getDialogPane(), Style.LIGHT);
-            Builders.secureAlert(alert);
-            alert.setTitle(TR.tr("Confirmation"));
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.tr("du document") + "\n" + TR.tr("Le éléments de cette page seront supprimés et les notes seront réinitialisés"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
