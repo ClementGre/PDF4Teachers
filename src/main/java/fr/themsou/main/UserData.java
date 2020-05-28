@@ -191,6 +191,8 @@ public class UserData {
                 e.printStackTrace();
             }
 
+            if(!new File(lastConvertSrcDir).exists()) lastConvertSrcDir = System.getProperty("user.home");
+
             Platform.runLater(() -> {
                 TextTreeView.favoritesSection.sortManager.simulateCall();
                 TextTreeView.lastsSection.sortManager.simulateCall();

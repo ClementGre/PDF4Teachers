@@ -174,7 +174,7 @@ public class LBFileTab extends Tab {
 
 	public File getCurrentDir(){
 		if(MainWindow.mainScreen.hasDocument(false)) return MainWindow.mainScreen.document.getFile().getParentFile();
-		if(files.getItems().size() != 0) return files.getItems().get(0);
+		if(files.getItems().size() != 0) return files.getItems().get(0).getParentFile();
 		return null;
 	}
 

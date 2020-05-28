@@ -25,22 +25,29 @@ import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ConvertWindow extends Stage {
 
     public static ObservableList<String> definitions = FXCollections.observableArrayList(
-            "0.50Mp (A4 72 dpi)", "0.77Mp (HD / A4 96dpi)", "2.07Mp (Full HD / A4 150dpi)", "3.69Mp (Quad HD)", "8.29Mp (4k / A4 300dpi)");
+            TR.tr("Adapter à l'image"), "0.50Mp (A4 72 dpi)", "0.77Mp (HD / A4 96dpi)", "2.07Mp (Full HD / A4 150dpi)", "3.69Mp (Quad HD)", "8.29Mp (4k / A4 300dpi)");
     public static ObservableList<String> formats = FXCollections.observableArrayList(
-            "594:841 (A4 " + TR.tr("Portrait") + ")", "841:594 (A4 " + TR.tr("Paysage") + ")", "16:9", "9:16", "4:3", "3:4");
+            TR.tr("Adapter à l'image"), "594:841 (A4 " + TR.tr("Portrait") + ")", "841:594 (A4 " + TR.tr("Paysage") + ")", "16:9", "9:16", "4:3", "3:4");
+
+    DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
     PDRectangle defaultSize;
     CallBack<ArrayList<ConvertedFile>> callBack;
     public ConvertWindow(PDRectangle defaultSize, CallBack<ArrayList<ConvertedFile>> callBack){
         this.defaultSize = defaultSize;
         this.callBack = callBack;
+
+        df.setMaximumFractionDigits(340);
 
         TabPane tabPane = new TabPane();
 
@@ -60,20 +67,21 @@ public class ConvertWindow extends Stage {
 
         Text info;
 
-        if(defaultSize == null) info = new Text(TR.tr("Convertir des images en documents PDF") + "\n\n" +
-                TR.tr("Il est possible de :") + "\n" +
-                TR.tr("- convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)") + "\n" +
-                TR.tr("- convertir plusieurs dossiers en plusieurs documents PDF\n   (Chaque dossier sera convertis en un document, les images contenus dans le dossier représentent les pages)"));
-        else info = new Text(TR.tr("Convertir des images en documents PDF") + "\n\n" +
-                TR.tr("Chaque image sera convertie en une page"));
+        if(defaultSize == null) info = new Text(TR.tr("Convertir des images en documents PDF"));
+        else{
+            info = new Text(TR.tr("Convertir des images en pages de document PDF"));
+            int gcd = GCD((int)defaultSize.getWidth(), (int)defaultSize.getHeight());
+            int heightFactor = (int) (gcd == 0 ? defaultSize.getHeight() : defaultSize.getHeight()/gcd);
+            int widthFactor = (int) (gcd == 0 ? defaultSize.getWidth() : defaultSize.getWidth()/gcd);
+            definitions.add(df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (Ce document)");
+            formats.add(" (Ce document)");
+        }
 
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
         if(defaultSize == null) tabPane.getTabs().add(convertDirs);
         tabPane.getTabs().add(convertFiles);
-
         root.getChildren().addAll(info, tabPane);
-
         show();
     }
 
@@ -99,6 +107,7 @@ public class ConvertWindow extends Stage {
             setContent(root);
             root.setStyle("-fx-padding: 10;");
 
+            setupDesc();
             setupSrcFilesForm();
             setupDocNameForm();
             setupOutDirForm();
@@ -107,19 +116,38 @@ public class ConvertWindow extends Stage {
             setupBtns();
 
         }
+        public void setupDesc(){
+
+            Label desc = new Label();
+
+            if(convertDirs){
+                desc.setText(TR.tr("Convertir plusieurs dossiers en plusieurs documents PDF") + "\n   " +
+                        TR.tr("(Chaque dossier sera convertis en un document, les images contenus dans le dossier représentent les pages") + "\n   " +
+                        TR.tr("L'ordre des pages est pris en fonction de l'ordre alphabétique, Il sera toujours possible de déplacer les pages après."));
+            }else{
+                if(defaultSize != null){
+                    desc.setText(TR.tr("Convertir plusieurs images en pages à ajouter au document"));
+                }else{
+                    desc.setText(TR.tr("Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)"));
+                }
+            }
+
+            Builders.setVBoxPosition(desc, 0, 0, 2.5);
+            root.getChildren().add(desc);
+        }
         public void setupSrcFilesForm(){
 
             VBox info;
 
             if(convertDirs){
-                info = generateInfo(TR.tr("Dossier contenant les dossiers à convertir") + " :", false);
+                info = generateInfo(TR.tr("Dossier contenant les dossiers à convertir") + " :", true);
 
                 HBox filePathBox = new HBox();
 
                 srcDir = new TextField(MainWindow.userData.lastConvertSrcDir);
                 Builders.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
                 srcDir.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if(new File(srcDir.getText()).exists()) MainWindow.userData.lastConvertSrcDir = srcDir.getText() + File.separator;
+                    if(new File(srcDir.getText()).exists()) MainWindow.userData.lastConvertSrcDir = srcDir.getText();
                 });
 
                 Button changePath = new Button(TR.tr("Parcourir"));
@@ -140,7 +168,7 @@ public class ConvertWindow extends Stage {
                 });
 
             }else{
-                info = generateInfo(TR.tr("Fichiers à convertir") + " :", false);
+                info = generateInfo(TR.tr("Fichiers à convertir") + " :", true);
 
                 HBox filePathBox = new HBox();
 
@@ -197,11 +225,8 @@ public class ConvertWindow extends Stage {
 
             HBox filePathBox = new HBox();
 
-            outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() == null ? MainWindow.userData.lastConvertSrcDir : MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath());
+            outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() != null ? MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
             Builders.setHBoxPosition(outDir, -1, 30, 0, 2.5);
-            outDir.textProperty().addListener((observable, oldValue, newValue) -> {
-
-            });
 
             Button changePath = new Button(TR.tr("Parcourir"));
             Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
@@ -277,6 +302,12 @@ public class ConvertWindow extends Stage {
                         this.mp = mp;
                         updateWidthAndHeight();
                     }
+                }else if(newValue.equals(TR.tr("Adapter à l'image"))){
+                    format.getSelectionModel().select(0);
+                    width.setText(TR.tr("Auto"));
+                    height.setText(TR.tr("Auto"));
+                    widthPixels = -1;
+                    heightPixels = -1;
                 }
             });
             format.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
@@ -291,6 +322,8 @@ public class ConvertWindow extends Stage {
                             updateWidthAndHeight();
                         }
                     }
+                }else if(newValue.equals(TR.tr("Adapter à l'image"))){
+                    definition.getSelectionModel().select(0);
                 }
             });
             width.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -338,18 +371,13 @@ public class ConvertWindow extends Stage {
 
             if(this.mp != mp){
                 this.mp = mp;
-                definition.getEditor().setText(mp+"Mp");
+                definition.getEditor().setText(df.format(mp)+"Mp");
             }if(this.heightFactor != heightFactor || this.widthFactor != widthFactor){
                 this.widthFactor = widthFactor;
                 this.heightFactor = heightFactor;
                 format.getEditor().setText(widthFactor + ":" + heightFactor);
             }
         }
-        public int GCD(int a, int b){
-            if(b==0) return a;
-            return GCD(b,a%b);
-        }
-
 
         public void setupSettingsForm(){
             if(convertDirs){
@@ -382,7 +410,28 @@ public class ConvertWindow extends Stage {
             VBox.setVgrow(spacer, Priority.ALWAYS);
 
             export.setOnAction(event -> {
-                end(new ConvertRenderer(this).start());
+                if((widthPixels > 0 && heightPixels > 0) || (width.getText().equals(TR.tr("Auto")) && height.getText().equals(TR.tr("Auto")))){
+                    if(convertDirs || !docName.getText().isEmpty()){
+                        if(new File(outDir.getText()).exists()){
+                            end(new ConvertRenderer(this).start());
+                        }else{
+                            Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
+                            alert.setHeaderText(TR.tr("Le dossier de destination n'existe pas"));
+                            alert.setContentText(outDir.getText() + " : " + TR.tr("Veuillez entrer un chemin correct"));
+                            alert.show();
+                        }
+                    }else{
+                        Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
+                        alert.setHeaderText(TR.tr("Impossible de créer un fichier sans nom"));
+                        alert.setContentText(TR.tr("Veuillez entrer le nom du document dans le champ prévus."));
+                        alert.show();
+                    }
+                }else{
+                    Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
+                    alert.setHeaderText(TR.tr("Impossible de générer des pages de 0Mp"));
+                    alert.setContentText(TR.tr("Veuillez changer les dimensions des pages."));
+                    alert.show();
+                }
             });
             cancel.setOnAction(event -> {
                 window.close();
@@ -413,5 +462,9 @@ public class ConvertWindow extends Stage {
             callBack.call(files);
         }
 
+    }
+    public int GCD(int a, int b){
+        if(b==0) return a;
+        return GCD(b,a%b);
     }
 }

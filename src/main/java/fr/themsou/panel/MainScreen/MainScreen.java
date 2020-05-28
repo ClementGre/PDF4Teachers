@@ -10,6 +10,7 @@ import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -112,12 +113,10 @@ public class MainScreen extends Pane {
 	}
 	public void setup(){
 
-		setStyle("-fx-padding: 0;");
-
-		setBackground(new Background(new BackgroundFill(Color.rgb(80, 80, 80), CornerRadii.EMPTY, Insets.EMPTY)));
+		setStyle("-fx-padding: 0; -fx-background-color: #484848;");
 		setBorder(Border.EMPTY);
 
-		pane.setBackground(new Background(new BackgroundFill(Color.rgb(80, 80, 80), CornerRadii.EMPTY, Insets.EMPTY)));
+		pane.setStyle("-fx-background-color: #484848;");
 		pane.setBorder(Border.EMPTY);
 		getChildren().add(pane);
 
