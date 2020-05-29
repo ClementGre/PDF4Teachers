@@ -42,9 +42,9 @@ public class LogWindow extends Stage {
         StyleManager.putStyle(scene, Style.DEFAULT);
 
         Pane pane = new Pane();
-        root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        root.setStyle("-fx-background-color: black;");
         ScrollPane scrollPane = new ScrollPane(pane);
-        scrollPane.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        scrollPane.setStyle("-fx-background-color: black;");
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.prefWidthProperty().bind(scene.widthProperty());
@@ -70,8 +70,7 @@ public class LogWindow extends Stage {
 
     private void setupUi(Pane root){
 
-        text.setStyle("-fx-font-size: 14;");
-        text.setStyle("-fx-color: white; -fx-padding: 10;");
+        text.setStyle("-fx-font-size: 12; -fx-text-fill: white; -fx-padding: 5;");
         text.setWrapText(true);
         text.prefWidthProperty().bind(root.widthProperty());
         text.minHeight(Double.MAX_VALUE);
