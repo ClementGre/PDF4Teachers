@@ -282,6 +282,7 @@ public class Edition {
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
+            if(result.isEmpty()) return;
             if(result.get() == ButtonType.OK){
                 confirm = false;
             }
@@ -310,7 +311,6 @@ public class Edition {
                 confirm = false;
             }
         }
-
         if(!confirm){
             MainWindow.mainScreen.setSelected(null);
             for(PageRenderer page : document.pages){

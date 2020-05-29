@@ -1,16 +1,17 @@
 package fr.themsou.panel.leftBar.files;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
+import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -22,6 +23,8 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Optional;
 
 public class FileListItem extends ListCell<File>{
 
@@ -33,7 +36,7 @@ public class FileListItem extends ListCell<File>{
     ImageView check = new ImageView();
     ImageView checkLow = new ImageView();
 
-    ContextMenu menu;
+    ContextMenu menu = new ContextMenu();
     EventHandler<MouseEvent> onClick = e -> {
         if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) MainWindow.mainScreen.openFile(getItem());
     };
@@ -55,7 +58,7 @@ public class FileListItem extends ListCell<File>{
         path.setStyle("-fx-font-size: 9;");
         pane.getChildren().addAll(nameBox, path);
 
-        menu = FileListView.getNewMenu();
+        getNewMenu();
         setStyle("-fx-padding: 2 15;");
     }
 
@@ -77,7 +80,6 @@ public class FileListItem extends ListCell<File>{
             name.setStyle("-fx-font-size: 13;");
 
             nameBox.getChildren().clear();
-            menu.setId(file.getAbsolutePath());
 
             try{
                 double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
@@ -113,11 +115,68 @@ public class FileListItem extends ListCell<File>{
                 setTooltip(new Tooltip(e.getMessage()));
             }
 
+            menu.setId(file.getAbsolutePath());
             nameBox.getChildren().add(name);
             setGraphic(pane);
             setContextMenu(menu);
             setOnMouseClicked(onClick);
         }
+    }
+
+    public void getNewMenu(){
+
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), -1, false);
+        item1.setToolTip(TR.tr("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
+        item2.setToolTip(TR.tr("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), -1, false);
+        item3.setToolTip(TR.tr("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), -1, false);
+        item4.setToolTip(TR.tr("Supprime le fichier PDF sur l'ordinateur."));
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), -1, false);
+        item5.setToolTip(TR.tr("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
+        NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+        item6.setToolTip(TR.tr("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
+
+        menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
+        Builders.setMenuSize(menu);
+
+        item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(new File(menu.getId()))));
+
+        item2.setOnAction(e -> MainWindow.lbFilesTab.removeFile(new File(menu.getId())));
+
+        item3.setOnAction(e ->  Edition.clearEdit(new File(menu.getId()), true));
+
+        item4.setOnAction(e -> {
+
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document et son édition ?"));
+            alert.setContentText(TR.tr("Cette action est irréversible."));
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if(result.isEmpty()) return;
+            if(result.get() == ButtonType.OK){
+                MainWindow.lbFilesTab.removeFile(new File(menu.getId()));
+                Edition.clearEdit(new File(menu.getId()), false);
+                new File(menu.getId()).delete();
+            }
+
+        });
+        item5.setOnAction(e -> {
+            if(new File(menu.getId()).exists()){
+
+                if(MainWindow.mainScreen.hasDocument(false)){
+                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(menu.getId())){
+                        MainWindow.mainScreen.document.save();
+                    }
+                }
+
+                new ExportWindow(Collections.singletonList(new File(menu.getId())));
+            }
+
+        });
+        item6.setOnAction(e -> MainWindow.lbFilesTab.clearFiles());
+
     }
 
 }
