@@ -35,9 +35,24 @@ import java.util.regex.Pattern;
 public class ConvertWindow extends Stage {
 
     public static ObservableList<String> definitions = FXCollections.observableArrayList(
-            TR.tr("Adapter à l'image"), "0.50Mp (A4 72 dpi)", "0.77Mp (HD / A4 96dpi)", "2.07Mp (Full HD / A4 150dpi)", "3.69Mp (Quad HD)", "8.29Mp (4k / A4 300dpi)");
+            TR.tr("Adapter à l'image"),
+            "0.501832Mp (A4 72 dpi)",
+            "0.777600Mp (HD)",
+            "0.967590Mp (A4 100dpi)",
+            "2.073600Mp (Full HD)",
+            "3.686400Mp (Quad HD)",
+            "3.868706Mp (A4 200dpi)",
+            "8.294400Mp (Ultra HD 4k)",
+            "8.699840Mp (A4 300dpi)");
+
     public static ObservableList<String> formats = FXCollections.observableArrayList(
-            TR.tr("Adapter à l'image"), "594:841 (A4 " + TR.tr("Portrait") + ")", "841:594 (A4 " + TR.tr("Paysage") + ")", "16:9", "9:16", "4:3", "3:4");
+            TR.tr("Adapter à l'image"),
+            "594:841 (A4 " + TR.tr("Portrait") + ")",
+            "841:594 (A4 " + TR.tr("Paysage") + ")",
+            "16:9",
+            "9:16",
+            "4:3",
+            "3:4");
 
     DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
@@ -52,7 +67,7 @@ public class ConvertWindow extends Stage {
         TabPane tabPane = new TabPane();
 
         ExportPane convertDirs = new ExportPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
-        ExportPane convertFiles = new ExportPane(this, TR.tr("Convertir des fichiers en un document"), false);
+        //ExportPane convertFiles = new ExportPane(this, TR.tr("Convertir des fichiers en un document"), false);
 
         VBox root = new VBox();
         Scene scene = new Scene(root);
@@ -70,17 +85,17 @@ public class ConvertWindow extends Stage {
         if(defaultSize == null) info = new Text(TR.tr("Convertir des images en documents PDF"));
         else{
             info = new Text(TR.tr("Convertir des images en pages de document PDF"));
-            int gcd = GCD((int)defaultSize.getWidth(), (int)defaultSize.getHeight());
+            /*int gcd = GCD((int)defaultSize.getWidth(), (int)defaultSize.getHeight());
             int heightFactor = (int) (gcd == 0 ? defaultSize.getHeight() : defaultSize.getHeight()/gcd);
             int widthFactor = (int) (gcd == 0 ? defaultSize.getWidth() : defaultSize.getWidth()/gcd);
-            definitions.add(df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (Ce document)");
-            formats.add(" (Ce document)");
+            definitions.add(0, df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (" + TR.tr("Ce document") + ")");
+            formats.add(0, widthFactor + ":" + heightFactor + " (" + TR.tr("Ce document") + ")");*/
         }
 
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
         if(defaultSize == null) tabPane.getTabs().add(convertDirs);
-        tabPane.getTabs().add(convertFiles);
+        //tabPane.getTabs().add(convertFiles);
         root.getChildren().addAll(info, tabPane);
         show();
     }
@@ -266,7 +281,6 @@ public class ConvertWindow extends Stage {
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
             Builders.setHBoxPosition(definition, -1, 30, 2.5);
-            definition.getSelectionModel().select("2.07Mp (Full HD / A4 150dpi)");
             definitionColumn.getChildren().add(definition);
 
             // Format COLUMN
@@ -275,7 +289,6 @@ public class ConvertWindow extends Stage {
             format = new ComboBox<>(formats);
             format.setEditable(true);
             Builders.setHBoxPosition(format, -1, 30, 2.5);
-            format.getSelectionModel().select("594:841 (A4 " + TR.tr("Portrait") + ")");
             formatColumn.getChildren().add(format);
 
             // SIZE COLUMN
@@ -295,6 +308,8 @@ public class ConvertWindow extends Stage {
             // LISTENERS
 
             definition.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+                updateDefaultValues();
+
                 String data = StringUtils.removeAfterLastRejex(newValue, "Mp");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
@@ -303,14 +318,12 @@ public class ConvertWindow extends Stage {
                         updateWidthAndHeight();
                     }
                 }else if(newValue.equals(TR.tr("Adapter à l'image"))){
-                    format.getSelectionModel().select(0);
-                    width.setText(TR.tr("Auto"));
-                    height.setText(TR.tr("Auto"));
-                    widthPixels = -1;
-                    heightPixels = -1;
+                    updateWidthAndHeight();
                 }
             });
             format.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+                updateDefaultValues();
+
                 String data = StringUtils.removeAfterLastRejex(newValue, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
@@ -323,27 +336,33 @@ public class ConvertWindow extends Stage {
                         }
                     }
                 }else if(newValue.equals(TR.tr("Adapter à l'image"))){
-                    definition.getSelectionModel().select(0);
+                    updateWidthAndHeight();
                 }
             });
             width.textProperty().addListener((observable, oldValue, newValue) -> {
                 Integer data = StringUtils.getInt(newValue);
                 if(data != null){
-                    if(widthPixels != data){
+                    if(data <= 0) width.setText("1");
+                    else if(widthPixels != data){
                         widthPixels = data;
                         updateFormatAndDefinition();
+                        if(heightPixels <= 0) height.setText("1");
                     }
                 }
             });
             height.textProperty().addListener((observable, oldValue, newValue) -> {
                 Integer data = StringUtils.getInt(newValue);
                 if(data != null){
-                    if(heightPixels != data){
+                    if(data <= 0) height.setText("1");
+                    else if(heightPixels != data){
                         heightPixels = data;
                         updateFormatAndDefinition();
+                        if(widthPixels <= 0) width.setText("1");
                     }
                 }
             });
+
+            setDefaultValues();
 
             /////////////////
 
@@ -352,13 +371,21 @@ public class ConvertWindow extends Stage {
 
         }
         private void updateWidthAndHeight(){
+            // set to Auto if Definition or Format is in Auto mode
+            if(definition.getEditor().getText().equals(TR.tr("Adapter à l'image")) || format.getEditor().getText().equals(TR.tr("Adapter à l'image"))){
+                width.setText(TR.tr("Auto"));
+                height.setText(TR.tr("Auto"));
+                return;
+            }
+
             int width = (int) Math.sqrt((mp*1000000) / (heightFactor / ((double) widthFactor)));
             int height = (int) (width * (heightFactor / ((double) widthFactor)));
 
             if(widthPixels != width){
                 widthPixels = width;
                 this.width.setText(width + "");
-            }if(heightPixels != height){
+            }
+            if(heightPixels != height){
                 heightPixels = height;
                 this.height.setText(height+"");
             }
@@ -371,12 +398,40 @@ public class ConvertWindow extends Stage {
 
             if(this.mp != mp){
                 this.mp = mp;
-                definition.getEditor().setText(df.format(mp)+"Mp");
+                definition.getSelectionModel().select(df.format(mp)+"Mp");
             }if(this.heightFactor != heightFactor || this.widthFactor != widthFactor){
                 this.widthFactor = widthFactor;
                 this.heightFactor = heightFactor;
-                format.getEditor().setText(widthFactor + ":" + heightFactor);
+                format.getSelectionModel().select(widthFactor + ":" + heightFactor);
             }
+        }
+        private void setDefaultValues(){
+
+            if(definitions.contains(MainWindow.userData.lastConvertDefinition)) definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
+            else{
+                Double mp = StringUtils.getDouble(StringUtils.removeAfterLastRejex(MainWindow.userData.lastConvertDefinition, "Mp"));
+                if(mp != null){
+                    definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
+
+                }else definition.getSelectionModel().select(4);
+            }
+
+            if(formats.contains(MainWindow.userData.lastConvertFormat)) format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
+            else{
+                String data = StringUtils.removeAfterLastRejex(MainWindow.userData.lastConvertFormat, " (");
+                if(data.split(":").length == 2){
+                    Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
+                    Integer heightFactor = StringUtils.getInt(data.split(":")[1]);
+                    if(widthFactor != null && heightFactor != null){
+                        format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
+
+                    }else format.getSelectionModel().select(1);
+                }else format.getSelectionModel().select(1);
+            }
+        }
+        private void updateDefaultValues(){
+            MainWindow.userData.lastConvertDefinition = definition.getEditor().getText();
+            MainWindow.userData.lastConvertFormat = format.getEditor().getText();
         }
 
         public void setupSettingsForm(){

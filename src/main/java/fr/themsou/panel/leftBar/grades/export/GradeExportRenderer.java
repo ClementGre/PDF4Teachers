@@ -310,9 +310,6 @@ public class GradeExportRenderer {
 
     public boolean save(ExportFile source) throws IOException {
 
-        System.out.println("Saving file, text = ");
-        System.out.println(text);
-
         String filePath = pane.filePath.getText();
         String fileName;
 

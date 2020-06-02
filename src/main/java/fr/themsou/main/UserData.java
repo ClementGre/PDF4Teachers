@@ -50,6 +50,8 @@ public class UserData {
 
     public String lastConvertSrcDir = System.getProperty("user.home");
     public String lastConvertFileName = ".pdf";
+    public String lastConvertDefinition = "";
+    public String lastConvertFormat = "";
     public boolean settingsConvertAloneImages = true;
 
     public UserData(){
@@ -179,6 +181,8 @@ public class UserData {
                 HashMap<String, Object> convertFields = Config.getSection(convertParams, "fields");
                 lastConvertSrcDir = Config.getString(convertFields, "srcDir");
                 lastConvertFileName = Config.getString(convertFields, "outFileName");
+                lastConvertDefinition = Config.getString(convertFields, "convertDefinition");
+                lastConvertFormat = Config.getString(convertFields, "convertFormat");
 
                 HashMap<String, Object> convertSettings = Config.getSection(convertParams, "settings");
                 settingsConvertAloneImages = Config.getBoolean(convertSettings, "convertAloneImages");
@@ -408,13 +412,15 @@ public class UserData {
             LinkedHashMap<Object, Object> convertFields = new LinkedHashMap<>();
             convertFields.put("srcDir", lastConvertSrcDir);
             convertFields.put("outFileName", lastConvertFileName);
+            convertFields.put("convertDefinition", lastConvertDefinition);
+            convertFields.put("convertFormat", lastConvertFormat);
             convertParams.put("fields", convertFields);
 
             LinkedHashMap<Object, Object> convertSettings = new LinkedHashMap<>();
             convertSettings.put("convertAloneImages", settingsConvertAloneImages);
             convertParams.put("settings", convertSettings);
 
-            config.base.put("export", convertParams);
+            config.base.put("convert", convertParams);
 
             // SINGLE
 
