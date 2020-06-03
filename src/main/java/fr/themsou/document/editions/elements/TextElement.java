@@ -159,6 +159,7 @@ public class TextElement extends Element {
 	}
 	public static void readDataAndCreate(DataInputStream reader) throws IOException {
 		TextElement element = readDataAndGive(reader, true);
+		element.setTranslateY(element.getTranslateY()-element.getBaseLineY());
 		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
 			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
 	}

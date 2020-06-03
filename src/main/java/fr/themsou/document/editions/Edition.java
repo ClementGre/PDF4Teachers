@@ -44,6 +44,8 @@ public class Edition {
         if(lastEditFile.exists()){
             loadHEX(lastEditFile);
             lastEditFile.delete();
+            Edition.setUnsave();
+            save();
             return;
         }
         new File(Main.dataFolder + "editions").mkdirs();
