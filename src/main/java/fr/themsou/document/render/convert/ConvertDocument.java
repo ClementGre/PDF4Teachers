@@ -1,12 +1,9 @@
 package fr.themsou.document.render.convert;
 
-
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.control.Alert;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,31 +12,36 @@ public class ConvertDocument {
 
     public ConvertDocument(){
         new ConvertWindow(null, (convertedFiles) -> {
+
+            int converted = 0;
             for(ConvertedFile file : convertedFiles){
 
-                PDDocument doc = new PDDocument();
-                for(PDPage page : file.pages){
-                    doc.addPage(page);
+                if(MainWindow.mainScreen.hasDocument(false)){
+                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.file.getAbsolutePath())){
+                        if(!MainWindow.mainScreen.closeFile(true)) continue;
+                    }
                 }
 
                 try{
-                    doc.save(file.file);
+                    file.document.save(file.file);
+                    file.document.close();
                 }catch(IOException e){ e.printStackTrace(); }
 
                 MainWindow.lbFilesTab.openFiles(new File[]{file.file});
-
-                Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
-
-                if(convertedFiles.size() == 0) alert.setHeaderText(TR.tr("Aucun document n'a été convertis !"));
-                else if(convertedFiles.size() == 1) alert.setHeaderText(TR.tr("Le document a bien été créé !"));
-                else alert.setHeaderText(convertedFiles.size() + " " + TR.tr("documents ont été créées !"));
-
-
-                if(convertedFiles.size() > 1) alert.setContentText(TR.tr("Les documents ont été ouverts dans le panneau latéral"));
-                else if(convertedFiles.size() != 0) alert.setContentText(TR.tr("Le document a été ouvert dans le panneau latéral"));
-
-                alert.show();
+                converted++;
             }
+
+            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
+
+            if(converted == 0) alert.setHeaderText(TR.tr("Aucun document n'a été convertis !"));
+            else if(converted == 1) alert.setHeaderText(TR.tr("Le document a bien été créé !"));
+            else alert.setHeaderText(converted + " " + TR.tr("documents ont été créées !"));
+
+
+            if(converted > 1) alert.setContentText(TR.tr("Les documents ont été ouverts dans le panneau latéral"));
+            else if(converted != 0) alert.setContentText(TR.tr("Le document a été ouvert dans le panneau latéral"));
+
+            alert.show();
         });
     }
 

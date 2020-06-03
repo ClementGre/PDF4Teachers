@@ -20,6 +20,8 @@ import java.util.*;
 
 public class UserData {
 
+
+
     private class DataType{
         public static final int SIMPLE_DATA = 0;
         public static final int TEXT_ELEMENT_FAVORITE = 1;
@@ -53,6 +55,7 @@ public class UserData {
     public String lastConvertDefinition = "";
     public String lastConvertFormat = "";
     public boolean settingsConvertAloneImages = true;
+    public Boolean settingsConvertVoidFiles = true;
 
     public UserData(){
 
@@ -186,6 +189,7 @@ public class UserData {
 
                 HashMap<String, Object> convertSettings = Config.getSection(convertParams, "settings");
                 settingsConvertAloneImages = Config.getBoolean(convertSettings, "convertAloneImages");
+                settingsConvertVoidFiles = Config.getBoolean(convertSettings, "convertVoidFiles");
 
                 // SINGLE
 
@@ -418,6 +422,7 @@ public class UserData {
 
             LinkedHashMap<Object, Object> convertSettings = new LinkedHashMap<>();
             convertSettings.put("convertAloneImages", settingsConvertAloneImages);
+            convertSettings.put("convertVoidFiles", settingsConvertVoidFiles);
             convertParams.put("settings", convertSettings);
 
             config.base.put("convert", convertParams);

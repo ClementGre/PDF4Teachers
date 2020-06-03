@@ -36,7 +36,7 @@ public class FileListItem extends ListCell<File>{
     ImageView check = new ImageView();
     ImageView checkLow = new ImageView();
 
-    ContextMenu menu = new ContextMenu();
+    ContextMenu menu;
     EventHandler<MouseEvent> onClick = e -> {
         if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) MainWindow.mainScreen.openFile(getItem());
     };
@@ -57,8 +57,6 @@ public class FileListItem extends ListCell<File>{
 
         path.setStyle("-fx-font-size: 9;");
         pane.getChildren().addAll(nameBox, path);
-
-        getNewMenu();
         setStyle("-fx-padding: 2 15;");
     }
 
@@ -73,6 +71,11 @@ public class FileListItem extends ListCell<File>{
             setOnMouseClicked(null);
 
         }else{
+
+            if(!file.exists()){
+                MainWindow.lbFilesTab.removeFile(file);
+                return;
+            }
 
             path.setText(getItem().getAbsolutePath().replace(System.getProperty("user.home"), "~").replace(getItem().getName(), ""));
 
@@ -114,69 +117,72 @@ public class FileListItem extends ListCell<File>{
                 path.setText(path.getText() + " | " + TR.tr("Impossible de récupérer les informations"));
                 setTooltip(new Tooltip(e.getMessage()));
             }
-
-            menu.setId(file.getAbsolutePath());
             nameBox.getChildren().add(name);
             setGraphic(pane);
-            setContextMenu(menu);
+
             setOnMouseClicked(onClick);
-        }
-    }
 
-    public void getNewMenu(){
+            ContextMenu menu = new ContextMenu();
 
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), -1, false);
-        item1.setToolTip(TR.tr("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
-        item2.setToolTip(TR.tr("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), -1, false);
-        item3.setToolTip(TR.tr("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), -1, false);
-        item4.setToolTip(TR.tr("Supprime le fichier PDF sur l'ordinateur."));
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), -1, false);
-        item5.setToolTip(TR.tr("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
-        NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
-        item6.setToolTip(TR.tr("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), -1, false);
+            item1.setToolTip(TR.tr("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
+            item2.setToolTip(TR.tr("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), -1, false);
+            item3.setToolTip(TR.tr("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
+            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), -1, false);
+            item4.setToolTip(TR.tr("Supprime le fichier PDF sur l'ordinateur."));
+            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), -1, false);
+            item5.setToolTip(TR.tr("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
+            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+            item6.setToolTip(TR.tr("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
 
-        menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
-        Builders.setMenuSize(menu);
+            menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
+            Builders.setMenuSize(menu);
 
-        item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(new File(menu.getId()))));
+            item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(file)));
 
-        item2.setOnAction(e -> MainWindow.lbFilesTab.removeFile(new File(menu.getId())));
+            item2.setOnAction(e -> MainWindow.lbFilesTab.removeFile(file));
 
-        item3.setOnAction(e ->  Edition.clearEdit(new File(menu.getId()), true));
+            item3.setOnAction(e ->  Edition.clearEdit(file, true));
 
-        item4.setOnAction(e -> {
+            item4.setOnAction(e -> {
 
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document et son édition ?"));
-            alert.setContentText(TR.tr("Cette action est irréversible."));
+                Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+                alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document") + " " + file.getName() + " " + TR.tr("et son édition ?"));
+                alert.setContentText(TR.tr("Cette action est irréversible."));
 
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.isEmpty()) return;
-            if(result.get() == ButtonType.OK){
-                MainWindow.lbFilesTab.removeFile(new File(menu.getId()));
-                Edition.clearEdit(new File(menu.getId()), false);
-                new File(menu.getId()).delete();
-            }
-
-        });
-        item5.setOnAction(e -> {
-            if(new File(menu.getId()).exists()){
-
-                if(MainWindow.mainScreen.hasDocument(false)){
-                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(menu.getId())){
-                        MainWindow.mainScreen.document.save();
+                Optional<ButtonType> result = alert.showAndWait();
+                if(result.isEmpty()) return;
+                if(result.get() == ButtonType.OK){
+                    if(MainWindow.mainScreen.hasDocument(false)){
+                        if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                            MainWindow.mainScreen.closeFile(false);
+                        }
                     }
+                    MainWindow.lbFilesTab.removeFile(file);
+                    Edition.clearEdit(file, false);
+                    file.delete();
                 }
 
-                new ExportWindow(Collections.singletonList(new File(menu.getId())));
-            }
+            });
+            item5.setOnAction(e -> {
+                if(file.exists()){
 
-        });
-        item6.setOnAction(e -> MainWindow.lbFilesTab.clearFiles());
+                    if(MainWindow.mainScreen.hasDocument(false)){
+                        if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
+                            MainWindow.mainScreen.document.save();
+                        }
+                    }
 
+                    new ExportWindow(Collections.singletonList(file));
+                }
+
+            });
+            item6.setOnAction(e -> MainWindow.lbFilesTab.clearFiles());
+
+            setContextMenu(menu);
+        }
     }
 
 }

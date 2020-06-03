@@ -2,10 +2,7 @@ package fr.themsou.document.render.convert;
 
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.CallBack;
-import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.*;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
@@ -64,11 +61,6 @@ public class ConvertWindow extends Stage {
 
         df.setMaximumFractionDigits(340);
 
-        TabPane tabPane = new TabPane();
-
-        ExportPane convertDirs = new ExportPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
-        //ExportPane convertFiles = new ExportPane(this, TR.tr("Convertir des fichiers en un document"), false);
-
         VBox root = new VBox();
         Scene scene = new Scene(root);
 
@@ -80,27 +72,38 @@ public class ConvertWindow extends Stage {
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
 
-        Text info;
+        // HEADER
 
+        Text info;
         if(defaultSize == null) info = new Text(TR.tr("Convertir des images en documents PDF"));
         else{
             info = new Text(TR.tr("Convertir des images en pages de document PDF"));
-            /*int gcd = GCD((int)defaultSize.getWidth(), (int)defaultSize.getHeight());
+            int gcd = GCD((int)defaultSize.getWidth(), (int)defaultSize.getHeight());
             int heightFactor = (int) (gcd == 0 ? defaultSize.getHeight() : defaultSize.getHeight()/gcd);
             int widthFactor = (int) (gcd == 0 ? defaultSize.getWidth() : defaultSize.getWidth()/gcd);
-            definitions.add(0, df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (" + TR.tr("Ce document") + ")");
-            formats.add(0, widthFactor + ":" + heightFactor + " (" + TR.tr("Ce document") + ")");*/
+            //definitions.add(0, df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (" + TR.tr("Ce document") + ")");
+            formats.add(1, widthFactor + ":" + heightFactor + " (" + TR.tr("Ce document") + ")");
         }
 
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
+        // PANES
+
+        TabPane tabPane = new TabPane();
+
+        ConvertPane convertDirs = new ConvertPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
+        ConvertPane convertFiles = new ConvertPane(this, TR.tr("Convertir des fichiers en un document"), false);
+
         if(defaultSize == null) tabPane.getTabs().add(convertDirs);
-        //tabPane.getTabs().add(convertFiles);
+        tabPane.getTabs().add(convertFiles);
         root.getChildren().addAll(info, tabPane);
+
+        // SHOW
+
         show();
     }
 
-    class ExportPane extends Tab {
+    class ConvertPane extends Tab {
 
         public boolean convertDirs;
         ConvertWindow window;
@@ -108,12 +111,13 @@ public class ConvertWindow extends Stage {
         VBox root = new VBox();
 
         public TextArea srcFiles;
-        public TextField srcDir, docName, outDir, width, height;
+        public TextField srcDir, docName, outDir;
         ComboBox<String> definition, format;
 
         public CheckBox convertAloneFiles = new CheckBox(TR.tr("Convertir aussi les images du dossier source en documents (un document par image)"));
+        public CheckBox convertVoidFiles = new CheckBox(TR.tr("Convertir les sous-dossiers vides en pages blanches"));
 
-        public ExportPane(ConvertWindow window, String tabName, boolean convertDirs){
+        public ConvertPane(ConvertWindow window, String tabName, boolean convertDirs){
             super(tabName);
             this.window = window;
             this.convertDirs = convertDirs;
@@ -137,9 +141,11 @@ public class ConvertWindow extends Stage {
 
             if(convertDirs){
                 desc.setText(TR.tr("Convertir plusieurs dossiers en plusieurs documents PDF") + "\n   " +
-                        TR.tr("(Chaque dossier sera convertis en un document, les images contenus dans le dossier représentent les pages") + "\n   " +
-                        TR.tr("L'ordre des pages est pris en fonction de l'ordre alphabétique, Il sera toujours possible de déplacer les pages après."));
+                        TR.tr("Chaque dossier sera convertis en un document, les images contenus dans le dossier représentent les pages") + "\n   " +
+                        TR.tr("L'ordre des pages est pris en fonction de l'ordre alphabétique.") + "\n   " +
+                        TR.tr("Il sera toujours possible de déplacer les pages après."));
             }else{
+                convertVoidFiles.setText(TR.tr("Convertir les fichiers non existants en pages blanches (lignes vides)"));
                 if(defaultSize != null){
                     desc.setText(TR.tr("Convertir plusieurs images en pages à ajouter au document"));
                 }else{
@@ -263,11 +269,11 @@ public class ConvertWindow extends Stage {
             });
 
         }
-        private int widthFactor;
-        private int heightFactor;
-        private double mp;
-        private int widthPixels;
-        private int heightPixels;
+        public int widthFactor = 1;
+        public int heightFactor = 1;
+        public double mp = 1;
+        public int width = 1;
+        public int height = 1;
         public void setupSizeForm(){
 
             Separator separator = new Separator();
@@ -277,7 +283,7 @@ public class ConvertWindow extends Stage {
             columns.setSpacing(10);
 
             // Definition COLUMN
-            VBox definitionColumn = generateInfo(TR.tr("Définition") + " :", false);
+            VBox definitionColumn = generateInfo(TR.tr("Définition des images") + " :", false);
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
             Builders.setHBoxPosition(definition, -1, 30, 2.5);
@@ -285,25 +291,11 @@ public class ConvertWindow extends Stage {
 
             // Format COLUMN
 
-            VBox formatColumn = generateInfo(TR.tr("Format") + " :", false);
+            VBox formatColumn = generateInfo(TR.tr("Format des pages") + " :", false);
             format = new ComboBox<>(formats);
             format.setEditable(true);
             Builders.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
-
-            // SIZE COLUMN
-
-            GridPane sizeColumn = new GridPane();
-            HBox.setMargin(sizeColumn, new Insets(4, 0, 0, 0));
-            VBox widthInfo = generateInfo(TR.tr("Largeur") + " :", false);
-            width = new TextField();
-            sizeColumn.add(widthInfo, 0, 0);
-            sizeColumn.add(width, 1, 0);
-
-            VBox heightInfo = generateInfo(TR.tr("Hauteur") + " :", false);
-            height = new TextField();
-            sizeColumn.add(heightInfo, 0, 1);
-            sizeColumn.add(height, 1, 1);
 
             // LISTENERS
 
@@ -313,11 +305,7 @@ public class ConvertWindow extends Stage {
                 String data = StringUtils.removeAfterLastRejex(newValue, "Mp");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
-                    if(this.mp != mp){
-                        this.mp = mp;
-                        updateWidthAndHeight();
-                    }
-                }else if(newValue.equals(TR.tr("Adapter à l'image"))){
+                    this.mp = mp;
                     updateWidthAndHeight();
                 }
             });
@@ -329,35 +317,9 @@ public class ConvertWindow extends Stage {
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
                     Integer heightFactor = StringUtils.getInt(data.split(":")[1]);
                     if(widthFactor != null && heightFactor != null){
-                        if(this.widthFactor != widthFactor || this.heightFactor != heightFactor){
-                            this.widthFactor = widthFactor;
-                            this.heightFactor = heightFactor;
-                            updateWidthAndHeight();
-                        }
-                    }
-                }else if(newValue.equals(TR.tr("Adapter à l'image"))){
-                    updateWidthAndHeight();
-                }
-            });
-            width.textProperty().addListener((observable, oldValue, newValue) -> {
-                Integer data = StringUtils.getInt(newValue);
-                if(data != null){
-                    if(data <= 0) width.setText("1");
-                    else if(widthPixels != data){
-                        widthPixels = data;
-                        updateFormatAndDefinition();
-                        if(heightPixels <= 0) height.setText("1");
-                    }
-                }
-            });
-            height.textProperty().addListener((observable, oldValue, newValue) -> {
-                Integer data = StringUtils.getInt(newValue);
-                if(data != null){
-                    if(data <= 0) height.setText("1");
-                    else if(heightPixels != data){
-                        heightPixels = data;
-                        updateFormatAndDefinition();
-                        if(widthPixels <= 0) width.setText("1");
+                        this.widthFactor = widthFactor;
+                        this.heightFactor = heightFactor;
+                        updateWidthAndHeight();
                     }
                 }
             });
@@ -366,35 +328,20 @@ public class ConvertWindow extends Stage {
 
             /////////////////
 
-            columns.getChildren().addAll(definitionColumn, formatColumn, sizeColumn);
+            columns.getChildren().addAll(definitionColumn, formatColumn);
             root.getChildren().addAll(separator, columns);
 
         }
         private void updateWidthAndHeight(){
-            // set to Auto if Definition or Format is in Auto mode
-            if(definition.getEditor().getText().equals(TR.tr("Adapter à l'image")) || format.getEditor().getText().equals(TR.tr("Adapter à l'image"))){
-                width.setText(TR.tr("Auto"));
-                height.setText(TR.tr("Auto"));
-                return;
-            }
-
-            int width = (int) Math.sqrt((mp*1000000) / (heightFactor / ((double) widthFactor)));
-            int height = (int) (width * (heightFactor / ((double) widthFactor)));
-
-            if(widthPixels != width){
-                widthPixels = width;
-                this.width.setText(width + "");
-            }
-            if(heightPixels != height){
-                heightPixels = height;
-                this.height.setText(height+"");
-            }
+            this.width = (int) Math.sqrt((mp*1000000) / (heightFactor / ((double) widthFactor)));
+            this.height = (int) (width * (heightFactor / ((double) widthFactor)));
         }
+        // unused since the width and height can't be changed by the user
         private void updateFormatAndDefinition(){
-            double mp = widthPixels * heightPixels / 1000000D;
-            int gcd = GCD(widthPixels, heightPixels);
-            int heightFactor = gcd == 0 ? heightPixels : heightPixels/gcd;
-            int widthFactor = gcd == 0 ? widthPixels : widthPixels/gcd;
+            double mp = width * height / 1000000D;
+            int gcd = GCD(width, height);
+            int heightFactor = gcd == 0 ? height : height/gcd;
+            int widthFactor = gcd == 0 ? width : width/gcd;
 
             if(this.mp != mp){
                 this.mp = mp;
@@ -405,6 +352,7 @@ public class ConvertWindow extends Stage {
                 format.getSelectionModel().select(widthFactor + ":" + heightFactor);
             }
         }
+
         private void setDefaultValues(){
 
             if(definitions.contains(MainWindow.userData.lastConvertDefinition)) definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
@@ -425,8 +373,8 @@ public class ConvertWindow extends Stage {
                     if(widthFactor != null && heightFactor != null){
                         format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
 
-                    }else format.getSelectionModel().select(1);
-                }else format.getSelectionModel().select(1);
+                    }else format.getSelectionModel().select(0);
+                }else format.getSelectionModel().select(0);
             }
         }
         private void updateDefaultValues(){
@@ -435,16 +383,22 @@ public class ConvertWindow extends Stage {
         }
 
         public void setupSettingsForm(){
+            VBox info = generateInfo(TR.tr("Paramètres") + " :", true);
+            root.getChildren().add(info);
             if(convertDirs){
-                VBox info = generateInfo(TR.tr("Paramètres") + " :", true);
 
                 Builders.setHBoxPosition(convertAloneFiles, 0, 30, 0, 2.5);
                 convertAloneFiles.setSelected(MainWindow.userData.settingsConvertAloneImages);
 
-                root.getChildren().addAll(info, convertAloneFiles);
-
+                root.getChildren().add(convertAloneFiles);
                 convertAloneFiles.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsConvertAloneImages = newValue);
             }
+
+            Builders.setHBoxPosition(convertVoidFiles, 0, 30, 0, 2.5);
+            convertVoidFiles.setSelected(MainWindow.userData.settingsConvertVoidFiles);
+
+            root.getChildren().add(convertVoidFiles);
+            convertVoidFiles.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsConvertVoidFiles = newValue);
         }
 
         public void setupBtns(){
@@ -465,10 +419,10 @@ public class ConvertWindow extends Stage {
             VBox.setVgrow(spacer, Priority.ALWAYS);
 
             export.setOnAction(event -> {
-                if((widthPixels > 0 && heightPixels > 0) || (width.getText().equals(TR.tr("Auto")) && height.getText().equals(TR.tr("Auto")))){
+                if(mp > 0 && widthFactor > 0 && heightFactor > 0){
                     if(convertDirs || !docName.getText().isEmpty()){
                         if(new File(outDir.getText()).exists()){
-                            end(new ConvertRenderer(this).start());
+                            startConversion();
                         }else{
                             Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                             alert.setHeaderText(TR.tr("Le dossier de destination n'existe pas"));
@@ -483,8 +437,8 @@ public class ConvertWindow extends Stage {
                     }
                 }else{
                     Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
-                    alert.setHeaderText(TR.tr("Impossible de générer des pages de 0Mp"));
-                    alert.setContentText(TR.tr("Veuillez changer les dimensions des pages."));
+                    alert.setHeaderText(TR.tr("Impossible de générer des images/pages de 0 pixels"));
+                    alert.setContentText(TR.tr("Veuillez changer la définition des images ou le format des pages."));
                     alert.show();
                 }
             });
@@ -512,12 +466,56 @@ public class ConvertWindow extends Stage {
             return box;
         }
 
+
+
+        Alert loadingAlert;
+        private void startConversion(){
+
+            loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
+
+            // Wait Dialog
+
+            loadingAlert.setWidth(600);
+            loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
+
+            VBox pane = new VBox();
+            Label currentDocument = new Label();
+            ProgressBar loadingBar = new ProgressBar();
+            loadingBar.setMinHeight(10);
+            VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
+            pane.getChildren().addAll(currentDocument, loadingBar);
+            loadingAlert.getDialogPane().setContent(pane);
+            //loadingAlert.show();
+
+            try{
+                end(new ConvertRenderer(this).start());
+            }catch(Exception e){
+                e.printStackTrace();
+
+                // Error dialog
+                Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de conversion"));
+                alert.setHeaderText(TR.tr("Une erreur de conversion est survenue"));
+
+                TextArea textArea = new TextArea(e.getMessage());
+                textArea.setEditable(false);
+                textArea.setWrapText(true);
+                GridPane expContent = new GridPane();
+                expContent.setMaxWidth(Double.MAX_VALUE);
+                expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                expContent.add(textArea, 0, 1);
+                alert.getDialogPane().setExpandableContent(expContent);
+                alert.showAndWait();
+            }
+
+        }
+
         private void end(ArrayList<ConvertedFile> files){
             close();
             callBack.call(files);
         }
 
     }
+
     public int GCD(int a, int b){
         if(b==0) return a;
         return GCD(b,a%b);
