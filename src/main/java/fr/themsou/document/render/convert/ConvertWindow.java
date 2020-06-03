@@ -1,11 +1,14 @@
 package fr.themsou.document.render.convert;
 
+import fr.themsou.document.editions.Edition;
+import fr.themsou.document.render.export.ExportRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -27,6 +30,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class ConvertWindow extends Stage {
@@ -213,7 +217,7 @@ public class ConvertWindow extends Stage {
                     chooser.setTitle(TR.tr("Sélectionner un dossier"));
                     chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists() ? new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile() : new File(MainWindow.userData.lastConvertSrcDir));
 
-                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Image"), "*.png", "*.jpeg", "*.jpg"));
+                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Image"), "*.png", "*.jpeg", "*.jpg", "*.tiff", "*.gif", "*.bmp"));
                     chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
                     chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
 
@@ -421,14 +425,7 @@ public class ConvertWindow extends Stage {
             export.setOnAction(event -> {
                 if(mp > 0 && widthFactor > 0 && heightFactor > 0){
                     if(convertDirs || !docName.getText().isEmpty()){
-                        if(new File(outDir.getText()).exists()){
-                            startConversion();
-                        }else{
-                            Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
-                            alert.setHeaderText(TR.tr("Le dossier de destination n'existe pas"));
-                            alert.setContentText(outDir.getText() + " : " + TR.tr("Veuillez entrer un chemin correct"));
-                            alert.show();
-                        }
+                        startConversion();
                     }else{
                         Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                         alert.setHeaderText(TR.tr("Impossible de créer un fichier sans nom"));
@@ -469,11 +466,14 @@ public class ConvertWindow extends Stage {
 
 
         Alert loadingAlert;
+        private int converted;
+        private int total;
         private void startConversion(){
 
-            loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
-
             // Wait Dialog
+
+            loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion..."));
+            converted = 0;
 
             loadingAlert.setWidth(600);
             loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
@@ -485,31 +485,47 @@ public class ConvertWindow extends Stage {
             VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
             pane.getChildren().addAll(currentDocument, loadingBar);
             loadingAlert.getDialogPane().setContent(pane);
-            //loadingAlert.show();
+            loadingAlert.show();
 
-            try{
-                end(new ConvertRenderer(this).start());
-            }catch(Exception e){
-                e.printStackTrace();
+            new Thread(() -> {
+                try{
+                    ConvertRenderer renderer = new ConvertRenderer(this);
+                    total = renderer.getFilesLength();
+                    ArrayList<ConvertedFile> convertedFiles = renderer.start(value -> {
+                        Platform.runLater(() -> {
+                            currentDocument.setText(value + " (" + converted + "/" + total + ")");
+                            loadingBar.setProgress(converted/((float)total));
+                            converted++;
+                        });
+                    });
+                    Platform.runLater(() -> {
+                        end(convertedFiles);
+                    });
+                }catch(Exception e){
+                    e.printStackTrace();
+                    Platform.runLater(() -> {
+                        loadingAlert.close();
+                        // Error dialog
+                        Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de conversion"));
+                        alert.setHeaderText(TR.tr("Une erreur de conversion est survenue"));
 
-                // Error dialog
-                Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de conversion"));
-                alert.setHeaderText(TR.tr("Une erreur de conversion est survenue"));
-
-                TextArea textArea = new TextArea(e.getMessage());
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
-                GridPane expContent = new GridPane();
-                expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
-                expContent.add(textArea, 0, 1);
-                alert.getDialogPane().setExpandableContent(expContent);
-                alert.showAndWait();
-            }
+                        TextArea textArea = new TextArea(e.getMessage());
+                        textArea.setEditable(false);
+                        textArea.setWrapText(true);
+                        GridPane expContent = new GridPane();
+                        expContent.setMaxWidth(Double.MAX_VALUE);
+                        expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                        expContent.add(textArea, 0, 1);
+                        alert.getDialogPane().setExpandableContent(expContent);
+                        alert.showAndWait();
+                    });
+                }
+            }, "conversion").start();
 
         }
 
         private void end(ArrayList<ConvertedFile> files){
+            loadingAlert.close();
             close();
             callBack.call(files);
         }

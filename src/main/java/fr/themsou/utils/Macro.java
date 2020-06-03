@@ -57,7 +57,7 @@ public class Macro {
                         Element selected = MainWindow.mainScreen.getSelected();
                         if(selected != null){
                             if(selected instanceof TextElement){
-                                ((TextElement) selected).setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
+                                selected.setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
                             }
                         }
                     }else if(e.getCode() == KeyCode.N){

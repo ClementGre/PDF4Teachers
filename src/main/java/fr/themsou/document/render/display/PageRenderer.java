@@ -143,6 +143,18 @@ public class PageRenderer extends Pane{
         setOnMouseReleased(e -> {
             setCursor(Cursor.DEFAULT);
         });
+        setOnMouseClicked(e -> {
+            if(e.getClickCount() == 2){
+                MainWindow.leftBar.getSelectionModel().select(1);
+                MainWindow.lbTextTab.newBtn.fire();
+                Element selected = MainWindow.mainScreen.getSelected();
+                if(selected != null){
+                    if(selected instanceof TextElement){
+                        selected.setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
+                    }
+                }
+            }
+        });
     }
     public void updatePosition(int totalHeight){
         if(totalHeight == -1) totalHeight = (int) getTranslateY();
@@ -201,6 +213,7 @@ public class PageRenderer extends Pane{
 
         setOnMousePressed(null);
         setOnMouseReleased(null);
+        setOnMouseClicked(null);
         setOnMouseMoved(null);
         setOnMouseDragged(null);
 

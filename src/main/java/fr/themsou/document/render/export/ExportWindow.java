@@ -315,7 +315,7 @@ public class ExportWindow {
 
                 // Update Wait dialog
                 Platform.runLater(() -> {
-                    currentDocument.setText(file.getName());
+                    currentDocument.setText(file.getName() + "(" + total + "/" + files.size() + ")");
                     loadingBar.setProgress(total/((float)files.size()));
                 });
                 total++;

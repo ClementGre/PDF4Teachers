@@ -1,10 +1,8 @@
 package fr.themsou.document.render.convert;
 
-import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.TextElement;
+import fr.themsou.utils.CallBack;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
-import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -27,20 +25,23 @@ public class ConvertRenderer {
     public ConvertRenderer(ConvertWindow.ConvertPane convertPane) {
         this.convertPane = convertPane;
     }
-    public ArrayList<ConvertedFile> start() throws Exception{
+    public ArrayList<ConvertedFile> start(CallBack<String> documentCallBack) throws Exception{
         String out = convertPane.outDir.getText();
+        new File(out).mkdirs();
         if(!out.endsWith(File.separator)) out += File.separator;
 
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
+                documentCallBack.call(dir.getName() + ".pdf");
                 if(dir.isDirectory()){
-                    convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + StringUtils.removeAfterLastRejex(dir.getName(), ".") + ".pdf"));
-                }else if(isGoodFormat(dir)){
+                    convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
+                }else if(isValidFile(dir)){
                     convertFile(new File[]{dir}, new File(out + StringUtils.removeAfterLastRejex(dir.getName(), ".") + ".pdf"));
                 }
             }
         }else{
+            documentCallBack.call(StringUtils.removeAfterLastRejex(convertPane.docName.getText(), ".pdf") + ".pdf");
             File[] files = new File[convertPane.srcFiles.getText().split(Pattern.quote("\n")).length];
             int i = 0;
             for(String filePath : convertPane.srcFiles.getText().split(Pattern.quote("\n"))){
@@ -49,6 +50,8 @@ public class ConvertRenderer {
             }
             convertFile(files, new File(out + StringUtils.removeAfterLastRejex(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
+        documentCallBack.call("");
+
         return convertedFiles;
     }
 
@@ -58,6 +61,8 @@ public class ConvertRenderer {
         double pageHeight = 841; // the page height is always 841 (A4 72dpi)
         double pageWidth = convertPane.widthFactor*pageHeight/convertPane.heightFactor;
         PDRectangle pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
+        PDRectangle defaultPageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
+        if(convertPane.format.getEditor().getText().equals(TR.tr("Adapter à l'image"))) defaultPageSize = PDRectangle.A4;
 
         for(File file : files){
             if(isGoodFormat(file)){
@@ -117,8 +122,8 @@ public class ConvertRenderer {
 
                 contentStream.close();
                 convertedFile.addPage(page);
-            }else if(convertPane.convertVoidFiles.isSelected()){
-                convertedFile.addPage(new PDPage(pageSize));
+            }else if(isValidFile(file)){
+                convertedFile.addPage(new PDPage(defaultPageSize));
             }
         }
 
@@ -126,7 +131,8 @@ public class ConvertRenderer {
         if(convertedFile.document.getNumberOfPages() >= 1){
             convertedFiles.add(convertedFile);
         }else{
-            convertedFile.document.close();
+            convertedFile.addPage(new PDPage(defaultPageSize));
+            convertedFiles.add(convertedFile);
         }
     }
 
@@ -135,7 +141,13 @@ public class ConvertRenderer {
         if(!file.exists()) ext = "";
         return ext.equalsIgnoreCase("png") ||
                 ext.equalsIgnoreCase("jpg") ||
-                ext.equalsIgnoreCase("jpeg");
+                ext.equalsIgnoreCase("jpeg") ||
+                ext.equalsIgnoreCase("tiff") ||
+                ext.equalsIgnoreCase("gif") ||
+                ext.equalsIgnoreCase("bmp");
+    }
+    private boolean isValidFile(File file){
+        return isGoodFormat(file) || (convertPane.convertVoidFiles.isSelected() && !file.isHidden());
     }
 
     private BufferedImage scaleImage(BufferedImage image, int width, int height){
@@ -148,5 +160,20 @@ public class ConvertRenderer {
         g.drawImage(image, 0, 0, width, height, 0, 0, image.getWidth(), image.getHeight(), null);
         g.dispose();
         return image2;
+    }
+
+    public int getFilesLength(){
+        if(convertPane.convertDirs){
+            File mainDir = new File(convertPane.srcDir.getText());
+            int i = 0;
+            for(File dir : Objects.requireNonNull(mainDir.listFiles())){
+                if(dir.isDirectory() || isValidFile(dir)){
+                    i++;
+                }
+            }
+            return i;
+        }else{
+            return 1;
+        }
     }
 }
