@@ -54,7 +54,7 @@ public class Main extends Application {
 		StyleManager.setup();
 
 		if(languageAsk()){
-			if(liscenceAsk()){
+			if(licenceAsk()){
 				startMainWindow();
 			}
 		}
@@ -70,7 +70,7 @@ public class Main extends Application {
 					Main.settings.setLanguage(value);
 				}
 				TR.updateTranslation();
-				if(liscenceAsk()){
+				if(licenceAsk()){
 					startMainWindow();
 				}
 			});
@@ -79,7 +79,7 @@ public class Main extends Application {
 		TR.updateTranslation();
 		return true;
 	}
-	public boolean liscenceAsk(){
+	public boolean licenceAsk(){
 		if(firstLaunch){
 			new LicenseWindow(value -> {
 				startMainWindow();

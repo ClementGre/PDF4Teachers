@@ -6,6 +6,7 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
+import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
@@ -99,8 +100,13 @@ public class PageRenderer extends Pane{
 
                 if(MainWindow.lbGradeTab.treeView.getRoot().getChildren().size() != 0){
                     GradeTreeView.defineNaNLocations();
-                    GradeTreeItem grade = GradeTreeView.getNextGrade(page, (int) e.getY());
-                    if(grade != null) menu.getItems().add(new CustomMenuItem(grade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+                    GradeTreeItem nextGrade = GradeTreeView.getNextLogicGrade();
+                    if(nextGrade != null) menu.getItems().add(new CustomMenuItem(nextGrade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+
+                    var gradeElement = GradeTreeView.getNextGrade(page, (int) e.getY());
+                    GradeTreeItem grade = gradeElement == null ? null : gradeElement.getGradeTreeItem();
+                    if(grade != null) if(nextGrade != grade) menu.getItems().add(0, new CustomMenuItem(grade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+
                 }
 
                 List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
@@ -288,7 +294,7 @@ public class PageRenderer extends Pane{
                                     CornerRadii.EMPTY,
                                     Insets.EMPTY)),
                             Collections.singletonList(new BackgroundImage(
-                                    SwingFXUtils.toFXImage(image, null),
+                                    image,
                                     BackgroundRepeat.NO_REPEAT,
                                     BackgroundRepeat.NO_REPEAT,
                                     BackgroundPosition.CENTER,

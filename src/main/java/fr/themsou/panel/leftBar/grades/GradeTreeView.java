@@ -2,6 +2,7 @@ package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
+import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -16,6 +17,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.regex.Pattern;
 
 public class GradeTreeView extends TreeView<String> {
@@ -168,23 +170,23 @@ public class GradeTreeView extends TreeView<String> {
         parent.getChildren().add(before, element);
     }
 
-    public static GradeTreeItem getNextGrade(int page, int y){
+    public static GradeElement getNextGrade(int page, int y){
 
-        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
-        GradeTreeItem before = null;
-        GradeTreeItem after = items.size() >= 2 ? items.get(1) : null;
+        ArrayList<GradeElement> items = getGradesArrayByCoordinates();
+        GradeElement before = null;
+        GradeElement after = items.size() >= 2 ? items.get(1) : null;
 
         int i = 0;
-        for(GradeTreeItem grade : items){
+        for(GradeElement grade : items){
             int minPage = 0; int minY = 0;
             if(before != null){
-                minPage = before.getCore().getPageNumber();
-                minY = (int) before.getCore().getLayoutY();
+                minPage = before.getPageNumber();
+                minY = (int) before.getLayoutY();
             }
             int maxPage = 999999; int maxY = 999999;
             if(after != null){
-                maxPage = after.getCore().getPageNumber();
-                maxY = (int) after.getCore().getLayoutY();
+                maxPage = after.getPageNumber();
+                maxY = (int) after.getLayoutY();
             }
             if((page == maxPage && y < maxY || page < maxPage) && (page == minPage && y > minY || page > minPage)){
                 return grade;
@@ -194,6 +196,23 @@ public class GradeTreeView extends TreeView<String> {
             after = items.size() >= i+2 ? items.get(i+1) : null;
         }
         return null;
+    }
+    public static GradeTreeItem getNextLogicGrade(){
+        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
+        for(GradeTreeItem grade : items){
+            if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
+        }
+        return null;
+    }
+    public static GradeTreeItem getNextLogicGradeNonNull(){
+        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
+        for(GradeTreeItem grade : items){
+            if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
+        }
+        for(GradeTreeItem grade : items){
+            if(!grade.hasSubGrade()) return grade;
+        }
+        return items.get(0);
     }
 
     public static void defineNaNLocations(){
@@ -264,6 +283,21 @@ public class GradeTreeView extends TreeView<String> {
             }
         }
         return items;
+    }
+    public static ArrayList<GradeElement> getGradesArrayByCoordinates(){
+
+        ArrayList<GradeElement> grades = new ArrayList<>();
+
+        for(PageRenderer page : MainWindow.mainScreen.document.pages){
+            ArrayList<GradeElement> pageGrades = new ArrayList<>();
+            for(Element element : page.getElements()){
+                if(element instanceof GradeElement) pageGrades.add((GradeElement) element);
+            }
+
+            pageGrades.sort(Comparator.comparingInt(Element::getRealY));
+            grades.addAll(pageGrades);
+        }
+        return grades;
     }
 
 

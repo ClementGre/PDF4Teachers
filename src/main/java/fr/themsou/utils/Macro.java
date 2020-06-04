@@ -66,7 +66,7 @@ public class Macro {
                         int y = (int) MainWindow.mainScreen.document.pages.get(page).getMouseY();
 
                         MainWindow.leftBar.getSelectionModel().select(2);
-                        MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextGrade(page, y));
+                        MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
                     }
                 }else{ // SHORTCUT + ALT
                     if(e.getCode() == KeyCode.C){

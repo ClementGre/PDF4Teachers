@@ -165,7 +165,7 @@ public class GradeTreeItem extends TreeItem {
         HBox.setMargin(totalField, new Insets(0, 5, 0, 0));
 
         ScratchText meter = new ScratchText();
-        meter.setFont(nameField.getFont());
+        meter.setFont(new Font(nameField.getFont().getFamily(), 13));
 
         nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {

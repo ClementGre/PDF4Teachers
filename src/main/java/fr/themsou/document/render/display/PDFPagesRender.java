@@ -10,6 +10,8 @@ import java.util.Map;
 
 import fr.themsou.utils.CallBack;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.WritableImage;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -37,7 +39,7 @@ public class PDFPagesRender {
 		render = false;
 	}
 
-	public void renderPage(int pageNumber, double size, CallBack<BufferedImage> callBack){
+	public void renderPage(int pageNumber, double size, CallBack<WritableImage> callBack){
 
 		Thread renderPage = new Thread(() -> {
 			/*while(render){
@@ -70,7 +72,9 @@ public class PDFPagesRender {
 				e.printStackTrace();
 			}
 			graphics.dispose();
-			Platform.runLater(() -> callBack.call(renderImage));
+			WritableImage fxImage = SwingFXUtils.toFXImage(renderImage, null);
+
+			Platform.runLater(() -> callBack.call(fxImage));
 
 			render = false;
 
