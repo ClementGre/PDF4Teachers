@@ -3,6 +3,7 @@ package fr.themsou.document.render.convert;
 import fr.themsou.utils.CallBack;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -56,7 +57,13 @@ public class ConvertRenderer {
     }
 
     private void convertFile(File[] files, File out) throws IOException {
+
         ConvertedFile convertedFile = new ConvertedFile(out);
+        /*if(convertPane.convertToExistingDoc){
+            convertedFile = new ConvertedFile(out);
+        }else{
+            convertedFile = new ConvertedFile(out, MainWindow.mainScreen.document.pdfPagesRender.getDocument());
+        }*/
 
         double pageHeight = 841; // the page height is always 841 (A4 72dpi)
         double pageWidth = convertPane.widthFactor*pageHeight/convertPane.heightFactor;

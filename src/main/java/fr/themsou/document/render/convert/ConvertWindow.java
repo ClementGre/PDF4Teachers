@@ -1,7 +1,5 @@
 package fr.themsou.document.render.convert;
 
-import fr.themsou.document.editions.Edition;
-import fr.themsou.document.render.export.ExportRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
@@ -30,7 +28,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class ConvertWindow extends Stage {
@@ -96,7 +93,7 @@ public class ConvertWindow extends Stage {
         TabPane tabPane = new TabPane();
 
         ConvertPane convertDirs = new ConvertPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
-        ConvertPane convertFiles = new ConvertPane(this, TR.tr("Convertir des fichiers en un document"), false);
+        ConvertPane convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("Convertir des fichiers en un document") : TR.tr("Convertir des fichiers en pages"), false);
 
         if(defaultSize == null) tabPane.getTabs().add(convertDirs);
         tabPane.getTabs().add(convertFiles);
@@ -112,6 +109,8 @@ public class ConvertWindow extends Stage {
         public boolean convertDirs;
         ConvertWindow window;
 
+        boolean convertToExistingDoc;
+
         VBox root = new VBox();
 
         public TextArea srcFiles;
@@ -125,6 +124,7 @@ public class ConvertWindow extends Stage {
             super(tabName);
             this.window = window;
             this.convertDirs = convertDirs;
+            this.convertToExistingDoc = defaultSize != null;
 
             setClosable(false);
             setContent(root);
@@ -234,44 +234,51 @@ public class ConvertWindow extends Stage {
         public void setupDocNameForm(){
 
             if(!convertDirs){
-                VBox info = generateInfo(TR.tr("Nom du document") + " :", true);
+                if(defaultSize == null){
+                    VBox info = generateInfo(TR.tr("Nom du document") + " :", true);
 
-                docName = new TextField(MainWindow.userData.lastConvertFileName);
-                docName.setPromptText(TR.tr("Nom du document"));
-                Builders.setHBoxPosition(docName, -1, 30, 0, 2.5);
-                docName.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastConvertFileName = newValue);
-                root.getChildren().addAll(info, docName);
+                    docName = new TextField(MainWindow.userData.lastConvertFileName);
+                    docName.setPromptText(TR.tr("Nom du document"));
+                    Builders.setHBoxPosition(docName, -1, 30, 0, 2.5);
+                    docName.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastConvertFileName = newValue);
+                    root.getChildren().addAll(info, docName);
+                }else{
+                    docName = new TextField(MainWindow.mainScreen.document.getFileName());
+                }
             }
 
         }
         public void setupOutDirForm(){
 
-            VBox info = generateInfo(TR.tr("Dossier d'exportation") + " :", true);
+            if(defaultSize == null){
+                VBox info = generateInfo(TR.tr("Dossier d'exportation") + " :", true);
 
-            HBox filePathBox = new HBox();
+                HBox filePathBox = new HBox();
 
-            outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() != null ? MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
-            Builders.setHBoxPosition(outDir, -1, 30, 0, 2.5);
+                outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() != null ? MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
+                Builders.setHBoxPosition(outDir, -1, 30, 0, 2.5);
 
-            Button changePath = new Button(TR.tr("Parcourir"));
-            Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                Button changePath = new Button(TR.tr("Parcourir"));
+                Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
-            filePathBox.getChildren().addAll(outDir, changePath);
+                filePathBox.getChildren().addAll(outDir, changePath);
 
-            root.getChildren().addAll(info, filePathBox);
+                root.getChildren().addAll(info, filePathBox);
 
-            changePath.setOnAction(event -> {
+                changePath.setOnAction(event -> {
 
-                final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(TR.tr("Sélectionner un dossier"));
-                chooser.setInitialDirectory(new File(outDir.getText()).exists() ? new File(outDir.getText()) : ((MainWindow.lbFilesTab.getCurrentDir() == null ? new File(MainWindow.userData.lastConvertSrcDir) : MainWindow.lbFilesTab.getCurrentDir())));
+                    final DirectoryChooser chooser = new DirectoryChooser();
+                    chooser.setTitle(TR.tr("Sélectionner un dossier"));
+                    chooser.setInitialDirectory(new File(outDir.getText()).exists() ? new File(outDir.getText()) : ((MainWindow.lbFilesTab.getCurrentDir() == null ? new File(MainWindow.userData.lastConvertSrcDir) : MainWindow.lbFilesTab.getCurrentDir())));
 
-                File file = chooser.showDialog(Main.window);
-                if(file != null){
-                    outDir.setText(file.getAbsolutePath() + File.separator);
-                }
-            });
-
+                    File file = chooser.showDialog(Main.window);
+                    if(file != null){
+                        outDir.setText(file.getAbsolutePath() + File.separator);
+                    }
+                });
+            }else{
+                outDir = new TextField(System.getProperty("user.home"));
+            }
         }
         public int widthFactor = 1;
         public int heightFactor = 1;

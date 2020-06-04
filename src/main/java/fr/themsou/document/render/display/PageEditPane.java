@@ -1,10 +1,13 @@
 package fr.themsou.document.render.display;
 
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 
@@ -24,6 +27,7 @@ public class PageEditPane extends HBox {
     Button deleteButton = getCustomButton(deleteImage, "Supprime cette page");
     Button newButton = getCustomButton(newImage, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
 
+    ContextMenu menu = new ContextMenu();
 
     private PageRenderer page;
     private int buttonNumber = 6;
@@ -42,7 +46,29 @@ public class PageEditPane extends HBox {
 
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
 
-        newButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPage(page.getPage()+1));
+        newButton.setOnMouseClicked((e) -> {
+
+            menu.hide();
+            menu.getItems().clear();
+
+            if(page.getPage() == 0){
+                NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), -1, false);
+                NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), -1, false);
+                menu.getItems().addAll(addTopBlank, addTopConvert, new SeparatorMenuItem());
+
+                addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()));
+                addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()));
+            }
+
+            NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), -1, false);
+            NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), -1, false);
+            menu.getItems().addAll(addBlank, addConvert);
+
+            addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()+1));
+            addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()+1));
+
+            menu.show(page, e.getScreenX(), e.getScreenY());
+        });
 
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton);
 

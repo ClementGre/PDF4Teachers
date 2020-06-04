@@ -114,7 +114,9 @@ public class PDFPagesRender {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	}
+	public PDDocument getDocument(){
+		return document;
 	}
 
 	public int getNumberOfPages(){
