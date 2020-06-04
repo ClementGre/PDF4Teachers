@@ -1,5 +1,6 @@
-package fr.themsou.utils;
+package fr.themsou.utils.components;
 
+import fr.themsou.utils.Builders;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -14,8 +15,8 @@ public class NodeRadioMenuItem extends NodeMenuItem {
 
     private boolean autoUpdate;
 
-    public NodeRadioMenuItem(HBox node, String text, int width, boolean fat, boolean autoUpdate) {
-        super(node, text, width, fat, false);
+    public NodeRadioMenuItem(HBox node, String text, boolean fat, boolean autoUpdate) {
+        super(node, text, fat, false);
 
         this.autoUpdate = autoUpdate;
 
@@ -30,7 +31,7 @@ public class NodeRadioMenuItem extends NodeMenuItem {
         });
 
         if(autoUpdate){
-            getContent().setOnMouseClicked((e) -> {
+            getNode().setOnMouseClicked((e) -> {
                 setSelected(!isSelected());
             });
         }

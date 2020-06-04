@@ -1,7 +1,7 @@
 package fr.themsou.document.render.display;
 
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.Cursor;
@@ -52,21 +52,22 @@ public class PageEditPane extends HBox {
             menu.getItems().clear();
 
             if(page.getPage() == 0){
-                NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), -1, false);
-                NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), -1, false);
+                NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), false);
+                NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), false);
                 menu.getItems().addAll(addTopBlank, addTopConvert, new SeparatorMenuItem());
 
                 addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()));
                 addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()));
             }
 
-            NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), -1, false);
-            NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), -1, false);
+            NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), false);
+            NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), false);
             menu.getItems().addAll(addBlank, addConvert);
 
             addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()+1));
             addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()+1));
 
+            NodeMenuItem.setupMenu(menu);
             menu.show(page, e.getScreenX(), e.getScreenY());
         });
 

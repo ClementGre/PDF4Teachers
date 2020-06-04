@@ -4,7 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
@@ -17,10 +17,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 
 import java.io.File;
 import java.util.Collections;
@@ -124,21 +120,21 @@ public class FileListItem extends ListCell<File>{
 
             ContextMenu menu = new ContextMenu();
 
-            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), -1, false);
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), false);
             item1.setToolTip(TR.tr("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
-            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), false);
             item2.setToolTip(TR.tr("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
-            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), -1, false);
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), false);
             item3.setToolTip(TR.tr("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
-            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), -1, false);
+            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), false);
             item4.setToolTip(TR.tr("Supprime le fichier PDF sur l'ordinateur."));
-            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), -1, false);
+            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), false);
             item5.setToolTip(TR.tr("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
-            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), false);
             item6.setToolTip(TR.tr("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
 
             menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
-            Builders.setMenuSize(menu);
+            NodeMenuItem.setupMenu(menu);
 
             item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(file)));
 

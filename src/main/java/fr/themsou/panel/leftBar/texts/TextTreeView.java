@@ -9,7 +9,7 @@ import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeLasts;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeOnFile;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
@@ -99,7 +99,7 @@ public class TextTreeView extends TreeView<String>{
 
 
         if(section.sectionType == TextTreeSection.ONFILE_TYPE){
-            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer tous les éléments textuels"), -1, false);
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer tous les éléments textuels"), false);
             item3.setToolTip(TR.tr("Supprime tous les éléments textuels ajoutés au document, cela va donc supprimer une partie de l'édition."));
             menu.getItems().addAll(item3);
 
@@ -111,9 +111,9 @@ public class TextTreeView extends TreeView<String>{
                 Edition.setUnsave();
             });
         }else{
-            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), -1, false);
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), false);
             item1.setToolTip(TR.tr("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
-            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer les donnés d'utilisation"), -1, false);
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer les donnés d'utilisation"), false);
             item2.setToolTip(TR.tr("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
             menu.getItems().addAll(item1, item2);
 
@@ -131,22 +131,22 @@ public class TextTreeView extends TreeView<String>{
                 }
             });
         }
-        Builders.setMenuSize(menu);
+        NodeMenuItem.setupMenu(menu);
         return menu;
     }
 
     public static ContextMenu getNewMenu(TextTreeItem element){
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter et lier"), -1, false);
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ajouter et lier"), false);
         item1.setToolTip(TR.tr("Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), -1, false);
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), false);
         item2.setToolTip(TR.tr("Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité"));
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux favoris"), -1, false);
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux favoris"), false);
         item3.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments précédents."));
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), -1, false);
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), false);
         item4.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments favoris."));
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Dé-lier l'élément"), -1, false);
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Dé-lier l'élément"), false);
         item5.setToolTip(TR.tr("L'élément de la liste ne sera plus synchronisé avec l'élément du document"));
 
 
@@ -157,7 +157,7 @@ public class TextTreeView extends TreeView<String>{
         if(element.getType() == TextTreeSection.ONFILE_TYPE) menu.getItems().add(item4); // onFile
         if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
 
-        Builders.setMenuSize(menu);
+        NodeMenuItem.setupMenu(menu);
 
         // Définis les actions des boutons
         item1.setOnAction((e) -> {

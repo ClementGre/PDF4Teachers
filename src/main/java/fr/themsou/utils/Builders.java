@@ -1,5 +1,6 @@
 package fr.themsou.utils;
 
+import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -137,15 +138,6 @@ public class Builders {
     }
 
     public static void setMenuSize(Menu menu){
-
-        for(MenuItem subMenu : menu.getItems()){
-            subMenu.setStyle("-fx-font-size: 13;");
-            if(subMenu instanceof Menu){
-                setMenuSize((Menu) subMenu);
-            }
-        }
-    }
-    public static void setMenuSize(ContextMenu menu){
 
         for(MenuItem subMenu : menu.getItems()){
             subMenu.setStyle("-fx-font-size: 13;");

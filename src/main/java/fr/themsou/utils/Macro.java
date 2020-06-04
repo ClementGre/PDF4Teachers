@@ -9,13 +9,14 @@ import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
+import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
 import java.util.ArrayList;
 
 public class Macro {
 
-    public Macro(Pane main){
+    public Macro(Scene main){
 
         main.setOnKeyPressed(e -> {
 

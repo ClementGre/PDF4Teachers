@@ -70,6 +70,8 @@ public class MainWindow extends Stage{
         setResizable(true);
         setScene(scene);
 
+        new Macro(scene);
+
         setOnCloseRequest(e -> {
             userData.saveData();
             if(e.getSource().equals(menuBar)) return;
@@ -131,8 +133,6 @@ public class MainWindow extends Stage{
                 e.consume();
             }
         });
-
-        new Macro(root);
 
 //		SHOWING
 

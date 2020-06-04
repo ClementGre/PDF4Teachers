@@ -41,7 +41,7 @@ public class Settings {
         defaultZoom = 130;
         if(System.getProperty("os.name").equals("Mac OS X")) zoomAnimations.set(false);
         else zoomAnimations.set(true);
-        darkTheme.set(false);
+        darkTheme.set(true);
 
         autoSave.set(false);
         regularSaving = -1;

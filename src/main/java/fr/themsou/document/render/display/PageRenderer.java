@@ -89,7 +89,6 @@ public class PageRenderer extends Pane{
             pageEditPane.setVisible(false);
         });
 
-        Builders.setMenuSize(menu);
         setOnMousePressed(e -> {
 
             MainWindow.mainScreen.setSelected(null);

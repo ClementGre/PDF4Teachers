@@ -7,7 +7,7 @@ import fr.themsou.panel.leftBar.grades.GradeRating;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.utils.Builders;
-import fr.themsou.utils.NodeMenuItem;
+import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
@@ -132,14 +132,14 @@ public class GradeElement extends Element {
     }
     @Override
     protected void setupMenu() {
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), -1, false);
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), false);
         item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
         item1.setToolTip(TR.tr("suppr"));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), -1, false);
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), false);
         item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
         item2.disableProperty().bind(MainWindow.lbGradeTab.isLockGradeScaleProperty());
         menu.getItems().addAll(item1, item2);
-        Builders.setMenuSize(menu);
+        NodeMenuItem.setupMenu(menu);
 
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement;
