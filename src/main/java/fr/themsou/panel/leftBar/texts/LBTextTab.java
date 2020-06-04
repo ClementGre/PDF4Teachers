@@ -4,6 +4,8 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.display.PageRenderer;
+import fr.themsou.main.Main;
+import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
@@ -11,8 +13,10 @@ import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
@@ -47,7 +51,7 @@ public class LBTextTab extends Tab {
 	private ToggleButton boldBtn = new ToggleButton("");
 	private ToggleButton itBtn = new ToggleButton("");
 
-	private TextArea txtArea = new TextArea();
+	public TextArea txtArea = new TextArea();
 
 	private HBox btnBox = new HBox();
 	private Button deleteBtn = new Button(TR.tr("Supprimer"));
@@ -132,9 +136,11 @@ public class LBTextTab extends Tab {
 		});
 
 		Builders.setHBoxPosition(txtArea, -1, 30, 0);
-		txtArea.setStyle("-fx-font-size: 13");
+		if(Main.settings.isSmallFontInTextsList()) txtArea.setStyle("-fx-font-size: 12");
+		else txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));
+		txtArea.setId("no-vertical-scroll-bar");
 
 		Builders.setHBoxPosition(deleteBtn, -1, 30, 2.5);
 		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -176,7 +182,6 @@ public class LBTextTab extends Tab {
 					fontCombo.getSelectionModel().select(current.getFont().getFamily());
 					sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
 
-					current.textProperty().bind(txtArea.textProperty());
 					current.fontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 				}
 			}
@@ -187,18 +192,59 @@ public class LBTextTab extends Tab {
 				else MainWindow.leftBar.getSelectionModel().select(1);
 			}
 		});
+
+		ContextMenu menu = new ContextMenu();
+		MenuItem deleteReturn = new MenuItem(TR.tr("Supprimer les retours à la ligne inutiles"));
+		deleteReturn.setOnAction(event -> {
+			String wrapped = new TextWrapper(txtArea.getText().replaceAll(Pattern.quote("\n"), " "), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+			if(txtArea.getText().endsWith(" ")) wrapped += " ";
+
+			if(!wrapped.equals(txtArea.getText())){
+				int positionCaret = txtArea.getCaretPosition();
+				txtArea.setText(wrapped);
+				txtArea.positionCaret(positionCaret);
+			}
+			Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
+		});
+		menu.getItems().add(deleteReturn);
+		txtArea.setContextMenu(menu);
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
-			if(newValue.contains("\u0009")){
-					txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
+			if(newValue.contains("\u0009")){ // TAB
+				txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
+				return;
 			}
+
+			Platform.runLater(() -> {
+				String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+				if(newValue.endsWith(" ")) wrapped += " ";
+
+				if(!wrapped.equals(newValue)){
+					int positionCaret = txtArea.getCaretPosition();
+					txtArea.setText(wrapped);
+					txtArea.positionCaret(positionCaret);
+				}
+				Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
+			});
 
 			updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
 			if(!txtAreaScrollBarListenerIsSetup){
 				getHorizontalSB(txtArea).visibleProperty().addListener((ObservableValue<? extends Boolean> observableTxt, Boolean oldTxtValue, Boolean newTxtValue) ->  updateHeightAndYLocations(newTxtValue));
 				txtAreaScrollBarListenerIsSetup = true;
 			}
+			((TextElement) MainWindow.mainScreen.getSelected()).setText(newValue);
 		});
+		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+			String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+			if(txtArea.getText().endsWith(" ")) wrapped += " ";
+
+			if(!wrapped.equals(txtArea.getText())){
+				int positionCaret = txtArea.getCaretPosition();
+				txtArea.setText(wrapped);
+				txtArea.positionCaret(positionCaret);
+			}
+			Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
+		}));
 		txtArea.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.DELETE){
 				if(txtArea.getCaretPosition() == txtArea.getText().length()){

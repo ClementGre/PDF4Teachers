@@ -83,6 +83,8 @@ public class Settings {
         smallFontInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
             if(MainWindow.lbTextTab != null) TextTreeView.updateListsGraphic();
+            if(t1) MainWindow.lbTextTab.txtArea.setStyle("-fx-font-size: 12");
+            else MainWindow.lbTextTab.txtArea.setStyle("-fx-font-size: 13");
         });
 
         /////
