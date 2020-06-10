@@ -4,7 +4,6 @@ import fr.themsou.main.Main;
 import fr.themsou.utils.CustomPrintStream;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
-import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -16,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.PrintStream;
 
@@ -39,7 +39,7 @@ public class LogWindow extends Stage {
             updater.stop();
             close();
         });
-        StyleManager.putStyle(scene, Style.DEFAULT);
+        new JMetro(scene, Style.DARK);
 
         Pane pane = new Pane();
         root.setStyle("-fx-background-color: black;");

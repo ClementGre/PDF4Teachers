@@ -105,7 +105,7 @@ Cette action est irréversible.=This action can't be canceled
 Confirmation=Confirmation
 # SortEvent
 # ExportFile
-# LBFilesTab
+# LBFileTab
 Édition=Edit
 Date d'Ajout=Added on
 Dossier=Folder
@@ -312,7 +312,7 @@ Niveau=Level
 Ces paramètres sonts indépendants de l'édition du document.=These settings are not related to comment edits
 PDF4Teachers - Polices et Couleurs des Notes=PDF4Teachers - Fonts and colors of grades
 Configuration des polices pour chaque catégorie de note=Set fonts for each kind of grade
-# LBFilesListView
+# FileListItem
 Êtes vous sûr de vouloir supprimer le document et son édition ?=Are you sure you want to delete file and its editings ?
 Vider la liste=Empty list
 Impossible de récupérer les informations=Impossible to get content
