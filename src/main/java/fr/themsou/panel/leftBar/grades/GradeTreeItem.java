@@ -20,6 +20,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class GradeTreeItem extends TreeItem {
@@ -122,7 +124,11 @@ public class GradeTreeItem extends TreeItem {
 
         newGrade.setOnAction(event -> {
             setExpanded(true);
-            MainWindow.lbGradeTab.newGradeElementAuto(this).select();
+            GradeElement element = MainWindow.lbGradeTab.newGradeElementAuto(this);
+            element.select();
+
+            // Update total (Fix the bug when a total is predefined (with no children))
+            makeSum();
         });
 
     }
@@ -169,9 +175,13 @@ public class GradeTreeItem extends TreeItem {
 
         nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
-                if(nameField.getCaretPosition() == nameField.getText().length() || nameField.getCaretPosition() == 0) {
-                    nameField.positionCaret(nameField.getText().length());
-                    nameField.selectAll();
+                if(newValue){
+                    if(nameField.getCaretPosition() == nameField.getText().length() || nameField.getCaretPosition() == 0) {
+                        nameField.positionCaret(nameField.getText().length());
+                        nameField.selectAll();
+                    }
+                }else{
+                    nameField.deselect();
                 }
             });
         });
@@ -193,11 +203,16 @@ public class GradeTreeItem extends TreeItem {
         });
         gradeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
-                gradeField.positionCaret(gradeField.getText().length());
-                gradeField.selectAll();
+                if(newValue){
+                    gradeField.positionCaret(gradeField.getText().length());
+                    gradeField.selectAll();
+                }else{
+                    gradeField.deselect();
+                }
             });
         });
-        gradeField.textProperty().addListener((observable, oldValue, newValue) -> {
+        gradeField.textProperty().addListener((observable, oldTextValue, newValue) -> {
+            System.out.println("newValue = " + newValue);
             if(newValue.contains("/")){
                 totalField.requestFocus();
                 totalField.positionCaret(totalField.getText().length());
@@ -218,20 +233,25 @@ public class GradeTreeItem extends TreeItem {
             meter.setText(newText);
             gradeField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
 
+            // dont accept a value higher than the total
             try{
                 double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
                 if(value > core.getTotal()){
-                    core.setValue(core.getTotal());
                     gradeField.setText(Main.format.format(core.getTotal()));
                 }else core.setValue(value);
             }catch(NumberFormatException e){
                 core.setValue(-1);
             }
+
         });
         totalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
-                totalField.positionCaret(totalField.getText().length());
-                totalField.selectAll();
+                if(newValue){
+                    totalField.positionCaret(totalField.getText().length());
+                    totalField.selectAll();
+                }else{
+                    totalField.deselect();
+                }
             });
         });
         totalField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -397,7 +417,6 @@ public class GradeTreeItem extends TreeItem {
     }
 
     public void makeSum(){
-
         boolean hasValue = false;
         double value = 0;
         double total = 0;
@@ -405,7 +424,11 @@ public class GradeTreeItem extends TreeItem {
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
 
-            total += children.getCore().getTotal();
+            // Don't count the "Bonus" children in the Total
+            if(!children.getCore().getName().equalsIgnoreCase(TR.tr("Bonus"))){
+                total += children.getCore().getTotal();
+            }
+
             if(children.getCore().getValue() >= 0){
                 hasValue = true;
                 value += children.getCore().getValue();
@@ -422,10 +445,24 @@ public class GradeTreeItem extends TreeItem {
     }
 
     public void resetChildrenValues(){
-
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setValue(-1);
+            children.resetChildrenValues();
+        }
+    }
+    public void setChildrenValuesTo0(){
+        for(int i = 0; i < getChildren().size(); i++){
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
+            children.getCore().setValue(0);
+            children.setChildrenValuesTo0();
+        }
+    }
+    public void setChildrenValuesToMax(){
+        for(int i = 0; i < getChildren().size(); i++){
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
+            children.getCore().setValue(children.getCore().getTotal());
+            children.setChildrenValuesToMax();
         }
     }
 

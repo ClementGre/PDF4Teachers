@@ -68,14 +68,15 @@ public class GradeTreeView extends TreeView<String> {
         setRoot(null);
         generateRoot(false);
     }
-    // Clear and removingf element from pages
+    // Clear and removing element from pages
     public void clear(){
         if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
         generateRoot(false);
     }
 
     public void generateRoot(boolean update){
-        MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 20, 0, "", update);
+        MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 0, 0, "", update);
+        //MainWindow.lbGradeTab.newGradeElement(TR.tr("Bonus"), -1, 0, 0, "\\Total", update);
     }
 
     public void addElement(GradeElement element){
@@ -198,14 +199,14 @@ public class GradeTreeView extends TreeView<String> {
         return null;
     }
     public static GradeTreeItem getNextLogicGrade(){
-        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
+        ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         for(GradeTreeItem grade : items){
             if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
         }
         return null;
     }
     public static GradeTreeItem getNextLogicGradeNonNull(){
-        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
+        ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         for(GradeTreeItem grade : items){
             if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
         }
@@ -216,7 +217,7 @@ public class GradeTreeView extends TreeView<String> {
     }
 
     public static void defineNaNLocations(){
-        ArrayList<GradeTreeItem> items = getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot());
+        ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         ArrayList<GradeTreeItem> itemsToSend = new ArrayList<>();
 
         boolean afterItemHaveToDropDown = false;
@@ -269,6 +270,10 @@ public class GradeTreeView extends TreeView<String> {
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
         }
+    }
+
+    public static GradeTreeItem getTotal(){
+        return (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
     }
 
     public static ArrayList<GradeTreeItem> getGradesArray(GradeTreeItem root){

@@ -134,7 +134,7 @@ public class AboutWindow extends Stage {
                     Hyperlink javaFx = new Hyperlink("Java FX 14");
                     javaFx.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://openjfx.io/"));
 
-                    Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.19");
+                    Hyperlink pdfBox = new Hyperlink("Apache PDFBox 2.0.20");
                     pdfBox.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdfbox.apache.org/"));
 
                     Hyperlink jMetro = new Hyperlink("JMetro 11.6.11");

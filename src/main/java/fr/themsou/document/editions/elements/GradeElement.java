@@ -77,23 +77,25 @@ public class GradeElement extends Element {
         nameProperty().addListener((observable, oldValue, newValue) -> {
 
             text.setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
-
             Edition.setUnsave();
+
+            // Check if name is null
             if(newValue.isBlank()){
                 setName(TR.tr("Nouvelle note"));
                 return;
             }
+            // Check if exist twice
+            GradeTreeItem treeItemElement = getGradeTreeItem();
+            if(((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
 
-            GradeTreeItem treeItemElement;
-            if(getParentPath().isEmpty()) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
-            else{
-                treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
-                // Check if exist twice
-                if(((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
-            }
-
-            // ReIndex childrens
+            // Redefine children parentPath
             if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
+
+            // Update total if switch/unSwitch to Bonus
+            if(oldValue.equalsIgnoreCase(TR.tr("Bonus")) != newValue.equalsIgnoreCase(TR.tr("Bonus"))){
+                if(treeItemElement.hasSubGrade() && getValue() == -1) treeItemElement.resetChildrenValues();
+                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum();
+            }
         });
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -115,44 +117,60 @@ public class GradeElement extends Element {
             }
 
             GradeTreeItem treeItemElement = getGradeTreeItem();
-            if(treeItemElement.isRoot()){// this is Root
-                if(newValue.intValue() == -1) ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).resetChildrenValues();
-            }else{
-                if(treeItemElement.hasSubGrade() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
-                ((GradeTreeItem) treeItemElement.getParent()).makeSum();
-            }
+            if(treeItemElement.hasSubGrade() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
+            else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum();
+
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
             text.setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(getValue()) + "/" + Main.format.format(getTotal()));
 
-            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) return; // This is Root
-            ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this).getParent()).makeSum();
+            if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
+            ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum();
         });
     }
     @Override
     protected void setupMenu() {
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), false);
-        item1.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes."));
-        item1.setToolTip(TR.tr("suppr"));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), false);
-        item2.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition."));
-        item2.disableProperty().bind(MainWindow.lbGradeTab.isLockGradeScaleProperty());
-        menu.getItems().addAll(item1, item2);
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Attribuer tout les points"), false);
+        item1.setToolTip(TR.tr("Entre toutes les sous-notes à leurs valeur maximum."));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), false);
+        item2.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes"));
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), false);
+        item3.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition"));
+        item3.disableProperty().bind(MainWindow.lbGradeTab.isLockGradeScaleProperty());
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Mettre 0 à toutes les sous-notes"), false);
+        item4.setToolTip(TR.tr("Donne la valeur 0 à toutes les sous-notes"));
+
+        menu.getItems().addAll(item1, item4, item2, item3);
         NodeMenuItem.setupMenu(menu);
 
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement;
-            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
-            else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
-            treeItemElement.gradeField.setText("");
+            if((GradeTreeView.getTotal()).getCore().equals(this)) treeItemElement = GradeTreeView.getTotal();
+            else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+            treeItemElement.gradeField.setText(Main.format.format(treeItemElement.getCore().getTotal()));
+            treeItemElement.setChildrenValuesToMax();
         });
         item2.setOnAction(e -> {
-            if(((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot()).getCore().equals(this)){
+            GradeTreeItem treeItemElement;
+            if((GradeTreeView.getTotal()).getCore().equals(this)) treeItemElement = GradeTreeView.getTotal();
+            else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+            treeItemElement.gradeField.setText("");
+            treeItemElement.resetChildrenValues();
+        });
+        item3.setOnAction(e -> {
+            if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 delete();
                 MainWindow.lbGradeTab.treeView.generateRoot(true);
             }else delete();
+        });
+        item4.setOnAction(e -> {
+            GradeTreeItem treeItemElement;
+            if((GradeTreeView.getTotal()).getCore().equals(this)) treeItemElement = GradeTreeView.getTotal();
+            else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+            treeItemElement.gradeField.setText("0");
+            treeItemElement.setChildrenValuesTo0();
         });
     }
     @Override
@@ -247,15 +265,14 @@ public class GradeElement extends Element {
     }
     public GradeTreeItem getGradeTreeItem(){
         GradeTreeItem treeItemElement;
-        if(getParentPath().isEmpty()) treeItemElement = (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
-        else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot(), this);
+        if(isRoot()) treeItemElement = GradeTreeView.getTotal();
+        else treeItemElement = MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+
         return treeItemElement;
     }
-    public boolean isDefaultRoot(){
-        if(isRoot()){
-            return (getValue() == -1 && getTotal() == 20 && getName().equals(TR.tr("Total")));
-        }
-        return false;
+    public boolean isDefaultGrade(){
+        return (getValue() == -1 && getTotal() == 0 &&
+                (getName().equals(TR.tr("Total")) || getName().equals(TR.tr("Bonus"))) );
     }
     public boolean isRoot(){
         return getParentPath().isEmpty();
@@ -282,6 +299,9 @@ public class GradeElement extends Element {
     }
     public double getValue() {
         return value.get();
+    }
+    public double getVisibleValue() {
+        return Math.max(0, value.get());
     }
     public DoubleProperty valueProperty() {
         return value;

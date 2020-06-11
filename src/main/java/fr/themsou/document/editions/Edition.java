@@ -98,9 +98,9 @@ public class Edition {
             }
 
             // GRADES ELEMENTS
-            for(GradeTreeItem element : GradeTreeView.getGradesArray((GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot())){
+            for(GradeTreeItem element : GradeTreeView.getGradesArray(GradeTreeView.getTotal())){
                 grades.add(element.getCore().getYAMLData());
-                if(!element.getCore().isDefaultRoot()) counter++;
+                if(!element.getCore().isDefaultGrade()) counter++;
             }
 
             // delete edit file if edition is empty
@@ -192,8 +192,8 @@ public class Edition {
                     } counter++;
 
                 }else if(element instanceof GradeElement){
-                    grades.add(((GradeElement) element).getYAMLData());
-                    if(!((GradeElement) element).isDefaultRoot()) counter++;
+                    grades.add(element.getYAMLData());
+                    if(!((GradeElement) element).isDefaultGrade()) counter++;
                 }
             }
             // delete edit file if edition is empty
