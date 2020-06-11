@@ -25,11 +25,11 @@ import java.util.List;
 
 public class TextTreeView extends TreeView<String>{
 
-    public static TreeItem<String> treeViewRoot = new TreeItem<>();
+    public TreeItem<String> treeViewRoot = new TreeItem<>();
 
-    public static TextTreeFavorites favoritesSection = new TextTreeFavorites();
-    public static TextTreeLasts lastsSection = new TextTreeLasts();
-    public static TextTreeOnFile onFileSection = new TextTreeOnFile();
+    public TextTreeFavorites favoritesSection = new TextTreeFavorites();
+    public TextTreeLasts lastsSection = new TextTreeLasts();
+    public TextTreeOnFile onFileSection = new TextTreeOnFile();
 
     public TextTreeView(Pane pane){
 
@@ -107,7 +107,7 @@ public class TextTreeView extends TreeView<String>{
                 for(PageRenderer page : MainWindow.mainScreen.document.pages){
                     page.clearTextElements();
                 }
-                TextTreeView.onFileSection.updateElementsList();
+                MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
                 Edition.setUnsave();
             });
         }else{
@@ -163,12 +163,12 @@ public class TextTreeView extends TreeView<String>{
         item1.setOnAction((e) -> {
             element.addToDocument(true);
             if(element.getType() == TextTreeSection.FAVORITE_TYPE){
-                if(TextTreeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    TextTreeView.favoritesSection.sortManager.simulateCall();
+                if(MainWindow.lbTextTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
                 }
             }else if(element.getType() == TextTreeSection.LAST_TYPE){
-                if(TextTreeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-                    TextTreeView.lastsSection.sortManager.simulateCall();
+                if(MainWindow.lbTextTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+                    MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
                 }
             }
         });
@@ -198,23 +198,23 @@ public class TextTreeView extends TreeView<String>{
     }
 
     public static void updateListsGraphic(){
-        favoritesSection.updateChildrenGraphics();
-        lastsSection.updateChildrenGraphics();
-        onFileSection.updateChildrenGraphics();
+        MainWindow.lbTextTab.treeView.favoritesSection.updateChildrenGraphics();
+        MainWindow.lbTextTab.treeView.lastsSection.updateChildrenGraphics();
+        MainWindow.lbTextTab.treeView.onFileSection.updateChildrenGraphics();
     }
 
     public static void addSavedElement(TextTreeItem element){
         if(element.getType() == TextTreeSection.FAVORITE_TYPE){
-            favoritesSection.addElement(element);
+            MainWindow.lbTextTab.treeView.favoritesSection.addElement(element);
         }else if(element.getType() == TextTreeSection.LAST_TYPE){
-            lastsSection.addElement(element);
+            MainWindow.lbTextTab.treeView.lastsSection.addElement(element);
         }
     }
     public static void removeSavedElement(TextTreeItem element){
         if(element.getType() == TextTreeSection.FAVORITE_TYPE){
-            favoritesSection.removeElement(element);
+            MainWindow.lbTextTab.treeView.favoritesSection.removeElement(element);
         }else if(element.getType() == TextTreeSection.LAST_TYPE){
-            lastsSection.removeElement(element);
+            MainWindow.lbTextTab.treeView.lastsSection.removeElement(element);
         }
     }
 
@@ -241,14 +241,14 @@ public class TextTreeView extends TreeView<String>{
     public static List<TextTreeItem> getMostUseElements(){
 
         List<TextTreeItem> toSort = new ArrayList<>();
-        for(int i = 0; i < favoritesSection.getChildren().size(); i++){
-            if(favoritesSection.getChildren().get(i) instanceof TextTreeItem){
-                toSort.add((TextTreeItem) favoritesSection.getChildren().get(i));
+        for(int i = 0; i < MainWindow.lbTextTab.treeView.favoritesSection.getChildren().size(); i++){
+            if(MainWindow.lbTextTab.treeView.favoritesSection.getChildren().get(i) instanceof TextTreeItem){
+                toSort.add((TextTreeItem) MainWindow.lbTextTab.treeView.favoritesSection.getChildren().get(i));
             }
         }
-        for(int i = 0; i < lastsSection.getChildren().size(); i++){
-            if(lastsSection.getChildren().get(i) instanceof TextTreeItem){
-                toSort.add((TextTreeItem) lastsSection.getChildren().get(i));
+        for(int i = 0; i < MainWindow.lbTextTab.treeView.lastsSection.getChildren().size(); i++){
+            if(MainWindow.lbTextTab.treeView.lastsSection.getChildren().get(i) instanceof TextTreeItem){
+                toSort.add((TextTreeItem) MainWindow.lbTextTab.treeView.lastsSection.getChildren().get(i));
             }
         }
         return autoSortList(toSort, TR.tr("Utilisation"), true);

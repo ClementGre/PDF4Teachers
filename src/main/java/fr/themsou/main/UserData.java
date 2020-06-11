@@ -102,11 +102,11 @@ public class UserData {
 
                 Platform.runLater(() -> {
                     for(Object data : Config.getList(texts, "favorites")){
-                        if(data instanceof Map) TextTreeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
+                        if(data instanceof Map) MainWindow.lbTextTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
                     }
 
                     for(Object data : Config.getList(texts, "lasts")){
-                        if(data instanceof Map) TextTreeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
+                        if(data instanceof Map) MainWindow.lbTextTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
                     }
 
                     for(Map.Entry<String, Object> list : Config.getSection(texts, "lists").entrySet()){
@@ -115,7 +115,7 @@ public class UserData {
                             for(Object data : ((List<Object>) list.getValue())){
                                 listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
                             }
-                            TextTreeView.favoritesSection.favoriteLists.put(list.getKey(), listTexts);
+                            MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.put(list.getKey(), listTexts);
                         }
                     }
                 });
@@ -202,10 +202,10 @@ public class UserData {
             if(!new File(lastConvertSrcDir).exists()) lastConvertSrcDir = System.getProperty("user.home");
 
             Platform.runLater(() -> {
-                TextTreeView.favoritesSection.sortManager.simulateCall();
-                TextTreeView.lastsSection.sortManager.simulateCall();
+                MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
+                MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
 
-                TextTreeView.favoritesSection.listsManager.setupMenu();
+                MainWindow.lbTextTab.treeView.favoritesSection.listsManager.setupMenu();
             });
 
         }).start();
@@ -267,20 +267,20 @@ public class UserData {
                         break;
                         case DataType.TEXT_ELEMENT_FAVORITE: // Favorite TextElement
                             try{
-                                TextTreeView.favoritesSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.FAVORITE_TYPE));
+                                MainWindow.lbTextTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.FAVORITE_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LAST: // Last TextElement
                             try{
-                                TextTreeView.lastsSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.LAST_TYPE));
+                                MainWindow.lbTextTab.treeView.lastsSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.LAST_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LIST: // List TextElement
                             try{
                                 String listName = reader.readUTF();
-                                ArrayList<TextListItem> list = TextTreeView.favoritesSection.favoriteLists.containsKey(listName) ? TextTreeView.favoritesSection.favoriteLists.get(listName) : new ArrayList<>();
+                                ArrayList<TextListItem> list = MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.containsKey(listName) ? MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.get(listName) : new ArrayList<>();
                                 list.add(TextListItem.readDataAndGive(reader));
-                                TextTreeView.favoritesSection.favoriteLists.put(listName, list);
+                                MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.put(listName, list);
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
@@ -288,10 +288,10 @@ public class UserData {
                 }
                 reader.close();
 
-                TextTreeView.favoritesSection.sortManager.simulateCall();
-                TextTreeView.lastsSection.sortManager.simulateCall();
+                MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
+                MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
 
-                TextTreeView.favoritesSection.listsManager.setupMenu();
+                MainWindow.lbTextTab.treeView.favoritesSection.listsManager.setupMenu();
 
                 file.delete();
             }
@@ -323,7 +323,7 @@ public class UserData {
 
             LinkedHashMap<Object, Object> texts = new LinkedHashMap<>();
             List<Object> favoriteTexts = new ArrayList<>();
-            for(Object item : TextTreeView.favoritesSection.getChildren()){
+            for(Object item : MainWindow.lbTextTab.treeView.favoritesSection.getChildren()){
                 if(item instanceof TextTreeItem){
                     favoriteTexts.add(((TextTreeItem) item).getYAMLData());
                 }
@@ -331,7 +331,7 @@ public class UserData {
             texts.put("favorites", favoriteTexts);
 
             ArrayList<Object> lastTexts = new ArrayList<>();
-            for(Object item : TextTreeView.lastsSection.getChildren()){
+            for(Object item : MainWindow.lbTextTab.treeView.lastsSection.getChildren()){
                 if(item instanceof TextTreeItem){
                     lastTexts.add(((TextTreeItem) item).getYAMLData());
                 }
@@ -339,7 +339,7 @@ public class UserData {
             texts.put("lasts", lastTexts);
 
             LinkedHashMap<Object, Object> lists = new LinkedHashMap<>();
-            for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeView.favoritesSection.favoriteLists.entrySet()){
+            for(Map.Entry<String, ArrayList<TextListItem>> list : MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.entrySet()){
                 List<Object> listTexts = new ArrayList<>();
                 for(TextListItem item : list.getValue()){
                     listTexts.add(item.getYAMLData());

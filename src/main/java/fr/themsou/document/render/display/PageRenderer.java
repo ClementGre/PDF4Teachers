@@ -366,7 +366,7 @@ public class PageRenderer extends Pane{
             if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
-                if(update) TextTreeView.onFileSection.addElement((TextElement) element);
+                if(update) MainWindow.lbTextTab.treeView.onFileSection.addElement((TextElement) element);
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
             }
@@ -381,7 +381,7 @@ public class PageRenderer extends Pane{
             if(update) Edition.setUnsave();
 
             if(element instanceof TextElement){
-                if(update) TextTreeView.onFileSection.removeElement((TextElement) element);
+                if(update) MainWindow.lbTextTab.treeView.onFileSection.removeElement((TextElement) element);
             }else if(element instanceof GradeElement){
                 MainWindow.lbGradeTab.treeView.removeElement((GradeElement) element);
             }

@@ -73,7 +73,7 @@ public class TextElement extends Element {
 	}
 	@Override
 	protected void onMouseRelease(){
-		TextTreeView.onFileSection.sortManager.simulateCall();
+		MainWindow.lbTextTab.treeView.onFileSection.sortManager.simulateCall();
 	}
 	@Override
 	protected void setupMenu(){

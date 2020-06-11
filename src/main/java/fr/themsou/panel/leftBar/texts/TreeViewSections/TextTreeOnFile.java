@@ -45,8 +45,8 @@ public class TextTreeOnFile extends TextTreeSection {
     @Override
     public void removeElement(TextElement element){
         super.removeElement(element);
-        TextTreeView.lastsSection.removeElement(element);
-        TextTreeView.favoritesSection.removeElement(element);
+        MainWindow.lbTextTab.treeView.lastsSection.removeElement(element);
+        MainWindow.lbTextTab.treeView.favoritesSection.removeElement(element);
     }
 
 }

@@ -51,9 +51,9 @@ public class StyleManager {
     private static void putStylesAuto(){
         new JMetro(MainWindow.root, DEFAULT_STYLE);
 
-        TextTreeView.lastsSection.updateGraphics();
-        TextTreeView.favoritesSection.updateGraphics();
-        TextTreeView.onFileSection.updateGraphics();
+        MainWindow.lbTextTab.treeView.lastsSection.updateGraphics();
+        MainWindow.lbTextTab.treeView.favoritesSection.updateGraphics();
+        MainWindow.lbTextTab.treeView.onFileSection.updateGraphics();
         MainWindow.lbFilesTab.sortManager.updateGraphics();
         if(MainWindow.mainScreen.hasDocument(false)){
             MainWindow.mainScreen.document.updateBackgrounds();

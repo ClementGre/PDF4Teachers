@@ -70,7 +70,7 @@ public class Edition {
             }
 
         }catch (IOException e){ e.printStackTrace(); }
-        TextTreeView.onFileSection.updateElementsList();
+        MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
     }
     public void save(){
         if(Edition.isSave()) return;
@@ -140,7 +140,7 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
-        TextTreeView.onFileSection.updateElementsList();
+        MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
     }
 
     // STATIC
@@ -318,7 +318,7 @@ public class Edition {
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
-            TextTreeView.onFileSection.updateElementsList();
+            MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
             MainWindow.lbGradeTab.treeView.clear();
 
             Edition.setUnsave();

@@ -111,12 +111,12 @@ public class TextTreeItem extends TreeItem{
 				addToDocument(false);
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
-					if(TextTreeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-						TextTreeView.favoritesSection.sortManager.simulateCall();
+					if(MainWindow.lbTextTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
 					}
 				}else if(getType() == TextTreeSection.LAST_TYPE){
-					if(TextTreeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-						TextTreeView.lastsSection.sortManager.simulateCall();
+					if(MainWindow.lbTextTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
 					}
 				}
 			}
