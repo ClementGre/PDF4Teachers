@@ -20,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -56,7 +57,7 @@ public class TextTreeItem extends TreeItem{
 
 	// Graphics items
 	public HBox pane = new HBox();
-	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 15, 15);
+	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
 	public ScratchText name = new ScratchText();
 	public ContextMenu menu;
 	public EventHandler<MouseEvent> onMouseCLick;
@@ -133,6 +134,8 @@ public class TextTreeItem extends TreeItem{
 
 	public void updateGraphic(){ // Re calcule le Text
 
+		int cellHeight = (Main.settings.isSmallFontInTextsList() ? 14 : 18);
+
 		int maxWidth = (int) (MainWindow.lbTextTab.treeView.getWidth() - 45);
 		if(maxWidth < 0) return;
 
@@ -164,40 +167,34 @@ public class TextTreeItem extends TreeItem{
 			}
 		}
 
-		name.setStyle("-fx-padding: 0;");
 		name.setText(wrappedText);
 		name.setFill(StyleManager.convertColor(color.get()));
 
-		pane.setStyle("-fx-padding: " + (Main.settings.isSmallFontInTextsList() ? 0 : 1) + " 0;");
+		pane.setAlignment(Pos.CENTER_LEFT);
 
 	}
 	Rectangle rect = new Rectangle();
 	public void updateIcon(){ // Re définis les children de la pane
+		int cellHeight = (Main.settings.isSmallFontInTextsList() ? 14 : 18);
 
 		pane.getChildren().clear();
 
-		if(core != null){
-			Pane spacer = new Pane(); spacer.setPrefWidth(15);
-			spacer.getChildren().add(linkImage);
-			spacer.setPrefHeight(15);
-			HBox.setMargin(spacer, new Insets(1.5, 0, 1.5, 0));
-			pane.getChildren().add(spacer);
-		}else{
-			Region spacer = new Region(); spacer.setPrefWidth(15);
-			spacer.setPrefHeight(18);
-			pane.getChildren().add(spacer);
-		}
+		HBox spacer = new HBox();
+		spacer.setPrefWidth(15 + (3 + 4 + 3));
+		spacer.setAlignment(Pos.TOP_RIGHT);
+		if(core != null) spacer.getChildren().add(linkImage);
 
 
 		rect.setWidth(4);
 		rect.setHeight(4);
 		rect.setFill(StyleManager.convertColor(Color.WHITE));
-		HBox.setMargin(rect, new Insets(7, 3, 7, 3));
+		HBox.setMargin(rect, new Insets(((cellHeight - 4) / 2.0), 3, 0, 3));
+		spacer.getChildren().add(rect);
 
-		pane.getChildren().addAll(rect, name);
+		pane.getChildren().addAll(spacer, name);
 
 	}
-	public void updateCell(TreeCell<String> cell){ // Réatribue une cell à la pane
+	public void updateCell(TreeCell<String> cell){ // Réattribue une cell à la pane
 
 		if(cell == null) return;
 		if(name.getText().isEmpty()) updateGraphic();

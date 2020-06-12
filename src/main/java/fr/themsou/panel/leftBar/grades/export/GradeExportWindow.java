@@ -38,7 +38,6 @@ public class GradeExportWindow extends Stage {
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(650);
-        setHeight(760);
         setResizable(false);
         setTitle(TR.tr("PDF4Teachers - Exporter les notes"));
         setScene(scene);

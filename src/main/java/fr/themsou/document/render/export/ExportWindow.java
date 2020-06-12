@@ -37,18 +37,15 @@ public class ExportWindow {
         this.files = files;
 
         VBox root = new VBox();
-        Scene scene = new Scene(root, 650, 470);
+        Scene scene = new Scene(root);
 
         window.initOwner(Main.window);
         window.initModality(Modality.WINDOW_MODAL);
         window.getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         window.setWidth(650);
-        window.setHeight(470);
 
         window.setMinWidth(500);
-        window.setMinHeight(470);
         window.setMaxWidth(800);
-        window.setMaxHeight(470);
         window.setTitle("PDF4Teachers - " + TR.tr("Exporter") + " (" + files.size() + " " + TR.tr("documents)"));
         window.setScene(scene);
         window.setOnCloseRequest(e -> window.close());
