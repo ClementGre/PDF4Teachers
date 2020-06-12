@@ -5,6 +5,7 @@ import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.windows.MainWindow;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.event.Event;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -112,6 +113,7 @@ public abstract class Element extends Region {
 
 			checkLocation(itemX, itemY, true);
 		});
+		setOnMouseClicked(Event::consume);
 
 		/////////////////////////////////////////////////////////////////////////
 

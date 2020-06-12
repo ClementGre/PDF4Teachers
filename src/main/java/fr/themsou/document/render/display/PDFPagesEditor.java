@@ -92,7 +92,7 @@ public class PDFPagesEditor{
 
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
             Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-            alert.setHeaderText(TR.tr("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.tr("du document") + "\n" + TR.tr("Le éléments de cette page seront supprimés et les notes seront réinitialisés"));
+            alert.setHeaderText(TR.tr("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.tr("du document") + "\n" + TR.tr("Les éléments de cette page seront supprimés et les notes seront réinitialisés"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();

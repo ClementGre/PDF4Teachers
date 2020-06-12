@@ -186,12 +186,6 @@ public class LBTextTab extends Tab {
 				}
 			}
 		});
-		txtArea.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.TAB){
-				if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
-				else MainWindow.leftBar.getSelectionModel().select(1);
-			}
-		});
 
 		ContextMenu menu = new ContextMenu();
 		MenuItem deleteReturn = new MenuItem(TR.tr("Supprimer les retours à la ligne inutiles"));
@@ -215,7 +209,9 @@ public class LBTextTab extends Tab {
 				return;
 			}
 
+			if(MainWindow.mainScreen.getSelected() == null) return;
 			Platform.runLater(() -> {
+				if(MainWindow.mainScreen.getSelected() == null) return;
 				String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
 				if(newValue.endsWith(" ")) wrapped += " ";
 
@@ -254,6 +250,9 @@ public class LBTextTab extends Tab {
 						element.delete();
 					}
 				}
+			}else if(e.getCode() == KeyCode.TAB){
+				if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
+				else MainWindow.leftBar.getSelectionModel().select(1);
 			}
 		});
 		colorPicker.setOnAction((ActionEvent e) -> {

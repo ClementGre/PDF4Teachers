@@ -5,13 +5,20 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import fr.themsou.utils.Builders;
 import fr.themsou.utils.CallBack;
+import fr.themsou.utils.TR;
+import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
+import javafx.scene.control.Alert;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -28,6 +35,7 @@ public class PDFPagesRender {
 	private PDDocument document;
 	ArrayList<Thread> rendersPage = new ArrayList<>();
 
+	public boolean advertisement = false;
 	private boolean render = false;
 
 	public PDFPagesRender(File file) throws IOException{
@@ -39,7 +47,7 @@ public class PDFPagesRender {
 		render = false;
 	}
 
-	public void renderPage(int pageNumber, double size, CallBack<WritableImage> callBack){
+	public void renderPage(int pageNumber, double size, double width, double height, CallBack<Background> callBack){
 
 		Thread renderPage = new Thread(() -> {
 			/*while(render){
@@ -72,9 +80,19 @@ public class PDFPagesRender {
 				e.printStackTrace();
 			}
 			graphics.dispose();
-			WritableImage fxImage = SwingFXUtils.toFXImage(renderImage, null);
+			Background background = new Background(
+					Collections.singletonList(new BackgroundFill(
+							javafx.scene.paint.Color.WHITE,
+							CornerRadii.EMPTY,
+							Insets.EMPTY)),
+					Collections.singletonList(new BackgroundImage(
+							SwingFXUtils.toFXImage(renderImage, null),
+							BackgroundRepeat.NO_REPEAT,
+							BackgroundRepeat.NO_REPEAT,
+							BackgroundPosition.CENTER,
+							new BackgroundSize(width, height, false, false, false, true))));
 
-			Platform.runLater(() -> callBack.call(fxImage));
+			Platform.runLater(() -> callBack.call(background));
 
 			render = false;
 
@@ -82,6 +100,19 @@ public class PDFPagesRender {
 		renderPage.start();
 		rendersPage.add(renderPage);
 
+	}
+
+	public static void renderAdvertisement(){
+		if(MainWindow.mainScreen.hasDocument(false)){
+			if(!MainWindow.mainScreen.document.pdfPagesRender.advertisement){ // not already sended
+				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
+
+				Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de rendu"));
+				alert.setHeaderText(TR.tr("Certaines erreurs sont apparues lors du rendu du document PDF."));
+				alert.setContentText(TR.tr("Certains caractères risquent de ne pas s'afficher correctement."));
+				alert.show();
+			}
+		}
 	}
 
 	public BufferedImage scale(BufferedImage img, double width) {

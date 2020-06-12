@@ -212,7 +212,6 @@ public class GradeTreeItem extends TreeItem {
             });
         });
         gradeField.textProperty().addListener((observable, oldTextValue, newValue) -> {
-            System.out.println("newValue = " + newValue);
             if(newValue.contains("/")){
                 totalField.requestFocus();
                 totalField.positionCaret(totalField.getText().length());

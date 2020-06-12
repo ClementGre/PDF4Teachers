@@ -12,10 +12,12 @@ import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ProgressBar;
@@ -150,6 +152,7 @@ public class PageRenderer extends Pane{
         });
         setOnMouseClicked(e -> {
             if(e.getClickCount() == 2){
+
                 MainWindow.leftBar.getSelectionModel().select(1);
                 MainWindow.lbTextTab.newBtn.fire();
                 Element selected = MainWindow.mainScreen.getSelected();
@@ -200,10 +203,13 @@ public class PageRenderer extends Pane{
         });*/
     }
     public void updateZoom(){
-        if(lastShowStatus != 0) return;
+        if(lastShowStatus != 0) return; // Verify that the page is visible
+        if(status != PageStatus.RENDERED) return; // Verify that the page is rendered
         if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
+            status = PageStatus.RENDERING;
             render();
         }
+
     }
     public void updateRender(){
         setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
@@ -279,25 +285,14 @@ public class PageRenderer extends Pane{
 
         renderedZoomFactor = getNewRenderedZoomFactor();
 
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, (image) -> {
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (background) -> {
 
-            if(image == null){
+            if(background == null){
                 status = PageStatus.FAIL;
                 return;
             }
 
-            setBackground(
-                    new Background(
-                            Collections.singletonList(new BackgroundFill(
-                                    Color.WHITE,
-                                    CornerRadii.EMPTY,
-                                    Insets.EMPTY)),
-                            Collections.singletonList(new BackgroundImage(
-                                    image,
-                                    BackgroundRepeat.NO_REPEAT,
-                                    BackgroundRepeat.NO_REPEAT,
-                                    BackgroundPosition.CENTER,
-                                    new BackgroundSize(getWidth(), getHeight(), false, false, false, true)))));
+            setBackground(background);
 
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);
