@@ -94,6 +94,7 @@ public class PDFPagesRender {
 
 			Platform.runLater(() -> callBack.call(background));
 
+			System.gc(); // clear unused element in RAM
 			render = false;
 
 		}, "Render page " + pageNumber);

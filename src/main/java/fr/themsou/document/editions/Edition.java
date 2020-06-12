@@ -21,6 +21,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.io.*;
+import java.nio.file.CopyOption;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Edition {
@@ -251,25 +254,29 @@ public class Edition {
     public static File getFileEdit(File file){
         return new File(file.getName().replaceAll("!E!", "\\" + File.separator).replaceAll("!P!", ":").replace(".yml", ""));
     }
-    public static void mergeEditFileWithDocFile(File from, File dest){
-        mergeEditFileWithEditFile(getEditFile(from), getEditFile(dest));
-    }
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){
-        if(destEdit.exists()) destEdit.delete();
-        fromEdit.renameTo(destEdit);
+        try {
+            Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Erreur"));
+            alert.setHeaderText(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"");
+            alert.setContentText(TR.tr("Faites Ctrl+Alt+C pour accéder aux logs"));
+            alert.show();
+        }
         fromEdit.delete();
     }
 
-    public static ArrayList<File> getEditFilesWithSameName(File originFile){
+    public static HashMap<File, File> getEditFilesWithSameName(File originFile){
 
-        ArrayList<File> files = new ArrayList<>();
+        HashMap<File, File> files = new HashMap<>();
 
         for(File editFile : new File(Main.dataFolder + "editions" + File.separator).listFiles()){
 
             File file = getFileEdit(editFile);
 
             if(file.getName().equals(originFile.getName()) && !file.equals(originFile)){
-                files.add(file);
+                files.put(editFile, file);
             }
         }
         return files;

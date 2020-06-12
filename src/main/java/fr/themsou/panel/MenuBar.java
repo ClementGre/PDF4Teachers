@@ -274,9 +274,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier8SameName.setOnShowing((Event event) -> {
 			fichier8SameName.getItems().clear();
 			int i = 0;
-			for(File file : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile())) {
+			for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
 
-				MenuItem item = new MenuItem(file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
+				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
 				fichier8SameName.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
 					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
@@ -290,24 +290,27 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					Optional<ButtonType> option = dialog.showAndWait();
 					if(option.get() == yes){
 						if(MainWindow.mainScreen.hasDocument(true)){
+
 							MainWindow.mainScreen.document.edition.clearEdit(false);
-							Edition.mergeEditFileWithDocFile(file, MainWindow.mainScreen.document.getFile());
+							Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
 							MainWindow.mainScreen.document.loadEdition();
 						}
 					}else if(option.get() == yesAll){
 						if(MainWindow.mainScreen.hasDocument(true)){
+
 							MainWindow.mainScreen.document.edition.clearEdit(false);
-							Edition.mergeEditFileWithDocFile(file, MainWindow.mainScreen.document.getFile());
+							Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
 							MainWindow.mainScreen.document.loadEdition();
 
 							for(File otherFileDest : MainWindow.lbFilesTab.files.getItems()){
 								if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
-									File fromEditFile = Edition.getEditFile(new File(file.getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
+									File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
+
 									if(fromEditFile.exists()){
 										Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
 									}else{
 										Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier introuvable"));
-										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + file.getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
+										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
 										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
 										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);
