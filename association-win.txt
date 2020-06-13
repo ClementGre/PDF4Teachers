@@ -1,0 +1,4 @@
+extension=pdf
+mime-type=application-x/pdf
+icon=src\main\resources\logo.ico
+description=Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs.

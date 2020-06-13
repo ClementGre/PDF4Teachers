@@ -75,8 +75,6 @@ jlink {
     }
 
 
-
-
     jpackage {
         installerOptions = [
                 '--description', project.description,
@@ -93,7 +91,8 @@ jlink {
                     '--win-dir-chooser',
                     '--win-menu',
                     '--win-shortcut',
-                    '--win-menu-group', ''
+                    '--win-menu-group'/*,
+                    '--file-associations association-win.txt'*/
             ]
         }else if(installerType == 'dmg'){ // MAC
             imageOptions += ['--icon', 'src/main/resources/logo.icns']

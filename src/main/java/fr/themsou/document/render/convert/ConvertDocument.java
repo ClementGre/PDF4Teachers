@@ -14,8 +14,10 @@ import java.util.Optional;
 
 public class ConvertDocument {
 
+    public ConvertWindow convertWindow;
+
     public ConvertDocument(){
-        new ConvertWindow(null, (convertedFiles) -> {
+        convertWindow = new ConvertWindow(null, (convertedFiles) -> {
 
             boolean eraseAll = false;
             int converted = 0;

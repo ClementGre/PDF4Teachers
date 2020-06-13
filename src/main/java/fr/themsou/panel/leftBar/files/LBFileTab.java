@@ -8,28 +8,29 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import fr.themsou.document.render.convert.ConvertDocument;
+import fr.themsou.document.render.convert.ConvertRenderer;
 import fr.themsou.document.render.convert.ConvertWindow;
+import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.geometry.VPos;
-import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 
 public class LBFileTab extends Tab {
 
 	public SortManager sortManager;
-	private VBox separator = new VBox();
+	private VBox pane = new VBox();
 	private GridPane options = new GridPane();
+
+	private VBox info = new VBox();
 
 	public FileListView files = new FileListView();
 	public ArrayList<File> originalFiles = new ArrayList<>();
@@ -37,7 +38,7 @@ public class LBFileTab extends Tab {
 	public LBFileTab(){
 
 		setClosable(false);
-		setContent(separator);
+		setContent(pane);
 
 		setGraphic(Builders.buildImage(getClass().getResource("/img/pdfdocument.png")+"", 0, 25));
 		MainWindow.leftBar.getTabs().add(0, this);
@@ -47,12 +48,13 @@ public class LBFileTab extends Tab {
 
 	public void setup(){
 
-		files.setOnDragOver((DragEvent e) -> {
+		MainWindow.root.setOnDragOver((DragEvent e) -> {
 			Dragboard db = e.getDragboard();
 			if(db.hasFiles()){
 				for(File file : db.getFiles()){
-					if(isFilePdf(file) || file.isDirectory()){
+					if(isFilePdf(file) || file.isDirectory() || ConvertRenderer.isGoodFormat(file)){
 						e.acceptTransferModes(TransferMode.ANY);
+						MainWindow.leftBar.getSelectionModel().select(0);
 						e.consume();
 						return;
 					}
@@ -60,20 +62,39 @@ public class LBFileTab extends Tab {
 			}
 			e.consume();
 		});
-		files.setOnDragDropped((DragEvent e) -> {
+		MainWindow.root.setOnDragDropped((DragEvent e) -> {
 			Dragboard db = e.getDragboard();
 			if(db.hasFiles()){
+				// We need only one good file to accept all. We will do the sorting after.
 				for(File file : db.getFiles()){
 					if(isFilePdf(file) || file.isDirectory()){
 						File[] files = db.getFiles().toArray(new File[db.getFiles().size()]);
 						openFiles(files);
+						if(files.length == 1) MainWindow.mainScreen.openFile(files[0]);
 						e.setDropCompleted(true);
 						e.consume();
-						return;
+						break;
 					}
 				}
-			}
+				// Test for conversion
+				ArrayList<File> toConvertFiles = new ArrayList<>();
+				for(File file : db.getFiles()){
+					if(ConvertRenderer.isGoodFormat(file)){
+						toConvertFiles.add(file);
+					}
+				}
+				if(toConvertFiles.size() != 0){
 
+					ConvertDocument converter = new ConvertDocument();
+					for(File file : toConvertFiles){
+						converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
+					}
+					converter.convertWindow.tabPane.getSelectionModel().select(1);
+
+					e.setDropCompleted(true);
+					e.consume();
+				}
+			}
 			e.consume();
 		});
 
@@ -97,25 +118,42 @@ public class LBFileTab extends Tab {
 		}, null);
 		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
 
-		// Convert button
+		// Info pane
 
-		Pane convert = new Pane();
+		Label infoLabel = new Label(TR.tr("Aucun fichier ouvert"));
+		infoLabel.setStyle("-fx-font-size: 16;");
+		VBox.setMargin(infoLabel, new Insets(0, 0, 10, 0));
 
-		Label label = new Label("Convertir");
-		label.setStyle("-fx-font-size: 18; -fx-text-fill: white;");
-		label.prefWidthProperty().bind(convert.widthProperty());
-		label.prefHeightProperty().bind(convert.heightProperty());
-		label.setAlignment(Pos.CENTER);
+		Hyperlink openFile = new Hyperlink(TR.tr("Ouvrir un·des fichiers"));
+		openFile.setOnAction(e -> MainWindow.menuBar.fichier1Open.fire());
+		VBox.setMargin(openFile, new Insets(-2, 0, -2, 0));
 
-		convert.setCursor(Cursor.HAND);
-		convert.setStyle("-fx-background-color: #0078d7;");
-		convert.setOnMouseEntered((e) -> convert.setStyle("-fx-background-color: #006bc0;"));
-		convert.setOnMouseExited((e) -> convert.setStyle("-fx-background-color: #0078d7;"));
-		convert.setOnMouseClicked((e) -> new ConvertDocument());
-		convert.getChildren().add(label);
-		convert.setMinHeight(30);
+		Hyperlink openDir = new Hyperlink(TR.tr("Ouvrir un dossier"));
+		openDir.setOnAction(e -> MainWindow.menuBar.fichier2OpenDir.fire());
+		VBox.setMargin(openDir, new Insets(-2, 0, -2, 0));
 
-		separator.getChildren().addAll(options, files, convert);
+		Hyperlink convert = new Hyperlink(TR.tr("Convertir"));
+		convert.setOnAction(e -> new ConvertDocument());
+		VBox.setMargin(convert, new Insets(-2, 0, -2, 0));
+
+		VBox.setMargin(info, new Insets(20, 0, 20, 0));
+		info.setAlignment(Pos.CENTER);
+		info.getChildren().addAll(infoLabel, openFile, openDir, convert);
+
+
+
+		info.visibleProperty().bind(Bindings.size(files.getItems()).isEqualTo(0));
+		info.visibleProperty().addListener((observable, oldValue, newValue) -> {
+			if(!newValue){
+				pane.getChildren().remove(info);
+			}else if(!pane.getChildren().contains(info)){
+				pane.getChildren().add(1, info);
+			}
+		});
+
+
+		pane.getChildren().addAll(options, info, files);
+
 	}
 
 	private void openFile(File file){

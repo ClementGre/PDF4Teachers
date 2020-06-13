@@ -143,7 +143,7 @@ public class ConvertRenderer {
         }
     }
 
-    private boolean isGoodFormat(File file){
+    public static boolean isGoodFormat(File file){
         String ext = StringUtils.removeBeforeLastRejex(file.getName(), ".");
         if(!file.exists()) ext = "";
         return ext.equalsIgnoreCase("png") ||

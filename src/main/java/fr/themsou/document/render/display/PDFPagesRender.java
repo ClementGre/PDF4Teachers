@@ -109,8 +109,8 @@ public class PDFPagesRender {
 				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
 
 				Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de rendu"));
-				alert.setHeaderText(TR.tr("Certaines erreurs sont apparues lors du rendu du document PDF."));
-				alert.setContentText(TR.tr("Certains caractères risquent de ne pas s'afficher correctement."));
+				alert.setHeaderText(TR.tr("Des erreurs sont apparues lors du rendu du document PDF."));
+				alert.setContentText(TR.tr("Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement."));
 				alert.show();
 			}
 		}

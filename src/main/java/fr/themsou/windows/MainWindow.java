@@ -141,7 +141,7 @@ public class MainWindow extends Stage{
 
 //      COPY DESC
 
-        if(Main.firstLaunch){
+        if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
             mainScreen.openFile(LanguageWindow.getDocFile());
         }
 

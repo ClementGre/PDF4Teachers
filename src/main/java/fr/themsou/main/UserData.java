@@ -86,9 +86,11 @@ public class UserData {
 
                 if(Main.settings.isRestoreLastSession()){
                     for(Object filePath : Config.getList(files, "lastFiles")){
-                        File lastFile = new File(filePath.toString());
-                        if(lastFile.exists()) MainWindow.lbFilesTab.originalFiles.add(lastFile);
-                        MainWindow.lbFilesTab.backOpenFilesList(false);
+                        Platform.runLater(() ->{
+                            File lastFile = new File(filePath.toString());
+                            if(lastFile.exists()) MainWindow.lbFilesTab.originalFiles.add(lastFile);
+                            MainWindow.lbFilesTab.backOpenFilesList(false);
+                        });
                     }
                     File lastFile = new File(Config.getString(files, "lastFile"));
                     if(lastFile.exists()){

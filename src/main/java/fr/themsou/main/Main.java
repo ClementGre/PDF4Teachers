@@ -1,6 +1,12 @@
 package fr.themsou.main;
 
+import java.awt.*;
+import java.awt.desktop.OpenURIEvent;
+import java.awt.desktop.OpenURIHandler;
+import java.awt.desktop.SystemEventListener;
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;
@@ -31,16 +37,43 @@ public class Main extends Application {
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
+	public static String systemShortcut = "Ctrl";
+
+	static {
+		if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
+			Desktop.getDesktop().setOpenFileHandler(e -> {
+				System.out.println(e.getFiles().get(0).getAbsolutePath());
+				if(window.isShowing()){
+					MainWindow.lbFilesTab.openFiles((File[]) e.getFiles().toArray());
+					if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
+
+				}
+			});
+		}
+	}
 
 	public static void main(String[] args){
 		if(COPY_CONSOLE) LogWindow.copyLogs();
 		System.out.println("Starting PDF4Teachers...");
+
+		///// START APP /////
 		launch(args);
+
+		///// OPEN FILES WITH PDF4TEACHERS /////
+		/*Desktop.getDesktop().setOpenURIHandler(e -> {
+			File file = new File(e.getURI());
+			if(window.isShowing() && file.exists()){
+				MainWindow.lbFilesTab.openFiles(new File[]{file});
+				MainWindow.mainScreen.openFile(file);
+			}
+
+		});*/
 	}
 	@Override
 	public void start(Stage window){
 
 		if(System.getProperty("os.name").toLowerCase().contains("win")) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
+		else if(System.getProperty("os.name").toLowerCase().contains("osx")) systemShortcut = "Cmd";
 
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();

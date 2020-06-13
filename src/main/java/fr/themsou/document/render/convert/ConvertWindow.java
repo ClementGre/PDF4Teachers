@@ -54,6 +54,10 @@ public class ConvertWindow extends Stage {
 
     DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
 
+    public TabPane tabPane = new TabPane();
+    public ConvertPane convertDirs;
+    public ConvertPane convertFiles;
+
     PDRectangle defaultSize;
     CallBack<ArrayList<ConvertedFile>> callBack;
     public ConvertWindow(PDRectangle defaultSize, CallBack<ArrayList<ConvertedFile>> callBack){
@@ -90,10 +94,8 @@ public class ConvertWindow extends Stage {
 
         // PANES
 
-        TabPane tabPane = new TabPane();
-
-        ConvertPane convertDirs = new ConvertPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
-        ConvertPane convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("Convertir des fichiers en un document") : TR.tr("Convertir des fichiers en pages"), false);
+        convertDirs = new ConvertPane(this, TR.tr("Convertir des dossiers en plusieurs documents"), true);
+        convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("Convertir des fichiers en un document") : TR.tr("Convertir des fichiers en pages"), false);
 
         if(defaultSize == null) tabPane.getTabs().add(convertDirs);
         tabPane.getTabs().add(convertFiles);
@@ -104,7 +106,7 @@ public class ConvertWindow extends Stage {
         show();
     }
 
-    class ConvertPane extends Tab {
+    public class ConvertPane extends Tab {
 
         public boolean convertDirs;
         ConvertWindow window;
@@ -118,7 +120,7 @@ public class ConvertWindow extends Stage {
         ComboBox<String> definition, format;
 
         public CheckBox convertAloneFiles = new CheckBox(TR.tr("Convertir aussi les images du dossier source en documents (un document par image)"));
-        public CheckBox convertVoidFiles = new CheckBox(TR.tr("Convertir les sous-dossiers vides en pages blanches"));
+        public CheckBox convertVoidFiles = new CheckBox(TR.tr("Convertir les fichiers invalides (de mauvais format ou non existant) en pages blanches"));
 
         public ConvertPane(ConvertWindow window, String tabName, boolean convertDirs){
             super(tabName);
@@ -145,11 +147,10 @@ public class ConvertWindow extends Stage {
 
             if(convertDirs){
                 desc.setText(TR.tr("Convertir plusieurs dossiers en plusieurs documents PDF") + "\n   " +
-                        TR.tr("Chaque dossier sera convertis en un document, les images contenus dans le dossier représentent les pages") + "\n   " +
+                        TR.tr("Chaque dossier sera converti en un document, les images contenues dans le dossier représentent les pages") + "\n   " +
                         TR.tr("L'ordre des pages est pris en fonction de l'ordre alphabétique.") + "\n   " +
                         TR.tr("Il sera toujours possible de déplacer les pages après."));
             }else{
-                convertVoidFiles.setText(TR.tr("Convertir les fichiers non existants en pages blanches (lignes vides)"));
                 if(defaultSize != null){
                     desc.setText(TR.tr("Convertir plusieurs images en pages à ajouter au document"));
                 }else{
@@ -200,7 +201,7 @@ public class ConvertWindow extends Stage {
                 srcFiles = new TextArea();
                 Builders.setHBoxPosition(srcFiles, -1, 0, 0, 2.5);
                 srcFiles.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists())
+                    if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists())
                         MainWindow.userData.lastConvertSrcDir = new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile().getAbsolutePath() + File.separator;
                 });
 
@@ -214,16 +215,16 @@ public class ConvertWindow extends Stage {
                 changePath.setOnAction(event -> {
 
                     final FileChooser chooser = new FileChooser();
-                    chooser.setTitle(TR.tr("Sélectionner un dossier"));
-                    chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists() ? new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile() : new File(MainWindow.userData.lastConvertSrcDir));
-
-                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Image"), "*.png", "*.jpeg", "*.jpg", "*.tiff", "*.gif", "*.bmp"));
                     chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
-                    chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
+                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Image"), "*.png", "*.jpeg", "*.jpg", "*.tiff", "*.gif", "*.bmp"));
+                    if(!srcFiles.getText().isBlank()){
+                        chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists() ? new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile() : new File(MainWindow.userData.lastConvertSrcDir));
+                    }else{
+                        chooser.setInitialDirectory(new File(MainWindow.userData.lastConvertSrcDir));
+                    }
 
                     List<File> files = chooser.showOpenMultipleDialog(Main.window);
                     if(files != null){
-                        srcFiles.setText("");
                         for(File file : files) srcFiles.appendText(file.getAbsolutePath() + "\n");
                     }
                 });

@@ -1,6 +1,8 @@
 package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.render.convert.ConvertDocument;
+import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
@@ -15,6 +17,8 @@ import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -44,10 +48,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	////////// FICHIER //////////
 
 	Menu fichier = new Menu(TR.tr("Fichier"));
-	NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", "Ctrl+O",
+	public NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", "Ctrl+O",
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", "Ctrl+Shift+O",
+	public NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", "Ctrl+Shift+O",
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
 	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", "Ctrl+Shift+W",
@@ -75,6 +79,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", "Ctrl+Shift+E",
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
+
+	NodeMenuItem fichier11Convert = createMenuItem(TR.tr("Convertir"), "convert", "Ctrl+Shift+C",
+			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
 
 	////////// PREFS //////////
 
@@ -136,7 +143,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
 		fichier8SameName.getItems().add(fichier8SameNameNull);
 
-		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6DeleteAll, fichier7Close, fichier8SameName, new SeparatorMenuItem(), fichier9Export, fichier10ExportAll);
+		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6DeleteAll, fichier7Close, fichier8SameName, new SeparatorMenuItem(), fichier9Export, fichier10ExportAll, fichier11Convert);
 
 		////////// PREFS //////////
 
@@ -339,6 +346,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
 			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
 
+		});
+		fichier11Convert.setOnAction(e -> {
+			new ConvertDocument();
 		});
 
 		////////// PREFS //////////
