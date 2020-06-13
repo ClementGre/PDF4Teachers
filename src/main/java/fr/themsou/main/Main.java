@@ -1,12 +1,7 @@
 package fr.themsou.main;
 
 import java.awt.*;
-import java.awt.desktop.OpenURIEvent;
-import java.awt.desktop.OpenURIHandler;
-import java.awt.desktop.SystemEventListener;
 import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 
 import fr.themsou.utils.TR;

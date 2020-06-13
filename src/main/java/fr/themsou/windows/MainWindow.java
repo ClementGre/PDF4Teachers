@@ -152,11 +152,13 @@ public class MainWindow extends Stage{
 
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
-                    menuBar.apropos.setStyle("-fx-background-color: #ba6800;");
-                    Tooltip.install(menuBar.apropos.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
+                    if(UpdateWindow.newVersion){
+                        menuBar.apropos.setStyle("-fx-background-color: #d6a600;");
+                        Tooltip.install(menuBar.apropos.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
-                    if(Main.settings.isCheckUpdates()){
-                        new UpdateWindow();
+                        if(Main.settings.isCheckUpdates()){
+                            new UpdateWindow();
+                        }
                     }
                 });
             }

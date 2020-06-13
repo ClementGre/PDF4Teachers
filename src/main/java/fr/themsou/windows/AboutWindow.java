@@ -64,11 +64,27 @@ public class AboutWindow extends Stage {
             if(UpdateWindow.newVersion){
                 newVersion = new Button(TR.tr("Une nouvelle version est disponible !"));
                 newVersion.setAlignment(Pos.CENTER);
-                newVersion.setStyle("-fx-background-color: #ba6800;");
+                newVersion.setStyle("-fx-background-color: #e5b100; -fx-text-fill: black;");
 
                 newVersion.setOnAction(event -> {
                     new UpdateWindow();
                 });
+            }else if(UpdateWindow.newPre){
+                newVersion = new Button(TR.tr("Une nouvelle avant-première est disponible !"));
+                newVersion.setAlignment(Pos.CENTER);
+                newVersion.setStyle("-fx-background-color: #24bcfe; -fx-text-fill: black;");
+
+                newVersion.setOnAction(event -> {
+                    new UpdateWindow();
+                });
+            }else if(UpdateWindow.error){
+                newVersion = new Button(TR.tr("Impossible de récupérer la dernière version"));
+                newVersion.setAlignment(Pos.CENTER);
+                newVersion.setStyle("-fx-background-color: #ff3434; -fx-text-fill: black;");
+            }else{
+                newVersion = new Button(TR.tr("Vous exécutez la dernière version !"));
+                newVersion.setAlignment(Pos.CENTER);
+                newVersion.setStyle("-fx-background-color: #5bd600; -fx-text-fill: black;");
             }
 
             HBox devInfo = new HBox();

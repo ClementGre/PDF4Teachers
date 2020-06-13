@@ -140,7 +140,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	private static ColorAdjust colorAdjust = new ColorAdjust();
 	static {
-		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.2);
+		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
 		else colorAdjust.setBrightness(-1);
 	}
 

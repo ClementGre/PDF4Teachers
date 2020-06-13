@@ -28,18 +28,14 @@ public class GradeSettingsWindow extends Stage {
 
     public GradeSettingsWindow(){
 
-        ScrollPane scroller = new ScrollPane();
         VBox root = new VBox();
-        scroller.setContent(root);
-
-        Scene scene = new Scene(scroller);
+        Scene scene = new Scene(root);
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(750);
-        setHeight(390);
         setTitle(TR.tr("PDF4Teachers - Polices et Couleurs des Notes"));
+        setResizable(false);
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
 
