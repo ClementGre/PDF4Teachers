@@ -251,7 +251,7 @@ public class GradeElement extends Element {
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
         GradeElement element = readDataAndGive(reader, true);
-        element.setTranslateY(element.getTranslateY()-element.getBaseLineY());
+        element.setRealY((int) (element.getRealY() - element.getBaseLineY()/element.getPage().getHeight()*Element.GRID_HEIGHT));
         if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
             MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
     }

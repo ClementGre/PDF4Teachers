@@ -41,7 +41,7 @@ public class GradeSettingsWindow extends Stage {
         setHeight(390);
         setTitle(TR.tr("PDF4Teachers - Polices et Couleurs des Notes"));
         setScene(scene);
-        StyleManager.putStyle(scene, Style.DEFAULT);
+        StyleManager.putStyle(root, Style.DEFAULT);
 
         setupPanel(root);
         show();

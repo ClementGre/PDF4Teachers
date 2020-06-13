@@ -28,6 +28,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -135,10 +136,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
 	MenuItem aide3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
 
+	////////// OFF TOPIC //////////
+
+	private static ColorAdjust colorAdjust = new ColorAdjust();
+	static {
+		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.2);
+		else colorAdjust.setBrightness(-1);
+	}
+
 	public MenuBar(){
 		setup();
 	}
-
 	public void setup(){
 
 		////////// FICHIER //////////
@@ -182,9 +190,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// OTHER //////////
 
-		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
-		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0));
-		aide3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0));
+		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
+		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
+		aide3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
 		aide.getItems().addAll(aide1Doc, aide2Probleme, aide3Twitter);
 
 		////////// SETUP ITEMS WIDTH ///////////
@@ -472,7 +480,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
 
 
-		ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0);
+		ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
 
 		if(disableIfNoDoc){
 			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
@@ -491,7 +499,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
 
-		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 
 		return menuItem;
@@ -501,7 +509,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", true);
 
-		if(!imgName.isBlank()) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+
+		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 		if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
 		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 		if(leftMargin) menuItem.setFalseLeftData();

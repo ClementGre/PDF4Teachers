@@ -246,9 +246,13 @@ public class UserData {
                                             Font.loadFont(FontUtils.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
-                                MainWindow.lbGradeTab.updateElementsFont();
 
-                                MainWindow.lbGradeTab.lockGradeScale.setSelected(reader.readBoolean());
+                                boolean lockGradingScale = reader.readBoolean();
+
+                                Platform.runLater(() -> {
+                                    MainWindow.lbGradeTab.updateElementsFont();
+                                    MainWindow.lbGradeTab.lockGradeScale.setSelected(lockGradingScale);
+                                });
 
                                 lastExportFileName = reader.readUTF();
                                 lastExportFileNameReplace = reader.readUTF();

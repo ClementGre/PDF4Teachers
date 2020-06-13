@@ -118,7 +118,7 @@ zoom=zoom
 (Non sauvegardé)=(unsaved)
 PDF4Teachers - Aucun document=PDF4Teachers - No document
 Vérifiez que le fichier n'est pas corrompus=
-et que PDF4Teachers a les droites de lecture sur ce fichier.=
+et que PDF4Teachers a les droits de lecture sur ce fichier.=
 Impossible de charger l'édition du document=
 Supprimez l'édition ou modifiez la en modifiant son fichier YAML dans :=
 # TextTreeView

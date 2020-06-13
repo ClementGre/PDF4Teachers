@@ -92,7 +92,7 @@ public class MainScreen extends Pane {
 			}else if(status.get() == Status.ERROR){
 				info.setText(TR.tr("Impossible de charger ce document") + "\n\n" +
 						TR.tr("Vérifiez que le fichier n'est pas corrompus") + "\n" +
-						TR.tr("et que PDF4Teachers a les droites de lecture sur ce fichier."));
+						TR.tr("et que PDF4Teachers a les droits de lecture sur ce fichier."));
 				infoLink.setVisible(false);
 
 			}else if(status.get() == Status.ERROR_EDITION){

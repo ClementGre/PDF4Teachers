@@ -7,6 +7,8 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -38,7 +40,12 @@ public class Builders {
         return imageView;
     }
     public static ImageView buildImage(String imgPath, int width, int height) {
+        return buildImage(imgPath, width, height, null);
+    }
+    public static ImageView buildImage(String imgPath, int width, int height, Effect effect) {
         ImageView imageView = new ImageView(new Image(imgPath));
+
+        if(effect != null) imageView.setEffect(effect);
 
         if(width == 0 && height == 0) return imageView;
 
