@@ -76,23 +76,25 @@ public class PDFPagesRender {
 				pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth/pageSize.getWidth(), destWidth/pageSize.getWidth(), RenderDestination.VIEW);
 				//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
 				document.close();
+
+				graphics.dispose();
+				Background background = new Background(
+						Collections.singletonList(new BackgroundFill(
+								javafx.scene.paint.Color.WHITE,
+								CornerRadii.EMPTY,
+								Insets.EMPTY)),
+						Collections.singletonList(new BackgroundImage(
+								SwingFXUtils.toFXImage(renderImage, null),
+								BackgroundRepeat.NO_REPEAT,
+								BackgroundRepeat.NO_REPEAT,
+								BackgroundPosition.CENTER,
+								new BackgroundSize(width, height, false, false, false, true))));
+
+				Platform.runLater(() -> callBack.call(background));
 			}catch(Exception e){
 				e.printStackTrace();
+				Platform.runLater(() -> callBack.call(null));
 			}
-			graphics.dispose();
-			Background background = new Background(
-					Collections.singletonList(new BackgroundFill(
-							javafx.scene.paint.Color.WHITE,
-							CornerRadii.EMPTY,
-							Insets.EMPTY)),
-					Collections.singletonList(new BackgroundImage(
-							SwingFXUtils.toFXImage(renderImage, null),
-							BackgroundRepeat.NO_REPEAT,
-							BackgroundRepeat.NO_REPEAT,
-							BackgroundPosition.CENTER,
-							new BackgroundSize(width, height, false, false, false, true))));
-
-			Platform.runLater(() -> callBack.call(background));
 
 			System.gc(); // clear unused element in RAM
 			render = false;

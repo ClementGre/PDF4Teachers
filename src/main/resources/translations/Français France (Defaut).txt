@@ -155,6 +155,9 @@ Aucun fichier ouvert=
 PDF4Teachers - À Propos=
 Version=
 Une nouvelle version est disponible !=
+Une nouvelle avant-première est disponible !=
+Impossible de récupérer la dernière version=
+Vous exécutez la dernière version !=
 Développeur :=
 Concepteur :=
 Traducteur : <Votre nom>=
@@ -309,12 +312,16 @@ a bien été supprimé.=
 # Builders
 # UpdateWindow
 PDF4Teachers - Nouvelle Version=
-Une nouvelle version de PDF4Teachers est disponible !=
+Une nouvelle avant-première de PDF4Teachers est disponible !=
+Les avant-première sont destinés aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=
 Vous utilisez la version=
-et la version=
+et l'avant-première=
 est disponible.=
 Description :=
-Faire la mise à jour=
+Une nouvelle version de PDF4Teachers est disponible !=
+et la version=
+Voir sur GitHub=
+Téléchargement direct=
 # FileDrop
 # GradeCopyGradeScaleDialog
 Copier le barème sur d'autres éditions=
