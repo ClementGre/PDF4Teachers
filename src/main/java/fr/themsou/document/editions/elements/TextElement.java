@@ -22,6 +22,9 @@ import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -79,7 +82,7 @@ public class TextElement extends Element {
 	protected void setupMenu(){
 
 		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), false);
-		item1.setAccelerator("Suppr");
+		item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
 		item1.setToolTip(TR.tr("Supprime cet élément. Il sera donc retiré de l'édition."));
 		NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Dupliquer"), false);
 		item2.setToolTip(TR.tr("Crée un second élément identique à celui-ci."));

@@ -62,7 +62,7 @@ L'application a été développée sous Java SE 8 (avec Swing) puis elle est pas
 
 Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink et JPackager pour votre système d'exploitation.
 
-## L'organisation du code
+## L'organisation du code (1.2.0)
 
 *Les noms de packages commençants par un ``.`` représentent des packages de ``fr.themsou``*
 
@@ -72,26 +72,26 @@ La classe main se situe dans le package ``fr.themsou.main``
 
 Au démarrage de l'application, ``Main`` va vérifier si une langue est définie, si non, elle va ouvrir la fenêtre de choix de langage (``.windows.LanguageWindow``). Elle va ensuite ouvir la fenêtre de validation de liscence (``.windows.LicenceWindow``) si l'application est à son premier démarrage (Détecté avec la présence du fichier ``settings.yml``).
 Enfin, Main va appeler (``.windows.MainWindow``) qui va tout initialiser et préparer l'interface principale.
-(Toutes les classes de ``fr.themsou.windows`` etendent de ``Stage``, qui représente une fenêtre dans JavaFx).
+(Toutes les classes de ``fr.themsou.windows`` étendent de ``Stage``, qui représente une fenêtre dans JavaFx).
 
 **Classes des éléments graphiques de JavaFX (``fr.themsou.panel``)**
 
-Chaque classe ou package du package ``fr.themsou.panel`` et ``fr.themsou.panel.leftBar`` représentent un élément graphique de l'écran, elle etendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
+Chaque classe ou package du package ``fr.themsou.panel`` et ``fr.themsou.panel.leftBar`` représentent un élément graphique de l'écran, elle étendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
 
-On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et quelques classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans MainWindow (``LBFilesTab``, ``LBTextTab``, ``LBGradeTab``, ``LBPaintTab``). Ces classes sont accompagnés d'autres classes dont les ``xxxTreeView`` ou ``xxxTreeView`` qui représentent un arbre ou une liste JavaFX. On retrouve aussi les ``xxxTreeItem`` qui représentent un élément de l'arbre. Ces classes ont généralement une variable ``core``, qui représentent l'élément de ``.document.editions.elements`` qui leurs correspond.
+On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et quelques classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans MainWindow (``LBFilesTab``, ``LBTextTab``, ``LBGradeTab``, ``LBPaintTab``). Ces classes sont accompagnés d'autres classes dont les ``xxxTreeView`` ou ``xxxListView`` qui représentent un arbre ou une liste JavaFX. On retrouve aussi les ``xxxTreeItem`` ou ``xxxListItem`` qui représentent un élément de l'arbre (ou de la liste). Ces classes ont généralement une variable ``core``, qui représente l'élément de ``.document.editions.elements`` qui lui correspond.
 
 **Classes des éléments (``fr.themsou.document.editions.elements``)**
 
-Ces différents éléments (texte, notes et formes géométriques) ont des classes attribués dans ``.document.editions.elements`` qui implémentent ``Element``, étendent d'un élément graphique de ``javafx.scene.control`` et qui permettent de stoquer les donnés d'un élément et d'encoder/décoder les donnés en hexadécimal. Ces classes gèrent tout ce qui est relatif à l'élément en question.
+Ces différents éléments (texte, notes et formes géométriques) ont des classes attribués dans ``.document.editions.elements`` qui étendent ``Element``. ``Element`` étend de ``Region`` (Conteneur JavaFX). Ces différentes classes qui étendent ``Element`` contiennent un composant JavaFx, qui sera le "children" de la ``Region`` que représente la classe. ``Element`` s'occupe de toutes les fonctionnalités communes (coordonnés, interactions...).
 
 **Classes pour gérer les documents PDF (``fr.themsou.document``)**
 
 À l'ouverture d'un document, ``fr.themsou.panel.MainScreen.MainScreen`` initialisera :
 - ``.document.Document`` qui initialisera sous demande de MainScreen :
 
-  - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en Hexadécimal et stoqué dans ``<user.home>/.PDF4Teachers/<nom de l'édition>.yml`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.edit``. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il pourra aussi écrire les fichiers lors de la sauvegarde.
+  - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en YAML et stocké dans ``<Dossier Utilisateur>/.PDF4Teachers/<nom de l'édition>.yml`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.yml`` sous Windows. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il pourra aussi écrire les fichiers lors de la sauvegarde.
   
-  - ``.document.render.PageRenderer`` pour chacune des pages en passant en paramètre le numéro de la page correspondant. PageRenderer stoquera touts les Elements dans une ``ArrayList<Element>``. Chaque ``PageRenderer`` fera un rendu sous forme d'image de la page du fichier PDF qui lui est assigné, avec ``.document.render.PDFPagesRender``. Le rendu se lancera lorsque la page sera proche de la zone visible de la ScrollPane.
+  - ``.document.render.PageRenderer`` pour chacune des pages en passant en paramètre le numéro de la page correspondant. PageRenderer stockera tous les Elements dans une ``ArrayList<Element>``. Chaque ``PageRenderer`` fera un rendu sous forme d'image de la page du fichier PDF qui lui est assigné, avec ``.document.render.PDFPagesRender``. Le rendu se lancera lorsque la page sera proche de la zone visible de la ScrollPane et se re-lancera si le niveau de zoom change.
 
 ## Statistiques :
 

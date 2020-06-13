@@ -29,6 +29,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -48,25 +51,25 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	////////// FICHIER //////////
 
 	Menu fichier = new Menu(TR.tr("Fichier"));
-	public NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", "Ctrl+O",
+	public NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", "Ctrl+Shift+O",
+	public NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", "Ctrl+Shift+W",
+	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Vide la liste des fichiers"), false, true, false);
 
-	NodeMenuItem fichier4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", "Ctrl+S",
+	NodeMenuItem fichier4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	NodeMenuItem fichier5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", "",
+	NodeMenuItem fichier5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", "",
+	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
-	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", "Ctrl+W",
+	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
 	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
@@ -74,20 +77,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	MenuItem fichier8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
-	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", "Ctrl+E",
+	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", "Ctrl+Shift+E",
+	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
-	NodeMenuItem fichier11Convert = createMenuItem(TR.tr("Convertir"), "convert", "Ctrl+Shift+C",
+	NodeMenuItem fichier11Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
 
 	////////// PREFS //////////
 
 	Menu preferences = new Menu(TR.tr("Préférences"));
 
-	NodeMenuItem preferences1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", "",
+	NodeMenuItem preferences1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", null,
 			TR.tr("Définit la langue de l'interface"), true);
 
 	NodeRadioMenuItem preferences2Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
@@ -96,7 +99,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
-	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", "",
+	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
 			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
 
 	NodeRadioMenuItem preferences5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
@@ -494,16 +497,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		return menuItem;
 
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
-
-		if(System.getProperty("os.name").toLowerCase().contains("mac")){
-			accelerator = accelerator.replaceAll(Pattern.quote("Ctrl"), "Meta");
-		}
+	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
 
 		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", true);
 
 		if(!imgName.isBlank()) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
-		if(!accelerator.isBlank()) menuItem.setAccelerator(accelerator);
+		if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
 		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 		if(leftMargin) menuItem.setFalseLeftData();
 
@@ -516,10 +515,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		return menuItem;
 
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip){
-		return createMenuItem(text, imgName, accelerator, toolTip, false, false, false);
+	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip){
+		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, false);
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, String accelerator, String toolTip, boolean leftMargin){
-		return createMenuItem(text, imgName, accelerator, toolTip, false, false, leftMargin);
+	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
+		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, leftMargin);
 	}
 }

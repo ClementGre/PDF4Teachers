@@ -4,6 +4,8 @@ import fr.themsou.utils.Builders;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -101,14 +103,14 @@ public class NodeMenuItem extends CustomMenuItem {
         getNode().getChildren().set(2, textLabel);
     }
 
-    public void setAccelerator(String accelerator){
+    public void setKeyCombinaison(KeyCombination keyCombinaison){
 
-        Label acceleratorLabel = new Label(accelerator.replaceAll(Pattern.quote("Meta"), "Cmd"));
+        Label acceleratorLabel = new Label(keyCombinaison.getDisplayText());
         if(fat) acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 9 10 9 10;"); // top - right - bottom - left
         else acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 5 10 5 10;");  // top - right - bottom - left
         getNode().getChildren().set(4, acceleratorLabel);
 
-        setAccelerator(KeyCombination.keyCombination(accelerator));
+        setAccelerator(keyCombinaison);
     }
 
     public void setToolTip(String toolTip){
