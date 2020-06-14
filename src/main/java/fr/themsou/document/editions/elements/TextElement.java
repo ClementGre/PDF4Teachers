@@ -240,10 +240,12 @@ public class TextElement extends Element {
 
 		}catch(ParseException ex){
 			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
-				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + " \\\\ " +
-						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula: "), ""), color, size);
+				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + "\\\\" +
+						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), ""), color, size);
+			}else if(text.startsWith(TR.tr("Erreur~:") + "\\\\")){
+				return renderLatex(TR.tr("Impossible~de~lire~la~formule"), color, size);
 			}else{
-				return renderLatex("$" + TR.tr("Erreur~:") + " \\\\ " + ex.getMessage(), color, size);
+				return renderLatex(TR.tr("Erreur~:") + "\\\\" + ex.getMessage(), color, size);
 			}
 		}
 	}

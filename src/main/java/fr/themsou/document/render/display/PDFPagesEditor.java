@@ -177,8 +177,7 @@ public class PDFPagesEditor{
             for(int j = 0; j < addedPages; j++){
                 PageRenderer page = new PageRenderer(index);
 
-                addDocumentPage(index, this.document.getPage(this.document.getNumberOfPages()-1));
-                this.document.removePage(this.document.getNumberOfPages()-1);
+                moveDocumentPage(this.document.getNumberOfPages()-1, index);
 
                 try{ this.document.save(this.file); }catch(IOException e){ e.printStackTrace(); }
 
@@ -222,6 +221,23 @@ public class PDFPagesEditor{
             // add pages
             for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         }
+    }
+    private void moveDocumentPage(final int from, final int to) {
+
+        ArrayList<PDPage> pages = new ArrayList<>();
+
+        // save non-from pages
+        for(int i = 0; i < document.getPages().getCount(); i++){
+            if(i != from) pages.add(document.getPage(i));
+        }
+        // save from page
+        pages.add(to, document.getPages().get(from));
+
+        // remove pages
+        while(document.getPages().getCount() != 0) document.removePage(0);
+
+        // add pages
+        for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
     }
 
 

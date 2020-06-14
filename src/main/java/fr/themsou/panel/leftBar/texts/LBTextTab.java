@@ -209,19 +209,23 @@ public class LBTextTab extends Tab {
 				return;
 			}
 
-			if(MainWindow.mainScreen.getSelected() == null) return;
-			Platform.runLater(() -> {
+			if(!newValue.startsWith("$")){
+				// WRAP TEXT
 				if(MainWindow.mainScreen.getSelected() == null) return;
-				String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-				if(newValue.endsWith(" ")) wrapped += " ";
+				Platform.runLater(() -> {
+					if(MainWindow.mainScreen.getSelected() == null) return;
+					String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+					if(newValue.endsWith(" ")) wrapped += " ";
 
-				if(!wrapped.equals(newValue)){
-					int positionCaret = txtArea.getCaretPosition();
-					txtArea.setText(wrapped);
-					txtArea.positionCaret(positionCaret);
-				}
-				Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
-			});
+					if(!wrapped.equals(newValue)){
+						int positionCaret = txtArea.getCaretPosition();
+						txtArea.setText(wrapped);
+						txtArea.positionCaret(positionCaret);
+					}
+					Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
+				});
+			}
+
 
 			updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
 			if(!txtAreaScrollBarListenerIsSetup){

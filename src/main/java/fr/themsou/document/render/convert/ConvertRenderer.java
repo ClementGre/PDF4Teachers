@@ -34,10 +34,11 @@ public class ConvertRenderer {
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
-                documentCallBack.call(dir.getName() + ".pdf");
-                if(dir.isDirectory()){
+                if(isValidDir(dir)){
+                    documentCallBack.call(dir.getName() + ".pdf");
                     convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
-                }else if(isValidFile(dir)){
+                }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
+                    documentCallBack.call(dir.getName() + ".pdf");
                     convertFile(new File[]{dir}, new File(out + StringUtils.removeAfterLastRejex(dir.getName(), ".") + ".pdf"));
                 }
             }
@@ -156,6 +157,15 @@ public class ConvertRenderer {
     private boolean isValidFile(File file){
         return isGoodFormat(file) || (convertPane.convertVoidFiles.isSelected() && !file.isHidden());
     }
+    private boolean isValidDir(File dir){
+        if(!dir.isDirectory()) return false;
+        if(!convertPane.convertVoidFiles.isSelected()){
+            int compatibleFiles = 0;
+            for(File file : Objects.requireNonNull(dir.listFiles())) if(isValidFile(file)) compatibleFiles++;
+            return compatibleFiles != 0;
+        }
+        return true;
+    }
 
     private BufferedImage scaleImage(BufferedImage image, int width, int height){
 
@@ -174,7 +184,7 @@ public class ConvertRenderer {
             File mainDir = new File(convertPane.srcDir.getText());
             int i = 0;
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
-                if(dir.isDirectory() || isValidFile(dir)){
+                if(isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected())){
                     i++;
                 }
             }

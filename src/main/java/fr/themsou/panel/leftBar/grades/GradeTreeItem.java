@@ -235,7 +235,7 @@ public class GradeTreeItem extends TreeItem {
             // dont accept a value higher than the total
             try{
                 double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
-                if(value > core.getTotal()){
+                if(value > core.getTotal() && !hasSubGrade()){
                     gradeField.setText(Main.format.format(core.getTotal()));
                 }else core.setValue(value);
             }catch(NumberFormatException e){
