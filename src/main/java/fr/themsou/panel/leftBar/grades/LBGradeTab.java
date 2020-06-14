@@ -50,11 +50,11 @@ public class LBGradeTab extends Tab {
 
     public void setup(){
 
-        fontTiers.put(0, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
-        fontTiers.put(1, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
-        fontTiers.put(2, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
-        fontTiers.put(3, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
-        fontTiers.put(4, Map.entry(Font.loadFont(FontUtils.getFontFile("Arial", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
+        fontTiers.put(0, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
+        fontTiers.put(1, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
+        fontTiers.put(2, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
+        fontTiers.put(3, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
+        fontTiers.put(4, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
 
         lockRatingPotitions.setSelected(false);
 

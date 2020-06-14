@@ -10,7 +10,10 @@ import javafx.scene.text.FontWeight;
 import java.io.InputStream;
 
 public class FontUtils {
-    public static final ObservableList<String> fonts = FXCollections.observableArrayList("Arial", "Lato", "Lato Light", "Calibri", "Calibri Light", "Roboto", "Times New Roman", "Segoe Print", "Arrows");
+    public static final ObservableList<String> fonts = FXCollections.observableArrayList(
+            "Open Sans", "Jost", "Lato Black", "Lato", "Lato Light", "Roboto Medium", "Roboto", "Roboto Light", "Hind Guntur", "Shanti",
+            "Karma", "Noto Serif", "Crimson Text", "Bitter",
+            "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno",  "Averia Libre", "Indie Flower", "Sriracha", "Arrows");
     public static final ObservableList<Integer> sizes = FXCollections.observableArrayList(6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 22, 24, 26, 28, 30, 34, 38, 42, 46, 50);
 
     public static Font getFont(String family, boolean italic, boolean bold, double size){
@@ -32,8 +35,8 @@ public class FontUtils {
                 else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) fileFontName = "bold";
                 else fileFontName = "regular";
             }else{
-                System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " ) : Chargement du Font Arial classique");
-                return TextElement.class.getResourceAsStream("/fonts/Arial/regular.ttf");
+                System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " ) : Chargement du Font Open Sans classique");
+                return TextElement.class.getResourceAsStream("/fonts/Open Sans/regular.ttf");
             }
 
             fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");

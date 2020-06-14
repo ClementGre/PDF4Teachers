@@ -61,7 +61,7 @@ public class LBTextTab extends Tab {
 
 	public boolean isNew = false;
 
-	public String lastFont = "Arial";
+	public String lastFont = "Open Sans";
 	public int lastFontSize = 14;
 	public String lastColor = "#000000";
 	public boolean lastBold = false;
@@ -96,7 +96,7 @@ public class LBTextTab extends Tab {
 
 		Builders.setHBoxPosition(fontCombo, -1, 30, 2.5);
 		fontCombo.setStyle("-fx-font-size: 13");
-		fontCombo.getSelectionModel().select("Arial");
+		fontCombo.getSelectionModel().select("Open Sans");
 		fontCombo.setMaxHeight(25);
 		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -271,7 +271,7 @@ public class LBTextTab extends Tab {
 
 			MainWindow.mainScreen.setSelected(null);
 
-			fontCombo.getSelectionModel().select(lastFont.isEmpty() ? "Arial" : lastFont);
+			fontCombo.getSelectionModel().select(lastFont.isEmpty() ? "Open Sans" : lastFont);
 			sizeCombo.getSelectionModel().select((Integer) lastFontSize);
 			colorPicker.setValue(Color.valueOf(lastColor.isEmpty() ? "#000000" : lastColor));
 			boldBtn.setSelected(lastBold);
@@ -339,6 +339,7 @@ public class LBTextTab extends Tab {
 				setGraphic(null);
 			}else{
 				setText(item);
+				FontUtils.getFont(item, false, false, 14);
 				setStyle("-fx-font: 14 \"" + item + "\"");
 			}
 		}

@@ -11,6 +11,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.util.Matrix;
 
 import java.io.IOException;
@@ -50,7 +51,7 @@ public class GradeElementRenderer {
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
 
         if(!fonts.containsKey(entry)){
-            PDFont font = PDTrueTypeFont.loadTTF(doc, fontFile);
+            PDType0Font font = PDType0Font.load(doc, fontFile);
             contentStream.setFont(font, (float) element.getFont().getSize());
             fonts.put(entry, font);
         }else{
