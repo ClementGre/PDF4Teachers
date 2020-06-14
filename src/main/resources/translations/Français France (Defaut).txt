@@ -61,10 +61,9 @@ Créer le dossier=
 Modifier la destination=
 # CustomPrintStream
 # GradeTreeItem
-Cliquez sur le cadenas pour pouvoir éditer le barème=
+Clic sur le cadenas pour éditer le barème=
 Créer une nouvelle sous-note de=
 # MainWindow
-PDF4Teachers - Aucun documents=
 # Sorter
 # ConvertWindow
 Portrait=
@@ -77,7 +76,7 @@ Convertir des dossiers en plusieurs documents=
 Convertir des fichiers en un document=
 Convertir des fichiers en pages=
 Convertir aussi les images du dossier source en documents (un document par image)=
-Convertir les fichiers invalides (de mauvais format ou non existant) en pages blanches=
+Convertir les chemins de fichiers invalides (mauvais format ou non existant) en pages blanches=
 Convertir plusieurs dossiers en plusieurs documents PDF=
 Chaque dossier sera converti en un document, les images contenues dans le dossier représentent les pages=
 L'ordre des pages est pris en fonction de l'ordre alphabétique.=
@@ -121,7 +120,7 @@ Renommer=
 Sauter=
 Tout Arrêter=
 Conversion terminée=
-Aucun document n'a été convertis !=
+Aucun document n'a été converti !=
 Le document a bien été créé !=
 documents ont été créées !=
 Les documents ont été ouverts dans le panneau latéral=
@@ -129,13 +128,13 @@ Le document a été ouvert dans le panneau latéral=
 # PDFPagesEditor
 Vous allez supprimer la page=
 du document=
-Les éléments de cette page seront supprimés et les notes seront réinitialisés=
+Les éléments de cette page seront supprimés et les notes seront réinitialisées=
 # ZoomOperator
 # Edition
 Erreur=
 Impossible de copier le fichier=
 vers=
-Faites Ctrl+Alt+C pour accéder aux logs=
+Ctrl+Alt+C pour accéder aux logs=
 Confirmation=
 Êtes vous sûr de vouloir supprimer l'édition de ce document ?=
 Cette action est irréversible.=
@@ -177,10 +176,10 @@ Enregistrer les fichiers déjà traduits en Anglais=
 # MainScreen
 Aucun document ouvert=
 Impossible de charger ce document=
-Vérifiez que le fichier n'est pas corrompus=
-et que PDF4Teachers a les droits de lecture sur ce fichier.=
+Vérifiez que le fichier n'est pas corrompu=
+et que l'utilisateur a les droits de lecture sur ce fichier.=
 Impossible de charger l'édition du document=
-Supprimez l'édition ou modifiez la en modifiant son fichier YAML dans :=
+Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :=
 (Non sauvegardé)=
 PDF4Teachers - Aucun document=
 zoom=
@@ -362,10 +361,10 @@ Utilisation=
 # GradeElement
 Nouvelle note=
 Bonus=
-Attribuer tout les points=
-Entre toutes les sous-notes à leurs valeur maximum.=
+Attribuer tous les points=
+Place toutes les sous-notes à leur valeur maximale=
 Réinitialiser=
-Réinitialise la note entrée et toutes ses sous-notes=
+Réinitialise la note et toutes ses sous-notes=
 Supprimer du barème=
 Supprime cet élément du barème et de l'édition=
 Mettre 0 à toutes les sous-notes=

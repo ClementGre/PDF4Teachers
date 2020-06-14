@@ -25,6 +25,7 @@ PDF4Teachers is a free and open-source application.
 PDF4Teachers offers tools for a productive edit of PDF files, during the annotation / correction of assessments. Edits are saved separately from PDF files, lists of previous and favorites annotations allow quick insertion of recurrent advices and corrections. Documents are managed as a set. when job is done, all documents can be exported as new PDF files with annotations on it.
 
 PDF4Teachers includes special functionalities for annotation of grades and offers a tool for grading scale (marking scheme). When using numerical grading system, the tool computes the total and sub-totals, and exports the grades of a whole set of corrected documents as a .csv spreadsheet.
+Il est possible de convertir des images en documents PDF et d’éditer les pages des documents (rotation, position...) avec des boutons situés au pied de chaque page.
 
 PDF4Teachers is available for Windows, Linux, OSX. Go to the download section with the release button above.
 
@@ -41,7 +42,7 @@ Vous pouvez définir un barème pour une série de copies puis entrer les notes 
 
 Il est possible de convertir des images en documents PDF et d’éditer les pages des documents (rotation, position...) avec des boutons situés au pied de chaque page.
 
-PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichiers exportés sont stockés en local, les seuls accès réseau de l'application concernent la vérification des mises à jour.
+PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichiers exportés sont stockés en local, les seuls accès réseaux de l'application concernent la vérification des mises à jour.
 
 *Prévisualisation de l'interface :*
 

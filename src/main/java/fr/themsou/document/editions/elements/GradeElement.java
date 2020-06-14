@@ -131,10 +131,10 @@ public class GradeElement extends Element {
     }
     @Override
     protected void setupMenu() {
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Attribuer tout les points"), false);
-        item1.setToolTip(TR.tr("Entre toutes les sous-notes à leurs valeur maximum."));
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Attribuer tous les points"), false);
+        item1.setToolTip(TR.tr("Place toutes les sous-notes à leur valeur maximale"));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), false);
-        item2.setToolTip(TR.tr("Réinitialise la note entrée et toutes ses sous-notes"));
+        item2.setToolTip(TR.tr("Réinitialise la note et toutes ses sous-notes"));
         NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer du barème"), false);
         item3.setToolTip(TR.tr("Supprime cet élément du barème et de l'édition"));
         item3.disableProperty().bind(MainWindow.lbGradeTab.isLockGradeScaleProperty());

@@ -71,7 +71,7 @@ public class ConvertDocument {
 
             Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
 
-            if(converted == 0) alert.setHeaderText(TR.tr("Aucun document n'a été convertis !"));
+            if(converted == 0) alert.setHeaderText(TR.tr("Aucun document n'a été converti !"));
             else if(converted == 1) alert.setHeaderText(TR.tr("Le document a bien été créé !"));
             else alert.setHeaderText(converted + " " + TR.tr("documents ont été créées !"));
 

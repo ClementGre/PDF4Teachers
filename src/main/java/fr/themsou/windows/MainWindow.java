@@ -62,7 +62,7 @@ public class MainWindow extends Stage{
 
         Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth()-200 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth()-200, Main.SCREEN_BOUNDS.getHeight()-200 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-200);
 
-        setTitle(TR.tr("PDF4Teachers - Aucun documents"));
+        setTitle(TR.tr("PDF4Teachers - Aucun document"));
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 
         setMinWidth(700);

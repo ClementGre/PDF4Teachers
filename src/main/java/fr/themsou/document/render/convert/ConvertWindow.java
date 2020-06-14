@@ -120,7 +120,7 @@ public class ConvertWindow extends Stage {
         ComboBox<String> definition, format;
 
         public CheckBox convertAloneFiles = new CheckBox(TR.tr("Convertir aussi les images du dossier source en documents (un document par image)"));
-        public CheckBox convertVoidFiles = new CheckBox(TR.tr("Convertir les fichiers invalides (de mauvais format ou non existant) en pages blanches"));
+        public CheckBox convertVoidFiles = new CheckBox(TR.tr("Convertir les chemins de fichiers invalides (mauvais format ou non existant) en pages blanches"));
 
         public ConvertPane(ConvertWindow window, String tabName, boolean convertDirs){
             super(tabName);

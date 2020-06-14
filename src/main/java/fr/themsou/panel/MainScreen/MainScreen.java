@@ -91,14 +91,14 @@ public class MainScreen extends Pane {
 
 			}else if(status.get() == Status.ERROR){
 				info.setText(TR.tr("Impossible de charger ce document") + "\n\n" +
-						TR.tr("Vérifiez que le fichier n'est pas corrompus") + "\n" +
-						TR.tr("et que PDF4Teachers a les droits de lecture sur ce fichier."));
+						TR.tr("Vérifiez que le fichier n'est pas corrompu") + "\n" +
+						TR.tr("et que l'utilisateur a les droits de lecture sur ce fichier."));
 				infoLink.setVisible(false);
 
 			}else if(status.get() == Status.ERROR_EDITION){
 				infoLink.setVisible(true);
 				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
-						TR.tr("Supprimez l'édition ou modifiez la en modifiant son fichier YAML dans :"));
+						TR.tr("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
 				infoLink.setOnAction(e -> Main.hostServices.showDocument(Main.dataFolder + "editions" + File.separator));
 			}

@@ -65,6 +65,19 @@ public class LanguageWindow extends Stage{
         show();
     }
 
+    public static String detectLanguage() {
+        String country = System.getProperty("user.country").toLowerCase();
+        String language = System.getProperty("user.language").toLowerCase();
+
+        if(language.equals("fr")){
+            return "Français France (Defaut)";
+        }else if(language.equals("en")){
+            return "English US";
+        }
+
+        return null;
+    }
+
     public void setupLanguages(){
 
         try{

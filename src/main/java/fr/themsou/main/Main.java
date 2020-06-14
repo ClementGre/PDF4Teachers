@@ -27,7 +27,7 @@ public class Main extends Application {
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "Snapshot 1.2.0";
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean COPY_CONSOLE = true;
 
 	public static boolean firstLaunch;
@@ -91,21 +91,28 @@ public class Main extends Application {
 
 	public boolean languageAsk(){
 		if(settings.getLanguage().isEmpty()){
-			Main.settings.setLanguage("English US");
-			TR.updateTranslation();
-			new LanguageWindow(value -> {
-				if(!value.isEmpty()) {
-					Main.settings.setLanguage(value);
-				}
+
+			String language = LanguageWindow.detectLanguage();
+			if(language != null){
+				Main.settings.setLanguage(language);
 				TR.updateTranslation();
-				if(licenceAsk()){
-					startMainWindow();
-				}
-			});
-			return false;
+				return true;
+			}else{
+				Main.settings.setLanguage("English US");
+				TR.updateTranslation();
+				new LanguageWindow(value -> {
+					if(!value.isEmpty()) Main.settings.setLanguage(value);
+					TR.updateTranslation();
+					if(licenceAsk()){
+						startMainWindow();
+					}
+				});
+				return false;
+			}
+		}else{
+			TR.updateTranslation();
+			return true;
 		}
-		TR.updateTranslation();
-		return true;
 	}
 	public boolean licenceAsk(){
 		if(firstLaunch){

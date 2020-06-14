@@ -261,7 +261,7 @@ public class Edition {
             e.printStackTrace();
             Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Erreur"));
             alert.setHeaderText(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"");
-            alert.setContentText(TR.tr("Faites Ctrl+Alt+C pour accéder aux logs"));
+            alert.setContentText(TR.tr("Ctrl+Alt+C pour accéder aux logs"));
             alert.show();
         }
         fromEdit.delete();
