@@ -7,14 +7,14 @@
 
 ![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/images/banner-flat.png)
 
-##### Shortcuts : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Before opening new issue, see :
+##### Shortcuts : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Before opening new issue, see :
 
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion) 
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.2.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion) 
 [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+label%3A%22enhancement%22+)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.2.0%22+label%3A%22enhancement%22+)
 
 ## PDF4Teachers [EN]
 
@@ -101,11 +101,11 @@ Ces différents éléments (texte, notes et formes géométriques) ont des class
 
 ## Statistiques :
 
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1.msi)
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Windows-1.1.1-BIN.zip)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-Windows-1.2.0.msi)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-Windows-1.2.0-BIN.zip)
 
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1.dmg)
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-MacOSX-1.1.1-BIN.zip)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-MacOSX-1.2.0.dmg)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-MacOSX-1.2.0-BIN.zip)
 
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1.deb)
-![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.1.1/PDF4Teachers-Linux-1.1.1-BIN.tar.gz)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-Linux-1.2.0.deb)
+![](https://img.shields.io/github/downloads-pre/clementgre/PDF4Teachers/1.2.0/PDF4Teachers-Linux-1.2.0-BIN.tar.gz)
