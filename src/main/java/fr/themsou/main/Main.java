@@ -68,7 +68,7 @@ public class Main extends Application {
 	public void start(Stage window){
 
 		if(System.getProperty("os.name").toLowerCase().contains("win")) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
-		else if(System.getProperty("os.name").toLowerCase().contains("osx")) systemShortcut = "Cmd";
+		else if(System.getProperty("os.name").toLowerCase().contains("os x")) systemShortcut = "Cmd";
 
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
