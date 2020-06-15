@@ -147,15 +147,15 @@ Mode Fichiers=File mode
 Mode Notes=Grades Mode
 # AboutWindow
 Développeur :=Developper :
+Impossible de récupérer la dernière version=Cannot get the last version
 Concepteur :=Conceptor :
+Une nouvelle avant-première est disponible !=A new pre release version is available
 PDF4Teachers - À Propos=PDF4Teachers - About
 Version=Version
 Projet GitHub :=GitHub project :
+Vous exécutez la dernière version !=You are using the up to date version
 Traducteur : <Votre nom>=Translator : Vincent Grennerat
 Dépendances :=Dependencies :
-Une nouvelle avant-première est disponible !=
-Impossible de récupérer la dernière version=
-Vous exécutez la dernière version !=
 # LanguageWindow
 Télécharger les fichier de traduction=Download translation files
 Enregistrer les fichiers déjà traduits en Anglais=Save files already translated in English
@@ -313,17 +313,17 @@ Charger=Load
 Vider et charger=Flush and load
 # Builders
 # UpdateWindow
+Une nouvelle avant-première de PDF4Teachers est disponible !=A new PDF4Teachers pre release is available !
 Une nouvelle version de PDF4Teachers est disponible !=A new version of PDF4Teachers is available !
 et la version=and version
 Description :=Description :
+Voir sur GitHub=Check out on GitHub
 Vous utilisez la version=You are using version
 est disponible.=is available
+Téléchargement direct=Direct download
 PDF4Teachers - Nouvelle Version=PDF4Teachers - New version
-Une nouvelle avant-première de PDF4Teachers est disponible !=
-Les avant-première sont destinés aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=
-et l'avant-première=
-Voir sur GitHub=
-Téléchargement direct=
+Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=Pre releases are for users willing to contribute to the project, by testing\nPDF4Teachers versions before their release.
+et l'avant-première=and pre release
 # FileDrop
 # GradeCopyGradeScaleDialog
 Vous serez avertis si une note va être écrasée.=You will be warned if a grade should be overwritten
@@ -356,6 +356,7 @@ Supprimer=Delete
 Crée un second élément identique à celui-ci.=Creates a new element, identical to this one
 Ajoute cet élément à la liste des éléments précédents.=Add this element to previous elements list
 Erreur~:=Error~:
+Impossible~de~lire~la~formule=Error~while~parsing~formula
 # NodeRadioMenuItem
 # TextTreeItem
 # StringUtils

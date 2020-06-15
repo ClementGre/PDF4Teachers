@@ -5,14 +5,11 @@
 [![GitHubFolowers](https://img.shields.io/github/followers/clementgre?label=Follow%20Clément%20Grennerat&style=social)](https://github.com/clementgre)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
 
-#### Shortcuts :
-[![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
-[![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest)
+| Shortcuts | Before opening new issue, see : |
+|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE) [![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest) | [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion) [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+) [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+label%3A%22enhancement%22+) |
 
-#### Before opening new issue, see :
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.1.1%22+label%3A%22enhancement%22+)
+![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/images/banner-flat.png)
 
 ## PDF4Teachers [EN]
 
@@ -25,7 +22,8 @@ PDF4Teachers is a free and open-source application.
 PDF4Teachers offers tools for a productive edit of PDF files, during the annotation / correction of assessments. Edits are saved separately from PDF files, lists of previous and favorites annotations allow quick insertion of recurrent advices and corrections. Documents are managed as a set. when job is done, all documents can be exported as new PDF files with annotations on it.
 
 PDF4Teachers includes special functionalities for annotation of grades and offers a tool for grading scale (marking scheme). When using numerical grading system, the tool computes the total and sub-totals, and exports the grades of a whole set of corrected documents as a .csv spreadsheet.
-Il est possible de convertir des images en documents PDF et d’éditer les pages des documents (rotation, position...) avec des boutons situés au pied de chaque page.
+
+A set of pictures can be converted in PDF documents, and pages format can be edited (rotation, position…) through buttons located in the footer of each page.
 
 PDF4Teachers is available for Windows, Linux, OSX. Go to the download section with the release button above.
 
@@ -38,7 +36,7 @@ Teachers speaking other languages than French and English : help us translate PD
 Elle est basée sur un système d'édition rapide des documents PDF. L'édition peut être sauvée pour reprendre le travail plus tard. Lorsque les éditions sont terminées, le document peut être exporté sous la forme d'un nouveau fichier PDF.
 Les éditions sont composées de plusieurs éléments : Les commentaires (Texte), les Notes et les formes géométriques (Carrés, ronds, etc.)
 
-Vous pouvez définir un barème pour une série de copies puis entrer les notes dans chaque copie. La somme des notes se calcule automatiquement. Une fois terminé, vous pouvez exporter les notes d'une ou plusieurs copies dans un ou plusieurs fichiers CSV (Tableaux de donnés formatable par LibreOffice Calc ou Excel).
+Vous pouvez définir un barème pour une série de copies puis entrer les notes dans chaque copie. La somme des notes se calcule automatiquement. Une fois terminé, vous pouvez exporter les notes d'une ou plusieurs copies dans un ou plusieurs tableaux CSV (Tableaux de donnés formatable par des applications tels que LibreOffice Calc ou Excel).
 
 Il est possible de convertir des images en documents PDF et d’éditer les pages des documents (rotation, position...) avec des boutons situés au pied de chaque page.
 
@@ -46,7 +44,7 @@ PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichie
 
 *Prévisualisation de l'interface :*
 
-![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/preview.png)
+![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/images/preview.png)
 
 ## Les APIs
 

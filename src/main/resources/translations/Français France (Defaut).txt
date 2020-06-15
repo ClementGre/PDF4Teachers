@@ -312,7 +312,7 @@ a bien été supprimé.=
 # UpdateWindow
 PDF4Teachers - Nouvelle Version=
 Une nouvelle avant-première de PDF4Teachers est disponible !=
-Les avant-première sont destinés aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=
+Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=
 Vous utilisez la version=
 et l'avant-première=
 est disponible.=
@@ -353,6 +353,7 @@ Ajouter aux éléments Favoris=
 Ajoute cet élément à la liste des éléments favoris.=
 Commande/Symbole~inconnu~:=
 Erreur~:=
+Impossible~de~lire~la~formule=
 # NodeRadioMenuItem
 # TextTreeItem
 Utilisation=
