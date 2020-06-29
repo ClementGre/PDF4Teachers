@@ -26,7 +26,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "1.2.0";
+	public static final String VERSION = "snapshot 1.3.0";
 	public static final boolean DEBUG = false;
 	public static final boolean COPY_CONSOLE = true;
 
@@ -35,15 +35,19 @@ public class Main extends Application {
 	public static String systemShortcut = "Ctrl";
 
 	static {
-		if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
-			Desktop.getDesktop().setOpenFileHandler(e -> {
-				System.out.println(e.getFiles().get(0).getAbsolutePath());
-				if(window.isShowing()){
-					MainWindow.lbFilesTab.openFiles((File[]) e.getFiles().toArray());
-					if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
+		try{
+			if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
+				Desktop.getDesktop().setOpenFileHandler(e -> {
+					System.out.println(e.getFiles().get(0).getAbsolutePath());
+					if(window.isShowing()){
+						MainWindow.lbFilesTab.openFiles((File[]) e.getFiles().toArray());
+						if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
 
-				}
-			});
+					}
+				});
+			}
+		}catch (Exception e){
+			e.printStackTrace();
 		}
 	}
 

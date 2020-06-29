@@ -34,7 +34,8 @@ public class LanguageWindow extends Stage{
     public static final String[] TO_COPY_FILES = new String[]{
             "Français France (Defaut).txt", "Français France (Defaut).png", "Français France (Defaut).pdf", "Français France (Defaut).odt",
             "English US.txt", "English US.png", "English US.pdf", "English US.odt",
-            "English GB.png"
+            "English GB.png",
+            "Italiano.txt", "Italiano.png"
     };
 
 

@@ -9,6 +9,7 @@ module fr.themsou {
     requires java.desktop;
     requires java.management;
     requires jdk.crypto.ec;
+    requires jdk.accessibility;
 
     // OTHER DEPENDENCIES
 
@@ -21,6 +22,7 @@ module fr.themsou {
     requires org.yaml.snakeyaml;
 
     requires com.fasterxml.jackson.core;
+
 
     requires jlatexmath;
 
