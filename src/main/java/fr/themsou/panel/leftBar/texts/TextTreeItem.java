@@ -261,7 +261,7 @@ public class TextTreeItem extends TreeItem{
 		long creationDate = reader.readLong();
 		String text = reader.readUTF();
 
-		Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
 
 		return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
 	}
@@ -276,7 +276,7 @@ public class TextTreeItem extends TreeItem{
 		long creationDate = Config.getLong(data, "date");
 		String text = Config.getString(data, "text");
 
-		Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
 
 		return new TextTreeItem(font, text, color, type, uses, creationDate);
 	}

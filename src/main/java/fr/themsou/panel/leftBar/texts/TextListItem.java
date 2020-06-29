@@ -60,7 +60,7 @@ public class TextListItem {
         long creationDate = reader.readLong();
         String text = reader.readUTF();
 
-        Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
+        Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
 
         return new TextListItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), uses, creationDate);
     }
@@ -75,7 +75,7 @@ public class TextListItem {
         long creationDate = Config.getLong(data, "date");
         String text = Config.getString(data, "text");
 
-        Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
+        Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
 
         return new TextListItem(font, text, color, uses, creationDate);
     }

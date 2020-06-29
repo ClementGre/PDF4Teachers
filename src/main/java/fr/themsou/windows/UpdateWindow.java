@@ -205,7 +205,7 @@ public class UpdateWindow extends Stage {
 
         HBox buttons = new HBox();
 
-        Label desc = new Label(new TextWrapper(UpdateWindow.description, FontUtils.getFont("Arial", false, false, 12.5),545).wrap());
+        Label desc = new Label(new TextWrapper(UpdateWindow.description, FontUtils.getFont("Open Sans", false, false, 12.5),545).wrap());
         desc.setStyle("-fx-padding: 10; -fx-font-size: 12.5;");
         desc.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 

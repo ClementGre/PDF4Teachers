@@ -138,7 +138,7 @@ public class TextElement extends Element {
 		Color color = Color.valueOf(Config.getString(data, "color"));
 		String text = Config.getString(data, "text");
 
-		Font font = FontUtils.getFont(fontName, isBold, isItalic, (int) fontSize);
+		Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
 		return new TextElement(x, y, page, font, text, color, hasPage);
 	}
 

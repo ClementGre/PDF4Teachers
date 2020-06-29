@@ -74,6 +74,8 @@ public class LanguageWindow extends Stage{
             return "Français France (Defaut)";
         }else if(language.equals("en")){
             return "English US";
+        }else if(language.equals("it")){
+            return "Italianno";
         }
 
         return null;
