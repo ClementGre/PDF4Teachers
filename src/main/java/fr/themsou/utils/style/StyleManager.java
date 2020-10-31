@@ -6,6 +6,7 @@ import fr.themsou.windows.MainWindow;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
@@ -15,6 +16,7 @@ public class StyleManager {
     public static jfxtras.styles.jmetro.Style ACCENT_STYLE = jfxtras.styles.jmetro.Style.DARK;
 
     public static void setup(){
+
         if(Main.settings.isDarkTheme()){
             DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;
         }

@@ -1,15 +1,22 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
+import fr.themsou.panel.leftBar.texts.ListsManager;
+import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.sort.Sorter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TextTreeLasts extends TextTreeSection {
 
+    public ListsManager listsManager;
+
     public TextTreeLasts(){
         super(TR.tr("Éléments Précédents"), TextTreeSection.LAST_TYPE);
+
+        listsManager = new ListsManager(this);
         setupGraphics();
     }
 
@@ -19,6 +26,20 @@ public class TextTreeLasts extends TextTreeSection {
                 TR.tr("Ajout"), TR.tr("Nom"), TR.tr("Utilisation"),
                 "\n",
                 TR.tr("Police"), TR.tr("Taille"), TR.tr("Couleur"));
+    }
+
+    @Override
+    public void setupGraphics() {
+        super.setupGraphics();
+        pane.getChildren().add(pane.getChildren().size()-1, listsManager.saveListBtn);
+        pane.getChildren().add(pane.getChildren().size()-1, listsManager.loadListBtn);
+
+    }
+
+    @Override
+    public void updateGraphics() {
+        super.updateGraphics();
+        listsManager.updateGraphics();
     }
 
     @Override

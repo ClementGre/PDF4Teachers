@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 public class TextTreeFavorites extends TextTreeSection {
 
-    public HashMap<String, ArrayList<TextListItem>> favoriteLists = new HashMap<>();
     public ListsManager listsManager;
 
     public TextTreeFavorites(){

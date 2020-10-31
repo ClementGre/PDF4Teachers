@@ -7,6 +7,7 @@ import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
+import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.Scene;
@@ -81,9 +82,9 @@ public class Macro {
                             MainWindow.lbTextTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
                         }
-                        if(i < MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.size()){
+                        if(i < TextTreeSection.lists.size()){
                             int k = 0;
-                            for(ArrayList<TextListItem> list : MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.values()){
+                            for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
                                     MainWindow.lbTextTab.treeView.favoritesSection.listsManager.loadList(list, true);
@@ -101,9 +102,9 @@ public class Macro {
                             MainWindow.lbTextTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
                         }
-                        if(i < MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.size()){
+                        if(i < TextTreeSection.lists.size()){
                             int k = 0;
-                            for(ArrayList<TextListItem> list : MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.values()){
+                            for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
                                     MainWindow.lbTextTab.treeView.favoritesSection.listsManager.loadList(list, true);

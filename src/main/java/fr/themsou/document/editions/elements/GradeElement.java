@@ -13,6 +13,8 @@ import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -46,6 +48,8 @@ public class GradeElement extends Element {
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
         this.parentPath = parentPath;
+
+        this.value.addListener((observable, oldValue, newValue) -> System.out.println("from " + oldValue.doubleValue() + " to " + newValue.doubleValue()));
 
         text.setBoundsType(TextBoundsType.LOGICAL);
         text.setTextOrigin(VPos.TOP);
@@ -100,7 +104,6 @@ public class GradeElement extends Element {
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-
             if(newValue.intValue() == -1){
                 setVisible(false);
                 text.setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
@@ -307,6 +310,7 @@ public class GradeElement extends Element {
         return value;
     }
     public void setValue(double value) {
+        System.out.println("Set value to " + value);
         this.value.set(value);
     }
     public double getTotal() {

@@ -45,7 +45,7 @@ Vous pouvez définir un barème pour une série de copies puis entrer les notes 
 
 Il est possible de convertir des images en documents PDF et d’éditer les pages des documents (rotation, position...) avec des boutons situés au pied de chaque page.
 
-PDF4Teachers est conforme à la RGPD française : toutes les éditions et fichiers exportés sont stockés en local, les seuls accès réseaux de l'application concernent la vérification des mises à jour.
+PDF4Teachers est conforme au RGPD de l'Union européenne : toutes les éditions et fichiers exportés sont stockés en local, les seuls accès réseaux de l'application concernent la vérification des mises à jour.
 
 *Prévisualisation de l'interface :*
 

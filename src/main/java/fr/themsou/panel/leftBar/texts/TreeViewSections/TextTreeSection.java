@@ -1,10 +1,7 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.panel.leftBar.texts.LBTextTab;
-import fr.themsou.panel.leftBar.texts.SortPanelTreeItem;
-import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
+import fr.themsou.panel.leftBar.texts.*;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.sort.SortManager;
@@ -24,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public abstract class TextTreeSection extends TreeItem {
@@ -43,6 +41,8 @@ public abstract class TextTreeSection extends TreeItem {
 
     HBox pane = new HBox();
     ContextMenu menu;
+
+    public static HashMap<String, ArrayList<TextListItem>> lists = new HashMap<>();
 
     public TextTreeSection(String sectionName, int sectionType){
         this.sectionName = sectionName;

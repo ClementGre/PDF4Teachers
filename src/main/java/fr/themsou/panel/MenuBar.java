@@ -451,12 +451,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Main.hostServices.showDocument("https://twitter.com/PDF4Teachers");
 		});
 
-		fichier.setStyle("-fx-font-size: 12;");
-		preferences.setStyle("-fx-font-size: 12;");
-		aide.setStyle("-fx-font-size: 12;");
-
 		Label name = new Label(TR.tr("À propos"));
-		name.setStyle("-fx-font-size: 12;");
 		name.setAlignment(Pos.CENTER_LEFT);
 		name.setOnMouseClicked(event -> new AboutWindow());
 		apropos.setGraphic(name);

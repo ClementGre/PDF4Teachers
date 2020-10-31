@@ -1,6 +1,7 @@
 package fr.themsou.main;
 
 import fr.themsou.panel.leftBar.grades.LBGradeTab;
+import fr.themsou.panel.leftBar.texts.ListsManager;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
@@ -117,7 +118,7 @@ public class UserData {
                             for(Object data : ((List<Object>) list.getValue())){
                                 listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
                             }
-                            MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.put(list.getKey(), listTexts);
+                            TextTreeSection.lists.put(list.getKey(), listTexts);
                         }
                     }
                 });
@@ -206,8 +207,7 @@ public class UserData {
             Platform.runLater(() -> {
                 MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
                 MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
-
-                MainWindow.lbTextTab.treeView.favoritesSection.listsManager.setupMenu();
+                ListsManager.setupMenus();
             });
 
         }).start();
@@ -284,9 +284,9 @@ public class UserData {
                         case DataType.TEXT_ELEMENT_LIST: // List TextElement
                             try{
                                 String listName = reader.readUTF();
-                                ArrayList<TextListItem> list = MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.containsKey(listName) ? MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.get(listName) : new ArrayList<>();
+                                ArrayList<TextListItem> list = TextTreeSection.lists.containsKey(listName) ? TextTreeSection.lists.get(listName) : new ArrayList<>();
                                 list.add(TextListItem.readDataAndGive(reader));
-                                MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.put(listName, list);
+                                TextTreeSection.lists.put(listName, list);
 
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
@@ -296,8 +296,7 @@ public class UserData {
 
                 MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
                 MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
-
-                MainWindow.lbTextTab.treeView.favoritesSection.listsManager.setupMenu();
+                ListsManager.setupMenus();
 
                 file.delete();
             }
@@ -345,7 +344,7 @@ public class UserData {
             texts.put("lasts", lastTexts);
 
             LinkedHashMap<Object, Object> lists = new LinkedHashMap<>();
-            for(Map.Entry<String, ArrayList<TextListItem>> list : MainWindow.lbTextTab.treeView.favoritesSection.favoriteLists.entrySet()){
+            for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
                 List<Object> listTexts = new ArrayList<>();
                 for(TextListItem item : list.getValue()){
                     listTexts.add(item.getYAMLData());
