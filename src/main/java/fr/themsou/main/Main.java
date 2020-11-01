@@ -4,7 +4,6 @@ import java.awt.*;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
 import java.util.Locale;
 
 import fr.themsou.utils.TR;

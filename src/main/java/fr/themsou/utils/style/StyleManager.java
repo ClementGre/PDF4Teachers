@@ -50,6 +50,13 @@ public class StyleManager {
         parent.getStylesheets().add(StyleManager.class.getResource("/css/base.css").toExternalForm());
     }
 
+    public static void putCustomStyle(Scene scene, String name){
+        scene.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
+    }
+    public static void putCustomStyle(Parent parent, String name){
+        parent.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
+    }
+
     private static void putStylesAuto(){
         new JMetro(MainWindow.root, DEFAULT_STYLE);
 

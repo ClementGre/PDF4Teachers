@@ -19,6 +19,13 @@ Hyperlink{
     -fx-font-size: 12;
 }
 
+/*******************************************************************************
+ *                                                                             *
+ * Common properties                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+
  /*******************************************************************************
   *                                                                             *
   * Inputs                                                                      *
@@ -89,11 +96,11 @@ CheckBox {
 }
 
 .dialog-pane > .button-bar > .container > .details-button.more {
-    -fx-graphic: url("dialog-more-details.png");
+    -fx-graphic: url("../img/dialogs/dialog-more-details.png");
 }
 
 .dialog-pane > .button-bar > .container > .details-button.less {
-    -fx-graphic: url("dialog-fewer-details.png");
+    -fx-graphic: url("../img/dialogs/dialog-fewer-details.png");
 }
 
 .dialog-pane > .button-bar > .container > .details-button:hover {
@@ -103,17 +110,17 @@ CheckBox {
 .alert.confirmation.dialog-pane,
 .text-input-dialog.dialog-pane,
 .choice-dialog.dialog-pane {
-    -fx-graphic: url("dialog-confirm.png");
+    -fx-graphic: url("../img/dialogs/dialog-confirm.png");
 }
 
 .alert.information.dialog-pane {
-    -fx-graphic: url("dialog-information.png");
+    -fx-graphic: url("../img/dialogs/dialog-information.png");
 }
 
 .alert.error.dialog-pane {
-    -fx-graphic: url("dialog-error.png");
+    -fx-graphic: url("../img/dialogs/dialog-error.png");
 }
 
 .alert.warning.dialog-pane {
-    -fx-graphic: url("dialog-warning.png");
+    -fx-graphic: url("../img/dialogs/dialog-warning.png");
 }

@@ -51,4 +51,5 @@ module fr.themsou {
     exports fr.themsou.panel.leftBar.grades.export;
     exports fr.themsou.utils;
     exports fr.themsou.windows;
+    opens fr.themsou.windows;
 }

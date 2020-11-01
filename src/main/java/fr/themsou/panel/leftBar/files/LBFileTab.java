@@ -9,8 +9,6 @@ import java.util.stream.Collectors;
 
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.convert.ConvertRenderer;
-import fr.themsou.document.render.convert.ConvertWindow;
-import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
@@ -125,11 +123,11 @@ public class LBFileTab extends Tab {
 		VBox.setMargin(infoLabel, new Insets(0, 0, 10, 0));
 
 		Hyperlink openFile = new Hyperlink(TR.tr("Ouvrir un·des fichiers"));
-		openFile.setOnAction(e -> MainWindow.menuBar.fichier1Open.fire());
+		openFile.setOnAction(e -> MainWindow.menuBar.file1Open.fire());
 		VBox.setMargin(openFile, new Insets(-2, 0, -2, 0));
 
 		Hyperlink openDir = new Hyperlink(TR.tr("Ouvrir un dossier"));
-		openDir.setOnAction(e -> MainWindow.menuBar.fichier2OpenDir.fire());
+		openDir.setOnAction(e -> MainWindow.menuBar.file2OpenDir.fire());
 		VBox.setMargin(openDir, new Insets(-2, 0, -2, 0));
 
 		Hyperlink convert = new Hyperlink(TR.tr("Convertir"));

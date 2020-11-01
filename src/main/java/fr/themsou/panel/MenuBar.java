@@ -2,7 +2,6 @@ package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.convert.ConvertDocument;
-import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
@@ -10,18 +9,16 @@ import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.components.NodeRadioMenuItem;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.AboutWindow;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.windows.LanguageWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -44,99 +41,107 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
 
-	////////// FICHIER //////////
+	////////// FILE //////////
 
-	Menu fichier = new Menu(TR.tr("Fichier"));
-	public NodeMenuItem fichier1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+	Menu file = new Menu(TR.tr("Fichier"));
+	public NodeMenuItem file1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public NodeMenuItem fichier2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	public NodeMenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	NodeMenuItem fichier3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Vide la liste des fichiers"), false, true, false);
 
-	NodeMenuItem fichier4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	NodeMenuItem fichier5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
+	NodeMenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	NodeMenuItem fichier6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", null,
+	NodeMenuItem file6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
-	NodeMenuItem fichier7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	Menu fichier8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
+	Menu file8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
 			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
 
-	MenuItem fichier8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+	MenuItem file8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
-	NodeMenuItem fichier9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	NodeMenuItem fichier10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
-	NodeMenuItem fichier11Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+
+	////////// TOOLS //////////
+
+	Menu tools = new Menu(TR.tr("Outils"));
+
+	NodeMenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
+	NodeMenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
 
-	////////// PREFS //////////
 
-	Menu preferences = new Menu(TR.tr("Préférences"));
+	////////// SETTINGS //////////
 
-	NodeMenuItem preferences1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", null,
+	Menu settings = new Menu(TR.tr("Préférences"));
+
+	NodeMenuItem settings1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", null,
 			TR.tr("Définit la langue de l'interface"), true);
 
-	NodeRadioMenuItem preferences2Restore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+	NodeRadioMenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem preferences3Update = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
+	NodeRadioMenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
-	NodeMenuItem preferences4Zoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
+	NodeMenuItem settings4DefaultZoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
 			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
 
-	NodeRadioMenuItem preferences5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
+	NodeRadioMenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
 			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
 
-	NodeRadioMenuItem preferences6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
+	NodeRadioMenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
 			TR.tr("Change les couleurs de l'interface vers un thème plus sombre."), true);
 
 
-	NodeRadioMenuItem preferences7Save = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+	NodeRadioMenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
 			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	NodeRadioMenuItem preferences8Regular = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+	NodeRadioMenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
 			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
 
-	NodeRadioMenuItem preferences9RemoveWhenAdd = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	NodeRadioMenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem preferences10ShowStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	NodeRadioMenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem preferences11SmallFont = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	NodeRadioMenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
-	////////// OTHER //////////
+	////////// ABOUT / HELP //////////
 
-	public Menu apropos = new Menu();
+	public Menu about = new Menu();
 
-	Menu aide = new Menu(TR.tr("Aide"));
-	MenuItem aide1Doc = new MenuItem(TR.tr("Charger le document d'aide"));
-	MenuItem aide2Probleme = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
-	MenuItem aide3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
+	Menu help = new Menu(TR.tr("Aide"));
+	MenuItem help1LoadDoc = new MenuItem(TR.tr("Charger le document d'aide"));
+	MenuItem help2GitHubIssue = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
+	MenuItem help3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
+	MenuItem help4Website = new MenuItem(TR.tr("Site Web de PDF4Teachers"));
 
-	////////// OFF TOPIC //////////
+	////////// ICONS COLOR //////////
 
 	private static ColorAdjust colorAdjust = new ColorAdjust();
 	static {
@@ -149,60 +154,65 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 	public void setup(){
 
-		////////// FICHIER //////////
+		////////// FILE //////////
 
-		fichier8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-		fichier8SameName.getItems().add(fichier8SameNameNull);
+		file8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+		file8SameName.getItems().add(file8SameNameNull);
+		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6DeleteAll, file7Close, file8SameName, new SeparatorMenuItem(), file9Export, file10ExportAll);
 
-		fichier.getItems().addAll(fichier1Open, fichier2OpenDir, fichier3Clear, new SeparatorMenuItem(), fichier4Save, fichier5Delete, fichier6DeleteAll, fichier7Close, fichier8SameName, new SeparatorMenuItem(), fichier9Export, fichier10ExportAll, fichier11Convert);
+		////////// TOOLS //////////
 
-		////////// PREFS //////////
+		tools.getItems().addAll(tools1Convert, tools2QRCode);
+
+		////////// SETTINGS //////////
 
 		// DEFINE DEFAULT STATE
-		preferences2Restore.selectedProperty().set(Main.settings.isRestoreLastSession());
-		preferences3Update.selectedProperty().set(Main.settings.isCheckUpdates());
-		preferences5Animation.selectedProperty().set(Main.settings.isZoomAnimations());
-		preferences6DarkTheme.selectedProperty().set(Main.settings.isDarkTheme());
+		settings2AlwaysRestore.selectedProperty().set(Main.settings.isRestoreLastSession());
+		settings3AlertUpdate.selectedProperty().set(Main.settings.isCheckUpdates());
+		settings5Animation.selectedProperty().set(Main.settings.isZoomAnimations());
+		settings6DarkTheme.selectedProperty().set(Main.settings.isDarkTheme());
 
-		preferences7Save.selectedProperty().set(Main.settings.isAutoSave());
-		preferences8Regular.selectedProperty().set(Main.settings.getRegularSaving() != -1);
+		settings7AutoSave.selectedProperty().set(Main.settings.isAutoSave());
+		settings8RegularSave.selectedProperty().set(Main.settings.getRegularSaving() != -1);
 
-		preferences9RemoveWhenAdd.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-		preferences10ShowStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-		preferences11SmallFont.selectedProperty().set(Main.settings.isSmallFontInTextsList());
+		settings9TextAutoRemove.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+		settings10TextOnlyStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+		settings11TextSmall.selectedProperty().set(Main.settings.isSmallFontInTextsList());
 
 		// BIND
-		Main.settings.restoreLastSessionProperty().bind(preferences2Restore.selectedProperty());
-		Main.settings.checkUpdatesProperty().bind(preferences3Update.selectedProperty());
-		Main.settings.zoomAnimationsProperty().bind(preferences5Animation.selectedProperty());
-		Main.settings.darkThemeProperty().bind(preferences6DarkTheme.selectedProperty());
+		Main.settings.restoreLastSessionProperty().bind(settings2AlwaysRestore.selectedProperty());
+		Main.settings.checkUpdatesProperty().bind(settings3AlertUpdate.selectedProperty());
+		Main.settings.zoomAnimationsProperty().bind(settings5Animation.selectedProperty());
+		Main.settings.darkThemeProperty().bind(settings6DarkTheme.selectedProperty());
 
-		Main.settings.autoSavingProperty().bind(preferences7Save.selectedProperty());
+		Main.settings.autoSavingProperty().bind(settings7AutoSave.selectedProperty());
 
-		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(preferences9RemoveWhenAdd.selectedProperty());
-		Main.settings.showOnlyStartInTextsListProperty().bind(preferences10ShowStart.selectedProperty());
-		Main.settings.smallFontInTextsListProperty().bind(preferences11SmallFont.selectedProperty());
+		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(settings9TextAutoRemove.selectedProperty());
+		Main.settings.showOnlyStartInTextsListProperty().bind(settings10TextOnlyStart.selectedProperty());
+		Main.settings.smallFontInTextsListProperty().bind(settings11TextSmall.selectedProperty());
 
 		// ADD
-		preferences.getItems().addAll(preferences1Language, preferences2Restore, preferences3Update, preferences4Zoom, preferences5Animation, preferences6DarkTheme,
-				new SeparatorMenuItem(), preferences7Save, preferences8Regular,
-				new SeparatorMenuItem(), preferences9RemoveWhenAdd, preferences10ShowStart, preferences11SmallFont);
+		settings.getItems().addAll(settings1Language, settings2AlwaysRestore, settings3AlertUpdate, settings4DefaultZoom, settings5Animation, settings6DarkTheme,
+				new SeparatorMenuItem(), settings7AutoSave, settings8RegularSave,
+				new SeparatorMenuItem(), settings9TextAutoRemove, settings10TextOnlyStart, settings11TextSmall);
 
-		////////// OTHER //////////
+		////////// HELP //////////
 
-		aide1Doc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
-		aide2Probleme.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
-		aide3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
-		aide.getItems().addAll(aide1Doc, aide2Probleme, aide3Twitter);
+		help1LoadDoc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
+		help2GitHubIssue.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
+		help3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
+		help4Website.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+		help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
 
 		////////// SETUP ITEMS WIDTH ///////////
 
-		NodeMenuItem.setupMenu(fichier);
-		NodeMenuItem.setupMenu(preferences);
+		NodeMenuItem.setupMenu(file);
+		NodeMenuItem.setupMenu(tools);
+		NodeMenuItem.setupMenu(settings);
 
-		////////// FICHIER //////////
+		////////// FILE //////////
 
-		fichier1Open.setOnAction((ActionEvent actionEvent) -> {
+		file1Open.setOnAction((ActionEvent actionEvent) -> {
 
 			final FileChooser chooser = new FileChooser();
 			chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
@@ -221,7 +231,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			}
 		});
-		fichier2OpenDir.setOnAction((ActionEvent actionEvent) -> {
+		file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
 
 			final DirectoryChooser chooser = new DirectoryChooser();
 			chooser.setTitle(TR.tr("Sélectionner un dossier"));
@@ -233,20 +243,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				UserData.lastOpenDir = file.getParentFile();
 			}
 		});
-		fichier3Clear.setOnAction((ActionEvent actionEvent) -> {
+		file3Clear.setOnAction((ActionEvent actionEvent) -> {
 			MainWindow.lbFilesTab.clearFiles();
 		});
-		fichier4Save.setOnAction((ActionEvent actionEvent) -> {
+		file4Save.setOnAction((ActionEvent actionEvent) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){
 				MainWindow.mainScreen.document.edition.save();
 			}
 		});
-		fichier5Delete.setOnAction((ActionEvent e) -> {
+		file5Delete.setOnAction((ActionEvent e) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){
 				MainWindow.mainScreen.document.edition.clearEdit(true);
 			}
 		});
-		fichier6DeleteAll.setOnAction((ActionEvent e) -> {
+		file6DeleteAll.setOnAction((ActionEvent e) -> {
 			Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
 			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
@@ -284,18 +294,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
 		});
-		fichier7Close.setOnAction((ActionEvent e) -> {
+		file7Close.setOnAction((ActionEvent e) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){
 				MainWindow.mainScreen.closeFile(true);
 			}
 		});
-		fichier8SameName.setOnShowing((Event event) -> {
-			fichier8SameName.getItems().clear();
+		file8SameName.setOnShowing((Event event) -> {
+			file8SameName.getItems().clear();
 			int i = 0;
 			for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
 
 				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
-				fichier8SameName.getItems().add(item);
+				file8SameName.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
 					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
 					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
@@ -343,28 +353,35 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				});
 				i++;
 			}
-			if(i == 0) fichier8SameName.getItems().add(fichier8SameNameNull);
-			Builders.setMenuSize(fichier8SameName);
+			if(i == 0) file8SameName.getItems().add(file8SameNameNull);
+			Builders.setMenuSize(file8SameName);
 		});
-		fichier9Export.setOnAction((ActionEvent actionEvent) -> {
+		file9Export.setOnAction((ActionEvent actionEvent) -> {
 
 			MainWindow.mainScreen.document.save();
 			new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
 
 		});
-		fichier10ExportAll.setOnAction((ActionEvent actionEvent) -> {
+		file10ExportAll.setOnAction((ActionEvent actionEvent) -> {
 
 			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
 			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
 
 		});
-		fichier11Convert.setOnAction(e -> {
+
+		////////// TOOLS //////////
+
+		tools1Convert.setOnAction(e -> {
 			new ConvertDocument();
 		});
 
-		////////// PREFS //////////
+		tools2QRCode.setOnAction(e -> {
 
-		preferences1Language.setOnAction(e -> {
+		});
+
+		////////// SETTINGS //////////
+
+		settings1Language.setOnAction(e -> {
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()){
 					Main.settings.setLanguage(value);
@@ -381,7 +398,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				}
 			});
 		});
-		preferences4Zoom.setOnAction((ActionEvent actionEvent) -> {
+		settings4DefaultZoom.setOnAction((ActionEvent actionEvent) -> {
 
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
@@ -398,7 +415,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 
 		});
-		preferences8Regular.setOnAction((ActionEvent actionEvent) -> {
+		settings8RegularSave.setOnAction((ActionEvent actionEvent) -> {
 
 			Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
 
@@ -426,10 +443,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(option.get() == ok){
 				if(activated.isSelected()){
 					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					preferences8Regular.setSelected(true);
+					settings8RegularSave.setSelected(true);
 				}else{
 					Main.settings.setRegularSaving(-1);
-					preferences8Regular.setSelected(false);
+					settings8RegularSave.setSelected(false);
 				}
 
 			}
@@ -437,29 +454,32 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		});
 
-		////////// OTHER //////////
+		////////// ABOUT / HELP //////////
 
-		aide1Doc.setOnAction((ActionEvent actionEvent) -> {
-			MainWindow.mainScreen.openFile(LanguageWindow.getDocFile());
+		Label name = new Label(TR.tr("À propos"));
+		name.setAlignment(Pos.CENTER_LEFT);
+		name.setOnMouseClicked(event -> {
+			try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }
 		});
-		aide2Probleme.setOnAction((ActionEvent actionEvent) -> {
+		about.setGraphic(name);
+
+		help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(LanguageWindow.getDocFile()));
+		help2GitHubIssue.setOnAction((ActionEvent actionEvent) -> {
 			try{
 				Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDF4Teachers/issues/new"));
 			}catch(IOException | URISyntaxException e){ e.printStackTrace(); }
 		});
-		aide3Twitter.setOnAction((ActionEvent t) -> {
-			Main.hostServices.showDocument("https://twitter.com/PDF4Teachers");
-		});
+		help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
+		help4Website.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdf4teachers.org"));
 
-		Label name = new Label(TR.tr("À propos"));
-		name.setAlignment(Pos.CENTER_LEFT);
-		name.setOnMouseClicked(event -> new AboutWindow());
-		apropos.setGraphic(name);
+
+
+		////////// ABOUT / HELP //////////
 
 		// UI Style
 		setStyle("");
 		StyleManager.putStyle(this, Style.ACCENT);
-		getMenus().addAll(fichier, preferences, apropos, aide);
+		getMenus().addAll(file, tools, settings, about, help);
 
 		for(Menu menu : getMenus()){
 			Builders.setMenuSize(menu);

@@ -16,17 +16,13 @@ import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
 public class MainWindow extends Stage{
 
@@ -153,8 +149,8 @@ public class MainWindow extends Stage{
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
-                        menuBar.apropos.setStyle("-fx-background-color: #d6a600;");
-                        Tooltip.install(menuBar.apropos.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
+                        menuBar.about.setStyle("-fx-background-color: #d6a600;");
+                        Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
                         if(Main.settings.isCheckUpdates()){
                             new UpdateWindow();

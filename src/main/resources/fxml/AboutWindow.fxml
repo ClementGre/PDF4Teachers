@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fr.themsou.windows.AboutWindow"
+      fx:id="root" prefWidth="400.0" alignment="CENTER" styleClass="aboutPane">
+
+
+    <ImageView fitWidth="200" preserveRatio="true">
+        <Image url="/logo.png"/>
+        <VBox.margin><Insets bottom="10.0"/></VBox.margin>
+    </ImageView>
+    <Label text="PDF4Teachers">
+        <style>-fx-font-size: 23;</style>
+    </Label>
+    <Label fx:id="versionName">
+        <style>-fx-font-size: 15;</style>
+    </Label>
+
+    <Button fx:id="newRelease" textFill="black">
+        <VBox.margin><Insets bottom="10" top="10"/></VBox.margin>
+    </Button>
+
+    <HBox>
+        <Label fx:id="developerLabel"/>
+        <Hyperlink id="https://github.com/clementgre" text="Clément Grennerat"/>
+    </HBox>
+    <HBox>
+        <Label fx:id="designerLabel"/>
+        <Hyperlink id="https://github.com/grensv" text="Vincent Grennerat"/>
+    </HBox>
+    <Label fx:id="translatorText"/>
+    <HBox>
+        <VBox.margin><Insets bottom="7" top="7"/></VBox.margin>
+        <Hyperlink id="https://pdf4teachers.org" text="pdf4teachers.org">
+            <style>-fx-font-size: 20;</style>
+        </Hyperlink>
+    </HBox>
+
+    <HBox>
+        <Label text="Twitter (FR) : "/>
+        <Hyperlink id="https://twitter.com/Pdf4Teachers" text="\@Pdf4Teachers"/>
+    </HBox>
+    <HBox>
+        <VBox.margin><Insets bottom="10"/></VBox.margin>
+        <Label fx:id="githubLabel"/>
+        <Hyperlink id="https://github.com/clementgre/PDF4Teachers" text="ClementGre/PDF4Teachers"/>
+    </HBox>
+    <Label fx:id="donateLabel"/>
+    <HBox>
+        <VBox.margin><Insets bottom="10"/></VBox.margin>
+        <Pane fx:id="paypalLinkPane" styleClass="align-child-right"><Hyperlink id="https://www.paypal.com/paypalme/themsou" text="PayPal" prefWidth="150"/></Pane>
+        <Label text=" | "/>
+        <Pane fx:id="githubSponsorsPane" styleClass="align-child-left"><Hyperlink id="https://github.com/sponsors/ClementGre" text="GitHub" prefWidth="150"/></Pane>
+    </HBox>
+
+    <Label fx:id="dependenciesLabel"/>
+    <HBox styleClass="dependencies">
+        <VBox.margin><Insets bottom="15"/></VBox.margin>
+        <VBox fx:id="dependenciesLeft">
+            <Hyperlink text="Java FX 14" id="https://openjfx.io/"/>
+            <Hyperlink text="Apache PDFBox 2.0.21" id="https://pdfbox.apache.org/"/>
+            <Hyperlink text="JMetro 11.6.14" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
+        </VBox>
+        <VBox fx:id="dependenciesRight">
+            <Hyperlink text="JLatexMath 1.0.7" id="https://github.com/opencollab/jlatexmath"/>
+            <Hyperlink text="SnakeYAML 1.26" id="https://bitbucket.org/asomov/snakeyaml/src/master/"/>
+            <Hyperlink text="Jackson Streaming API 2.10.3" id="https://github.com/FasterXML/jackson-core"/>
+        </VBox>
+    </HBox>
+
+    <Hyperlink id="mailto:clement.grennerat@free.fr" text="clement.grennerat@free.fr">
+        <style>-fx-font-size: 12;</style>
+    </Hyperlink>
+
+</VBox>

@@ -49,8 +49,6 @@ public class GradeElement extends Element {
         this.index = index;
         this.parentPath = parentPath;
 
-        this.value.addListener((observable, oldValue, newValue) -> System.out.println("from " + oldValue.doubleValue() + " to " + newValue.doubleValue()));
-
         text.setBoundsType(TextBoundsType.LOGICAL);
         text.setTextOrigin(VPos.TOP);
 
@@ -310,7 +308,6 @@ public class GradeElement extends Element {
         return value;
     }
     public void setValue(double value) {
-        System.out.println("Set value to " + value);
         this.value.set(value);
     }
     public double getTotal() {
