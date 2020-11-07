@@ -2,6 +2,7 @@ package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.convert.ConvertDocument;
+import fr.themsou.document.render.display.PageEditPane;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
@@ -87,9 +88,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	NodeMenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
-	NodeMenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
 			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
-
+	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
+			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
 
 	////////// SETTINGS //////////
 
@@ -156,13 +158,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FILE //////////
 
-		file8SameName.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
 		file8SameName.getItems().add(file8SameNameNull);
 		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6DeleteAll, file7Close, file8SameName, new SeparatorMenuItem(), file9Export, file10ExportAll);
 
 		////////// TOOLS //////////
 
-		tools.getItems().addAll(tools1Convert, tools2QRCode);
+		tools3AddPages.getItems().add(new MenuItem());
+		tools.getItems().addAll(tools1Convert, tools2QRCode, tools3AddPages);
 
 		////////// SETTINGS //////////
 
@@ -377,6 +379,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		tools2QRCode.setOnAction(e -> {
 
+		});
+
+		tools3AddPages.setOnShowing(e -> {
+			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages));
+			Builders.setMenuSize(tools3AddPages);
 		});
 
 		////////// SETTINGS //////////

@@ -272,6 +272,7 @@ public class MainScreen extends Pane {
 		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		status.set(Status.OPEN);
+		MainWindow.lbFilesTab.files.getSelectionModel().select(file);
 
 		document.showPages();
 		try{

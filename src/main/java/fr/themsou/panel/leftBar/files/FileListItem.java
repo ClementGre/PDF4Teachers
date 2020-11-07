@@ -3,6 +3,7 @@ package fr.themsou.panel.leftBar.files;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
+import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.StringUtils;

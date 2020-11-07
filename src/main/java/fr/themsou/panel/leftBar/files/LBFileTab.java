@@ -14,11 +14,13 @@ import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
 import fr.themsou.windows.MainWindow;
 import javafx.beans.binding.Bindings;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
@@ -45,6 +47,11 @@ public class LBFileTab extends Tab {
 	}
 
 	public void setup(){
+
+		files.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+		files.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+			event.consume();
+		});
 
 		MainWindow.root.setOnDragOver((DragEvent e) -> {
 			Dragboard db = e.getDragboard();

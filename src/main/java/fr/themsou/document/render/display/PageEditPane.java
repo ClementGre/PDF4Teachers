@@ -7,9 +7,12 @@ import fr.themsou.windows.MainWindow;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
+
+import java.util.ArrayList;
 
 public class PageEditPane extends HBox {
 
@@ -50,23 +53,7 @@ public class PageEditPane extends HBox {
 
             menu.hide();
             menu.getItems().clear();
-
-            if(page.getPage() == 0){
-                NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), false);
-                NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), false);
-                menu.getItems().addAll(addTopBlank, addTopConvert, new SeparatorMenuItem());
-
-                addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()));
-                addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()));
-            }
-
-            NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), false);
-            NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), false);
-            menu.getItems().addAll(addBlank, addConvert);
-
-            addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page.getPage(), page.getPage()+1));
-            addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page.getPage(), page.getPage()+1));
-
+            menu.getItems().addAll(getNewPageMenu(page.getPage(), 0));
             NodeMenuItem.setupMenu(menu);
             menu.show(page, e.getScreenX(), e.getScreenY());
         });
@@ -77,6 +64,38 @@ public class PageEditPane extends HBox {
         updatePosition();
         page.getChildren().add(this);
 
+    }
+
+    public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd){
+        System.out.println("ask");
+        ArrayList<MenuItem> menus = new ArrayList<>();
+        if(page == 0){
+            NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), false);
+            NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), false);
+            NodeMenuItem addTopPdf = new NodeMenuItem(new HBox(), TR.tr("Ajouter les pages d'un fichier PDF au dessus"), false);
+            menus.add(addTopBlank);
+            menus.add(addTopConvert);
+            menus.add(addTopPdf);
+            menus.add(new SeparatorMenuItem());
+
+            addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, page));
+            addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, page));
+            addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(page));
+        }
+
+        NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), false);
+        NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), false);
+        NodeMenuItem addTopPdf = new NodeMenuItem(new HBox(), TR.tr("Ajouter les pages d'un fichier PDF"), false);
+        menus.add(addBlank);
+        menus.add(addConvert);
+        menus.add(addTopPdf);
+        int index = (addAtTheEnd != 0) ? addAtTheEnd : page+1;
+        addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, index));
+        addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, index));
+        addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(index));
+
+        System.out.println("return menus");
+        return menus;
     }
 
     private Button getCustomButton(Image image, String nonTranslatedToolTip){

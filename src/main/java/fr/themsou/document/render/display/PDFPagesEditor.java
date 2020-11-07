@@ -5,11 +5,14 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.convert.ConvertedFile;
+import fr.themsou.main.Main;
+import fr.themsou.main.UserData;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.FileChooser;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -17,6 +20,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class PDFPagesEditor{
@@ -200,6 +204,57 @@ public class PDFPagesEditor{
             document.setCurrentPage(index);
         });
     }
+    public void newPdfPage(int index){
+
+        Document document = MainWindow.mainScreen.document;
+
+        final FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
+        chooser.setTitle(TR.tr("Sélectionner un fichier"));
+        chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
+
+        File file = chooser.showOpenDialog(Main.window);
+        if(file != null){
+            try{
+                PDDocument fileDoc = PDDocument.load(file);
+
+                PDFMergerUtility merger = new PDFMergerUtility();
+
+                int addedPages = fileDoc.getNumberOfPages();
+                try{
+                    merger.appendDocument(this.document, fileDoc);
+                    merger.mergeDocuments();
+                }catch(IOException e){ e.printStackTrace(); }
+
+                for(int j = 0; j < addedPages; j++){
+                    PageRenderer page = new PageRenderer(index);
+
+                    moveDocumentPage(this.document.getNumberOfPages()-1, index);
+
+                    try{ this.document.save(this.file); }catch(IOException e){ e.printStackTrace(); }
+
+                    // add page
+                    document.pages.add(index, page);
+                    MainWindow.mainScreen.addPage(page);
+                    document.totalPages++;
+
+                    // Update pages of all pages
+                    for(int k = 0 ; k < document.totalPages ; k++) document.pages.get(k).setPage(k);
+                }
+
+                try{ fileDoc.close(); }catch(IOException e){ e.printStackTrace(); }
+
+                // update coordinates of the pages
+                document.pages.get(0).updatePosition(30);
+                document.updateShowsStatus();
+
+                // update current page
+                document.setCurrentPage(index);
+
+            }catch(IOException e){ e.printStackTrace(); }
+        }
+
+    }
 
     // "UTILS"
 
@@ -239,6 +294,5 @@ public class PDFPagesEditor{
         // add pages
         for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
     }
-
 
 }
