@@ -151,6 +151,8 @@ public abstract class Element extends Region {
 		toFront();
 		getPage().toFront();
 	}
+	public abstract void addedToDocument(boolean silent);
+	public abstract void removedFromDocument(boolean silent);
 	public void delete(){
 		if(getPage() != null){
 			getPage().removeElement(this, true);

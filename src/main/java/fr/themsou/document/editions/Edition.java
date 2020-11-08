@@ -85,13 +85,13 @@ public class Edition {
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
             ArrayList<Object> grades = new ArrayList<>();
 
-            // TEXTS ELEMENTS
+            // NON GRADES ELEMENTS
             int counter = 0; int i = 0;
             for(PageRenderer page : document.pages){
                 ArrayList<Object> pageData = new ArrayList<>();
 
                 for(Element element : page.getElements()){
-                    if(element instanceof TextElement){
+                    if(!(element instanceof GradeElement)){
                         pageData.add(element.getYAMLData());
                         counter++;
                     }
@@ -187,14 +187,14 @@ public class Edition {
             int counter = 0;
             for(Element element : elements){
 
-                if(element instanceof TextElement){
+                if(!(element instanceof GradeElement)){
                     if(texts.containsKey("page"+element.getPageNumber())){
                         texts.get("page"+element.getPageNumber()).add(element.getYAMLData());
                     }else{
                         texts.put("page"+element.getPageNumber(),  new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                     } counter++;
 
-                }else if(element instanceof GradeElement){
+                }else{
                     grades.add(element.getYAMLData());
                     if(!((GradeElement) element).isDefaultGrade()) counter++;
                 }

@@ -112,7 +112,7 @@ public class LBGradeTab extends Tab {
         MainWindow.mainScreen.setSelected(null);
 
         GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
-                TR.tr("Nouvelle note"), -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), true);
+                true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), TR.tr("Nouvelle note"));
 
         page.addElement(current, true);
         MainWindow.mainScreen.setSelected(current);
@@ -128,7 +128,7 @@ public class LBGradeTab extends Tab {
         if(update) MainWindow.mainScreen.setSelected(null);
 
         GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
-                name, value, total, index, parentPath, true);
+                true, value, total, index, parentPath, name);
 
         page.addElement(current, update);
         if(update) MainWindow.mainScreen.setSelected(current);

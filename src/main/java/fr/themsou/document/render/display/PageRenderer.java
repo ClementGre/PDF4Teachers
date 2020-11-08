@@ -151,7 +151,7 @@ public class PageRenderer extends Pane{
             setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {
-            if(e.getClickCount() == 2){
+            if(e.getClickCount() == 2){ // ADD TextElement when double click
 
                 MainWindow.leftBar.getSelectionModel().select(1);
                 MainWindow.lbTextTab.newBtn.fire();
@@ -341,30 +341,16 @@ public class PageRenderer extends Pane{
             page.getChildren().add(element);
         }
     }
-    public void addElementSimple(Element element){
 
-        if(element != null){
-            elements.add(element);
-            getChildren().add(element);
-
-            if(element instanceof GradeElement){
-                MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
-            }
-        }
-    }
     public void addElement(Element element, boolean update){
 
         if(element != null){
 
             elements.add(element);
             getChildren().add(element);
-            if(update) Edition.setUnsave();
 
-            if(element instanceof TextElement){
-                if(update) MainWindow.lbTextTab.treeView.onFileSection.addElement((TextElement) element);
-            }else if(element instanceof GradeElement){
-                MainWindow.lbGradeTab.treeView.addElement((GradeElement) element);
-            }
+            if(update) Edition.setUnsave();
+            element.addedToDocument(!update);
         }
     }
     public void removeElement(Element element, boolean update){
@@ -374,12 +360,7 @@ public class PageRenderer extends Pane{
             getChildren().remove(element);
 
             if(update) Edition.setUnsave();
-
-            if(element instanceof TextElement){
-                if(update) MainWindow.lbTextTab.treeView.onFileSection.removeElement((TextElement) element);
-            }else if(element instanceof GradeElement){
-                MainWindow.lbGradeTab.treeView.removeElement((GradeElement) element);
-            }
+            element.removedFromDocument(!update);
         }
     }
 

@@ -28,16 +28,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -246,7 +242,7 @@ public class TextTreeItem extends TreeItem{
 		return data;
 	}
 	public TextElement toRealTextElement(int x, int y, int page){
-		return new TextElement(x, y, page, font.get(), text, color.get(), true);
+		return new TextElement(x, y, page, true, text, color.get(), font.get());
 	}
 	public static TextTreeItem readDataAndGive(DataInputStream reader, int type) throws IOException {
 

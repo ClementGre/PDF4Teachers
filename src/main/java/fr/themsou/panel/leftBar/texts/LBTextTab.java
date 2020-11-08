@@ -5,7 +5,6 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
@@ -13,10 +12,8 @@ import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
@@ -282,7 +279,7 @@ public class LBTextTab extends Tab {
 			itBtn.setSelected(lastItalic);
 
 			TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
-					getFont(), txtArea.getText(), colorPicker.getValue(), true);
+                    true, txtArea.getText(), colorPicker.getValue(), getFont());
 
 			page.addElement(current, true);
 			MainWindow.mainScreen.setSelected(current);

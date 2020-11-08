@@ -24,7 +24,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -42,7 +41,7 @@ public class TextElement extends Element {
 
 	public static final float imageFactor = 2.5f;
 
-	public TextElement(int x, int y, int pageNumber, Font font, String text, Color color, boolean hasPage){
+	public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font){
 		super(x, y, pageNumber);
 
 		this.text.setFont(font);
@@ -107,6 +106,14 @@ public class TextElement extends Element {
 		MainWindow.leftBar.getSelectionModel().select(1);
 		MainWindow.lbTextTab.selectItem();
 	}
+	@Override
+	public void addedToDocument(boolean silent) {
+		if(!silent) MainWindow.lbTextTab.treeView.onFileSection.addElement(this);
+	}
+	@Override
+	public void removedFromDocument(boolean silent) {
+		if(!silent) MainWindow.lbTextTab.treeView.onFileSection.removeElement(this);
+	}
 
 	// READER AND WRITERS
 
@@ -125,7 +132,7 @@ public class TextElement extends Element {
 	public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
 		TextElement element = readYAMLDataAndGive(data, true, page);
 		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
+			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
 	}
 	public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
 
@@ -139,7 +146,7 @@ public class TextElement extends Element {
 		String text = Config.getString(data, "text");
 
 		Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-		return new TextElement(x, y, page, font, text, color, hasPage);
+		return new TextElement(x, y, page, hasPage, text, color, font);
 	}
 
 	public static TextElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
@@ -157,13 +164,13 @@ public class TextElement extends Element {
 		String text = reader.readUTF();
 
 		Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-		return new TextElement(x, y, page, font, text, Color.rgb(colorRed, colorGreen, colorBlue), hasPage);
+		return new TextElement(x, y, page, hasPage, text, Color.rgb(colorRed, colorGreen, colorBlue), font);
 	}
 	public static void readDataAndCreate(DataInputStream reader) throws IOException {
 		TextElement element = readDataAndGive(reader, true);
 		element.setRealY((int) (element.getRealY() - element.getBaseLineY()/element.getPage().getHeight()*Element.GRID_HEIGHT));
 		if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
+			MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
 	}
 
 	// SPECIFIC METHODS
@@ -284,7 +291,7 @@ public class TextElement extends Element {
 
 	@Override
 	public Element clone(){
-		return new TextElement(getRealX(), getRealY(), pageNumber, text.getFont(), text.getText(), (Color) text.getFill(), true);
+		return new TextElement(getRealX(), getRealY(), pageNumber, true, text.getText(), (Color) text.getFill(), text.getFont());
 	}
 	public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
 		if(hasCore) return new TextTreeItem(text.getFont(), text.getText(), (Color) text.getFill(), type, 0, System.currentTimeMillis()/1000, this);

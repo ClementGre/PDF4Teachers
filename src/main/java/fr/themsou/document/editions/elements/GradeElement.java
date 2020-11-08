@@ -13,8 +13,6 @@ import fr.themsou.utils.components.ScratchText;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -38,7 +36,7 @@ public class GradeElement extends Element {
     private int index;
     private String parentPath;
 
-    public GradeElement(int x, int y, int pageNumber, String name, double value, double total, int index, String parentPath, boolean hasPage){
+    public GradeElement(int x, int y, int pageNumber, boolean hasPage, double value, double total, int index, String parentPath, String name){
         super(x, y, pageNumber);
         this.pageNumber = pageNumber;
         this.realX.set(x);
@@ -195,6 +193,14 @@ public class GradeElement extends Element {
         }
     }
 
+    @Override
+    public void addedToDocument(boolean silent) {
+        MainWindow.lbGradeTab.treeView.addElement(this);
+    }
+    @Override
+    public void removedFromDocument(boolean silent) {
+        MainWindow.lbGradeTab.treeView.removeElement(this);
+    }
     // READER AND WRITERS
 
     @Override
@@ -229,12 +235,12 @@ public class GradeElement extends Element {
         double total = Config.getDouble(data, "total");
         String name = Config.getString(data, "name");
 
-        return new GradeElement(x, y, page, name, value, total, index, parentPath, hasPage);
+        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name);
     }
     public static void readYAMLDataAndCreate(HashMap<String, Object> data){
         GradeElement element = readYAMLDataAndGive(data, true);
         if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
+            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
     }
 
     public static GradeElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException {
@@ -248,13 +254,13 @@ public class GradeElement extends Element {
         double total = reader.readDouble();
         String name = reader.readUTF();
 
-        return new GradeElement(x, y, page, name, value, total, index, parentPath, hasPage);
+        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name);
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
         GradeElement element = readDataAndGive(reader, true);
         element.setRealY((int) (element.getRealY() - element.getBaseLineY()/element.getPage().getHeight()*Element.GRID_HEIGHT));
         if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElementSimple(element);
+            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
     }
 
     // SPECIFIC METHODS
@@ -366,7 +372,7 @@ public class GradeElement extends Element {
 
     @Override
     public Element clone() {
-        return new GradeElement(getRealX(), getRealY(), pageNumber, name.getValue(), value.getValue(), total.getValue(), index, parentPath, true);
+        return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), index, parentPath, name.getValue());
     }
     public GradeRating toGradeRating(){
         return new GradeRating(total.get(), name.get(), index, parentPath);
