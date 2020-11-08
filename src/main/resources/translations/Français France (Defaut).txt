@@ -456,3 +456,4 @@ Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. 
 Trier=
 # GradeTreeView
 # TR
+acronym=

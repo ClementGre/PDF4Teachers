@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.themsou.main.Main;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.utils.TextWrapper;
+import fr.themsou.main.Settings;
+import fr.themsou.utils.*;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.geometry.Insets;
@@ -14,6 +13,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -92,7 +92,7 @@ public class UpdateWindow extends Stage {
                     parsedPre = jParser.getBooleanValue();
                 }else if("body".equals(fieldname)){
                     jParser.nextToken();
-                    parsedDescription = jParser.getText().split(Pattern.quote("\r\n\r\n\r\n"))[0];
+                    parsedDescription = jParser.getText();
                     break;
                 }
             }
@@ -142,7 +142,7 @@ public class UpdateWindow extends Stage {
 
                 }if("body".equals(fieldname)){
                     jParser.nextToken();
-                    parsedLatestDescription = jParser.getText().split(Pattern.quote("\r\n\r\n\r\n"))[0];
+                    parsedLatestDescription = jParser.getText();
                     break;
                 }
             }
@@ -205,12 +205,15 @@ public class UpdateWindow extends Stage {
 
         HBox buttons = new HBox();
 
-        Label desc = new Label(new TextWrapper(UpdateWindow.description, FontUtils.getFont("Open Sans", false, false, 12.5),545).wrap());
-        desc.setStyle("-fx-padding: 10; -fx-font-size: 12.5;");
-        desc.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        VBox description = new VBox();
+        description.setStyle("-fx-padding: 10;");
+        generateDescription(description);
+        ScrollPane descriptionPane = new ScrollPane(description);
+        descriptionPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+        descriptionPane.setMaxHeight(500); descriptionPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Button see = new Button(TR.tr("Voir sur GitHub"));
-        see.setOnAction(t -> Main.hostServices.showDocument("https://github.com/ClementGre/PDF4Teachers/releases/tag/" + UpdateWindow.version));
+        Button see = new Button(TR.tr("Voir sur le site WEB"));
+        see.setOnAction(t -> Main.hostServices.showDocument("https://pdf4teachers.org/Download/?v=" + UpdateWindow.version));
         //see.setStyle("-fx-background-color: #ba6800;");
         see.setAlignment(Pos.BASELINE_CENTER);
 
@@ -230,7 +233,7 @@ public class UpdateWindow extends Stage {
 
         buttons.getChildren().addAll(see, maj);
 
-        root.getChildren().addAll(info, version, desc, buttons);
+        root.getChildren().addAll(info, version, descriptionPane, buttons);
         root.setStyle("-fx-padding: 10;");
 
         VBox.setMargin(info, new Insets(40, 10, 40, 10));
@@ -240,6 +243,56 @@ public class UpdateWindow extends Stage {
 
         maj.requestFocus();
 
+    }
+
+    public void generateDescription(VBox root){
+        String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
+        String englishText = "";
+        String langText = "";
+        for(String languageText : languagesTexts){
+            if(languageText.startsWith("# ")) languageText = languageText.replaceFirst(Pattern.quote("# "), "");
+            String langAcronym = languageText.substring(0, languageText.indexOf(' '));
+            if(langAcronym.equals(TR.getCurrentLanguageAcronym())){
+                langText = languageText.substring(languageText.indexOf("\r\n") + 2);
+            }else if(langAcronym.equals("en") && !TR.getCurrentLanguageAcronym().equals("en")){
+                englishText = languageText.substring(languageText.indexOf("\r\n") + 2);
+            }
+        }
+
+        if(langText.isEmpty()) langText = englishText;
+
+        boolean first = true;
+        for(String line : langText.split(Pattern.quote("## \uD83C\uDF10"))[0].split(Pattern.quote("\r\n"))){
+            if(first && line.isBlank()) continue;
+            if(line.startsWith("- ")){
+                Label label = new Label(line);
+                label.setWrapText(true);
+                label.setMaxWidth(530);
+                label.setStyle("-fx-padding: 0 0 0 30; -fx-font-size: 13;");
+                root.getChildren().add(label);
+            }else{
+
+                if(line.startsWith("##")){
+                    Label label = new Label(line.replace("##", ""));
+                    label.setWrapText(true);
+                    label.setMaxWidth(530);
+                    if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 15; -fx-font-weight: 900;");
+                    else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 15; -fx-font-weight: 900;");
+                    root.getChildren().add(label);
+                }else if(line.isEmpty()){
+                    Region spacer = new Region();
+                    spacer.setPrefHeight(5);
+                    root.getChildren().add(spacer);
+                }else{
+                    Label label = new Label(line.replace("##", ""));
+                    label.setWrapText(true);
+                    label.setMaxWidth(530);
+                    label.setStyle("-fx-padding: 0 0 0 15; -fx-font-size: 13;");
+                    root.getChildren().add(label);
+                }
+            }
+            first = false;
+        }
     }
 
 }

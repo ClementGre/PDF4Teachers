@@ -456,3 +456,4 @@ Envoyer le barème sur d'autres éditions.=Send grade scale on other edits
 # TextTreeSection
 # GradeTreeView
 # TR
+acronym=en

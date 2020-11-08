@@ -456,3 +456,4 @@ Envoyer le barème sur d'autres éditions.=Invia la scala dei voti su altre modi
 # TextTreeSection
 # GradeTreeView
 # TR
+acronym=it

@@ -1,6 +1,7 @@
 package fr.themsou.utils;
 
 import fr.themsou.main.Main;
+import fr.themsou.windows.LanguageWindow;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,10 @@ public class TR {
         }
 
         return text;
+    }
+
+    public static String getCurrentLanguageAcronym(){
+        return TR.tr("acronym").equals("acronym") ? "fr" : TR.tr("acronym").toLowerCase();
     }
 
     public static void updateTranslation(){

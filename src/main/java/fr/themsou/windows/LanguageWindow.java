@@ -66,7 +66,7 @@ public class LanguageWindow extends Stage{
         show();
     }
 
-    public static String detectLanguage() {
+    public static String getLanguageFromComputerLanguage() {
         String country = System.getProperty("user.country").toLowerCase();
         String language = System.getProperty("user.language").toLowerCase();
 
