@@ -432,7 +432,7 @@ public class ConvertWindow extends Stage {
 
             export.setOnAction(event -> {
                 if(mp > 0 && widthFactor > 0 && heightFactor > 0){
-                    if(convertDirs || !docName.getText().isEmpty()){
+                    if(convertDirs || (!docName.getText().isEmpty() && !docName.getText().equalsIgnoreCase(".PDF"))){
                         startConversion();
                     }else{
                         Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));

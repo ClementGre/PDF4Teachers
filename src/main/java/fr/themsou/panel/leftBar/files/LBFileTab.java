@@ -196,7 +196,7 @@ public class LBFileTab extends Tab {
 	private boolean isFilePdf(File file) {
         String fileName = file.getName();
         String ext = "";
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0) 
+        if(fileName.lastIndexOf(".") != -1)
         	ext = fileName.substring(fileName.lastIndexOf(".") + 1);
 
 		return ext.equalsIgnoreCase("pdf");
