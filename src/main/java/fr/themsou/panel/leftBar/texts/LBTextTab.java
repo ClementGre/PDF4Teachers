@@ -83,9 +83,7 @@ public class LBTextTab extends Tab {
 		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();
-		ColorPicker cp1 = new ColorPicker(Color.RED);
-		new JMetro(cp1, Style.DARK);
-		pane.getChildren().addAll(optionPane, treeView, cp1);
+		pane.getChildren().addAll(optionPane, treeView);
 	}
 
 	public void setup(){

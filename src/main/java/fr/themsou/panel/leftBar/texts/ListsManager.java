@@ -122,13 +122,21 @@ public class ListsManager {
 
     public void saveList(String listName){
         TextTreeSection.lists.remove(listName);
+        ArrayList<TextListItem> list = new ArrayList<>();
         for(Object item : section.getChildren()){
             if(item instanceof TextTreeItem){
-                ArrayList<TextListItem> list = TextTreeSection.lists.containsKey(listName) ? TextTreeSection.lists.get(listName) : new ArrayList<>();
                 list.add(((TextTreeItem) item).toTextItem());
-                TextTreeSection.lists.put(listName, list);
             }
         }
+        if(list.size() == 0){
+            Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Liste non sauvegardée"));
+            alert.setHeaderText(TR.tr("Impossible de sauvegarder la liste"));
+            alert.setContentText(TR.tr("Il n'y a aucun élément à enregistrer"));
+            alert.show();
+            return;
+        }
+        TextTreeSection.lists.put(listName, list);
+
         Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste sauvegardée"));
         alert.setHeaderText(TR.tr("La liste a bien été sauvegardée !"));
         alert.setContentText(TR.tr("La liste pourra être chargée via le bouton de liste"));

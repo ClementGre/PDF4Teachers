@@ -53,6 +53,10 @@ public abstract class GraphicElement extends Element{
         MainWindow.leftBar.getSelectionModel().select(3);
 
     }
+    @Override
+    public void doubleClick() {
+
+    }
 
     // READERS AND WRITERS
 

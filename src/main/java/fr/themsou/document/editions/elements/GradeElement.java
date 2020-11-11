@@ -183,9 +183,12 @@ public class GradeElement extends Element {
     @Override
     public void select() {
         super.selectPartial();
-
         // Sélectionne l'élément associé dans l'arbre
         MainWindow.lbGradeTab.treeView.getSelectionModel().select(getGradeTreeItem());
+    }
+    @Override
+    public void doubleClick() {
+
     }
     @Override
     public void delete(){

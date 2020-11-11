@@ -107,6 +107,10 @@ public class TextElement extends Element {
 		MainWindow.lbTextTab.selectItem();
 	}
 	@Override
+	public void doubleClick() {
+		cloneOnDocument();
+	}
+	@Override
 	public void addedToDocument(boolean silent) {
 		if(!silent) MainWindow.lbTextTab.treeView.onFileSection.addElement(this);
 	}

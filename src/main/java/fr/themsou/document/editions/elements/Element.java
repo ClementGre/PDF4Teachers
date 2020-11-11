@@ -113,7 +113,12 @@ public abstract class Element extends Region {
 
 			checkLocation(itemX, itemY, true);
 		});
-		setOnMouseClicked(Event::consume);
+		setOnMouseClicked(e -> {
+			e.consume();
+			if(e.getClickCount() == 2){
+				doubleClick();
+			}
+		});
 
 		/////////////////////////////////////////////////////////////////////////
 
@@ -146,6 +151,7 @@ public abstract class Element extends Region {
 	// ACTIONS
 
 	public abstract void select();
+	public abstract void doubleClick();
 	protected void selectPartial(){
 		MainWindow.mainScreen.setSelected(this);
 		toFront();
