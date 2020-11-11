@@ -7,6 +7,7 @@ import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.FontUtils;
+import fr.themsou.utils.components.SyncColorPicker;
 import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.application.Platform;
@@ -18,6 +19,7 @@ import javafx.scene.text.FontWeight;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UserData {
 
@@ -197,6 +199,7 @@ public class UserData {
                 // SINGLE
 
                 lastOpenDir = new File(config.getString("lastOpenDir"));
+                SyncColorPicker.loadCustomsColors(config.getList("customColors").stream().map(Object::toString).collect(Collectors.toList()));
 
             }catch(IOException e) {
                 e.printStackTrace();
@@ -435,6 +438,8 @@ public class UserData {
             // SINGLE
 
             config.base.put("lastOpenDir", lastOpenDir.getAbsolutePath());
+
+            config.base.put("customColors", SyncColorPicker.getCustomColorsList());
 
             config.save();
         }catch(IOException e) {

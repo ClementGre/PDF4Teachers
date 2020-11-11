@@ -8,6 +8,8 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
+import fr.themsou.utils.components.SyncColorPicker;
+import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -26,6 +28,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -44,7 +48,7 @@ public class LBTextTab extends Tab {
 	private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
 
 	private HBox colorAndParamsBox = new HBox();
-	private ColorPicker colorPicker = new ColorPicker();
+	private SyncColorPicker colorPicker = new SyncColorPicker();
 	private ToggleButton boldBtn = new ToggleButton("");
 	private ToggleButton itBtn = new ToggleButton("");
 
@@ -79,8 +83,9 @@ public class LBTextTab extends Tab {
 		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();
-
-		pane.getChildren().addAll(optionPane, treeView);
+		ColorPicker cp1 = new ColorPicker(Color.RED);
+		new JMetro(cp1, Style.DARK);
+		pane.getChildren().addAll(optionPane, treeView, cp1);
 	}
 
 	public void setup(){

@@ -5,6 +5,7 @@ import fr.themsou.panel.leftBar.texts.LBTextTab;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.FontUtils;
 import fr.themsou.utils.TR;
+import fr.themsou.utils.components.SyncColorPicker;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.windows.MainWindow;
@@ -65,7 +66,7 @@ public class GradeSettingsWindow extends Stage {
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
         private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
-        private ColorPicker colorPicker = new ColorPicker();
+        private SyncColorPicker colorPicker = new SyncColorPicker();
         private CheckBox showName = new CheckBox(TR.tr("Afficher le nom de la note"));
 
         public TierPane(int tier){

@@ -14,6 +14,7 @@ import fr.themsou.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.*;
 import javafx.geometry.VPos;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
