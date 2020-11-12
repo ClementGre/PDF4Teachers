@@ -37,6 +37,8 @@ public class GradeElement extends Element {
     private int index;
     private String parentPath;
 
+    public int nextRealYToUse = 0;
+
     public GradeElement(int x, int y, int pageNumber, boolean hasPage, double value, double total, int index, String parentPath, String name){
         super(x, y, pageNumber);
         this.pageNumber = pageNumber;
@@ -95,7 +97,7 @@ public class GradeElement extends Element {
             // Update total if switch/unSwitch to Bonus
             if(oldValue.equalsIgnoreCase(TR.tr("Bonus")) != newValue.equalsIgnoreCase(TR.tr("Bonus"))){
                 if(treeItemElement.hasSubGrade() && getValue() == -1) treeItemElement.resetChildrenValues();
-                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum();
+                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(-1, 0);
             }
         });
         // make sum when value or total change
@@ -110,7 +112,10 @@ public class GradeElement extends Element {
                         switchPage(MainWindow.mainScreen.document.getCurrentPage());
                     }
                     setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
-                    setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
+                    if(nextRealYToUse != 0){
+                        setRealY(nextRealYToUse);
+                        nextRealYToUse = 0;
+                    }else setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
                 }
                 setVisible(true);
                 text.setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
@@ -118,7 +123,7 @@ public class GradeElement extends Element {
 
             GradeTreeItem treeItemElement = getGradeTreeItem();
             if(treeItemElement.hasSubGrade() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
-            else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum();
+            else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(getPageNumber(), getRealY());
 
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
@@ -126,7 +131,7 @@ public class GradeElement extends Element {
             text.setText((LBGradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(getValue()) + "/" + Main.format.format(getTotal()));
 
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
-            ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum();
+            ((GradeTreeItem) MainWindow.lbGradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(-1, 0);
         });
     }
     @Override

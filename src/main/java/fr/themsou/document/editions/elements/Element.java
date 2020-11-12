@@ -181,6 +181,9 @@ public abstract class Element extends Region {
 	// GETTERS AND SETTERS
 
 	public abstract float getAlwaysHeight();
+	public int getRealHeight() {
+		return (int) (getAlwaysHeight() / getPage().getHeight() * Element.GRID_HEIGHT);
+	}
 
 	// COORDINATES GETTERS AND SETTERS
 
@@ -232,5 +235,4 @@ public abstract class Element extends Region {
 		element.getPage().addElement(element, true);
 		element.select();
 	}
-
 }

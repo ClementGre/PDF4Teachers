@@ -1,6 +1,7 @@
 package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.GradeElement;
+import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.TR;
@@ -128,7 +129,7 @@ public class GradeTreeItem extends TreeItem {
             element.select();
 
             // Update total (Fix the bug when a total is predefined (with no children))
-            makeSum();
+            makeSum(-1, 0);
         });
 
     }
@@ -415,7 +416,7 @@ public class GradeTreeItem extends TreeItem {
         return null;
     }
 
-    public void makeSum(){
+    public void makeSum(int previousPage, int previousRealY){
         boolean hasValue = false;
         double value = 0;
         double total = 0;
@@ -434,12 +435,18 @@ public class GradeTreeItem extends TreeItem {
             }
         }
 
-        if(hasValue) core.setValue(value);
+        if(hasValue){
+            if(core.getValue() == -1 && previousPage == core.getPageNumber()){
+                System.out.println(core.getRealHeight());
+                core.nextRealYToUse = (int) (previousRealY-core.getRealHeight());
+                core.setValue(value);
+            }else core.setValue(value);
+        }
         else core.setValue(-1);
         core.setTotal(total);
 
         if(getParent() != null){
-            ((GradeTreeItem) getParent()).makeSum();
+            ((GradeTreeItem) getParent()).makeSum(core.getPageNumber(), core.getRealY());
         }
     }
 

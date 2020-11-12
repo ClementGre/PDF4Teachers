@@ -106,7 +106,7 @@ public class GradeTreeView extends TreeView<String> {
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
             parent.reIndexChildren();
-            parent.makeSum();
+            parent.makeSum(-1, 0);
         }
     }
 

@@ -67,7 +67,6 @@ public class PageEditPane extends HBox {
     }
 
     public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd){
-        System.out.println("ask");
         ArrayList<MenuItem> menus = new ArrayList<>();
         if(page == 0){
             NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), false);
@@ -94,7 +93,6 @@ public class PageEditPane extends HBox {
         addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, index));
         addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(index));
 
-        System.out.println("return menus");
         return menus;
     }
 
