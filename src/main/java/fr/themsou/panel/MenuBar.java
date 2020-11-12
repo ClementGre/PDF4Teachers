@@ -70,15 +70,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeMenuItem file7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	Menu file8SameName = createSubMenu(TR.tr("Éditions des documents du même nom"), "memenom",
-			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
-
-	MenuItem file8SameNameNull = new MenuItem(TR.tr("Aucune édition trouvée"));
-
-	NodeMenuItem file9Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file8Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	NodeMenuItem file10ExportAll = createMenuItem(TR.tr("Tout exporter"), "exporter", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file9ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
@@ -88,10 +83,42 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	NodeMenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
+
 	NodeMenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
 			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
+
 	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
 			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
+
+	Menu tools4ExportEdition = createSubMenu(TR.tr("Exporter l'édition"), "export",
+			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
+
+		NodeMenuItem tools4ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
+				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
+		NodeMenuItem tools4ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
+				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
+
+	Menu tools5ImportEdition = createSubMenu(TR.tr("Importer une édition"), "import",
+			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
+
+		NodeMenuItem tools5ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
+				TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true, false, false, false);
+		NodeMenuItem tools5ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
+				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
+
+		Menu tools5ImportEdition3SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), null,
+				TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true, false);
+		MenuItem tools5ImportEdition3SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+
+	Menu tools6Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
+			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), true);
+
+		NodeMenuItem tools6Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution"), null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+				TR.tr("Ouvre la console de l'application"), false, false, false, false);
+		NodeMenuItem tools6Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
+				TR.tr("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
+		NodeMenuItem tools6Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
+				TR.tr("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
 
 	////////// SETTINGS //////////
 
@@ -158,13 +185,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FILE //////////
 
-		file8SameName.getItems().add(file8SameNameNull);
-		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6DeleteAll, file7Close, file8SameName, new SeparatorMenuItem(), file9Export, file10ExportAll);
+		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6DeleteAll, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll);
 
 		////////// TOOLS //////////
 
 		tools3AddPages.getItems().add(new MenuItem());
-		tools.getItems().addAll(tools1Convert, tools2QRCode, tools3AddPages);
+		tools4ExportEdition.getItems().addAll(tools4ExportEdition1All, tools4ExportEdition2Grades);
+		tools5ImportEdition.getItems().addAll(tools5ImportEdition1All, tools5ImportEdition2Grades, tools5ImportEdition3SameNameEditions);
+		tools5ImportEdition3SameNameEditions.getItems().add(tools5ImportEdition3SameNameEditionsNull);
+		tools6Debug.getItems().addAll(tools6Debug1OpenConsole, tools6Debug2OpenAppFolder, tools6Debug3OpenEditionFile);
+
+		tools.getItems().addAll(tools1Convert, tools2QRCode, tools3AddPages, tools4ExportEdition, tools5ImportEdition, tools6Debug);
 
 		////////// SETTINGS //////////
 
@@ -301,13 +332,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				MainWindow.mainScreen.closeFile(true);
 			}
 		});
-		file8SameName.setOnShowing((Event event) -> {
-			file8SameName.getItems().clear();
+		tools5ImportEdition3SameNameEditions.setOnShowing((Event event) -> {
+			tools5ImportEdition3SameNameEditions.getItems().clear();
 			int i = 0;
 			for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
 
 				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
-				file8SameName.getItems().add(item);
+				tools5ImportEdition3SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
 					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
 					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
@@ -355,16 +386,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				});
 				i++;
 			}
-			if(i == 0) file8SameName.getItems().add(file8SameNameNull);
-			Builders.setMenuSize(file8SameName);
+			if(i == 0) tools5ImportEdition3SameNameEditions.getItems().add(tools5ImportEdition3SameNameEditionsNull);
+			Builders.setMenuSize(tools5ImportEdition3SameNameEditions);
 		});
-		file9Export.setOnAction((ActionEvent actionEvent) -> {
+		file8Export.setOnAction((ActionEvent actionEvent) -> {
 
 			MainWindow.mainScreen.document.save();
 			new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
 
 		});
-		file10ExportAll.setOnAction((ActionEvent actionEvent) -> {
+		file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
 
 			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
 			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
@@ -492,17 +523,27 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Builders.setMenuSize(menu);
 		}
 	}
-
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
+		return createSubMenu(name, imgName, toolTip, disableIfNoDoc, true);
+	}
+	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
 
 		Menu menu = new Menu();
 		HBox pane = new HBox();
 
 		Label text = new Label(name);
-		text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
 
+		if(imgName != null){
+			ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
+			pane.getChildren().add(icon);
 
-		ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
+			if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
+			else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 10;");
+		}else{
+			if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;"); // top - right - bottom - left
+			else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 0;");
+		}
+		pane.getChildren().add(text);
 
 		if(disableIfNoDoc){
 			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
@@ -512,9 +553,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		toolTipUI.setShowDuration(Duration.INDEFINITE);
 		Tooltip.install(pane, toolTipUI);
 
-		pane.getChildren().addAll(icon, text);
 		menu.setGraphic(pane);
-
 		return menu;
 	}
 	public NodeRadioMenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
@@ -528,8 +567,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	}
 	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
+		return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
+	}
+	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
 
-		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", true);
+		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
 
 
 		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
@@ -542,7 +584,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		}if(disableIfNoList){
 			menuItem.disableProperty().bind(Bindings.size(MainWindow.lbFilesTab.files.getItems()).isEqualTo(0));
 		}
-
 		return menuItem;
 
 	}
