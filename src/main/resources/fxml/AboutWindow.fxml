@@ -73,6 +73,7 @@
             <Hyperlink text="JLatexMath 1.0.7" id="https://github.com/opencollab/jlatexmath"/>
             <Hyperlink text="SnakeYAML 1.26" id="https://bitbucket.org/asomov/snakeyaml/src/master/"/>
             <Hyperlink text="Jackson Streaming API 2.10.3" id="https://github.com/FasterXML/jackson-core"/>
+            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>
         </VBox>
     </HBox>
 
