@@ -1,43 +1,42 @@
 package fr.themsou.document.render.display;
 
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.SVGPathIcons;
 import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+import javafx.scene.shape.SVGPath;
 
 import java.util.ArrayList;
 
-public class PageEditPane extends HBox {
+public class PageEditPane extends VBox {
 
-    private static final Image ascendImage = new Image(PageEditPane.class.getResource("/img/Pages/ascend.png")+"");
-    private static final Image descendImage = new Image(PageEditPane.class.getResource("/img/Pages/descend.png")+"");
-    private static final Image rotateLeftImage = new Image(PageEditPane.class.getResource("/img/Pages/rotate-left.png")+"");
-    private static final Image rotateRightImage = new Image(PageEditPane.class.getResource("/img/Pages/rotate-right.png")+"");
-    private static final Image deleteImage = new Image(PageEditPane.class.getResource("/img/Pages/delete.png")+"");
-    private static final Image newImage = new Image(PageEditPane.class.getResource("/img/Pages/new.png")+"");
-
-    Button ascendButton = getCustomButton(ascendImage, "Monte cette page au dessus de la page précédente");
-    Button descendButton = getCustomButton(descendImage, "Descend cette page au dessous de la page suivante");
-    Button rotateLeftButton = getCustomButton(rotateLeftImage, "Tourne la page de 90° vers la gauche");
-    Button rotateRightButton = getCustomButton(rotateRightImage, "Tourne la page de 90° vers la droite");
-    Button deleteButton = getCustomButton(deleteImage, "Supprime cette page");
-    Button newButton = getCustomButton(newImage, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
+    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, "Monte cette page au dessus de la page précédente", -90);
+    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, "Descend cette page au dessous de la page suivante", 90);
+    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, "Tourne la page de 90° vers la gauche");
+    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, "Tourne la page de 90° vers la droite");
+    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, "Supprime cette page", 45);
+    Button newButton = getCustomButton(SVGPathIcons.PLUS, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
+    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, "Capturer la page sous forme d'image");
 
     ContextMenu menu = new ContextMenu();
 
     private PageRenderer page;
-    private int buttonNumber = 6;
+
     public PageEditPane(PageRenderer page){
         this.page = page;
-
-
 
         ascendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.ascendPage(page));
 
@@ -58,7 +57,9 @@ public class PageEditPane extends HBox {
             menu.show(page, e.getScreenX(), e.getScreenY());
         });
 
-        getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton);
+        captureButton.setOnAction((e) -> {});
+
+        getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
 
         updateVisibility();
         updatePosition();
@@ -95,20 +96,23 @@ public class PageEditPane extends HBox {
 
         return menus;
     }
-
-    private Button getCustomButton(Image image, String nonTranslatedToolTip){
+    private Button getCustomButton(String path, String nonTranslatedToolTip){
+        return getCustomButton(path, nonTranslatedToolTip, 0);
+    }
+    private Button getCustomButton(String path, String nonTranslatedToolTip, int rotate){
         Button button = new Button();
         button.setStyle("-fx-background-color: white;");
         Builders.setHBoxPosition(button, 30, 30, 0);
         button.setCursor(Cursor.HAND);
-        button.setGraphic(Builders.buildImage(image, 30, 30));
+        button.setGraphic(SVGPathIcons.generateImage(path, "#dc3e3e", 3, 30, 30, rotate));
         button.setTooltip(Builders.genToolTip(TR.tr(nonTranslatedToolTip)));
         return button;
     }
 
     public void updatePosition(){
-        setLayoutY(page.getHeight() - 15/2D);
-        setLayoutX(page.getWidth() - 30*buttonNumber + 30*buttonNumber/4D);
+        int buttonNumber = 7;
+        setLayoutY(0 - 30* buttonNumber /4D);
+        setLayoutX(page.getWidth() - 30/4D);
         setScaleX(0.5);
         setScaleY(0.5);
     }

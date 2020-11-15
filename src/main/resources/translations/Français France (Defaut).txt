@@ -6,7 +6,7 @@ Nom=
 Dossier=
 Édition=
 Date d'Ajout=
-Ouvrir un·des fichiers=
+Ouvrir un ou plusieurs fichiers=
 Ouvrir un dossier=
 # NodeMenuItem
 # FilesUtils

@@ -13,6 +13,7 @@ import fr.themsou.utils.style.StyleManager;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.windows.LanguageWindow;
+import fr.themsou.windows.LogWindow;
 import fr.themsou.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -49,7 +50,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	////////// FILE //////////
 
 	Menu file = new Menu(TR.tr("Fichier"));
-	public NodeMenuItem file1Open = createMenuItem(TR.tr("Ouvrir un·des fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+	public NodeMenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
 	public NodeMenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
@@ -63,9 +64,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	NodeMenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
-
-	NodeMenuItem file6DeleteAll = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "supprimer", null,
-			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
 	NodeMenuItem file7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
@@ -90,34 +88,37 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
 			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
 
-	Menu tools4ExportEdition = createSubMenu(TR.tr("Exporter l'édition"), "export",
+	NodeMenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
+			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
+
+	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), "cross-way",
+			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
+	MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+
+	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition"), "export",
 			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
 
-		NodeMenuItem tools4ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
+		NodeMenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
 				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
-		NodeMenuItem tools4ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
+		NodeMenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
-	Menu tools5ImportEdition = createSubMenu(TR.tr("Importer une édition"), "import",
+	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition"), "import",
 			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
-		NodeMenuItem tools5ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
+		NodeMenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
 				TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true, false, false, false);
-		NodeMenuItem tools5ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
+		NodeMenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-		Menu tools5ImportEdition3SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), null,
-				TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true, false);
-		MenuItem tools5ImportEdition3SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+	Menu tools8Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
+			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), false);
 
-	Menu tools6Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
-			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), true);
-
-		NodeMenuItem tools6Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution"), null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+		NodeMenuItem tools8Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
 				TR.tr("Ouvre la console de l'application"), false, false, false, false);
-		NodeMenuItem tools6Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
+		NodeMenuItem tools8Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
 				TR.tr("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
-		NodeMenuItem tools6Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
+		NodeMenuItem tools8Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
 				TR.tr("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
 
 	////////// SETTINGS //////////
@@ -185,17 +186,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FILE //////////
 
-		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6DeleteAll, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll);
+		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, tools4DeleteAllEdits, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll);
 
 		////////// TOOLS //////////
 
 		tools3AddPages.getItems().add(new MenuItem());
-		tools4ExportEdition.getItems().addAll(tools4ExportEdition1All, tools4ExportEdition2Grades);
-		tools5ImportEdition.getItems().addAll(tools5ImportEdition1All, tools5ImportEdition2Grades, tools5ImportEdition3SameNameEditions);
-		tools5ImportEdition3SameNameEditions.getItems().add(tools5ImportEdition3SameNameEditionsNull);
-		tools6Debug.getItems().addAll(tools6Debug1OpenConsole, tools6Debug2OpenAppFolder, tools6Debug3OpenEditionFile);
+		tools6ExportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades);
+		tools7ImportEdition.getItems().addAll(tools7ImportEdition1All, tools7ImportEdition2Grades, tools5SameNameEditions);
+		tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
+		tools8Debug.getItems().addAll(tools8Debug1OpenConsole, tools8Debug2OpenAppFolder, tools8Debug3OpenEditionFile);
 
-		tools.getItems().addAll(tools1Convert, tools2QRCode, tools3AddPages, tools4ExportEdition, tools5ImportEdition, tools6Debug);
+		tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportEdition, tools7ImportEdition, new SeparatorMenuItem(), tools8Debug);
 
 		////////// SETTINGS //////////
 
@@ -289,7 +290,40 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				MainWindow.mainScreen.document.edition.clearEdit(true);
 			}
 		});
-		file6DeleteAll.setOnAction((ActionEvent e) -> {
+		file7Close.setOnAction((ActionEvent e) -> {
+			if(MainWindow.mainScreen.hasDocument(true)){
+				MainWindow.mainScreen.closeFile(true);
+			}
+		});
+		file8Export.setOnAction((ActionEvent actionEvent) -> {
+
+			MainWindow.mainScreen.document.save();
+			new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
+
+		});
+		file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
+
+			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
+			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
+
+		});
+
+		////////// TOOLS //////////
+
+		tools1Convert.setOnAction(e -> {
+			new ConvertDocument();
+		});
+
+		tools2QRCode.setOnAction(e -> {
+
+		});
+
+		tools3AddPages.setOnShowing(e -> {
+			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages));
+			Builders.setMenuSize(tools3AddPages);
+		});
+
+		tools4DeleteAllEdits.setOnAction((ActionEvent e) -> {
 			Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
 			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
@@ -327,18 +361,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
 		});
-		file7Close.setOnAction((ActionEvent e) -> {
-			if(MainWindow.mainScreen.hasDocument(true)){
-				MainWindow.mainScreen.closeFile(true);
-			}
-		});
-		tools5ImportEdition3SameNameEditions.setOnShowing((Event event) -> {
-			tools5ImportEdition3SameNameEditions.getItems().clear();
+		tools5SameNameEditions.setOnShowing((Event event) -> {
+			tools5SameNameEditions.getItems().clear();
 			int i = 0;
 			for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
 
 				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
-				tools5ImportEdition3SameNameEditions.getItems().add(item);
+				tools5SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
 					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
 					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
@@ -386,36 +415,25 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				});
 				i++;
 			}
-			if(i == 0) tools5ImportEdition3SameNameEditions.getItems().add(tools5ImportEdition3SameNameEditionsNull);
-			Builders.setMenuSize(tools5ImportEdition3SameNameEditions);
+			if(i == 0) tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
+			Builders.setMenuSize(tools5SameNameEditions);
 		});
-		file8Export.setOnAction((ActionEvent actionEvent) -> {
-
-			MainWindow.mainScreen.document.save();
-			new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
+		tools6ExportEdition1All.setOnAction((e) -> {
 
 		});
-		file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
-
-			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
-			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
+		tools6ExportEdition2Grades.setOnAction((e) -> {
 
 		});
-
-		////////// TOOLS //////////
-
-		tools1Convert.setOnAction(e -> {
-			new ConvertDocument();
-		});
-
-		tools2QRCode.setOnAction(e -> {
+		tools7ImportEdition1All.setOnAction((e) -> {
 
 		});
+		tools7ImportEdition2Grades.setOnAction((e) -> {
 
-		tools3AddPages.setOnShowing(e -> {
-			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages));
-			Builders.setMenuSize(tools3AddPages);
 		});
+		tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
+		tools8Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
+		tools8Debug3OpenEditionFile.setOnAction((e) -> Main.hostServices.showDocument(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
+
 
 		////////// SETTINGS //////////
 

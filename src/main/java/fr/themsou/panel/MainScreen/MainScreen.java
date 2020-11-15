@@ -38,6 +38,7 @@ public class MainScreen extends Pane {
 	private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
 	public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
 	public Document document;
+	public String failedEditFile = "";
 
 	private Label info = new Label();
 	private Hyperlink infoLink = new Hyperlink();
@@ -100,7 +101,7 @@ public class MainScreen extends Pane {
 				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
 						TR.tr("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
-				infoLink.setOnAction(e -> Main.hostServices.showDocument(Main.dataFolder + "editions" + File.separator));
+				infoLink.setOnAction(e -> Main.hostServices.showDocument(failedEditFile));
 			}
 		}else{
 			info.setVisible(false);
@@ -281,6 +282,7 @@ public class MainScreen extends Pane {
 			System.err.println("ERREUR : Impossible de changer l'édition");
 			e.printStackTrace();
 			closeFile(false);
+			failedEditFile = Edition.getEditFile(file).getAbsolutePath();
 			status.set(Status.ERROR_EDITION);
 		}
 

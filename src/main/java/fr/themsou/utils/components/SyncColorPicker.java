@@ -2,7 +2,6 @@ package fr.themsou.utils.components;
 
 import javafx.scene.control.ColorPicker;
 import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,6 +12,8 @@ public class SyncColorPicker extends ColorPicker {
     private static ArrayList<Color> customColors = new ArrayList<>();
 
     public SyncColorPicker(){
+        super();
+
         colorPickers.add(this);
 
         getCustomColors().setAll(customColors);
@@ -25,8 +26,8 @@ public class SyncColorPicker extends ColorPicker {
         });
         setOnHiding((value) -> {
             customColors = new ArrayList<>(getCustomColors());
-            for(ColorPicker colorPicker : colorPickers){
-                if(colorPicker != this) colorPicker.getCustomColors().setAll(customColors);
+            for (ColorPicker colorPicker : colorPickers) {
+                if (colorPicker != this) colorPicker.getCustomColors().setAll(customColors);
             }
         });
     }

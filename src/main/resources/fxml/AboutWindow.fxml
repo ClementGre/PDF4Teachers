@@ -67,6 +67,7 @@
             <Hyperlink text="Java FX 14" id="https://openjfx.io/"/>
             <Hyperlink text="Apache PDFBox 2.0.21" id="https://pdfbox.apache.org/"/>
             <Hyperlink text="JMetro 11.6.14" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
+            <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
         </VBox>
         <VBox fx:id="dependenciesRight">
             <Hyperlink text="JLatexMath 1.0.7" id="https://github.com/opencollab/jlatexmath"/>

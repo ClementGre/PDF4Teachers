@@ -71,10 +71,6 @@ public class Macro {
                         MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
                     }
                 }else{ // SHORTCUT + ALT
-                    if(e.getCode() == KeyCode.C){
-                        new LogWindow();
-                        return;
-                    }
 
                     try{
                         int i = Integer.parseInt(e.getCode().getChar())-1;

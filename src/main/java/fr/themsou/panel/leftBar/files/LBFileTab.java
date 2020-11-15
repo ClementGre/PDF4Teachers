@@ -129,7 +129,7 @@ public class LBFileTab extends Tab {
 		infoLabel.setStyle("-fx-font-size: 16;");
 		VBox.setMargin(infoLabel, new Insets(0, 0, 10, 0));
 
-		Hyperlink openFile = new Hyperlink(TR.tr("Ouvrir un·des fichiers"));
+		Hyperlink openFile = new Hyperlink(TR.tr("Ouvrir un ou plusieurs fichiers"));
 		openFile.setOnAction(e -> MainWindow.menuBar.file1Open.fire());
 		VBox.setMargin(openFile, new Insets(-2, 0, -2, 0));
 
