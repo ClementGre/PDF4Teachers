@@ -1,5 +1,6 @@
 package fr.themsou.utils;
 
+import fr.themsou.main.Main;
 import fr.themsou.utils.components.NodeMenuItem;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
@@ -15,6 +16,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
@@ -157,6 +160,8 @@ public class Builders {
     public static Alert getAlert(Alert.AlertType type, String title){
         Alert alert = new Alert(type);
         alert.setTitle(title);
+
+        alert.initOwner(Main.window.getScene().getWindow());
 
         setupDialog(alert);
         return alert;
