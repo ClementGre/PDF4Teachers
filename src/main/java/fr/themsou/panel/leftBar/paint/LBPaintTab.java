@@ -1,6 +1,7 @@
 package fr.themsou.panel.leftBar.paint;
 
 import fr.themsou.utils.Builders;
+import fr.themsou.utils.SVGPathIcons;
 import fr.themsou.utils.TR;
 import fr.themsou.utils.TextWrapper;
 import fr.themsou.windows.MainWindow;
@@ -23,7 +24,7 @@ public class LBPaintTab extends Tab {
 
         setClosable(false);
         setContent(pane);
-        setGraphic(Builders.buildImage(getClass().getResource("/img/paint.png")+"", 0, 25));
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.DRAW_POLYGON, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.DRAW_POLYGON_RATIO));
         MainWindow.leftBar.getTabs().add(3, this);
 
         setup();

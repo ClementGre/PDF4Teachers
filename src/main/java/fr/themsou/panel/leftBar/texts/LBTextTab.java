@@ -81,7 +81,7 @@ public class LBTextTab extends Tab {
 
 		setClosable(false);
 		setContent(pane);
-		setGraphic(Builders.buildImage(getClass().getResource("/img/text.png")+"", 0, 25));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SPELL_CHECK, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.SPELL_CHECK_RATIO));
 		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();

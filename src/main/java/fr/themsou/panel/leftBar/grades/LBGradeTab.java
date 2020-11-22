@@ -7,6 +7,7 @@ import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.export.GradeExportWindow;
 import fr.themsou.utils.Builders;
 import fr.themsou.utils.FontUtils;
+import fr.themsou.utils.SVGPathIcons;
 import fr.themsou.utils.TR;
 import fr.themsou.windows.MainWindow;
 import javafx.beans.property.BooleanProperty;
@@ -42,7 +43,7 @@ public class LBGradeTab extends Tab {
     public LBGradeTab(){
         setClosable(false);
         setContent(pane);
-        setGraphic(Builders.buildImage(getClass().getResource("/img/grade.png")+"", 0, 25));
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PERCENTAGE, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.PERCENTAGE_RATIO));
         MainWindow.leftBar.getTabs().add(2, this);
 
         setup();

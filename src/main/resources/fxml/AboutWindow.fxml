@@ -38,7 +38,7 @@
     <Label fx:id="translatorText"/>
     <HBox>
         <VBox.margin><Insets bottom="7" top="7"/></VBox.margin>
-        <Hyperlink id="https://pdf4teachers.org" text="pdf4teachers.org">
+        <Hyperlink id="https://pdf4teachers.org" text="https://pdf4teachers.org">
             <style>-fx-font-size: 20;</style>
         </Hyperlink>
     </HBox>

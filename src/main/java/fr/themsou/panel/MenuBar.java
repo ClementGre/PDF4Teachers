@@ -1,6 +1,7 @@
 package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
+import fr.themsou.document.editions.EditionUtils;
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.display.PageEditPane;
 import fr.themsou.document.render.export.ExportWindow;
@@ -65,13 +66,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	NodeMenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	NodeMenuItem file7Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	NodeMenuItem file8Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	NodeMenuItem file9ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	NodeMenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
@@ -186,13 +187,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// FILE //////////
 
-		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, tools4DeleteAllEdits, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll);
+		file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6Close, new SeparatorMenuItem(), file7Export, file8ExportAll);
 
 		////////// TOOLS //////////
 
 		tools3AddPages.getItems().add(new MenuItem());
 		tools6ExportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades);
-		tools7ImportEdition.getItems().addAll(tools7ImportEdition1All, tools7ImportEdition2Grades, tools5SameNameEditions);
+		tools7ImportEdition.getItems().addAll(tools7ImportEdition1All, tools7ImportEdition2Grades);
 		tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
 		tools8Debug.getItems().addAll(tools8Debug1OpenConsole, tools8Debug2OpenAppFolder, tools8Debug3OpenEditionFile);
 
@@ -248,33 +249,19 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		file1Open.setOnAction((ActionEvent actionEvent) -> {
 
-			final FileChooser chooser = new FileChooser();
-			chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
-			chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
-			chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
-
-			List<File> listFiles = chooser.showOpenMultipleDialog(Main.window);
-			if(listFiles != null){
-				File[] files = new File[listFiles.size()];
-				files = listFiles.toArray(files);
+			File[] files = Builders.showFilesDialog(true, true, TR.tr("Fichier PDF"), "*.pdf");
+			if(files != null){
 				MainWindow.lbFilesTab.openFiles(files);
 				if(files.length == 1){
 					MainWindow.mainScreen.openFile(files[0]);
 				}
-				UserData.lastOpenDir = files[0].getParentFile();
-
 			}
 		});
 		file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
 
-			final DirectoryChooser chooser = new DirectoryChooser();
-			chooser.setTitle(TR.tr("Sélectionner un dossier"));
-			chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
-
-			File file = chooser.showDialog(Main.window);
-			if(file != null) {
-				MainWindow.lbFilesTab.openFiles(new File[]{file});
-				UserData.lastOpenDir = file.getParentFile();
+			File directory = Builders.showDirectoryDialog(true);
+			if(directory != null) {
+				MainWindow.lbFilesTab.openFiles(new File[]{directory});
 			}
 		});
 		file3Clear.setOnAction((ActionEvent actionEvent) -> {
@@ -290,18 +277,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				MainWindow.mainScreen.document.edition.clearEdit(true);
 			}
 		});
-		file7Close.setOnAction((ActionEvent e) -> {
+		file6Close.setOnAction((ActionEvent e) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){
 				MainWindow.mainScreen.closeFile(true);
 			}
 		});
-		file8Export.setOnAction((ActionEvent actionEvent) -> {
+		file7Export.setOnAction((ActionEvent actionEvent) -> {
 
 			MainWindow.mainScreen.document.save();
 			new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
 
 		});
-		file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
+		file8ExportAll.setOnAction((ActionEvent actionEvent) -> {
 
 			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
 			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
@@ -418,18 +405,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(i == 0) tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
 			Builders.setMenuSize(tools5SameNameEditions);
 		});
-		tools6ExportEdition1All.setOnAction((e) -> {
 
-		});
-		tools6ExportEdition2Grades.setOnAction((e) -> {
+		tools6ExportEdition1All.setOnAction((e) -> EditionUtils.showExportDialog(false));
+		tools6ExportEdition2Grades.setOnAction((e) -> EditionUtils.showExportDialog(true));
+		tools7ImportEdition1All.setOnAction((e) -> EditionUtils.showImportDialog(false));
+		tools7ImportEdition2Grades.setOnAction((e) -> EditionUtils.showImportDialog(true));
 
-		});
-		tools7ImportEdition1All.setOnAction((e) -> {
-
-		});
-		tools7ImportEdition2Grades.setOnAction((e) -> {
-
-		});
 		tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
 		tools8Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
 		tools8Debug3OpenEditionFile.setOnAction((e) -> Main.hostServices.showDocument(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));

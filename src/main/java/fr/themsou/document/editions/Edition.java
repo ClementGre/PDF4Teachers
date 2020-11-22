@@ -255,14 +255,11 @@ public class Edition {
         return new File(file.getName().replaceAll("!E!", "\\" + File.separator).replaceAll("!P!", ":").replace(".yml", ""));
     }
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){
-        try {
+        try{
             Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (IOException e) {
+        }catch(IOException e){
             e.printStackTrace();
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Erreur"));
-            alert.setHeaderText(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"");
-            alert.setContentText(TR.tr("Ctrl+Alt+C pour accéder aux logs"));
-            alert.show();
+            Builders.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
         }
         fromEdit.delete();
     }

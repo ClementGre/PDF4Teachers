@@ -215,6 +215,7 @@ public class PDFPagesEditor{
 
         File file = chooser.showOpenDialog(Main.window);
         if(file != null){
+            if(file.getParentFile().exists()) UserData.lastOpenDir = file.getParentFile();
             try{
                 PDDocument fileDoc = PDDocument.load(file);
 

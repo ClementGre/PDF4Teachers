@@ -331,31 +331,7 @@ public class ExportWindow {
                     e.printStackTrace();
 
                     // Error dialog
-                    if(PlatformTools.runAndWait(() -> {
-                        Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
-                        alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName());
-                        alert.setContentText(TR.tr("Choisissez une action."));
-
-                        TextArea textArea = new TextArea(e.getMessage());
-                        textArea.setEditable(false);
-                        textArea.setWrapText(true);
-                        GridPane expContent = new GridPane();
-                        expContent.setMaxWidth(Double.MAX_VALUE);
-                        expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
-                        expContent.add(textArea, 0, 1);
-                        alert.getDialogPane().setExpandableContent(expContent);
-
-                        ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                        ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
-                        alert.getButtonTypes().setAll(stopAll, continueRender);
-
-                        Optional<ButtonType> option = alert.showAndWait();
-                        if(option.get() == stopAll){
-                            window.close();
-                            return true; // Return true to ask to cancel exportation
-                        }
-                        return false;
-                    })){
+                    if(PlatformTools.runAndWait(() -> Builders.showErrorAlert(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName(), e.getMessage(), true))){
                         // If callback return true (cancel exportation), return
                         Platform.runLater(() -> loadingAlert.close());
                         return;

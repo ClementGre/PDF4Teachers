@@ -96,11 +96,11 @@ CheckBox {
 }
 
 .dialog-pane > .button-bar > .container > .details-button.more {
-    -fx-graphic: url("../img/dialogs/dialog-more-details.png");
+    -fx-graphic: url("../img/dialogs/more.png");
 }
 
 .dialog-pane > .button-bar > .container > .details-button.less {
-    -fx-graphic: url("../img/dialogs/dialog-fewer-details.png");
+    -fx-graphic: url("../img/dialogs/less.png");
 }
 
 .dialog-pane > .button-bar > .container > .details-button:hover {
@@ -110,17 +110,17 @@ CheckBox {
 .alert.confirmation.dialog-pane,
 .text-input-dialog.dialog-pane,
 .choice-dialog.dialog-pane {
-    -fx-graphic: url("../img/dialogs/dialog-confirm.png");
+    -fx-graphic: url("../img/dialogs/confirm.png");
 }
 
 .alert.information.dialog-pane {
-    -fx-graphic: url("../img/dialogs/dialog-information.png");
+    -fx-graphic: url("../img/dialogs/information.png");
 }
 
 .alert.error.dialog-pane {
-    -fx-graphic: url("../img/dialogs/dialog-error.png");
+    -fx-graphic: url("../img/dialogs/error.png");
 }
 
 .alert.warning.dialog-pane {
-    -fx-graphic: url("../img/dialogs/dialog-warning.png");
+    -fx-graphic: url("../img/dialogs/warning.png");
 }

@@ -40,7 +40,7 @@ public class LBFileTab extends Tab {
 		setClosable(false);
 		setContent(pane);
 
-		setGraphic(Builders.buildImage(getClass().getResource("/img/pdfdocument.png")+"", 0, 25));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PDF_FILE, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.PDF_FILE_RATIO));
 		MainWindow.leftBar.getTabs().add(0, this);
 
 		setup();
