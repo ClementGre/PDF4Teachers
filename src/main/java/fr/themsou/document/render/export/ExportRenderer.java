@@ -4,9 +4,9 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.PlatformTools;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.PlatformUtils;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -96,8 +96,8 @@ public class ExportRenderer {
             if(mkdirs){
                 new File(directory).mkdirs();
             }else{
-                if(PlatformTools.runAndWait(() -> {
-                    Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Dossier introuvable"));
+                if(PlatformUtils.runAndWait(() -> {
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Dossier introuvable"));
                     alert.setHeaderText(TR.tr("Le dossier d'exportation n'existe pas"));
                     alert.setContentText(TR.tr("Créer le dossier, ou modifier la destination ?"));
 
@@ -123,8 +123,8 @@ public class ExportRenderer {
         }
 
         if(new File(uri).exists() && !erase){
-            int i = PlatformTools.runAndWait(() -> {
-                Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
+            int i = PlatformUtils.runAndWait(() -> {
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
                 alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + uri.replace(directory + File.separator, "") + "\" " +TR.tr("existe déjà"));
                 alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
 

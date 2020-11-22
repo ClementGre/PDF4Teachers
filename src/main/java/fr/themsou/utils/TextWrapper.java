@@ -1,7 +1,6 @@
 package fr.themsou.utils;
-import fr.themsou.utils.components.ScratchText;
+import fr.themsou.components.ScratchText;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.util.regex.Pattern;
 

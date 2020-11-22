@@ -3,10 +3,10 @@ package fr.themsou.panel.leftBar.grades.export;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeRating;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.DialogBuilder;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
@@ -64,7 +64,7 @@ public class GradeExportRenderer {
             }catch(Exception e){
                 e.printStackTrace();
 
-                Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
                 alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document"));
                 alert.setContentText(TR.tr("Impossible d'exporter."));
 
@@ -99,7 +99,7 @@ public class GradeExportRenderer {
                 }catch(Exception e){
                     e.printStackTrace();
 
-                    Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
                     alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
@@ -248,7 +248,7 @@ public class GradeExportRenderer {
             if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())) files.add(defaultFile);
         }catch(Exception e){
             e.printStackTrace();
-            Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
             alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
             alert.setContentText(TR.tr("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
 
@@ -282,7 +282,7 @@ public class GradeExportRenderer {
 
                 }catch(Exception e) {
                     e.printStackTrace();
-                    Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
                     alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
                     alert.setContentText(TR.tr("Choisissez une action."));
 
@@ -354,7 +354,7 @@ public class GradeExportRenderer {
 
     public int fileAlreadyExist(File file){
 
-        Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
         alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + file.getAbsolutePath() + "\" " + TR.tr("existe déjà"));
         alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
 

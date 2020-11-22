@@ -9,11 +9,10 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.DialogBuilder;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -21,7 +20,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 import java.io.*;
-import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -52,7 +50,7 @@ public class Edition {
             return;
         }
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.lbGradeTab.treeView.hardClear();
+        MainWindow.gradeTab.treeView.hardClear();
 
         try{
             if(!editFile.exists()) return; // File does not exist
@@ -123,7 +121,7 @@ public class Edition {
 
     }
     public void loadHEX(File file){
-        MainWindow.lbGradeTab.treeView.clear();
+        MainWindow.gradeTab.treeView.clear();
         try{
             if(file.exists()){ //file does not exist
 
@@ -259,7 +257,7 @@ public class Edition {
             Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
             e.printStackTrace();
-            Builders.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
+            DialogBuilder.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
         }
         fromEdit.delete();
     }
@@ -283,7 +281,7 @@ public class Edition {
     public static void clearEdit(File file, boolean confirm){
 
         if(confirm){
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
@@ -308,7 +306,7 @@ public class Edition {
 
     public void clearEdit(boolean confirm){
         if(confirm){
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 
@@ -323,7 +321,7 @@ public class Edition {
                 page.clearElements();
             }
             MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
-            MainWindow.lbGradeTab.treeView.clear();
+            MainWindow.gradeTab.treeView.clear();
 
             Edition.setUnsave();
         }

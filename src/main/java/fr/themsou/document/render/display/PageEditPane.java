@@ -1,23 +1,17 @@
 package fr.themsou.document.render.display;
 
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.SVGPathIcons;
-import fr.themsou.utils.components.NodeMenuItem;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
-import javafx.event.Event;
-import javafx.event.EventHandler;
+import fr.themsou.utils.PaneUtils;
+import fr.themsou.utils.image.SVGPathIcons;
+import fr.themsou.components.NodeMenuItem;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.image.Image;
-import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.shape.SVGPath;
 
 import java.util.ArrayList;
 
@@ -102,10 +96,10 @@ public class PageEditPane extends VBox {
     private Button getCustomButton(String path, String nonTranslatedToolTip, int rotate){
         Button button = new Button();
         button.setStyle("-fx-background-color: white;");
-        Builders.setHBoxPosition(button, 30, 30, 0);
+        PaneUtils.setHBoxPosition(button, 30, 30, 0);
         button.setCursor(Cursor.HAND);
         button.setGraphic(SVGPathIcons.generateImage(path, "#dc3e3e", 3, 30, 30, rotate));
-        button.setTooltip(Builders.genToolTip(TR.tr(nonTranslatedToolTip)));
+        button.setTooltip(PaneUtils.genToolTip(TR.tr(nonTranslatedToolTip)));
         return button;
     }
 

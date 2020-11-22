@@ -7,9 +7,9 @@ import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.convert.ConvertedFile;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
@@ -20,7 +20,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class PDFPagesEditor{
@@ -95,7 +94,7 @@ public class PDFPagesEditor{
     public void deletePage(PageRenderer page){
 
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
             alert.setHeaderText(TR.tr("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.tr("du document") + "\n" + TR.tr("Les éléments de cette page seront supprimés et les notes seront réinitialisées"));
             alert.setContentText(TR.tr("Cette action est irréversible."));
 

@@ -1,6 +1,5 @@
 package fr.themsou.yaml;
 
-import fr.themsou.utils.Builders;
 import fr.themsou.utils.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -84,7 +83,7 @@ public class Config {
 
     public static Object getValue(HashMap<String, Object> base, String path){
 
-        String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
+        String[] splitedPath = StringUtils.cleanArray(path.split(Pattern.quote(".")));
         HashMap<String, Object> section = base;
         int i = splitedPath.length;
 
@@ -128,7 +127,7 @@ public class Config {
         createSection(base, path);
     }
     public static void createSection(HashMap<String, Object> base, String path){
-        String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
+        String[] splitedPath = StringUtils.cleanArray(path.split(Pattern.quote(".")));
 
         HashMap<String, Object> section = base;
         for(String key : splitedPath){
@@ -148,7 +147,7 @@ public class Config {
         return exist(base, path);
     }
     public static boolean exist(HashMap<String, Object> base, String path){
-        String[] splitedPath = Builders.cleanArray(path.split(Pattern.quote(".")));
+        String[] splitedPath = StringUtils.cleanArray(path.split(Pattern.quote(".")));
 
         HashMap<String, Object> section = base;
         for(String key : splitedPath){

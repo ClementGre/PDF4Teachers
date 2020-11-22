@@ -1,4 +1,4 @@
-package fr.themsou.utils;
+package fr.themsou.interfaces;
 
 
 import fr.themsou.document.editions.elements.Element;
@@ -6,13 +6,11 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
-import fr.themsou.windows.LogWindow;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
+
 import java.util.ArrayList;
 
 public class Macro {
@@ -68,7 +66,7 @@ public class Macro {
                         int y = (int) MainWindow.mainScreen.document.pages.get(page).getMouseY();
 
                         MainWindow.leftBar.getSelectionModel().select(2);
-                        MainWindow.lbGradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
+                        MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
                     }
                 }else{ // SHORTCUT + ALT
 

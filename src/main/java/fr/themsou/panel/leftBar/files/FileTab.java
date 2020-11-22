@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.convert.ConvertRenderer;
-import fr.themsou.utils.*;
+import fr.themsou.utils.image.SVGPathIcons;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.sort.Sorter;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.beans.binding.Bindings;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -24,7 +24,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
-public class LBFileTab extends Tab {
+public class FileTab extends Tab {
 
 	public SortManager sortManager;
 	private VBox pane = new VBox();
@@ -35,7 +35,7 @@ public class LBFileTab extends Tab {
 	public FileListView files = new FileListView();
 	public ArrayList<File> originalFiles = new ArrayList<>();
 
-	public LBFileTab(){
+	public FileTab(){
 
 		setClosable(false);
 		setContent(pane);

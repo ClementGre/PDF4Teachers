@@ -1,17 +1,16 @@
 package fr.themsou.panel.leftBar.paint;
 
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.SVGPathIcons;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.image.SVGPathIcons;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.TextWrapper;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
 @SuppressWarnings("serial")
-public class LBPaintTab extends Tab {
+public class PaintTab extends Tab {
 
     public VBox pane = new VBox();
     public VBox optionPane = new VBox();
@@ -20,7 +19,7 @@ public class LBPaintTab extends Tab {
     public TreeView treeView = new TreeView<>();
     public TreeItem<String> treeViewRoot = new TreeItem<>();
 
-    public LBPaintTab(){
+    public PaintTab(){
 
         setClosable(false);
         setContent(pane);

@@ -5,9 +5,9 @@ import fr.themsou.document.render.display.PDFPagesRender;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.document.render.display.PageStatus;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -113,7 +113,7 @@ public class Document {
         if(Main.settings.isAutoSave()){
             edition.save();
         }else{
-            Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Édition non sauvegardée"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Édition non sauvegardée"));
             alert.setHeaderText(TR.tr("L'édition du document n'est pas enregistrée."));
             alert.setContentText(TR.tr("Voulez-vous l'enregistrer ?"));
             ButtonType yesButton = new ButtonType(TR.tr("Oui"), ButtonBar.ButtonData.YES);

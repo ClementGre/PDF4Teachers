@@ -5,11 +5,11 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.export.GradeExportWindow;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.SVGPathIcons;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.*;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.utils.image.SVGPathIcons;
+import fr.themsou.interfaces.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("serial")
-public class LBGradeTab extends Tab {
+public class GradeTab extends Tab {
 
     public VBox pane = new VBox();
     public HBox optionPane = new HBox();
@@ -40,7 +40,7 @@ public class LBGradeTab extends Tab {
     private Button link = new Button();
     private Button export = new Button();
 
-    public LBGradeTab(){
+    public GradeTab(){
         setClosable(false);
         setContent(pane);
         setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PERCENTAGE, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.PERCENTAGE_RATIO));
@@ -59,13 +59,13 @@ public class LBGradeTab extends Tab {
 
         lockRatingPotitions.setSelected(false);
 
-        Builders.setHBoxPosition(lockGradeScale, 45, 35, 0);
+        PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
         lockGradeScale.setSelected(false);
-        lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
+        lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0));
-            else lockGradeScale.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
+            if(newValue) lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0));
+            else lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
 
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
@@ -74,27 +74,27 @@ public class LBGradeTab extends Tab {
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockGradeScale.setTooltip(Builders.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
+        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
 
-        Builders.setHBoxPosition(settings, 45, 35, 0);
+        PaneUtils.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
-        settings.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0));
+        settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0));
         settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(Builders.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
+        settings.setTooltip(PaneUtils.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
 
-        Builders.setHBoxPosition(link, 45, 35, 0);
+        PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
-        link.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0));
+        link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog());
-        link.setTooltip(Builders.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
+        link.setTooltip(PaneUtils.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
-        Builders.setHBoxPosition(export, 45, 35, 0);
+        PaneUtils.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
-        export.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0));
+        export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
-        export.setTooltip(Builders.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
+        export.setTooltip(PaneUtils.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);

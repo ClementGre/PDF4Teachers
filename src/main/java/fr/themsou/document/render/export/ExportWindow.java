@@ -2,12 +2,12 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.PlatformTools;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.PlatformUtils;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -23,7 +22,6 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.List;
-import java.util.Optional;
 
 public class ExportWindow {
 
@@ -287,7 +285,7 @@ public class ExportWindow {
                                  boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
 
         erase = eraseFile;
-        loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
+        loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
         exported = 0;
         total = 0;
 
@@ -331,7 +329,7 @@ public class ExportWindow {
                     e.printStackTrace();
 
                     // Error dialog
-                    if(PlatformTools.runAndWait(() -> Builders.showErrorAlert(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName(), e.getMessage(), true))){
+                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName(), e.getMessage(), true))){
                         // If callback return true (cancel exportation), return
                         Platform.runLater(() -> loadingAlert.close());
                         return;
@@ -347,7 +345,7 @@ public class ExportWindow {
         loadingAlert.close();
         window.close();
 
-        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
 
         if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
         else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));

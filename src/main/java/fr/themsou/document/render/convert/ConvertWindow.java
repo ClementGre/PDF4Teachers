@@ -1,11 +1,12 @@
 package fr.themsou.document.render.convert;
 
 import fr.themsou.main.Main;
-import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
+import fr.themsou.utils.callbacks.CallBack;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -162,7 +163,7 @@ public class ConvertWindow extends Stage {
                 }
             }
 
-            Builders.setVBoxPosition(desc, 0, 0, 2.5);
+            PaneUtils.setVBoxPosition(desc, 0, 0, 2.5);
             root.getChildren().add(desc);
         }
         public void setupSrcFilesForm(){
@@ -175,13 +176,13 @@ public class ConvertWindow extends Stage {
                 HBox filePathBox = new HBox();
 
                 srcDir = new TextField(MainWindow.userData.lastConvertSrcDir);
-                Builders.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
                 srcDir.textProperty().addListener((observable, oldValue, newValue) -> {
                     if(new File(srcDir.getText()).exists()) MainWindow.userData.lastConvertSrcDir = srcDir.getText();
                 });
 
                 Button changePath = new Button(TR.tr("Parcourir"));
-                Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
                 filePathBox.getChildren().addAll(srcDir, changePath);
 
@@ -203,14 +204,14 @@ public class ConvertWindow extends Stage {
                 HBox filePathBox = new HBox();
 
                 srcFiles = new TextArea();
-                Builders.setHBoxPosition(srcFiles, -1, 0, 0, 2.5);
+                PaneUtils.setHBoxPosition(srcFiles, -1, 0, 0, 2.5);
                 srcFiles.textProperty().addListener((observable, oldValue, newValue) -> {
                     if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists())
                         MainWindow.userData.lastConvertSrcDir = new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile().getAbsolutePath() + File.separator;
                 });
 
                 Button changePath = new Button(TR.tr("Sélectionner"));
-                Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
                 filePathBox.getChildren().addAll(srcFiles, changePath);
 
@@ -244,7 +245,7 @@ public class ConvertWindow extends Stage {
 
                     docName = new TextField(MainWindow.userData.lastConvertFileName);
                     docName.setPromptText(TR.tr("Nom du document"));
-                    Builders.setHBoxPosition(docName, -1, 30, 0, 2.5);
+                    PaneUtils.setHBoxPosition(docName, -1, 30, 0, 2.5);
                     docName.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastConvertFileName = newValue);
                     root.getChildren().addAll(info, docName);
                 }else{
@@ -261,10 +262,10 @@ public class ConvertWindow extends Stage {
                 HBox filePathBox = new HBox();
 
                 outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() != null ? MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
-                Builders.setHBoxPosition(outDir, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(outDir, -1, 30, 0, 2.5);
 
                 Button changePath = new Button(TR.tr("Parcourir"));
-                Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
                 filePathBox.getChildren().addAll(outDir, changePath);
 
@@ -293,7 +294,7 @@ public class ConvertWindow extends Stage {
         public void setupSizeForm(){
 
             Separator separator = new Separator();
-            Builders.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
+            PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
 
             HBox columns = new HBox();
             columns.setSpacing(10);
@@ -302,7 +303,7 @@ public class ConvertWindow extends Stage {
             VBox definitionColumn = generateInfo(TR.tr("Définition des images") + " :", false);
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
-            Builders.setHBoxPosition(definition, -1, 30, 2.5);
+            PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
 
             // Format COLUMN
@@ -310,7 +311,7 @@ public class ConvertWindow extends Stage {
             VBox formatColumn = generateInfo(TR.tr("Format des pages") + " :", false);
             format = new ComboBox<>(formats);
             format.setEditable(true);
-            Builders.setHBoxPosition(format, -1, 30, 2.5);
+            PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
 
             // LISTENERS
@@ -403,14 +404,14 @@ public class ConvertWindow extends Stage {
             root.getChildren().add(info);
             if(convertDirs){
 
-                Builders.setHBoxPosition(convertAloneFiles, 0, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(convertAloneFiles, 0, 30, 0, 2.5);
                 convertAloneFiles.setSelected(MainWindow.userData.settingsConvertAloneImages);
 
                 root.getChildren().add(convertAloneFiles);
                 convertAloneFiles.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsConvertAloneImages = newValue);
             }
 
-            Builders.setHBoxPosition(convertVoidFiles, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(convertVoidFiles, 0, 30, 0, 2.5);
             convertVoidFiles.setSelected(MainWindow.userData.settingsConvertVoidFiles);
 
             root.getChildren().add(convertVoidFiles);
@@ -439,13 +440,13 @@ public class ConvertWindow extends Stage {
                     if(convertDirs || (!docName.getText().isEmpty() && !docName.getText().equalsIgnoreCase(".PDF"))){
                         startConversion();
                     }else{
-                        Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
+                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                         alert.setHeaderText(TR.tr("Impossible de créer un fichier sans nom"));
                         alert.setContentText(TR.tr("Veuillez entrer le nom du document dans le champ prévus."));
                         alert.show();
                     }
                 }else{
-                    Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                     alert.setHeaderText(TR.tr("Impossible de générer des images/pages de 0 pixels"));
                     alert.setContentText(TR.tr("Veuillez changer la définition des images ou le format des pages."));
                     alert.show();
@@ -464,12 +465,12 @@ public class ConvertWindow extends Stage {
 
             if(topBar){
                 Separator separator = new Separator();
-                Builders.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
+                PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
                 box.getChildren().add(separator);
             }
 
             Label info = new Label(text);
-            Builders.setVBoxPosition(info, 0, 0, 2.5);
+            PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
             box.getChildren().add(info);
 
             return box;
@@ -484,7 +485,7 @@ public class ConvertWindow extends Stage {
 
             // Wait Dialog
 
-            loadingAlert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion..."));
+            loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion..."));
             converted = 0;
 
             loadingAlert.setWidth(600);
@@ -518,7 +519,7 @@ public class ConvertWindow extends Stage {
                     Platform.runLater(() -> {
                         loadingAlert.close();
                         // Error dialog
-                        Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de conversion"));
+                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur de conversion"));
                         alert.setHeaderText(TR.tr("Une erreur de conversion est survenue"));
 
                         TextArea textArea = new TextArea(e.getMessage());

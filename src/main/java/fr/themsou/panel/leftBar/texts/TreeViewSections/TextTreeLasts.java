@@ -1,12 +1,10 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.panel.leftBar.texts.ListsManager;
-import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.utils.TR;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.sort.Sorter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class TextTreeLasts extends TextTreeSection {

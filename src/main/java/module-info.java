@@ -50,6 +50,6 @@ module fr.themsou {
     exports fr.themsou.panel.leftBar.paint;
     exports fr.themsou.panel.leftBar.grades.export;
     exports fr.themsou.utils;
-    exports fr.themsou.windows;
-    opens fr.themsou.windows;
+    exports fr.themsou.interfaces.windows;
+    opens fr.themsou.interfaces;
 }

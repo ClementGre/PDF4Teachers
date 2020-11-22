@@ -1,9 +1,8 @@
-package fr.themsou.windows;
+package fr.themsou.interfaces.windows;
 
 import fr.themsou.main.Main;
-import fr.themsou.utils.CallBack;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.callbacks.CallBack;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -18,7 +17,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
 
 import java.io.File;
 

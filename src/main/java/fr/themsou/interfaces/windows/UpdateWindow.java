@@ -1,11 +1,10 @@
-package fr.themsou.windows;
+package fr.themsou.interfaces.windows;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.main.Main;
-import fr.themsou.main.Settings;
-import fr.themsou.utils.*;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.geometry.Insets;

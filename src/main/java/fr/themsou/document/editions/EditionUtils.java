@@ -1,8 +1,8 @@
 package fr.themsou.document.editions;
 
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -22,7 +22,7 @@ public class EditionUtils {
     }
 
     public static void showImportDialog(boolean onlyGrades){
-        Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?"));
         else dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
 
@@ -44,7 +44,7 @@ public class EditionUtils {
         }
     }
     public static void showExportDialog(boolean onlyGrades){
-        Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Exporter l'édition"));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Exporter l'édition"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier."));
         else dialog.setHeaderText(TR.tr("Vous allez exporter le barème du document sous forme de fichier."));
 

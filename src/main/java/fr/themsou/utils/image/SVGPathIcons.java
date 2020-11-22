@@ -1,4 +1,4 @@
-package fr.themsou.utils;
+package fr.themsou.utils.image;
 
 import javafx.scene.layout.Region;
 import javafx.scene.shape.SVGPath;

@@ -2,13 +2,12 @@ package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.texts.*;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.PaneUtils;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.sort.SortManager;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ToggleButton;
@@ -17,7 +16,6 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -81,9 +79,9 @@ public abstract class TextTreeSection extends TreeItem {
 
     public void setupGraphics(){
 
-        Builders.setPosition(sortToggleBtn, 0, 0, 30, 30, true);
-        sortToggleBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
-        sortToggleBtn.setTooltip(Builders.genToolTip(TR.tr("Trier")));
+        PaneUtils.setPosition(sortToggleBtn, 0, 0, 30, 30, true);
+        sortToggleBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
+        sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Trier")));
 
         if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
         else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");

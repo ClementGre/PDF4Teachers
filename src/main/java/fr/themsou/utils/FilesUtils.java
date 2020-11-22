@@ -29,7 +29,7 @@ public class FilesUtils {
     }
 
     public static String getExtension(String fileName){
-        String[] splited = fileName.split(Pattern.quote("."));
-        return splited[splited.length-1];
+        String[] splitted = fileName.split(Pattern.quote("."));
+        return splitted[splitted.length-1];
     }
 }

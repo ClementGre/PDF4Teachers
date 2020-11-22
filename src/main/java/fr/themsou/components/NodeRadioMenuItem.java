@@ -1,6 +1,6 @@
-package fr.themsou.utils.components;
+package fr.themsou.components;
 
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.image.ImageUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -10,8 +10,8 @@ import javafx.scene.layout.HBox;
 public class NodeRadioMenuItem extends NodeMenuItem {
 
     private BooleanProperty selected = new SimpleBooleanProperty(false);
-    private ImageView SELECTED_IMAGE = Builders.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png")+"", 0, 0);
-    private ImageView NONSELECTED_IMAGE = Builders.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png")+"", 0, 0);
+    private ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png")+"", 0, 0);
+    private ImageView NONSELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png")+"", 0, 0);
 
     private boolean autoUpdate;
 

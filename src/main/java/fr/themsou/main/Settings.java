@@ -1,16 +1,13 @@
 package fr.themsou.main;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.windows.LanguageWindow;
-import fr.themsou.windows.MainWindow;
-import javafx.application.Platform;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 

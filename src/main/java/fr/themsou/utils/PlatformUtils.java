@@ -1,11 +1,12 @@
 package fr.themsou.utils;
 
+import fr.themsou.utils.callbacks.ReturnCallBack;
 import javafx.application.Platform;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PlatformTools {
+public class PlatformUtils {
 
     
     public static <T> T runAndWait(ReturnCallBack<T> action) {

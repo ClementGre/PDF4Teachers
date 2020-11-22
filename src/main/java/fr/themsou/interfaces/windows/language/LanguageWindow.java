@@ -1,8 +1,10 @@
-package fr.themsou.windows;
+package fr.themsou.interfaces.windows.language;
 
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
+import fr.themsou.utils.callbacks.CallBack;
+import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import javafx.event.ActionEvent;
@@ -13,7 +15,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -90,7 +91,7 @@ public class LanguageWindow extends Stage{
                 if(FilesUtils.getExtension(file.getName()).equals("txt")){
                     ImageView image = new ImageView();
                     if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png").exists()) {
-                        image = Builders.buildImage(new FileInputStream(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png")), 88, 50);
+                        image = ImageUtils.buildImage(new FileInputStream(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png")), 88, 50);
                     }
                     languages.put(StringUtils.removeAfterLastRejex(file.getName(), ".txt"), image);
                 }
@@ -144,7 +145,7 @@ public class LanguageWindow extends Stage{
         });
         newTrans.setOnAction((ActionEvent event) -> {
 
-            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Télécharger les fichier de traduction"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Télécharger les fichier de traduction"));
 
             alert.setHeaderText(TR.tr("Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue." +
                     "\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation"));

@@ -1,17 +1,15 @@
 package fr.themsou.main;
 
-import fr.themsou.panel.leftBar.grades.LBGradeTab;
+import fr.themsou.panel.leftBar.grades.GradeTab;
 import fr.themsou.panel.leftBar.texts.ListsManager;
 import fr.themsou.panel.leftBar.texts.TextListItem;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.components.SyncColorPicker;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.components.SyncColorPicker;
+import fr.themsou.interfaces.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import javafx.application.Platform;
-import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -25,7 +23,7 @@ public class UserData {
 
 
 
-    private class DataType{
+    private static class DataType{
         public static final int SIMPLE_DATA = 0;
         public static final int TEXT_ELEMENT_FAVORITE = 1;
         public static final int TEXT_ELEMENT_LAST = 2;
@@ -143,7 +141,7 @@ public class UserData {
                 for(Object font : Config.getSection(grades, "tiersFont").values()){
                     if(font instanceof Map){
                         HashMap<String, Object> data = (HashMap<String, Object>) font;
-                        LBGradeTab.fontTiers.put(i, Map.entry(
+                        GradeTab.fontTiers.put(i, Map.entry(
                                 Font.loadFont(
                                         FontUtils.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
                                         Config.getDouble(data, "size")), // Font + Size
@@ -156,7 +154,7 @@ public class UserData {
                 }
 
                 Platform.runLater(() -> {
-                    MainWindow.lbGradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
+                    MainWindow.gradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
                 });
 
                 // EXPORT
@@ -245,7 +243,7 @@ public class UserData {
                                 // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
 
                                 for(int i = 0; i < 5 ; i++){
-                                    LBGradeTab.fontTiers.put(i, Map.entry(
+                                    GradeTab.fontTiers.put(i, Map.entry(
                                             Font.loadFont(FontUtils.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
                                             Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
                                 }
@@ -253,8 +251,8 @@ public class UserData {
                                 boolean lockGradingScale = reader.readBoolean();
 
                                 Platform.runLater(() -> {
-                                    MainWindow.lbGradeTab.updateElementsFont();
-                                    MainWindow.lbGradeTab.lockGradeScale.setSelected(lockGradingScale);
+                                    MainWindow.gradeTab.updateElementsFont();
+                                    MainWindow.gradeTab.lockGradeScale.setSelected(lockGradingScale);
                                 });
 
                                 lastExportFileName = reader.readUTF();
@@ -371,7 +369,7 @@ public class UserData {
             int i = 0;
             HashMap<Object, Object> grades = new HashMap<>();
             LinkedHashMap<Object, Object> gradeTiersFont = new LinkedHashMap<>();
-            for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : LBGradeTab.fontTiers.values()){
+            for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : GradeTab.fontTiers.values()){
                 Font realFont = font.getKey();
                 LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
 
@@ -387,7 +385,7 @@ public class UserData {
                 i++;
             }
             grades.put("tiersFont", gradeTiersFont);
-            grades.put("lockGradeScale", MainWindow.lbGradeTab.lockGradeScale.isSelected());
+            grades.put("lockGradeScale", MainWindow.gradeTab.lockGradeScale.isSelected());
 
             config.base.put("grades", grades);
 

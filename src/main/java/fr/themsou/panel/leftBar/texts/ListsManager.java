@@ -1,10 +1,12 @@
 package fr.themsou.panel.leftBar.texts;
 
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
+import fr.themsou.utils.PaneUtils;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;
@@ -22,13 +24,13 @@ public class ListsManager {
     public ListsManager(TextTreeSection section){
         this.section = section;
 
-        loadListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
-        loadListBtn.setTooltip(Builders.genToolTip(TR.tr("Afficher les listes d'éléments enregistrés")));
-        saveListBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/save.png") +"", 22, 22));
-        saveListBtn.setTooltip(Builders.genToolTip(TR.tr("Sauvegarder les éléments favoris en tant qu'une nouvelle liste")));
+        loadListBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
+        loadListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Afficher les listes d'éléments enregistrés")));
+        saveListBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/save.png") +"", 22, 22));
+        saveListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Sauvegarder les éléments favoris en tant qu'une nouvelle liste")));
 
-        Builders.setPosition(loadListBtn, 0, 0, 30, 30, true);
-        Builders.setPosition(saveListBtn, 0, 0, 30, 30, true);
+        PaneUtils.setPosition(loadListBtn, 0, 0, 30, 30, true);
+        PaneUtils.setPosition(saveListBtn, 0, 0, 30, 30, true);
 
         updateGraphics();
 
@@ -39,7 +41,7 @@ public class ListsManager {
 
         saveListBtn.setOnAction(event -> {
             TextInputDialog alert = new TextInputDialog(TR.tr("Nouvelle liste"));
-            Builders.setupDialog(alert);
+            DialogBuilder.setupDialog(alert);
 
             alert.setTitle(TR.tr("Enregistrer les éléments de cette catégorie"));
             alert.setHeaderText(TR.tr("Vous allez enregistrer les éléments de cette catégorie dans une nouvelle liste."));
@@ -49,7 +51,7 @@ public class ListsManager {
             if(result.isPresent()){
                 if(!result.get().isEmpty()){
                     if(TextTreeSection.lists.containsKey(result.get())){
-                        Alert alert2 = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Liste déjà existante"));
+                        Alert alert2 = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Liste déjà existante"));
                         alert2.setHeaderText(TR.tr("Une liste du même nom existe déjà."));
                         alert2.setContentText(TR.tr("Choisissez une action."));
 
@@ -90,7 +92,7 @@ public class ListsManager {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
 
-                    Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Actions de listes"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Actions de listes"));
                     alert.setHeaderText(TR.tr("Choisissez une action a effectuer avec la liste d'éléments.") + "\n" + TR.tr("Ces actions sont irréversibles."));
                     alert.setContentText(TR.tr("- Vider et charger remplacera la liste des éléments favoris/précédents par celle ci") + "\n" +
                                          TR.tr("- Charger ajoutera cette liste d'éléments à la liste des éléments favoris/précédents") + "\n" +
@@ -129,7 +131,7 @@ public class ListsManager {
             }
         }
         if(list.size() == 0){
-            Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Liste non sauvegardée"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Liste non sauvegardée"));
             alert.setHeaderText(TR.tr("Impossible de sauvegarder la liste"));
             alert.setContentText(TR.tr("Il n'y a aucun élément à enregistrer"));
             alert.show();
@@ -137,7 +139,7 @@ public class ListsManager {
         }
         TextTreeSection.lists.put(listName, list);
 
-        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste sauvegardée"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste sauvegardée"));
         alert.setHeaderText(TR.tr("La liste a bien été sauvegardée !"));
         alert.setContentText(TR.tr("La liste pourra être chargée via le bouton de liste"));
         alert.show();
@@ -147,7 +149,7 @@ public class ListsManager {
     public void deleteList(String listName){
         TextTreeSection.lists.remove(listName);
 
-        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste supprimée"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Liste supprimée"));
         alert.setHeaderText(TR.tr("La liste") + " \"" + listName + "\" " + TR.tr("a bien été supprimé."));
         alert.show();
         ListsManager.setupMenus();

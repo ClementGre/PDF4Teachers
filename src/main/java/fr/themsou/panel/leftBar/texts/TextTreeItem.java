@@ -5,13 +5,12 @@ import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.utils.TextWrapper;
-import fr.themsou.utils.components.ScratchText;
+import fr.themsou.utils.*;
+import fr.themsou.components.ScratchText;
+import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.yaml.Config;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
@@ -53,7 +52,7 @@ public class TextTreeItem extends TreeItem{
 
 	// Graphics items
 	public HBox pane = new HBox();
-	public ImageView linkImage = Builders.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
+	public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
 	public ScratchText name = new ScratchText();
 	public ContextMenu menu;
 	public EventHandler<MouseEvent> onMouseCLick;

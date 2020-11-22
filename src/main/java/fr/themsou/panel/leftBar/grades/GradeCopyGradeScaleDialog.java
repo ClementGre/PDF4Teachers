@@ -4,9 +4,9 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -26,7 +26,7 @@ public class GradeCopyGradeScaleDialog {
 
     public GradeCopyGradeScaleDialog(){
 
-        Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Copier le barème sur d'autres éditions"));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Copier le barème sur d'autres éditions"));
         dialog.setHeaderText(TR.tr("Cette action va copier le barème entré dans cette édition sur d'autres éditions."));
 
         ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -56,7 +56,7 @@ public class GradeCopyGradeScaleDialog {
             }
         }else return;
 
-        Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Barème copiés"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Barème copiés"));
         alert.setHeaderText(TR.tr("Votre barème a bien été copié."));
         alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectés") + ".)");
         alert.show();
@@ -93,7 +93,7 @@ public class GradeCopyGradeScaleDialog {
             }
 
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
-                Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Barème déjà présent"));
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Barème déjà présent"));
                 dialog.setHeaderText(TR.tr("L'édition du fichier") + " " + file.getName() + " " + TR.tr("contient déjà un barème"));
                 dialog.setContentText(TR.tr("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.tr("Vous serez avertis si une note va être écrasée."));
 
@@ -129,7 +129,7 @@ public class GradeCopyGradeScaleDialog {
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + Main.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + Main.format.format(grade.getTotal()) + ")";
                 }
 
-                Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Écraser les notes non correspondantes"));
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Écraser les notes non correspondantes"));
                 dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.tr("Dans le document") + " : " + file.getName());
 
                 ButtonType ignore = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.OK_DONE);

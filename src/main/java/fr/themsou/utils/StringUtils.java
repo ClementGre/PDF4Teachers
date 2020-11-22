@@ -2,6 +2,8 @@ package fr.themsou.utils;
 
 import javafx.beans.property.BooleanProperty;
 
+import java.util.Arrays;
+
 public class StringUtils {
 
     public static String removeBefore(String string, String rejex){
@@ -103,4 +105,7 @@ public class StringUtils {
     }
 
 
+    public static String[] cleanArray(String[] array) {
+        return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
+    }
 }

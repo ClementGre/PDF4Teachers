@@ -1,7 +1,7 @@
-package fr.themsou.utils;
+package fr.themsou.interfaces.windows.language;
 
 import fr.themsou.main.Main;
-import fr.themsou.windows.LanguageWindow;
+import fr.themsou.utils.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;

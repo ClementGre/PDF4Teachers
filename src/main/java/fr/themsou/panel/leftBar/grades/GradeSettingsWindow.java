@@ -1,14 +1,15 @@
 package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.texts.LBTextTab;
-import fr.themsou.utils.Builders;
+import fr.themsou.panel.leftBar.texts.TextTab;
+import fr.themsou.utils.PaneUtils;
 import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.utils.components.SyncColorPicker;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.components.SyncColorPicker;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -21,7 +22,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetro;
 
 import java.util.Map;
 
@@ -73,42 +73,42 @@ public class GradeSettingsWindow extends Stage {
             this.tier = tier;
 
             setStyle("-fx-padding: 2.5;");
-            Font font = LBGradeTab.getTierFont(tier);
+            Font font = GradeTab.getTierFont(tier);
 
             Label name = new Label(TR.tr("Niveau") + " " + (tier+1) + " :");
             name.setStyle("-fx-font-size: 13");
             HBox.setMargin(name, new Insets(7));
 
-            Builders.setHBoxPosition(fontCombo, 150, 30, 2.5);
+            PaneUtils.setHBoxPosition(fontCombo, 150, 30, 2.5);
             fontCombo.setStyle("-fx-font-size: 13");
             fontCombo.getSelectionModel().select(font.getFamily());
             fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
-            fontCombo.setCellFactory((ListView<String> stringListView) -> new LBTextTab.ShapeCell());
+            fontCombo.setCellFactory((ListView<String> stringListView) -> new TextTab.ShapeCell());
 
-            Builders.setHBoxPosition(sizeCombo, 60, 30, 2.5);
+            PaneUtils.setHBoxPosition(sizeCombo, 60, 30, 2.5);
             sizeCombo.setStyle("-fx-font-size: 13");
             sizeCombo.getSelectionModel().select((Integer) ((int) font.getSize()));
             sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            Builders.setHBoxPosition(colorPicker, 120, 30, 2.5);
+            PaneUtils.setHBoxPosition(colorPicker, 120, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
-            colorPicker.setValue(LBGradeTab.getTierColor(tier));
+            colorPicker.setValue(GradeTab.getTierColor(tier));
             colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
+            PaneUtils.setHBoxPosition(boldBtn, 45, 29, 2.5);
             boldBtn.setCursor(Cursor.HAND);
             boldBtn.setSelected(FontUtils.getFontWeight(font) == FontWeight.BOLD);
-            boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
+            boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
             boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
+            PaneUtils.setHBoxPosition(itBtn, 45, 29, 2.5);
             itBtn.setCursor(Cursor.HAND);
             itBtn.setSelected(FontUtils.getFontPosture(font) == FontPosture.ITALIC);
-            itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
+            itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            Builders.setHBoxPosition(showName, 0, 29, 2.5);
-            showName.setSelected(LBGradeTab.getTierShowName(tier));
+            PaneUtils.setHBoxPosition(showName, 0, 29, 2.5);
+            showName.setSelected(GradeTab.getTierShowName(tier));
             showName.setCursor(Cursor.HAND);
             showName.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
@@ -118,10 +118,10 @@ public class GradeSettingsWindow extends Stage {
 
         private void updateFont(){
 
-            LBGradeTab.fontTiers.put(tier, Map.entry(
+            GradeTab.fontTiers.put(tier, Map.entry(
                     Font.loadFont(FontUtils.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
                     Map.entry(colorPicker.getValue(), showName.isSelected()))); // Color + ShowName
-            MainWindow.lbGradeTab.updateElementsFont();
+            MainWindow.gradeTab.updateElementsFont();
 
         }
 

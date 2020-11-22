@@ -1,12 +1,13 @@
 package fr.themsou.panel.leftBar.grades;
 
 import fr.themsou.document.editions.elements.GradeElement;
-import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.utils.components.ScratchText;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.PaneUtils;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.utils.StringUtils;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.components.ScratchText;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -21,8 +22,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class GradeTreeItem extends TreeItem {
@@ -76,7 +75,7 @@ public class GradeTreeItem extends TreeItem {
                 totalField.setText(Main.format.format(core.getTotal()));
                 pane.getChildren().clear();
 
-                if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+                if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
                     if(hasSubGrade()){
                         pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
                     }else{
@@ -112,7 +111,7 @@ public class GradeTreeItem extends TreeItem {
 
         mouseEnteredEvent = event -> {
             if(!cell.isFocused()) newGrade.setVisible(true);
-            if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+            if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
                 if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("Clic sur le cadenas pour éditer le barème")));
             }else if(cell.getTooltip() != null){
                 cell.setTooltip(null);
@@ -125,7 +124,7 @@ public class GradeTreeItem extends TreeItem {
 
         newGrade.setOnAction(event -> {
             setExpanded(true);
-            GradeElement element = MainWindow.lbGradeTab.newGradeElementAuto(this);
+            GradeElement element = MainWindow.gradeTab.newGradeElementAuto(this);
             element.select();
 
             // Update total (Fix the bug when a total is predefined (with no children))
@@ -189,7 +188,7 @@ public class GradeTreeItem extends TreeItem {
         nameField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){
                 GradeTreeItem afterItem = getAfterItem();
-                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
+                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.nameField.requestFocus());
             }
 
@@ -223,7 +222,7 @@ public class GradeTreeItem extends TreeItem {
                     pageContextMenu.getItems().clear();
                 }
                 GradeTreeItem afterItem = getAfterChildItem();
-                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
+                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.gradeField.requestFocus());
             }
             String newText = newValue.replaceAll("[^0123456789.,]", "");
@@ -257,7 +256,7 @@ public class GradeTreeItem extends TreeItem {
         totalField.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){ // Enter : Switch to the next grade
                 GradeTreeItem afterItem = getAfterChildItem();
-                MainWindow.lbGradeTab.treeView.getSelectionModel().select(afterItem);
+                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.totalField.requestFocus());
             }
 
@@ -280,12 +279,12 @@ public class GradeTreeItem extends TreeItem {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         newGrade = new Button();
-        newGrade.setGraphic(Builders.buildImage(getClass().getResource("/img/GradesTab/more.png")+"", 0, 0));
-        Builders.setPosition(newGrade, 0, 0, 30, 30, true);
-        newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.lbGradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.lbGradeTab.isLockGradeScaleProperty()));
+        newGrade.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/more.png")+"", 0, 0));
+        PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
+        newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);
-        newGrade.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
-        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(Builders.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
+        newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText()));
+        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("Créer une nouvelle sous-note de") + " " + name.getText())));
 
         pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
 
@@ -353,7 +352,7 @@ public class GradeTreeItem extends TreeItem {
 
         cell.selectedProperty().addListener(selectedListener);
 
-        if(MainWindow.lbGradeTab.isLockGradeScaleProperty().get()){
+        if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
             if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("Clic sur le cadenas pour éditer le barème")));
         }else if(cell.getTooltip() != null){
             cell.setTooltip(null);
@@ -476,8 +475,8 @@ public class GradeTreeItem extends TreeItem {
         return getChildren().size() != 0;
     }
     public boolean isRoot(){
-        return Builders.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
-        //return Main.lbGradeTab.treeView.getRoot().equals(this);
+        return StringUtils.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
+        //return Main.gradeTab.treeView.getRoot().equals(this);
     }
 
     public GradeElement getCore() {

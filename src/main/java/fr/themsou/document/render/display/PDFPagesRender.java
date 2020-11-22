@@ -6,26 +6,21 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.CallBack;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.callbacks.CallBack;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
-
-import javax.imageio.ImageIO;
 
 public class PDFPagesRender {
 
@@ -110,7 +105,7 @@ public class PDFPagesRender {
 			if(!MainWindow.mainScreen.document.pdfPagesRender.advertisement){ // not already sended
 				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
 
-				Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Erreur de rendu"));
+				Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Erreur de rendu"));
 				alert.setHeaderText(TR.tr("Des erreurs sont apparues lors du rendu du document PDF."));
 				alert.setContentText(TR.tr("Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement."));
 				alert.show();

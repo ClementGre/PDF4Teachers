@@ -1,18 +1,19 @@
-package fr.themsou.windows;
+package fr.themsou.interfaces.windows;
 
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.panel.FooterBar;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.MenuBar;
-import fr.themsou.panel.leftBar.files.LBFileTab;
-import fr.themsou.panel.leftBar.grades.LBGradeTab;
-import fr.themsou.panel.leftBar.paint.LBPaintTab;
-import fr.themsou.panel.leftBar.texts.LBTextTab;
-import fr.themsou.utils.Macro;
-import fr.themsou.utils.TR;
+import fr.themsou.panel.leftBar.files.FileTab;
+import fr.themsou.panel.leftBar.grades.GradeTab;
+import fr.themsou.panel.leftBar.paint.PaintTab;
+import fr.themsou.panel.leftBar.texts.TextTab;
+import fr.themsou.interfaces.Macro;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
+import fr.themsou.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
@@ -38,10 +39,10 @@ public class MainWindow extends Stage{
     public static MenuBar menuBar;
 
     public static TabPane leftBar;
-    public static LBFileTab lbFilesTab;
-    public static LBTextTab lbTextTab;
-    public static LBGradeTab lbGradeTab;
-    public static LBPaintTab lbPaintTab;
+    public static FileTab lbFilesTab;
+    public static TextTab lbTextTab;
+    public static GradeTab gradeTab;
+    public static PaintTab lbPaintTab;
 
 
     Thread userDataSaver = new Thread(() -> {
@@ -91,10 +92,10 @@ public class MainWindow extends Stage{
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
 
-        lbFilesTab = new LBFileTab();
-        lbTextTab = new LBTextTab();
-        lbGradeTab = new LBGradeTab();
-        lbPaintTab = new LBPaintTab();
+        lbFilesTab = new FileTab();
+        lbTextTab = new TextTab();
+        gradeTab = new GradeTab();
+        lbPaintTab = new PaintTab();
 
         menuBar = new MenuBar();
 

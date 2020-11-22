@@ -8,9 +8,11 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.*;
-import fr.themsou.utils.components.SyncColorPicker;
-import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.components.SyncColorPicker;
+import fr.themsou.utils.image.ImageUtils;
+import fr.themsou.utils.image.SVGPathIcons;
+import fr.themsou.interfaces.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -20,24 +22,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.skin.ColorPickerSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.Style;
 
 import java.util.Set;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
-public class LBTextTab extends Tab {
+public class TextTab extends Tab {
 
 	public VBox pane = new VBox();
 	public VBox optionPane = new VBox();
@@ -77,7 +75,7 @@ public class LBTextTab extends Tab {
 
 	private boolean txtAreaScrollBarListenerIsSetup = false;
 
-	public LBTextTab(){
+	public TextTab(){
 
 		setClosable(false);
 		setContent(pane);
@@ -96,7 +94,7 @@ public class LBTextTab extends Tab {
 		fontCombo.setCellFactory((ListView<String> stringListView) -> new ShapeCell());
 		//fontCombo.setEditable(true);
 
-		Builders.setHBoxPosition(fontCombo, -1, 30, 2.5);
+		PaneUtils.setHBoxPosition(fontCombo, -1, 30, 2.5);
 		fontCombo.setStyle("-fx-font-size: 13");
 		fontCombo.getSelectionModel().select("Open Sans");
 		fontCombo.setMaxHeight(25);
@@ -105,7 +103,7 @@ public class LBTextTab extends Tab {
 			if(isNew) lastFont = newValue;
 		});
 
-		Builders.setHBoxPosition(sizeCombo, 95, 30, 2.5);
+		PaneUtils.setHBoxPosition(sizeCombo, 95, 30, 2.5);
 		sizeCombo.setStyle("-fx-font-size: 13");
 		sizeCombo.getSelectionModel().select(7);
 		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -113,7 +111,7 @@ public class LBTextTab extends Tab {
 			if(isNew) lastFontSize = newValue;
 		});
 
-		Builders.setHBoxPosition(colorPicker, -1, 30, 2.5);
+		PaneUtils.setHBoxPosition(colorPicker, -1, 30, 2.5);
 		colorPicker.setStyle("-fx-font-size: 13");
 		colorPicker.setValue(Color.BLACK);
 		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -121,33 +119,33 @@ public class LBTextTab extends Tab {
 			if(isNew) lastColor = newValue.toString();
 		});
 
-		Builders.setHBoxPosition(boldBtn, 45, 29, 2.5);
+		PaneUtils.setHBoxPosition(boldBtn, 45, 29, 2.5);
 		boldBtn.setCursor(Cursor.HAND);
-		boldBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
+		boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastBold = newValue;
 		});
 
-		Builders.setHBoxPosition(itBtn, 45, 29, 2.5);
+		PaneUtils.setHBoxPosition(itBtn, 45, 29, 2.5);
 		itBtn.setCursor(Cursor.HAND);
-		itBtn.setGraphic(Builders.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
+		itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) lastItalic = newValue;
 		});
 
-		Builders.setHBoxPosition(txtArea, -1, 30, 0);
+		PaneUtils.setHBoxPosition(txtArea, -1, 30, 0);
 		if(Main.settings.isSmallFontInTextsList()) txtArea.setStyle("-fx-font-size: 12");
 		else txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));
 		txtArea.setId("no-vertical-scroll-bar");
 
-		Builders.setHBoxPosition(deleteBtn, -1, 30, 2.5);
+		PaneUtils.setHBoxPosition(deleteBtn, -1, 30, 2.5);
 		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 
-		Builders.setHBoxPosition(newBtn, -1, 30, 2.5);
+		PaneUtils.setHBoxPosition(newBtn, -1, 30, 2.5);
 		newBtn.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
 
 		combosBox.getChildren().addAll(fontCombo, sizeCombo);

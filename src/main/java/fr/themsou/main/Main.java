@@ -6,12 +6,12 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-import fr.themsou.utils.TR;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.LanguageWindow;
-import fr.themsou.windows.LicenseWindow;
-import fr.themsou.windows.LogWindow;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.LanguageWindow;
+import fr.themsou.interfaces.windows.LicenseWindow;
+import fr.themsou.interfaces.windows.log.LogWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.geometry.Rectangle2D;

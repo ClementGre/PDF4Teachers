@@ -6,7 +6,7 @@ import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeRating;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ public class ExportFile{
 
         grades.sort(Comparator.comparing(grade -> {
 
-            String[] parentPath = Builders.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
+            String[] parentPath = StringUtils.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
             String lastParentPath = grade.getParentPath();
 
             StringBuilder indexes = new StringBuilder(grade.getIndex() + "");
@@ -52,7 +52,7 @@ public class ExportFile{
                     if((parent.getParentPath() + "\\" + parent.getName()).equals(lastParentPath)){
                         indexes.insert(0, parent.getIndex());
                         lastParentPath = "\\" + String.join("\\", parentPath);
-                        parentPath = Builders.cleanArray(parent.getParentPath().split(Pattern.quote("\\")));
+                        parentPath = StringUtils.cleanArray(parent.getParentPath().split(Pattern.quote("\\")));
                     }
                 }
             }

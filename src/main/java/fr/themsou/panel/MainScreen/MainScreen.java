@@ -8,9 +8,9 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -335,7 +335,7 @@ public class MainScreen extends Pane {
 
 		if(status.get() != Status.OPEN){
 			if(confirm){
-				Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur"));
+				Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur"));
 				alert.setHeaderText(TR.tr("Aucun document n'est ouvert !"));
 				alert.setContentText(TR.tr("Cette action est censée s'éxécuter sur un document ouvert"));
 

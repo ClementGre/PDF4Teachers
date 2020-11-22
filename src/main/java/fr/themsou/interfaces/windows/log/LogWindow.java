@@ -1,10 +1,7 @@
-package fr.themsou.windows;
+package fr.themsou.interfaces.windows.log;
 
 import fr.themsou.main.Main;
-import fr.themsou.utils.CustomPrintStream;
-import fr.themsou.utils.FontUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.utils.style.StyleManager;
+import fr.themsou.interfaces.windows.language.TR;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

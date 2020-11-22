@@ -1,13 +1,12 @@
 package fr.themsou.panel;
 
 import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.utils.TR;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.beans.binding.Bindings;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 @SuppressWarnings("serial")

@@ -2,22 +2,16 @@ package fr.themsou.document.render.display;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
-import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
-import fr.themsou.panel.leftBar.grades.LBGradeTab;
 import fr.themsou.panel.leftBar.texts.TextTreeItem;
 import fr.themsou.panel.leftBar.texts.TextTreeView;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.components.ScratchText;
-import fr.themsou.windows.MainWindow;
-import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
+import fr.themsou.components.ScratchText;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.ProgressBar;
@@ -25,13 +19,9 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class PageRenderer extends Pane{
@@ -94,12 +84,12 @@ public class PageRenderer extends Pane{
         setOnMousePressed(e -> {
 
             MainWindow.mainScreen.setSelected(null);
-            MainWindow.lbGradeTab.treeView.getSelectionModel().select(null);
+            MainWindow.gradeTab.treeView.getSelectionModel().select(null);
             menu.hide();
             menu.getItems().clear();
             if(e.getButton() == MouseButton.SECONDARY){
 
-                if(MainWindow.lbGradeTab.treeView.getRoot().getChildren().size() != 0){
+                if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
                     GradeTreeView.defineNaNLocations();
                     GradeTreeItem nextGrade = GradeTreeView.getNextLogicGrade();
                     if(nextGrade != null) menu.getItems().add(new CustomMenuItem(nextGrade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));

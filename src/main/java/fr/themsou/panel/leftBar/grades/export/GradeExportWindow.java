@@ -1,19 +1,19 @@
 package fr.themsou.panel.leftBar.grades.export;
 
 import fr.themsou.main.Main;
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.PaneUtils;
+import fr.themsou.utils.DialogBuilder;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
+import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -106,33 +106,33 @@ public class GradeExportWindow extends Stage {
 
                 fileNamePrefix = new TextField(MainWindow.userData.lastExportFileNamePrefix);
                 fileNamePrefix.setPromptText(TR.tr("Préfixe"));
-                Builders.setHBoxPosition(fileNamePrefix, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileNamePrefix, -1, 30, 0, 2.5);
                 fileNamePrefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
                 TextField fileName = new TextField(TR.tr("Nom du document"));
                 fileName.setDisable(true); fileName.setAlignment(Pos.CENTER);
-                Builders.setHBoxPosition(fileName, 0, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileName, 0, 30, 0, 2.5);
 
                 fileNameSuffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
                 fileNameSuffix.setPromptText(TR.tr("Suffixe"));
-                Builders.setHBoxPosition(fileNameSuffix, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileNameSuffix, -1, 30, 0, 2.5);
                 fileNameSuffix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameSuffix = newValue);
 
                 fileNamePrefixSuffixBox.getChildren().addAll(fileNamePrefix, fileName, fileNameSuffix);
 
 
                 Label replaceText = new Label(TR.tr("Remplacer"));
-                Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
+                PaneUtils.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 fileNameReplace = new TextField(MainWindow.userData.lastExportFileNameReplace);
-                Builders.setHBoxPosition(fileNameReplace, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileNameReplace, -1, 30, 0, 2.5);
                 fileNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
-                Builders.setHBoxPosition(byText, 0, 30, 2.5);
+                PaneUtils.setHBoxPosition(byText, 0, 30, 2.5);
 
                 fileNameBy = new TextField(MainWindow.userData.lastExportFileNameBy);
-                Builders.setHBoxPosition(fileNameBy, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileNameBy, -1, 30, 0, 2.5);
                 fileNameBy.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
 
                 fileNameReplaceBox.getChildren().addAll(replaceText, fileNameReplace, byText, fileNameBy);
@@ -143,7 +143,7 @@ public class GradeExportWindow extends Stage {
 
                 fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("Nom du document"));
-                Builders.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
                 if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileName = newValue);
                 root.getChildren().addAll(info, fileNameSimple);
 
@@ -158,17 +158,17 @@ public class GradeExportWindow extends Stage {
                 HBox studentNameReplaceBox = new HBox();
 
                 Label replaceText = new Label(TR.tr("Remplacer"));
-                Builders.setHBoxPosition(replaceText, 0, 30, 2.5);
+                PaneUtils.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 studentNameReplace = new TextField(MainWindow.userData.lastExportStudentNameReplace);
-                Builders.setHBoxPosition(studentNameReplace, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(studentNameReplace, -1, 30, 0, 2.5);
                 studentNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameReplace = newValue);
 
                 Label byText = new Label(TR.tr("par"));
-                Builders.setHBoxPosition(byText, 0, 30, 2.5);
+                PaneUtils.setHBoxPosition(byText, 0, 30, 2.5);
 
                 studentNameBy = new TextField(MainWindow.userData.lastExportStudentNameBy);
-                Builders.setHBoxPosition(studentNameBy, -1, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(studentNameBy, -1, 30, 0, 2.5);
                 studentNameBy.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameBy = newValue);
 
                 studentNameReplaceBox.getChildren().addAll(replaceText, studentNameReplace, byText, studentNameBy);
@@ -179,7 +179,7 @@ public class GradeExportWindow extends Stage {
 
                 studentNameSimple = new TextField(StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
                 studentNameSimple.setPromptText(TR.tr("Nom de l'élève"));
-                Builders.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
+                PaneUtils.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
 
                 root.getChildren().addAll(info, studentNameSimple);
 
@@ -193,10 +193,10 @@ public class GradeExportWindow extends Stage {
             HBox filePathBox = new HBox();
 
             filePath = new TextField(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator);
-            Builders.setHBoxPosition(filePath, -1, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(filePath, -1, 30, 0, 2.5);
 
             Button changePath = new Button(TR.tr("Parcourir"));
-            Builders.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+            PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
             filePathBox.getChildren().addAll(filePath, changePath);
 
@@ -226,14 +226,14 @@ public class GradeExportWindow extends Stage {
             settingsTiersExportSlider.setMajorTickUnit(1);
             settingsTiersExportSlider.setMinorTickCount(0);
 
-            Builders.setHBoxPosition(settingsOnlySameGradeScale, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsOnlyCompleted, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsOnlySameDir, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsAttributeTotalLine, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsAttributeMoyLine, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsWithTxtElements, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(settingsTiersExportSlider, 0, 30, 0, 2.5);
-            Builders.setHBoxPosition(tiersExportLabel, 0, 30, 2.5, 2.5);
+            PaneUtils.setHBoxPosition(settingsOnlySameGradeScale, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsOnlyCompleted, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsOnlySameDir, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsAttributeTotalLine, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsAttributeMoyLine, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsWithTxtElements, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsTiersExportSlider, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(tiersExportLabel, 0, 30, 2.5, 2.5);
 
             root.getChildren().add(info);
 
@@ -295,12 +295,12 @@ public class GradeExportWindow extends Stage {
 
             if(topBar){
                 Separator separator = new Separator();
-                Builders.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
+                PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
                 box.getChildren().add(separator);
             }
 
             Label info = new Label(text);
-            Builders.setVBoxPosition(info, 0, 0, 2.5);
+            PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
             box.getChildren().add(info);
 
             return box;
@@ -310,7 +310,7 @@ public class GradeExportWindow extends Stage {
 
             close();
 
-            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
 
             if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
             else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));

@@ -1,9 +1,8 @@
 package fr.themsou.document.render.convert;
 
-import fr.themsou.utils.CallBack;
+import fr.themsou.utils.callbacks.CallBack;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;

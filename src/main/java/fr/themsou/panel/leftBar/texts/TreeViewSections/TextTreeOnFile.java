@@ -3,9 +3,8 @@ package fr.themsou.panel.leftBar.texts.TreeViewSections;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 
 public class TextTreeOnFile extends TextTreeSection {
 

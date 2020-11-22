@@ -1,8 +1,8 @@
 package fr.themsou.document.editions.elements;
 
-import fr.themsou.utils.TR;
-import fr.themsou.utils.components.NodeMenuItem;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.components.NodeMenuItem;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.HBox;

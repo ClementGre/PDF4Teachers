@@ -1,4 +1,4 @@
-package fr.themsou.utils.components;
+package fr.themsou.components;
 
 import javafx.scene.text.Text;
 

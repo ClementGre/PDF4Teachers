@@ -8,7 +8,7 @@
 <?import javafx.geometry.Insets?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="fr.themsou.windows.AboutWindow"
+      fx:controller="fr.themsou.interfaces.windows.AboutWindow"
       fx:id="root" prefWidth="400.0" alignment="CENTER" styleClass="aboutPane">
 
 

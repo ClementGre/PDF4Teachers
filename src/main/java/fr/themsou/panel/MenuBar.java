@@ -5,17 +5,18 @@ import fr.themsou.document.editions.EditionUtils;
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.display.PageEditPane;
 import fr.themsou.document.render.export.ExportWindow;
-import fr.themsou.main.UserData;
 import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.utils.components.NodeMenuItem;
-import fr.themsou.utils.components.NodeRadioMenuItem;
+import fr.themsou.components.NodeMenuItem;
+import fr.themsou.components.NodeRadioMenuItem;
+import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
-import fr.themsou.windows.LanguageWindow;
-import fr.themsou.windows.LogWindow;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.LanguageWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.log.LogWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -34,8 +35,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import javafx.util.Duration;
 
 import java.awt.*;
@@ -233,10 +232,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// HELP //////////
 
-		help1LoadDoc.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
-		help2GitHubIssue.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
-		help3Twitter.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
-		help4Website.setGraphic(Builders.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+		help1LoadDoc.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
+		help2GitHubIssue.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
+		help3Twitter.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
+		help4Website.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
 		help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
 
 		////////// SETUP ITEMS WIDTH ///////////
@@ -249,7 +248,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		file1Open.setOnAction((ActionEvent actionEvent) -> {
 
-			File[] files = Builders.showFilesDialog(true, true, TR.tr("Fichier PDF"), "*.pdf");
+			File[] files = DialogBuilder.showFilesDialog(true, true, TR.tr("Fichier PDF"), "*.pdf");
 			if(files != null){
 				MainWindow.lbFilesTab.openFiles(files);
 				if(files.length == 1){
@@ -259,7 +258,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
 
-			File directory = Builders.showDirectoryDialog(true);
+			File directory = DialogBuilder.showDirectoryDialog(true);
 			if(directory != null) {
 				MainWindow.lbFilesTab.openFiles(new File[]{directory});
 			}
@@ -307,11 +306,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		tools3AddPages.setOnShowing(e -> {
 			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages));
-			Builders.setMenuSize(tools3AddPages);
+			PaneUtils.setMenuSize(tools3AddPages);
 		});
 
 		tools4DeleteAllEdits.setOnAction((ActionEvent e) -> {
-			Alert dialog = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
+			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
 			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
 
@@ -343,7 +342,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				size = yesButSize;
 			}else return;
 
-			Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Supression terminée"));
+			Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Supression terminée"));
 			alert.setHeaderText(TR.tr("Vos éditions ont bien été supprimés."));
 			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
@@ -356,7 +355,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
 				tools5SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
-					Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
+					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
 					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
 
 					ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -386,7 +385,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 									if(fromEditFile.exists()){
 										Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
 									}else{
-										Alert alert = Builders.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier introuvable"));
+										Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier introuvable"));
 										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
 										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
 										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -403,7 +402,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				i++;
 			}
 			if(i == 0) tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
-			Builders.setMenuSize(tools5SameNameEditions);
+			PaneUtils.setMenuSize(tools5SameNameEditions);
 		});
 
 		tools6ExportEdition1All.setOnAction((e) -> EditionUtils.showExportDialog(false));
@@ -440,7 +439,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
 			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
-			Builders.setupDialog(dialog);
+			DialogBuilder.setupDialog(dialog);
 
 			dialog.setTitle(TR.tr("Zoom par défaut"));
 			dialog.setHeaderText(TR.tr("Zoom par défaut lors de l'ouverture d'un document"));
@@ -454,7 +453,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		settings8RegularSave.setOnAction((ActionEvent actionEvent) -> {
 
-			Alert dialog = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
+			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
 
 			HBox pane = new HBox();
 			ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
@@ -519,7 +518,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		getMenus().addAll(file, tools, settings, about, help);
 
 		for(Menu menu : getMenus()){
-			Builders.setMenuSize(menu);
+			PaneUtils.setMenuSize(menu);
 		}
 	}
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
@@ -533,7 +532,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		Label text = new Label(name);
 
 		if(imgName != null){
-			ImageView icon = Builders.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
+			ImageView icon = ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
 			pane.getChildren().add(icon);
 
 			if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
@@ -548,7 +547,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
 		}
 
-		Tooltip toolTipUI = Builders.genToolTip(toolTip);
+		Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
 		toolTipUI.setShowDuration(Duration.INDEFINITE);
 		Tooltip.install(pane, toolTipUI);
 
@@ -559,7 +558,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
 
-		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+		if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 
 		return menuItem;
@@ -573,7 +572,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
 
 
-		if(imgName != null) menuItem.setImage(Builders.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+		if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 		if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
 		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 		if(leftMargin) menuItem.setFalseLeftData();

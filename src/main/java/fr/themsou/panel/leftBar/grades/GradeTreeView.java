@@ -4,9 +4,9 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.utils.StringUtils;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 public class GradeTreeView extends TreeView<String> {
 
 
-    public GradeTreeView(LBGradeTab gradeTab){
+    public GradeTreeView(GradeTab gradeTab){
 
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
@@ -75,8 +75,8 @@ public class GradeTreeView extends TreeView<String> {
     }
 
     public void generateRoot(boolean update){
-        MainWindow.lbGradeTab.newGradeElement(TR.tr("Total"), -1, 0, 0, "", update);
-        //MainWindow.lbGradeTab.newGradeElement(TR.tr("Bonus"), -1, 0, 0, "\\Total", update);
+        MainWindow.gradeTab.newGradeElement(TR.tr("Total"), -1, 0, 0, "", update);
+        //MainWindow.gradeTab.newGradeElement(TR.tr("Bonus"), -1, 0, 0, "\\Total", update);
     }
 
     public void addElement(GradeElement element){
@@ -113,13 +113,13 @@ public class GradeTreeView extends TreeView<String> {
     public GradeTreeItem getGradeTreeItemParent(GradeElement element){
 
         // ELEMENT IS SUB-ROOT
-        String[] path = Builders.cleanArray(element.getParentPath().split(Pattern.quote("\\")));
+        String[] path = StringUtils.cleanArray(element.getParentPath().split(Pattern.quote("\\")));
         if(path[0].equals(((GradeTreeItem)getRoot()).getCore().getName()) && path.length == 1){
             return (GradeTreeItem) getRoot();
         }
 
         // OTHER
-        path = Builders.cleanArray(element.getParentPath()
+        path = StringUtils.cleanArray(element.getParentPath()
                 .replaceFirst(Pattern.quote(((GradeTreeItem)getRoot()).getCore().getName()), "")
                 .split(Pattern.quote("\\")));
 
@@ -273,7 +273,7 @@ public class GradeTreeView extends TreeView<String> {
     }
 
     public static GradeTreeItem getTotal(){
-        return (GradeTreeItem) MainWindow.lbGradeTab.treeView.getRoot();
+        return (GradeTreeItem) MainWindow.gradeTab.treeView.getRoot();
     }
 
     public static ArrayList<GradeTreeItem> getGradesArray(GradeTreeItem root){
@@ -310,6 +310,6 @@ public class GradeTreeView extends TreeView<String> {
         return parent.getCore().getParentPath() + "\\" + parent.getCore().getName();
     }
     public static int getElementTier(String parentPath){
-        return Builders.cleanArray(parentPath.split(Pattern.quote("\\"))).length;
+        return StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length;
     }
 }

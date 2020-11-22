@@ -1,11 +1,9 @@
-package fr.themsou.utils.components;
+package fr.themsou.components;
 
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.PaneUtils;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -14,7 +12,6 @@ import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Pattern;
 
 public class NodeMenuItem extends CustomMenuItem {
 
@@ -114,7 +111,7 @@ public class NodeMenuItem extends CustomMenuItem {
     }
 
     public void setToolTip(String toolTip){
-        Tooltip toolTipUI = Builders.genToolTip(toolTip);
+        Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
         toolTipUI.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(node, toolTipUI);
     }

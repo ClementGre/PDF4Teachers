@@ -1,9 +1,9 @@
 package fr.themsou.document.render.convert;
 
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.DialogBuilder;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -24,7 +24,7 @@ public class ConvertDocument {
             for(ConvertedFile file : convertedFiles){
 
                 if(file.file.exists() && !eraseAll){
-                    Alert alert = Builders.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
                     alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + file.file.getName() + "\" " +TR.tr("existe déjà"));
                     alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
 
@@ -69,7 +69,7 @@ public class ConvertDocument {
                 converted++;
             }
 
-            Alert alert = Builders.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Conversion terminée"));
 
             if(converted == 0) alert.setHeaderText(TR.tr("Aucun document n'a été converti !"));
             else if(converted == 1) alert.setHeaderText(TR.tr("Le document a bien été créé !"));

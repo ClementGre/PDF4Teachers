@@ -1,10 +1,7 @@
 package fr.themsou.panel.leftBar.texts.TreeViewSections;
 
 import fr.themsou.panel.leftBar.texts.ListsManager;
-import fr.themsou.panel.leftBar.texts.TextListItem;
-import fr.themsou.utils.TR;
-import java.util.ArrayList;
-import java.util.HashMap;
+import fr.themsou.interfaces.windows.language.TR;
 
 public class TextTreeFavorites extends TextTreeSection {
 

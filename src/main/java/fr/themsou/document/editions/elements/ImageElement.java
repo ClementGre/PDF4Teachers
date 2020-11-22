@@ -1,6 +1,6 @@
 package fr.themsou.document.editions.elements;
 
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import fr.themsou.yaml.Config;
 import java.util.HashMap;
 import java.util.LinkedHashMap;

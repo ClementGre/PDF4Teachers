@@ -1,4 +1,4 @@
-package fr.themsou.utils;
+package fr.themsou.interfaces.windows.log;
 
 import fr.themsou.document.render.display.PDFPagesRender;
 import javafx.application.Platform;

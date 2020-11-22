@@ -1,6 +1,6 @@
 package fr.themsou.utils.sort;
 
-import fr.themsou.utils.Builders;
+import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.StyleManager;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectPropertyBase;
@@ -8,15 +8,12 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class SortManager {
 
@@ -42,7 +39,7 @@ public class SortManager {
             }
 
             Button button = new Button(buttonName);
-            button.setGraphic(Builders.buildImage(getClass().getResource("/img/Sort/up.png")+"", 0, 0));
+            button.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/Sort/up.png")+"", 0, 0));
             button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
             GridPane.setHgrow(button, Priority.ALWAYS);
@@ -58,7 +55,7 @@ public class SortManager {
             // Image de l'ordre
             order.addListener(new ChangeListener<>() {
                 @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder) {
-                    button.setGraphic(Builders.buildImage(getClass().getResource(newOrder ? "/img/Sort/up.png" : "/img/Sort/down.png") + "", 0, 0));
+                    button.setGraphic(ImageUtils.buildImage(getClass().getResource(newOrder ? "/img/Sort/up.png" : "/img/Sort/down.png") + "", 0, 0));
                 }
             });
 

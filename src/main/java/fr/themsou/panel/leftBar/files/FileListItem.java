@@ -3,12 +3,11 @@ package fr.themsou.panel.leftBar.files;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
-import fr.themsou.panel.MainScreen.MainScreen;
-import fr.themsou.utils.Builders;
-import fr.themsou.utils.components.NodeMenuItem;
+import fr.themsou.utils.DialogBuilder;
+import fr.themsou.components.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
-import fr.themsou.utils.TR;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.language.TR;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -146,7 +145,7 @@ public class FileListItem extends ListCell<File>{
 
             item4.setOnAction(e -> {
 
-                Alert alert = Builders.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
                 alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document") + " " + file.getName() + " " + TR.tr("et son édition ?"));
                 alert.setContentText(TR.tr("Cette action est irréversible."));
 

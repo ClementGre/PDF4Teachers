@@ -1,12 +1,10 @@
 package fr.themsou.utils.style;
 
 import fr.themsou.main.Main;
-import fr.themsou.panel.leftBar.texts.TextTreeView;
-import fr.themsou.windows.MainWindow;
+import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
