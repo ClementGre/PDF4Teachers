@@ -32,9 +32,9 @@ public class Macro {
                         int i = Integer.parseInt(e.getCode().getChar());
                         if(i == 0) return;
 
-                        if(MainWindow.lbTextTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
-                        if(i <= MainWindow.lbTextTab.treeView.favoritesSection.getChildren().size()){
-                            ((TextTreeItem) MainWindow.lbTextTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
+                        if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
+                        if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size()){
+                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
                             return;
                         }
 
@@ -43,9 +43,9 @@ public class Macro {
                         int i = Integer.parseInt(keyName);
                         if(i == 0) return;
 
-                        if(MainWindow.lbTextTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
-                        if(i <= MainWindow.lbTextTab.treeView.favoritesSection.getChildren().size()){
-                            ((TextTreeItem) MainWindow.lbTextTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
+                        if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
+                        if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size()){
+                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
                             return;
                         }
 
@@ -53,7 +53,7 @@ public class Macro {
 
                     if(e.getCode() == KeyCode.T){
                         MainWindow.leftBar.getSelectionModel().select(1);
-                        MainWindow.lbTextTab.newBtn.fire();
+                        MainWindow.textTab.newBtn.fire();
                         Element selected = MainWindow.mainScreen.getSelected();
                         if(selected != null){
                             if(selected instanceof TextElement){
@@ -73,7 +73,7 @@ public class Macro {
                     try{
                         int i = Integer.parseInt(e.getCode().getChar())-1;
                         if(i == -1){
-                            MainWindow.lbTextTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
+                            MainWindow.textTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
                         }
                         if(i < TextTreeSection.lists.size()){
@@ -81,7 +81,7 @@ public class Macro {
                             for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
-                                    MainWindow.lbTextTab.treeView.favoritesSection.listsManager.loadList(list, true);
+                                    MainWindow.textTab.treeView.favoritesSection.listsManager.loadList(list, true);
                                     return;
                                 }
                                 k++;
@@ -93,7 +93,7 @@ public class Macro {
                     try{
                         int i = Integer.parseInt(keyName)-1;
                         if(i == -1){
-                            MainWindow.lbTextTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
+                            MainWindow.textTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
                         }
                         if(i < TextTreeSection.lists.size()){
@@ -101,7 +101,7 @@ public class Macro {
                             for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
                                     MainWindow.leftBar.getSelectionModel().select(1);
-                                    MainWindow.lbTextTab.treeView.favoritesSection.listsManager.loadList(list, true);
+                                    MainWindow.textTab.treeView.favoritesSection.listsManager.loadList(list, true);
                                     return;
                                 }
                                 k++;

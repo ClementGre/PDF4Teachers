@@ -7,7 +7,7 @@ import java.util.Arrays;
 public class StringUtils {
 
     public static String removeBefore(String string, String rejex){
-
+        if(rejex.isEmpty()) return string;
         int index = string.indexOf(rejex);
 
         if(index == -1) return string;
@@ -33,7 +33,7 @@ public class StringUtils {
         }
     }
     public static String removeBeforeLastRejex(String string, String rejex){
-
+        if(rejex.isEmpty()) return string;
         int index = string.lastIndexOf(rejex);
 
         if(index == -1) return string;
@@ -42,7 +42,7 @@ public class StringUtils {
         return "";
     }
     public static String removeAfterLastRejex(String string, String rejex){
-
+        if(rejex.isEmpty()) return string;
         int index = string.lastIndexOf(rejex);
 
         if(index == -1) return string;
@@ -51,7 +51,7 @@ public class StringUtils {
         return "";
     }
     public static String removeAfter(String string, String rejex){
-
+        if(rejex.isEmpty()) return "";
         int index = string.indexOf(rejex);
 
         if(index == -1) return string;

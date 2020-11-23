@@ -3,7 +3,7 @@ package fr.themsou.panel.leftBar.grades.export;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
 import fr.themsou.panel.leftBar.grades.GradeRating;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
@@ -268,7 +268,7 @@ public class GradeExportRenderer {
 
 
         if(pane.type != 2){
-            for(File file : MainWindow.lbFilesTab.files.getItems()){
+            for(File file : MainWindow.filesTab.files.getItems()){
 
                 try{
                     if(MainWindow.mainScreen.document.getFile().equals(file)) continue;

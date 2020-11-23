@@ -4,6 +4,7 @@ import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
 import fr.themsou.utils.*;
 import fr.themsou.utils.callbacks.CallBack;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;

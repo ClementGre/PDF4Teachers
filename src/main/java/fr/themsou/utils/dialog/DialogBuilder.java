@@ -1,7 +1,9 @@
-package fr.themsou.utils;
+package fr.themsou.utils.dialog;
 
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
+import fr.themsou.utils.FilesUtils;
+import fr.themsou.utils.PaneUtils;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.interfaces.windows.language.TR;
@@ -31,6 +33,23 @@ public class DialogBuilder {
         return alert;
     }
 
+    public static boolean showWrongAlert(String headerText,String contentText, boolean continueAsk){
+        Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("Une erreur est survenue"));
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+
+        if(continueAsk){
+            ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.YES);
+            alert.getButtonTypes().setAll(stopAll, continueRender);
+
+            Optional<ButtonType> option = alert.showAndWait();
+            if(option.get() == stopAll) return true;
+        }else{
+            alert.show();
+        }
+        return false;
+    }
     public static boolean showErrorAlert(String headerText, String error, boolean continueAsk){
         Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("Une erreur est survenue"));
         alert.setHeaderText(headerText);
@@ -46,8 +65,8 @@ public class DialogBuilder {
         alert.getDialogPane().setExpandableContent(expContent);
 
         if(continueAsk){
-            ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-            ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+            ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.YES);
             alert.getButtonTypes().setAll(stopAll, continueRender);
 
             Optional<ButtonType> option = alert.showAndWait();
@@ -57,22 +76,39 @@ public class DialogBuilder {
         }
         return false;
     }
-
+    public static File showFileDialog(boolean syncWithLastOpenDir){
+        File[] files = showFilesDialog(syncWithLastOpenDir, false, TR.tr("Fichier PDF"), "*.pdf");
+        return files == null ? null : files[0];
+    }
+    public static File showFileDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
+        File[] files = showFilesDialog(syncWithLastOpenDir, false, extensionsName, extensions);
+        return files == null ? null : files[0];
+    }
+    public static File[] showFilesDialog(boolean syncWithLastOpenDir){
+        return showFilesDialog(syncWithLastOpenDir, true, TR.tr("Fichier PDF"), "*.pdf");
+    }
+    public static File[] showFilesDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
+        return showFilesDialog(syncWithLastOpenDir, true, extensionsName, extensions);
+    }
     public static File[] showFilesDialog(boolean syncWithLastOpenDir, boolean multiple, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
+        if(multiple) chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
+        else chooser.setTitle(TR.tr("Sélectionner un fichier"));
         chooser.setInitialDirectory((syncWithLastOpenDir && UserData.lastOpenDir.exists()) ? UserData.lastOpenDir : new File(System.getProperty("user.home")));
-        List<File> listFiles;
+
+        List<File> listFiles = null;
         if(multiple) listFiles = chooser.showOpenMultipleDialog(Main.window);
-        else listFiles = Collections.singletonList(chooser.showOpenDialog(Main.window));
+        else{
+            File file = chooser.showOpenDialog(Main.window);
+            if(file != null) listFiles = Collections.singletonList(file);
+        }
 
         if(listFiles != null){
             if(listFiles.size() == 0) return null;
             File[] files = new File[listFiles.size()];
             files = listFiles.toArray(files);
-
-            if(syncWithLastOpenDir) UserData.lastOpenDir = files[0].getParentFile();
+            if(syncWithLastOpenDir) UserData.lastOpenDir = listFiles.get(0).getParentFile();
             return files;
         }
         return null;
@@ -86,7 +122,7 @@ public class DialogBuilder {
         File file = chooser.showDialog(Main.window);
         if(file != null){
             if(!file.exists()) return null;
-            if(syncWithLastOpenDir) UserData.lastOpenDir = file.getParentFile();
+            if(syncWithLastOpenDir) UserData.lastOpenDir = file;
             return file;
         }
         return null;

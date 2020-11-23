@@ -92,11 +92,11 @@ public class PageRenderer extends Pane{
                 if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
                     GradeTreeView.defineNaNLocations();
                     GradeTreeItem nextGrade = GradeTreeView.getNextLogicGrade();
-                    if(nextGrade != null) menu.getItems().add(new CustomMenuItem(nextGrade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+                    if(nextGrade != null) menu.getItems().add(new CustomMenuItem(nextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu)));
 
                     var gradeElement = GradeTreeView.getNextGrade(page, (int) e.getY());
                     GradeTreeItem grade = gradeElement == null ? null : gradeElement.getGradeTreeItem();
-                    if(grade != null) if(nextGrade != grade) menu.getItems().add(0, new CustomMenuItem(grade.getEditGraphics((int) MainWindow.lbTextTab.treeView.getWidth()-50, menu)));
+                    if(grade != null) if(nextGrade != grade) menu.getItems().add(0, new CustomMenuItem(grade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu)));
 
                 }
 
@@ -120,7 +120,7 @@ public class PageRenderer extends Pane{
 
                         sub.setLayoutY(-6);
                         sub.setPrefHeight(name.getLayoutBounds().getHeight()+7);
-                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.lbTextTab.treeView.getWidth() - 50));
+                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.textTab.treeView.getWidth() - 50));
 
                         pane.setPrefHeight(name.getLayoutBounds().getHeight()+7-14);
 
@@ -144,7 +144,7 @@ public class PageRenderer extends Pane{
             if(e.getClickCount() == 2){ // ADD TextElement when double click
 
                 MainWindow.leftBar.getSelectionModel().select(1);
-                MainWindow.lbTextTab.newBtn.fire();
+                MainWindow.textTab.newBtn.fire();
                 Element selected = MainWindow.mainScreen.getSelected();
                 if(selected != null){
                     if(selected instanceof TextElement){

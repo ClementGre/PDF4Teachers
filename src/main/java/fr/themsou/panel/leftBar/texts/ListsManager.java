@@ -2,7 +2,7 @@ package fr.themsou.panel.leftBar.texts;
 
 import fr.themsou.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.themsou.utils.PaneUtils;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.StyleManager;
@@ -77,8 +77,8 @@ public class ListsManager {
     }
 
     public static void setupMenus(){
-        MainWindow.lbTextTab.treeView.favoritesSection.listsManager.setupMenu();
-        MainWindow.lbTextTab.treeView.lastsSection.listsManager.setupMenu();
+        MainWindow.textTab.treeView.favoritesSection.listsManager.setupMenu();
+        MainWindow.textTab.treeView.lastsSection.listsManager.setupMenu();
     }
 
     public void setupMenu(){

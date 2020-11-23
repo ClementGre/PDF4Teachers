@@ -7,7 +7,7 @@ import fr.themsou.document.render.convert.ConvertWindow;
 import fr.themsou.document.render.convert.ConvertedFile;
 import fr.themsou.main.Main;
 import fr.themsou.main.UserData;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;

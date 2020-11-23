@@ -4,7 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.document.editions.elements.TextElement;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.PlatformUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import javafx.scene.control.Alert;

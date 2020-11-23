@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import fr.themsou.utils.callbacks.CallBack;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;

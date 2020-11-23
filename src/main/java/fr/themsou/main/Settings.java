@@ -75,13 +75,13 @@ public class Settings {
         });
         showOnlyStartInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(MainWindow.lbTextTab != null) TextTreeView.updateListsGraphic();
+            if(MainWindow.textTab != null) TextTreeView.updateListsGraphic();
         });
         smallFontInTextsListProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
             saveSettings();
-            if(MainWindow.lbTextTab != null) TextTreeView.updateListsGraphic();
-            if(t1) MainWindow.lbTextTab.txtArea.setStyle("-fx-font-size: 12");
-            else MainWindow.lbTextTab.txtArea.setStyle("-fx-font-size: 13");
+            if(MainWindow.textTab != null) TextTreeView.updateListsGraphic();
+            if(t1) MainWindow.textTab.txtArea.setStyle("-fx-font-size: 12");
+            else MainWindow.textTab.txtArea.setStyle("-fx-font-size: 13");
         });
 
         /////

@@ -2,7 +2,7 @@ package fr.themsou.panel.leftBar.grades.export;
 
 import fr.themsou.main.Main;
 import fr.themsou.utils.PaneUtils;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;

@@ -8,7 +8,7 @@ import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.main.Main;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;
@@ -273,7 +273,7 @@ public class MainScreen extends Pane {
 		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		status.set(Status.OPEN);
-		MainWindow.lbFilesTab.files.getSelectionModel().select(file);
+		MainWindow.filesTab.files.getSelectionModel().select(file);
 
 		document.showPages();
 		try{

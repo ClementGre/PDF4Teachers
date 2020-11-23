@@ -76,7 +76,7 @@ public class TextElement extends Element {
 	}
 	@Override
 	protected void onMouseRelease(){
-		MainWindow.lbTextTab.treeView.onFileSection.sortManager.simulateCall();
+		MainWindow.textTab.treeView.onFileSection.sortManager.simulateCall();
 	}
 	@Override
 	protected void setupMenu(){
@@ -105,7 +105,7 @@ public class TextElement extends Element {
 	public void select(){
 		super.selectPartial();
 		MainWindow.leftBar.getSelectionModel().select(1);
-		MainWindow.lbTextTab.selectItem();
+		MainWindow.textTab.selectItem();
 	}
 	@Override
 	public void doubleClick() {
@@ -113,11 +113,11 @@ public class TextElement extends Element {
 	}
 	@Override
 	public void addedToDocument(boolean silent) {
-		if(!silent) MainWindow.lbTextTab.treeView.onFileSection.addElement(this);
+		if(!silent) MainWindow.textTab.treeView.onFileSection.addElement(this);
 	}
 	@Override
 	public void removedFromDocument(boolean silent) {
-		if(!silent) MainWindow.lbTextTab.treeView.onFileSection.removeElement(this);
+		if(!silent) MainWindow.textTab.treeView.onFileSection.removeElement(this);
 	}
 
 	// READER AND WRITERS

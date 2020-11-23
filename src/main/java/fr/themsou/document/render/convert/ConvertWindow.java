@@ -3,6 +3,7 @@ package fr.themsou.document.render.convert;
 import fr.themsou.main.Main;
 import fr.themsou.utils.*;
 import fr.themsou.utils.callbacks.CallBack;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
 import fr.themsou.interfaces.windows.MainWindow;
@@ -261,7 +262,7 @@ public class ConvertWindow extends Stage {
 
                 HBox filePathBox = new HBox();
 
-                outDir = new TextField(MainWindow.lbFilesTab.getCurrentDir() != null ? MainWindow.lbFilesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
+                outDir = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
                 PaneUtils.setHBoxPosition(outDir, -1, 30, 0, 2.5);
 
                 Button changePath = new Button(TR.tr("Parcourir"));
@@ -275,7 +276,7 @@ public class ConvertWindow extends Stage {
 
                     final DirectoryChooser chooser = new DirectoryChooser();
                     chooser.setTitle(TR.tr("Sélectionner un dossier"));
-                    chooser.setInitialDirectory(new File(outDir.getText()).exists() ? new File(outDir.getText()) : ((MainWindow.lbFilesTab.getCurrentDir() == null ? new File(MainWindow.userData.lastConvertSrcDir) : MainWindow.lbFilesTab.getCurrentDir())));
+                    chooser.setInitialDirectory(new File(outDir.getText()).exists() ? new File(outDir.getText()) : ((MainWindow.filesTab.getCurrentDir() == null ? new File(MainWindow.userData.lastConvertSrcDir) : MainWindow.filesTab.getCurrentDir())));
 
                     File file = chooser.showDialog(Main.window);
                     if(file != null){

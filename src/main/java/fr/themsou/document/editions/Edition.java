@@ -9,7 +9,7 @@ import fr.themsou.main.Main;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.panel.leftBar.grades.GradeTreeItem;
 import fr.themsou.panel.leftBar.grades.GradeTreeView;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
@@ -23,6 +23,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class Edition {
 
@@ -71,7 +72,7 @@ public class Edition {
             }
 
         }catch (IOException e){ e.printStackTrace(); }
-        MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
+        MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }
     public void save(){
         if(Edition.isSave()) return;
@@ -117,7 +118,7 @@ public class Edition {
         }
 
         isSave.set(true);
-        MainWindow.lbFilesTab.files.refresh();
+        MainWindow.filesTab.files.refresh();
 
     }
     public void loadHEX(File file){
@@ -141,7 +142,7 @@ public class Edition {
                 reader.close();
             }
         }catch (IOException e){ e.printStackTrace(); }
-        MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
+        MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }
 
     // STATIC
@@ -245,12 +246,16 @@ public class Edition {
     }
 
     // get YAML file from PDF file
-    public static File getEditFile(File file){
-        return new File(Main.dataFolder + "editions" + File.separator + file.getParentFile().getAbsolutePath().replace(File.separator, "!E!").replace(":", "!P!") + "!E!" + file.getName() + ".yml");
+    public static File getEditFile(File pdfFile){
+        String namePath = pdfFile.getParentFile().getAbsolutePath().replace(File.separator, "!E!").replace(":", "!P!");
+        String nameName = pdfFile.getName() + ".yml";
+        return new File(Main.dataFolder + "editions" + File.separator + namePath + "!E!" + nameName);
     }
     // get PDF file from YAML file
-    public static File getFileEdit(File file){
-        return new File(file.getName().replaceAll("!E!", "\\" + File.separator).replaceAll("!P!", ":").replace(".yml", ""));
+    public static File getFileEdit(File editFile){
+        String path = editFile.getName().replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
+        path = StringUtils.removeAfterLastRejex(path, ".yml");
+        return new File(path);
     }
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){
         try{
@@ -300,7 +305,7 @@ public class Edition {
                 }
             }
             Edition.getEditFile(file).delete();
-            MainWindow.lbFilesTab.files.refresh();
+            MainWindow.filesTab.files.refresh();
         }
     }
 
@@ -320,7 +325,7 @@ public class Edition {
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
-            MainWindow.lbTextTab.treeView.onFileSection.updateElementsList();
+            MainWindow.textTab.treeView.onFileSection.updateElementsList();
             MainWindow.gradeTab.treeView.clear();
 
             Edition.setUnsave();

@@ -39,10 +39,10 @@ public class MainWindow extends Stage{
     public static MenuBar menuBar;
 
     public static TabPane leftBar;
-    public static FileTab lbFilesTab;
-    public static TextTab lbTextTab;
+    public static FileTab filesTab;
+    public static TextTab textTab;
     public static GradeTab gradeTab;
-    public static PaintTab lbPaintTab;
+    public static PaintTab paintTab;
 
 
     Thread userDataSaver = new Thread(() -> {
@@ -92,10 +92,10 @@ public class MainWindow extends Stage{
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
 
-        lbFilesTab = new FileTab();
-        lbTextTab = new TextTab();
+        filesTab = new FileTab();
+        textTab = new TextTab();
         gradeTab = new GradeTab();
-        lbPaintTab = new PaintTab();
+        paintTab = new PaintTab();
 
         menuBar = new MenuBar();
 

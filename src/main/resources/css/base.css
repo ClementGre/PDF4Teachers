@@ -12,9 +12,6 @@ Text{
 Hyperlink{
     -fx-font-size: 14;
 }
-.menu-bar{
-    -fx-use-system-menu-bar: true;
-}
 .menu .label, .menu{
     -fx-font-size: 12;
 }

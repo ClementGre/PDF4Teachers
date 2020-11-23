@@ -2,7 +2,7 @@ package fr.themsou.document.render.export;
 
 import fr.themsou.document.editions.Edition;
 import fr.themsou.main.Main;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.PlatformUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.utils.style.Style;

@@ -1,13 +1,14 @@
 package fr.themsou.panel;
 
 import fr.themsou.document.editions.Edition;
-import fr.themsou.document.editions.EditionUtils;
+import fr.themsou.document.editions.EditionExporter;
 import fr.themsou.document.render.convert.ConvertDocument;
 import fr.themsou.document.render.display.PageEditPane;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.panel.MainScreen.MainScreen;
 import fr.themsou.components.NodeMenuItem;
 import fr.themsou.components.NodeRadioMenuItem;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.image.ImageUtils;
 import fr.themsou.utils.style.Style;
 import fr.themsou.utils.style.StyleManager;
@@ -248,9 +249,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		file1Open.setOnAction((ActionEvent actionEvent) -> {
 
-			File[] files = DialogBuilder.showFilesDialog(true, true, TR.tr("Fichier PDF"), "*.pdf");
+			File[] files = DialogBuilder.showFilesDialog(true);
 			if(files != null){
-				MainWindow.lbFilesTab.openFiles(files);
+				MainWindow.filesTab.openFiles(files);
 				if(files.length == 1){
 					MainWindow.mainScreen.openFile(files[0]);
 				}
@@ -260,11 +261,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			File directory = DialogBuilder.showDirectoryDialog(true);
 			if(directory != null) {
-				MainWindow.lbFilesTab.openFiles(new File[]{directory});
+				MainWindow.filesTab.openFiles(new File[]{directory});
 			}
 		});
 		file3Clear.setOnAction((ActionEvent actionEvent) -> {
-			MainWindow.lbFilesTab.clearFiles();
+			MainWindow.filesTab.clearFiles();
 		});
 		file4Save.setOnAction((ActionEvent actionEvent) -> {
 			if(MainWindow.mainScreen.hasDocument(true)){
@@ -290,7 +291,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		file8ExportAll.setOnAction((ActionEvent actionEvent) -> {
 
 			if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
-			new ExportWindow(MainWindow.lbFilesTab.files.getItems());
+			new ExportWindow(MainWindow.filesTab.files.getItems());
 
 		});
 
@@ -316,7 +317,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			float yesButSize = FilesUtils.convertOctetToMo(FilesUtils.getSize(new File(Main.dataFolder + "editions")));
 			float yesSize = 0L;
-			for(File file : MainWindow.lbFilesTab.files.getItems()){
+			for(File file : MainWindow.filesTab.files.getItems()){
 				File editFile = Edition.getEditFile(file);
 				yesSize += FilesUtils.getSize(editFile);
 			}yesSize = FilesUtils.convertOctetToMo((long) yesSize);
@@ -330,7 +331,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			float size = 0L;
 			if(option.get() == yes){
 				if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.edition.clearEdit(false);
-				for(File file : MainWindow.lbFilesTab.files.getItems()){
+				for(File file : MainWindow.filesTab.files.getItems()){
 					Edition.getEditFile(file).delete();
 				}
 				size = yesSize;
@@ -378,7 +379,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 							Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
 							MainWindow.mainScreen.document.loadEdition();
 
-							for(File otherFileDest : MainWindow.lbFilesTab.files.getItems()){
+							for(File otherFileDest : MainWindow.filesTab.files.getItems()){
 								if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
 									File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
 
@@ -405,10 +406,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			PaneUtils.setMenuSize(tools5SameNameEditions);
 		});
 
-		tools6ExportEdition1All.setOnAction((e) -> EditionUtils.showExportDialog(false));
-		tools6ExportEdition2Grades.setOnAction((e) -> EditionUtils.showExportDialog(true));
-		tools7ImportEdition1All.setOnAction((e) -> EditionUtils.showImportDialog(false));
-		tools7ImportEdition2Grades.setOnAction((e) -> EditionUtils.showImportDialog(true));
+		tools6ExportEdition1All.setOnAction((e) -> EditionExporter.showExportDialog(false));
+		tools6ExportEdition2Grades.setOnAction((e) -> EditionExporter.showExportDialog(true));
+		tools7ImportEdition1All.setOnAction((e) -> EditionExporter.showImportDialog(false));
+		tools7ImportEdition2Grades.setOnAction((e) -> EditionExporter.showImportDialog(true));
 
 		tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
 		tools8Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
@@ -580,7 +581,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		if(disableIfNoDoc){
 			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
 		}if(disableIfNoList){
-			menuItem.disableProperty().bind(Bindings.size(MainWindow.lbFilesTab.files.getItems()).isEqualTo(0));
+			menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.files.getItems()).isEqualTo(0));
 		}
 		return menuItem;
 

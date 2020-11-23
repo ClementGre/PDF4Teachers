@@ -5,7 +5,7 @@ import fr.themsou.document.render.display.PDFPagesRender;
 import fr.themsou.document.render.display.PageRenderer;
 import fr.themsou.document.render.display.PageStatus;
 import fr.themsou.main.Main;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
 import javafx.application.Platform;

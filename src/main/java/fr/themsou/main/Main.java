@@ -42,7 +42,7 @@ public class Main extends Application {
 				Desktop.getDesktop().setOpenFileHandler(e -> {
 					System.out.println(e.getFiles().get(0).getAbsolutePath());
 					if(window.isShowing()){
-						MainWindow.lbFilesTab.openFiles((File[]) e.getFiles().toArray());
+						MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
 						if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
 
 					}

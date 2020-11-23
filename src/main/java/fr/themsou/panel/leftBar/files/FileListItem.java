@@ -3,7 +3,7 @@ package fr.themsou.panel.leftBar.files;
 import fr.themsou.document.editions.Edition;
 import fr.themsou.document.render.export.ExportWindow;
 import fr.themsou.main.Main;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.components.NodeMenuItem;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.interfaces.windows.language.TR;
@@ -69,7 +69,7 @@ public class FileListItem extends ListCell<File>{
         }else{
 
             if(!file.exists()){
-                MainWindow.lbFilesTab.removeFile(file);
+                MainWindow.filesTab.removeFile(file);
                 return;
             }
 
@@ -139,7 +139,7 @@ public class FileListItem extends ListCell<File>{
 
             item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(file)));
 
-            item2.setOnAction(e -> MainWindow.lbFilesTab.removeFile(file));
+            item2.setOnAction(e -> MainWindow.filesTab.removeFile(file));
 
             item3.setOnAction(e ->  Edition.clearEdit(file, true));
 
@@ -157,7 +157,7 @@ public class FileListItem extends ListCell<File>{
                             MainWindow.mainScreen.closeFile(false);
                         }
                     }
-                    MainWindow.lbFilesTab.removeFile(file);
+                    MainWindow.filesTab.removeFile(file);
                     Edition.clearEdit(file, false);
                     file.delete();
                 }
@@ -176,7 +176,7 @@ public class FileListItem extends ListCell<File>{
                 }
 
             });
-            item6.setOnAction(e -> MainWindow.lbFilesTab.clearFiles());
+            item6.setOnAction(e -> MainWindow.filesTab.clearFiles());
 
             setContextMenu(menu);
         }

@@ -30,6 +30,20 @@ public class FilesUtils {
 
     public static String getExtension(String fileName){
         String[] splitted = fileName.split(Pattern.quote("."));
+        if(splitted.length == 0 || splitted.length == 1) return "";
         return splitted[splitted.length-1];
+    }
+
+    public static boolean isInSameDir(File file1, File file2){
+        return file1.getParentFile().getAbsolutePath().equals(file2.getParentFile().getAbsolutePath());
+    }
+
+    public static String getPathReplacingUserHome(File file){
+        return getPathReplacingUserHome(file.getAbsolutePath());
+    }
+    public static String getPathReplacingUserHome(String path){
+        if(path.startsWith(System.getProperty("user.home"))){
+            return path.replaceFirst(Pattern.quote(System.getProperty("user.home")), "~");
+        }else return path;
     }
 }

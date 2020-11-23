@@ -4,7 +4,7 @@ import fr.themsou.document.editions.Edition;
 import fr.themsou.document.editions.elements.Element;
 import fr.themsou.document.editions.elements.GradeElement;
 import fr.themsou.main.Main;
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
 import javafx.scene.control.Alert;
@@ -38,7 +38,7 @@ public class GradeCopyGradeScaleDialog {
         int copiedEditions = 0;
         if(option.get() == yes){
             prepareCopyEditions();
-            for(File file : MainWindow.lbFilesTab.files.getItems()){
+            for(File file : MainWindow.filesTab.getOpenedFiles()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
                     int result = copyToFile(file);
@@ -48,7 +48,7 @@ public class GradeCopyGradeScaleDialog {
             }
         }else if(option.get() == yesAll){
             prepareCopyEditions();
-            for(File file : MainWindow.lbFilesTab.files.getItems()){
+            for(File file : MainWindow.filesTab.getOpenedFiles()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 int result = copyToFile(file);
                 if(result == 0) copiedEditions++;
@@ -61,7 +61,7 @@ public class GradeCopyGradeScaleDialog {
         alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectés") + ".)");
         alert.show();
 
-        MainWindow.lbFilesTab.files.refresh();
+        MainWindow.filesTab.refresh();
 
     }
 

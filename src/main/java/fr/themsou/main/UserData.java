@@ -89,8 +89,8 @@ public class UserData {
                     for(Object filePath : Config.getList(files, "lastFiles")){
                         Platform.runLater(() ->{
                             File lastFile = new File(filePath.toString());
-                            if(lastFile.exists()) MainWindow.lbFilesTab.originalFiles.add(lastFile);
-                            MainWindow.lbFilesTab.backOpenFilesList(false);
+                            if(lastFile.exists()) MainWindow.filesTab.originalFiles.add(lastFile);
+                            MainWindow.filesTab.backOpenFilesList(false);
                         });
                     }
                     File lastFile = new File(Config.getString(files, "lastFile"));
@@ -105,11 +105,11 @@ public class UserData {
 
                 Platform.runLater(() -> {
                     for(Object data : Config.getList(texts, "favorites")){
-                        if(data instanceof Map) MainWindow.lbTextTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
+                        if(data instanceof Map) MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
                     }
 
                     for(Object data : Config.getList(texts, "lasts")){
-                        if(data instanceof Map) MainWindow.lbTextTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
+                        if(data instanceof Map) MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
                     }
 
                     for(Map.Entry<String, Object> list : Config.getSection(texts, "lists").entrySet()){
@@ -125,11 +125,11 @@ public class UserData {
 
                 HashMap<String, Object> lastTextFont = Config.getSection(texts, "lastFont");
                 if(lastTextFont.size() == 5){
-                    MainWindow.lbTextTab.lastFont = Config.getString(lastTextFont, "font");
-                    MainWindow.lbTextTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
-                    MainWindow.lbTextTab.lastColor = Config.getString(lastTextFont, "color");
-                    MainWindow.lbTextTab.lastBold = Config.getBoolean(lastTextFont, "bold");
-                    MainWindow.lbTextTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+                    MainWindow.textTab.lastFont = Config.getString(lastTextFont, "font");
+                    MainWindow.textTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
+                    MainWindow.textTab.lastColor = Config.getString(lastTextFont, "color");
+                    MainWindow.textTab.lastBold = Config.getBoolean(lastTextFont, "bold");
+                    MainWindow.textTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
                 }
 
 
@@ -206,8 +206,8 @@ public class UserData {
             if(!new File(lastConvertSrcDir).exists()) lastConvertSrcDir = System.getProperty("user.home");
 
             Platform.runLater(() -> {
-                MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
-                MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
+                MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
+                MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
                 ListsManager.setupMenus();
             });
 
@@ -234,11 +234,11 @@ public class UserData {
 
                                 // LAST FONTS (TEXT_TAB)
 
-                                MainWindow.lbTextTab.lastFont = reader.readUTF();
-                                MainWindow.lbTextTab.lastFontSize =reader.readInt();
-                                MainWindow.lbTextTab.lastColor = reader.readUTF();
-                                MainWindow.lbTextTab.lastBold = reader.readBoolean();
-                                MainWindow.lbTextTab.lastItalic = reader.readBoolean();
+                                MainWindow.textTab.lastFont = reader.readUTF();
+                                MainWindow.textTab.lastFontSize =reader.readInt();
+                                MainWindow.textTab.lastColor = reader.readUTF();
+                                MainWindow.textTab.lastBold = reader.readBoolean();
+                                MainWindow.textTab.lastItalic = reader.readBoolean();
 
                                 // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
 
@@ -274,12 +274,12 @@ public class UserData {
                         break;
                         case DataType.TEXT_ELEMENT_FAVORITE: // Favorite TextElement
                             try{
-                                MainWindow.lbTextTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.FAVORITE_TYPE));
+                                MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.FAVORITE_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LAST: // Last TextElement
                             try{
-                                MainWindow.lbTextTab.treeView.lastsSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.LAST_TYPE));
+                                MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.LAST_TYPE));
                             }catch(Exception e){ e.printStackTrace(); }
                         break;
                         case DataType.TEXT_ELEMENT_LIST: // List TextElement
@@ -295,8 +295,8 @@ public class UserData {
                 }
                 reader.close();
 
-                MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
-                MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
+                MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
+                MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
                 ListsManager.setupMenus();
 
                 file.delete();
@@ -317,7 +317,7 @@ public class UserData {
             LinkedHashMap<Object, Object> files = new LinkedHashMap<>();
 
             ArrayList<String> lastFiles = new ArrayList<>();
-            for(File file : MainWindow.lbFilesTab.originalFiles){
+            for(File file : MainWindow.filesTab.originalFiles){
                 lastFiles.add(file.getAbsolutePath());
             }
             files.put("lastFiles", lastFiles);
@@ -329,7 +329,7 @@ public class UserData {
 
             LinkedHashMap<Object, Object> texts = new LinkedHashMap<>();
             List<Object> favoriteTexts = new ArrayList<>();
-            for(Object item : MainWindow.lbTextTab.treeView.favoritesSection.getChildren()){
+            for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
                 if(item instanceof TextTreeItem){
                     favoriteTexts.add(((TextTreeItem) item).getYAMLData());
                 }
@@ -337,7 +337,7 @@ public class UserData {
             texts.put("favorites", favoriteTexts);
 
             ArrayList<Object> lastTexts = new ArrayList<>();
-            for(Object item : MainWindow.lbTextTab.treeView.lastsSection.getChildren()){
+            for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
                 if(item instanceof TextTreeItem){
                     lastTexts.add(((TextTreeItem) item).getYAMLData());
                 }
@@ -355,11 +355,11 @@ public class UserData {
             texts.put("lists", lists);
 
             LinkedHashMap<Object, Object> lastTextFont = new LinkedHashMap<>();
-            lastTextFont.put("font", MainWindow.lbTextTab.lastFont);
-            lastTextFont.put("size", MainWindow.lbTextTab.lastFontSize);
-            lastTextFont.put("color", MainWindow.lbTextTab.lastColor);
-            lastTextFont.put("bold", MainWindow.lbTextTab.lastBold);
-            lastTextFont.put("italic", MainWindow.lbTextTab.lastItalic);
+            lastTextFont.put("font", MainWindow.textTab.lastFont);
+            lastTextFont.put("size", MainWindow.textTab.lastFontSize);
+            lastTextFont.put("color", MainWindow.textTab.lastColor);
+            lastTextFont.put("bold", MainWindow.textTab.lastBold);
+            lastTextFont.put("italic", MainWindow.textTab.lastItalic);
             texts.put("lastFont", lastTextFont);
 
             config.base.put("texts", texts);

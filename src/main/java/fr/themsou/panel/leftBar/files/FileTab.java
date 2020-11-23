@@ -15,6 +15,7 @@ import fr.themsou.utils.sort.Sorter;
 import fr.themsou.interfaces.windows.MainWindow;
 import fr.themsou.interfaces.windows.language.TR;
 import javafx.beans.binding.Bindings;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -204,7 +205,7 @@ public class FileTab extends Tab {
 
 	private void updateOpenFilesList(){
 		originalFiles.clear();
-		originalFiles.addAll(MainWindow.lbFilesTab.files.getItems());
+		originalFiles.addAll(MainWindow.filesTab.files.getItems());
 	}
 	public void backOpenFilesList(boolean reverse){
 		files.getItems().clear();
@@ -219,6 +220,13 @@ public class FileTab extends Tab {
 		if(MainWindow.mainScreen.hasDocument(false)) return MainWindow.mainScreen.document.getFile().getParentFile();
 		if(files.getItems().size() != 0) return files.getItems().get(0).getParentFile();
 		return null;
+	}
+
+	public ObservableList<File> getOpenedFiles(){
+		return files.getItems();
+	}
+	public void refresh(){
+		files.refresh();
 	}
 
 }

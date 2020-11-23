@@ -1,6 +1,6 @@
 package fr.themsou.document.render.convert;
 
-import fr.themsou.utils.DialogBuilder;
+import fr.themsou.utils.dialog.DialogBuilder;
 import fr.themsou.utils.StringUtils;
 import fr.themsou.interfaces.windows.language.TR;
 import fr.themsou.interfaces.windows.MainWindow;
@@ -65,7 +65,7 @@ public class ConvertDocument {
                 }catch(IOException e){ e.printStackTrace(); }
 
 
-                MainWindow.lbFilesTab.openFiles(new File[]{file.file});
+                MainWindow.filesTab.openFiles(new File[]{file.file});
                 converted++;
             }
 

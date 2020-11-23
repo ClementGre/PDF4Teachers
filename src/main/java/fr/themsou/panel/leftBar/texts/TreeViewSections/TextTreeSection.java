@@ -111,7 +111,7 @@ public abstract class TextTreeSection extends TreeItem {
 
         sortManager.updateGraphics();
 
-        MainWindow.lbTextTab.treeView.refresh();
+        MainWindow.textTab.treeView.refresh();
     }
     public void updateCell(TreeCell cell){
         cell.setOnMouseClicked(null);

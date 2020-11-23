@@ -107,12 +107,12 @@ public class TextTreeItem extends TreeItem{
 				addToDocument(false);
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
-					if(MainWindow.lbTextTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-						MainWindow.lbTextTab.treeView.favoritesSection.sortManager.simulateCall();
+					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
 					}
 				}else if(getType() == TextTreeSection.LAST_TYPE){
-					if(MainWindow.lbTextTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
-						MainWindow.lbTextTab.treeView.lastsSection.sortManager.simulateCall();
+					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
 					}
 				}
 			}
@@ -131,7 +131,7 @@ public class TextTreeItem extends TreeItem{
 
 		int cellHeight = (Main.settings.isSmallFontInTextsList() ? 14 : 18);
 
-		int maxWidth = (int) (MainWindow.lbTextTab.treeView.getWidth() - 45);
+		int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 45);
 		if(maxWidth < 0) return;
 
 		Font font = getListFont();
