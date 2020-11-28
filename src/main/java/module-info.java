@@ -1,4 +1,4 @@
-module fr.themsou {
+module fr.clementgre.pdf4teachers {
 
     // JAVA MODULES
 
@@ -35,21 +35,21 @@ module fr.themsou {
 
     // EXPORTS
 
-    exports fr.themsou.yaml;
-    exports fr.themsou.main;
-    exports fr.themsou.document;
-    exports fr.themsou.document.render.display;
-    exports fr.themsou.document.render.export;
-    exports fr.themsou.document.editions;
-    exports fr.themsou.document.editions.elements;
-    exports fr.themsou.panel;
-    exports fr.themsou.panel.leftBar.files;
-    exports fr.themsou.panel.leftBar.texts;
-    exports fr.themsou.panel.leftBar.texts.TreeViewSections;
-    exports fr.themsou.panel.leftBar.grades;
-    exports fr.themsou.panel.leftBar.paint;
-    exports fr.themsou.panel.leftBar.grades.export;
-    exports fr.themsou.utils;
-    exports fr.themsou.interfaces.windows;
-    opens fr.themsou.interfaces;
+    exports fr.clementgre.pdf4teachers;
+    exports fr.clementgre.pdf4teachers.datasaving;
+    exports fr.clementgre.pdf4teachers.document;
+    exports fr.clementgre.pdf4teachers.document.render.display;
+    exports fr.clementgre.pdf4teachers.document.render.export;
+    exports fr.clementgre.pdf4teachers.document.editions;
+    exports fr.clementgre.pdf4teachers.document.editions.elements;
+    exports fr.clementgre.pdf4teachers.panel;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.files;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.texts;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.grades;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.paint;
+    exports fr.clementgre.pdf4teachers.panel.leftBar.grades.export;
+    exports fr.clementgre.pdf4teachers.utils;
+    exports fr.clementgre.pdf4teachers.interfaces.windows;
+    opens fr.clementgre.pdf4teachers.interfaces;
 }

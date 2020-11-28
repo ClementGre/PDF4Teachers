@@ -43,7 +43,7 @@ javafx {
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-mainClassName = "fr.themsou/fr.themsou.main.Main"
+mainClassName = "fr.clementgre.pdf4teachers/fr.clementgre.pdf4teachers.Main"
 
 version = "1.2.0"
 description = "Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs."

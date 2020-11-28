@@ -83,29 +83,29 @@ Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink e
 
 ## L'organisation du code (1.2.0)
 
-*Les noms de packages commençants par un ``.`` représentent des packages de ``fr.themsou``*
+*Les noms de packages commençants par un ``.`` représentent des packages de ``fr.clementgre``*
 
-La classe main se situe dans le package ``fr.themsou.main``
+La classe main se situe dans le package ``fr.clementgre.main``
 
 **Démmarage de l'application**
 
 Au démarrage de l'application, ``Main`` va vérifier si une langue est définie, si non, elle va ouvrir la fenêtre de choix de langage (``.windows.LanguageWindow``). Elle va ensuite ouvir la fenêtre de validation de liscence (``.windows.LicenceWindow``) si l'application est à son premier démarrage (Détecté avec la présence du fichier ``settings.yml``).
 Enfin, Main va appeler (``.windows.MainWindow``) qui va tout initialiser et préparer l'interface principale.
-(Toutes les classes de ``fr.themsou.windows`` étendent de ``Stage``, qui représente une fenêtre dans JavaFx).
+(Toutes les classes de ``fr.clementgre.windows`` étendent de ``Stage``, qui représente une fenêtre dans JavaFx).
 
-**Classes des éléments graphiques de JavaFX (``fr.themsou.panel``)**
+**Classes des éléments graphiques de JavaFX (``fr.clementgre.panel``)**
 
-Chaque classe ou package du package ``fr.themsou.panel`` et ``fr.themsou.panel.leftBar`` représentent un élément graphique de l'écran, elle étendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
+Chaque classe ou package du package ``fr.clementgre.panel`` et ``fr.clementgre.panel.leftBar`` représentent un élément graphique de l'écran, elle étendent indirectement de ``javafx.scene.Node``, (JPanel en Swing).
 
 On y retrouve donc FooterBar (La barre d'état en bas), MenuBar (Le Menu en haut), MainScreen (là où s'affichera le document à éditer) et quelques classes du package LeftBar qui sont les différents ``Tab`` du ``TabPane`` initialisé dans MainWindow (``LBFilesTab``, ``LBTextTab``, ``LBGradeTab``, ``LBPaintTab``). Ces classes sont accompagnés d'autres classes dont les ``xxxTreeView`` ou ``xxxListView`` qui représentent un arbre ou une liste JavaFX. On retrouve aussi les ``xxxTreeItem`` ou ``xxxListItem`` qui représentent un élément de l'arbre (ou de la liste). Ces classes ont généralement une variable ``core``, qui représente l'élément de ``.document.editions.elements`` qui lui correspond.
 
-**Classes des éléments (``fr.themsou.document.editions.elements``)**
+**Classes des éléments (``fr.clementgre.document.editions.elements``)**
 
 Ces différents éléments (texte, notes et formes géométriques) ont des classes attribués dans ``.document.editions.elements`` qui étendent ``Element``. ``Element`` étend de ``Region`` (Conteneur JavaFX). Ces différentes classes qui étendent ``Element`` contiennent un composant JavaFx, qui sera le "children" de la ``Region`` que représente la classe. ``Element`` s'occupe de toutes les fonctionnalités communes (coordonnés, interactions...).
 
-**Classes pour gérer les documents PDF (``fr.themsou.document``)**
+**Classes pour gérer les documents PDF (``fr.clementgre.document``)**
 
-À l'ouverture d'un document, ``fr.themsou.panel.MainScreen.MainScreen`` initialisera :
+À l'ouverture d'un document, ``MainScreen`` initialisera :
 - ``.document.Document`` qui initialisera sous demande de MainScreen :
 
   - ``.document.editions.Edition`` qui chargera l'édition du document depuis un fichier écrit en YAML et stocké dans ``<Dossier Utilisateur>/.PDF4Teachers/<nom de l'édition>.yml`` sous Mac et Linux et dans ``<AppData/Romaning>/PDF4Teachers/<nom de l'édition>.yml`` sous Windows. Il traduira l'Hexadécimal en classes du package (``.document.edition.elements``) et les ajoutera aux instances de PageRenderer enregistrés dans ``Document``. Il pourra aussi écrire les fichiers lors de la sauvegarde.
