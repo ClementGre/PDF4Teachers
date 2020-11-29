@@ -111,6 +111,7 @@ public class ConvertWindow extends Stage {
         // SHOW
 
         show();
+        Main.window.centerWindowIntoMe(this);
     }
 
     public class ConvertPane extends Tab {

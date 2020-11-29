@@ -67,6 +67,9 @@ public class LanguageWindow extends Stage{
         setupPanel(root);
 
         show();
+        if(Main.window != null){
+            Main.window.centerWindowIntoMe(this);
+        }
     }
 
     public static String getLanguageFromComputerLanguage() {

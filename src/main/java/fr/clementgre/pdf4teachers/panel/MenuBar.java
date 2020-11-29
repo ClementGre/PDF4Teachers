@@ -113,14 +113,17 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		NodeMenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-	Menu tools8Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
+	NodeMenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), "fullscreen", null,
+			TR.tr("Passe l'application en mode plein écran"));
+
+	Menu tools9Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
 			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), false);
 
-		NodeMenuItem tools8Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+		NodeMenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
 				TR.tr("Ouvre la console de l'application"), false, false, false, false);
-		NodeMenuItem tools8Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
+		NodeMenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
 				TR.tr("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
-		NodeMenuItem tools8Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
+		NodeMenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
 				TR.tr("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
 
 	////////// SETTINGS //////////
@@ -196,9 +199,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		tools6ExportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades);
 		tools7ImportEdition.getItems().addAll(tools7ImportEdition1All, tools7ImportEdition2Grades);
 		tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
-		tools8Debug.getItems().addAll(tools8Debug1OpenConsole, tools8Debug2OpenAppFolder, tools8Debug3OpenEditionFile);
+		tools9Debug.getItems().addAll(tools9Debug1OpenConsole, tools9Debug2OpenAppFolder, tools9Debug3OpenEditionFile);
 
-		tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportEdition, tools7ImportEdition, new SeparatorMenuItem(), tools8Debug);
+		tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportEdition, tools7ImportEdition, new SeparatorMenuItem(), tools8FullScreen, new SeparatorMenuItem(), tools9Debug);
 
 		////////// SETTINGS //////////
 
@@ -412,9 +415,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		tools7ImportEdition1All.setOnAction((e) -> EditionExporter.showImportDialog(false));
 		tools7ImportEdition2Grades.setOnAction((e) -> EditionExporter.showImportDialog(true));
 
-		tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
-		tools8Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
-		tools8Debug3OpenEditionFile.setOnAction((e) -> Main.hostServices.showDocument(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
+		tools8FullScreen.setOnAction((e) -> {
+			Main.window.setFullScreen(!Main.window.isFullScreen());
+		});
+
+		tools9Debug1OpenConsole.setOnAction((e) -> new LogWindow());
+		tools9Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
+		tools9Debug3OpenEditionFile.setOnAction((e) -> Main.hostServices.showDocument(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
 
 
 		////////// SETTINGS //////////

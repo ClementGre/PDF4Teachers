@@ -188,6 +188,7 @@ public class UpdateWindow extends Stage {
 
         setupPanel(root);
         show();
+        Main.window.centerWindowIntoMe(this);
     }
 
     public void setupPanel(VBox root){

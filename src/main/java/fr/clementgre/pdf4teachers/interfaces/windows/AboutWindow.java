@@ -41,6 +41,7 @@ public class AboutWindow extends Stage {
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
+
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setTitle(TR.tr("PDF4Teachers - À Propos"));
         setResizable(false);
@@ -51,6 +52,8 @@ public class AboutWindow extends Stage {
 
         setupUi();
         show();
+        Main.window.centerWindowIntoMe(this);
+
     }
 
     private void setupUi(){

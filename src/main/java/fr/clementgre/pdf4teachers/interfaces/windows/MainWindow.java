@@ -25,6 +25,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class MainWindow extends Stage{
 
@@ -126,6 +127,11 @@ public class MainWindow extends Stage{
         root.setTop(menuBar);
         root.setBottom(footerBar);
 
+        Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) root.setBottom(null);
+            else root.setBottom(footerBar);
+        });
+
         root.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
                 if(leftBar.getSelectionModel().getSelectedIndex() == 1) leftBar.getSelectionModel().select(2);
@@ -147,6 +153,8 @@ public class MainWindow extends Stage{
             mainScreen.openFile(LanguageWindow.getDocFile());
         }
 
+
+
 //      CHECK UPDATES
         new Thread(() -> {
 
@@ -166,6 +174,24 @@ public class MainWindow extends Stage{
             }
         }).start();
 
+    }
+
+    public void centerWindowIntoMe(Window window){
+        double w = window.getWidth();
+        double h = window.getHeight();
+        double sw = Main.SCREEN_BOUNDS.getWidth();
+        double sh = Main.SCREEN_BOUNDS.getHeight();
+
+        double x = getX() + getWidth()/2 - w/2;
+        double y = getY() + getHeight()/2 - h/2;
+
+        if(x > sw-w) x = sw-w;
+        if(y > sh-h) y = sh-h;
+        if(x < 0) x = 0;
+        if(y < 0) y = 0;
+
+        window.setX(x);
+        window.setY(y);
     }
 
 }

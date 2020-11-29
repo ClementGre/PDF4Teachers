@@ -51,6 +51,7 @@ public class LogWindow extends Stage {
         setupUi(pane);
 
         show();
+        Main.window.centerWindowIntoMe(this);
     }
 
     private Label text = new Label(logs.toString());

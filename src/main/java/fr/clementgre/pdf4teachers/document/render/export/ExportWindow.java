@@ -63,6 +63,7 @@ public class ExportWindow {
         }
 
         window.show();
+        Main.window.centerWindowIntoMe(window);
     }
 
     public void setupSimplePanel(VBox root){
