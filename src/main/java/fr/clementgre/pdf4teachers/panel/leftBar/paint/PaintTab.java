@@ -23,7 +23,7 @@ public class PaintTab extends Tab {
 
         setClosable(false);
         setContent(pane);
-        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.DRAW_POLYGON, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.DRAW_POLYGON_RATIO));
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.DRAW_POLYGON, "#aaaaaa", 2, 30, 30));
         MainWindow.leftBar.getTabs().add(3, this);
 
         setup();

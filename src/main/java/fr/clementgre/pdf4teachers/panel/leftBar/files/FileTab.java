@@ -41,7 +41,7 @@ public class FileTab extends Tab {
 		setClosable(false);
 		setContent(pane);
 
-		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PDF_FILE, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.PDF_FILE_RATIO));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PDF_FILE, "#aaaaaa", 2, 0, 30, 0, new int[]{374, 500}));
 		MainWindow.leftBar.getTabs().add(0, this);
 
 		setup();

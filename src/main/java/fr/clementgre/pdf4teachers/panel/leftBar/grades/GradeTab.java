@@ -44,7 +44,7 @@ public class GradeTab extends Tab {
     public GradeTab(){
         setClosable(false);
         setContent(pane);
-        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PERCENTAGE, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.PERCENTAGE_RATIO));
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "#aaaaaa", 2, 34, 25));
         MainWindow.leftBar.getTabs().add(2, this);
 
         setup();

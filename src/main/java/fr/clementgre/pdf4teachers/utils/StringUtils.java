@@ -48,6 +48,15 @@ public class StringUtils {
 
         return "";
     }
+    public static String removeAfterLastRejexIgnoringCase(String string, String rejex){
+        if(rejex.isEmpty()) return string;
+        int index = string.toLowerCase().lastIndexOf(rejex.toLowerCase());
+
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(0, index);
+
+        return "";
+    }
     public static String removeAfter(String string, String rejex){
         if(rejex.isEmpty()) return "";
         int index = string.indexOf(rejex);

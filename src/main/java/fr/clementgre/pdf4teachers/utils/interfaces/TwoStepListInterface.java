@@ -8,6 +8,7 @@ public interface TwoStepListInterface<T, D> {
 
     List<T> prepare();
     Entry<D, Integer> sortData(T data);
+    String getSortedDataName(D data);
     TwoStepListAction.ProcessResult completeData(D data);
     void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons);
 

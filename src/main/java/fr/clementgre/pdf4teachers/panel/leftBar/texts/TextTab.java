@@ -81,7 +81,7 @@ public class TextTab extends Tab {
 
 		setClosable(false);
 		setContent(pane);
-		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SPELL_CHECK, "#aaaaaa", 2, 0, 30, 0, SVGPathIcons.SPELL_CHECK_RATIO));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TEXT_LETTER, "#aaaaaa", 2, 30, 30));
 		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();

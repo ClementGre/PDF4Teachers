@@ -50,7 +50,7 @@ public class EditionExporter {
 
         File finalSingleFile = singleFile;
         File finalDirectory = directory;
-        new TwoStepListAction<>(new TwoStepListInterface<Map.Entry<File, File>, Map.Entry<File, File>>() {
+        new TwoStepListAction<>(false, new TwoStepListInterface<Map.Entry<File, File>, Map.Entry<File, File>>() {
             @Override
             public List<Map.Entry<File, File>> prepare() {
                 if(finalSingleFile != null){
@@ -78,6 +78,11 @@ public class EditionExporter {
                     if(result || finalSingleFile != null) return Map.entry(Map.entry(new File(""), new File("")),TwoStepListAction.CODE_STOP); // No match > Stop all
                     else return Map.entry(Map.entry(new File(""), new File("")), 2); // No match
                 }
+            }
+
+            @Override
+            public String getSortedDataName(Map.Entry<File, File> data) {
+                return "undefined";
             }
 
             @Override
@@ -143,7 +148,7 @@ public class EditionExporter {
         final boolean finalRecursive = recursive;
         final File finalDirectory = directory;
         AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(recursive);
-        new TwoStepListAction<>(new TwoStepListInterface<File, Map.Entry<File, File>>() {
+        new TwoStepListAction<>(false, new TwoStepListInterface<File, Map.Entry<File, File>>() {
             @Override
             public List<File> prepare() {
                 if(finalRecursive){
@@ -168,6 +173,11 @@ public class EditionExporter {
                     else if(result == AlreadyExistDialog.ResultType.RENAME) toFile = AlreadyExistDialog.rename(toFile);
                 }
                 return Map.entry(Map.entry(editFile, toFile), TwoStepListAction.CODE_OK);
+            }
+
+            @Override
+            public String getSortedDataName(Map.Entry<File, File> data) {
+                return "undefined";
             }
 
             @Override

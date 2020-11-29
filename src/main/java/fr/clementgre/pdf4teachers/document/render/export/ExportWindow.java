@@ -4,8 +4,12 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
+import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -21,12 +25,15 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 public class ExportWindow {
 
-    Stage window = new Stage();
-    List<File> files;
+    private final Stage window = new Stage();
+    private final List<File> files;
 
     public static boolean erase = false;
 
@@ -93,11 +100,8 @@ public class ExportWindow {
 
 
         VBox settings = new VBox();
-            CheckBox erase = new CheckBox(TR.tr("Toujours écraser"));
-            CheckBox folders = new CheckBox(TR.tr("Créer les dossiers manquants"));
-            folders.setSelected(true);
             CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
-        settings.getChildren().addAll(erase, folders, delEdit);
+        settings.getChildren().addAll(delEdit);
 
         HBox btns = new HBox();
             Button export = new Button(TR.tr("Exporter"));
@@ -118,9 +122,7 @@ public class ExportWindow {
         HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
         HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
 
-        VBox.setMargin(erase, new Insets(20, 10, 5, 10));
-        VBox.setMargin(folders, new Insets(0, 10, 5, 10));
-        VBox.setMargin(delEdit, new Insets(0, 10, 0, 10));
+        VBox.setMargin(delEdit, new Insets(20, 10, 0, 10));
 
         HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
         HBox.setMargin(export, new Insets(50, 10, 10, 5));
@@ -142,7 +144,7 @@ public class ExportWindow {
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
 
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    erase.isSelected(), folders.isSelected(), false, delEdit.isSelected(), textElements.isSelected(),  gradesElements.isSelected(), drawElements.isSelected());
+                    false, delEdit.isSelected(), textElements.isSelected(),  gradesElements.isSelected(), drawElements.isSelected());
         });
         cancel.setOnAction(event -> window.close());
 
@@ -217,13 +219,10 @@ public class ExportWindow {
 
 
         VBox settings = new VBox();
-        CheckBox erase = new CheckBox(TR.tr("Toujours écraser"));
-        CheckBox folders = new CheckBox(TR.tr("Créer les dossiers manquants"));
-        folders.setSelected(true);
         CheckBox onlyEdited = new CheckBox(TR.tr("Exporter uniquement les documents édités"));
         onlyEdited.setSelected(true);
         CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
-        settings.getChildren().addAll(erase, folders, onlyEdited, delEdit);
+        settings.getChildren().addAll(onlyEdited, delEdit);
 
         HBox btns = new HBox();
         Button export = new Button(TR.tr("Exporter"));
@@ -252,9 +251,7 @@ public class ExportWindow {
         HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
         HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
 
-        VBox.setMargin(erase, new Insets(20, 10, 5, 10));
-        VBox.setMargin(folders, new Insets(0, 10, 5, 10));
-        VBox.setMargin(onlyEdited, new Insets(0, 10, 5, 10));
+        VBox.setMargin(onlyEdited, new Insets(20, 10, 5, 10));
         VBox.setMargin(delEdit, new Insets(0, 10, 0, 10));
 
         HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
@@ -273,86 +270,106 @@ public class ExportWindow {
         });
 
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                erase.isSelected(), folders.isSelected(), onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
+                onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
         cancel.setOnAction(event -> window.close());
 
     }
 
-    Alert loadingAlert;
-    private int exported;
-    private int total;
-    public void startExportation(File directory, String prefix, String suffix, String replace, String by, String customName,
-                                 boolean eraseFile, boolean mkdirs, boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
+    public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
+                                 boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
 
-        erase = eraseFile;
-        loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
-        exported = 0;
-        total = 0;
+        final boolean recursive = customName.isEmpty();
+        AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(recursive);
+        new TwoStepListAction<>(true, new TwoStepListInterface<File, Map.Entry<File, File>>() {
+            @Override
+            public List<File> prepare(){
+                return files;
+            }
 
-        // Wait Dialog
+            @Override
+            public Map.Entry<Map.Entry<File, File>, Integer> sortData(File pdfFile) {
 
-        loadingAlert.setWidth(600);
-        loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
-
-        VBox pane = new VBox();
-        Label currentDocument = new Label();
-        ProgressBar loadingBar = new ProgressBar();
-        loadingBar.setMinHeight(10);
-        VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
-        pane.getChildren().addAll(currentDocument, loadingBar);
-        loadingAlert.getDialogPane().setContent(pane);
-        loadingAlert.show();
-
-        // Export Thread
-
-        new Thread(() -> {
-            for(File file : files){
-
-                // Update Wait dialog
-                Platform.runLater(() -> {
-                    currentDocument.setText(file.getName() + "(" + total + "/" + files.size() + ")");
-                    loadingBar.setProgress(total/((float)files.size()));
-                });
-                total++;
-
-
-                try{
-                    // Export the file
-                    int result = new ExportRenderer().exportFile(file, directory.getPath(), prefix, suffix, replace, by, customName, erase, mkdirs, onlyEdited, textElements, gradesElements, drawElements);
-                    // Exportation canceled, return
-                    if(result == 0){ Platform.runLater(() -> loadingAlert.close()); return; }
-                    // GOOD !
-                    else if(result == 1) exported++;
-                    // Delete edition option
-                    if(deleteEdit) Edition.getEditFile(file).delete();
-                }catch(Exception e){
-                    e.printStackTrace();
-
-                    // Error dialog
-                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + file.getName(), e.getMessage(), true))){
-                        // If callback return true (cancel exportation), return
-                        Platform.runLater(() -> loadingAlert.close());
-                        return;
+                if(onlyEdited){ // Check only edited export
+                    if(!Edition.getEditFile(pdfFile).exists()){
+                        return Map.entry(Map.entry(new File(""), new File("")), 1);
                     }
                 }
+
+                String fileName = pdfFile.getName();
+                if(recursive){
+                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(fileName, ".pdf");
+                    fileName = fileName.replace(replaceText, replaceByText);
+                    fileName = prefix + fileName + suffix + ".pdf";
+                }else{
+                    fileName = customName + ".pdf";
+                }
+
+                File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);
+
+                if(toFile.exists()){ // Check Already Exist
+                    AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(toFile);
+                    if(result == AlreadyExistDialog.ResultType.SKIP) return Map.entry(Map.entry(new File(""), new File("")), 2);
+                    else if(result == AlreadyExistDialog.ResultType.STOP) return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
+                    else if(result == AlreadyExistDialog.ResultType.RENAME) toFile = AlreadyExistDialog.rename(toFile);
+                }
+
+                return Map.entry(Map.entry(pdfFile, toFile), TwoStepListAction.CODE_OK);
             }
-            // Open the end window
-            Platform.runLater(this::endExportations);
-            return;
-        }, "exportation").start();
-    }
-    private void endExportations(){
-        loadingAlert.close();
-        window.close();
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
+            @Override
+            public String getSortedDataName(Map.Entry<File, File> data) {
+                return data.getKey().getName();
+            }
 
-        if(exported == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
-        else if(exported == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));
-        else alert.setHeaderText(exported + " " + TR.tr("documents ont été exportés !"));
+            @Override
+            public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data) {
+                try{
+                    new ExportRenderer().exportFile(data.getKey(), data.getValue(), textElements, gradesElements, drawElements);
+                    if(deleteEdit){
+                        Platform.runLater(() -> {
+                            if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(data.getKey().getAbsolutePath())){
+                                MainWindow.mainScreen.document.edition.clearEdit(false);
+                            }else{
+                                Edition.getEditFile(data.getKey()).delete();
+                            }
+                        });
+                    }
+                }catch(Exception e){
+                    e.printStackTrace();
+                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("Une erreur d'exportation s'est produite avec le document :") + " " + data.getKey().getName(), e.getMessage(), recursive))){
+                        return TwoStepListAction.ProcessResult.STOP;
+                    }
+                    if(!recursive){
+                        window.close();
+                        return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                    }
+                    return TwoStepListAction.ProcessResult.SKIPPED;
+                }
+                return TwoStepListAction.ProcessResult.OK;
+            }
 
-        alert.setContentText(TR.tr("Les documents exportés se trouvent dans le dossier choisi"));
-        alert.show();
-        return;
+            @Override
+            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons) {
+                window.close();
+                if(deleteEdit) MainWindow.filesTab.refresh();
+
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
+                ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
+                alert.getButtonTypes().add(open);
+
+                if(completedSize == 0) alert.setHeaderText(TR.tr("Aucun document n'a été exporté !"));
+                else if(completedSize == 1) alert.setHeaderText(TR.tr("Le document a bien été exporté !"));
+                else alert.setHeaderText(completedSize + " " + TR.tr("documents ont été exportés !"));
+
+                String noEditText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition") + ")";
+                String alreadyExistText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils existaient déjà") + ")";
+                alert.setContentText(completedSize + "/" + originSize + " " + TR.tr("documents exportées") + noEditText + alreadyExistText);
+
+                Optional<ButtonType> optionSelected = alert.showAndWait();
+                if(optionSelected.get() == open){
+                    Main.hostServices.showDocument(directory.getAbsolutePath());
+                }
+            }
+        });
     }
 }
