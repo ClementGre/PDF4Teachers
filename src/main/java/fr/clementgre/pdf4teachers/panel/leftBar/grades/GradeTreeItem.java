@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -279,7 +280,8 @@ public class GradeTreeItem extends TreeItem {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         newGrade = new Button();
-        newGrade.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/more.png")+"", 0, 0));
+        newGrade.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/more.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
+
         PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
         newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);

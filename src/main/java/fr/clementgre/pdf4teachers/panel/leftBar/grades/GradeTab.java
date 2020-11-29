@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.leftBar.grades;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
@@ -11,10 +12,13 @@ import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -44,7 +48,10 @@ public class GradeTab extends Tab {
     public GradeTab(){
         setClosable(false);
         setContent(pane);
-        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "#aaaaaa", 2, 34, 25));
+        ImageUtils.defaultDarkColorAdjust.brightnessProperty().addListener((observable, oldValue, newValue) -> {
+            setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "gray", 0, 29, 0, 0, new int[]{500, 440}, ImageUtils.defaultGrayColorAdjust));
+        });
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "gray", 0, 29, 0, 0, new int[]{500, 440}, ImageUtils.defaultGrayColorAdjust));
         MainWindow.leftBar.getTabs().add(2, this);
 
         setup();
@@ -63,10 +70,10 @@ public class GradeTab extends Tab {
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
         lockGradeScale.setSelected(false);
-        lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
+        lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0));
-            else lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0));
+            if(newValue) lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
+            else lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
 
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
@@ -79,20 +86,20 @@ public class GradeTab extends Tab {
 
         PaneUtils.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
-        settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0));
+        settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         settings.setOnAction((e) -> new GradeSettingsWindow());
         settings.setTooltip(PaneUtils.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
 
         PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
-        link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0));
+        link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog());
         link.setTooltip(PaneUtils.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         PaneUtils.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
-        export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0));
+        export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
         export.setTooltip(PaneUtils.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));

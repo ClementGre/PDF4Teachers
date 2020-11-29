@@ -1,11 +1,9 @@
 package fr.clementgre.pdf4teachers.utils.image;
 
 import javafx.geometry.Insets;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
-
-import java.awt.*;
 
 public class SVGPathIcons {
 
@@ -20,16 +18,26 @@ public class SVGPathIcons {
     public static String ON_TWENTY = "M287.646 366.34C290.951 366.29 294.14 367.602 296.513 369.989C298.885 372.377 300.247 375.643 300.299 379.071V414.267C300.247 417.695 298.885 420.962 296.513 423.349C294.14 425.736 290.951 427.049 287.646 426.998H161.645C158.185 427.04 154.753 426.337 151.568 424.934C148.383 423.53 145.513 421.457 143.139 418.845C140.765 416.233 138.94 413.139 137.777 409.758C136.614 406.376 136.14 402.782 136.384 399.201C140.612 343.639 158.695 308.633 194.86 255.058C225.653 209.397 235.902 196.402 236.072 157.706C236.074 157.376 236.075 157.045 236.075 156.712C236.075 130.019 233.352 118.424 217.505 118.424C203.225 118.424 198.206 130.098 198.206 154.203V162.454C198.18 164.153 197.832 165.83 197.181 167.389C196.531 168.948 195.59 170.36 194.414 171.542C193.237 172.724 191.848 173.654 190.325 174.279C188.802 174.904 187.175 175.212 185.537 175.185H147.669C146.031 175.212 144.404 174.904 142.881 174.279C141.358 173.654 139.968 172.724 138.792 171.542C137.616 170.36 136.675 168.948 136.024 167.389C135.374 165.83 135.026 164.153 135 162.454V156.033C135 112.965 147.897 61 220.821 61C286.216 61 305.333 101.78 305.333 157.232C305.333 213.363 286.414 238.02 253.093 285.505C235.512 309.169 215.665 341.62 212.927 366.277L287.646 366.34ZM500 326.538C500 382.006 481.294 426.998 412.963 426.998C346.685 426.998 329.667 380.428 329.667 326.901V160.735C329.667 96.4797 359.445 61 415.137 61C471.104 61 500 96.7164 500 157.706V326.538ZM414.636 120.522C400.325 120.522 394.515 132.354 394.515 152.074V334.994C394.515 355.676 399.975 367.476 414.636 367.476C429.296 367.476 434.406 354.856 434.406 333.921V151.017C434.437 133.237 429.859 120.522 414.636 120.522Z M49.3982 421.761L140.355 82.3054C141.642 77.5042 138.792 72.5692 133.991 71.2827L104.309 63.3294C99.5077 62.0429 94.5727 64.8921 93.2862 69.6933L2.32935 409.149C1.04287 413.95 3.89212 418.885 8.69331 420.172L38.3755 428.125C43.1767 429.411 48.1117 426.562 49.3982 421.761Z";
     public static String DRAW_POLYGON = "M428.571 357.143C428.181 357.143 427.824 357.254 427.433 357.254L383.683 284.353C389.342 274.118 392.857 262.522 392.857 250C392.857 237.478 389.353 225.882 383.683 215.647L427.433 142.746C427.824 142.757 428.181 142.857 428.571 142.857C468.025 142.857 500 110.882 500 71.4286C500 31.9754 468.025 0 428.571 0C402.199 0 379.42 14.4531 367.054 35.7143H132.946C120.58 14.4531 97.8013 0 71.4286 0C31.9754 0 0 31.9754 0 71.4286C0 97.8013 14.4531 120.58 35.7143 132.946V367.042C14.4531 379.42 0 402.199 0 428.571C0 468.025 31.9754 500 71.4286 500C97.8013 500 120.58 485.547 132.946 464.286H367.042C379.42 485.547 402.188 500 428.56 500C468.013 500 499.989 468.025 499.989 428.571C500 389.118 468.025 357.143 428.571 357.143ZM107.143 367.054V132.946C117.839 126.732 126.732 117.839 132.946 107.143H365.491L322.567 178.683C322.176 178.672 321.819 178.571 321.429 178.571C281.975 178.571 250 210.547 250 250C250 289.453 281.975 321.429 321.429 321.429C321.819 321.429 322.176 321.317 322.567 321.317L365.491 392.857H132.946C126.735 382.159 117.841 373.265 107.143 367.054ZM303.571 250C303.571 240.156 311.585 232.143 321.429 232.143C331.272 232.143 339.286 240.156 339.286 250C339.286 259.844 331.272 267.857 321.429 267.857C311.585 267.857 303.571 259.844 303.571 250ZM446.429 71.4286C446.429 81.2723 438.415 89.2857 428.571 89.2857C418.728 89.2857 410.714 81.2723 410.714 71.4286C410.714 61.5848 418.728 53.5714 428.571 53.5714C438.415 53.5714 446.429 61.5848 446.429 71.4286ZM71.4286 53.5714C81.2723 53.5714 89.2857 61.5848 89.2857 71.4286C89.2857 81.2723 81.2723 89.2857 71.4286 89.2857C61.5848 89.2857 53.5714 81.2723 53.5714 71.4286C53.5714 61.5848 61.5848 53.5714 71.4286 53.5714ZM53.5714 428.571C53.5714 418.728 61.5848 410.714 71.4286 410.714C81.2723 410.714 89.2857 418.728 89.2857 428.571C89.2857 438.415 81.2723 446.429 71.4286 446.429C61.5848 446.429 53.5714 438.415 53.5714 428.571ZM428.571 446.429C418.728 446.429 410.714 438.415 410.714 428.571C410.714 418.728 418.728 410.714 428.571 410.714C438.415 410.714 446.429 418.728 446.429 428.571C446.429 438.415 438.415 446.429 428.571 446.429Z";
 
+    public static String SAVE = "M433.941 129.941l-83.882-83.882A48 48 0 0 0 316.118 32H48C21.49 32 0 53.49 0 80v352c0 26.51 21.49 48 48 48h352c26.51 0 48-21.49 48-48V163.882a48 48 0 0 0-14.059-33.941zM224 416c-35.346 0-64-28.654-64-64 0-35.346 28.654-64 64-64s64 28.654 64 64c0 35.346-28.654 64-64 64zm96-304.52V212c0 6.627-5.373 12-12 12H76c-6.627 0-12-5.373-12-12V108c0-6.627 5.373-12 12-12h228.52c3.183 0 6.235 1.264 8.485 3.515l3.48 3.48A11.996 11.996 0 0 1 320 111.48z";
+    public static String LIST = "M48 48a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm0 160a48 48 0 1 0 48 48 48 48 0 0 0-48-48zm448 16H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm0-320H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16V80a16 16 0 0 0-16-16zm0 160H176a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h320a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16z";
+    public static String SORT = "M304 416h-64a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h64a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm-128-64h-48V48a16 16 0 0 0-16-16H80a16 16 0 0 0-16 16v304H16c-14.19 0-21.37 17.24-11.29 27.31l80 96a16 16 0 0 0 22.62 0l80-96C197.35 369.26 190.22 352 176 352zm256-192H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h192a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zm-64 128H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16zM496 32H240a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h256a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16z";
+
     public static Region generateImage(String path, String bgColor, int width, int height){
-        return generateImage(path, bgColor, 0, width, height, 0, new int[]{1, 1});
+        return generateImage(path, bgColor, 0, width, height, 0, new int[]{1, 1}, null);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height){
-        return generateImage(path, bgColor, padding, width, height, 0, new int[]{1, 1});
+        return generateImage(path, bgColor, padding, width, height, 0, new int[]{1, 1}, null);
+    }
+    public static Region generateImage(String path, String bgColor, int padding, int width, int height, ColorAdjust effect){
+        return generateImage(path, bgColor, padding, width, height, 0, new int[]{1, 1}, effect);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate){
-        return generateImage(path, bgColor, padding, width, height, rotate, new int[]{1, 1});
+        return generateImage(path, bgColor, padding, width, height, rotate, new int[]{1, 1}, null);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio){
+        return generateImage(path, bgColor, padding, width, height, rotate, ratio, null);
+    }
+    public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio, ColorAdjust effect){
 
         SVGPath image = new SVGPath();
         image.setContent(path);
@@ -40,27 +48,35 @@ public class SVGPathIcons {
         imageRegion.setRotate(rotate);
         imageRegion.setStyle("-fx-background-color: " + bgColor + ";");
 
-        if(width != 0){
-            if(height == 0){
-                int w = width - padding*2;
-                int h = (int) (w / ((double) ratio[0]) * ratio[1]);
-                imageRegion.setMinWidth(w);
-                imageRegion.setMinHeight(h);
-            }else{
-                imageRegion.setMinWidth(width - padding*2);
-            }
-        }if(height != 0){
-            if(width == 0){
-                int h = height - padding*2;
-                int w = (int) (h / ((double) ratio[1]) * ratio[0]);
-                imageRegion.setMinHeight(h);
-                imageRegion.setMinWidth(w);
-            }else{
-                imageRegion.setMinHeight(height - padding*2);
-            }
+        if(effect != null){
+            effect.brightnessProperty().addListener((observable, oldValue, newValue) -> {
+                imageRegion.setEffect(effect);
+            });
+            imageRegion.setEffect(effect);
         }
 
-        return imageRegion;
+        if(width != 0 && height != 0){
+            int w = width - padding*2;
+            imageRegion.setMinWidth(w);
+            imageRegion.setMinHeight(w / ((double) width) * height);
+            return imageRegion;
+        }else{
+            StackPane imagePane = new StackPane();
+            int w = width - padding*2;
+            int h = height - padding*2;
+            if(height == 0){
+                h = (int) (w / ((double) ratio[0]) * ratio[1]);
+                imagePane.setPadding(new Insets((w-h)/2d, 0, (w-h)/2d, 0));
+            }else{
+                w = (int) (h / ((double) ratio[1]) * ratio[0]);
+                imagePane.setPadding(new Insets(0, (h-w)/2d, 0, (h-w)/2d));
+            }
+            imageRegion.setMinWidth(w);
+            imageRegion.setMinHeight(h);
+            imagePane.getChildren().add(imageRegion);
+            return imagePane;
+        }
+
     }
 
 }

@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.panel.leftBar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
@@ -88,6 +89,7 @@ public class MainWindow extends Stage{
 
         mainPane = new SplitPane();
         leftBar = new TabPane();
+        leftBar.setStyle("-fx-tab-max-width: 22px;");
 
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
@@ -131,6 +133,8 @@ public class MainWindow extends Stage{
                 e.consume();
             }
         });
+
+        ImageUtils.setupListeners();
 
 //		SHOWING
 

@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -83,7 +84,7 @@ public abstract class TextTreeSection extends TreeItem {
     public void setupGraphics(){
 
         PaneUtils.setPosition(sortToggleBtn, 0, 0, 30, 30, true);
-        sortToggleBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/sort.png") +"", 0, 0));
+        sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
         sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Trier")));
 
         if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");

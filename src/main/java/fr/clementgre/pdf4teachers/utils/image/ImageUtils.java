@@ -1,5 +1,7 @@
 package fr.clementgre.pdf4teachers.utils.image;
 
+import fr.clementgre.pdf4teachers.Main;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -7,6 +9,30 @@ import javafx.scene.image.ImageView;
 import java.io.FileInputStream;
 
 public class ImageUtils {
+
+    public static ColorAdjust defaultFullDarkColorAdjust = new ColorAdjust();
+    public static ColorAdjust defaultDarkColorAdjust = new ColorAdjust();
+    public static ColorAdjust defaultGrayColorAdjust = new ColorAdjust();
+    public static ColorAdjust defaultWhiteColorAdjust = new ColorAdjust();
+
+    public static void setupListeners(){
+        Main.settings.darkThemeProperty().addListener((observable, oldValue, newValue) -> updateColorsAdjust());
+        updateColorsAdjust();
+    }
+    private static void updateColorsAdjust(){
+        if(Main.settings.isDarkTheme()){
+            defaultFullDarkColorAdjust.setBrightness(1);
+            defaultDarkColorAdjust.setBrightness(0.8);
+            defaultGrayColorAdjust.setBrightness(0.8);
+            defaultWhiteColorAdjust.setBrightness(0);
+        }else{
+            defaultFullDarkColorAdjust.setBrightness(-1);
+            defaultDarkColorAdjust.setBrightness(0.25);
+            defaultGrayColorAdjust.setBrightness(0);
+            defaultWhiteColorAdjust.setBrightness(-1);
+        }
+    }
+
     public static ImageView buildImage(Image image, int width, int height) {
         ImageView imageView = new ImageView(image);
 

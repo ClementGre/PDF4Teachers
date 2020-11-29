@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.leftBar.paint;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
@@ -23,7 +24,7 @@ public class PaintTab extends Tab {
 
         setClosable(false);
         setContent(pane);
-        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.DRAW_POLYGON, "#aaaaaa", 2, 30, 30));
+        setGraphic(SVGPathIcons.generateImage(SVGPathIcons.DRAW_POLYGON, "gray", 0, 28, 30, ImageUtils.defaultGrayColorAdjust));
         MainWindow.leftBar.getTabs().add(3, this);
 
         setup();

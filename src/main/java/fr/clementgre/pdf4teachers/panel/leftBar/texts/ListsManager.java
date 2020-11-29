@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeS
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -24,9 +25,9 @@ public class ListsManager {
     public ListsManager(TextTreeSection section){
         this.section = section;
 
-        loadListBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/list.png") +"", 18, 18));
+        loadListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LIST, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
         loadListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Afficher les listes d'éléments enregistrés")));
-        saveListBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/save.png") +"", 22, 22));
+        saveListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SAVE, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
         saveListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("Sauvegarder les éléments favoris en tant qu'une nouvelle liste")));
 
         PaneUtils.setPosition(loadListBtn, 0, 0, 30, 30, true);

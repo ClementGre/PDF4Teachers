@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
@@ -41,8 +42,9 @@ public class FileTab extends Tab {
 		setClosable(false);
 		setContent(pane);
 
-		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PDF_FILE, "#aaaaaa", 2, 0, 30, 0, new int[]{374, 500}));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PDF_FILE, "gray", 0, 0, 28, 0, new int[]{400, 500}, ImageUtils.defaultGrayColorAdjust));
 		MainWindow.leftBar.getTabs().add(0, this);
+
 
 		setup();
 	}

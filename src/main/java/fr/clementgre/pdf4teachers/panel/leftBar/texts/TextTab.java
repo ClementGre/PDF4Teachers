@@ -81,7 +81,8 @@ public class TextTab extends Tab {
 
 		setClosable(false);
 		setContent(pane);
-		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TEXT_LETTER, "#aaaaaa", 2, 30, 30));
+		setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TEXT_LETTER, "gray", 1, 0, 28, 0, new int[]{460, 500}, ImageUtils.defaultGrayColorAdjust));
+
 		MainWindow.leftBar.getTabs().add(1, this);
 
 		setup();
