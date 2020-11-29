@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.callbacks.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -213,8 +213,8 @@ public class LicenseWindow extends Stage{
             "   See the License for the specific language governing permissions and\n" +
             "   limitations under the License.";
 
-    CallBack<String> callBack;
-    public LicenseWindow(CallBack<String> callBack){
+    CallBackArg<String> callBack;
+    public LicenseWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
 
         ScrollPane root = new ScrollPane();

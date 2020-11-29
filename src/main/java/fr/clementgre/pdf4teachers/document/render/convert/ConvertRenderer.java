@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.callbacks.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -25,7 +25,7 @@ public class ConvertRenderer {
     public ConvertRenderer(ConvertWindow.ConvertPane convertPane) {
         this.convertPane = convertPane;
     }
-    public ArrayList<ConvertedFile> start(CallBack<String> documentCallBack) throws Exception{
+    public ArrayList<ConvertedFile> start(CallBackArg<String> documentCallBack) throws Exception{
         String out = convertPane.outDir.getText();
         new File(out).mkdirs();
         if(!out.endsWith(File.separator)) out += File.separator;

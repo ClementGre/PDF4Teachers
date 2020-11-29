@@ -4,7 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.callbacks.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
@@ -42,8 +42,8 @@ public class LanguageWindow extends Stage{
     };
 
 
-    CallBack<String> callBack;
-    public LanguageWindow(CallBack<String> callBack){
+    CallBackArg<String> callBack;
+    public LanguageWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
 
         VBox root = new VBox();

@@ -33,7 +33,7 @@ public class AlreadyExistDialog{
         alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier déjà existant"));
 
         if(recursive){
-            stopAll = new ButtonType(TR.tr("Tout arrêter"), ButtonBar.ButtonData.OK_DONE);
+            stopAll = new ButtonType(TR.tr("Tout annuler"), ButtonBar.ButtonData.OK_DONE);
             skip = new ButtonType(TR.tr("Passer"), ButtonBar.ButtonData.YES);
             skipAlways = new ButtonType(TR.tr("Toujours Passer"), ButtonBar.ButtonData.YES);
             renameAlways = new ButtonType(TR.tr("Toujours Renommer"), ButtonBar.ButtonData.YES);

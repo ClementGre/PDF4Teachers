@@ -1,6 +1,6 @@
 package fr.clementgre.pdf4teachers.utils;
 
-import fr.clementgre.pdf4teachers.utils.callbacks.ReturnCallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 
 import java.util.concurrent.CountDownLatch;

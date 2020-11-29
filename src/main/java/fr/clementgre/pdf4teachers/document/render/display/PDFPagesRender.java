@@ -9,7 +9,7 @@ import java.util.Collections;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.callbacks.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -42,7 +42,7 @@ public class PDFPagesRender {
 		render = false;
 	}
 
-	public void renderPage(int pageNumber, double size, double width, double height, CallBack<Background> callBack){
+	public void renderPage(int pageNumber, double size, double width, double height, CallBackArg<Background> callBack){
 
 		Thread renderPage = new Thread(() -> {
 			/*while(render){
