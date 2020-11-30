@@ -64,12 +64,6 @@ public class TextTab extends Tab {
 
 	public boolean isNew = false;
 
-	public String lastFont = "Open Sans";
-	public int lastFontSize = 14;
-	public String lastColor = "#000000";
-	public boolean lastBold = false;
-	public boolean lastItalic = false;
-
 	// TREEVIEW
 	public TextTreeView treeView;
 
@@ -103,7 +97,7 @@ public class TextTab extends Tab {
 		fontCombo.setMaxHeight(25);
 		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-			if(isNew) lastFont = newValue;
+			if(isNew) MainWindow.userData.textLastFontName = newValue;
 		});
 
 		PaneUtils.setHBoxPosition(sizeCombo, 95, 30, 2.5);
@@ -111,7 +105,7 @@ public class TextTab extends Tab {
 		sizeCombo.getSelectionModel().select(7);
 		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-			if(isNew) lastFontSize = newValue;
+			if(isNew) MainWindow.userData.textLastFontSize = newValue;
 		});
 
 		PaneUtils.setHBoxPosition(colorPicker, -1, 30, 2.5);
@@ -119,7 +113,7 @@ public class TextTab extends Tab {
 		colorPicker.setValue(Color.BLACK);
 		colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-			if(isNew) lastColor = newValue.toString();
+			if(isNew) MainWindow.userData.textLastFontColor = newValue.toString();
 		});
 
 		PaneUtils.setHBoxPosition(boldBtn, 45, 29, 2.5);
@@ -127,7 +121,7 @@ public class TextTab extends Tab {
 		boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if(isNew) lastBold = newValue;
+			if(isNew) MainWindow.userData.textLastFontBold = newValue;
 		});
 
 		PaneUtils.setHBoxPosition(itBtn, 45, 29, 2.5);
@@ -135,7 +129,7 @@ public class TextTab extends Tab {
 		itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-			if(isNew) lastItalic = newValue;
+			if(isNew) MainWindow.userData.textLastFontItalic = newValue;
 		});
 
 		PaneUtils.setHBoxPosition(txtArea, -1, 30, 0);
@@ -278,11 +272,12 @@ public class TextTab extends Tab {
 
 			MainWindow.mainScreen.setSelected(null);
 
-			fontCombo.getSelectionModel().select(lastFont.isEmpty() ? "Open Sans" : lastFont);
-			sizeCombo.getSelectionModel().select((Integer) lastFontSize);
-			colorPicker.setValue(Color.valueOf(lastColor.isEmpty() ? "#000000" : lastColor));
-			boldBtn.setSelected(lastBold);
-			itBtn.setSelected(lastItalic);
+			fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
+			sizeCombo.getSelectionModel().select((Integer) ((int) MainWindow.userData.textLastFontSize));
+			System.out.println(MainWindow.userData.textLastFontColor);
+			colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
+			boldBtn.setSelected(MainWindow.userData.textLastFontBold);
+			itBtn.setSelected(MainWindow.userData.textLastFontItalic);
 
 			TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
                     true, txtArea.getText(), colorPicker.getValue(), getFont());

@@ -96,6 +96,13 @@ public class StringUtils {
             return 0;
         }
     }
+    public static Long getLong(String text){
+        try{
+            return Long.parseLong(text);
+        }catch (NumberFormatException e){
+            return null;
+        }
+    }
     public static long getAlwaysLong(String text){
         try{
             return Long.parseLong(text);
@@ -114,5 +121,18 @@ public class StringUtils {
 
     public static String[] cleanArray(String[] array) {
         return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
+    }
+
+    public static boolean getAlwaysBoolean(String text) {
+        return "true".equalsIgnoreCase(text);
+    }
+    public static Boolean getBoolean(String text) {
+        if("true".equalsIgnoreCase(text)){
+            return true;
+        }else if("false".equalsIgnoreCase(text)){
+            return false;
+        }else{
+            return null;
+        }
     }
 }

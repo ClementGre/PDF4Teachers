@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.utils.dialog;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -94,7 +95,7 @@ public class DialogBuilder {
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
         if(multiple) chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
         else chooser.setTitle(TR.tr("Sélectionner un fichier"));
-        chooser.setInitialDirectory((syncWithLastOpenDir && UserData.lastOpenDir.exists()) ? UserData.lastOpenDir : new File(System.getProperty("user.home")));
+        chooser.setInitialDirectory((syncWithLastOpenDir && new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         List<File> listFiles = null;
         if(multiple) listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -107,7 +108,7 @@ public class DialogBuilder {
             if(listFiles.size() == 0) return null;
             File[] files = new File[listFiles.size()];
             files = listFiles.toArray(files);
-            if(syncWithLastOpenDir) UserData.lastOpenDir = listFiles.get(0).getParentFile();
+            if(syncWithLastOpenDir)  MainWindow.userData.lastOpenDir = listFiles.get(0).getParentFile().getAbsolutePath();
             return files;
         }
         return null;
@@ -116,12 +117,12 @@ public class DialogBuilder {
     public static File showDirectoryDialog(boolean syncWithLastOpenDir){
         final DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(TR.tr("Sélectionner un dossier"));
-        chooser.setInitialDirectory((syncWithLastOpenDir && UserData.lastOpenDir.exists()) ? UserData.lastOpenDir : new File(System.getProperty("user.home")));
+        chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         File file = chooser.showDialog(Main.window);
         if(file != null){
             if(!file.exists()) return null;
-            if(syncWithLastOpenDir) UserData.lastOpenDir = file;
+            if(syncWithLastOpenDir) MainWindow.userData.lastOpenDir = file.getAbsolutePath();
             return file;
         }
         return null;

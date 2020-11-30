@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -176,7 +177,7 @@ public class LanguageWindow extends Stage{
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Sélectionner un dossier"));
-            chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
+            chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
 
             File dir = chooser.showDialog(Main.window);
             if(dir != null) {

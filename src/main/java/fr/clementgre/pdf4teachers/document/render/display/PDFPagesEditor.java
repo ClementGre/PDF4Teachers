@@ -210,11 +210,11 @@ public class PDFPagesEditor{
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
         chooser.setTitle(TR.tr("Sélectionner un fichier"));
-        chooser.setInitialDirectory((UserData.lastOpenDir.exists() ? UserData.lastOpenDir : new File(System.getProperty("user.home"))));
+        chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
 
         File file = chooser.showOpenDialog(Main.window);
         if(file != null){
-            if(file.getParentFile().exists()) UserData.lastOpenDir = file.getParentFile();
+            if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
             try{
                 PDDocument fileDoc = PDDocument.load(file);
 

@@ -6,10 +6,7 @@ import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class Config {
@@ -36,41 +33,7 @@ public class Config {
         output.close();
     }
 
-    // GET VALUE
-
-    public String getString(String path){
-        return getValue(base, path).toString();
-    }
-    public long getLong(String path){
-        return StringUtils.getAlwaysLong(getValue(base, path).toString());
-    }
-    public double getDouble(String path){
-        return StringUtils.getAlwaysDouble(getValue(base, path).toString());
-    }
-    public boolean getBoolean(String path){
-        return Boolean.parseBoolean(getValue(base, path).toString());
-    }
-    public ArrayList<Object> getList(String path){
-        return getList(base, path);
-    }
-
-    public static String getString(HashMap<String, Object> base, String path){
-        return getValue(base, path).toString();
-    }
-    public static long getLong(HashMap<String, Object> base, String path){
-        return StringUtils.getAlwaysLong(getValue(base, path).toString());
-    }
-    public static double getDouble(HashMap<String, Object> base, String path){
-        return StringUtils.getAlwaysDouble(getValue(base, path).toString());
-    }
-    public static boolean getBoolean(HashMap<String, Object> base, String path){
-        return Boolean.parseBoolean(getValue(base, path).toString());
-    }
-    public static ArrayList<Object> getList(HashMap<String, Object> base, String path){
-        Object value = getValue(base, path);
-        if(value instanceof List) return (ArrayList<Object>) value;
-        return new ArrayList<>();
-    }
+    // GET SECTION / CASTS
 
     public static ArrayList<Object> castList(Object list){
         if(list instanceof List) return (ArrayList<Object>) list;
@@ -91,7 +54,8 @@ public class Config {
             if(section.containsKey(key)){ // Key exist
                 Object value = section.get(key);
                 if(value == null) return "";
-                else if(!(section.get(key) instanceof Map) || i == 1) return value; // Value is a value or this is the last iteration : return value
+                else if(i == 1) return value; // Value is a value or this is the last iteration : return value
+                else if(!(section.get(key) instanceof Map)) return "";
                 else section = (HashMap<String, Object>) value; // Continue loop
                 i--;
             }else{
@@ -99,6 +63,76 @@ public class Config {
             }
         }
         System.err.println("WARNING: for loop return anything"); return "";
+    }
+
+    // GET VALUE
+
+    public String getString(String path){
+        return getString(base, path);
+    }
+    public long getLong(String path){
+        return getLong(base, path);
+    }
+    public Long getLongNull(String path){
+        return getLongNull(base, path);
+    }
+    public double getDouble(String path){
+        return getDouble(base, path);
+    }
+    public Double getDoubleNull(String path){
+        return getDoubleNull(base, path);
+    }
+    public boolean getBoolean(String path){
+        return getBoolean(base, path);
+    }
+    public Boolean getBooleanNull(String path){
+        return getBooleanNull(base, path);
+    }
+    public ArrayList<Object> getList(String path){
+        return getList(base, path);
+    }
+    public ArrayList<Object> getListNull(String path){
+        return getListNull(base, path);
+    }
+
+    public static String getString(HashMap<String, Object> base, String path){
+        return getValue(base, path).toString();
+    }
+    public static long getLong(HashMap<String, Object> base, String path){
+        return StringUtils.getAlwaysLong(getValue(base, path).toString());
+    }
+    public static Long getLongNull(HashMap<String, Object> base, String path){
+        return StringUtils.getLong(getValue(base, path).toString());
+    }
+    public static double getDouble(HashMap<String, Object> base, String path){
+        return StringUtils.getAlwaysDouble(getValue(base, path).toString());
+    }
+    public static Double getDoubleNull(HashMap<String, Object> base, String path){
+        return StringUtils.getDouble(getValue(base, path).toString());
+    }
+    public static boolean getBoolean(HashMap<String, Object> base, String path){
+        return Boolean.parseBoolean(getValue(base, path).toString());
+    }
+    public static Boolean getBooleanNull(HashMap<String, Object> base, String path){
+        return StringUtils.getBoolean(getValue(base, path).toString());
+    }
+    public static ArrayList<Object> getList(HashMap<String, Object> base, String path){
+        Object value = getValue(base, path);
+        if(value instanceof List) return (ArrayList<Object>) value;
+        return new ArrayList<>();
+    }
+    public static ArrayList<Object> getListNull(HashMap<String, Object> base, String path){
+        Object value = getValue(base, path);
+        if(value instanceof List) return (ArrayList<Object>) value;
+        return null;
+    }
+
+    // SET VALUE
+    public void set(String path, Object value){
+        set(base, path, value);
+    }
+    public static void set(HashMap<String, Object> base, String path, Object value){
+        createSectionAndSet(base, path, value);
     }
 
     // GET KEY (SECTION)
@@ -111,17 +145,29 @@ public class Config {
         createSection(base, path);
         return getSection(base, path);
     }
-
     public HashMap<String, Object> getSection(String path){
         return getSection(base, path);
+    }
+    public LinkedHashMap<String, Object> getLinkedSection(String path){
+        return getLinkedSection(base, path);
     }
     public static HashMap<String, Object> getSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
         if(value instanceof Map) return (HashMap<String, Object>) value;
         return new HashMap<>();
     }
+    public static LinkedHashMap<String, Object> getLinkedSection(HashMap<String, Object> base, String path){
+        Object value = getValue(base, path);
+        if(value instanceof Map) return (LinkedHashMap<String, Object>) value;
+        return new LinkedHashMap<>();
+    }
+    public static HashMap<String, Object> getSectionNull(HashMap<String, Object> base, String path){
+        Object value = getValue(base, path);
+        if(value instanceof Map) return (HashMap<String, Object>) value;
+        return null;
+    }
 
-    // CREATE SECTION
+    // SET KEY (CREATE SECTION)
 
     public void createSection(String path){
         createSection(base, path);
@@ -138,6 +184,25 @@ public class Config {
             }else{ // use existing section
                 section = (HashMap<String, Object>) section.get(key);
             }
+        }
+    }
+    public static void createSectionAndSet(HashMap<String, Object> base, String path, Object value){
+        String[] splitedPath = StringUtils.cleanArray(path.split(Pattern.quote(".")));
+
+        HashMap<String, Object> section = base;
+        int i = splitedPath.length;
+        for(String key : splitedPath){
+            if(i == 1){
+                section.put(key, value);
+            }else if(!section.containsKey(key) || !(section.get(key) instanceof Map)){ // section does not exist : Create section
+                if(section.containsKey(key)) System.out.println(section.get(key).getClass().getName() + " != Map");
+                HashMap<String, Object> newSection = new HashMap<>();
+                section.put(key, newSection);
+                section = newSection;
+            }else{ // use existing section
+                section = (HashMap<String, Object>) section.get(key);
+            }
+            i--;
         }
     }
 
@@ -159,5 +224,4 @@ public class Config {
         }
         return true;
     }
-
 }

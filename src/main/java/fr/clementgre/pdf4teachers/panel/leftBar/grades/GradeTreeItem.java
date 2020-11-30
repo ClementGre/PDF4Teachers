@@ -438,7 +438,6 @@ public class GradeTreeItem extends TreeItem {
 
         if(hasValue){
             if(core.getValue() == -1 && previousPage == core.getPageNumber()){
-                System.out.println(core.getRealHeight());
                 core.nextRealYToUse = (int) (previousRealY-core.getRealHeight());
                 core.setValue(value);
             }else core.setValue(value);

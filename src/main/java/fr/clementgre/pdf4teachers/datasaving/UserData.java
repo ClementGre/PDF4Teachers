@@ -8,64 +8,102 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
-import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-
 import java.io.*;
+import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class UserData {
 
+    @UserDataObject(path = "lastOpenDir")
+    public String lastOpenDir = System.getProperty("user.home");
 
+    @UserDataObject(path = "customColors")
+    public List<String> customColors = new ArrayList<>();
 
-    private static class DataType{
-        public static final int SIMPLE_DATA = 0;
-        public static final int TEXT_ELEMENT_FAVORITE = 1;
-        public static final int TEXT_ELEMENT_LAST = 2;
-        public static final int TEXT_ELEMENT_LIST = 3;
-    }
+    // FILES (FilesTab)
+    @UserDataObject(path = "files.lastFile")
+    public String lastOpenedFile = "";
+    @UserDataObject(path = "files.lastFiles")
+    public List<String> lastOpenedFiles = new ArrayList<>();
 
-    public static File lastOpenDir = new File(System.getProperty("user.home"));
+    // TEXTS Sections
+    @UserDataObject(path = "texts.favorites")
+    public List<Object> favoritesTextElements = new ArrayList<>();
+    @UserDataObject(path = "texts.lasts")
+    public List<Object> lastsTextElements = new ArrayList<>();
+    @UserDataObject(path = "texts.lists")
+    public HashMap<Object, Object> listsOfTextElements = new HashMap<>();
+    @UserDataObject(path = "texts.lastFont.font")
+    public String textLastFontName = "Open Sans";
+    @UserDataObject(path = "texts.lastFont.size")
+    public double textLastFontSize = 14;
+    @UserDataObject(path = "texts.lastFont.color")
+    public String textLastFontColor = "";
+    @UserDataObject(path = "texts.lastFont.bold")
+    public boolean textLastFontBold = false;
+    @UserDataObject(path = "texts.lastFont.italic")
+    public boolean textLastFontItalic = false;
 
-    // Grades ExportParams
+    // GradesTab
+    @UserDataObject(path = "grades.lockGradeScale")
+    public boolean lockGradeScale = false;
+    @UserDataObject(path = "grades.tiersFont")
+    public LinkedHashMap<Object, Object> gradesTiersFont = new LinkedHashMap<>();
 
+    // GradesExport Params & PdfExport Params
+    @UserDataObject(path = "export.fields.fileName")
     public String lastExportFileName = "";
+    @UserDataObject(path = "export.fields.fileNamePrefix")
     public String lastExportFileNamePrefix = "";
+    @UserDataObject(path = "export.fields.fileNameSuffix")
     public String lastExportFileNameSuffix = "";
+    @UserDataObject(path = "export.fields.fileNameReplace")
     public String lastExportFileNameReplace = "";
+    @UserDataObject(path = "export.fields.fileNameBy")
     public String lastExportFileNameBy = "";
+    @UserDataObject(path = "export.fields.studentNameReplace")
     public String lastExportStudentNameReplace = "";
+    @UserDataObject(path = "export.fields.studentNameBy")
     public String lastExportStudentNameBy = "";
+    @UserDataObject(path = "export.settings.onlySameGradeScale")
     public boolean settingsOnlySameGradeScale = true;
+    @UserDataObject(path = "export.settings.onlyCompleted")
     public boolean settingsOnlyCompleted = false;
+    @UserDataObject(path = "export.settings.onlySameDir")
     public boolean settingsOnlySameDir = false;
+    @UserDataObject(path = "export.settings.attributeTotalLine")
     public boolean settingsAttributeTotalLine = false;
+    @UserDataObject( path = "export.settings.attributeMoyLine")
     public boolean settingsAttributeMoyLine = true;
+    @UserDataObject(path = "export.settings.withTxtElements")
     public boolean settingsWithTxtElements = false;
-    public int settingsTiersExportSlider = 2;
+    @UserDataObject(path = "export.settings.tiersExportSlider")
+    public long settingsTiersExportSlider = 2;
 
-    // ConvertParams
-
+    // Convert Params
+    @UserDataObject(path = "convert.fields.srcDir")
     public String lastConvertSrcDir = System.getProperty("user.home");
+    @UserDataObject(path = "convert.fields.outFileName")
     public String lastConvertFileName = ".pdf";
+    @UserDataObject(path = "convert.fields.convertDefinition")
     public String lastConvertDefinition = "";
+    @UserDataObject(path = "convert.fields.convertFormat")
     public String lastConvertFormat = "";
+    @UserDataObject(path = "convert.settings.convertAloneImages")
     public boolean settingsConvertAloneImages = true;
-    public Boolean settingsConvertVoidFiles = true;
+    @UserDataObject(path = "convert.settings.convertVoidFile")
+    public boolean settingsConvertVoidFiles = true;
 
     public UserData(){
 
-        if(Main.settings.getSettingsVersion().isEmpty()){
-            return;
-        }else if(new File(Main.dataFolder + "userdata.hex").exists()){
-            loadDataFromHEX();
-        }else{
+        if(!Main.settings.getSettingsVersion().isEmpty()){
             loadDataFromYAML();
         }
     }
@@ -74,7 +112,7 @@ public class UserData {
 
         new Thread(() -> {
 
-            try {
+            try{
                 new File(Main.dataFolder).mkdirs();
                 File file = new File(Main.dataFolder + "userdata.yml");
                 if(file.createNewFile()) return; // File does not exist or can't create it
@@ -82,64 +120,75 @@ public class UserData {
                 Config config = new Config(file);
                 config.load();
 
-                // FILES
+                for(Field field : getClass().getDeclaredFields()) {
+                    if(field.isAnnotationPresent(UserDataObject.class)){
+                        try {
+                            if(field.getType() == String.class){
+                                String value = config.getString(field.getAnnotation(UserDataObject.class).path());
+                                if(!value.isEmpty()) field.set(this, value);
+                            }else if(field.getType() == boolean.class){
+                                Boolean value = config.getBooleanNull(field.getAnnotation(UserDataObject.class).path());
+                                if(value != null) field.set(this, value);
+                            }else if(field.getType() == long.class){
+                                Long value = config.getLongNull(field.getAnnotation(UserDataObject.class).path());
+                                if(value != null) field.set(this, value);
+                            }else if(field.getType() == double.class){
+                                Double value = config.getDoubleNull(field.getAnnotation(UserDataObject.class).path());
+                                if(value != null) field.set(this, value);
+                            }else if(field.getType() == List.class){
+                                List<Object> value = config.getListNull(field.getAnnotation(UserDataObject.class).path());
+                                if(value != null) field.set(this, value);
+                            }else if(field.getType() == HashMap.class){
+                                field.set(this, config.getSection(field.getAnnotation(UserDataObject.class).path()));
+                            }else if(field.getType() == LinkedHashMap.class){
+                                field.set(this, config.getLinkedSection(field.getAnnotation(UserDataObject.class).path()));
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }catch(IOException e) {
+                e.printStackTrace();
+            }
 
-                HashMap<String, Object> files = config.getSection("files");
-
+            Platform.runLater(() -> {
                 if(Main.settings.isRestoreLastSession()){
-                    for(Object filePath : Config.getList(files, "lastFiles")){
+                    for(Object filePath : lastOpenedFiles){
                         Platform.runLater(() ->{
                             File lastFile = new File(filePath.toString());
                             if(lastFile.exists()) MainWindow.filesTab.originalFiles.add(lastFile);
                             MainWindow.filesTab.backOpenFilesList(false);
                         });
                     }
-                    File lastFile = new File(Config.getString(files, "lastFile"));
+                    File lastFile = new File(lastOpenedFile);
                     if(lastFile.exists()){
-                        Platform.runLater(() -> MainWindow.mainScreen.openFile(lastFile));
+                        MainWindow.mainScreen.openFile(lastFile);
                     }
                 }
 
                 // TEXTS
-
-                HashMap<String, Object> texts = config.getSection("texts");
-
-                Platform.runLater(() -> {
-                    for(Object data : Config.getList(texts, "favorites")){
-                        if(data instanceof Map) MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
-                    }
-
-                    for(Object data : Config.getList(texts, "lasts")){
-                        if(data instanceof Map) MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
-                    }
-
-                    for(Map.Entry<String, Object> list : Config.getSection(texts, "lists").entrySet()){
-                        if(list.getValue() instanceof List){
-                            ArrayList<TextListItem> listTexts = new ArrayList<>();
-                            for(Object data : ((List<Object>) list.getValue())){
-                                listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
-                            }
-                            TextTreeSection.lists.put(list.getKey(), listTexts);
-                        }
-                    }
-                });
-
-                HashMap<String, Object> lastTextFont = Config.getSection(texts, "lastFont");
-                if(lastTextFont.size() == 5){
-                    MainWindow.textTab.lastFont = Config.getString(lastTextFont, "font");
-                    MainWindow.textTab.lastFontSize = (int) Config.getDouble(lastTextFont, "size");
-                    MainWindow.textTab.lastColor = Config.getString(lastTextFont, "color");
-                    MainWindow.textTab.lastBold = Config.getBoolean(lastTextFont, "bold");
-                    MainWindow.textTab.lastItalic = Config.getBoolean(lastTextFont, "italic");
+                for(Object data : favoritesTextElements){
+                    if(data instanceof Map) MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
                 }
 
+                for(Object data : lastsTextElements){
+                    if(data instanceof Map) MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
+                }
 
-                // NOTES
+                for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){
+                    if(list.getValue() instanceof List){
+                        ArrayList<TextListItem> listTexts = new ArrayList<>();
+                        for(Object data : ((List<Object>) list.getValue())){
+                            listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
+                        }
+                        TextTreeSection.lists.put(list.getKey().toString(), listTexts);
+                    }
+                }
 
-                HashMap<String, Object> grades = config.getSection("grades");
-
+                // GRADES
                 int i = 0;
-                for(Object font : Config.getSection(grades, "tiersFont").values()){
+                for(Object font : gradesTiersFont.values()){
                     if(font instanceof Map){
                         HashMap<String, Object> data = (HashMap<String, Object>) font;
                         GradeTab.fontTiers.put(i, Map.entry(
@@ -154,291 +203,76 @@ public class UserData {
                     i++;
                 }
 
-                Platform.runLater(() -> {
-                    MainWindow.gradeTab.lockGradeScale.setSelected(Config.getBoolean(grades, "lockGradeScale"));
-                });
+                MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
 
-                // EXPORT
+                SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
 
-                HashMap<String, Object> exportParams = config.getSection("export");
-
-                HashMap<String, Object> exportFields = Config.getSection(exportParams, "fields");
-                lastExportFileName = Config.getString(exportFields, "fileName");
-                lastExportFileName = Config.getString(exportFields, "fileName");
-                lastExportFileNameReplace = Config.getString(exportFields, "fileNameReplace");
-                lastExportFileNameBy = Config.getString(exportFields, "fileNameBy");
-                lastExportFileNameSuffix = Config.getString(exportFields, "fileNameSuffix");
-                lastExportFileNamePrefix = Config.getString(exportFields, "fileNamePrefix");
-                lastExportStudentNameReplace = Config.getString(exportFields, "studentNameReplace");
-                lastExportStudentNameBy = Config.getString(exportFields, "studentNameBy");
-
-                HashMap<String, Object> exportSettings = Config.getSection(exportParams, "settings");
-                settingsOnlySameGradeScale = Config.getBoolean(exportSettings, "onlySameGradeScale");
-                settingsOnlyCompleted = Config.getBoolean(exportSettings, "onlyCompleted");
-                settingsOnlySameDir = Config.getBoolean(exportSettings, "onlySameDir");
-                settingsAttributeTotalLine = Config.getBoolean(exportSettings, "attributeTotalLine");
-                settingsAttributeMoyLine = Config.getBoolean(exportSettings, "attributeMoyLine");
-                settingsWithTxtElements = Config.getBoolean(exportSettings, "withTxtElements");
-                settingsTiersExportSlider = (int) Config.getLong(exportSettings, "tiersExportSlider");
-
-                // CONVERT
-
-                HashMap<String, Object> convertParams = config.getSection("convert");
-
-                HashMap<String, Object> convertFields = Config.getSection(convertParams, "fields");
-                lastConvertSrcDir = Config.getString(convertFields, "srcDir");
-                lastConvertFileName = Config.getString(convertFields, "outFileName");
-                lastConvertDefinition = Config.getString(convertFields, "convertDefinition");
-                lastConvertFormat = Config.getString(convertFields, "convertFormat");
-
-                HashMap<String, Object> convertSettings = Config.getSection(convertParams, "settings");
-                settingsConvertAloneImages = Config.getBoolean(convertSettings, "convertAloneImages");
-                settingsConvertVoidFiles = Config.getBoolean(convertSettings, "convertVoidFiles");
-
-                // SINGLE
-
-                lastOpenDir = new File(config.getString("lastOpenDir"));
-                SyncColorPicker.loadCustomsColors(config.getList("customColors").stream().map(Object::toString).collect(Collectors.toList()));
-
-            }catch(IOException e) {
-                e.printStackTrace();
-            }
-
-            if(!new File(lastConvertSrcDir).exists()) lastConvertSrcDir = System.getProperty("user.home");
-
-            Platform.runLater(() -> {
                 MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
                 MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
                 ListsManager.setupMenus();
             });
-
         }).start();
-    }
-    private void loadDataFromHEX(){
-
-        new File(Main.dataFolder).mkdirs();
-        File file = new File(Main.dataFolder + "userdata.hex");
-
-        try{
-            if(file.exists()){ // file exist
-                DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-
-                while(reader.available() != 0){
-                    int dataType = reader.readInt();
-
-                    switch(dataType){
-                        case DataType.SIMPLE_DATA: // Last TextElement
-                            try{
-                                lastOpenDir = new File(reader.readUTF());
-                                 reader.readUTF(); // lastExportDir
-                                 reader.readUTF(); // lastExportDirGrades
-
-                                // LAST FONTS (TEXT_TAB)
-
-                                MainWindow.textTab.lastFont = reader.readUTF();
-                                MainWindow.textTab.lastFontSize =reader.readInt();
-                                MainWindow.textTab.lastColor = reader.readUTF();
-                                MainWindow.textTab.lastBold = reader.readBoolean();
-                                MainWindow.textTab.lastItalic = reader.readBoolean();
-
-                                // TIERS FONTS (NOTE_TAB) + Lock + ExportParams
-
-                                for(int i = 0; i < 5 ; i++){
-                                    GradeTab.fontTiers.put(i, Map.entry(
-                                            Font.loadFont(FontUtils.getFontFile(reader.readUTF(), reader.readBoolean(), reader.readBoolean()), reader.readDouble()), // Font + Size
-                                            Map.entry(Color.valueOf(reader.readUTF()), reader.readBoolean()))); // Color + ShowName
-                                }
-
-                                boolean lockGradingScale = reader.readBoolean();
-
-                                Platform.runLater(() -> {
-                                    MainWindow.gradeTab.updateElementsFont();
-                                    MainWindow.gradeTab.lockGradeScale.setSelected(lockGradingScale);
-                                });
-
-                                lastExportFileName = reader.readUTF();
-                                lastExportFileNameReplace = reader.readUTF();
-                                lastExportFileNameBy = reader.readUTF();
-                                lastExportFileNamePrefix = reader.readUTF();
-                                lastExportFileNameSuffix = reader.readUTF();
-                                lastExportStudentNameReplace = reader.readUTF();
-                                lastExportStudentNameBy = reader.readUTF();
-                                settingsOnlySameGradeScale = reader.readBoolean();
-                                settingsOnlyCompleted = reader.readBoolean();
-                                settingsOnlySameDir = reader.readBoolean();
-                                settingsAttributeTotalLine = reader.readBoolean();
-                                settingsAttributeMoyLine = reader.readBoolean();
-                                settingsWithTxtElements = reader.readBoolean();
-                                settingsTiersExportSlider = reader.readInt();
-
-                            }catch(Exception e){ e.printStackTrace(); }
-                        break;
-                        case DataType.TEXT_ELEMENT_FAVORITE: // Favorite TextElement
-                            try{
-                                MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.FAVORITE_TYPE));
-                            }catch(Exception e){ e.printStackTrace(); }
-                        break;
-                        case DataType.TEXT_ELEMENT_LAST: // Last TextElement
-                            try{
-                                MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readDataAndGive(reader, TextTreeSection.LAST_TYPE));
-                            }catch(Exception e){ e.printStackTrace(); }
-                        break;
-                        case DataType.TEXT_ELEMENT_LIST: // List TextElement
-                            try{
-                                String listName = reader.readUTF();
-                                ArrayList<TextListItem> list = TextTreeSection.lists.containsKey(listName) ? TextTreeSection.lists.get(listName) : new ArrayList<>();
-                                list.add(TextListItem.readDataAndGive(reader));
-                                TextTreeSection.lists.put(listName, list);
-
-                            }catch(Exception e){ e.printStackTrace(); }
-                        break;
-                    }
-                }
-                reader.close();
-
-                MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
-                MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
-                ListsManager.setupMenus();
-
-                file.delete();
-            }
-        }catch(IOException e){
-            e.printStackTrace();
-        }
     }
 
     public void saveData(){
+
+        // SINGLES
+        customColors = SyncColorPicker.getCustomColorsList();
+
+        // FILES
+        lastOpenedFiles = new ArrayList<>();
+        for(File file : MainWindow.filesTab.originalFiles){
+            lastOpenedFiles.add(file.getAbsolutePath());
+        }
+        lastOpenedFile =  MainWindow.mainScreen.hasDocument(false) ? MainWindow.mainScreen.document.getFile().getAbsolutePath() : "";
+
+        // TEXTS
+        favoritesTextElements = new ArrayList<>();
+        for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
+            if(item instanceof TextTreeItem) favoritesTextElements.add(((TextTreeItem) item).getYAMLData());
+        }
+
+        lastsTextElements = new ArrayList<>();
+        for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
+            if(item instanceof TextTreeItem) lastsTextElements.add(((TextTreeItem) item).getYAMLData());
+        }
+
+        listsOfTextElements = new LinkedHashMap<>();
+        for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
+            List<Object> listTexts = new ArrayList<>();
+            for(TextListItem item : list.getValue()) listTexts.add(item.getYAMLData());
+            listsOfTextElements.put(list.getKey(), listTexts);
+        }
+
+        // GRADES
+        int i = 0;
+        gradesTiersFont = new LinkedHashMap<>();
+        for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : GradeTab.fontTiers.values()){
+            Font realFont = font.getKey();
+            LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
+            data.put("font", realFont.getFamily());
+            data.put("italic", FontUtils.getFontPosture(realFont) == FontPosture.ITALIC);
+            data.put("bold", FontUtils.getFontWeight(realFont) == FontWeight.BOLD);
+            data.put("size", realFont.getSize());
+            data.put("color", font.getValue().getKey().toString());
+            data.put("showName", font.getValue().getValue());
+            gradesTiersFont.put(i+"", data); i++;
+        }
+        lockGradeScale = MainWindow.gradeTab.lockGradeScale.isSelected();
 
         try{
             new File(Main.dataFolder).mkdirs();
             Config config = new Config(new File(Main.dataFolder + "userdata.yml"));
 
-            // FILES
-
-            LinkedHashMap<Object, Object> files = new LinkedHashMap<>();
-
-            ArrayList<String> lastFiles = new ArrayList<>();
-            for(File file : MainWindow.filesTab.originalFiles){
-                lastFiles.add(file.getAbsolutePath());
-            }
-            files.put("lastFiles", lastFiles);
-            files.put("lastFile", MainWindow.mainScreen.hasDocument(false) ? MainWindow.mainScreen.document.getFile().getAbsolutePath() : "");
-
-            config.base.put("files", files);
-
-            // TEXTS
-
-            LinkedHashMap<Object, Object> texts = new LinkedHashMap<>();
-            List<Object> favoriteTexts = new ArrayList<>();
-            for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
-                if(item instanceof TextTreeItem){
-                    favoriteTexts.add(((TextTreeItem) item).getYAMLData());
+            for(Field field : getClass().getDeclaredFields()) {
+                if(field.isAnnotationPresent(UserDataObject.class)){
+                    try{
+                        config.set(field.getAnnotation(UserDataObject.class).path(), field.get(this));
+                    }catch(Exception e){
+                        e.printStackTrace();
+                    }
                 }
             }
-            texts.put("favorites", favoriteTexts);
-
-            ArrayList<Object> lastTexts = new ArrayList<>();
-            for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
-                if(item instanceof TextTreeItem){
-                    lastTexts.add(((TextTreeItem) item).getYAMLData());
-                }
-            }
-            texts.put("lasts", lastTexts);
-
-            LinkedHashMap<Object, Object> lists = new LinkedHashMap<>();
-            for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
-                List<Object> listTexts = new ArrayList<>();
-                for(TextListItem item : list.getValue()){
-                    listTexts.add(item.getYAMLData());
-                }
-                lists.put(list.getKey(), listTexts);
-            }
-            texts.put("lists", lists);
-
-            LinkedHashMap<Object, Object> lastTextFont = new LinkedHashMap<>();
-            lastTextFont.put("font", MainWindow.textTab.lastFont);
-            lastTextFont.put("size", MainWindow.textTab.lastFontSize);
-            lastTextFont.put("color", MainWindow.textTab.lastColor);
-            lastTextFont.put("bold", MainWindow.textTab.lastBold);
-            lastTextFont.put("italic", MainWindow.textTab.lastItalic);
-            texts.put("lastFont", lastTextFont);
-
-            config.base.put("texts", texts);
-
-            // GRADES
-
-            int i = 0;
-            HashMap<Object, Object> grades = new HashMap<>();
-            LinkedHashMap<Object, Object> gradeTiersFont = new LinkedHashMap<>();
-            for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : GradeTab.fontTiers.values()){
-                Font realFont = font.getKey();
-                LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
-
-                data.put("font", realFont.getFamily());
-                data.put("italic", FontUtils.getFontPosture(realFont) == FontPosture.ITALIC);
-                data.put("bold", FontUtils.getFontWeight(realFont) == FontWeight.BOLD);
-                data.put("size", realFont.getSize());
-
-                data.put("color", font.getValue().getKey().toString());
-                data.put("showName", font.getValue().getValue());
-
-                gradeTiersFont.put(i+"", data);
-                i++;
-            }
-            grades.put("tiersFont", gradeTiersFont);
-            grades.put("lockGradeScale", MainWindow.gradeTab.lockGradeScale.isSelected());
-
-            config.base.put("grades", grades);
-
-            // EXPORT
-
-            HashMap<Object, Object> exportParams = new HashMap<>();
-
-            LinkedHashMap<Object, Object> exportFields = new LinkedHashMap<>();
-            exportFields.put("fileName", lastExportFileName);
-            exportFields.put("fileNameReplace", lastExportFileNameReplace);
-            exportFields.put("fileNameBy", lastExportFileNameBy);
-            exportFields.put("fileNameSuffix", lastExportFileNameSuffix);
-            exportFields.put("fileNamePrefix", lastExportFileNamePrefix);
-            exportFields.put("studentNameReplace", lastExportStudentNameReplace);
-            exportFields.put("studentNameBy", lastExportStudentNameBy);
-            exportParams.put("fields", exportFields);
-
-            LinkedHashMap<Object, Object> exportSettings = new LinkedHashMap<>();
-            exportSettings.put("onlySameGradeScale", settingsOnlySameGradeScale);
-            exportSettings.put("onlyCompleted", settingsOnlyCompleted);
-            exportSettings.put("onlySameDir", settingsOnlySameDir);
-            exportSettings.put("attributeTotalLine", settingsAttributeTotalLine);
-            exportSettings.put("attributeMoyLine", settingsAttributeMoyLine);
-            exportSettings.put("withTxtElements", settingsWithTxtElements);
-            exportSettings.put("tiersExportSlider", settingsTiersExportSlider);
-            exportParams.put("settings", exportSettings);
-
-            config.base.put("export", exportParams);
-
-            // CONVERT
-
-            HashMap<String, Object> convertParams = config.getSection("convert");
-
-            LinkedHashMap<Object, Object> convertFields = new LinkedHashMap<>();
-            convertFields.put("srcDir", lastConvertSrcDir);
-            convertFields.put("outFileName", lastConvertFileName);
-            convertFields.put("convertDefinition", lastConvertDefinition);
-            convertFields.put("convertFormat", lastConvertFormat);
-            convertParams.put("fields", convertFields);
-
-            LinkedHashMap<Object, Object> convertSettings = new LinkedHashMap<>();
-            convertSettings.put("convertAloneImages", settingsConvertAloneImages);
-            convertSettings.put("convertVoidFiles", settingsConvertVoidFiles);
-            convertParams.put("settings", convertSettings);
-
-            config.base.put("convert", convertParams);
-
-            // SINGLE
-
-            config.base.put("lastOpenDir", lastOpenDir.getAbsolutePath());
-
-            config.base.put("customColors", SyncColorPicker.getCustomColorsList());
 
             config.save();
         }catch(IOException e) {
