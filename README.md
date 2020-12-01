@@ -5,20 +5,16 @@
 [![GitHubFolowers](https://img.shields.io/github/followers/clementgre?label=Follow%20Clément%20Grennerat&style=social)](https://github.com/clementgre)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
 
+<h3 align="center">
+  <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/src/main/resources/logo.png" alt="Logo" width="120" height="120"><br>
+  PDF4Teachers<br>
+  <a href="https://pdf4teachers.org">https://pdf4teachers.org</a>
+</h3>
 <p align="center">
-  <a href="https://github.com/ClementGre/PDF4Teachers">
-    <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/src/main/resources/logo.png" alt="Logo" width="120" height="120">
-  </a>
+  <a href="#presentation-en">Presentation</a> | <a href="#the-dependencies">The dependencies</a> | <a href="#code-organization-fr-120">Code organization [French]</a><br/>
+  PDF editing software in large quantities designed for teachers.<br/><br/>
+  <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/images/banner-flat.png" alt="Logo" height="300"></img><br/>
 </p>
-<h3 align="center">PDF4Teachers</h3>
-<br/>
-<p align="center">
-  PDF editing software in large quantities designed for teachers.
-  <br/><br/>
-  <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/images/banner-flat.png" alt="Logo" height="300">
-  <br/><br/>
-</p>
-
 
 #### Shortcuts : &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Before opening new issue, see :
 
@@ -29,7 +25,7 @@
 [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
 [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.2.0%22+label%3A%22enhancement%22+)
 
-## PDF4Teachers [EN]
+# Presentation [EN]
 
 **This app is specifically designed for teachers, it allows to annotate assessments returned in PDF with a very good productivity**
 
@@ -47,7 +43,7 @@ PDF4Teachers is available for Windows, Linux, OSX. Go to the download section wi
 
 Teachers speaking other languages than French and English : help us translate PDF4Teachers, check in the language settings on how to do it !
 
-## PDF4Teachers [FR]
+# Presentation [FR]
 
 **Cette application est principalement destinée aux professeurs, elle permet d'éditer et plus précisément de corriger des copies PDF.**
 
@@ -64,24 +60,24 @@ PDF4Teachers est conforme au RGPD de l'Union européenne : toutes les éditions 
 
 ![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/images/preview.png)
 
-## Les APIs
+# The dependencies
+The application was developped with Java SE 8 (Swing), then, it moved to JavaFX with Java SE 11, Java SE 13, and now, Java SE 14.
 
-L'application a été développée sous Java SE 8 (avec Swing) puis elle est passé sous JavaFX avec Java SE 11, Java SE 13 et enfin, Java SE 14.
-
-- L'application, initialement basé sur Swing, a migré vers **[JavaFx 14](https://openjfx.io/)** pour bénéficier de tous ses avantages (Plus récent / encore maintenus, Bindings, etc.).
-- **[Apache PDF BOX 2.0.20](https://pdfbox.apache.org/)** est utilisé pour générer des images à partir d'un fichier PDF puis pour régénérer un nouveau fichier PDF avec divers éléments (exportation). **Commons Logging**, **Font BOX** et **ImageIO jpeg2000**, lui sont nécessaires.
-- **[JMetro 11.6.11](https://pixelduke.com/java-javafx-theme-jmetro/)**, est un thème JavaFX qui m'a permis de vous offrir une interface plus confortable à regarder que celle par défaut de JavaFx.
-- **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** permet de générer des images à partir de commandes LaTeX (Possibilité de faire des éléments textuels écrits en LaTeX).
-- **[SnakeYAML 1.26](https://bitbucket.org/asomov/snakeyaml/src/master/)** permet de lire et d'écrire les fichiers .yml (éditions et donnés utilisateurs) plus facilement : il convertis l'YAML en ``HashMap<String, Object>`` et inversement.
-- **[Jackson Streaming API 2.10.3](https://github.com/FasterXML/jackson-core)** permet d'interpréder des donnés Json, il me permet de faire des requêtes à GitHub pour vérifier si une nouvelle version est disponible.
+- **[JavaFx 14](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
+- **[Apache PDF BOX 2.0.20](https://pdfbox.apache.org/)** : used to all the interactions with PDF : it generate images from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, **Font BOX** and **ImageIO jpeg2000**, are dependencies of PDF Box.
+- **[JMetro 11.6.11](https://pixelduke.com/java-javafx-theme-jmetro/)** : JavaFX theme. It offers you a nicer interface, including the dark mode.
+- **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (LaTeX text elements feature in 1.2.0)
+- **[SnakeYAML 1.26](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (editings + user datas) : it convert the YAML into ``HashMap<String, Object>`` and vice versa.
+- **[Jackson Streaming API 2.10.3](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to send requests to GitHub to check if a new release is available.
 
 
-- J'ai choisi **[Gradle 6.3](https://gradle.org/)** pour gérer les dépendances, vous pouvez donc exécuter ``./gradlew run`` en bash ou ``gradlew.bat run`` en batch dans un terminal de commande pour exécuter l'application. Vous devrez bien sur auparavant avoir installé un JDK 14 et avoir donné son chemin d'accès dans votre variable d'environment ``JAVA_HOME``.
-- Les fichiers de traductions ont été générés grace à **[TranslationFileGenerator](https://github.com/clementgre/TranslationFileGenerator)**
+- **[Gradle 6.3](https://gradle.org/)** is used to manage the dependencies, therefore, you can execute ``./gradlew run`` (bash) or ``gradlew.bat run`` (batch) in a command prompt to run the application using only the downloaded code and the Java JDK 14 (should be in the environment variable ``JAVA_HOME``).
+- **[TranslationFileGenerator](https://github.com/clementgre/TranslationFileGenerator)** : used to generate the translations files using the code files. (Developped by me).
 
-Vous retrouverez aussi dans l'onglet release des versions compilés avec JLink et JPackager pour votre système d'exploitation.
+**[JLink](https://docs.oracle.com/javase/9/tools/jlink.htm#JSWOR-GUID-CECAC52B-CFEE-46CB-8166-F17A8E9280E9)** is used to generate an image of the code including the dependencies and the used modules of the JRE, for each platforms. (JDK 14 Tool)
+**[JPackager](https://docs.oracle.com/javase/9/tools/javapackager.htm#JSWOR719)** is used to generates instalers (.deb, .msi, .dmg) for each platforms from the image that was generated by JLink. (JDK 14 Tool)
 
-## L'organisation du code (1.2.0)
+# Code Organization [FR] (1.2.0)
 
 *Les noms de packages commençants par un ``.`` représentent des packages de ``fr.clementgre``*
 
