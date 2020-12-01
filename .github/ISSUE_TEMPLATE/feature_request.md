@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-[] I checked this feature was not already requested [here](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.2.0%22+label%3A%22enhancement%22+)
+- [ ] I checked this feature was not already requested [here](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.2.0%22+label%3A%22enhancement%22+)
 
 **Is your feature request related to a problem? Please describe.**
 Ex. I'm always frustrated when [...]
