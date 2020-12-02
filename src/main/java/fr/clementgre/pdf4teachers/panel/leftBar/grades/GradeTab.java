@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.leftBar.grades;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
@@ -12,13 +11,10 @@ import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -27,7 +23,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.util.HashMap;
-import java.util.Map;
 
 @SuppressWarnings("serial")
 public class GradeTab extends Tab {
@@ -37,7 +32,7 @@ public class GradeTab extends Tab {
 
     public GradeTreeView treeView;
 
-    public static HashMap<Integer, Map.Entry<Font, Map.Entry<Color, Boolean>>> fontTiers = new HashMap<>();
+    public static HashMap<Integer, TiersFont> fontTiers = new HashMap<>();
 
     public ToggleButton lockRatingPotitions = new ToggleButton();
     public ToggleButton lockGradeScale = new ToggleButton();
@@ -56,14 +51,13 @@ public class GradeTab extends Tab {
 
         setup();
     }
-
     public void setup(){
 
-        fontTiers.put(0, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 28), Map.entry(Color.valueOf("#990000"), true)));
-        fontTiers.put(1, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 24), Map.entry(Color.valueOf("#b31a1a"), false)));
-        fontTiers.put(2, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#cc3333"), false)));
-        fontTiers.put(3, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#e64d4d"), false)));
-        fontTiers.put(4, Map.entry(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Map.entry(Color.valueOf("#ff6666"), false)));
+        fontTiers.put(0, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 28), Color.valueOf("#990000"), true, false));
+        fontTiers.put(1, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 24), Color.valueOf("#b31a1a"), false, false));
+        fontTiers.put(2, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#cc3333"), false, false));
+        fontTiers.put(3, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#e64d4d"), false, false));
+        fontTiers.put(4, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#ff6666"), false, false));
 
         lockRatingPotitions.setSelected(false);
 
@@ -163,13 +157,16 @@ public class GradeTab extends Tab {
     }
 
     public static Font getTierFont(int index){
-        return fontTiers.get(index).getKey();
+        return fontTiers.get(index).getFont();
     }
     public static Color getTierColor(int index){
-        return fontTiers.get(index).getValue().getKey();
+        return fontTiers.get(index).getColor();
     }
     public static boolean getTierShowName(int index){
-        return fontTiers.get(index).getValue().getValue();
+        return fontTiers.get(index).isShowName();
+    }
+    public static boolean getTierHide(int index) {
+        return fontTiers.get(index).isHide();
     }
 
     public BooleanProperty isLockGradeScaleProperty(){

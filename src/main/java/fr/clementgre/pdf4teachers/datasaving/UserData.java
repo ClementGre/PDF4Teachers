@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
+import fr.clementgre.pdf4teachers.panel.leftBar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.ListsManager;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
@@ -10,7 +11,6 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import javafx.application.Platform;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -101,11 +101,18 @@ public class UserData {
     @UserDataObject(path = "convert.settings.convertVoidFile")
     public boolean settingsConvertVoidFiles = true;
 
+    private TextElementsData textElementsData;
+
     public UserData(){
 
         if(!Main.settings.getSettingsVersion().isEmpty()){
             loadDataFromYAML();
+            textElementsData = new TextElementsData();
         }
+    }
+    public void save(){
+        saveData();
+        textElementsData.saveData();
     }
 
     private void loadDataFromYAML(){
@@ -167,54 +174,48 @@ public class UserData {
                     }
                 }
 
-                // TEXTS
-                for(Object data : favoritesTextElements){
-                    if(data instanceof Map) MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
-                }
-
-                for(Object data : lastsTextElements){
-                    if(data instanceof Map) MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
-                }
-
-                for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){
-                    if(list.getValue() instanceof List){
-                        ArrayList<TextListItem> listTexts = new ArrayList<>();
-                        for(Object data : ((List<Object>) list.getValue())){
-                            listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
-                        }
-                        TextTreeSection.lists.put(list.getKey().toString(), listTexts);
+                if(Main.settings.getSettingsVersion().equals("1.2.0")){
+                    // TEXTS
+                    for(Object data : favoritesTextElements){
+                        if(data instanceof Map) MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
                     }
+
+                    for(Object data : lastsTextElements){
+                        if(data instanceof Map) MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
+                    }
+
+                    for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){
+                        if(list.getValue() instanceof List){
+                            ArrayList<TextListItem> listTexts = new ArrayList<>();
+                            for(Object data : ((List<Object>) list.getValue())){
+                                listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
+                            }
+                            TextTreeSection.lists.put(list.getKey().toString(), listTexts);
+                        }
+                    }
+
                 }
+                favoritesTextElements = new ArrayList<>();
+                lastsTextElements = new ArrayList<>();
+                listsOfTextElements = new LinkedHashMap<>();
 
                 // GRADES
                 int i = 0;
                 for(Object font : gradesTiersFont.values()){
                     if(font instanceof Map){
-                        HashMap<String, Object> data = (HashMap<String, Object>) font;
-                        GradeTab.fontTiers.put(i, Map.entry(
-                                Font.loadFont(
-                                        FontUtils.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold")),
-                                        Config.getDouble(data, "size")), // Font + Size
-                                Map.entry(
-                                        Color.valueOf(Config.getString(data, "color")),
-                                        Config.getBoolean(data, "showName")
-                                ))); // Color + ShowName
+                        GradeTab.fontTiers.put(i, TiersFont.getInstance((HashMap<String, Object>) font));
                     }
                     i++;
                 }
+                MainWindow.gradeTab.updateElementsFont();
 
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
-
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
-
-                MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
-                MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
-                ListsManager.setupMenus();
             });
         }).start();
     }
 
-    public void saveData(){
+    private void saveData(){
 
         // SINGLES
         customColors = SyncColorPicker.getCustomColorsList();
@@ -226,36 +227,11 @@ public class UserData {
         }
         lastOpenedFile =  MainWindow.mainScreen.hasDocument(false) ? MainWindow.mainScreen.document.getFile().getAbsolutePath() : "";
 
-        // TEXTS
-        favoritesTextElements = new ArrayList<>();
-        for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
-            if(item instanceof TextTreeItem) favoritesTextElements.add(((TextTreeItem) item).getYAMLData());
-        }
-
-        lastsTextElements = new ArrayList<>();
-        for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
-            if(item instanceof TextTreeItem) lastsTextElements.add(((TextTreeItem) item).getYAMLData());
-        }
-
-        listsOfTextElements = new LinkedHashMap<>();
-        for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
-            List<Object> listTexts = new ArrayList<>();
-            for(TextListItem item : list.getValue()) listTexts.add(item.getYAMLData());
-            listsOfTextElements.put(list.getKey(), listTexts);
-        }
-
         // GRADES
         int i = 0;
         gradesTiersFont = new LinkedHashMap<>();
-        for(Map.Entry<Font, Map.Entry<Color, Boolean>> font : GradeTab.fontTiers.values()){
-            Font realFont = font.getKey();
-            LinkedHashMap<Object, Object> data = new LinkedHashMap<>();
-            data.put("font", realFont.getFamily());
-            data.put("italic", FontUtils.getFontPosture(realFont) == FontPosture.ITALIC);
-            data.put("bold", FontUtils.getFontWeight(realFont) == FontWeight.BOLD);
-            data.put("size", realFont.getSize());
-            data.put("color", font.getValue().getKey().toString());
-            data.put("showName", font.getValue().getValue());
+        for(TiersFont font : GradeTab.fontTiers.values()){
+            LinkedHashMap<String, Object> data = font.getData();
             gradesTiersFont.put(i+"", data); i++;
         }
         lockGradeScale = MainWindow.gradeTab.lockGradeScale.isSelected();

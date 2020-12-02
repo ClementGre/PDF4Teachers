@@ -50,7 +50,7 @@ public class MainWindow extends Stage{
     Thread userDataSaver = new Thread(() -> {
         while(true){
             try{ Thread.sleep(300000); }catch(InterruptedException e){ e.printStackTrace(); }
-            MainWindow.userData.saveData();
+            MainWindow.userData.save();
         }
     }, "userData AutoSaver");
 
@@ -73,7 +73,7 @@ public class MainWindow extends Stage{
         new Macro(scene);
 
         setOnCloseRequest(e -> {
-            userData.saveData();
+            userData.save();
             if(e.getSource().equals(menuBar)) return;
             hasToClose = true;
 
@@ -147,13 +147,11 @@ public class MainWindow extends Stage{
         userDataSaver.start();
         mainScreen.repaint();
 
-//      COPY DESC
+//      OPEN DOC
 
         if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
             mainScreen.openFile(LanguageWindow.getDocFile());
         }
-
-
 
 //      CHECK UPDATES
         new Thread(() -> {

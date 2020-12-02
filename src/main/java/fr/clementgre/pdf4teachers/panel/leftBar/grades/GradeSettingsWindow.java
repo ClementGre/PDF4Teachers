@@ -23,8 +23,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-import java.util.Map;
-
 public class GradeSettingsWindow extends Stage {
 
     public GradeSettingsWindow(){
@@ -68,6 +66,7 @@ public class GradeSettingsWindow extends Stage {
         private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
         private SyncColorPicker colorPicker = new SyncColorPicker();
         private CheckBox showName = new CheckBox(TR.tr("Afficher le nom de la note"));
+        private CheckBox hide = new CheckBox(TR.tr("Cacher la note"));
 
         public TierPane(int tier){
             this.tier = tier;
@@ -111,16 +110,22 @@ public class GradeSettingsWindow extends Stage {
             showName.setSelected(GradeTab.getTierShowName(tier));
             showName.setCursor(Cursor.HAND);
             showName.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
+            showName.disableProperty().bind(hide.selectedProperty());
 
-            getChildren().addAll(name, fontCombo, boldBtn, itBtn, sizeCombo, colorPicker, showName);
+            PaneUtils.setHBoxPosition(hide, 0, 29, 2.5);
+            hide.setSelected(GradeTab.getTierHide(tier));
+            hide.setCursor(Cursor.HAND);
+            hide.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
+
+            getChildren().addAll(name, fontCombo, boldBtn, itBtn, sizeCombo, colorPicker, showName, hide);
 
         }
 
         private void updateFont(){
 
-            GradeTab.fontTiers.put(tier, Map.entry(
-                    Font.loadFont(FontUtils.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()), // Font + Size
-                    Map.entry(colorPicker.getValue(), showName.isSelected()))); // Color + ShowName
+            GradeTab.fontTiers.put(tier, new TiersFont(
+                    Font.loadFont(FontUtils.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()),
+                    colorPicker.getValue(), showName.isSelected(), hide.isSelected())); // Color + ShowName
             MainWindow.gradeTab.updateElementsFont();
 
         }

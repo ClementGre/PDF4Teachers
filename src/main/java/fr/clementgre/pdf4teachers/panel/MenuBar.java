@@ -432,7 +432,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					Main.settings.setLanguage(value);
 					TR.updateTranslation();
 
-					MainWindow.userData.saveData();
+					MainWindow.userData.save();
 					MainWindow.hasToClose = true;
 					if(MainWindow.mainScreen.closeFile(true)){
 						Main.window.close();

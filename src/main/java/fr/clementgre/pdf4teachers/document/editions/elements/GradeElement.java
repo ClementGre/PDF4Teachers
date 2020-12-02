@@ -52,7 +52,7 @@ public class GradeElement extends Element {
         text.setBoundsType(TextBoundsType.LOGICAL);
         text.setTextOrigin(VPos.TOP);
 
-        setVisible(getValue() != -1);
+        setVisible(getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
         updateFont();
 
         if(hasPage && getPage() != null) setupGeneral(this.text);
@@ -70,7 +70,7 @@ public class GradeElement extends Element {
     protected void setupBindings() {
         // Forse to be hide when value == -1
         visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && getValue() == -1) setVisible(false);
+            if(newValue && (getValue() == -1 || GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)))) setVisible(false);
         });
 
         text.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -102,9 +102,9 @@ public class GradeElement extends Element {
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            if(newValue.intValue() == -1){
+            if(newValue.intValue() == -1 || GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath))){
                 setVisible(false);
-                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + newValue + "/" + Main.format.format(getTotal()));
+                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
             }else{
                 if(oldValue.intValue() == -1){ // Deviens visible
                     if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
@@ -277,6 +277,7 @@ public class GradeElement extends Element {
         text.setFont(GradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
         text.setFill(GradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
         text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
+        setVisible(!GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
     }
     public GradeTreeItem getGradeTreeItem(){
         GradeTreeItem treeItemElement;
