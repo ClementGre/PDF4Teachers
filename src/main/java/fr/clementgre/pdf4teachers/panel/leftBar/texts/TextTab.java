@@ -118,7 +118,7 @@ public class TextTab extends Tab {
 
 		PaneUtils.setHBoxPosition(boldBtn, 45, 29, 2.5);
 		boldBtn.setCursor(Cursor.HAND);
-		boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0));
+		boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
 		boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) MainWindow.userData.textLastFontBold = newValue;
@@ -126,7 +126,7 @@ public class TextTab extends Tab {
 
 		PaneUtils.setHBoxPosition(itBtn, 45, 29, 2.5);
 		itBtn.setCursor(Cursor.HAND);
-		itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0));
+		itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
 		itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) MainWindow.userData.textLastFontItalic = newValue;

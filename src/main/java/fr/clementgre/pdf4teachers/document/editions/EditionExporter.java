@@ -28,7 +28,9 @@ public class EditionExporter {
 
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un dossier et répéter\ncette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+
         dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
+        dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
 
         Optional<ButtonType> option = dialog.showAndWait();
         File directory = null;
@@ -123,7 +125,9 @@ public class EditionExporter {
 
         ButtonType yes = new ButtonType(TR.tr("Choisir un dossier"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("Choisir un dossier et répéter\ncette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+
         dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
+        dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
 
         Optional<ButtonType> option = dialog.showAndWait();
         File directory = null;

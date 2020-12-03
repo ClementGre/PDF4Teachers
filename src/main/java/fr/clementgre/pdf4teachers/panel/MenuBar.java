@@ -589,7 +589,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		if(disableIfNoDoc){
 			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
 		}if(disableIfNoList){
-			menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.files.getItems()).isEqualTo(0));
+			menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
 		}
 		return menuItem;
 

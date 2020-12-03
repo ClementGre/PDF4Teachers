@@ -30,6 +30,8 @@ public class Settings {
     private BooleanProperty showOnlyStartInTextsList = new SimpleBooleanProperty();
     private BooleanProperty smallFontInTextsList = new SimpleBooleanProperty();
 
+    private StringProperty mainScreenSize = new SimpleStringProperty();
+
     private StringProperty language = new SimpleStringProperty("");
 
     public Settings(){
@@ -47,6 +49,8 @@ public class Settings {
         removeElementInPreviousListWhenAddingToFavorites.set(true);
         showOnlyStartInTextsList.set(true);
         smallFontInTextsList.set(false);
+
+        mainScreenSize.set("1200;675;-1;-1");
 
         loadSettings();
 
@@ -87,6 +91,9 @@ public class Settings {
 
         /////
 
+        mainScreenSizeProperty().addListener((observable, oldValue, newValue) -> {
+            saveSettings();
+        });
         languageProperty().addListener((observable, oldValue, newValue) -> {
             saveSettings();
         });
@@ -118,6 +125,9 @@ public class Settings {
                         case "language":
                             language.set(value);
                         break;
+                        case "mainScreenSize":
+                            mainScreenSize.set(value);
+                            break;
                         case "restoreLastSession":
                             try{
                                 restoreLastSession.set(Boolean.parseBoolean(value));
@@ -184,7 +194,7 @@ public class Settings {
     }
 
     public void saveSettings(){
-
+        System.out.println("save !");
         new Thread(() -> {
 
             new File(Main.dataFolder).mkdirs();
@@ -200,6 +210,9 @@ public class Settings {
 
                 writer.newLine();
                 writer.write("language: " + language.get());
+
+                writer.newLine();
+                writer.write("mainScreenSize: " + mainScreenSize.get());
 
                 writer.newLine();
                 writer.write("restoreLastSession: " + restoreLastSession.get());
@@ -342,6 +355,16 @@ public class Settings {
     }
     public void setSmallFontInTextsList(boolean smallFontInTextsList) {
         this.smallFontInTextsList.set(smallFontInTextsList);
+    }
+
+    public String getMainScreenSize() {
+        return mainScreenSize.get();
+    }
+    public StringProperty mainScreenSizeProperty() {
+        return mainScreenSize;
+    }
+    public void setMainScreenSize(String mainScreenSize) {
+        this.mainScreenSize.set(mainScreenSize);
     }
 
     public String getLanguage() {
