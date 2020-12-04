@@ -12,7 +12,10 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import javafx.application.Platform;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.VPos;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
@@ -68,6 +71,7 @@ public class GradeElement extends Element {
 
     @Override
     protected void setupBindings() {
+
         // Forse to be hide when value == -1
         visibleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && (getValue() == -1 || GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)))) setVisible(false);
@@ -107,10 +111,12 @@ public class GradeElement extends Element {
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + Main.format.format(newValue) + "/" + Main.format.format(getTotal()));
             }else{
                 if(oldValue.intValue() == -1){ // Deviens visible
+
                     if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getCurrentPage());
                     }
                     setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
+
                     if(nextRealYToUse != 0){
                         setRealY(nextRealYToUse);
                         nextRealYToUse = 0;
@@ -277,7 +283,7 @@ public class GradeElement extends Element {
         text.setFont(GradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
         text.setFill(GradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
         text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : Main.format.format(getValue())) + "/" + Main.format.format(getTotal()));
-        setVisible(!GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
+        setVisible(getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
     }
     public GradeTreeItem getGradeTreeItem(){
         GradeTreeItem treeItemElement;

@@ -278,7 +278,6 @@ public class TextTab extends Tab {
 
 			fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
 			sizeCombo.getSelectionModel().select(MainWindow.userData.textLastFontSize);
-			System.out.println(MainWindow.userData.textLastFontColor);
 			colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
 			boldBtn.setSelected(MainWindow.userData.textLastFontBold);
 			itBtn.setSelected(MainWindow.userData.textLastFontItalic);

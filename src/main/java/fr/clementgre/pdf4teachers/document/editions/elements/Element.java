@@ -83,9 +83,6 @@ public abstract class Element extends Region {
 					itemY = newPage.getPreciseMouseY() - shiftY;
 					checkLocation(itemX, itemY, true);
 
-					layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
-					layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
-
 					MainWindow.mainScreen.setSelected(this);
 				}
 			}
@@ -108,7 +105,6 @@ public abstract class Element extends Region {
 		setOnMouseDragged(e -> {
 			double itemX = getLayoutX() + e.getX() - shiftX;
 			double itemY = getLayoutY() + e.getY() - shiftY;
-
 			checkLocation(itemX, itemY, true);
 		});
 		setOnMouseClicked(e -> {
@@ -164,6 +160,8 @@ public abstract class Element extends Region {
 	}
 	public void switchPage(int page){
 		getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+		layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
+		layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
 	}
 
 	// READER AND WRITERS

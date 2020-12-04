@@ -312,4 +312,14 @@ public class GradeTreeView extends TreeView<String> {
     public static int getElementTier(String parentPath){
         return StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length;
     }
+
+    public void updateAllSum() {
+        ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
+
+        for(GradeTreeItem item : items){
+            if(item.hasSubGrade()){
+                item.makeSum(-1, 0);
+            }
+        }
+    }
 }

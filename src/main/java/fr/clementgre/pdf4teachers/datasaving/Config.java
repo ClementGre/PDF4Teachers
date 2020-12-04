@@ -195,7 +195,6 @@ public class Config {
             if(i == 1){
                 section.put(key, value);
             }else if(!section.containsKey(key) || !(section.get(key) instanceof Map)){ // section does not exist : Create section
-                if(section.containsKey(key)) System.out.println(section.get(key).getClass().getName() + " != Map");
                 HashMap<String, Object> newSection = new HashMap<>();
                 section.put(key, newSection);
                 section = newSection;

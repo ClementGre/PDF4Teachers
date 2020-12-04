@@ -34,7 +34,7 @@ public class GradeTab extends Tab {
 
     public static HashMap<Integer, TiersFont> fontTiers = new HashMap<>();
 
-    public ToggleButton lockRatingPotitions = new ToggleButton();
+    public ToggleButton sumByDecrement = new ToggleButton();
     public ToggleButton lockGradeScale = new ToggleButton();
     private Button settings = new Button();
     private Button link = new Button();
@@ -43,9 +43,6 @@ public class GradeTab extends Tab {
     public GradeTab(){
         setClosable(false);
         setContent(pane);
-        ImageUtils.defaultDarkColorAdjust.brightnessProperty().addListener((observable, oldValue, newValue) -> {
-            setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "gray", 0, 29, 0, 0, new int[]{500, 440}, ImageUtils.defaultGrayColorAdjust));
-        });
         setGraphic(SVGPathIcons.generateImage(SVGPathIcons.ON_TWENTY, "gray", 0, 29, 0, 0, new int[]{500, 440}, ImageUtils.defaultGrayColorAdjust));
         MainWindow.leftBar.getTabs().add(2, this);
 
@@ -59,7 +56,14 @@ public class GradeTab extends Tab {
         fontTiers.put(3, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#e64d4d"), false, false));
         fontTiers.put(4, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#ff6666"), false, false));
 
-        lockRatingPotitions.setSelected(false);
+        PaneUtils.setHBoxPosition(sumByDecrement, 45, 35, 0);
+        sumByDecrement.setCursor(Cursor.HAND);
+        sumByDecrement.setSelected(false);
+        sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, ImageUtils.defaultDarkColorAdjust));
+        sumByDecrement.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            treeView.updateAllSum();
+        });
+        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.")));
 
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
@@ -100,7 +104,7 @@ public class GradeTab extends Tab {
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, lockGradeScale, settings, link, export);
+        optionPane.getChildren().addAll(spacer, sumByDecrement, lockGradeScale, settings, link, export);
 
         treeView = new GradeTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);
