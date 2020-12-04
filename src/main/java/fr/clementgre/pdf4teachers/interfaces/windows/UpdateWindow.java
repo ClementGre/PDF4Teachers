@@ -219,9 +219,9 @@ public class UpdateWindow extends Stage {
 
         String platform = "Linux";
         String extension = "deb";
-        if(System.getProperty("os.name").toLowerCase().contains("win")){
+        if(Main.isWindows()){
             platform = "Windows"; extension = "msi";
-        }else if(System.getProperty("os.name").toLowerCase().contains("os x")) {
+        }else if(Main.isOSX()){
             platform = "MacOSX"; extension = "dmg";
         }
         String url = "https://github.com/ClementGre/PDF4Teachers/releases/download/" + UpdateWindow.version + "/PDF4Teachers-" + platform + "-" + UpdateWindow.version + "." + extension;

@@ -26,6 +26,8 @@ import java.util.List;
 
 public class PageRenderer extends Pane{
 
+    public static int PAGE_HORIZONTAL_MARGIN = 30;
+
     private PageStatus status = PageStatus.HIDE;
 
     private int page;
@@ -169,7 +171,7 @@ public class PageRenderer extends Pane{
         setMaxHeight(MainWindow.mainScreen.getPageWidth() * ratio);
         setMinHeight(MainWindow.mainScreen.getPageWidth() * ratio);
 
-        setTranslateX(30);
+        setTranslateX(PAGE_HORIZONTAL_MARGIN);
         setTranslateY(totalHeight);
 
         totalHeight = (int) (totalHeight + getHeight() + 30);

@@ -75,6 +75,8 @@ public class MainScreen extends Pane {
 
 	public MainScreen(){
 
+		if(Main.isOSX()) PageRenderer.PAGE_HORIZONTAL_MARGIN = 15;
+
 		setup();
 		repaint();
 
@@ -379,7 +381,7 @@ public class MainScreen extends Pane {
 	}
 	public void updateSize(int totalHeight){
 
-		pane.setPrefWidth(pageWidth + 60.0);
+		pane.setPrefWidth(pageWidth + (PageRenderer.PAGE_HORIZONTAL_MARGIN *2));
 		pane.setPrefHeight(totalHeight);
 	}
 }

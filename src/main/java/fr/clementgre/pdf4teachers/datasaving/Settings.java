@@ -39,7 +39,7 @@ public class Settings {
         restoreLastSession.set(true);
         checkUpdates.set(true);
         defaultZoom = 130;
-        if(System.getProperty("os.name").equals("Mac OS X")) zoomAnimations.set(false);
+        if(Main.isOSX()) zoomAnimations.set(false);
         else zoomAnimations.set(true);
         darkTheme.set(true);
 

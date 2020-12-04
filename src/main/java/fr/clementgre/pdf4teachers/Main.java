@@ -76,8 +76,8 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window){
 
-		if(System.getProperty("os.name").toLowerCase().contains("win")) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
-		else if(System.getProperty("os.name").toLowerCase().contains("os x")) systemShortcut = "Cmd";
+		if(isWindows()) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
+		else if(isOSX()) systemShortcut = "Cmd";
 
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
@@ -146,6 +146,16 @@ public class Main extends Application {
 		else if(separator != ',' && separator != '.') separator = '.';
 		symbols.setDecimalSeparator(separator);
 		format = new DecimalFormat("0.####", symbols);
+	}
+
+	public static boolean isWindows(){
+		return System.getProperty("os.name").toLowerCase().contains("windows");
+	}
+	public static boolean isOSX(){
+		return System.getProperty("os.name").toLowerCase().contains("mac os x");
+	}
+	public static boolean isLinux(){
+		return !isWindows() && !isOSX();
 	}
 
 
