@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -32,6 +33,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.util.StringConverter;
 
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -47,7 +49,7 @@ public class TextTab extends Tab {
 
 	private HBox combosBox = new HBox();
 	private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
-	private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
+	private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
 
 	private HBox colorAndParamsBox = new HBox();
 	private SyncColorPicker colorPicker = new SyncColorPicker();
@@ -102,8 +104,10 @@ public class TextTab extends Tab {
 
 		PaneUtils.setHBoxPosition(sizeCombo, 95, 30, 2.5);
 		sizeCombo.setStyle("-fx-font-size: 13");
+		sizeCombo.setEditable(true);
 		sizeCombo.getSelectionModel().select(7);
 		sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
+		sizeCombo.setConverter(new StringToDoubleConverter(sizeCombo.getValue()));
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
 			if(isNew) MainWindow.userData.textLastFontSize = newValue;
 		});
@@ -177,7 +181,7 @@ public class TextTab extends Tab {
 					itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
 					colorPicker.setValue(current.getColor());
 					fontCombo.getSelectionModel().select(current.getFont().getFamily());
-					sizeCombo.getSelectionModel().select((Integer) ((int) current.getFont().getSize()));
+					sizeCombo.getSelectionModel().select(current.getFont().getSize());
 
 					current.fontProperty().bind(Bindings.createObjectBinding(() -> { Edition.setUnsave(); return getFont(); }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
 				}
@@ -273,7 +277,7 @@ public class TextTab extends Tab {
 			MainWindow.mainScreen.setSelected(null);
 
 			fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
-			sizeCombo.getSelectionModel().select((Integer) ((int) MainWindow.userData.textLastFontSize));
+			sizeCombo.getSelectionModel().select(MainWindow.userData.textLastFontSize);
 			System.out.println(MainWindow.userData.textLastFontColor);
 			colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
 			boldBtn.setSelected(MainWindow.userData.textLastFontBold);

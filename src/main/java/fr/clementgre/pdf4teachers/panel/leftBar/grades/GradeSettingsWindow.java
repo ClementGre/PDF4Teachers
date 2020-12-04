@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
@@ -63,7 +64,7 @@ public class GradeSettingsWindow extends Stage {
         private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
-        private ComboBox<Integer> sizeCombo = new ComboBox<>(FontUtils.sizes);
+        private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
         private SyncColorPicker colorPicker = new SyncColorPicker();
         private CheckBox showName = new CheckBox(TR.tr("Afficher le nom de la note"));
         private CheckBox hide = new CheckBox(TR.tr("Cacher la note"));
@@ -84,9 +85,11 @@ public class GradeSettingsWindow extends Stage {
             fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
             fontCombo.setCellFactory((ListView<String> stringListView) -> new TextTab.ShapeCell());
 
-            PaneUtils.setHBoxPosition(sizeCombo, 60, 30, 2.5);
+            PaneUtils.setHBoxPosition(sizeCombo, 80, 30, 2.5);
             sizeCombo.setStyle("-fx-font-size: 13");
-            sizeCombo.getSelectionModel().select((Integer) ((int) font.getSize()));
+            sizeCombo.setEditable(true);
+            sizeCombo.getSelectionModel().select(font.getSize());
+            sizeCombo.setConverter(new StringToDoubleConverter(sizeCombo.getValue()));
             sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             PaneUtils.setHBoxPosition(colorPicker, 120, 30, 2.5);

@@ -50,7 +50,7 @@ public class Settings {
         showOnlyStartInTextsList.set(true);
         smallFontInTextsList.set(false);
 
-        mainScreenSize.set("1200;675;-1;-1");
+        mainScreenSize.set("1200;675;-1;-1;false");
 
         loadSettings();
 
@@ -194,7 +194,6 @@ public class Settings {
     }
 
     public void saveSettings(){
-        System.out.println("save !");
         new Thread(() -> {
 
             new File(Main.dataFolder).mkdirs();

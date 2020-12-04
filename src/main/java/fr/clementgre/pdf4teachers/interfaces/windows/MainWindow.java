@@ -193,34 +193,46 @@ public class MainWindow extends Stage{
     public void loadDimensions(){
 
         String[] size = Main.settings.getMainScreenSize().split(Pattern.quote(";"));
-        if(size.length == 4){
+        if(size.length == 5){
             try{
-                double w = Double.parseDouble(size[0]);
-                double h = Double.parseDouble(size[1]);
-                double x = Double.parseDouble(size[2]);
-                double y = Double.parseDouble(size[3]);
+                boolean maximized = Boolean.parseBoolean(size[4]);
 
-                double sw = Main.SCREEN_BOUNDS.getWidth();
-                double sh = Main.SCREEN_BOUNDS.getHeight();
-                if(w > sw) w = sw - 200;
-                if(h > sh) h = sh - 200;
-                if(x != -1) setX(x);
-                if(y != -1) setY(y);
-                setWidth(w);
-                setHeight(h);
+                if(maximized){
+                    setMaximized(true);
+                }else{
+                    double w = Double.parseDouble(size[0]);
+                    double h = Double.parseDouble(size[1]);
+                    double x = Double.parseDouble(size[2]);
+                    double y = Double.parseDouble(size[3]);
+
+                    double sw = Main.SCREEN_BOUNDS.getWidth();
+                    double sh = Main.SCREEN_BOUNDS.getHeight();
+                    if(w > sw) w = sw - 200;
+                    if(h > sh) h = sh - 200;
+                    if(x != -1){
+                        if(x + sh <= sw) setX(x);
+                    }
+                    if(y != -1){
+                        if(y + h <= sh) setY(y);
+                    }
+
+                    setWidth(w);
+                    setHeight(h);
+                }
+
             }catch(NumberFormatException e){
                 e.printStackTrace();
             }
         }
     }
     public void saveDimensions(){
-        String lastDimensions = getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY();
+        String lastDimensions = getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized();
 
         new Thread(() -> {
             try{
                 Thread.sleep(1000);
             }catch(InterruptedException e){ e.printStackTrace(); }
-            if(lastDimensions.equals(getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY())){
+            if(lastDimensions.equals(getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized())){
                 Main.settings.setMainScreenSize(lastDimensions);
             }
         }, "MainScreenDimensionsPreSaver").start();
