@@ -166,6 +166,17 @@ public class MainScreen extends Pane {
 				}
 			}else{ // SCROLL
 
+				if(Math.abs(e.getDeltaX()) > Math.abs(e.getDeltaY())/2){ // Accept side scrolling only if the scroll is not too vertical
+
+					if(e.getDeltaX() != 0){
+						if(e.getDeltaX() > 0){
+							zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false);
+						}else{
+							zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false);
+						}
+					}
+				}
+
 				if(e.getDeltaY() != 0){
 					if(e.getDeltaY() > 0){
 						zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false);
@@ -174,13 +185,7 @@ public class MainScreen extends Pane {
 					}
 				}
 
-				if(e.getDeltaX() != 0){
-					if(e.getDeltaX() > 0){
-						zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false);
-					}else{
-						zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false);
-					}
-				}
+
 
 			}
 

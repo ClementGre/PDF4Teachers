@@ -302,7 +302,7 @@ public class ExportWindow {
                     fileName = fileName.replace(replaceText, replaceByText);
                     fileName = prefix + fileName + suffix + ".pdf";
                 }else{
-                    fileName = customName + ".pdf";
+                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(fileName, ".pdf") + ".pdf";
                 }
 
                 File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);

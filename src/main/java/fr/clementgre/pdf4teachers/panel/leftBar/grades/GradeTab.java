@@ -9,10 +9,12 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
@@ -62,6 +64,14 @@ public class GradeTab extends Tab {
         sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, ImageUtils.defaultDarkColorAdjust));
         sumByDecrement.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             treeView.updateAllSum();
+        });
+        sumByDecrement.setOnAction((e) -> {
+            if(sumByDecrement.isSelected()){
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Activation du comptage par retranchement"));
+                alert.setHeaderText(TR.tr("Activation du comptage par retranchement"));
+                alert.setContentText(TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.") + "\n" + TR.tr("Les totaux des autres éditions ne s'actualiseront que lors de l'ouverture."));
+                alert.show();
+            }
         });
         sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.")));
 
