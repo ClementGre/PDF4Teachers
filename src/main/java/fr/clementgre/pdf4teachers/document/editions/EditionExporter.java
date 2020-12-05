@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.editions;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -14,8 +15,6 @@ import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,135 +26,174 @@ public class EditionExporter {
         else dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
 
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un dossier et répéter\ncette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste"), ButtonBar.ButtonData.OTHER);
 
         dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
-        dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
 
         Optional<ButtonType> option = dialog.showAndWait();
-        File directory = null;
-        File singleFile = null;
-        if(option.get() == yes){
-            if(MainWindow.mainScreen.hasDocument(true)){
-                File file = DialogBuilder.showFileDialog(true, TR.tr("Fichier d'édition YAML"), "*.yml");
-                if(file != null){
-                    directory = file.getParentFile();
-                    singleFile = file;
+        File file = null;
+        boolean recursive = false;
+        if(MainWindow.mainScreen.hasDocument(true)){
+            if(MainWindow.mainScreen.document.save()){
+                if(option.get() == yes){
+                    file = DialogBuilder.showFileDialog(true, TR.tr("Fichier d'édition YAML"), "*.yml");
+                }else if(option.get() == yesAll){
+                    file = DialogBuilder.showFileDialog(true, TR.tr("Fichier d'édition YAML"), "*.yml");
+                    recursive = true;
                 }
-            }
-        }else if(option.get() == yesAll){
-            if(MainWindow.mainScreen.hasDocument(true)){
-                directory = DialogBuilder.showDirectoryDialog(true);
             }
         }
-        if(directory == null) return;
 
-        File finalSingleFile = singleFile;
-        File finalDirectory = directory;
-        new TwoStepListAction<>(false, new TwoStepListInterface<Map.Entry<File, File>, Map.Entry<File, File>>() {
-            @Override
-            public List<Map.Entry<File, File>> prepare() {
-                if(finalSingleFile != null){
-                    return Collections.singletonList(Map.entry(MainWindow.mainScreen.document.getFile(), finalSingleFile));
-                }else{
-                    return MainWindow.filesTab.getOpenedFiles().stream().map(pdfFile -> {
-                        return Map.entry(pdfFile, new File(finalDirectory.getAbsolutePath() + File.separator + pdfFile.getName() + ".yml"));
-                    }).collect(Collectors.toList());
-                }
-            }
+        if(file == null) return;
 
-            @Override
-            public Map.Entry<Map.Entry<File, File>, Integer> sortData(Map.Entry<File, File> data) {
-                if(!FilesUtils.isInSameDir(data.getKey(), MainWindow.mainScreen.document.getFile())) return Map.entry(Map.entry(new File(""), new File("")), 1); // Check same dir
+        try{
+            Config loadedConfig = new Config(file);
+            loadedConfig.load();
 
-                if(data.getValue().exists()){
-                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(data.getKey().getAbsolutePath())){
-                        MainWindow.mainScreen.document.edition.clearEdit(false);
+            new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>() {
+                @Override
+                public List<String> prepare(boolean recursive) {
+                    if(!recursive){
+                        return Collections.singletonList(MainWindow.mainScreen.document.getFile().getName());
+                    }else{
+                        return loadedConfig.base.keySet().stream().collect(Collectors.toList());
                     }
-
-                    return Map.entry(Map.entry(data.getValue(), data.getKey()), TwoStepListAction.CODE_OK);
-                }else{
-                    boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun fichier d'édition trouvé pour") + " " + data.getKey().getName(),
-                            TR.tr("Le fichier PDF et le fichier d'édition doivent avoir le même nom (excepté le .yml) pour pouvoir faire l'association entre les deux fichiers."), true);
-                    if(result || finalSingleFile != null) return Map.entry(Map.entry(new File(""), new File("")),TwoStepListAction.CODE_STOP); // No match > Stop all
-                    else return Map.entry(Map.entry(new File(""), new File("")), 2); // No match
                 }
-            }
 
-            @Override
-            public String getSortedDataName(Map.Entry<File, File> data) {
-                return "undefined";
-            }
+                @Override
+                @SuppressWarnings("unchecked")
+                public Map.Entry<Config, Integer> sortData(String fileName, boolean recursive) throws Exception{
 
-            @Override
-            public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data){
-                try{
-                    Files.copy(data.getKey().toPath(), Edition.getEditFile(data.getValue()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-                }catch(IOException e){
-                    e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + data.getKey().getName() + "\" " + TR.tr("vers") + " \"" + data.getValue().toPath() + "\"", e.getMessage(), finalSingleFile == null);
-                    if(finalSingleFile != null) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                    if(result) return TwoStepListAction.ProcessResult.STOP;
-                    else return TwoStepListAction.ProcessResult.SKIPPED;
+                    if(!recursive){
+                        File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
+
+                        if(loadedConfig.base.containsKey(fileName)){
+                            loadedConfig.base = (HashMap<String, Object>) loadedConfig.base.get(fileName);
+                        }
+
+                        if(onlyGrades){
+                            Config config = new Config(editFile);
+                            config.load();
+                            config.set("grades", loadedConfig.getList("grades"));
+                            loadedConfig.base = config.base;
+                        }
+
+                        loadedConfig.setFile(editFile);
+                        loadedConfig.setName(fileName);
+
+                        return Map.entry(loadedConfig, TwoStepListAction.CODE_OK);
+                    }else{
+                        File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
+
+                        if(pdfFile.exists()){
+                            if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
+                                MainWindow.mainScreen.document.edition.clearEdit(false);
+                            }
+
+                            File editFile = Edition.getEditFile(pdfFile);
+                            Config config = new Config(editFile);
+                            config.setName(fileName);
+
+                            HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
+                            if(onlyGrades){
+                                config.load();
+                                config.set("grades", Config.getList(data, "grades"));
+                            }else{
+                                config.base = data;
+                            }
+
+                            return Map.entry(config, TwoStepListAction.CODE_OK);
+                        }else{
+                            boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition") + " " + fileName,
+                                    TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
+                            if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
+                            else return Map.entry(new Config(), 2); // No match
+                        }
+                    }
                 }
-                if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(data.getValue().getAbsolutePath())){
-                    MainWindow.mainScreen.document.loadEdition();
+
+                @Override
+                public String getSortedDataName(Config config, boolean recursive) {
+                    return config.getName();
                 }
-                return TwoStepListAction.ProcessResult.OK;
-            }
 
-            @Override
-            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons) {
-                Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
-                endAlert.setHeaderText(TR.tr("Les éditions ont bien été importées"));
-                String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'étaient pas dans le même dossier") + ")";
-                String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition correspondante") + ")";
-                endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions importés") + badFolderText + noMatchesText);
+                @Override
+                public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
+                    try{
+                        config.save();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                        boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
+                        if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                        if(result) return TwoStepListAction.ProcessResult.STOP;
+                        else return TwoStepListAction.ProcessResult.SKIPPED;
+                    }
+                    if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
+                        MainWindow.mainScreen.document.loadEdition();
+                    }
+                    return TwoStepListAction.ProcessResult.OK;
+                }
 
-                endAlert.show();
-            }
-        });
+                @Override
+                public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
+                    endAlert.setHeaderText(TR.tr("Les éditions ont bien été importées"));
+                    String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("éditions ignorés car elles n'avaient pas de document correspondant") + ")";
+                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions importés") + noMatchesText);
 
-        MainWindow.filesTab.refresh();
+                    endAlert.show();
+                }
+            });
+
+            MainWindow.filesTab.refresh();
+
+        }catch(Exception e){
+            e.printStackTrace();
+            DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+        }
     }
     public static void showExportDialog(final boolean onlyGrades){
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Exporter l'édition"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier."));
         else dialog.setHeaderText(TR.tr("Vous allez exporter le barème du document sous forme de fichier."));
 
-        ButtonType yes = new ButtonType(TR.tr("Choisir un dossier"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Choisir un dossier et répéter\ncette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yes = new ButtonType(TR.tr("Exporter pour ce document"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType yesAll = new ButtonType(TR.tr("Exporter pour touts les documents\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yesAllOneFile = new ButtonType(TR.tr("Exporter pour touts les documents\nde la liste et du même dossier\nen un seul fichier"), ButtonBar.ButtonData.OTHER);
 
-        dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
+        dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll, yesAllOneFile);
         dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
+        dialog.getDialogPane().lookupButton(yesAllOneFile).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
 
         Optional<ButtonType> option = dialog.showAndWait();
         File directory = null;
-        boolean recursive = true;
+        boolean recursive = option.get() != yes;
+        boolean oneFile = option.get() == yesAllOneFile;
+        final Config oneFileConfig = new Config();
 
-        if(option.get() == yes){
-            if(MainWindow.mainScreen.hasDocument(true)){
-                if(MainWindow.mainScreen.document.save()){
+        if(MainWindow.mainScreen.hasDocument(true)){
+            if(MainWindow.mainScreen.document.save()){
+                if(option.get() == yes){
                     directory = DialogBuilder.showDirectoryDialog(true);
-                    recursive = false;
-                }
-            }
-        }else if(option.get() == yesAll){
-            if(MainWindow.mainScreen.hasDocument(true)){
-                if(MainWindow.mainScreen.document.save()){
+                }else if(option.get() == yesAll){
                     directory = DialogBuilder.showDirectoryDialog(true);
+                }else if(option.get() == yesAllOneFile){
+                    File file = DialogBuilder.showSaveDialog(true, "YAML", ".yml");
+                    if(file != null){
+                        oneFileConfig.setFile(file);
+                        directory = new File(file.getParent());
+                    }
                 }
             }
         }
-        if(directory == null) return;
+        if(directory == null) return; // check isPresent btw
 
-        final boolean finalRecursive = recursive;
         final File finalDirectory = directory;
         AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(recursive);
-        new TwoStepListAction<>(false, new TwoStepListInterface<File, Map.Entry<File, File>>() {
+        new TwoStepListAction<>(false, recursive, new TwoStepListInterface<File, Config>() {
             @Override
-            public List<File> prepare() {
-                if(finalRecursive){
+            public List<File> prepare(boolean recursive) {
+                if(recursive){
                     return MainWindow.filesTab.getOpenedFiles();
                 }else{
                     return Collections.singletonList(MainWindow.mainScreen.document.getFile());
@@ -163,35 +201,60 @@ public class EditionExporter {
             }
 
             @Override
-            public Map.Entry<Map.Entry<File, File>, Integer> sortData(File pdfFile) {
-                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile())) return Map.entry(Map.entry(new File(""), new File("")), 1); // Check same dir
+            public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception {
+                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile())) return Map.entry(new Config(), 1); // Check same dir
 
                 File editFile = Edition.getEditFile(pdfFile);
-                if(!editFile.exists()) return Map.entry(Map.entry(new File(""), new File("")), 2); // Check HasEdit
+                if(!editFile.exists()) return Map.entry(new Config(), 2); // Check HasEdit
 
-                File toFile = new File(finalDirectory.getAbsolutePath() + File.separator + pdfFile.getName() + ".yml");
-                if(toFile.exists()){ // Check Already Exist
-                    AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(toFile);
-                    if(result == AlreadyExistDialog.ResultType.SKIP) return Map.entry(Map.entry(new File(""), new File("")), 3);
-                    else if(result == AlreadyExistDialog.ResultType.STOP) return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialog.ResultType.RENAME) toFile = AlreadyExistDialog.rename(toFile);
+                Config config = new Config(editFile);
+                config.load(); config.setName(pdfFile.getName());
+                if(onlyGrades){
+                    HashMap<String, Object> newBase = new HashMap<>();
+                    List<Object> grades = config.getList("grades");
+                    for(Object grade : grades){
+                        if(grade instanceof HashMap){
+                            ((HashMap) grade).put("value", -1);
+                            ((HashMap) grade).put("page", 0);
+                            ((HashMap) grade).put("x", 0);
+                            ((HashMap) grade).put("y", 0);
+                        }
+                    }
+                    newBase.put("grades", grades);
+                    config.base = newBase;
                 }
-                return Map.entry(Map.entry(editFile, toFile), TwoStepListAction.CODE_OK);
+
+                if(oneFile){
+                    oneFileConfig.base.put(pdfFile.getName(), config.base);
+                    return Map.entry(config, TwoStepListAction.CODE_OK);
+                }
+
+                config.setDestFile(new File(finalDirectory.getAbsolutePath() + File.separator + pdfFile.getName() + ".yml"));
+                if(config.getDestFile().exists()){ // Check Already Exist
+                    AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(config.getDestFile());
+                    if(result == AlreadyExistDialog.ResultType.SKIP) return Map.entry(new Config(), 3);
+                    else if(result == AlreadyExistDialog.ResultType.STOP) return Map.entry(new Config(), TwoStepListAction.CODE_STOP);
+                    else if(result == AlreadyExistDialog.ResultType.RENAME) config.setDestFile(AlreadyExistDialog.rename(config.getDestFile()));
+                }
+
+                return Map.entry(config, TwoStepListAction.CODE_OK);
             }
 
             @Override
-            public String getSortedDataName(Map.Entry<File, File> data) {
-                return "undefined";
+            public String getSortedDataName(Config config, boolean recursive) {
+                return config.getName();
             }
 
             @Override
-            public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data){
+            public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
+                if(oneFile) return TwoStepListAction.ProcessResult.OK;
+
                 try{
-                    Files.copy(data.getKey().toPath(), data.getValue().toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    config.saveToDestFile();
                 }catch(IOException e){
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + data.getKey().getName() + "\" " + TR.tr("vers") + " \"" + data.getValue().toPath() + "\"", e.getMessage(), alreadyExistDialog.isRecursive());
-                    if(!finalRecursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                    boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getDestFile().toPath() + "\" (" + TR.tr("Correspond à l'édition") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
+                    if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     if(result) return TwoStepListAction.ProcessResult.STOP;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
                 }
@@ -199,7 +262,17 @@ public class EditionExporter {
             }
 
             @Override
-            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons) {
+            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+                if(oneFile){
+                    try{
+                        oneFileConfig.save();
+                    }catch(IOException e){
+                        e.printStackTrace();
+                        DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + oneFileConfig.getDestFile().toPath() + "\"", e.getMessage(), false);
+                        return;
+                    }
+                }
+
                 Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
                 ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
                 endAlert.getButtonTypes().add(open);
@@ -214,6 +287,8 @@ public class EditionExporter {
                 if(optionSelected.get() == open){
                     Main.hostServices.showDocument(finalDirectory.getAbsolutePath());
                 }
+
+
             }
         });
     }

@@ -127,6 +127,19 @@ public class DialogBuilder {
         }
         return null;
     }
+    public static File showSaveDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
+        final FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
+        chooser.setTitle(TR.tr("Enregistrer un fichier"));
+        chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
+
+        File file = chooser.showSaveDialog(Main.window);
+        if(file != null){
+            if(syncWithLastOpenDir)  MainWindow.userData.lastOpenDir = file.getParent();
+            return file;
+        }
+        return null;
+    }
 
     public static void setupDialog(Dialog dialog){
 

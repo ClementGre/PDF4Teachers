@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map.Entry;
 public class TwoStepListAction<T, D> {
 
     private int completedSize = 0;
+    private boolean recursive;
     private final List<T> data;
     private final List<D> sortedData = new ArrayList<>();
     private final HashMap<Integer, Integer> excludedReasons = new HashMap<>();
@@ -36,17 +38,18 @@ public class TwoStepListAction<T, D> {
         STOP_WITHOUT_ALERT
     }
 
-    public TwoStepListAction(boolean async, TwoStepListInterface<T, D> caller){
-        this.data = caller.prepare();
+    public TwoStepListAction(boolean async, boolean recursive, TwoStepListInterface<T, D> caller){
+        this.recursive = recursive;
+        this.data = caller.prepare(isRecursive());
 
         if(sortData(caller)){
             if(async){
                 processDataAsync(caller, () -> {
-                    caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons);
+                    caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive());
                 });
             }else{
                 if(processData(caller)){
-                    caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons);
+                    caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive());
                 }
             }
 
@@ -56,21 +59,26 @@ public class TwoStepListAction<T, D> {
 
     public boolean sortData(TwoStepListInterface<T, D> caller){
         for(T value : data){
-            Entry<D, Integer> result = caller.sortData(value);
-            if(result != null){
-                if(result.getValue() == 0){
-                    sortedData.add(result.getKey());
-                }if(result.getValue() == -1){
-                    return false;
-                }else{
-                    if(excludedReasons.containsKey(result.getValue())){
-                        excludedReasons.put(result.getValue(), excludedReasons.get(result.getValue())+1);
+            try{
+                Entry<D, Integer> result = caller.sortData(value, isRecursive());
+                if(result != null){
+                    if(result.getValue() == 0){
+                        sortedData.add(result.getKey());
+                    }if(result.getValue() == -1){
+                        return false;
                     }else{
-                        excludedReasons.put(result.getValue(), 1);
+                        if(excludedReasons.containsKey(result.getValue())){
+                            excludedReasons.put(result.getValue(), excludedReasons.get(result.getValue())+1);
+                        }else{
+                            excludedReasons.put(result.getValue(), 1);
+                        }
                     }
-
                 }
-
+            }catch(Exception e){
+                e.printStackTrace();
+                boolean result = DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), data.size() > 1);
+                if(data.size() <= 1) return false;
+                if(result) return false;
             }
         }
         return true;
@@ -78,7 +86,7 @@ public class TwoStepListAction<T, D> {
 
     public boolean processData(TwoStepListInterface<T, D> caller){
         for(D value : sortedData){
-            TwoStepListAction.ProcessResult result = caller.completeData(value);
+            TwoStepListAction.ProcessResult result = caller.completeData(value, isRecursive());
             if(result == ProcessResult.OK) completedSize++;
             else if(result == ProcessResult.STOP) break;
             else if(result == ProcessResult.STOP_WITHOUT_ALERT) return false;
@@ -102,7 +110,7 @@ public class TwoStepListAction<T, D> {
         new Thread(() -> {
             boolean isCanceled = false;
             for(D value : sortedData){
-                ProcessResult result = caller.completeData(value);
+                ProcessResult result = caller.completeData(value, isRecursive());
                 if(result == ProcessResult.OK) completedSize++;
                 else if(result == ProcessResult.STOP) break;
                 else if(result == ProcessResult.STOP_WITHOUT_ALERT){
@@ -110,7 +118,7 @@ public class TwoStepListAction<T, D> {
                 }
 
                 Platform.runLater(() -> {
-                    currentDocument.setText(caller.getSortedDataName(value) + "(" + completedSize + "/" + sortedData.size() + ")");
+                    currentDocument.setText(caller.getSortedDataName(value, isRecursive()) + "(" + completedSize + "/" + sortedData.size() + ")");
                     loadingBar.setProgress(completedSize/((float)sortedData.size()));
                 });
 
@@ -125,6 +133,11 @@ public class TwoStepListAction<T, D> {
 
     }
 
+    public boolean isRecursive() {
+        return recursive;
+    }
 
-
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
+    }
 }

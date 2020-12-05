@@ -75,7 +75,7 @@ public class MainScreen extends Pane {
 
 	public MainScreen(){
 
-		if(Main.isOSX()) PageRenderer.PAGE_HORIZONTAL_MARGIN = 15;
+		//if(Main.isOSX()) PageRenderer.PAGE_HORIZONTAL_MARGIN = 15;
 
 		setup();
 		repaint();

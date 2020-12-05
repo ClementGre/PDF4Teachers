@@ -279,16 +279,15 @@ public class ExportWindow {
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
                                  boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
 
-        final boolean recursive = customName.isEmpty();
-        AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(recursive);
-        new TwoStepListAction<>(true, new TwoStepListInterface<File, Map.Entry<File, File>>() {
+        AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(customName.isEmpty());
+        new TwoStepListAction<>(true, customName.isEmpty(), new TwoStepListInterface<File, Map.Entry<File, File>>() {
             @Override
-            public List<File> prepare(){
+            public List<File> prepare(boolean recursive){
                 return files;
             }
 
             @Override
-            public Map.Entry<Map.Entry<File, File>, Integer> sortData(File pdfFile) {
+            public Map.Entry<Map.Entry<File, File>, Integer> sortData(File pdfFile, boolean recursive) {
 
                 if(onlyEdited){ // Check only edited export
                     if(!Edition.getEditFile(pdfFile).exists()){
@@ -318,12 +317,12 @@ public class ExportWindow {
             }
 
             @Override
-            public String getSortedDataName(Map.Entry<File, File> data) {
+            public String getSortedDataName(Map.Entry<File, File> data, boolean recursive) {
                 return data.getKey().getName();
             }
 
             @Override
-            public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data) {
+            public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive) {
                 try{
                     new ExportRenderer().exportFile(data.getKey(), data.getValue(), textElements, gradesElements, drawElements);
                     if(deleteEdit){
@@ -350,7 +349,7 @@ public class ExportWindow {
             }
 
             @Override
-            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons) {
+            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
                 window.close();
                 if(deleteEdit) MainWindow.filesTab.refresh();
 

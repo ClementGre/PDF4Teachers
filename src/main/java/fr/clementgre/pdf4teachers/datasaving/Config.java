@@ -15,22 +15,60 @@ public class Config {
 
     private Yaml yaml;
     private File file;
-    public Config(File file){
+    private File destFile;
+    private String name;
+    public Config(){
+        yaml = new Yaml(new SafeConstructor());
+    }
+    public Config(File file) throws IOException{
+        file.createNewFile();
         this.file = file;
         yaml = new Yaml(new SafeConstructor());
     }
 
     public void load() throws IOException {
+        if(file == null) return;
         InputStream input = new FileInputStream(file);
-        base = (HashMap<String, Object>) yaml.load(input);
+        base = yaml.load(input);
         input.close();
 
         if(base == null) base = new HashMap<>();
     }
     public void save() throws IOException {
+        if(file == null) return;
         Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
+    }
+    public void saveTo(File file) throws IOException {
+        Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
+        yaml.dump(base, output);
+        output.close();
+    }
+    public void saveToDestFile() throws IOException {
+        if(destFile == null) return;
+        Writer output = new OutputStreamWriter(new FileOutputStream(destFile), StandardCharsets.UTF_8);
+        yaml.dump(base, output);
+        output.close();
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public File getFile() {
+        return file;
+    }
+    public void setFile(File file) {
+        this.file = file;
+    }
+    public File getDestFile() {
+        return destFile;
+    }
+    public void setDestFile(File destFile) {
+        this.destFile = destFile;
     }
 
     // GET SECTION / CASTS
