@@ -109,8 +109,9 @@ public class UserData {
 
         if(!Main.settings.getSettingsVersion().isEmpty()){
             loadDataFromYAML();
-            textElementsData = new TextElementsData();
         }
+
+        textElementsData = new TextElementsData();
     }
     public void save(){
         saveData();

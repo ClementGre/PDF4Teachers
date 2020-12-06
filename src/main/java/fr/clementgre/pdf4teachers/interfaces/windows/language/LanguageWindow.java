@@ -5,7 +5,10 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
+import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
+import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
@@ -39,35 +42,37 @@ public class LanguageWindow extends Stage{
     public LanguageWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
 
-        VBox root = new VBox();
-        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
+        new LanguagesUpdater().update(() -> {
+            VBox root = new VBox();
+            Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
 
-        initOwner(Main.window);
-        initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setWidth(545);
-        setHeight(720);
-        setTitle(TR.tr("PDF4Teachers - Langage"));
-        setScene(scene);
-        setOnCloseRequest(event -> {
-            callBack.call("");
+            initOwner(Main.window);
+            initModality(Modality.WINDOW_MODAL);
+            getIcons().add(new Image(getClass().getResource("/logo.png")+""));
+            setWidth(545);
+            setHeight(720);
+            setTitle(TR.tr("PDF4Teachers - Langage"));
+            setScene(scene);
+            setOnCloseRequest(event -> {
+                callBack.call("");
+            });
+            StyleManager.putStyle(root, Style.DEFAULT);
+
+            if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("en-us");
+
+            setupLanguages();
+            setupPanel(root);
+
+            show();
+            if(Main.window != null){
+                Main.window.centerWindowIntoMe(this);
+            }
         });
-        StyleManager.putStyle(root, Style.DEFAULT);
-
-        if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("en-us");
-        
-        setupLanguages();
-        setupPanel(root);
-
-        show();
-        if(Main.window != null){
-            Main.window.centerWindowIntoMe(this);
-        }
     }
 
-    public static String getLanguageFromComputerLanguage() {
-        String country = System.getProperty("user.country").toLowerCase();
+    public static String getLanguageFromComputerLanguage(){
         String language = System.getProperty("user.language").toLowerCase();
+        String country = System.getProperty("user.country").toLowerCase();
 
         if(language.equals("fr")){
             return "fr-fr";
@@ -118,8 +123,13 @@ public class LanguageWindow extends Stage{
             Label shortName = new Label(language.getKey());
             shortName.setPrefHeight(50);
             shortName.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
+            HBox.setMargin(shortName, new Insets(0, 3, 0, 0));
 
-            box.getChildren().addAll(language.getValue(), label, shortName);
+            Label version = new Label("v" + getLanguageVersion(language.getKey()));
+            version.setPrefHeight(50);
+            version.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
+
+            box.getChildren().addAll(language.getValue(), label, shortName, version);
             languages.getItems().add(box);
             if(Main.settings.getLanguage().equals(language.getKey())) languages.getSelectionModel().select(box);
         }
@@ -198,11 +208,21 @@ public class LanguageWindow extends Stage{
         }
         return shortName;
     }
+    public static int getLanguageVersion(String shortName){
+        HashMap<String, Object> languages = getLanguagesConfig();
+        for(Map.Entry<String, Object> language : languages.entrySet()){
+            if(shortName.equals(language.getKey())){
+                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                return (int) data.get("version");
+            }
+        }
+        return 0;
+    }
     public static void setup(){
         if(Main.settings.getSettingsVersion().equals("1.2.0") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
             for (File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
         }
-
+        LanguageWindow.copyFiles(true); // test : force always
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
         if(Main.settings.getLanguage().equals("Français France (Defaut)")){
             Main.settings.setLanguage("fr-fr");
@@ -257,7 +277,7 @@ public class LanguageWindow extends Stage{
         HashMap<String, Object> data = new HashMap<>();
 
         Config.set(data, "fr-fr.version", 0);
-        Config.set(data, "fr-fr.name", "Français France (Defaut)");
+        Config.set(data, "fr-fr.name", "Français France");
 
         Config.set(data, "en-us.version", 0);
         Config.set(data, "en-us.name", "English US");
@@ -266,6 +286,10 @@ public class LanguageWindow extends Stage{
         Config.set(data, "it-it.name", "Italiano");
 
         return data;
+    }
+    public static void addLanguageToConfig(String name, String displayName, int version){
+        Config.set(languages, name + ".version", version);
+        Config.set(languages, name + ".name", displayName);
     }
 
 }

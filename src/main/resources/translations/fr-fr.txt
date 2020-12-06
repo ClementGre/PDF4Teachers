@@ -236,7 +236,7 @@ Tout exporter=
 Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition=
 Permet de convertir des images en fichiers PDF=
 Préférences=
-Langage=
+Langage (Français France)=
 Définit la langue de l'interface=
 Toujours restaurer la session précédente=
 Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application.=
@@ -456,4 +456,3 @@ Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. 
 Trier=
 # GradeTreeView
 # TR
-acronym=

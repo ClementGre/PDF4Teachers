@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import fr.clementgre.pdf4teachers.datasaving.Settings;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -249,12 +250,13 @@ public class UpdateWindow extends Stage {
         String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
         String englishText = "";
         String langText = "";
+        String currentLanguageAcronym = Main.settings.getLanguage().split("-")[0];
         for(String languageText : languagesTexts){
             if(languageText.startsWith("# ")) languageText = languageText.replaceFirst(Pattern.quote("# "), "");
             String langAcronym = languageText.substring(0, languageText.indexOf(' '));
-            if(langAcronym.equals(TR.getCurrentLanguageAcronym())){
+            if(langAcronym.equals(currentLanguageAcronym)){
                 langText = languageText.substring(languageText.indexOf("\r\n") + 2);
-            }else if(langAcronym.equals("en") && !TR.getCurrentLanguageAcronym().equals("en")){
+            }else if(langAcronym.equals("en") && !currentLanguageAcronym.equals("en")){
                 englishText = languageText.substring(languageText.indexOf("\r\n") + 2);
             }
         }

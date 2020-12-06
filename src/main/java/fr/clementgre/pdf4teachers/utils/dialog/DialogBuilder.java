@@ -27,7 +27,9 @@ public class DialogBuilder {
         Alert alert = new Alert(type);
         alert.setTitle(title);
 
-        alert.initOwner(Main.window.getScene().getWindow());
+        if(Main.window != null){
+            alert.initOwner(Main.window.getScene().getWindow());
+        }
 
         setupDialog(alert);
         return alert;

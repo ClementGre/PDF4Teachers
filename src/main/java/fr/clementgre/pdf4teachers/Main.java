@@ -1,8 +1,6 @@
 package fr.clementgre.pdf4teachers;
 
 import java.io.*;
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
@@ -27,11 +25,10 @@ public class Main extends Application {
 
 	public static Settings settings;
 
-	public static DecimalFormat format;
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "Snapshot-2 1.2.1";
+	public static final String VERSION = "1.2.1";
 	public static final boolean DEBUG = false;
 	public static final boolean COPY_CONSOLE = true;
 
@@ -43,8 +40,6 @@ public class Main extends Application {
 	public static void main(String[] args){
 		if(COPY_CONSOLE) LogWindow.copyLogs();
 		System.out.println("Starting PDF4Teachers...");
-
-		setupDecimalFormat();
 
 		///// START APP /////
 		launch(args);
@@ -114,7 +109,7 @@ public class Main extends Application {
 	public boolean licenceAsk(){
 
 		// Disabling the license
-		//if(true) return true;
+		if(true) return true;
 
 		if(firstLaunch){
 			new LicenseWindow(value -> {
@@ -129,15 +124,6 @@ public class Main extends Application {
 	public static void startMainWindow(){
 		window = new MainWindow();
 		window.setup();
-	}
-
-	private static void setupDecimalFormat(){
-		DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
-		char separator = TR.tr("Decimal separator").charAt(0);
-		if(separator == 'D') separator = ',';
-		else if(separator != ',' && separator != '.') separator = '.';
-		symbols.setDecimalSeparator(separator);
-		format = new DecimalFormat("0.####", symbols);
 	}
 
 	public static boolean isWindows(){

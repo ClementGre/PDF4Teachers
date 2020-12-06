@@ -77,6 +77,9 @@
         </VBox>
     </HBox>
 
+    <Hyperlink id="https://pdf4teachers.org/License/" fx:id="liscenselabel">
+        <style>-fx-font-size: 12;</style>
+    </Hyperlink>
     <Hyperlink id="mailto:clement.grennerat@free.fr" text="clement.grennerat@free.fr">
         <style>-fx-font-size: 12;</style>
     </Hyperlink>

@@ -22,6 +22,9 @@ public class TR {
                 return translated;
             }
         }
+
+        if(Main.settings.getLanguage().equals("fr-fr")) return text;
+
         if(defaultsTranslations.size() >= 1){
             String translated = defaultsTranslations.get(text);
             if(translated != null){
@@ -30,10 +33,6 @@ public class TR {
         }
 
         return text;
-    }
-
-    public static String getCurrentLanguageAcronym(){
-        return TR.tr("acronym").equals("acronym") ? "en" : TR.tr("acronym").toLowerCase();
     }
 
     public static void setup(){

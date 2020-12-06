@@ -31,8 +31,11 @@ import javafx.stage.Window;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
@@ -40,6 +43,7 @@ public class MainWindow extends Stage{
     public static boolean hasToClose = false;
     public static UserData userData;
 
+    public static DecimalFormat format;
 
     public static BorderPane root;
     public static SplitPane mainPane;
@@ -55,6 +59,7 @@ public class MainWindow extends Stage{
     public static PaintTab paintTab;
 
 
+
     Thread userDataSaver = new Thread(() -> {
         while(true){
             try{ Thread.sleep(300000); }catch(InterruptedException e){ e.printStackTrace(); }
@@ -63,6 +68,8 @@ public class MainWindow extends Stage{
     }, "userData AutoSaver");
 
     public MainWindow(){
+
+        setupDecimalFormat();
 
         root = new BorderPane();
 
@@ -321,6 +328,15 @@ public class MainWindow extends Stage{
 
         }
 
+    }
+
+    private static void setupDecimalFormat(){
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+        char separator = TR.tr("Decimal separator").charAt(0);
+        if(separator == 'D') separator = ',';
+        else if(separator != ',' && separator != '.') separator = '.';
+        symbols.setDecimalSeparator(separator);
+        MainWindow.format = new DecimalFormat("0.####", symbols);
     }
 
 }

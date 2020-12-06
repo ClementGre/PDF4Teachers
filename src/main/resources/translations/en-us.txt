@@ -26,6 +26,7 @@ documents)=documents)
 Créer les dossiers manquants=Create missing folders
 Notes=Grades
 par=to
+Decimal separator=.
 Une erreur d'exportation s'est produite avec le document :=Export error on this document :
 L'erreur survenue est la suivante :=Following error happened :
 Vous allez exporter un document pour former un nouveau fichier PDF.=You are about to export a document, this will create a new PDF file
@@ -240,7 +241,7 @@ Alerter quand une mise à jour est disponible=Notify when an update is available
 dans=in
 Réduire la taille des éléments dans les listes=Smaller display size in element lists
 Sauvegarder l'édition=Save edits
-Langage=Language
+Langage (Français France)=Language (English US)
 Supprime les éléments d'édition du document courant=Deletes all edits on the current document
 Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=Adds one or several PDF files to the files panel
 Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié=Saves the edits of the current document. This will NOT modify the source PDF file
@@ -456,4 +457,3 @@ Envoyer le barème sur d'autres éditions.=Send grade scale on other edits
 # TextTreeSection
 # GradeTreeView
 # TR
-acronym=en

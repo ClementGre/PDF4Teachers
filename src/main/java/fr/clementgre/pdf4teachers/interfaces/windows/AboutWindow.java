@@ -35,6 +35,8 @@ public class AboutWindow extends Stage {
     public Pane dependenciesLeft;
     public Pane dependenciesRight;
 
+    public Hyperlink liscenselabel;
+
     @FXML
     public void initialize(){
         Scene scene = new Scene(root);
@@ -93,6 +95,8 @@ public class AboutWindow extends Stage {
         dependenciesLabel.setText(TR.tr("Dépendances :"));
         dependenciesLeft.setPrefWidth(160);
         dependenciesRight.setPrefWidth(160);
+
+        liscenselabel.setText(TR.tr("Licence") + " Apache 2");
     }
 
     private void setupChildrenHyperlinks(Pane parent){

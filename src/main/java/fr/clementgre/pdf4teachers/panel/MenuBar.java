@@ -130,7 +130,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu settings = new Menu(TR.tr("Préférences"));
 
-	NodeMenuItem settings1Language = createMenuItem(TR.tr("Langage") + " (" + LanguageWindow.getLanguageName(Main.settings.getLanguage()) + ")", "language", null,
+	NodeMenuItem settings1Language = createMenuItem(TR.tr("Langage (Français France)"), "language", null,
 			TR.tr("Définit la langue de l'interface"), true);
 
 	NodeRadioMenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",

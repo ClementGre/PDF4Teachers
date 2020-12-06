@@ -3,7 +3,6 @@ package fr.clementgre.pdf4teachers.panel.leftBar.grades;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
@@ -126,7 +125,7 @@ public class GradeCopyGradeScaleDialog {
             if(gradeElements.size() >= 1 && !ignoreErase){
                 String grades = "";
                 for(GradeElement grade : gradeElements){
-                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + Main.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + Main.format.format(grade.getTotal()) + ")";
+                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.format.format(grade.getTotal()) + ")";
                 }
 
                 Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Écraser les notes non correspondantes"));

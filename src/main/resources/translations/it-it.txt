@@ -240,7 +240,7 @@ Alerter quand une mise à jour est disponible=Avvisa quando un aggiornamento è 
 dans=in
 Réduire la taille des éléments dans les listes=Riduci le dimensioni degli elementi negli elenchi
 Sauvegarder l'édition=Salva modifiche
-Langage=Lingua
+Langage (Français France)=Lingua (Italiano Italia)
 Supprime les éléments d'édition du document courant=Elimina tutte le modifiche del documento attuale
 Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=Aggiungi uno o più file PDF al pannello dei file
 Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié=Salva le modifiche del documento attuale. Questo NON modificherà il file sorgente PDF
@@ -456,4 +456,3 @@ Envoyer le barème sur d'autres éditions.=Invia la scala dei voti su altre modi
 # TextTreeSection
 # GradeTreeView
 # TR
-acronym=it

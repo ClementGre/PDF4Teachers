@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.panel.leftBar.files;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -85,14 +84,14 @@ public class FileListItem extends ListCell<File>{
                 double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
 
                 if(elementsCount.length > 0){ // has edit file
-                    String grade = (elementsCount[4] == -1 ? "?" : Main.format.format(elementsCount[4])) + "/" + Main.format.format(elementsCount[5]);
+                    String grade = (elementsCount[4] == -1 ? "?" : MainWindow.format.format(elementsCount[4])) + "/" + MainWindow.format.format(elementsCount[5]);
 
                     if(elementsCount[0] > 0){ // Has Elements
 
                         name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
 
-                        path.setText(path.getText() + " | " + Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade);
-                        setTooltip(new Tooltip(Main.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade + "\n" + Main.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + Main.format.format(elementsCount[2]) + "/" + Main.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + Main.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
+                        path.setText(path.getText() + " | " + MainWindow.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade);
+                        setTooltip(new Tooltip(MainWindow.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + MainWindow.format.format(elementsCount[2]) + "/" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + MainWindow.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
 
                         if(elementsCount[2] == elementsCount[6]){ // Edition completed : Green check
                             if(check.getImage() == null) check.setImage(new Image(getClass().getResource("/img/FilesTab/check.png") + ""));
@@ -104,7 +103,7 @@ public class FileListItem extends ListCell<File>{
 
                     }else{ // Don't have elements
                         path.setText(path.getText() + " | " + TR.tr("Non édité") + " | " + grade);
-                        setTooltip(new Tooltip(TR.tr("Non édité") + " | " + grade + "\n" + Main.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
+                        setTooltip(new Tooltip(TR.tr("Non édité") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
                     }
                 }else{ // don't have edit file
                     path.setText(path.getText() + " | " + TR.tr("Non édité"));

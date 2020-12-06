@@ -8,7 +8,6 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -72,8 +71,8 @@ public class GradeTreeItem extends TreeItem {
                     if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
                 }
 
-                gradeField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
-                totalField.setText(Main.format.format(core.getTotal()));
+                gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
+                totalField.setText(MainWindow.format.format(core.getTotal()));
                 pane.getChildren().clear();
 
                 if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
@@ -147,10 +146,10 @@ public class GradeTreeItem extends TreeItem {
         name.textProperty().bind(core.nameProperty());
 
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.format.format(core.getValue())), core.valueProperty()));
 
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
+        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.format.format(core.getTotal()), core.totalProperty()));
 
         // FIELDS
 
@@ -237,7 +236,7 @@ public class GradeTreeItem extends TreeItem {
             try{
                 double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
                 if(value > core.getTotal() && !hasSubGrade()){
-                    gradeField.setText(Main.format.format(core.getTotal()));
+                    gradeField.setText(MainWindow.format.format(core.getTotal()));
                 }else core.setValue(value);
             }catch(NumberFormatException e){
                 core.setValue(-1);
@@ -308,16 +307,16 @@ public class GradeTreeItem extends TreeItem {
         name.textProperty().bind(core.nameProperty());
 
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : Main.format.format(core.getValue())), core.valueProperty()));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.format.format(core.getValue())), core.valueProperty()));
 
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> Main.format.format(core.getTotal()), core.totalProperty()));
+        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.format.format(core.getTotal()), core.totalProperty()));
 
         // SETUP
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
-        gradeField.setText(core.getValue() == -1 ? "" : Main.format.format(core.getValue()));
+        gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
         if(!isRoot() && getParent() != null){
             if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
