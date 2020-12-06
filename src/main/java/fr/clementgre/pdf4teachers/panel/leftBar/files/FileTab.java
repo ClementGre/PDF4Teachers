@@ -187,6 +187,11 @@ public class FileTab extends Tab {
 			openFile(file);
 		}
 	}
+	public void openFiles(List<File> files){
+		for(File file : files){
+			openFile(file);
+		}
+	}
 	public void clearFiles(){
 		files.getItems().clear();
 		updateOpenFilesList();

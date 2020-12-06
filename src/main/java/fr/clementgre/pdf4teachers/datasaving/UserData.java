@@ -166,7 +166,7 @@ public class UserData {
                         });
                     }
                     File lastFile = new File(lastOpenedFile);
-                    if(lastFile.exists()){
+                    if(lastFile.exists() && !MainWindow.mainScreen.hasDocument(false)){
                         MainWindow.mainScreen.openFile(lastFile);
                     }
                 }

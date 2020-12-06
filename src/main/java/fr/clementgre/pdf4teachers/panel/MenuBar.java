@@ -79,7 +79,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// TOOLS //////////
 
-	Menu tools = new Menu(TR.tr("Outils"));
+	public Menu tools = new Menu(TR.tr("Outils"));
 
 	NodeMenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
@@ -128,7 +128,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// SETTINGS //////////
 
-	Menu settings = new Menu(TR.tr("Préférences"));
+	public Menu settings = new Menu(TR.tr("Préférences"));
 
 	NodeMenuItem settings1Language = createMenuItem(TR.tr("Langage") + " (" + Main.settings.getLanguage() + ")", "language", null,
 			TR.tr("Définit la langue de l'interface"), true);

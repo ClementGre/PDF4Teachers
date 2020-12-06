@@ -45,8 +45,8 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 mainClassName = "fr.clementgre.pdf4teachers/fr.clementgre.pdf4teachers.Main"
 
-version = "1.2.0"
-description = "Application pour éditer des copies PDF en grande quantité, destiné principalement aux professeurs."
+version = "1.2.1"
+description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers functionalities like grading scale, PDF conversion."
 
 task packageMsi(type: Exec){
     workingDir project.projectDir
@@ -91,19 +91,21 @@ jlink {
                     '--win-dir-chooser',
                     '--win-menu',
                     '--win-shortcut',
-                    '--win-menu-group'/*,
-                    '--file-associations association-win.txt'*/
+                    '--win-menu-group',
+                    '--file-associations association-win.properties'
             ]
         }else if(installerType == 'dmg'){ // MAC
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
-                    "--mac-package-name", "PDF4Teachers"
+                    "--mac-package-name", "PDF4Teachers",
+                    '--file-associations association-osx.properties'
             ]
         }else if(installerType in ['deb', 'rpm']){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
                     '--linux-menu-group', 'Office',
-                    '--linux-shortcut'
+                    '--linux-shortcut',
+                    '--file-associations association-lin.properties'
             ]
             if(installerType == 'deb'){
                 installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']

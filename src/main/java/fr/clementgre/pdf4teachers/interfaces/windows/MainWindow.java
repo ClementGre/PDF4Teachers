@@ -11,12 +11,12 @@ import fr.clementgre.pdf4teachers.panel.leftBar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
@@ -28,6 +28,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
@@ -78,6 +83,7 @@ public class MainWindow extends Stage{
 
         setOnCloseRequest(e -> {
             userData.save();
+            Main.params = new ArrayList<>();
             if(e.getSource().equals(menuBar)) return;
             hasToClose = true;
 
@@ -158,6 +164,7 @@ public class MainWindow extends Stage{
         });
 
         ImageUtils.setupListeners();
+        setupDesktopEvents();
 
 //		SHOWING
 
@@ -166,8 +173,20 @@ public class MainWindow extends Stage{
 
 //      OPEN DOC
 
+        List<File> toOpenFiles = new ArrayList<>();
+        for(String param : Main.params){
+            if(new File(param).exists()){
+                toOpenFiles.add(new File(param));
+            }
+        }
+        filesTab.openFiles(toOpenFiles);
+
         if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
             mainScreen.openFile(LanguageWindow.getDocFile());
+        }else if(toOpenFiles.size() >= 1){
+            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
+                mainScreen.openFile(toOpenFiles.get(0));
+            }
         }
 
 //      CHECK UPDATES
@@ -254,6 +273,54 @@ public class MainWindow extends Stage{
 
         window.setX(x);
         window.setY(y);
+    }
+
+    public void setupDesktopEvents(){
+
+        if(Desktop.isDesktopSupported()){
+            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
+                Desktop.getDesktop().setAboutHandler(e -> {
+                    new AboutWindow();
+                });
+            }
+
+            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_URI)){
+                Desktop.getDesktop().setOpenURIHandler(e -> {
+                    System.out.println(e.getURI());
+                    File file = new File(e.getURI());
+                    if(file.exists()){
+                        MainWindow.filesTab.openFiles(new File[]{file});
+                        MainWindow.mainScreen.openFile(file);
+                    }
+                });
+            }
+
+            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
+                Desktop.getDesktop().setOpenFileHandler(e -> {
+                    System.out.println(e.getFiles().get(0).getAbsolutePath());
+                    MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
+                    if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
+                });
+            }
+
+            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_PREFERENCES)){
+                Desktop.getDesktop().setPreferencesHandler(e -> {
+                    menuBar.settings.fire();
+                });
+            }
+
+            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_MENU_BAR)){
+                JMenuBar menuBar = new JMenuBar();
+                JMenu about = new JMenu("ABOUT");
+                about.add(new JMenuItem("test"));
+                about.add(new JMenuItem("open about page"));
+                menuBar.add(about);
+                menuBar.add(new JMenu("test"));
+                Desktop.getDesktop().setDefaultMenuBar(menuBar);
+            }
+
+        }
+
     }
 
 }

@@ -1,9 +1,11 @@
 package fr.clementgre.pdf4teachers;
 
-import java.awt.*;
 import java.io.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.List;
 import java.util.Locale;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -31,28 +33,12 @@ public class Main extends Application {
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "Snapshot 1.2.1";
 	public static final boolean DEBUG = false;
-	public static final boolean COPY_CONSOLE = false;
+	public static final boolean COPY_CONSOLE = true;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
 	public static String systemShortcut = "Ctrl";
-
-	static {
-		try{
-			if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
-				Desktop.getDesktop().setOpenFileHandler(e -> {
-					System.out.println(e.getFiles().get(0).getAbsolutePath());
-					if(window.isShowing()){
-						MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
-						if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
-
-					}
-				});
-			}
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-	}
+	public static List<String> params;
 
 	public static void main(String[] args){
 		if(COPY_CONSOLE) LogWindow.copyLogs();
@@ -63,24 +49,26 @@ public class Main extends Application {
 		///// START APP /////
 		launch(args);
 
-		///// OPEN FILES WITH PDF4TEACHERS /////
-		/*Desktop.getDesktop().setOpenURIHandler(e -> {
-			File file = new File(e.getURI());
-			if(window.isShowing() && file.exists()){
-				MainWindow.lbFilesTab.openFiles(new File[]{file});
-				MainWindow.mainScreen.openFile(file);
-			}
-
-		});*/
 	}
 	@Override
 	public void start(Stage window){
+
+		// define crucial vars
 
 		if(isWindows()) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		else if(isOSX()) systemShortcut = "Cmd";
 
 		firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
 		hostServices = getHostServices();
+
+		// read params
+
+
+		System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
+				+ "\n Unnamed: " + getParameters().getUnnamed().toString()
+				+ "\n Named: " + getParameters().getNamed().toString());
+		params = getParameters().getRaw();
+
 
 		// PREPARATION
 
@@ -124,6 +112,10 @@ public class Main extends Application {
 		}
 	}
 	public boolean licenceAsk(){
+
+		// Disabling the license
+		//if(true) return true;
+
 		if(firstLaunch){
 			new LicenseWindow(value -> {
 				startMainWindow();
