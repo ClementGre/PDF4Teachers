@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -18,6 +18,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -25,23 +26,14 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LanguageWindow extends Stage{
 
-    HashMap<String, ImageView> languages = new HashMap<>();
-
-    public static final String[] TO_COPY_FILES = new String[]{
-            "Français France (Defaut).txt", "Français France (Defaut).png", "Français France (Defaut).pdf", "Français France (Defaut).odt",
-            "English US.txt", "English US.png", "English US.pdf", "English US.odt",
-            "English GB.png",
-            "Italiano.txt", "Italiano.png"
-    };
-
+    HashMap<String, ImageView> languagesComponents = new HashMap<>();
+    private static HashMap<String, Object> languages = getLanguagesDefaultConfig();
 
     CallBackArg<String> callBack;
     public LanguageWindow(CallBackArg<String> callBack){
@@ -62,7 +54,7 @@ public class LanguageWindow extends Stage{
         });
         StyleManager.putStyle(root, Style.DEFAULT);
 
-        if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("English US");
+        if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("en-us");
         
         setupLanguages();
         setupPanel(root);
@@ -78,11 +70,11 @@ public class LanguageWindow extends Stage{
         String language = System.getProperty("user.language").toLowerCase();
 
         if(language.equals("fr")){
-            return "Français France (Defaut)";
+            return "fr-fr";
         }else if(language.equals("en")){
-            return "English US";
+            return "en-us";
         }else if(language.equals("it")){
-            return "Italianno";
+            return "it-it";
         }
 
         return null;
@@ -97,9 +89,9 @@ public class LanguageWindow extends Stage{
                 if(FilesUtils.getExtension(file.getName()).equals("txt")){
                     ImageView image = new ImageView();
                     if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png").exists()) {
-                        image = ImageUtils.buildImage(new FileInputStream(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png")), 88, 50);
+                        image = ImageUtils.buildImage(new FileInputStream(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png"), 88, 50);
                     }
-                    languages.put(StringUtils.removeAfterLastRejex(file.getName(), ".txt"), image);
+                    languagesComponents.put(StringUtils.removeAfterLastRejex(file.getName(), ".txt"), image);
                 }
             }
         }catch(Exception e){
@@ -115,13 +107,19 @@ public class LanguageWindow extends Stage{
         ListView<HBox> languages = new ListView<>();
         languages.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        for(Map.Entry<String, ImageView> language : this.languages.entrySet()){
+        for(Map.Entry<String, ImageView> language : this.languagesComponents.entrySet()){
             HBox box = new HBox();
             box.setStyle("-fx-padding: -5;");
-            Label label = new Label(language.getKey());
+
+            Label label = new Label(getLanguageName(language.getKey()));
             label.setPrefHeight(50);
-            HBox.setMargin(label, new Insets(0, 0, 0, 10));
-            box.getChildren().addAll(language.getValue(), label);
+            HBox.setMargin(label, new Insets(0, 5, 0, 10));
+
+            Label shortName = new Label(language.getKey());
+            shortName.setPrefHeight(50);
+            shortName.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
+
+            box.getChildren().addAll(language.getValue(), label, shortName);
             languages.getItems().add(box);
             if(Main.settings.getLanguage().equals(language.getKey())) languages.getSelectionModel().select(box);
         }
@@ -147,7 +145,7 @@ public class LanguageWindow extends Stage{
         accept.setOnAction((ActionEvent event) -> {
             TR.updateTranslation();
             close();
-            callBack.call(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(1)).getText());
+            callBack.call(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(2)).getText());
         });
         newTrans.setOnAction((ActionEvent event) -> {
 
@@ -166,14 +164,11 @@ public class LanguageWindow extends Stage{
 
             Optional<ButtonType> option = alert.showAndWait();
 
-            String name = "";
-            if(option.get() == originFile){
-                name = "Français France (Defaut)";
-            }else if(option.get() == englishFile){
-                name = "English US";
-            }else{
-                return;
-            }
+            String name;
+            if(option.get() == originFile) name = "fr-fr";
+            else if(option.get() == englishFile) name = "rn-us";
+            else return;
+
 
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("Sélectionner un dossier"));
@@ -193,29 +188,84 @@ public class LanguageWindow extends Stage{
 
     }
 
+    public static String getLanguageName(String shortName){
+        HashMap<String, Object> languages = getLanguagesConfig();
+        for(Map.Entry<String, Object> language : languages.entrySet()){
+            if(shortName.equals(language.getKey())){
+                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                return (String) data.get("name");
+            }
+        }
+        return shortName;
+    }
+    public static void setup(){
+        if(Main.settings.getSettingsVersion().equals("1.2.0") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
+            for (File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
+        }
+
+        LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
+        if(Main.settings.getLanguage().equals("Français France (Defaut)")){
+            Main.settings.setLanguage("fr-fr");
+        }else if(Main.settings.getLanguage().equals("English US")){
+            Main.settings.setLanguage("en-us");
+        }
+        TR.setup();
+    }
     public static void copyFiles(boolean force){
         try{
             File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
             translationsDir.mkdirs();
 
-            for(String fileName : TO_COPY_FILES){
-                File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
-                if(!dest.exists() || force){
-                    InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
-                    Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-                }
+            for(String name : LanguageWindow.getLanguagesDefaultConfig().keySet()){
+                copyFile(name + ".txt", force);
+                copyFile(name + ".pdf", force);
+                copyFile(name + ".png", force);
+                copyFile(name + ".odt", force);
             }
         }catch(IOException e){ e.printStackTrace(); }
+    }
+
+    private static void copyFile(String fileName, boolean force) throws IOException{
+        if(LanguageWindow.class.getResource("/translations/" + fileName) == null) return;
+
+        File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
+        if(!dest.exists() || force){
+            InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
+            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+        }
     }
 
     public static File getDocFile(){
 
         File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.getLanguage() + ".pdf");
         if(!doc.exists()){
-            return new File(Main.dataFolder + "translations" + File.separator + "Français France (Defaut).pdf");
+            return new File(Main.dataFolder + "translations" + File.separator + "en-us.pdf");
         }
         return doc;
 
+    }
+    public static HashMap<String, Object> getLanguagesConfig(){
+        return languages;
+    }
+    public static void loadLanguagesConfig(HashMap<String, Object> data){
+        for(Map.Entry<String, Object> language : LanguageWindow.getLanguagesDefaultConfig().entrySet()){
+            if(!data.containsKey(language.getKey())) data.put(language.getKey(), language.getValue());
+        }
+        languages = data;
+    }
+    public static HashMap<String, Object> getLanguagesDefaultConfig(){
+        HashMap<String, Object> data = new HashMap<>();
+
+        Config.set(data, "fr-fr.version", 0);
+        Config.set(data, "fr-fr.name", "Français France (Defaut)");
+
+        Config.set(data, "en-us.version", 0);
+        Config.set(data, "en-us.name", "English US");
+
+        Config.set(data, "it-it.version", 0);
+        Config.set(data, "it-it.name", "Italiano");
+
+        return data;
     }
 
 }

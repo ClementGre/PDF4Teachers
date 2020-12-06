@@ -31,7 +31,7 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "Snapshot 1.2.1";
+	public static final String VERSION = "Snapshot-2 1.2.1";
 	public static final boolean DEBUG = false;
 	public static final boolean COPY_CONSOLE = true;
 
@@ -74,8 +74,8 @@ public class Main extends Application {
 
 		settings = new Settings();
 
-		// force to re-copy all files only if version has changed
-		LanguageWindow.copyFiles(!settings.getSettingsVersion().equals(VERSION));
+		// setups
+		LanguageWindow.setup();
 		StyleManager.setup();
 
 		if(languageAsk()){
@@ -95,7 +95,7 @@ public class Main extends Application {
 				TR.updateTranslation();
 				return true;
 			}else{
-				Main.settings.setLanguage("English US");
+				Main.settings.setLanguage("en-us");
 				TR.updateTranslation();
 				new LanguageWindow(value -> {
 					if(!value.isEmpty()) Main.settings.setLanguage(value);

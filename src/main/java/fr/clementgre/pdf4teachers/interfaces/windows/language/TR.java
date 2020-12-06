@@ -11,14 +11,19 @@ import java.util.regex.Pattern;
 
 public class TR {
 
-    private static ArrayList<String> template = null;
+    private static HashMap<String, String> defaultsTranslations = new HashMap<>();
     private static HashMap<String, String> translations = new HashMap<>();
 
     public static String tr(String text){
 
         if(translations.size() >= 1){
-
             String translated = translations.get(text);
+            if(translated != null){
+                return translated;
+            }
+        }
+        if(defaultsTranslations.size() >= 1){
+            String translated = defaultsTranslations.get(text);
             if(translated != null){
                 return translated;
             }
@@ -28,27 +33,32 @@ public class TR {
     }
 
     public static String getCurrentLanguageAcronym(){
-        return TR.tr("acronym").equals("acronym") ? "fr" : TR.tr("acronym").toLowerCase();
+        return TR.tr("acronym").equals("acronym") ? "en" : TR.tr("acronym").toLowerCase();
+    }
+
+    public static void setup(){
+        TR.loadTranslationFile("en-us", true);
     }
 
     public static void updateTranslation(){
-        TR.loadTranslationFile(Main.settings.getLanguage());
+        TR.loadTranslationFile(Main.settings.getLanguage(), false);
     }
 
-    public static boolean loadTranslationFile(String fileName){
+    public static boolean loadTranslationFile(String fileName, boolean defaultTranslation){
 
-        translations = new HashMap<>();
+        if(defaultTranslation) defaultsTranslations = new HashMap<>();
+        else translations = new HashMap<>();
         File file = new File(Main.dataFolder + "translations" + File.separator + fileName + ".txt");
 
         if(file.exists()){
             try{
-                return loadFileTranslationsData(file);
+                return loadFileTranslationsData(file, defaultTranslation);
             }catch(IOException e){ e.printStackTrace(); }
         }
         return false;
     }
 
-    private static boolean loadFileTranslationsData(File file) throws IOException {
+    private static boolean loadFileTranslationsData(File file, boolean defaultTranslations) throws IOException {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
 
@@ -63,7 +73,11 @@ public class TR {
 
                 if(key != null){
                     if(!key.isBlank() && !value.isBlank()){
-                        translations.put(key.replaceAll(Pattern.quote("\\n"), "\n"), value.replaceAll(Pattern.quote("\\n"), "\n"));
+                        if(defaultTranslations){
+                            defaultsTranslations.put(key.replaceAll(Pattern.quote("\\n"), "\n"), value.replaceAll(Pattern.quote("\\n"), "\n"));
+                        }else{
+                            translations.put(key.replaceAll(Pattern.quote("\\n"), "\n"), value.replaceAll(Pattern.quote("\\n"), "\n"));
+                        }
                         i++;
                     }
                 }
@@ -71,9 +85,7 @@ public class TR {
             }
         }
         reader.close();
-
         return i >= 1;
-
     }
 
 }

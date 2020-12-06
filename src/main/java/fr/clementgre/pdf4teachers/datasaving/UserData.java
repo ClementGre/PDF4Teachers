@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
@@ -21,6 +22,10 @@ public class UserData {
 
     @UserDataObject(path = "customColors")
     public List<String> customColors = new ArrayList<>();
+
+    // OTHER
+    @UserDataObject(path = "languages")
+    public HashMap<String, Object> languages = new HashMap<>();
 
     // FILES (FilesTab)
     @UserDataObject(path = "files.lastFile")
@@ -209,6 +214,7 @@ public class UserData {
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
                 MainWindow.gradeTab.sumByDecrement.setSelected(sumByDecrement);
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
+                LanguageWindow.loadLanguagesConfig(languages);
             });
         }).start();
     }
@@ -217,6 +223,7 @@ public class UserData {
 
         // SINGLES
         customColors = SyncColorPicker.getCustomColorsList();
+        languages = LanguageWindow.getLanguagesConfig();
 
         // FILES
         lastOpenedFiles = new ArrayList<>();
