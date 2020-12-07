@@ -1,8 +1,10 @@
 package fr.clementgre.pdf4teachers.utils;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 
+import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,5 +37,21 @@ public class PlatformUtils {
         }catch(InterruptedException ignored){}
 
         return toReturn.get();
+
+    }
+
+    public static void openFile(String uri){
+
+        if (Main.isOSX()){
+            try {
+                Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
+            } catch (InterruptedException | IOException e) {
+                System.out.println("unable to open URI");
+                e.printStackTrace();
+            }
+        }else{
+            Main.hostServices.showDocument(uri);    //Doesn't work for OSX
+        }
+
     }
 }

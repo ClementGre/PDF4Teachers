@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -45,6 +46,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -425,8 +427,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 
 		tools9Debug1OpenConsole.setOnAction((e) -> new LogWindow());
-		tools9Debug2OpenAppFolder.setOnAction((e) -> Main.hostServices.showDocument(Main.dataFolder));
-		tools9Debug3OpenEditionFile.setOnAction((e) -> Main.hostServices.showDocument(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
+		tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openFile(Main.dataFolder));
+		tools9Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
 
 
 		////////// SETTINGS //////////
@@ -588,10 +590,21 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		if(Main.isOSX()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
-			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 
+			//OSX selects radioMenuItems upon click, but doesn't unselect it on click :
+			AtomicBoolean selected = new AtomicBoolean(false);
+			menuItem.selectedProperty().addListener((observable, oldValue, newValue) -> {
+				Platform.runLater(() -> {
+					selected.set(newValue);
+				});
+				System.out.println(oldValue + " -> " + newValue);
+			});
 			menuItem.setOnAction((e) -> {
-				if(menuItem.isSelected()) menuItem.setSelected(false);
+				System.out.println("clicked isSelected=" + menuItem.isSelected());
+				menuItem.setSelected(!selected.get());
+				System.out.println("clicked end isSelected=" + menuItem.isSelected());
+
 			});
 
 			return menuItem;

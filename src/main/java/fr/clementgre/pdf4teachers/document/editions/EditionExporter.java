@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
@@ -285,7 +286,7 @@ public class EditionExporter {
 
                 Optional<ButtonType> optionSelected = endAlert.showAndWait();
                 if(optionSelected.get() == open){
-                    Main.hostServices.showDocument(finalDirectory.getAbsolutePath());
+                    PlatformUtils.openFile(finalDirectory.getAbsolutePath());
                 }
 
 

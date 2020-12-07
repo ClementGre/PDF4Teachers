@@ -367,7 +367,7 @@ public class ExportWindow {
 
                 Optional<ButtonType> optionSelected = alert.showAndWait();
                 if(optionSelected.get() == open){
-                    Main.hostServices.showDocument(directory.getAbsolutePath());
+                    PlatformUtils.openFile(directory.getAbsolutePath());
                 }
             }
         });

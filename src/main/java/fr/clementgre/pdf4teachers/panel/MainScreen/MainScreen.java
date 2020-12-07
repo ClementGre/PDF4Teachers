@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -103,7 +104,7 @@ public class MainScreen extends Pane {
 				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
 						TR.tr("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
-				infoLink.setOnAction(e -> Main.hostServices.showDocument(failedEditFile));
+				infoLink.setOnAction(e -> PlatformUtils.openFile(failedEditFile));
 			}
 		}else{
 			info.setVisible(false);
