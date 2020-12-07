@@ -287,43 +287,40 @@ public class MainWindow extends Stage{
         if(Desktop.isDesktopSupported()){
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
                 Desktop.getDesktop().setAboutHandler(e -> {
-                    new AboutWindow();
+                    Platform.runLater(AboutWindow::new);
                 });
             }
 
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_URI)){
                 Desktop.getDesktop().setOpenURIHandler(e -> {
                     System.out.println(e.getURI());
-                    File file = new File(e.getURI());
-                    if(file.exists()){
-                        MainWindow.filesTab.openFiles(new File[]{file});
-                        MainWindow.mainScreen.openFile(file);
-                    }
+                    Platform.runLater(() -> {
+                        File file = new File(e.getURI());
+                        if(file.exists()){
+                            MainWindow.filesTab.openFiles(new File[]{file});
+                            MainWindow.mainScreen.openFile(file);
+                        }
+                    });
                 });
             }
 
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
                 Desktop.getDesktop().setOpenFileHandler(e -> {
-                    System.out.println(e.getFiles().get(0).getAbsolutePath());
-                    MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
-                    if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
+                    Platform.runLater(() -> {
+                        System.out.println(e.getFiles().get(0).getAbsolutePath());
+                        MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
+                        if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
+                    });
+
                 });
             }
 
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_PREFERENCES)){
                 Desktop.getDesktop().setPreferencesHandler(e -> {
-                    menuBar.settings.fire();
+                    Platform.runLater(() -> {
+                        menuBar.settings.fire();
+                    });
                 });
-            }
-
-            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_MENU_BAR)){
-                JMenuBar menuBar = new JMenuBar();
-                JMenu about = new JMenu("ABOUT");
-                about.add(new JMenuItem("test"));
-                about.add(new JMenuItem("open about page"));
-                menuBar.add(about);
-                menuBar.add(new JMenu("test"));
-                Desktop.getDesktop().setDefaultMenuBar(menuBar);
             }
 
         }

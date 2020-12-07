@@ -56,7 +56,8 @@ public class ImageUtils {
     }
 
     public static ImageView buildImage(String imgPath, int width, int height, Effect effect) {
-        ImageView imageView = new ImageView(new Image(imgPath));
+        Image image = new Image(imgPath);
+        ImageView imageView = new ImageView(image);
 
         if(effect != null) imageView.setEffect(effect);
 

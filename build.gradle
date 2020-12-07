@@ -98,7 +98,7 @@ jlink {
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
                     "--mac-package-name", "PDF4Teachers",
-                    '--file-associations association-osx.properties'
+                    '--file-associations', 'association-osx.properties'
             ]
         }else if(installerType in ['deb', 'rpm']){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']

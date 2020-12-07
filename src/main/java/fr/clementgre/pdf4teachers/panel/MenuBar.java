@@ -49,31 +49,39 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
 
+	////////// ICONS COLOR //////////
+
+	private static ColorAdjust colorAdjust = new ColorAdjust();
+	static {
+		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
+		else colorAdjust.setBrightness(-1);
+	}
+
 	////////// FILE //////////
 
 	Menu file = new Menu(TR.tr("Fichier"));
-	public NodeMenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public NodeMenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	NodeMenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Vide la liste des fichiers"), false, true, false);
 
-	NodeMenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	NodeMenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
+	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	NodeMenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	NodeMenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	NodeMenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
@@ -81,16 +89,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu tools = new Menu(TR.tr("Outils"));
 
-	NodeMenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
 
-	NodeMenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
+	MenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
 			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
 
 	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
 			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
 
-	NodeMenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
+	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
 	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), "cross-way",
@@ -100,69 +108,69 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition"), "export",
 			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
 
-		NodeMenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
+		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
 				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
-		NodeMenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
+		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
 	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition"), "import",
 			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
-		NodeMenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
+		MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
 				TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true, false, false, false);
-		NodeMenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
+		MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-	NodeMenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), "fullscreen", null,
+	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), "fullscreen", null,
 			TR.tr("Passe l'application en mode plein écran"));
 
 	Menu tools9Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
 			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), false);
 
-		NodeMenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+		MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
 				TR.tr("Ouvre la console de l'application"), false, false, false, false);
-		NodeMenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
+		MenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
 				TR.tr("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
-		NodeMenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
+		MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
 				TR.tr("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
 
 	////////// SETTINGS //////////
 
 	public Menu settings = new Menu(TR.tr("Préférences"));
 
-	NodeMenuItem settings1Language = createMenuItem(TR.tr("Langage (Français France)"), "language", null,
+	MenuItem settings1Language = createMenuItem(TR.tr("Langage (Français France)"), "language", null,
 			TR.tr("Définit la langue de l'interface"), true);
 
-	NodeRadioMenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+	RadioMenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	NodeRadioMenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
+	RadioMenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
-	NodeMenuItem settings4DefaultZoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
+	MenuItem settings4DefaultZoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
 			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
 
-	NodeRadioMenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
+	RadioMenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
 			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
 
-	NodeRadioMenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
+	RadioMenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
 			TR.tr("Change les couleurs de l'interface vers un thème plus sombre."), true);
 
 
-	NodeRadioMenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+	RadioMenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
 			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	NodeRadioMenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+	RadioMenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
 			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
 
-	NodeRadioMenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	RadioMenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	NodeRadioMenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	RadioMenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	NodeRadioMenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	RadioMenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
@@ -176,18 +184,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem help3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
 	MenuItem help4Website = new MenuItem(TR.tr("Site Web de PDF4Teachers"));
 
-	////////// ICONS COLOR //////////
-
-	private static ColorAdjust colorAdjust = new ColorAdjust();
-	static {
-		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
-		else colorAdjust.setBrightness(-1);
-	}
-
 	public MenuBar(){
 		setup();
 	}
 	public void setup(){
+
+		if(Main.isOSX()){
+			setUseSystemMenuBar(true);
+			colorAdjust.setBrightness(-1);
+		}
 
 		////////// FILE //////////
 
@@ -501,12 +506,21 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// ABOUT / HELP //////////
 
-		Label name = new Label(TR.tr("À propos"));
-		name.setAlignment(Pos.CENTER_LEFT);
-		name.setOnMouseClicked(event -> {
-			try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }
-		});
-		about.setGraphic(name);
+		if(Main.isOSX()){
+			about.setText(TR.tr("À propos"));
+			MenuItem triggerItem = new MenuItem(TR.tr("Fenêtre à Propos"));
+			about.getItems().add(triggerItem);
+			triggerItem.setOnAction((event) -> {
+				try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }
+			});
+		}else{
+			Label name = new Label(TR.tr("À propos"));
+			name.setAlignment(Pos.CENTER_LEFT);
+			name.setOnMouseClicked(event -> {
+				try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }
+			});
+			about.setGraphic(name);
+		}
 
 		help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(LanguageWindow.getDocFile()));
 		help2GitHubIssue.setOnAction((ActionEvent actionEvent) -> {
@@ -517,87 +531,118 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
 		help4Website.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdf4teachers.org"));
 
-
-
 		////////// ABOUT / HELP //////////
 
 		// UI Style
 		setStyle("");
 		StyleManager.putStyle(this, Style.ACCENT);
-		getMenus().addAll(file, tools, settings, about, help);
+		getMenus().addAll(file, tools, settings, help, about);
 
-		for(Menu menu : getMenus()){
-			PaneUtils.setMenuSize(menu);
-		}
+
 	}
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
 		return createSubMenu(name, imgName, toolTip, disableIfNoDoc, true);
 	}
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
 
-		Menu menu = new Menu();
-		HBox pane = new HBox();
+		if(Main.isOSX()){
+			Menu menu = new Menu(name);
+			if(imgName != null)menu.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0));
 
-		Label text = new Label(name);
+			if(disableIfNoDoc){
+				menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+			}
 
-		if(imgName != null){
-			ImageView icon = ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
-			pane.getChildren().add(icon);
-
-			if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
-			else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 10;");
+			return menu;
 		}else{
-			if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;"); // top - right - bottom - left
-			else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 0;");
+			Menu menu = new Menu();
+			HBox pane = new HBox();
+
+			Label text = new Label(name);
+
+			if(imgName != null){
+				ImageView icon = ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
+				pane.getChildren().add(icon);
+
+				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
+				else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 10;");
+			}else{
+				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;"); // top - right - bottom - left
+				else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 0;");
+			}
+			pane.getChildren().add(text);
+
+			if(disableIfNoDoc){
+				menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+			}
+
+			Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
+			toolTipUI.setShowDuration(Duration.INDEFINITE);
+			Tooltip.install(pane, toolTipUI);
+
+			menu.setGraphic(pane);
+			return menu;
 		}
-		pane.getChildren().add(text);
+	}
+	public RadioMenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
 
-		if(disableIfNoDoc){
-			menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+		if(Main.isOSX()){
+			RadioMenuItem menuItem = new RadioMenuItem(text);
+			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+
+			menuItem.setOnAction((e) -> {
+				if(menuItem.isSelected()) menuItem.setSelected(false);
+			});
+
+			return menuItem;
+
+		}else{
+			NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
+
+			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+
+			return new RadioMenuItem(text);
+			//return menuItem;
 		}
 
-		Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
-		toolTipUI.setShowDuration(Duration.INDEFINITE);
-		Tooltip.install(pane, toolTipUI);
-
-		menu.setGraphic(pane);
-		return menu;
-	}
-	public NodeRadioMenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
-
-		NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
-
-		if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
-		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
-
-		return menuItem;
 
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
+	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
+	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
+		if(Main.isOSX()){
+			MenuItem menuItem = new MenuItem(text);
+			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+			if(keyCombinaison != null) menuItem.setAccelerator(keyCombinaison);
+			if(disableIfNoDoc){
+				menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+			}if(disableIfNoList){
+				menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
+			}
+			return menuItem;
+		}else{
+			NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
 
-		NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
+			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+			if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
+			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+			if(leftMargin) menuItem.setFalseLeftData();
 
+			if(disableIfNoDoc){
+				menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+			}if(disableIfNoList){
+				menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
+			}
 
-		if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
-		if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
-		if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
-		if(leftMargin) menuItem.setFalseLeftData();
-
-		if(disableIfNoDoc){
-			menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-		}if(disableIfNoList){
-			menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
+			return menuItem;
 		}
-		return menuItem;
-
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip){
+	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, false);
 	}
-	public NodeMenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
+	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, leftMargin);
 	}
 }
