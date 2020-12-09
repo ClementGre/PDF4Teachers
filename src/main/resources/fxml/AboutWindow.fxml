@@ -12,7 +12,7 @@
       fx:id="root" prefWidth="400.0" alignment="CENTER" styleClass="aboutPane">
 
 
-    <ImageView fitWidth="200" preserveRatio="true">
+    <ImageView fitWidth="180" preserveRatio="true">
         <Image url="/logo.png"/>
         <VBox.margin><Insets bottom="10.0"/></VBox.margin>
     </ImageView>
@@ -64,7 +64,7 @@
     <HBox styleClass="dependencies">
         <VBox.margin><Insets bottom="15"/></VBox.margin>
         <VBox fx:id="dependenciesLeft">
-            <Hyperlink text="Java FX 14" id="https://openjfx.io/"/>
+            <Hyperlink text="Java FX 15" id="https://openjfx.io/"/>
             <Hyperlink text="Apache PDFBox 2.0.21" id="https://pdfbox.apache.org/"/>
             <Hyperlink text="JMetro 11.6.14" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
             <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
@@ -83,5 +83,10 @@
     <Hyperlink id="mailto:clement.grennerat@free.fr" text="clement.grennerat@free.fr">
         <style>-fx-font-size: 12;</style>
     </Hyperlink>
+
+    <Label fx:id="statsLabel">
+        <VBox.margin><Insets top="10"/></VBox.margin>
+        <style>-fx-font-size: 12;</style>
+    </Label>
 
 </VBox>

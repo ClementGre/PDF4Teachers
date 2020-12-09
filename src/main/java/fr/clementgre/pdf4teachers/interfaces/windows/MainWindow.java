@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -19,16 +20,13 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.text.DecimalFormat;
@@ -36,6 +34,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
@@ -58,11 +57,29 @@ public class MainWindow extends Stage{
     public static GradeTab gradeTab;
     public static PaintTab paintTab;
 
-
-
     Thread userDataSaver = new Thread(() -> {
         while(true){
-            try{ Thread.sleep(300000); }catch(InterruptedException e){ e.printStackTrace(); }
+            try{ Thread.sleep(1000*60); }catch(InterruptedException e){ e.printStackTrace(); }
+            if(isFocused()){
+                MainWindow.userData.foregroundTime++;
+                if(MainWindow.userData.foregroundTime % (60*50) == 0){
+                    Platform.runLater(() -> {
+                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Statistiques"),
+                                TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.tr("heures sur PDF4Teachers."),
+                                TR.tr("Remerciez-moi avec un don pour toutes les heures que vous avez gagnés."));
+                        ButtonType paypal = new ButtonType(TR.tr("Paypal"), ButtonBar.ButtonData.OTHER);
+                        ButtonType github = new ButtonType(TR.tr("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
+                        ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.YES);
+                        alert.getButtonTypes().setAll(paypal, github, ignore);
+                        Optional<ButtonType> option = alert.showAndWait();
+                        if(option.get() == paypal){
+                            Main.hostServices.showDocument("https://paypal.me/themsou");
+                        }else if (option.get() == github){
+                            Main.hostServices.showDocument("https://github.com/sponsors/ClementGre");
+                        }
+                    });
+                }
+            }
             MainWindow.userData.save();
         }
     }, "userData AutoSaver");

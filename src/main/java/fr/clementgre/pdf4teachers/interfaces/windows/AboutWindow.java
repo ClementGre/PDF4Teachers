@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -13,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -36,6 +38,7 @@ public class AboutWindow extends Stage {
     public Pane dependenciesRight;
 
     public Hyperlink liscenselabel;
+    public Label statsLabel;
 
     @FXML
     public void initialize(){
@@ -97,6 +100,10 @@ public class AboutWindow extends Stage {
         dependenciesRight.setPrefWidth(160);
 
         liscenselabel.setText(TR.tr("Licence") + " Apache 2");
+
+        statsLabel.setText(TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime + " " + TR.tr("heures sur PDF4Teachers,\net avez ouvert l'application") + " " +  MainWindow.userData.startsCount + " " + TR.tr("fois."));
+        statsLabel.setWrapText(true);
+        statsLabel.setTextAlignment(TextAlignment.CENTER);
     }
 
     private void setupChildrenHyperlinks(Pane parent){

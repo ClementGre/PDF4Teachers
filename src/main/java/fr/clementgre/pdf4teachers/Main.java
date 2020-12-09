@@ -6,6 +6,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.datasaving.Settings;
@@ -15,6 +16,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.LicenseWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -83,12 +85,9 @@ public class Main extends Application {
 
 	public boolean languageAsk(){
 		if(settings.getLanguage().isEmpty()){
-
 			String language = LanguageWindow.getLanguageFromComputerLanguage();
 			if(language != null){
 				Main.settings.setLanguage(language);
-				TR.updateTranslation();
-				return true;
 			}else{
 				Main.settings.setLanguage("en-us");
 				TR.updateTranslation();
@@ -101,10 +100,9 @@ public class Main extends Application {
 				});
 				return false;
 			}
-		}else{
-			TR.updateTranslation();
-			return true;
 		}
+		TR.updateTranslation();
+		return true;
 	}
 	public boolean licenceAsk(){
 

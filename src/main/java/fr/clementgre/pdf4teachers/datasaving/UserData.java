@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
@@ -22,6 +24,14 @@ public class UserData {
 
     @UserDataObject(path = "customColors")
     public List<String> customColors = new ArrayList<>();
+
+    @UserDataObject(path = "uuid")
+    public String uuid = UUID.randomUUID().toString();
+
+    @UserDataObject(path = "stats.foregroundTime")
+    public long foregroundTime = 0;
+    @UserDataObject(path = "stats.startsCount")
+    public long startsCount = 0;
 
     // OTHER
     @UserDataObject(path = "languages")
@@ -107,10 +117,7 @@ public class UserData {
 
     public UserData(){
 
-        if(!Main.settings.getSettingsVersion().isEmpty()){
-            loadDataFromYAML();
-        }
-
+        loadDataFromYAML();
         textElementsData = new TextElementsData();
     }
     public void save(){
@@ -211,6 +218,22 @@ public class UserData {
                     i++;
                 }
                 MainWindow.gradeTab.updateElementsFont();
+
+                startsCount++;
+                new LanguagesUpdater().update((hasDownloadedLanguages) -> {
+                    if(hasDownloadedLanguages){
+                        TR.updateTranslation();
+
+                        MainWindow.userData.save();
+                        MainWindow.hasToClose = true;
+                        if(MainWindow.mainScreen.closeFile(true)){
+                            Main.window.close();
+                            MainWindow.hasToClose = false;
+                            Platform.runLater(Main::startMainWindow);
+                        }
+                        MainWindow.hasToClose = false;
+                    }
+                }, true, true);
 
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
                 MainWindow.gradeTab.sumByDecrement.setSelected(sumByDecrement);

@@ -24,11 +24,26 @@ public class DialogBuilder {
 
 
     public static Alert getAlert(Alert.AlertType type, String title){
+        return getAlert(type, title, null, null);
+    }
+    public static Alert getAlert(Alert.AlertType type, String title, String header){
+        return getAlert(type, title, header, null);
+    }
+    public static Alert getAlertBooth(Alert.AlertType type, String titleHeader){
+        return getAlert(type, titleHeader, titleHeader, null);
+    }
+    public static Alert getAlert(Alert.AlertType type, String title, String header, String content){
         Alert alert = new Alert(type);
         alert.setTitle(title);
 
         if(Main.window != null){
             alert.initOwner(Main.window.getScene().getWindow());
+        }
+        if(header != null){
+            alert.setHeaderText(header);
+        }
+        if(content != null){
+            alert.setContentText(content);
         }
 
         setupDialog(alert);

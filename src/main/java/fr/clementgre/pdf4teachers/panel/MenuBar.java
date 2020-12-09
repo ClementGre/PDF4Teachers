@@ -143,36 +143,36 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem settings1Language = createMenuItem(TR.tr("Langage (Français France)"), "language", null,
 			TR.tr("Définit la langue de l'interface"), true);
 
-	RadioMenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
+	MenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
 			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
 
-	RadioMenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
+	MenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
 			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
 
 	MenuItem settings4DefaultZoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
 			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
 
-	RadioMenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
+	MenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
 			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
 
-	RadioMenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
+	MenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
 			TR.tr("Change les couleurs de l'interface vers un thème plus sombre."), true);
 
 
-	RadioMenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
+	MenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
 			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
 
-	RadioMenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
+	MenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
 			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
 
 
-	RadioMenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
+	MenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
 			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
 
-	RadioMenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
+	MenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
 			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
 
-	RadioMenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
+	MenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
 			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
 
 
@@ -212,30 +212,59 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// SETTINGS //////////
 
-		// DEFINE DEFAULT STATE
-		settings2AlwaysRestore.selectedProperty().set(Main.settings.isRestoreLastSession());
-		settings3AlertUpdate.selectedProperty().set(Main.settings.isCheckUpdates());
-		settings5Animation.selectedProperty().set(Main.settings.isZoomAnimations());
-		settings6DarkTheme.selectedProperty().set(Main.settings.isDarkTheme());
+		if(settings2AlwaysRestore instanceof RadioMenuItem){
+			// DEFINE DEFAULT STATE
+			((RadioMenuItem) settings2AlwaysRestore).selectedProperty().set(Main.settings.isRestoreLastSession());
+			((RadioMenuItem) settings3AlertUpdate).selectedProperty().set(Main.settings.isCheckUpdates());
+			((RadioMenuItem) settings5Animation).selectedProperty().set(Main.settings.isZoomAnimations());
+			((RadioMenuItem) settings6DarkTheme).selectedProperty().set(Main.settings.isDarkTheme());
 
-		settings7AutoSave.selectedProperty().set(Main.settings.isAutoSave());
-		settings8RegularSave.selectedProperty().set(Main.settings.getRegularSaving() != -1);
+			((RadioMenuItem) settings7AutoSave).selectedProperty().set(Main.settings.isAutoSave());
+			((RadioMenuItem) settings8RegularSave).selectedProperty().set(Main.settings.getRegularSaving() != -1);
 
-		settings9TextAutoRemove.selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-		settings10TextOnlyStart.selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-		settings11TextSmall.selectedProperty().set(Main.settings.isSmallFontInTextsList());
+			((RadioMenuItem) settings9TextAutoRemove).selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+			((RadioMenuItem) settings10TextOnlyStart).selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+			((RadioMenuItem) settings11TextSmall).selectedProperty().set(Main.settings.isSmallFontInTextsList());
 
-		// BIND
-		Main.settings.restoreLastSessionProperty().bind(settings2AlwaysRestore.selectedProperty());
-		Main.settings.checkUpdatesProperty().bind(settings3AlertUpdate.selectedProperty());
-		Main.settings.zoomAnimationsProperty().bind(settings5Animation.selectedProperty());
-		Main.settings.darkThemeProperty().bind(settings6DarkTheme.selectedProperty());
+			// BIND
+			Main.settings.restoreLastSessionProperty().bind(((RadioMenuItem) settings2AlwaysRestore).selectedProperty());
+			Main.settings.checkUpdatesProperty().bind(((RadioMenuItem) settings3AlertUpdate).selectedProperty());
+			Main.settings.zoomAnimationsProperty().bind(((RadioMenuItem) settings5Animation).selectedProperty());
+			Main.settings.darkThemeProperty().bind(((RadioMenuItem) settings6DarkTheme).selectedProperty());
 
-		Main.settings.autoSavingProperty().bind(settings7AutoSave.selectedProperty());
+			Main.settings.autoSavingProperty().bind(((RadioMenuItem) settings7AutoSave).selectedProperty());
 
-		Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(settings9TextAutoRemove.selectedProperty());
-		Main.settings.showOnlyStartInTextsListProperty().bind(settings10TextOnlyStart.selectedProperty());
-		Main.settings.smallFontInTextsListProperty().bind(settings11TextSmall.selectedProperty());
+			Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(((RadioMenuItem) settings9TextAutoRemove).selectedProperty());
+			Main.settings.showOnlyStartInTextsListProperty().bind(((RadioMenuItem) settings10TextOnlyStart).selectedProperty());
+			Main.settings.smallFontInTextsListProperty().bind(((RadioMenuItem) settings11TextSmall).selectedProperty());
+
+		}else if(settings2AlwaysRestore instanceof NodeRadioMenuItem){
+			// DEFINE DEFAULT STATE
+			((NodeRadioMenuItem) settings2AlwaysRestore).selectedProperty().set(Main.settings.isRestoreLastSession());
+			((NodeRadioMenuItem) settings3AlertUpdate).selectedProperty().set(Main.settings.isCheckUpdates());
+			((NodeRadioMenuItem) settings5Animation).selectedProperty().set(Main.settings.isZoomAnimations());
+			((NodeRadioMenuItem) settings6DarkTheme).selectedProperty().set(Main.settings.isDarkTheme());
+
+			((NodeRadioMenuItem) settings7AutoSave).selectedProperty().set(Main.settings.isAutoSave());
+			((NodeRadioMenuItem) settings8RegularSave).selectedProperty().set(Main.settings.getRegularSaving() != -1);
+
+			((NodeRadioMenuItem) settings9TextAutoRemove).selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
+			((NodeRadioMenuItem) settings10TextOnlyStart).selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
+			((NodeRadioMenuItem) settings11TextSmall).selectedProperty().set(Main.settings.isSmallFontInTextsList());
+
+			// BIND
+			Main.settings.restoreLastSessionProperty().bind(((NodeRadioMenuItem) settings2AlwaysRestore).selectedProperty());
+			Main.settings.checkUpdatesProperty().bind(((NodeRadioMenuItem) settings3AlertUpdate).selectedProperty());
+			Main.settings.zoomAnimationsProperty().bind(((NodeRadioMenuItem) settings5Animation).selectedProperty());
+			Main.settings.darkThemeProperty().bind(((NodeRadioMenuItem) settings6DarkTheme).selectedProperty());
+
+			Main.settings.autoSavingProperty().bind(((NodeRadioMenuItem) settings7AutoSave).selectedProperty());
+
+			Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(((NodeRadioMenuItem) settings9TextAutoRemove).selectedProperty());
+			Main.settings.showOnlyStartInTextsListProperty().bind(((NodeRadioMenuItem) settings10TextOnlyStart).selectedProperty());
+			Main.settings.smallFontInTextsListProperty().bind(((NodeRadioMenuItem) settings11TextSmall).selectedProperty());
+		}
+
 
 		// ADD
 		settings.getItems().addAll(settings1Language, settings2AlwaysRestore, settings3AlertUpdate, settings4DefaultZoom, settings5Animation, settings6DarkTheme,
@@ -495,10 +524,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			if(option.get() == ok){
 				if(activated.isSelected()){
 					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					settings8RegularSave.setSelected(true);
+					if(settings8RegularSave instanceof RadioMenuItem) ((RadioMenuItem) settings8RegularSave).setSelected(true);
+					else if(settings8RegularSave instanceof NodeRadioMenuItem) ((NodeRadioMenuItem) settings8RegularSave).setSelected(true);
 				}else{
 					Main.settings.setRegularSaving(-1);
-					settings8RegularSave.setSelected(false);
+					if(settings8RegularSave instanceof RadioMenuItem) ((RadioMenuItem) settings8RegularSave).setSelected(false);
+					else if(settings8RegularSave instanceof NodeRadioMenuItem) ((NodeRadioMenuItem) settings8RegularSave).setSelected(false);
 				}
 
 			}
@@ -586,7 +617,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			return menu;
 		}
 	}
-	public RadioMenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
+	public MenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
 
 		if(Main.isOSX()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
@@ -614,9 +645,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
-
-			return new RadioMenuItem(text);
-			//return menuItem;
+			return menuItem;
 		}
 
 

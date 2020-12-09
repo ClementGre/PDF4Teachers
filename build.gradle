@@ -37,7 +37,7 @@ dependencies{
 
 }
 javafx {
-    version = '14'
+    version = '15.0.1'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -105,7 +105,7 @@ jlink {
             installerOptions += [
                     '--linux-menu-group', 'Office',
                     '--linux-shortcut',
-                    '--file-associations association-lin.properties'
+                    '--file-associations', 'association-lin.properties'
             ]
             if(installerType == 'deb'){
                 installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']

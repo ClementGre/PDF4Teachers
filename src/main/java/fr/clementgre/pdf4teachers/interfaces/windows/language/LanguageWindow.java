@@ -42,7 +42,7 @@ public class LanguageWindow extends Stage{
     public LanguageWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
 
-        new LanguagesUpdater().update(() -> {
+        new LanguagesUpdater().update((hasDownloadedLanguage) -> {
             VBox root = new VBox();
             Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
 
@@ -67,7 +67,7 @@ public class LanguageWindow extends Stage{
             if(Main.window != null){
                 Main.window.centerWindowIntoMe(this);
             }
-        });
+        }, false, false);
     }
 
     public static String getLanguageFromComputerLanguage(){

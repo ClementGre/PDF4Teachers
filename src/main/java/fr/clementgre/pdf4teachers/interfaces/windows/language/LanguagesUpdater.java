@@ -4,8 +4,9 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -15,7 +16,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -90,14 +90,16 @@ public class LanguagesUpdater {
         }
     }
 
-    public void update(CallBack callBack){
+    public void update(CallBackArg<Boolean> callBack, boolean hideFirstDialogState, boolean provideData){
 
-        loadingAlert.show();
-
+        if(!hideFirstDialogState) loadingAlert.show();
 
         new Thread(() -> {
             try{
-                URL url = new URL("https://pdf4teachers.org/api/languages/");
+                URL url = new URL("https://pdf4teachers.org/api/startupdate/");
+                if(provideData){
+                    url = new URL("https://pdf4teachers.org/api/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -151,31 +153,39 @@ public class LanguagesUpdater {
                     }
                 }
 
+
+                Boolean haveToDownloadLanguages = toDownloadLanguages.size() != 0;
+                if(haveToDownloadLanguages){
+                    Platform.runLater(loadingAlert::show);
+                }
+
                 int i = 0;
                 for(Language language : toDownloadLanguages){
                     downloadLanguage(language, i, toDownloadLanguages.size());
                     i++;
                 }
 
+                complete(callBack, haveToDownloadLanguages);
 
             }catch(IOException e){
                 e.printStackTrace();
-                complete(callBack);
+                complete(callBack, false);
             }
-            complete(callBack);
+
         }, "Languages Updater").start();
 
 
     }
-    private void complete(CallBack callBack){
+    private void complete(CallBackArg<Boolean> callBack, Boolean hasDownloadedLanguages){
         Platform.runLater(() -> {
             loadingAlert.close();
-            callBack.call();
+            callBack.call(hasDownloadedLanguages);
         });
     }
 
     private boolean isLanguageAlreadyExisting(Language language){
-        if(!language.getRelease().equals(Main.VERSION)) return true;
+
+        if(!Main.VERSION.equals(language.getRelease())) return true;
 
         if(LanguageWindow.getLanguagesConfig().containsKey(language.getName())){
             Object existing = LanguageWindow.getLanguagesConfig().get(language.getName());

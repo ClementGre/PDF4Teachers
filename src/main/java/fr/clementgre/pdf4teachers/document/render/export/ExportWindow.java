@@ -297,11 +297,12 @@ public class ExportWindow {
 
                 String fileName = pdfFile.getName();
                 if(recursive){
+
                     fileName = StringUtils.removeAfterLastRejexIgnoringCase(fileName, ".pdf");
                     fileName = fileName.replace(replaceText, replaceByText);
                     fileName = prefix + fileName + suffix + ".pdf";
                 }else{
-                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(fileName, ".pdf") + ".pdf";
+                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(customName, ".pdf") + ".pdf";
                 }
 
                 File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);

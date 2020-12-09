@@ -15,10 +15,8 @@ import java.util.*;
 public class TextElementsData {
 
     public TextElementsData(){
-        if(!Main.settings.getSettingsVersion().isEmpty()){
-            if(!Main.settings.getSettingsVersion().equals("1.2.0")){
-                loadDataFromYAML();
-            }
+        if(!Main.settings.getSettingsVersion().equals("1.2.0")){
+            loadDataFromYAML();
         }
     }
 
