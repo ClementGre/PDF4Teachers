@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -23,24 +24,32 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -193,7 +202,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		return Main.isOSX();
 	}
 	public void setup(){
-		setUseSystemMenuBar(true);
+		if(isSystemMenuBarSupported()) setUseSystemMenuBar(true);
 
 		////////// FILE //////////
 
@@ -628,13 +637,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				Platform.runLater(() -> {
 					selected.set(newValue);
 				});
-				System.out.println(oldValue + " -> " + newValue);
 			});
 			menuItem.setOnAction((e) -> {
-				System.out.println("clicked isSelected=" + menuItem.isSelected());
 				menuItem.setSelected(!selected.get());
-				System.out.println("clicked end isSelected=" + menuItem.isSelected());
-
 			});
 
 			return menuItem;
@@ -644,6 +649,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+
 			return menuItem;
 		}
 

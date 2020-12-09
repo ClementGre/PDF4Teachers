@@ -42,8 +42,10 @@ dependencies{
 }
 javafx {
     version = '15.0.1'
-    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
+    modules = ['javafx.controls', 'javafx.graphics', 'javafx.swing', 'javafx.fxml']
 }
+
+applicationDefaultJvmArgs = ["-Djul.library.dir=/Users/vincent/Downloads/"]
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"

@@ -30,6 +30,7 @@ module fr.clementgre.pdf4teachers {
 
     // JAVAFX
 
+    requires javafx.base;
     requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;

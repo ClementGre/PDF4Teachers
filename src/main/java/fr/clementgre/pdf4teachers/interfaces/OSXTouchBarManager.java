@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.interfaces;
 
 import com.thizzer.jtouchbar.JTouchBar;
+import com.thizzer.jtouchbar.JTouchBarJNI;
 import com.thizzer.jtouchbar.common.Image;
 import com.thizzer.jtouchbar.common.ImageAlignment;
 import com.thizzer.jtouchbar.common.ImageName;
@@ -14,16 +15,22 @@ import com.thizzer.jtouchbar.scrubber.view.ScrubberImageItemView;
 import com.thizzer.jtouchbar.scrubber.view.ScrubberTextItemView;
 import com.thizzer.jtouchbar.scrubber.view.ScrubberView;
 import fr.clementgre.pdf4teachers.Main;
+import javafx.stage.Window;
 
 public class OSXTouchBarManager {
 
-    public OSXTouchBarManager(){
+    static {
+        String libPath = System.getProperty("java.library.path");
+        System.out.println("java.library.path=" + libPath);
+    }
 
-        if(Main.isOSX()) setup();
+    public OSXTouchBarManager(Window window){
+
+        if(Main.isOSX()) setup(window);
 
     }
 
-    public void setup(){
+    public void setup(Window window){
 
         JTouchBar jTouchBar = new JTouchBar();
         jTouchBar.setCustomizationIdentifier("MyJavaFXJavaTouchBar");
@@ -81,7 +88,7 @@ public class OSXTouchBarManager {
 
         jTouchBar.addItem(new TouchBarItem("Scrubber_1", touchBarScrubber, true));
 
-        JTouchBarJavaFX.show(jTouchBar, Main.window);
+        JTouchBarJavaFX.show(jTouchBar, window);
 
     }
 

@@ -123,9 +123,15 @@ public class LanguagesUpdater {
                     }else if(indentLevel == 2 && (token == JsonToken.VALUE_STRING || token == JsonToken.VALUE_NUMBER_INT)){
                         assert currentLanguage != null;
                         switch(jsonField){
-                            case "release" -> currentLanguage.setRelease(jParser.getText());
-                            case "version" -> currentLanguage.setVersion(jParser.getIntValue());
-                            case "name" -> currentLanguage.setDisplayName(jParser.getText());
+                            case "release":
+                                currentLanguage.setRelease(jParser.getText());
+                                break;
+                            case "version":
+                                currentLanguage.setVersion(jParser.getIntValue());
+                                break;
+                            case "name":
+                                currentLanguage.setDisplayName(jParser.getText());
+                                break;
                         }
                     }else if(indentLevel == 3 && token == JsonToken.VALUE_STRING){
                         assert currentLanguage != null;

@@ -217,9 +217,9 @@ public class MainWindow extends Stage{
             }
         }
 
- // Other interfaces
+//      Other interfaces
 
-        osxTouchBarManager = new OSXTouchBarManager();
+        //osxTouchBarManager = new OSXTouchBarManager(this);
 
 //      CHECK UPDATES
         new Thread(() -> {

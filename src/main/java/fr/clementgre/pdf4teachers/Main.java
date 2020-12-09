@@ -6,6 +6,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 
+import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -49,6 +50,12 @@ public class Main extends Application {
 	}
 	@Override
 	public void start(Stage window){
+
+
+		//window.show();
+		Platform.runLater(() -> {
+			//OSXTouchBarManager osxTouchBarManager = new OSXTouchBarManager(window);
+		});
 
 		// define crucial vars
 
