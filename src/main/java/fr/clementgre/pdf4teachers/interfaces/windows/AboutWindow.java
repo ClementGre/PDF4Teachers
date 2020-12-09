@@ -101,7 +101,7 @@ public class AboutWindow extends Stage {
 
         liscenselabel.setText(TR.tr("Licence") + " Apache 2");
 
-        statsLabel.setText(TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime + " " + TR.tr("heures sur PDF4Teachers,\net avez ouvert l'application") + " " +  MainWindow.userData.startsCount + " " + TR.tr("fois."));
+        statsLabel.setText(TR.tr("Vous avez passé") + " " + MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime/61d) + " " + TR.tr("heures sur PDF4Teachers,\net avez ouvert l'application") + " " +  MainWindow.userData.startsCount + " " + TR.tr("fois."));
         statsLabel.setWrapText(true);
         statsLabel.setTextAlignment(TextAlignment.CENTER);
     }

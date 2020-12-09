@@ -16,6 +16,9 @@ dependencies{
         exclude group: 'org.openjfx'
     }
 
+    // JTouchBar : OSX TouchBar //
+    compile group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '1.0.0'
+
     // PDF BOX //
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.21'
 
@@ -27,6 +30,7 @@ dependencies{
     // Signing and encrypting pdf (don't use)
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
+    compile group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '1.0.0'
 
     // JSON requests
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.3'

@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
@@ -43,6 +44,7 @@ public class MainWindow extends Stage{
     public static UserData userData;
 
     public static DecimalFormat format;
+    public static DecimalFormat twoDigFormat;
 
     public static BorderPane root;
     public static SplitPane mainPane;
@@ -56,6 +58,8 @@ public class MainWindow extends Stage{
     public static TextTab textTab;
     public static GradeTab gradeTab;
     public static PaintTab paintTab;
+
+    public OSXTouchBarManager osxTouchBarManager;
 
     Thread userDataSaver = new Thread(() -> {
         while(true){
@@ -213,6 +217,10 @@ public class MainWindow extends Stage{
             }
         }
 
+ // Other interfaces
+
+        osxTouchBarManager = new OSXTouchBarManager();
+
 //      CHECK UPDATES
         new Thread(() -> {
 
@@ -351,6 +359,7 @@ public class MainWindow extends Stage{
         else if(separator != ',' && separator != '.') separator = '.';
         symbols.setDecimalSeparator(separator);
         MainWindow.format = new DecimalFormat("0.####", symbols);
+        MainWindow.twoDigFormat = new DecimalFormat("0.##", symbols);
     }
 
 }

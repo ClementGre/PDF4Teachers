@@ -189,12 +189,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public MenuBar(){
 		setup();
 	}
+	public boolean isSystemMenuBarSupported(){
+		return Main.isOSX();
+	}
 	public void setup(){
-
-		if(Main.isOSX()){
-			setUseSystemMenuBar(true);
-			colorAdjust.setBrightness(-1);
-		}
+		setUseSystemMenuBar(true);
 
 		////////// FILE //////////
 
@@ -346,7 +345,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 
 		tools3AddPages.setOnShowing(e -> {
-			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages));
+			tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages, isSystemMenuBarSupported()));
 			PaneUtils.setMenuSize(tools3AddPages);
 		});
 
@@ -539,7 +538,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// ABOUT / HELP //////////
 
-		if(Main.isOSX()){
+		if(isSystemMenuBarSupported()){
 			about.setText(TR.tr("À propos"));
 			MenuItem triggerItem = new MenuItem(TR.tr("Fenêtre à Propos"));
 			about.getItems().add(triggerItem);
@@ -578,7 +577,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
 
-		if(Main.isOSX()){
+		if(isSystemMenuBarSupported()){
 			Menu menu = new Menu(name);
 			if(imgName != null)menu.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0));
 
@@ -619,7 +618,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	}
 	public MenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
 
-		if(Main.isOSX()){
+		if(isSystemMenuBarSupported()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
 			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 
@@ -654,7 +653,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
 	}
 	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
-		if(Main.isOSX()){
+		if(isSystemMenuBarSupported()){
 			MenuItem menuItem = new MenuItem(text);
 			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 			if(keyCombinaison != null) menuItem.setAccelerator(keyCombinaison);

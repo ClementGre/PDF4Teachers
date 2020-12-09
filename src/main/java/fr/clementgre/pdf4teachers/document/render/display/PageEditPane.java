@@ -46,7 +46,7 @@ public class PageEditPane extends VBox {
 
             menu.hide();
             menu.getItems().clear();
-            menu.getItems().addAll(getNewPageMenu(page.getPage(), 0));
+            menu.getItems().addAll(getNewPageMenu(page.getPage(), 0, false));
             NodeMenuItem.setupMenu(menu);
             menu.show(page, e.getScreenX(), e.getScreenY());
         });
@@ -61,12 +61,12 @@ public class PageEditPane extends VBox {
 
     }
 
-    public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd){
+    public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd, boolean vanillaMenu){
         ArrayList<MenuItem> menus = new ArrayList<>();
         if(page == 0){
-            NodeMenuItem addTopBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche au dessus"), false);
-            NodeMenuItem addTopConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties au dessus"), false);
-            NodeMenuItem addTopPdf = new NodeMenuItem(new HBox(), TR.tr("Ajouter les pages d'un fichier PDF au dessus"), false);
+            MenuItem addTopBlank = getMenuItem(TR.tr("Ajouter une page blanche au dessus"), vanillaMenu);
+            MenuItem addTopConvert = getMenuItem(TR.tr("Ajouter des pages converties au dessus"), vanillaMenu);
+            MenuItem addTopPdf = getMenuItem(TR.tr("Ajouter les pages d'un fichier PDF au dessus"), vanillaMenu);
             menus.add(addTopBlank);
             menus.add(addTopConvert);
             menus.add(addTopPdf);
@@ -77,9 +77,9 @@ public class PageEditPane extends VBox {
             addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(page));
         }
 
-        NodeMenuItem addBlank = new NodeMenuItem(new HBox(), TR.tr("Ajouter une page blanche"), false);
-        NodeMenuItem addConvert = new NodeMenuItem(new HBox(), TR.tr("Ajouter des pages converties"), false);
-        NodeMenuItem addTopPdf = new NodeMenuItem(new HBox(), TR.tr("Ajouter les pages d'un fichier PDF"), false);
+        MenuItem addBlank = getMenuItem(TR.tr("Ajouter une page blanche"), vanillaMenu);
+        MenuItem addConvert = getMenuItem(TR.tr("Ajouter des pages converties"), vanillaMenu);
+        MenuItem addTopPdf = getMenuItem(TR.tr("Ajouter les pages d'un fichier PDF"), vanillaMenu);
         menus.add(addBlank);
         menus.add(addConvert);
         menus.add(addTopPdf);
@@ -89,6 +89,10 @@ public class PageEditPane extends VBox {
         addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(index));
 
         return menus;
+    }
+    private static MenuItem getMenuItem(String title, boolean vanillaItem){
+        if(vanillaItem) return new MenuItem(title);
+        else return new NodeMenuItem(new HBox(), title, false);
     }
     private Button getCustomButton(String path, String nonTranslatedToolTip){
         return getCustomButton(path, nonTranslatedToolTip, 0);

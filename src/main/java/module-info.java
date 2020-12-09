@@ -25,6 +25,8 @@ module fr.clementgre.pdf4teachers {
 
 
     requires jlatexmath;
+    requires jtouchbar;
+    requires jtouchbar.javafx;
 
     // JAVAFX
 
