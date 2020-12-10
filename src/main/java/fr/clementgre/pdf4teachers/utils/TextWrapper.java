@@ -106,7 +106,7 @@ public class TextWrapper {
         return new String[]{line, text.replaceFirst(Pattern.quote(line), "")};
     }
     private String[] fillLineWithChar(String word){
-
+        if(word.length() == 0) return new String[]{"", ""};
         String line = word.substring(0, 1);
         charIndex = 1;
         while(charIndex < word.length()){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne

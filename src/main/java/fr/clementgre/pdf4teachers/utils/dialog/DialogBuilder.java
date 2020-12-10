@@ -37,7 +37,7 @@ public class DialogBuilder {
         alert.setTitle(title);
 
         if(Main.window != null){
-            alert.initOwner(Main.window.getScene().getWindow());
+            if(Main.window.getScene() != null) alert.initOwner(Main.window);
         }
         if(header != null){
             alert.setHeaderText(header);

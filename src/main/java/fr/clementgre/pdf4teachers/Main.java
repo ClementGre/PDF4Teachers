@@ -51,12 +51,6 @@ public class Main extends Application {
 	@Override
 	public void start(Stage window){
 
-
-		//window.show();
-		Platform.runLater(() -> {
-			//OSXTouchBarManager osxTouchBarManager = new OSXTouchBarManager(window);
-		});
-
 		// define crucial vars
 
 		if(isWindows()) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;

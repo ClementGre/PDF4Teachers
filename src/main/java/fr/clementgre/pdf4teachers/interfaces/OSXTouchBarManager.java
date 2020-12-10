@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.interfaces;
 
 import com.thizzer.jtouchbar.JTouchBar;
-import com.thizzer.jtouchbar.JTouchBarJNI;
 import com.thizzer.jtouchbar.common.Image;
 import com.thizzer.jtouchbar.common.ImageAlignment;
 import com.thizzer.jtouchbar.common.ImageName;
@@ -89,6 +88,8 @@ public class OSXTouchBarManager {
         jTouchBar.addItem(new TouchBarItem("Scrubber_1", touchBarScrubber, true));
 
         JTouchBarJavaFX.show(jTouchBar, window);
+
+        //jTouchBar.show(MainWindow.frame);
 
     }
 
