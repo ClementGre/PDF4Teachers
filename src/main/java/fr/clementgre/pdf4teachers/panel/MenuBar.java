@@ -1,5 +1,8 @@
 package fr.clementgre.pdf4teachers.panel;
 
+import fr.clementgre.pdf4teachers.datasaving.settings.Setting;
+import fr.clementgre.pdf4teachers.datasaving.settings.SettingObject;
+import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.EditionExporter;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
@@ -51,6 +54,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -149,41 +153,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu settings = new Menu(TR.tr("Préférences"));
 
-	MenuItem settings1Language = createMenuItem(TR.tr("Langage (Français France)"), "language", null,
-			TR.tr("Définit la langue de l'interface"), true);
-
-	MenuItem settings2AlwaysRestore = createRadioMenuItem(TR.tr("Toujours restaurer la session précédente"), "recharger",
-			TR.tr("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."), true);
-
-	MenuItem settings3AlertUpdate = createRadioMenuItem(TR.tr("Alerter quand une mise à jour est disponible"), "wifi",
-			TR.tr("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifira si une nouvelle version est disponible et affichera le menu À propos en couleur"), true);
-
-	MenuItem settings4DefaultZoom = createMenuItem(TR.tr("Zoom lors de l'ouverture d'un document"), "zoom", null,
-			TR.tr("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
-
-	MenuItem settings5Animation = createRadioMenuItem(TR.tr("Animations de zoom ou défilement"), "cloud",
-			TR.tr("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"), true);
-
-	MenuItem settings6DarkTheme = createRadioMenuItem(TR.tr("Thème sombre"), "settings",
-			TR.tr("Change les couleurs de l'interface vers un thème plus sombre."), true);
-
-
-	MenuItem settings7AutoSave = createRadioMenuItem(TR.tr("Sauvegarder automatiquement"), "sauvegarder",
-			TR.tr("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."), true);
-
-	MenuItem settings8RegularSave = createRadioMenuItem(TR.tr("Sauvegarder régulièrement"), "sauvegarder-recharger",
-			TR.tr("Sauvegarde l'édition du document automatiquement toutes les x minutes."), false);
-
-
-	MenuItem settings9TextAutoRemove = createRadioMenuItem(TR.tr("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), "favoris",
-			TR.tr("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."), true);
-
-	MenuItem settings10TextOnlyStart = createRadioMenuItem(TR.tr("N'afficher que le début des éléments textuels"), "lines",
-			TR.tr("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."), true);
-
-	MenuItem settings11TextSmall = createRadioMenuItem(TR.tr("Réduire la taille des éléments dans les listes"), "cursor",
-			TR.tr("Dans les liste des éléments textuels, affiche les éléments en plus petit."), true);
-
 
 	////////// ABOUT / HELP //////////
 
@@ -198,7 +167,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public MenuBar(){
 		setup();
 	}
-	public boolean isSystemMenuBarSupported(){
+	public static boolean isSystemMenuBarSupported(){
 		return Main.isOSX();
 	}
 	public void setup(){
@@ -220,64 +189,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// SETTINGS //////////
 
-		if(settings2AlwaysRestore instanceof RadioMenuItem){
-			// DEFINE DEFAULT STATE
-			((RadioMenuItem) settings2AlwaysRestore).selectedProperty().set(Main.settings.isRestoreLastSession());
-			((RadioMenuItem) settings3AlertUpdate).selectedProperty().set(Main.settings.isCheckUpdates());
-			((RadioMenuItem) settings5Animation).selectedProperty().set(Main.settings.isZoomAnimations());
-			((RadioMenuItem) settings6DarkTheme).selectedProperty().set(Main.settings.isDarkTheme());
-
-			((RadioMenuItem) settings7AutoSave).selectedProperty().set(Main.settings.isAutoSave());
-			((RadioMenuItem) settings8RegularSave).selectedProperty().set(Main.settings.getRegularSaving() != -1);
-
-			((RadioMenuItem) settings9TextAutoRemove).selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-			((RadioMenuItem) settings10TextOnlyStart).selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-			((RadioMenuItem) settings11TextSmall).selectedProperty().set(Main.settings.isSmallFontInTextsList());
-
-			// BIND
-			Main.settings.restoreLastSessionProperty().bind(((RadioMenuItem) settings2AlwaysRestore).selectedProperty());
-			Main.settings.checkUpdatesProperty().bind(((RadioMenuItem) settings3AlertUpdate).selectedProperty());
-			Main.settings.zoomAnimationsProperty().bind(((RadioMenuItem) settings5Animation).selectedProperty());
-			Main.settings.darkThemeProperty().bind(((RadioMenuItem) settings6DarkTheme).selectedProperty());
-
-			Main.settings.autoSavingProperty().bind(((RadioMenuItem) settings7AutoSave).selectedProperty());
-
-			Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(((RadioMenuItem) settings9TextAutoRemove).selectedProperty());
-			Main.settings.showOnlyStartInTextsListProperty().bind(((RadioMenuItem) settings10TextOnlyStart).selectedProperty());
-			Main.settings.smallFontInTextsListProperty().bind(((RadioMenuItem) settings11TextSmall).selectedProperty());
-
-		}else if(settings2AlwaysRestore instanceof NodeRadioMenuItem){
-			// DEFINE DEFAULT STATE
-			((NodeRadioMenuItem) settings2AlwaysRestore).selectedProperty().set(Main.settings.isRestoreLastSession());
-			((NodeRadioMenuItem) settings3AlertUpdate).selectedProperty().set(Main.settings.isCheckUpdates());
-			((NodeRadioMenuItem) settings5Animation).selectedProperty().set(Main.settings.isZoomAnimations());
-			((NodeRadioMenuItem) settings6DarkTheme).selectedProperty().set(Main.settings.isDarkTheme());
-
-			((NodeRadioMenuItem) settings7AutoSave).selectedProperty().set(Main.settings.isAutoSave());
-			((NodeRadioMenuItem) settings8RegularSave).selectedProperty().set(Main.settings.getRegularSaving() != -1);
-
-			((NodeRadioMenuItem) settings9TextAutoRemove).selectedProperty().set(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites());
-			((NodeRadioMenuItem) settings10TextOnlyStart).selectedProperty().set(Main.settings.isShowOnlyStartInTextsList());
-			((NodeRadioMenuItem) settings11TextSmall).selectedProperty().set(Main.settings.isSmallFontInTextsList());
-
-			// BIND
-			Main.settings.restoreLastSessionProperty().bind(((NodeRadioMenuItem) settings2AlwaysRestore).selectedProperty());
-			Main.settings.checkUpdatesProperty().bind(((NodeRadioMenuItem) settings3AlertUpdate).selectedProperty());
-			Main.settings.zoomAnimationsProperty().bind(((NodeRadioMenuItem) settings5Animation).selectedProperty());
-			Main.settings.darkThemeProperty().bind(((NodeRadioMenuItem) settings6DarkTheme).selectedProperty());
-
-			Main.settings.autoSavingProperty().bind(((NodeRadioMenuItem) settings7AutoSave).selectedProperty());
-
-			Main.settings.removeElementInPreviousListWhenAddingToFavoritesProperty().bind(((NodeRadioMenuItem) settings9TextAutoRemove).selectedProperty());
-			Main.settings.showOnlyStartInTextsListProperty().bind(((NodeRadioMenuItem) settings10TextOnlyStart).selectedProperty());
-			Main.settings.smallFontInTextsListProperty().bind(((NodeRadioMenuItem) settings11TextSmall).selectedProperty());
+		Settings s = Main.settings;
+		for(Field field : s.getClass().getDeclaredFields()){
+			if(field.isAnnotationPresent(SettingObject.class)){
+				try{
+					((Setting) field.get(s)).setupMenuItem();
+				}catch(Exception e){ e.printStackTrace(); }
+			}
 		}
-
-
-		// ADD
-		settings.getItems().addAll(settings1Language, settings2AlwaysRestore, settings3AlertUpdate, settings4DefaultZoom, settings5Animation, settings6DarkTheme,
-				new SeparatorMenuItem(), settings7AutoSave, settings8RegularSave,
-				new SeparatorMenuItem(), settings9TextAutoRemove, settings10TextOnlyStart, settings11TextSmall);
+		settings.getItems().addAll(
+				s.language.getMenuItem(), s.restoreLastSession.getMenuItem(), s.checkUpdates.getMenuItem(), s.sendStats.getMenuItem(), s.defaultZoom.getMenuItem(), s.zoomAnimations.getMenuItem(), s.darkTheme.getMenuItem(),
+				new SeparatorMenuItem(), s.autoSave.getMenuItem(), s.regularSave.getMenuItem(),
+				new SeparatorMenuItem(), s.textAutoRemove.getMenuItem(), s.textOnlyStart.getMenuItem(), s.textSmall.getMenuItem());
 
 		////////// HELP //////////
 
@@ -470,10 +393,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// SETTINGS //////////
 
-		settings1Language.setOnAction(e -> {
+		s.language.getMenuItem().setOnAction(e -> {
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()){
-					Main.settings.setLanguage(value);
+					Main.settings.language.setValue(value);
 					TR.updateTranslation();
 
 					MainWindow.userData.save();
@@ -487,11 +410,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				}
 			});
 		});
-		settings4DefaultZoom.setOnAction((ActionEvent actionEvent) -> {
+		s.defaultZoom.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
 
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
-			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.getDefaultZoom(), choices);
+			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.defaultZoom.getValue(), choices);
 			DialogBuilder.setupDialog(dialog);
 
 			dialog.setTitle(TR.tr("Zoom par défaut"));
@@ -500,20 +423,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			Optional<Integer> newZoom = dialog.showAndWait();
 			if(!newZoom.isEmpty()){
-				Main.settings.setDefaultZoom(newZoom.get());
+				Main.settings.defaultZoom.setValue(newZoom.get());
 			}
 
 		});
-		settings8RegularSave.setOnAction((ActionEvent actionEvent) -> {
+		s.regularSave.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
 
 			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
 
 			HBox pane = new HBox();
 			ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
-			combo.getSelectionModel().select(Main.settings.getRegularSaving() == -1 ? (Integer) 5 : (Integer) Main.settings.getRegularSaving());
+			combo.getSelectionModel().select(Main.settings.regularSave.getValue() == -1 ? (Integer) 5 : Main.settings.regularSave.getValue());
 			combo.setStyle("-fx-padding-left: 20px;");
 			CheckBox activated = new CheckBox(TR.tr("Activer"));
-			activated.setSelected(Main.settings.getRegularSaving() != -1);
+			activated.setSelected(Main.settings.regularSave.getValue() != -1);
 			pane.getChildren().add(0, activated);
 			pane.getChildren().add(1, combo);
 			HBox.setMargin(activated, new Insets(5, 0, 0, 10));
@@ -521,28 +444,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			combo.disableProperty().bind(activated.selectedProperty().not());
 			dialog.setHeaderText(TR.tr("Définir le nombre de minutes entre deux sauvegardes automatiques."));
-
 			dialog.getDialogPane().setContent(pane);
 
-			ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
-			ButtonType ok = new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE);
-			dialog.getButtonTypes().setAll(cancel, ok);
+			//ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+			//ButtonType ok = new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE);
+			//dialog.getButtonTypes().setAll(cancel, ok);
 
 			Optional<ButtonType> option = dialog.showAndWait();
-			if(option.get() == ok){
-				if(activated.isSelected()){
-					Main.settings.setRegularSaving(combo.getSelectionModel().getSelectedItem());
-					if(settings8RegularSave instanceof RadioMenuItem) ((RadioMenuItem) settings8RegularSave).setSelected(true);
-					else if(settings8RegularSave instanceof NodeRadioMenuItem) ((NodeRadioMenuItem) settings8RegularSave).setSelected(true);
-				}else{
-					Main.settings.setRegularSaving(-1);
-					if(settings8RegularSave instanceof RadioMenuItem) ((RadioMenuItem) settings8RegularSave).setSelected(false);
-					else if(settings8RegularSave instanceof NodeRadioMenuItem) ((NodeRadioMenuItem) settings8RegularSave).setSelected(false);
-				}
-
+			if(option.get() == ButtonType.OK){
+				s.regularSave.setRadioSelected(activated.isSelected());
+				if(activated.isSelected()) s.regularSave.setValue(combo.getSelectionModel().getSelectedItem());
+				else s.regularSave.setValue(-1);
 			}
-
-
 		});
 
 		////////// ABOUT / HELP //////////
@@ -581,10 +494,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 
 	}
-	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
+	public static Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
 		return createSubMenu(name, imgName, toolTip, disableIfNoDoc, true);
 	}
-	public Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
+	public static Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
 
 		if(isSystemMenuBarSupported()){
 			Menu menu = new Menu(name);
@@ -602,7 +515,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			Label text = new Label(name);
 
 			if(imgName != null){
-				ImageView icon = ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
+				ImageView icon = ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
 				pane.getChildren().add(icon);
 
 				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
@@ -625,7 +538,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			return menu;
 		}
 	}
-	public MenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
+	public static MenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
 
 		if(isSystemMenuBarSupported()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
@@ -647,7 +560,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		}else{
 			NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
 
-			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 
 			return menuItem;
@@ -655,10 +568,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 
 	}
-	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
+	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
 	}
-	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
+	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
 		if(isSystemMenuBarSupported()){
 			MenuItem menuItem = new MenuItem(text);
 			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
@@ -672,7 +585,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		}else{
 			NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
 
-			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
 			if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 			if(leftMargin) menuItem.setFalseLeftData();
@@ -686,10 +599,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			return menuItem;
 		}
 	}
-	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip){
+	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, false);
 	}
-	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
+	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, leftMargin);
 	}
 }

@@ -123,14 +123,14 @@ public class TextTreeItem extends TreeItem{
 			name.setFill(StyleManager.convertColor(newValue));
 		});
 
-		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.smallFontInTextsListProperty()));
+		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
 
 		updateIcon();
 	}
 
 	public void updateGraphic(){ // Re calcule le Text
 
-		int cellHeight = (Main.settings.isSmallFontInTextsList() ? 14 : 18);
+		int cellHeight = (Main.settings.textSmall.getValue() ? 14 : 18);
 
 		int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 45);
 		if(maxWidth < 0) return;
@@ -140,7 +140,7 @@ public class TextTreeItem extends TreeItem{
 		final String[] splittedText = getText().split("\\n");
 
 		if(splittedText.length != 0){
-			if(Main.settings.isShowOnlyStartInTextsList()){
+			if(Main.settings.textOnlyStart.getValue()){
 
 				String text = splittedText[0];
 				wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
@@ -171,7 +171,7 @@ public class TextTreeItem extends TreeItem{
 	}
 	Rectangle rect = new Rectangle();
 	public void updateIcon(){ // Re définis les children de la pane
-		int cellHeight = (Main.settings.isSmallFontInTextsList() ? 14 : 18);
+		int cellHeight = (Main.settings.textSmall.getValue() ? 14 : 18);
 
 		pane.getChildren().clear();
 
@@ -207,7 +207,7 @@ public class TextTreeItem extends TreeItem{
 	}
 
 	private Font getListFont(){
-		return FontUtils.getFont(getFont().getFamily(), false, false, Main.settings.isSmallFontInTextsList() ? 12 : 14);
+		return FontUtils.getFont(getFont().getFamily(), false, false, Main.settings.textSmall.getValue() ? 12 : 14);
 	}
 
 	@Override

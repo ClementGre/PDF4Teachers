@@ -15,17 +15,16 @@ public class StyleManager {
 
     public static void setup(){
 
-        if(Main.settings.isDarkTheme()){
+        if(Main.settings.darkTheme.getValue()){
             DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;
         }
-        Main.settings.darkThemeProperty().addListener((observable, oldValue, newValue) -> {
-            if(Main.settings.isDarkTheme()){
+        Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
                 DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;
-                putStylesAuto();
             }else{
                 DEFAULT_STYLE = jfxtras.styles.jmetro.Style.LIGHT;
-                putStylesAuto();
             }
+            putStylesAuto();
         });
     }
 

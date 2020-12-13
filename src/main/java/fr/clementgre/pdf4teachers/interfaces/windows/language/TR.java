@@ -14,6 +14,11 @@ public class TR {
     private static HashMap<String, String> defaultsTranslations = new HashMap<>();
     private static HashMap<String, String> translations = new HashMap<>();
 
+    // Just a function to ask TranslationFilesGenerator to add a translation line for the text
+    public static String ct(String text){
+        return text;
+    }
+    // Translate
     public static String tr(String text){
 
         if(translations.size() >= 1){
@@ -23,7 +28,7 @@ public class TR {
             }
         }
 
-        if(Main.settings.getLanguage().equals("fr-fr")) return text;
+        if(Main.settings.language.getValue().equals("fr-fr")) return text;
 
         if(defaultsTranslations.size() >= 1){
             String translated = defaultsTranslations.get(text);
@@ -40,7 +45,7 @@ public class TR {
     }
 
     public static void updateTranslation(){
-        TR.loadTranslationFile(Main.settings.getLanguage(), false);
+        TR.loadTranslationFile(Main.settings.language.getValue(), false);
     }
 
     public static boolean loadTranslationFile(String fileName, boolean defaultTranslation){
@@ -86,5 +91,4 @@ public class TR {
         reader.close();
         return i >= 1;
     }
-
 }

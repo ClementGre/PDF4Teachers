@@ -58,7 +58,7 @@ public class LanguageWindow extends Stage{
             });
             StyleManager.putStyle(root, Style.DEFAULT);
 
-            if(Main.settings.getLanguage().isEmpty()) Main.settings.setLanguage("en-us");
+            if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en-us");
 
             setupLanguages();
             setupPanel(root);
@@ -131,7 +131,7 @@ public class LanguageWindow extends Stage{
 
             box.getChildren().addAll(language.getValue(), label, shortName, version);
             languages.getItems().add(box);
-            if(Main.settings.getLanguage().equals(language.getKey())) languages.getSelectionModel().select(box);
+            if(Main.settings.language.getValue().equals(language.getKey())) languages.getSelectionModel().select(box);
         }
 
         VBox.setVgrow(languages, Priority.ALWAYS);
@@ -224,10 +224,10 @@ public class LanguageWindow extends Stage{
         }
         LanguageWindow.copyFiles(true); // test : force always
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
-        if(Main.settings.getLanguage().equals("Français France (Defaut)")){
-            Main.settings.setLanguage("fr-fr");
-        }else if(Main.settings.getLanguage().equals("English US")){
-            Main.settings.setLanguage("en-us");
+        if(Main.settings.language.getValue().equals("Français France (Defaut)")){
+            Main.settings.language.setValue("fr-fr");
+        }else if(Main.settings.language.getValue().equals("English US")){
+            Main.settings.language.setValue("en-us");
         }
         TR.setup();
     }
@@ -257,7 +257,7 @@ public class LanguageWindow extends Stage{
 
     public static File getDocFile(){
 
-        File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.getLanguage() + ".pdf");
+        File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.language.getValue() + ".pdf");
         if(!doc.exists()){
             return new File(Main.dataFolder + "translations" + File.separator + "en-us.pdf");
         }

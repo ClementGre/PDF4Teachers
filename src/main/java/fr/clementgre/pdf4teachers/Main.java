@@ -1,23 +1,17 @@
 package fr.clementgre.pdf4teachers;
 
 import java.io.*;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.List;
-import java.util.Locale;
 
-import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.datasaving.Settings;
+import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.LicenseWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
-import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -86,15 +80,15 @@ public class Main extends Application {
 	}
 
 	public boolean languageAsk(){
-		if(settings.getLanguage().isEmpty()){
+		if(settings.language.getValue().isEmpty()){
 			String language = LanguageWindow.getLanguageFromComputerLanguage();
 			if(language != null){
-				Main.settings.setLanguage(language);
+				Main.settings.language.setValue(language);
 			}else{
-				Main.settings.setLanguage("en-us");
+				Main.settings.language.setValue("en-us");
 				TR.updateTranslation();
 				new LanguageWindow(value -> {
-					if(!value.isEmpty()) Main.settings.setLanguage(value);
+					if(!value.isEmpty()) Main.settings.language.setValue(value);
 					TR.updateTranslation();
 					if(licenceAsk()){
 						startMainWindow();

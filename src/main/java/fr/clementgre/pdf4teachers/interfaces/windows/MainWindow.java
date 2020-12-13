@@ -115,7 +115,7 @@ public class MainWindow extends Stage{
             if(e.getSource().equals(menuBar)) return;
             hasToClose = true;
 
-            if(!mainScreen.closeFile(!Main.settings.isAutoSave())) {
+            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())) {
                 e.consume(); hasToClose = false; return;
             }
             System.exit(0);
@@ -237,7 +237,7 @@ public class MainWindow extends Stage{
 
                         Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
-                        if(Main.settings.isCheckUpdates()){
+                        if(Main.settings.checkUpdates.getValue()){
                             new UpdateWindow();
                         }
                     }
@@ -248,7 +248,7 @@ public class MainWindow extends Stage{
     }
     public void loadDimensions(){
 
-        String[] size = Main.settings.getMainScreenSize().split(Pattern.quote(";"));
+        String[] size = Main.settings.mainScreenSize.getValue().split(Pattern.quote(";"));
         if(size.length == 5){
             try{
                 boolean maximized = Boolean.parseBoolean(size[4]);
@@ -289,7 +289,7 @@ public class MainWindow extends Stage{
                 Thread.sleep(1000);
             }catch(InterruptedException e){ e.printStackTrace(); }
             if(lastDimensions.equals(getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized())){
-                Main.settings.setMainScreenSize(lastDimensions);
+                Main.settings.mainScreenSize.setValue(lastDimensions);
             }
         }, "MainScreenDimensionsPreSaver").start();
 

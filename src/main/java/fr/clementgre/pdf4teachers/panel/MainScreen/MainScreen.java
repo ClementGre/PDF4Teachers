@@ -262,7 +262,7 @@ public class MainScreen extends Pane {
 	}
 	public void openFile(File file){
 
-		if(!closeFile(!Main.settings.isAutoSave())){
+		if(!closeFile(!Main.settings.autoSave.getValue())){
 			return;
 		}
 
@@ -324,8 +324,8 @@ public class MainScreen extends Pane {
 
 	    pane.getChildren().clear();
 
-		pane.setScaleX(Main.settings.getDefaultZoom()/100.0);
-		pane.setScaleY(Main.settings.getDefaultZoom()/100.0);
+		pane.setScaleX(Main.settings.defaultZoom.getValue()/100.0);
+		pane.setScaleY(Main.settings.defaultZoom.getValue()/100.0);
 
 		pane.setPrefHeight(1);
 		pane.setPrefWidth(1);

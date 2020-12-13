@@ -181,7 +181,7 @@ public class TextTreeView extends TreeView<String>{
         item3.setOnAction((e) -> {
             addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
             if(element.getType() == TextTreeSection.LAST_TYPE){
-                if(Main.settings.isRemoveElementInPreviousListWhenAddingToFavorites()){
+                if(Main.settings.textAutoRemove.getValue()){
                     removeSavedElement(element);
                 }
             }

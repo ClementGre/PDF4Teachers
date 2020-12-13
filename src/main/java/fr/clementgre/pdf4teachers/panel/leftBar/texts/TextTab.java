@@ -137,7 +137,7 @@ public class TextTab extends Tab {
 		});
 
 		PaneUtils.setHBoxPosition(txtArea, -1, 30, 0);
-		if(Main.settings.isSmallFontInTextsList()) txtArea.setStyle("-fx-font-size: 12");
+		if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
 		else txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));

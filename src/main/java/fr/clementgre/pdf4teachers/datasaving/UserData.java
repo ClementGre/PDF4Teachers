@@ -170,7 +170,7 @@ public class UserData {
             }
 
             Platform.runLater(() -> {
-                if(Main.settings.isRestoreLastSession()){
+                if(Main.settings.restoreLastSession.getValue()){
                     for(Object filePath : lastOpenedFiles){
                         Platform.runLater(() ->{
                             File lastFile = new File(filePath.toString());

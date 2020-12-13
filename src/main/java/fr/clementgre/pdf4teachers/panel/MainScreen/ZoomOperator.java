@@ -269,7 +269,7 @@ public class ZoomOperator {
         aimTranslateX = newTranslateX;
         aimScale = scale;
 
-        if(Main.settings.isZoomAnimations() && factor > 0.05){
+        if(Main.settings.zoomAnimations.getValue() && factor > 0.05){
 
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
@@ -302,7 +302,7 @@ public class ZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
+        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), aimTranslateY))
@@ -328,7 +328,7 @@ public class ZoomOperator {
 
         aimTranslateY = newTranslateY;
 
-        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
+        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY))
@@ -353,7 +353,7 @@ public class ZoomOperator {
 
         aimTranslateX = newTranslateX;
 
-        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
+        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), newTranslateX))
@@ -377,7 +377,7 @@ public class ZoomOperator {
 
         aimTranslateX = newTranslateX;
 
-        if(Main.settings.isZoomAnimations() && factor > 25 && !removeTransition){
+        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), aimTranslateX))

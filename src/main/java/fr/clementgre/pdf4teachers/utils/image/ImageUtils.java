@@ -16,11 +16,11 @@ public class ImageUtils {
     public static ColorAdjust defaultWhiteColorAdjust = new ColorAdjust();
 
     public static void setupListeners(){
-        Main.settings.darkThemeProperty().addListener((observable, oldValue, newValue) -> updateColorsAdjust());
+        Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> updateColorsAdjust());
         updateColorsAdjust();
     }
     private static void updateColorsAdjust(){
-        if(Main.settings.isDarkTheme()){
+        if(Main.settings.darkTheme.getValue()){
             defaultFullDarkColorAdjust.setBrightness(1);
             defaultDarkColorAdjust.setBrightness(0.8);
             defaultGrayColorAdjust.setBrightness(0.8);

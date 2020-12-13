@@ -33,9 +33,9 @@ public class Document {
         @Override public void run() {
 
             while(true){
-                if(Main.settings.getRegularSaving() != -1){
+                if(Main.settings.regularSave.getValue() != -1){
                     try{
-                        Thread.sleep(Main.settings.getRegularSaving() * 60000);
+                        Thread.sleep(Main.settings.regularSave.getValue() * 60000);
                     }catch(InterruptedException e){ e.printStackTrace(); }
 
                     if(!Edition.isSave()) Platform.runLater(() -> edition.save());
@@ -110,7 +110,7 @@ public class Document {
             return true;
         }
 
-        if(Main.settings.isAutoSave()){
+        if(Main.settings.autoSave.getValue()){
             edition.save();
         }else{
             Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Édition non sauvegardée"));
