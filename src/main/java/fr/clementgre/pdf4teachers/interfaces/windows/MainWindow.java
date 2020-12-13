@@ -199,8 +199,6 @@ public class MainWindow extends Stage{
         userDataSaver.start();
         mainScreen.repaint();
 
-        osxTouchBarManager = new OSXTouchBarManager(this);
-
 //      OPEN DOC
 
         List<File> toOpenFiles = new ArrayList<>();
@@ -231,7 +229,12 @@ public class MainWindow extends Stage{
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
-                        menuBar.about.setStyle("-fx-background-color: #d6a600;");
+                        if(menuBar.isSystemMenuBarSupported()){
+                            menuBar.about.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
+                        }else{
+                            menuBar.about.setStyle("-fx-background-color: #d6a600;");
+                        }
+
                         Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
                         if(Main.settings.isCheckUpdates()){
