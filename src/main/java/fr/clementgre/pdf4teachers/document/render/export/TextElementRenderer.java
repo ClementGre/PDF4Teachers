@@ -3,15 +3,23 @@ package fr.clementgre.pdf4teachers.document.render.export;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
+import javafx.scene.paint.Color;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,6 +125,32 @@ public class TextElementRenderer {
             contentStream.newLineAtOffset(0, (float) -lineHeight);
         }
         contentStream.endText();
+
+        if(element.isURL()){
+            final PDAnnotationLink txtLink = new PDAnnotationLink();
+            txtLink.setColor(ExportRenderer.toPDColor(element.getColor()));
+
+            // Border bottom
+            final PDBorderStyleDictionary linkBorder = new PDBorderStyleDictionary();
+
+            linkBorder.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
+            linkBorder.setWidth(1);
+            txtLink.setBorderStyle(linkBorder);
+
+            // Border color
+            final PDRectangle position = new PDRectangle ();
+            position.setLowerLeftX(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth);
+            position.setLowerLeftY((float) (bottomMargin + pageRealHeight - height - element.getRealY() / Element.GRID_HEIGHT * pageHeight));
+            position.setUpperRightX(position.getLowerLeftX() + element.getAlwaysWidth());
+            position.setUpperRightY((float) (position.getLowerLeftY() + height));
+            System.out.println(position.getHeight() + " / " + position.getWidth());
+            txtLink.setRectangle (position);
+            page.getAnnotations().add(txtLink);
+
+            PDActionURI action = new PDActionURI();
+            action.setURI(element.getText());
+            txtLink.setAction(action);
+        }
 
     }
 

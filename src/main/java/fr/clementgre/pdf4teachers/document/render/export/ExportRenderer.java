@@ -10,11 +10,14 @@ import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDStream;
+import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
+import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.util.Matrix;
 
 import java.io.File;
@@ -97,5 +100,10 @@ public class ExportRenderer {
 
         doc.save(toFile);
         doc.close();
+    }
+
+    public static PDColor toPDColor(Color color){
+        final float [] components = new float []{(float) color.getRed(), (float) color.getGreen(), (float) color.getBlue()};
+        return new PDColor(components, PDDeviceRGB.INSTANCE);
     }
 }

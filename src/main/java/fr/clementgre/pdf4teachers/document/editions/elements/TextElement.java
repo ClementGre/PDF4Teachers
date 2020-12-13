@@ -55,6 +55,7 @@ public class TextElement extends Element {
 		if(hasPage && getPage() != null){
 			setupGeneral(isLaTeX() ? this.image : this.text);
 			updateLaTeX();
+			this.text.setUnderline(isURL());
 		}
 
 	}
@@ -66,6 +67,7 @@ public class TextElement extends Element {
 		this.text.textProperty().addListener((observable, oldValue, newValue) -> {
 			updateLaTeX();
 			checkLocation(getLayoutX(), getLayoutY(), false);
+			this.text.setUnderline(isURL());
 		});
 		this.text.fillProperty().addListener((observable, oldValue, newValue) -> {
 			updateLaTeX();
@@ -187,10 +189,17 @@ public class TextElement extends Element {
 	public float getAlwaysHeight(){
 		return (float) text.getLayoutBounds().getHeight();
 	}
+	public float getAlwaysWidth(){
+		return (float) text.getLayoutBounds().getWidth();
+	}
 
+	public boolean isURL(){
+		return text.getText().startsWith("http://") || text.getText().startsWith("https://") || text.getText().startsWith("www.");
+	}
 	public boolean isLaTeX(){
 		return text.getText().startsWith("$");
 	}
+
 	public String getLaTeXText(){
 		return text.getText().replaceFirst(Pattern.quote("$"), "");
 	}

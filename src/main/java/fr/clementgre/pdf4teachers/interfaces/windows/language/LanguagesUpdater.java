@@ -98,7 +98,11 @@ public class LanguagesUpdater {
             try{
                 URL url = new URL("https://pdf4teachers.org/api/startupdate/");
                 if(provideData){
-                    url = new URL("https://pdf4teachers.org/api/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                    if(Main.settings.sendStats.getValue()){
+                        url = new URL("https://pdf4teachers.org/api/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                    }else{
+                        url = new URL("https://pdf4teachers.org/api/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                    }
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(true);
@@ -147,14 +151,16 @@ public class LanguagesUpdater {
                 }
                 jParser.close();
 
+
+
                 List<Language> toDownloadLanguages = new ArrayList<>();
-                System.out.println("Listing languages :");
+                if(Main.DEBUG) System.out.println("Listing languages :");
                 for(Language language : languages){
-                    System.out.print(language.toString());
+                    if(Main.DEBUG) System.out.print(language.toString());
                     if(isLanguageAlreadyExisting(language)){
-                        System.out.println(" (Already existing)");
+                        if(Main.DEBUG) System.out.println(" (Already existing)");
                     }else{
-                        System.out.println(" (Will be downloaded)");
+                        if(Main.DEBUG) System.out.println(" (Will be downloaded)");
                         toDownloadLanguages.add(language);
                     }
                 }
