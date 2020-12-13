@@ -32,7 +32,7 @@ public class Main extends Application {
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "1.2.1";
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final boolean COPY_CONSOLE = true;
 
 	public static boolean firstLaunch;
@@ -61,12 +61,13 @@ public class Main extends Application {
 
 		// read params
 
+		if(DEBUG){
+			System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
+					+ "\n Unnamed: " + getParameters().getUnnamed().toString()
+					+ "\n Named: " + getParameters().getNamed().toString());
+		}
 
-		System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
-				+ "\n Unnamed: " + getParameters().getUnnamed().toString()
-				+ "\n Named: " + getParameters().getNamed().toString());
 		params = getParameters().getRaw();
-
 
 		// PREPARATION
 

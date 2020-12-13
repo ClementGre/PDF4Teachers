@@ -29,6 +29,15 @@ public class ExportRenderer {
         File editFile = Edition.getEditFile(pdfFile);
 
         PDDocument doc = PDDocument.load(pdfFile);
+
+        if(doc.isEncrypted()) {
+            try{
+                doc.setAllSecurityToBeRemoved(true);
+            }catch(Exception e){
+                throw new Exception("The document is encrypted, and we can't decrypt it.", e);
+            }
+        }
+
         new PDStream(doc, new FileInputStream(pdfFile), COSName.FLATE_DECODE);
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
 

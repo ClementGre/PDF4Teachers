@@ -17,7 +17,7 @@ dependencies{
     }
 
     // JTouchBar : OSX TouchBar //
-    implementation group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '1.0.0'
+    implementation group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '0.2.0'
 
 
     // PDF BOX //
@@ -65,9 +65,9 @@ task packageDeb(type: Exec){
     workingDir project.projectDir
     commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
 }
-
+sourceCompatibility = 15
+targetCompatibility = 15
 jlink {
-    addExtraDependencies("javafx")
     options = [
                 '--strip-debug',
                '--compress', '2',
@@ -78,13 +78,14 @@ jlink {
         name = 'PDF4Teachers'
     }
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
-        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
+        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-15.0.1.9-hotspot')
     }else if(Os.isFamily(Os.FAMILY_MAC)){
-        targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home/')
+        targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/')
     }else if(Os.isFamily(Os.FAMILY_UNIX)){
-        targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-14/')
+        targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-15/')
     }
 
+    addExtraDependencies("javafx")
 
     jpackage {
         installerOptions = [

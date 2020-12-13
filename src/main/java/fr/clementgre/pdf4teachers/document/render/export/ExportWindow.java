@@ -25,6 +25,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -278,6 +279,8 @@ public class ExportWindow {
 
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
                                  boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
+
+        directory.mkdirs();
 
         AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(customName.isEmpty());
         new TwoStepListAction<>(true, customName.isEmpty(), new TwoStepListInterface<File, Map.Entry<File, File>>() {

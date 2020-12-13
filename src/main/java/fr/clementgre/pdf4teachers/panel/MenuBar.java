@@ -588,7 +588,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		if(isSystemMenuBarSupported()){
 			Menu menu = new Menu(name);
-			if(imgName != null)menu.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0));
+			//if(imgName != null)menu.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0));
 
 			if(disableIfNoDoc){
 				menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
@@ -629,7 +629,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		if(isSystemMenuBarSupported()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
-			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 
 			//OSX selects radioMenuItems upon click, but doesn't unselect it on click :
 			AtomicBoolean selected = new AtomicBoolean(false);
@@ -661,7 +661,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
 		if(isSystemMenuBarSupported()){
 			MenuItem menuItem = new MenuItem(text);
-			if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
+			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
 			if(keyCombinaison != null) menuItem.setAccelerator(keyCombinaison);
 			if(disableIfNoDoc){
 				menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));

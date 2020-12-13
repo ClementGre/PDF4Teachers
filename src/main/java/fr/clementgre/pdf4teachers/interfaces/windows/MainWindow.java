@@ -199,6 +199,8 @@ public class MainWindow extends Stage{
         userDataSaver.start();
         mainScreen.repaint();
 
+        osxTouchBarManager = new OSXTouchBarManager(this);
+
 //      OPEN DOC
 
         List<File> toOpenFiles = new ArrayList<>();
