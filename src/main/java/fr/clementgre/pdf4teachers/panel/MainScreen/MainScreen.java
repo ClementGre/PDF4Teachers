@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -198,7 +199,7 @@ public class MainScreen extends Pane {
 		});
 
 		setOnMouseDragged(e -> {
-			if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)){ // GrabNScroll
+			if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) && !(e.getTarget() instanceof PageZoneSelector)){ // GrabNScroll
 				double distY = e.getY() - dragStartY;
 				double distX = e.getX() - dragStartX;
 

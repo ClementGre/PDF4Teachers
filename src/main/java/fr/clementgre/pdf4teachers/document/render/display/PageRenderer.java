@@ -42,6 +42,7 @@ public class PageRenderer extends Pane{
     private double renderedZoomFactor;
 
     private PageEditPane pageEditPane;
+    private PageZoneSelector pageCursorRecord;
 
     public PageRenderer(int page){
         this.page = page;
@@ -394,4 +395,8 @@ public class PageRenderer extends Pane{
         this.status = status;
     }
 
+    public PageZoneSelector getPageCursorRecord() {
+        if(pageCursorRecord == null) pageCursorRecord = new PageZoneSelector(this);
+        return pageCursorRecord;
+    }
 }

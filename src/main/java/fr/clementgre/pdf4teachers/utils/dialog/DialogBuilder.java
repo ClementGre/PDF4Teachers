@@ -49,8 +49,18 @@ public class DialogBuilder {
         setupDialog(alert);
         return alert;
     }
+    public static <T> ChoiceDialog<T> getChoiceDialog(T selected, List<T> values){
+        ChoiceDialog<T> alert = new ChoiceDialog<T>(selected, values);
 
-    public static boolean showWrongAlert(String headerText,String contentText, boolean continueAsk){
+        if(Main.window != null){
+            if(Main.window.getScene() != null) alert.initOwner(Main.window);
+        }
+
+        setupDialog(alert);
+        return alert;
+    }
+
+    public static boolean showWrongAlert(String headerText, String contentText, boolean continueAsk){
         Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("Une erreur est survenue"));
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
@@ -144,10 +154,11 @@ public class DialogBuilder {
         }
         return null;
     }
-    public static File showSaveDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
+    public static File showSaveDialog(boolean syncWithLastOpenDir, String initialFileName, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
         chooser.setTitle(TR.tr("Enregistrer un fichier"));
+        chooser.setInitialFileName(initialFileName);
         chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         File file = chooser.showSaveDialog(Main.window);

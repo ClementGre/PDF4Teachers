@@ -179,7 +179,7 @@ public class EditionExporter {
                 }else if(option.get() == yesAll){
                     directory = DialogBuilder.showDirectoryDialog(true);
                 }else if(option.get() == yesAllOneFile){
-                    File file = DialogBuilder.showSaveDialog(true, "YAML", ".yml");
+                    File file = DialogBuilder.showSaveDialog(true, "edits.yml", "YAML", ".yml");
                     if(file != null){
                         oneFileConfig.setFile(file);
                         directory = new File(file.getParent());

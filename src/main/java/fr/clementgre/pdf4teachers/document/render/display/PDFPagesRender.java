@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -45,16 +47,6 @@ public class PDFPagesRender {
 	public void renderPage(int pageNumber, double size, double width, double height, CallBackArg<Background> callBack){
 
 		Thread renderPage = new Thread(() -> {
-			/*while(render){
-				try{
-					Thread.sleep(500);
-				}catch(InterruptedException e){
-					e.printStackTrace();
-					callBack.call(null);
-					return;
-				}
-			}
-			render = true;*/
 
 			PDRectangle pageSize = getPageSize(pageNumber);
 
@@ -97,7 +89,28 @@ public class PDFPagesRender {
 		}, "Render page " + pageNumber);
 		renderPage.start();
 		rendersPage.add(renderPage);
+	}
+	public BufferedImage renderPageBasic(int pageNumber, int width, int height){
 
+		PDRectangle pageSize = getPageSize(pageNumber);
+
+		BufferedImage renderImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics = renderImage.createGraphics();
+		graphics.setBackground(Color.WHITE);
+
+		try{
+			PDDocument document = PDDocument.load(file);
+			PDFRenderer pdfRenderer = new PDFRenderer(document);
+			pdfRenderer.renderPageToGraphics(pageNumber, graphics, width/pageSize.getWidth(), width/pageSize.getWidth(), RenderDestination.VIEW);
+			//scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+			document.close();
+			graphics.dispose();
+
+			return renderImage;
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static void renderAdvertisement(){

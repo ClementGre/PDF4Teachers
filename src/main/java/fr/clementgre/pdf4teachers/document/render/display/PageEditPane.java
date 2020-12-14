@@ -12,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
@@ -43,7 +44,6 @@ public class PageEditPane extends VBox {
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
 
         newButton.setOnMouseClicked((e) -> {
-
             menu.hide();
             menu.getItems().clear();
             menu.getItems().addAll(getNewPageMenu(page.getPage(), 0, false));
@@ -51,7 +51,13 @@ public class PageEditPane extends VBox {
             menu.show(page, e.getScreenX(), e.getScreenY());
         });
 
-        captureButton.setOnAction((e) -> {});
+        captureButton.setOnMouseClicked((e) -> {
+            menu.hide();
+            menu.getItems().clear();
+            menu.getItems().addAll(getCaptureMenu(page, false));
+            NodeMenuItem.setupMenu(menu);
+            menu.show(page, e.getScreenX(), e.getScreenY());
+        });
 
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
 
@@ -87,6 +93,39 @@ public class PageEditPane extends VBox {
         addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, index));
         addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, index));
         addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(index));
+
+        return menus;
+    }
+    public static ArrayList<MenuItem> getCaptureMenu(PageRenderer page, boolean vanillaMenu){
+        ArrayList<MenuItem> menus = new ArrayList<>();
+
+        MenuItem capturePage = getMenuItem(TR.tr("Capturer toute la page"), vanillaMenu);
+        menus.add(capturePage);
+        capturePage.setOnAction(ignored -> {
+            MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), null);
+        });
+
+
+        MenuItem captureSelection = getMenuItem(TR.tr("Sélectionner une zone"), vanillaMenu);
+        menus.add(captureSelection);
+        captureSelection.setOnAction(ignored -> {
+            PageZoneSelector recorder = page.getPageCursorRecord();
+            recorder.setSelectionZoneType(PageZoneSelector.SelectionZoneType.PDF_ON_DARK);
+            recorder.setupSelectionZoneOnce(positionDimensions -> {
+                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), positionDimensions);
+            });
+            recorder.setShow(true);
+        });
+
+
+        if(MainWindow.mainScreen.document.totalPages != 1){
+            MenuItem captureDocument = getMenuItem(TR.tr("Capturer toute les pages du document"), vanillaMenu);
+            menus.add(captureDocument);
+
+            captureDocument.setOnAction(ignored -> {
+                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(-1, null);
+            });
+        }
 
         return menus;
     }

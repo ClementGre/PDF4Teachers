@@ -414,8 +414,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
-			ChoiceDialog<Integer> dialog = new ChoiceDialog<>(Main.settings.defaultZoom.getValue(), choices);
-			DialogBuilder.setupDialog(dialog);
+			ChoiceDialog<Integer> dialog = DialogBuilder.getChoiceDialog(Main.settings.defaultZoom.getValue(), choices);
 
 			dialog.setTitle(TR.tr("Zoom par défaut"));
 			dialog.setHeaderText(TR.tr("Zoom par défaut lors de l'ouverture d'un document"));

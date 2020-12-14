@@ -31,6 +31,7 @@ public class TwoStepListAction<T, D> {
     public static final int CODE_SKIP_3 = 3;
     public static final int CODE_SKIP_4 = 4;
 
+
     public enum ProcessResult{
         OK,
         SKIPPED,
