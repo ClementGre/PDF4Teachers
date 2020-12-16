@@ -220,25 +220,29 @@ public class UserData {
                 MainWindow.gradeTab.updateElementsFont();
 
                 startsCount++;
-                new LanguagesUpdater().update((hasDownloadedLanguages) -> {
-                    if(hasDownloadedLanguages){
-                        TR.updateTranslation();
-
-                        MainWindow.userData.save();
-                        MainWindow.hasToClose = true;
-                        if(MainWindow.mainScreen.closeFile(true)){
-                            Main.window.close();
-                            MainWindow.hasToClose = false;
-                            Platform.runLater(Main::startMainWindow);
-                        }
-                        MainWindow.hasToClose = false;
-                    }
-                }, true, true);
 
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
                 MainWindow.gradeTab.sumByDecrement.setSelected(sumByDecrement);
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
                 LanguageWindow.loadLanguagesConfig(languages);
+
+                Platform.runLater(() -> {
+                    new LanguagesUpdater().update((hasDownloadedLanguages) -> {
+                        if(hasDownloadedLanguages){
+                            TR.updateTranslation();
+
+                            MainWindow.userData.save();
+                            MainWindow.hasToClose = true;
+                            if(MainWindow.mainScreen.closeFile(true)){
+                                Main.window.close();
+                                MainWindow.hasToClose = false;
+                                Platform.runLater(Main::startMainWindow);
+                            }
+                            MainWindow.hasToClose = false;
+                        }
+                    }, true, true);
+                });
+
             });
         }).start();
     }

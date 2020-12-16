@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
@@ -254,9 +255,7 @@ public class TextElement extends Element {
 			TeXFormula formula = new TeXFormula(text);
 			formula.setColor(color);
 
-			System.out.println("gen icon");
 			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size*imageFactor);
-			System.out.println("end icon");
 
 			icon.setInsets(new Insets((int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7)));
 
@@ -268,7 +267,7 @@ public class TextElement extends Element {
 			return image;
 
 		}catch(ParseException ex){
-			System.out.println("error rendering Latex");
+			if(Main.DEBUG) System.out.println("error rendering Latex");
 			if(calls >= 3){
 				ex.printStackTrace();
 				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);

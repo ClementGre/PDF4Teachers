@@ -89,7 +89,7 @@ public class Document {
     public void close(){
         pdfPagesRender.close();
         for(int i = 0 ; i < totalPages ; i++){
-            pages.get(i).remove();
+            if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
     }

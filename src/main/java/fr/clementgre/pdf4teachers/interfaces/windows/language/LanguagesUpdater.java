@@ -173,7 +173,10 @@ public class LanguagesUpdater {
 
                 int i = 0;
                 for(Language language : toDownloadLanguages){
-                    downloadLanguage(language, i, toDownloadLanguages.size());
+                    if(!downloadLanguage(language, i, toDownloadLanguages.size())){
+                        complete(callBack, false);
+                        return;
+                    }
                     i++;
                 }
 
@@ -211,7 +214,7 @@ public class LanguagesUpdater {
         return false;
     }
 
-    private void downloadLanguage(Language language, int index, int size){
+    private boolean downloadLanguage(Language language, int index, int size){
 
         for(Map.Entry<String, String> urls : language.getUrls().entrySet()){
             Platform.runLater(() -> {
@@ -220,14 +223,30 @@ public class LanguagesUpdater {
             });
             try{
                 BufferedInputStream in = new BufferedInputStream(new URL(urls.getValue()).openStream());
-                Files.copy(in, new File(Main.dataFolder + "translations" + File.separator + urls.getKey()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                File target = new File(Main.dataFolder + "translations" + File.separator + urls.getKey());
 
+                File closed = null;
+                if(MainWindow.mainScreen.hasDocument(false)){
+                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(target.getAbsolutePath())){
+                        closed = MainWindow.mainScreen.document.getFile();
+                        Platform.runLater(() -> MainWindow.mainScreen.closeFile(false));
+                        Thread.sleep(500);
+                    }
+                }
+                Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 LanguageWindow.addLanguageToConfig(language.getName(), language.getDisplayName(), language.getVersion());
 
-            }catch(IOException e){
+                if(closed != null) {
+                    File finalClosed = closed;
+                    Platform.runLater(() -> MainWindow.mainScreen.openFile(finalClosed));
+                }
+
+            }catch(IOException | InterruptedException e){
                 e.printStackTrace();
+                return false;
             }
         }
+        return true;
 
     }
 

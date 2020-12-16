@@ -7,7 +7,7 @@ public class OSXTouchBarManager {
 
     static {
         String libPath = System.getProperty("java.library.path");
-        System.out.println("java.library.path=" + libPath);
+        if(Main.DEBUG) System.out.println("java.library.path=" + libPath);
     }
 
     public OSXTouchBarManager(Window window){

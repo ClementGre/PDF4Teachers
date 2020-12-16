@@ -63,7 +63,6 @@ public class Edition {
                 if(page == null || !(pageData.getValue() instanceof List)) break;
 
                 for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    System.out.println(data.toString());
                     if(data instanceof Map) TextElement.readYAMLDataAndCreate((HashMap<String, Object>) data, page);
                 }
             }

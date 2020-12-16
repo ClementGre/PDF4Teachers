@@ -64,7 +64,9 @@ public class TR {
 
     private static boolean loadFileTranslationsData(File file, boolean defaultTranslations) throws IOException {
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        InputStreamReader inputStream = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+        BufferedReader reader = new BufferedReader(inputStream);
 
         String line; int i = 0;
         while((line = reader.readLine()) != null){
@@ -89,6 +91,8 @@ public class TR {
             }
         }
         reader.close();
+        inputStream.close();
+        fileInputStream.close();
         return i >= 1;
     }
 }

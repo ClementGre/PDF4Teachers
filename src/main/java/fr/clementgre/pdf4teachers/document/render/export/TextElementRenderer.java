@@ -143,7 +143,7 @@ public class TextElementRenderer {
             position.setLowerLeftY((float) (bottomMargin + pageRealHeight - height - element.getRealY() / Element.GRID_HEIGHT * pageHeight));
             position.setUpperRightX(position.getLowerLeftX() + element.getAlwaysWidth());
             position.setUpperRightY((float) (position.getLowerLeftY() + height));
-            System.out.println(position.getHeight() + " / " + position.getWidth());
+
             txtLink.setRectangle (position);
             page.getAnnotations().add(txtLink);
 
