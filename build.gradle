@@ -17,8 +17,7 @@ dependencies{
     }
 
     // JTouchBar : OSX TouchBar //
-    implementation group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '0.2.0'
-
+    //compile group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '1.0.0'
 
     // PDF BOX //
     compile group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.21'
@@ -31,7 +30,7 @@ dependencies{
     // Signing and encrypting pdf (don't use)
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
-    compile group: 'com.thizzer.jtouchbar', name: 'jtouchbar-javafx', version: '1.0.0'
+
 
     // JSON requests
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.10.3'
@@ -43,7 +42,7 @@ dependencies{
 }
 javafx {
     version = '15.0.1'
-    modules = ['javafx.graphics', 'javafx.controls', 'javafx.swing', 'javafx.fxml']
+    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
 compileJava.options.encoding = "UTF-8"
@@ -80,12 +79,10 @@ jlink {
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
         targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-15.0.1.9-hotspot')
     }else if(Os.isFamily(Os.FAMILY_MAC)){
-        targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home/')
+        targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/openjdk-15.0.1/Contents/Home')
     }else if(Os.isFamily(Os.FAMILY_UNIX)){
         targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-15/')
     }
-
-    addExtraDependencies("javafx")
 
     jpackage {
         installerOptions = [

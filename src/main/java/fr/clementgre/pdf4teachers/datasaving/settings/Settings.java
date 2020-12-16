@@ -81,15 +81,14 @@ public class Settings {
         File settings = new File(Main.dataFolder + "settings.yml");
         try{
 
-            ArrayList<File> lastFiles = new ArrayList<>();
-            File lastFile = null;
-
             if(settings.createNewFile()){ //file was created
                 saveSettings();
             }else{ // file already exist
 
                 Config config = new Config(settings);
                 config.load();
+
+                settingsVersion = config.getString("version");
 
                 for(Field field : getClass().getDeclaredFields()) {
                     if(field.isAnnotationPresent(SettingObject.class)){
@@ -127,6 +126,8 @@ public class Settings {
                 File settings = new File(Main.dataFolder + "settings.yml");
                 settings.createNewFile();
                 Config config = new Config(settings);
+
+                config.set("version", Main.VERSION);
 
                 for(Field field : getClass().getDeclaredFields()) {
                     if(field.isAnnotationPresent(SettingObject.class)){

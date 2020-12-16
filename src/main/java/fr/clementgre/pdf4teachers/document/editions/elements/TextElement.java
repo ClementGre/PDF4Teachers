@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
 import javafx.embed.swing.SwingFXUtils;
@@ -54,7 +55,11 @@ public class TextElement extends Element {
 
 		if(hasPage && getPage() != null){
 			setupGeneral(isLaTeX() ? this.image : this.text);
-			updateLaTeX();
+			new Thread(() -> {
+
+
+				Platform.runLater(this::updateLaTeX);
+			}).start();
 			this.text.setUnderline(isURL());
 		}
 
@@ -240,16 +245,21 @@ public class TextElement extends Element {
 		return SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null)));
 	}
 	public BufferedImage renderAwtLatex(){
-		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize());
+		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize(), 0);
 	}
 
-	public static BufferedImage renderLatex(String text, java.awt.Color color, int size){
+	public static BufferedImage renderLatex(String text, java.awt.Color color, int size, int calls){
+
 		try {
 
+			System.out.println(text + " - " + color.toString());
 			TeXFormula formula = new TeXFormula(text);
 			formula.setColor(color);
 
+			System.out.println("gen icon");
 			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size*imageFactor);
+			System.out.println("end icon");
+
 			icon.setInsets(new Insets((int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7)));
 
 			BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -260,13 +270,18 @@ public class TextElement extends Element {
 			return image;
 
 		}catch(ParseException ex){
+			System.out.println("error rendering Latex");
+			if(calls >= 1){
+				ex.printStackTrace();
+				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+			}
 			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
 				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + "\\\\" +
-						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), ""), color, size);
+						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), ""), color, size, calls+1);
 			}else if(text.startsWith(TR.tr("Erreur~:") + "\\\\")){
-				return renderLatex(TR.tr("Impossible~de~lire~la~formule"), color, size);
+				return renderLatex(TR.tr("Impossible~de~lire~la~formule"), color, size, calls+1);
 			}else{
-				return renderLatex(TR.tr("Erreur~:") + "\\\\" + ex.getMessage(), color, size);
+				return renderLatex(TR.tr("Erreur~:") + "\\\\" + ex.getMessage(), color, size, calls+1);
 			}
 		}
 	}

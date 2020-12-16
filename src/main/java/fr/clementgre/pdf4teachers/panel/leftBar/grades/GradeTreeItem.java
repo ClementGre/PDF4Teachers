@@ -468,14 +468,14 @@ public class GradeTreeItem extends TreeItem {
             value = total - value;
         }
 
-        if(hasValue && previousPage != -1){
-            if(core.getValue() == -1){
+        if(hasValue){
+            if(core.getValue() == -1 && previousPage != -1){
                 if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
                 core.nextRealYToUse = previousRealY - core.getRealHeight();
-                core.setValue(value);
-            }else core.setValue(value);
-        }
-        else core.setValue(-1);
+            }
+            core.setValue(value);
+        }else core.setValue(-1);
+
         core.setTotal(total);
 
         if(getParent() != null){

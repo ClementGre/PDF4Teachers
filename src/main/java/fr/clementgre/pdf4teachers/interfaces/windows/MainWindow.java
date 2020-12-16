@@ -230,7 +230,7 @@ public class MainWindow extends Stage{
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
                         if(menuBar.isSystemMenuBarSupported()){
-                            menuBar.about.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0));
+                            menuBar.about.setText(TR.tr("À Propos") + " " + TR.tr("(Nouvelle Version Disponible)"));
                         }else{
                             menuBar.about.setStyle("-fx-background-color: #d6a600;");
                         }

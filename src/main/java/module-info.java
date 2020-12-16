@@ -34,8 +34,8 @@ open module fr.clementgre.pdf4teachers {
     requires javafx.swing;
     requires javafx.graphics;
 
-    requires jtouchbar;
-    requires jtouchbar.javafx;
+    //requires jtouchbar;
+    //requires jtouchbar.javafx;
 
     // EXPORTS
 
