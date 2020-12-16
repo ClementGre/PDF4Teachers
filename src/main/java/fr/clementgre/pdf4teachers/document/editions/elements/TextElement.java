@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.StringProperty;
@@ -55,11 +56,7 @@ public class TextElement extends Element {
 
 		if(hasPage && getPage() != null){
 			setupGeneral(isLaTeX() ? this.image : this.text);
-			new Thread(() -> {
-
-
-				Platform.runLater(this::updateLaTeX);
-			}).start();
+			updateLaTeX();
 			this.text.setUnderline(isURL());
 		}
 
@@ -221,16 +218,18 @@ public class TextElement extends Element {
 				getChildren().remove(text);
 				getChildren().add(image);
 			}
-			Image render = renderLatex();
-			image.setImage(render);
-			image.setVisible(true);
-			image.setFitWidth(render.getWidth()/imageFactor);
-			image.setFitHeight(render.getHeight()/imageFactor);
+			renderLatex((render) -> {
+				 Platform.runLater(() -> {
+					 image.setImage(render);
+					 image.setVisible(true);
+					 image.setFitWidth(render.getWidth()/imageFactor);
+					 image.setFitHeight(render.getHeight()/imageFactor);
+				 });
+			});
 
 		}else{ // Lambda Text
 
 			text.setVisible(true);
-
 			if(getChildren().contains(image)){
 				getChildren().remove(image);
 				getChildren().add(text);
@@ -239,10 +238,11 @@ public class TextElement extends Element {
 		}
 	}
 
-	public WritableImage renderLatex(){
-
-		BufferedImage render = renderAwtLatex();
-		return SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null)));
+	public void renderLatex(CallBackArg<Image> callback){
+		new Thread(() -> {
+			BufferedImage render = renderAwtLatex();
+			callback.call(SwingFXUtils.toFXImage(render, new WritableImage(render.getWidth(null), render.getHeight(null))));
+		}, "LaTeX rendered").start();
 	}
 	public BufferedImage renderAwtLatex(){
 		return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize(), 0);
@@ -251,8 +251,6 @@ public class TextElement extends Element {
 	public static BufferedImage renderLatex(String text, java.awt.Color color, int size, int calls){
 
 		try {
-
-			System.out.println(text + " - " + color.toString());
 			TeXFormula formula = new TeXFormula(text);
 			formula.setColor(color);
 
@@ -271,7 +269,7 @@ public class TextElement extends Element {
 
 		}catch(ParseException ex){
 			System.out.println("error rendering Latex");
-			if(calls >= 1){
+			if(calls >= 3){
 				ex.printStackTrace();
 				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 			}
