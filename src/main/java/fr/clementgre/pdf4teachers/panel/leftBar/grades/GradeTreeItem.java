@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class GradeTreeItem extends TreeItem {
@@ -128,7 +129,7 @@ public class GradeTreeItem extends TreeItem {
             element.select();
 
             // Update total (Fix the bug when a total is predefined (with no children))
-            makeSum(-1, 0);
+            makeSum(false);
         });
 
     }
@@ -173,6 +174,10 @@ public class GradeTreeItem extends TreeItem {
         ScratchText meter = new ScratchText();
         meter.setFont(new Font(nameField.getFont().getFamily(), 13));
 
+        nameField.setContextMenu(core.menu);
+        gradeField.setContextMenu(core.menu);
+        totalField.setContextMenu(core.menu);
+
         nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if(newValue){
@@ -191,6 +196,13 @@ public class GradeTreeItem extends TreeItem {
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.nameField.requestFocus());
             }
+            if(newValue.contains("\u0009")){ // TAB
+                if(core.getTotal() == 0){
+                    totalField.requestFocus(); totalField.positionCaret(totalField.getText().length());
+                }else{
+                    gradeField.requestFocus(); gradeField.positionCaret(gradeField.getText().length());
+                }
+            }
 
             String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
             if(newText.length() >= 20) newText = newText.substring(0, 20);
@@ -204,8 +216,7 @@ public class GradeTreeItem extends TreeItem {
         gradeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if(newValue){
-                    gradeField.positionCaret(gradeField.getText().length());
-                    gradeField.selectAll();
+                    gradeField.positionCaret(gradeField.getText().length()); gradeField.selectAll();
                 }else{
                     gradeField.deselect();
                 }
@@ -224,6 +235,9 @@ public class GradeTreeItem extends TreeItem {
                 GradeTreeItem afterItem = getAfterChildItem();
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.gradeField.requestFocus());
+            }
+            if(newValue.contains("\u0009")){ // TAB
+                totalField.requestFocus(); totalField.positionCaret(totalField.getText().length());
             }
             String newText = newValue.replaceAll("[^0123456789.,]", "");
             if(newText.length() >= 5) newText = newText.substring(0, 5);
@@ -258,6 +272,10 @@ public class GradeTreeItem extends TreeItem {
                 GradeTreeItem afterItem = getAfterChildItem();
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> afterItem.totalField.requestFocus());
+            }
+            if(newValue.contains("\u0009")){ // TAB
+                gradeField.requestFocus();
+                gradeField.positionCaret(gradeField.getText().length());
             }
 
             String newText = newValue.replaceAll("[^0123456789.,]", "");
@@ -415,9 +433,11 @@ public class GradeTreeItem extends TreeItem {
         }
         return null;
     }
-
+    public void makeSum(boolean updateLocation){
+       if(!updateLocation) makeSum(-1, 0);
+       else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
+    }
     public void makeSum(int previousPage, int previousRealY){
-
         boolean hasValue = false;
         double value = 0;
         double total = 0;
@@ -426,8 +446,8 @@ public class GradeTreeItem extends TreeItem {
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
 
             // Don't count the "Bonus" children in the Total
-            if(!children.getCore().getName().equalsIgnoreCase(TR.tr("Bonus"))){
-                total += children.getCore().getTotal();
+            if(!children.getCore().isBonus()){
+                total += children.getCore().getTotal(); // count total
             }
 
             if(children.getCore().getValue() >= 0){
@@ -448,9 +468,10 @@ public class GradeTreeItem extends TreeItem {
             value = total - value;
         }
 
-        if(hasValue){
-            if(core.getValue() == -1 && previousPage == core.getPageNumber()){
-                core.nextRealYToUse = (int) (previousRealY-core.getRealHeight());
+        if(hasValue && previousPage != -1){
+            if(core.getValue() == -1){
+                if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
+                core.nextRealYToUse = previousRealY - core.getRealHeight();
                 core.setValue(value);
             }else core.setValue(value);
         }

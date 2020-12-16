@@ -11,20 +11,15 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -426,7 +421,7 @@ public class PDFPagesEditor{
 
                     Optional<ButtonType> optionSelected = endAlert.showAndWait();
                     if(optionSelected.get() == open){
-                        PlatformUtils.openFile(exportDir.getAbsolutePath());
+                        PlatformUtils.openDirectory(exportDir.getAbsolutePath());
                     }
                 }
             });

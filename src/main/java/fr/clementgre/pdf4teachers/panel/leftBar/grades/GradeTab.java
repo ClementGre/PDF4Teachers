@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -128,8 +129,15 @@ public class GradeTab extends Tab {
 
         MainWindow.mainScreen.setSelected(null);
 
+        String name = TR.tr("Nouvelle note");
+        if(parent.getChildren().size() >= 1){
+            String lastName = ((GradeTreeItem) parent.getChildren().get(parent.getChildren().size()-1)).getCore().getName();
+            String newName = StringUtils.incrementName(lastName);
+            if(!lastName.equals(newName)) name = newName;
+        }
+
         GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
-                true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), TR.tr("Nouvelle note"));
+                true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name);
 
         page.addElement(current, true);
         MainWindow.mainScreen.setSelected(current);

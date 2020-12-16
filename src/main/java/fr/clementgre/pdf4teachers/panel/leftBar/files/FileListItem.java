@@ -74,7 +74,7 @@ public class FileListItem extends ListCell<File>{
 
             path.setText(getItem().getAbsolutePath().replace(System.getProperty("user.home"), "~").replace(getItem().getName(), ""));
 
-            name.setText(StringUtils.removeAfterLastRejex(file.getName(), ".pdf"));
+            name.setText(StringUtils.removeAfterLastRegex(file.getName(), ".pdf"));
             if(file.getName().equals(".pdf")) name.setText(".pdf");
             name.setStyle("-fx-font-size: 13;");
 

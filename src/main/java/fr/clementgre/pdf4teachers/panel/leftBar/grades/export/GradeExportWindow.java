@@ -141,7 +141,7 @@ public class GradeExportWindow extends Stage {
 
             }else{
 
-                fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
+                fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("Nom du document"));
                 PaneUtils.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
                 if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileName = newValue);
@@ -177,7 +177,7 @@ public class GradeExportWindow extends Stage {
 
             }else{
 
-                studentNameSimple = new TextField(StringUtils.removeAfterLastRejex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
+                studentNameSimple = new TextField(StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
                 studentNameSimple.setPromptText(TR.tr("Nom de l'élève"));
                 PaneUtils.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
 

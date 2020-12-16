@@ -76,7 +76,6 @@ public class GradeTreeView extends TreeView<String> {
 
     public void generateRoot(boolean update){
         MainWindow.gradeTab.newGradeElement(TR.tr("Total"), -1, 0, 0, "", update);
-        //MainWindow.gradeTab.newGradeElement(TR.tr("Bonus"), -1, 0, 0, "\\Total", update);
     }
 
     public void addElement(GradeElement element){
@@ -84,13 +83,15 @@ public class GradeTreeView extends TreeView<String> {
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
-            setRoot(element.toGradeTreeItem());
+            GradeTreeItem item = element.toGradeTreeItem();
+            item.setExpanded(true);
+            setRoot(item);
             getSelectionModel().select(getRoot());
         }else{
             // OTHER
             GradeTreeItem treeElement = element.toGradeTreeItem();
             addToList(getGradeTreeItemParent(element), treeElement);
-            getRoot().setExpanded(true);
+            treeElement.setExpanded(true);
         }
     }
     public void removeElement(GradeElement element){
@@ -106,7 +107,7 @@ public class GradeTreeView extends TreeView<String> {
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
             parent.reIndexChildren();
-            parent.makeSum(-1, 0);
+            parent.makeSum(false);
         }
     }
 
@@ -318,7 +319,7 @@ public class GradeTreeView extends TreeView<String> {
 
         for(GradeTreeItem item : items){
             if(item.hasSubGrade()){
-                item.makeSum(-1, 0);
+                item.makeSum(false);
             }
         }
     }

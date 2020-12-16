@@ -25,7 +25,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -301,11 +300,11 @@ public class ExportWindow {
                 String fileName = pdfFile.getName();
                 if(recursive){
 
-                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(fileName, ".pdf");
+                    fileName = StringUtils.removeAfterLastRegexIgnoringCase(fileName, ".pdf");
                     fileName = fileName.replace(replaceText, replaceByText);
                     fileName = prefix + fileName + suffix + ".pdf";
                 }else{
-                    fileName = StringUtils.removeAfterLastRejexIgnoringCase(customName, ".pdf") + ".pdf";
+                    fileName = StringUtils.removeAfterLastRegexIgnoringCase(customName, ".pdf") + ".pdf";
                 }
 
                 File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);
@@ -371,7 +370,7 @@ public class ExportWindow {
 
                 Optional<ButtonType> optionSelected = alert.showAndWait();
                 if(optionSelected.get() == open){
-                    PlatformUtils.openFile(directory.getAbsolutePath());
+                    PlatformUtils.openDirectory(directory.getAbsolutePath());
                 }
             }
         });

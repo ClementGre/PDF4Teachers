@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeView;
@@ -94,18 +95,26 @@ public class PageRenderer extends Pane{
 
                 if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
                     GradeTreeView.defineNaNLocations();
-                    GradeTreeItem nextGrade = GradeTreeView.getNextLogicGrade();
-                    if(nextGrade != null) menu.getItems().add(new CustomMenuItem(nextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu)));
+                    GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
+                    if(logicalNextGrade != null){
+                        CustomMenuItem menuItem = new CustomMenuItem(logicalNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu));
+                        menu.getItems().add(menuItem);
+                        menuItem.setOnAction((actionEvent) -> logicalNextGrade.getCore().setValue(logicalNextGrade.getCore().getTotal()));
+                    }
 
-                    var gradeElement = GradeTreeView.getNextGrade(page, (int) e.getY());
-                    GradeTreeItem grade = gradeElement == null ? null : gradeElement.getGradeTreeItem();
-                    if(grade != null) if(nextGrade != grade) menu.getItems().add(0, new CustomMenuItem(grade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu)));
+                    GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) e.getY());
+                    GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
+                    if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
+                        CustomMenuItem menuItem = new CustomMenuItem(documentNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth()-50, menu));
+                        menu.getItems().add(0, menuItem);
+                        menuItem.setOnAction((actionEvent) -> documentNextGradeElement.setValue(documentNextGradeElement.getTotal()));
+                    }
 
                 }
 
                 List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
 
-                for(int i = 0; i <= 5; i++){
+                for(int i = 0; i <= 7; i++){
                     if(mostUsed.size() > i){
                         TextTreeItem item = mostUsed.get(i);
 

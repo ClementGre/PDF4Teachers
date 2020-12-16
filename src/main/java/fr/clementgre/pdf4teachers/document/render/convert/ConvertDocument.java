@@ -46,7 +46,7 @@ public class ConvertDocument {
                     else if(option.get() == renameButton){
                         int k = 1; String tmpUri = file.file.getAbsolutePath();
                         while(new File(tmpUri).exists()){
-                            tmpUri = StringUtils.removeAfterLastRejex(file.file.getAbsolutePath(), ".pdf") + " (" + k + ").pdf";
+                            tmpUri = StringUtils.removeAfterLastRegex(file.file.getAbsolutePath(), ".pdf") + " (" + k + ").pdf";
                             k++;
                         }
                         file.file = new File(tmpUri);

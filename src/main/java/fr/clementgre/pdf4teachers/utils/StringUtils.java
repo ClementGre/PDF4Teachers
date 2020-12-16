@@ -1,6 +1,8 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class StringUtils {
 
@@ -30,7 +32,43 @@ public class StringUtils {
 
         }
     }
-    public static String removeBeforeLastRejex(String string, String rejex){
+
+    public static Entry<String, Integer> getLastInt(String expression){
+        String stringResult = expression;
+        StringBuffer result = new StringBuffer();
+
+        for(int i = expression.length() - 1; i >= 0; i--){
+            try{
+                result.append(Integer.parseInt(expression.substring(i, i+1)));
+                stringResult = stringResult.substring(0, i);
+            }catch(NumberFormatException ignored){
+                break;
+            }
+        }
+
+        if(result.toString().isEmpty()) return Map.entry(expression, -1);
+        return Map.entry(stringResult, Integer.parseInt(result.reverse().toString()));
+    }
+
+    public static String incrementName(String name){
+
+        Entry<String, Integer> lastIntData = getLastInt(name);
+
+        if(lastIntData.getValue() != -1){
+            return lastIntData.getKey() + (lastIntData.getValue()+1);
+        }
+
+        if(name.length() == 1){
+            if(name.replaceAll("^[A-Ya-y]", "").isEmpty()){
+                return Character.toString(name.charAt(0) + 1);
+            }
+        }
+
+        return name;
+    }
+
+
+    public static String removeBeforeLastRegex(String string, String rejex){
         if(rejex.isEmpty()) return string;
         int index = string.lastIndexOf(rejex);
 
@@ -39,7 +77,7 @@ public class StringUtils {
 
         return "";
     }
-    public static String removeAfterLastRejex(String string, String rejex){
+    public static String removeAfterLastRegex(String string, String rejex){
         if(rejex.isEmpty()) return string;
         int index = string.lastIndexOf(rejex);
 
@@ -48,7 +86,7 @@ public class StringUtils {
 
         return "";
     }
-    public static String removeAfterLastRejexIgnoringCase(String string, String rejex){
+    public static String removeAfterLastRegexIgnoringCase(String string, String rejex){
         if(rejex.isEmpty()) return string;
         int index = string.toLowerCase().lastIndexOf(rejex.toLowerCase());
 

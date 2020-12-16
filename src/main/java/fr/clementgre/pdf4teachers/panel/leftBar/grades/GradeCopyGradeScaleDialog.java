@@ -57,7 +57,7 @@ public class GradeCopyGradeScaleDialog {
 
         Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Barème copiés"));
         alert.setHeaderText(TR.tr("Votre barème a bien été copié."));
-        alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectés") + ".)");
+        alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectées") + ".)");
         alert.show();
 
         MainWindow.filesTab.refresh();

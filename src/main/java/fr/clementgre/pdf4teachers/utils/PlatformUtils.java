@@ -40,17 +40,32 @@ public class PlatformUtils {
 
     }
 
-    public static void openFile(String uri){
+    public static void openDirectory(String uri){
 
         if (Main.isOSX()){
             try {
                 Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
             } catch (InterruptedException | IOException e) {
-                System.out.println("unable to open URI");
+                System.out.println("unable to open URI directory");
                 e.printStackTrace();
             }
         }else{
-            Main.hostServices.showDocument(uri);    //Doesn't work for OSX
+            Main.hostServices.showDocument(uri); // Doesn't work for OSX
+        }
+
+    }
+
+    public static void openFile(String uri){
+
+        if (Main.isOSX()){
+            try {
+                Runtime.getRuntime().exec("/usr/bin/open -a TextEdit " + uri).waitFor();
+            } catch (InterruptedException | IOException e) {
+                System.out.println("unable to open URI file");
+                e.printStackTrace();
+            }
+        }else{
+            Main.hostServices.showDocument(uri);// Doesn't work for OSX
         }
 
     }

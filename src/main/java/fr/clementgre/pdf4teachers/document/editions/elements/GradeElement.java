@@ -94,9 +94,9 @@ public class GradeElement extends Element {
             if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
 
             // Update total if switch/unSwitch to Bonus
-            if(oldValue.equalsIgnoreCase(TR.tr("Bonus")) != newValue.equalsIgnoreCase(TR.tr("Bonus"))){
+            if(GradeElement.isBonus(oldValue) != GradeElement.isBonus(newValue)){
                 if(treeItemElement.hasSubGrade() && getValue() == -1) treeItemElement.resetChildrenValues();
-                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(-1, 0);
+                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(false);
             }
         });
         // make sum when value or total change
@@ -132,7 +132,7 @@ public class GradeElement extends Element {
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + MainWindow.format.format(getValue()) + "/" + MainWindow.format.format(getTotal()));
 
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
-            ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(-1, 0);
+            ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
         });
     }
     @Override
@@ -289,11 +289,16 @@ public class GradeElement extends Element {
         return treeItemElement;
     }
     public boolean isDefaultGrade(){
-        return (getValue() == -1 && getTotal() == 0 &&
-                (getName().equals(TR.tr("Total")) || getName().equals(TR.tr("Bonus"))) );
+        return (getValue() == -1 && getTotal() == 0 && getName().equals(TR.tr("Total")));
     }
     public boolean isRoot(){
         return getParentPath().isEmpty();
+    }
+    public boolean isBonus(){
+        return isBonus(getName());
+    }
+    public static boolean isBonus(String name){
+        return name.toLowerCase().startsWith( TR.tr("Bonus").toLowerCase() );
     }
 
     public float getBaseLineY(){

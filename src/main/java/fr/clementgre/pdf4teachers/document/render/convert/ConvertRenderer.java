@@ -38,18 +38,18 @@ public class ConvertRenderer {
                     convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
                     documentCallBack.call(dir.getName() + ".pdf");
-                    convertFile(new File[]{dir}, new File(out + StringUtils.removeAfterLastRejex(dir.getName(), ".") + ".pdf"));
+                    convertFile(new File[]{dir}, new File(out + StringUtils.removeAfterLastRegex(dir.getName(), ".") + ".pdf"));
                 }
             }
         }else{
-            documentCallBack.call(StringUtils.removeAfterLastRejex(convertPane.docName.getText(), ".pdf") + ".pdf");
+            documentCallBack.call(StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf");
             File[] files = new File[convertPane.srcFiles.getText().split(Pattern.quote("\n")).length];
             int i = 0;
             for(String filePath : convertPane.srcFiles.getText().split(Pattern.quote("\n"))){
                 files[i] = new File(filePath);
                 i++;
             }
-            convertFile(files, new File(out + StringUtils.removeAfterLastRejex(convertPane.docName.getText(), ".pdf") + ".pdf"));
+            convertFile(files, new File(out + StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
         documentCallBack.call("");
 
@@ -144,7 +144,7 @@ public class ConvertRenderer {
     }
 
     public static boolean isGoodFormat(File file){
-        String ext = StringUtils.removeBeforeLastRejex(file.getName(), ".");
+        String ext = StringUtils.removeBeforeLastRegex(file.getName(), ".");
         if(!file.exists()) ext = "";
         return ext.equalsIgnoreCase("png") ||
                 ext.equalsIgnoreCase("jpg") ||

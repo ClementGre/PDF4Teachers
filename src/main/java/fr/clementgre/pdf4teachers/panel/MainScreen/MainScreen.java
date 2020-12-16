@@ -105,7 +105,7 @@ public class MainScreen extends Pane {
 				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
 						TR.tr("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
-				infoLink.setOnAction(e -> PlatformUtils.openFile(failedEditFile));
+				infoLink.setOnAction(e -> PlatformUtils.openDirectory(failedEditFile));
 			}
 		}else{
 			info.setVisible(false);

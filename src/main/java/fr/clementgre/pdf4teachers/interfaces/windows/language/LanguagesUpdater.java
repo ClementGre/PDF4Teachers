@@ -96,12 +96,12 @@ public class LanguagesUpdater {
 
         new Thread(() -> {
             try{
-                URL url = new URL("https://pdf4teachers.org/api/startupdate/");
+                URL url = new URL("https://api.pdf4teachers.org/startupdate/");
                 if(provideData){
                     if(Main.settings.sendStats.getValue()){
-                        url = new URL("https://pdf4teachers.org/api/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
                     }else{
-                        url = new URL("https://pdf4teachers.org/api/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
                     }
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();

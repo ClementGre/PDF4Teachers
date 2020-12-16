@@ -5,10 +5,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
-import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
-import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
@@ -21,7 +18,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -93,10 +89,10 @@ public class LanguageWindow extends Stage{
             for(File file : dir.listFiles()){
                 if(FilesUtils.getExtension(file.getName()).equals("txt")){
                     ImageView image = new ImageView();
-                    if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png").exists()) {
-                        image = ImageUtils.buildImage(new FileInputStream(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRejex(file.getName(), ".txt") + ".png"), 88, 50);
+                    if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRegex(file.getName(), ".txt") + ".png").exists()) {
+                        image = ImageUtils.buildImage(new FileInputStream(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRegex(file.getName(), ".txt") + ".png"), 88, 50);
                     }
-                    languagesComponents.put(StringUtils.removeAfterLastRejex(file.getName(), ".txt"), image);
+                    languagesComponents.put(StringUtils.removeAfterLastRegex(file.getName(), ".txt"), image);
                 }
             }
         }catch(Exception e){

@@ -2,7 +2,9 @@ package fr.clementgre.pdf4teachers.interfaces;
 
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
@@ -18,7 +20,6 @@ public class Macro {
     public Macro(Scene main){
 
         main.setOnKeyPressed(e -> {
-
             if(e.getCode() == KeyCode.TAB){
                 if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
                 else MainWindow.leftBar.getSelectionModel().select(1);
@@ -67,6 +68,21 @@ public class Macro {
 
                         MainWindow.leftBar.getSelectionModel().select(2);
                         MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
+
+                    }else if(e.getCode() == KeyCode.G){
+                        if(MainWindow.leftBar.getSelectionModel().getSelectedItem() != MainWindow.gradeTab) return;
+
+                        GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
+                        if(item == null) return;
+                        if(item.isRoot()){
+                            GradeElement element = MainWindow.gradeTab.newGradeElementAuto(item);
+                            element.select();
+                        }else{
+                            GradeElement element = MainWindow.gradeTab.newGradeElementAuto(((GradeTreeItem) item.getParent()));
+                            element.select();
+                        }
+                        // Update total (Fix the bug when a total is predefined (with no children))
+                        item.makeSum(false);
                     }
                 }else{ // SHORTCUT + ALT
 

@@ -89,7 +89,7 @@ public class AlreadyExistDialog{
     public static File rename(File file){
         int counter = 1;
         String extension = "." + FilesUtils.getExtension(file.getName());
-        String fileName = StringUtils.removeAfterLastRejex(file.getName(), extension);
+        String fileName = StringUtils.removeAfterLastRegex(file.getName(), extension);
         while(file.exists()){
             file = new File(file.getParentFile().getAbsolutePath() + File.separator + fileName + " (" + counter + ")" + extension);
             counter++;

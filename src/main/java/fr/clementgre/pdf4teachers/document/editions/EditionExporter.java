@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.document.editions;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -29,7 +28,8 @@ public class EditionExporter {
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste"), ButtonBar.ButtonData.OTHER);
 
-        dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
+        if(!onlyGrades)  dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
+        else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
 
         Optional<ButtonType> option = dialog.showAndWait();
         File file = null;
@@ -159,12 +159,14 @@ public class EditionExporter {
         else dialog.setHeaderText(TR.tr("Vous allez exporter le barème du document sous forme de fichier."));
 
         ButtonType yes = new ButtonType(TR.tr("Exporter pour ce document"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Exporter pour touts les documents\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
-        ButtonType yesAllOneFile = new ButtonType(TR.tr("Exporter pour touts les documents\nde la liste et du même dossier\nen un seul fichier"), ButtonBar.ButtonData.OTHER);
-
-        dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll, yesAllOneFile);
-        dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
-        dialog.getDialogPane().lookupButton(yesAllOneFile).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
+        ButtonType yesAll = new ButtonType(TR.tr("Exporter pour tous les documents\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yesAllOneFile = new ButtonType(TR.tr("Exporter pour tous les documents\nde la liste et du même dossier\nen un seul fichier"), ButtonBar.ButtonData.OTHER);
+        if(!onlyGrades){
+            dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll, yesAllOneFile);
+            dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
+            dialog.getDialogPane().lookupButton(yesAllOneFile).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
+        }
+        else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
 
         Optional<ButtonType> option = dialog.showAndWait();
         File directory = null;
@@ -286,7 +288,7 @@ public class EditionExporter {
 
                 Optional<ButtonType> optionSelected = endAlert.showAndWait();
                 if(optionSelected.get() == open){
-                    PlatformUtils.openFile(finalDirectory.getAbsolutePath());
+                    PlatformUtils.openDirectory(finalDirectory.getAbsolutePath());
                 }
 
 

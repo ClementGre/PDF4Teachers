@@ -42,7 +42,7 @@ public class Edition {
     }
 
     public void load(){
-        File lastEditFile = new File(StringUtils.removeAfterLastRejex(editFile.getAbsolutePath(), ".yml") + ".edit");
+        File lastEditFile = new File(StringUtils.removeAfterLastRegex(editFile.getAbsolutePath(), ".yml") + ".edit");
         if(lastEditFile.exists()){
             loadHEX(lastEditFile);
             lastEditFile.delete();
@@ -255,7 +255,7 @@ public class Edition {
     // get PDF file from YAML file
     public static File getFileEdit(File editFile){
         String path = editFile.getName().replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
-        path = StringUtils.removeAfterLastRejex(path, ".yml");
+        path = StringUtils.removeAfterLastRegex(path, ".yml");
         return new File(path);
     }
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){

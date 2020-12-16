@@ -167,7 +167,7 @@ public class GradeExportRenderer {
         if(pane.studentNameSimple != null){
             text += pane.studentNameSimple.getText();
         }else{
-            text += StringUtils.removeAfterLastRejex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
+            text += StringUtils.removeAfterLastRegex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
         }
 
         for(GradeElement grade : file.grades){
@@ -314,10 +314,10 @@ public class GradeExportRenderer {
         String fileName;
 
         if(source != null){ // type = 1 -> Splited export
-            fileName = pane.fileNamePrefix.getText() + StringUtils.removeAfterLastRejex(source.file.getName(), ".pdf")
+            fileName = pane.fileNamePrefix.getText() + StringUtils.removeAfterLastRegex(source.file.getName(), ".pdf")
                     .replaceAll(Pattern.quote(pane.fileNameReplace.getText()), pane.fileNameBy.getText()) + pane.fileNameSuffix.getText();
         }else{ // other
-            fileName = StringUtils.removeAfterLastRejex(pane.fileNameSimple.getText(), ".csv");
+            fileName = StringUtils.removeAfterLastRegex(pane.fileNameSimple.getText(), ".csv");
         }
 
         File file = new File(filePath + File.separator + fileName + ".csv");

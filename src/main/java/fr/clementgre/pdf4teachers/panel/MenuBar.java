@@ -18,7 +18,6 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -27,32 +26,24 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.shape.SVGPath;
 import javafx.util.Duration;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -120,10 +111,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
 	MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
-	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition"), "export",
+	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), "export",
 			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
 
-		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
+		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition/barème"), null, null,
 				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
 		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
@@ -204,10 +195,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		////////// HELP //////////
 
-		help1LoadDoc.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
-		help2GitHubIssue.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
-		help3Twitter.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
-		help4Website.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+		if(!isSystemMenuBarSupported()){
+			help1LoadDoc.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
+			help2GitHubIssue.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
+			help3Twitter.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
+			help4Website.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+		}
 		help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
 
 		////////// SETUP ITEMS WIDTH ///////////
@@ -387,7 +380,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 
 		tools9Debug1OpenConsole.setOnAction((e) -> new LogWindow());
-		tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openFile(Main.dataFolder));
+		tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
 		tools9Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
 
 
