@@ -11,8 +11,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.VPos;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -88,7 +91,7 @@ public class GradeElement extends Element {
             }
             // Check if exist twice
             GradeTreeItem treeItemElement = getGradeTreeItem();
-            if(((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
+            if(!treeItemElement.isRoot() && ((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())) setName(getName() + "(1)");
 
             // Redefine children parentPath
             if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
@@ -116,7 +119,10 @@ public class GradeElement extends Element {
                     if(nextRealYToUse != 0){
                         setRealY(nextRealYToUse);
                         nextRealYToUse = 0;
-                    }else setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
+                    }else{
+                        setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
+                        centerOnCoordinatesY();
+                    }
                 }
                 setVisible(true);
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + MainWindow.format.format(newValue) + "/" + MainWindow.format.format(getTotal()));
@@ -146,6 +152,21 @@ public class GradeElement extends Element {
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Mettre 0 à toutes les sous-notes"), false);
         item4.setToolTip(TR.tr("Donne la valeur 0 à toutes les sous-notes"));
+
+
+        menu.setOnShowing((e) -> {
+            Platform.runLater(() -> {
+                GradeTreeItem treeItem = getGradeTreeItem();
+                MenuItem menuItem = new CustomMenuItem(treeItem.getEditGraphics((int) menu.getWidth()-50, menu));
+                menuItem.setOnAction((actionEvent) -> setValue(getTotal()));
+
+                System.out.println(menu.getWidth());
+
+                if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
+                else menu.getItems().set(0, menuItem);
+            });
+
+        });
 
         menu.getItems().addAll(item1, item4, item2, item3);
         NodeMenuItem.setupMenu(menu);

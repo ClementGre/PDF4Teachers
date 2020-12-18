@@ -22,6 +22,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import javax.print.attribute.standard.MediaSize;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
@@ -41,9 +42,9 @@ public class GradeTreeItem extends TreeItem {
 
     private Button newGrade;
 
-    private TextArea nameField = new TextArea("☺");
-    public TextArea gradeField = new TextArea("☺");
-    private TextArea totalField = new TextArea("☺");
+    private TextArea nameField;
+    public TextArea gradeField;
+    private TextArea totalField;
 
     private ContextMenu pageContextMenu = null;
 
@@ -53,7 +54,6 @@ public class GradeTreeItem extends TreeItem {
     private ChangeListener<Boolean> selectedListener;
 
     public GradeTreeItem(GradeElement core){
-
         this.core = core;
 
         setupGraphic();
@@ -154,143 +154,9 @@ public class GradeTreeItem extends TreeItem {
 
         // FIELDS
 
-        nameField.setStyle("-fx-font-size: 13;");
-        nameField.setMinHeight(29);
-        nameField.setMaxHeight(29);
-        nameField.setMinWidth(29);
-
-        gradeField.setStyle("-fx-font-size: 13;");
-        gradeField.setMinHeight(29);
-        gradeField.setMaxHeight(29);
-        gradeField.setMinWidth(29);
-        HBox.setMargin(gradeField, new Insets(0, 0, 0, 5));
-
-        totalField.setStyle("-fx-font-size: 13;");
-        totalField.setMinHeight(29);
-        totalField.setMaxHeight(29);
-        totalField.setMinWidth(29);
-        HBox.setMargin(totalField, new Insets(0, 5, 0, 0));
-
-        ScratchText meter = new ScratchText();
-        meter.setFont(new Font(nameField.getFont().getFamily(), 13));
-
-        nameField.setContextMenu(core.menu);
-        gradeField.setContextMenu(core.menu);
-        totalField.setContextMenu(core.menu);
-
-        nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue){
-                    if(nameField.getCaretPosition() == nameField.getText().length() || nameField.getCaretPosition() == 0) {
-                        nameField.positionCaret(nameField.getText().length());
-                        nameField.selectAll();
-                    }
-                }else{
-                    nameField.deselect();
-                }
-            });
-        });
-        nameField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.contains("\n")){
-                GradeTreeItem afterItem = getAfterItem();
-                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) Platform.runLater(() -> afterItem.nameField.requestFocus());
-            }
-            if(newValue.contains("\u0009")){ // TAB
-                if(core.getTotal() == 0){
-                    totalField.requestFocus(); totalField.positionCaret(totalField.getText().length());
-                }else{
-                    gradeField.requestFocus(); gradeField.positionCaret(gradeField.getText().length());
-                }
-            }
-
-            String newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
-            if(newText.length() >= 20) newText = newText.substring(0, 20);
-
-            nameField.setText(newText);
-            meter.setText(newText);
-            nameField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
-
-            core.setName(newText);
-        });
-        gradeField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue){
-                    gradeField.positionCaret(gradeField.getText().length()); gradeField.selectAll();
-                }else{
-                    gradeField.deselect();
-                }
-            });
-        });
-        gradeField.textProperty().addListener((observable, oldTextValue, newValue) -> {
-            if(newValue.contains("/")){
-                totalField.requestFocus();
-                totalField.positionCaret(totalField.getText().length());
-            }
-            if(newValue.contains("\n")){ // Enter : Switch to the next grade
-                if(pageContextMenu != null){
-                    pageContextMenu.hide();
-                    pageContextMenu.getItems().clear();
-                }
-                GradeTreeItem afterItem = getAfterChildItem();
-                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) Platform.runLater(() -> afterItem.gradeField.requestFocus());
-            }
-            if(newValue.contains("\u0009")){ // TAB
-                totalField.requestFocus(); totalField.positionCaret(totalField.getText().length());
-            }
-            String newText = newValue.replaceAll("[^0123456789.,]", "");
-            if(newText.length() >= 5) newText = newText.substring(0, 5);
-
-            gradeField.setText(newText);
-            meter.setText(newText);
-            gradeField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
-
-            // dont accept a value higher than the total
-            try{
-                double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
-                if(value > core.getTotal() && !hasSubGrade()){
-                    gradeField.setText(MainWindow.format.format(core.getTotal()));
-                }else core.setValue(value);
-            }catch(NumberFormatException e){
-                core.setValue(-1);
-            }
-
-        });
-        totalField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue){
-                    totalField.positionCaret(totalField.getText().length());
-                    totalField.selectAll();
-                }else{
-                    totalField.deselect();
-                }
-            });
-        });
-        totalField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.contains("\n")){ // Enter : Switch to the next grade
-                GradeTreeItem afterItem = getAfterChildItem();
-                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) Platform.runLater(() -> afterItem.totalField.requestFocus());
-            }
-            if(newValue.contains("\u0009")){ // TAB
-                gradeField.requestFocus();
-                gradeField.positionCaret(gradeField.getText().length());
-            }
-
-            String newText = newValue.replaceAll("[^0123456789.,]", "");
-            if(newText.length() >= 5) newText = newText.substring(0, 5);
-
-            totalField.setText(newText);
-            meter.setText(newText);
-            totalField.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
-
-            try{
-                core.setTotal(Double.parseDouble(newText.replaceAll(Pattern.quote(","), ".")));
-            }catch(NumberFormatException e){
-                core.setTotal(0);
-            }
-        });
+        nameField = getField(FieldType.NAME, true);
+        gradeField = getField(FieldType.GRADE, true);
+        totalField = getField(FieldType.TOTAL, true);
 
         // OTHER
 
@@ -334,6 +200,7 @@ public class GradeTreeItem extends TreeItem {
 
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
+        TextArea gradeField = getField(FieldType.GRADE, false);
         gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
         if(!isRoot() && getParent() != null){
             if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
@@ -343,17 +210,24 @@ public class GradeTreeItem extends TreeItem {
             pane.getChildren().addAll(name, spacer, value, slash, total);
         }else{
             pane.getChildren().addAll(name, spacer, gradeField, slash, total);
-            Platform.runLater(() -> {
-                gradeField.requestFocus();
-            });
+            Platform.runLater(gradeField::requestFocus);
         }
 
         pageContextMenu = menu;
 
         pane.setOnMouseEntered(e -> {
             gradeField.requestFocus();
+            MainWindow.gradeTab.treeView.getSelectionModel().select(this);
         });
-        pane.setPrefWidth(width);
+
+        pane.setMinWidth(width);
+
+        pane.widthProperty().addListener((e) -> {
+            if(pane.getWidth() < width){
+                pane.setPrefWidth(width);
+            }
+        });
+
         return pane;
     }
 
@@ -553,6 +427,7 @@ public class GradeTreeItem extends TreeItem {
     }
 
     public boolean isExistTwice(String name){
+        if(isRoot()) return false;
         int k = 0;
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
@@ -561,4 +436,114 @@ public class GradeTreeItem extends TreeItem {
 
         return k >= 2;
     }
+
+    public enum FieldType{
+        NAME,
+        GRADE,
+        TOTAL
+    }
+
+    public TextArea getField(FieldType type, boolean contextMenu){
+
+        TextArea field = new TextArea("😉😉😉");
+
+        field.setStyle("-fx-font-size: 13;");
+        field.setMinHeight(29);
+        field.setMaxHeight(29);
+        field.setMinWidth(29);
+
+        if(type == FieldType.GRADE) HBox.setMargin(field, new Insets(0, 0, 0, 5));
+        if(type == FieldType.TOTAL) HBox.setMargin(field, new Insets(0, 5, 0, 0));
+
+        if(contextMenu) field.setContextMenu(core.menu);
+        else field.setContextMenu(null);
+
+        field.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if(newValue){
+                    if(field.getCaretPosition() == field.getText().length() || field.getCaretPosition() == 0 || type != FieldType.NAME){
+                        field.positionCaret(field.getText().length());
+                        field.selectAll();
+                    }
+                }else field.deselect();
+            });
+        });
+        ScratchText meter = new ScratchText();
+        meter.setFont(new Font(field.getFont().getFamily(), 13));
+
+        field.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.contains("\n")){ // Enter : Switch to the next grade
+                if(pageContextMenu != null) pageContextMenu.hide();
+
+                GradeTreeItem afterItem = getAfterChildItem();
+                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
+                if(afterItem != null) Platform.runLater(() -> {
+                    switch (type){
+                        case NAME -> afterItem.nameField.requestFocus();
+                        case GRADE -> afterItem.gradeField.requestFocus();
+                        case TOTAL -> afterItem.totalField.requestFocus();
+                    }
+                });
+                field.setText(oldValue);
+                return;
+            }
+
+            if(newValue.contains("\u0009")){ // TAB
+                if(core.getTotal() == 0){
+                    switch (type){
+                        case NAME, GRADE -> totalField.requestFocus();
+                        case TOTAL -> gradeField.requestFocus();
+                    }
+                }else{
+                    switch (type){
+                        case NAME, TOTAL -> gradeField.requestFocus();
+                        case GRADE -> totalField.requestFocus();
+                    }
+                }
+                field.setText(oldValue);
+                return;
+            }
+
+            String newText;
+            if(type == FieldType.NAME){
+                newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
+                if(newText.length() >= 20) newText = newText.substring(0, 20);
+            }else{
+                newText = newValue.replaceAll("[^0123456789.,]", "");
+                if(newText.length() >= 5) newText = newText.substring(0, 5);
+            }
+
+            field.setText(newText); meter.setText(newText);
+            field.setMaxWidth(meter.getLayoutBounds().getWidth()+20);
+
+            if(type == FieldType.GRADE && field != gradeField){
+                gradeField.setText(newText);
+            }
+
+            switch (type){
+                case NAME:
+                    core.setName(newText);
+                    break;
+                case GRADE:
+                    // dont accept a value higher than the total
+                    try{
+                        double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
+                        if(value > core.getTotal() && !hasSubGrade()){
+                            field.setText(MainWindow.format.format(core.getTotal()));
+                            gradeField.setText(MainWindow.format.format(core.getTotal()));
+                        }else core.setValue(value);
+                    }catch(NumberFormatException e){ core.setValue(-1); }
+                    break;
+                case TOTAL:
+                    try{
+                        core.setTotal(Double.parseDouble(newText.replaceAll(Pattern.quote(","), ".")));
+                    }catch(NumberFormatException e){ core.setTotal(0); }
+                    break;
+            }
+
+        });
+
+        return field;
+    }
+
 }

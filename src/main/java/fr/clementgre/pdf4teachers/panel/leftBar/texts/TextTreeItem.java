@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -13,11 +14,13 @@ import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -25,6 +28,8 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -118,9 +123,9 @@ public class TextTreeItem extends TreeItem{
 				}
 			}
 		};
-		name.setFill(StyleManager.convertColor(color.get()));
+		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
 		colorProperty().addListener((observable, oldValue, newValue) -> {
-			name.setFill(StyleManager.convertColor(newValue));
+			name.setFill(StyleManager.shiftColorWithTheme(newValue));
 		});
 
 		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
@@ -164,9 +169,36 @@ public class TextTreeItem extends TreeItem{
 		}
 
 		name.setText(wrappedText);
-		name.setFill(StyleManager.convertColor(color.get()));
+		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
 
 		pane.setAlignment(Pos.CENTER_LEFT);
+		pane.setFocusTraversable(false);
+
+		MainWindow.textTab.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(() -> {
+				if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
+			});
+		});
+
+		pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue) pane.setStyle("-fx-background-color: #d6a600");
+			else pane.setStyle("");
+		});
+
+		pane.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT){
+				MainWindow.textTab.treeView.selectNextInSelection();
+				e.consume();
+			}else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+				MainWindow.textTab.treeView.selectPreviousInSelection();
+				e.consume();
+			}else if(e.getCode() == KeyCode.ENTER){
+				addToDocument(e.isShiftDown());
+				e.consume();
+			}
+		});
+		pane.setOnKeyTyped(Event::consume);
+		pane.setOnKeyReleased(Event::consume);
 
 	}
 	Rectangle rect = new Rectangle();
@@ -183,7 +215,7 @@ public class TextTreeItem extends TreeItem{
 
 		rect.setWidth(4);
 		rect.setHeight(4);
-		rect.setFill(StyleManager.convertColor(Color.WHITE));
+		rect.setFill(StyleManager.invertColorWithTheme(Color.WHITE));
 		HBox.setMargin(rect, new Insets(((cellHeight - 4) / 2.0), 3, 0, 3));
 		spacer.getChildren().add(rect);
 
@@ -195,8 +227,8 @@ public class TextTreeItem extends TreeItem{
 		if(cell == null) return;
 		if(name.getText().isEmpty()) updateGraphic();
 
-		name.setFill(StyleManager.convertColor(color.get()));
-		rect.setFill(StyleManager.convertColor(Color.WHITE));
+		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
+		rect.setFill(StyleManager.invertColorWithTheme(Color.WHITE));
 
 		cell.setGraphic(pane);
 		cell.setStyle(null);
@@ -306,6 +338,7 @@ public class TextTreeItem extends TreeItem{
 			}
 
 			page.addElement(realElement, true);
+			realElement.centerOnCoordinatesY();
 			MainWindow.mainScreen.selectedProperty().setValue(realElement);
 		}
 

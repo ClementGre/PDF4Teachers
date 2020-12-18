@@ -18,12 +18,12 @@ import java.util.regex.Pattern;
 
 public class GradeCopyGradeScaleDialog {
 
-    ArrayList<GradeRating> ratings = new ArrayList<>();
+    public ArrayList<GradeRating> ratings = new ArrayList<>();
 
     boolean ignoreAlreadyExist = false;
     boolean ignoreErase = false;
 
-    public GradeCopyGradeScaleDialog(){
+    public void show(){
 
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Copier le barème sur d'autres éditions"));
         dialog.setHeaderText(TR.tr("Cette action va copier le barème entré dans cette édition sur d'autres éditions."));
@@ -37,19 +37,21 @@ public class GradeCopyGradeScaleDialog {
         int copiedEditions = 0;
         if(option.get() == yes){
             prepareCopyEditions();
+            boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
-                    int result = copyToFile(file);
+                    int result = copyToFile(file, recursive);
                     if(result == 0) copiedEditions++;
                     else if(result == 2) break;
                 }
             }
         }else if(option.get() == yesAll){
             prepareCopyEditions();
+            boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
                 if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
-                int result = copyToFile(file);
+                int result = copyToFile(file, recursive);
                 if(result == 0) copiedEditions++;
                 else if(result == 2) break;
             }
@@ -79,7 +81,7 @@ public class GradeCopyGradeScaleDialog {
     }
 
     // 0 : Copied | 1 : Canceled | 2 : Cancel All
-    public int copyToFile(File file){
+    public int copyToFile(File file, boolean recursive){
         try{
             File editFile = Edition.getEditFile(file);
 
@@ -100,9 +102,11 @@ public class GradeCopyGradeScaleDialog {
                 ButtonType ignoreAll = new ButtonType(TR.tr("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType stop = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 ButtonType stopAll = new ButtonType(TR.tr("Tout annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
 
-                Optional<ButtonType> option = dialog.showAndWait();
+                if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else dialog.getButtonTypes().setAll(ignore, stopAll);
+
+                    Optional<ButtonType> option = dialog.showAndWait();
                 if(option.get() == stop){
                     return 1;
                 }else if(option.get() == stopAll){
@@ -135,7 +139,9 @@ public class GradeCopyGradeScaleDialog {
                 ButtonType ignoreAll = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType stop = new ButtonType(TR.tr("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
                 ButtonType stopAll = new ButtonType(TR.tr("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+
+                if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else dialog.getButtonTypes().setAll(ignore, stop);
 
                 Optional<ButtonType> option = dialog.showAndWait();
                 if(option.get() == stop){
@@ -162,5 +168,4 @@ public class GradeCopyGradeScaleDialog {
             return 1;
         }
     }
-
 }

@@ -103,7 +103,7 @@ public class GradeTab extends Tab {
         link.setCursor(Cursor.HAND);
         link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        link.setOnAction((e) -> new GradeCopyGradeScaleDialog());
+        link.setOnAction((e) -> new GradeCopyGradeScaleDialog().show());
         link.setTooltip(PaneUtils.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
 
         PaneUtils.setHBoxPosition(export, 45, 35, 0);
@@ -140,6 +140,7 @@ public class GradeTab extends Tab {
                 true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name);
 
         page.addElement(current, true);
+        current.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(current);
 
         return current;
@@ -156,6 +157,7 @@ public class GradeTab extends Tab {
                 true, value, total, index, parentPath, name);
 
         page.addElement(current, update);
+        current.centerOnCoordinatesY();
         if(update) MainWindow.mainScreen.setSelected(current);
 
         return current;
