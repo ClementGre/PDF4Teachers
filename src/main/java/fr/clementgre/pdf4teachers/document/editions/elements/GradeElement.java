@@ -37,10 +37,11 @@ public class GradeElement extends Element {
     private DoubleProperty total;
     private int index;
     private String parentPath;
+    private boolean alwaysVisible;
 
     public int nextRealYToUse = 0;
 
-    public GradeElement(int x, int y, int pageNumber, boolean hasPage, double value, double total, int index, String parentPath, String name){
+    public GradeElement(int x, int y, int pageNumber, boolean hasPage, double value, double total, int index, String parentPath, String name, boolean alwaysVisible){
         super(x, y, pageNumber);
         this.pageNumber = pageNumber;
         this.realX.set(x);
@@ -50,14 +51,21 @@ public class GradeElement extends Element {
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
         this.parentPath = parentPath;
+        this.alwaysVisible = alwaysVisible;
 
         text.setBoundsType(TextBoundsType.LOGICAL);
         text.setTextOrigin(VPos.TOP);
 
-        setVisible(getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
+        setVisible(isShouldVisible());
         updateFont();
 
-        if(hasPage && getPage() != null) setupGeneral(this.text);
+        if(hasPage){
+            if(getPage() == null){
+                if(MainWindow.mainScreen.hasDocument(false)) this.pageNumber = MainWindow.mainScreen.document.pages.size()-1;
+                else return;
+            }
+            setupGeneral(this.text);
+        }
 
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
@@ -73,7 +81,7 @@ public class GradeElement extends Element {
 
         // Forse to be hide when value == -1
         visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && (getValue() == -1 || GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)))) setVisible(false);
+            if(newValue && !isShouldVisible()) setVisible(false);
         });
 
         text.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -81,7 +89,7 @@ public class GradeElement extends Element {
         });
         nameProperty().addListener((observable, oldValue, newValue) -> {
 
-            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
             Edition.setUnsave();
 
             // Check if name is null
@@ -105,11 +113,11 @@ public class GradeElement extends Element {
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            if(newValue.intValue() == -1 || GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath))){
+            if(!isShouldVisible()){
                 setVisible(false);
-                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + MainWindow.format.format(newValue) + "/" + MainWindow.format.format(getTotal()));
+                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
             }else{
-                if(oldValue.intValue() == -1){ // Deviens visible
+                if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
 
                     if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getCurrentPage());
@@ -125,7 +133,7 @@ public class GradeElement extends Element {
                     }
                 }
                 setVisible(true);
-                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + MainWindow.format.format(newValue) + "/" + MainWindow.format.format(getTotal()));
+                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
             }
 
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -135,7 +143,7 @@ public class GradeElement extends Element {
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + MainWindow.format.format(getValue()) + "/" + MainWindow.format.format(getTotal()));
+            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
 
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
             ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
@@ -143,6 +151,8 @@ public class GradeElement extends Element {
     }
     @Override
     protected void setupMenu() {
+        menu.getItems().clear();
+
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Attribuer tous les points"), false);
         item1.setToolTip(TR.tr("Place toutes les sous-notes à leur valeur maximale"));
         NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Réinitialiser"), false);
@@ -152,6 +162,8 @@ public class GradeElement extends Element {
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Mettre 0 à toutes les sous-notes"), false);
         item4.setToolTip(TR.tr("Donne la valeur 0 à toutes les sous-notes"));
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Cacher les sous-notes non saisies"), false);
+        item5.setToolTip(TR.tr("Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles même sans valeur. Il est possible de réinitialiser leur position et de les cacher avec cette option."));
 
 
         menu.setOnShowing((e) -> {
@@ -160,8 +172,6 @@ public class GradeElement extends Element {
                 MenuItem menuItem = new CustomMenuItem(treeItem.getEditGraphics((int) menu.getWidth()-50, menu));
                 menuItem.setOnAction((actionEvent) -> setValue(getTotal()));
 
-                System.out.println(menu.getWidth());
-
                 if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
                 else menu.getItems().set(0, menuItem);
             });
@@ -169,6 +179,7 @@ public class GradeElement extends Element {
         });
 
         menu.getItems().addAll(item1, item4, item2, item3);
+        if(alwaysVisible && getValue() == -1) menu.getItems().add(item5);
         NodeMenuItem.setupMenu(menu);
 
         item1.setOnAction(e -> {
@@ -198,6 +209,9 @@ public class GradeElement extends Element {
             else treeItemElement = MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
             treeItemElement.gradeField.setText("0");
             treeItemElement.setChildrenValuesTo0();
+        });
+        item5.setOnAction(e -> {
+            setAlwaysVisible(false);
         });
     }
     @Override
@@ -243,6 +257,7 @@ public class GradeElement extends Element {
         data.put("value", value.getValue());
         data.put("total", total.getValue());
         data.put("name", name.getValue());
+        data.put("alwaysVisible", alwaysVisible);
 
         return data;
     }
@@ -264,9 +279,10 @@ public class GradeElement extends Element {
         String parentPath = Config.getString(data, "parentPath");
         double value = Config.getDouble(data, "value");
         double total = Config.getDouble(data, "total");
+        boolean alwaysVisible = Config.getBoolean(data, "alwaysVisible");
         String name = Config.getString(data, "name");
 
-        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name);
+        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, alwaysVisible);
     }
     public static void readYAMLDataAndCreate(HashMap<String, Object> data){
         GradeElement element = readYAMLDataAndGive(data, true);
@@ -285,7 +301,7 @@ public class GradeElement extends Element {
         double total = reader.readDouble();
         String name = reader.readUTF();
 
-        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name);
+        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, false);
     }
     public static void readDataAndCreate(DataInputStream reader) throws IOException {
         GradeElement element = readDataAndGive(reader, true);
@@ -296,11 +312,22 @@ public class GradeElement extends Element {
 
     // SPECIFIC METHODS
 
+    public boolean isFilled(){
+        return getValue() != -1 || alwaysVisible;
+    }
+    public boolean isShouldVisible(){
+        return isShouldVisibleOnExport() || alwaysVisible;
+    }
+    public boolean isShouldVisibleOnExport(){
+        return (getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
+    }
+
     public void updateFont(){
         text.setFont(GradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
         text.setFill(GradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
-        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
-        setVisible(getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
+        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+        System.out.println("alwaysVisible for " + name + " is " + alwaysVisible + " visible=" + isShouldVisible());
+        setVisible(isShouldVisible());
     }
     public GradeTreeItem getGradeTreeItem(){
         GradeTreeItem treeItemElement;
@@ -376,6 +403,19 @@ public class GradeElement extends Element {
         this.parentPath = parentPath;
         Edition.setUnsave();
     }
+    public boolean isAlwaysVisible() {
+        return alwaysVisible;
+    }
+    public void setAlwaysVisible(boolean alwaysVisible) {
+        this.alwaysVisible = alwaysVisible;
+        updateFont();
+        setupMenu();
+        if(!alwaysVisible){
+            GradeTreeItem treeItemElement = getGradeTreeItem();
+            treeItemElement.setChildrenAlwaysVisibleToFalse();
+        }
+    }
+
     // shortcuts
     public String getText(){
         return text.getText();
@@ -409,10 +449,10 @@ public class GradeElement extends Element {
 
     @Override
     public Element clone() {
-        return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), index, parentPath, name.getValue());
+        return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), index, parentPath, name.getValue(), alwaysVisible);
     }
     public GradeRating toGradeRating(){
-        return new GradeRating(total.get(), name.get(), index, parentPath);
+        return new GradeRating(total.get(), name.get(), index, parentPath, alwaysVisible, getRealX(), getRealY(), pageNumber);
     }
     public GradeTreeItem toGradeTreeItem(){
         return new GradeTreeItem(this);

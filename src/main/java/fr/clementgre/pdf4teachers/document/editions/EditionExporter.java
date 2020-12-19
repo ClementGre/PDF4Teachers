@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,6 +28,9 @@ public class EditionExporter {
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?"));
         else dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
+
+        CheckBox copyLocations = new CheckBox(TR.tr("Copier la position des notes"));
+        if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
 
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste"), ButtonBar.ButtonData.OTHER);
@@ -60,7 +64,7 @@ public class EditionExporter {
                         gradeCopyGradeScale.ratings.add(((GradeElement) element).toGradeRating());
                     }
                 }
-                int result = gradeCopyGradeScale.copyToFile(MainWindow.mainScreen.document.getFile(), false);
+                int result = gradeCopyGradeScale.copyToFile(MainWindow.mainScreen.document.getFile(), false, copyLocations.isSelected());
                 if(result == 0){
                     Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
                     endAlert.setHeaderText(TR.tr("Le barème a bien été importé"));
@@ -247,9 +251,7 @@ public class EditionExporter {
                     for(Object grade : grades){
                         if(grade instanceof HashMap){
                             ((HashMap) grade).put("value", -1);
-                            ((HashMap) grade).put("page", 0);
-                            ((HashMap) grade).put("x", 0);
-                            ((HashMap) grade).put("y", 0);
+                            ((HashMap) grade).remove("alwaysVisible");
                         }
                     }
                     newBase.put("grades", grades);

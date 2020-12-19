@@ -343,7 +343,7 @@ public class GradeTreeItem extends TreeItem {
         }
 
         if(hasValue){
-            if(core.getValue() == -1 && previousPage != -1){
+            if(!core.isFilled() && previousPage != -1){
                 if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
                 core.nextRealYToUse = previousRealY - core.getRealHeight();
             }
@@ -376,6 +376,12 @@ public class GradeTreeItem extends TreeItem {
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setValue(children.getCore().getTotal());
             children.setChildrenValuesToMax();
+        }
+    }
+    public void setChildrenAlwaysVisibleToFalse() {
+        for(int i = 0; i < getChildren().size(); i++){
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
+            children.getCore().setAlwaysVisible(false);
         }
     }
 
@@ -436,6 +442,8 @@ public class GradeTreeItem extends TreeItem {
 
         return k >= 2;
     }
+
+
 
     public enum FieldType{
         NAME,

@@ -10,19 +10,27 @@ public class GradeRating {
     public String name;
     public int index;
     public String parentPath;
+    public boolean alwaysVisible;
+    public int x;
+    public int y;
+    public int page;
 
-    public GradeRating(double total, String name, int index, String parentPath) {
+    public GradeRating(double total, String name, int index, String parentPath, boolean alwaysVisible, int x, int y, int page) {
         this.total = total;
         this.name = name;
         this.index = index;
         this.parentPath = parentPath;
+        this.alwaysVisible = alwaysVisible;
+        this.x = x;
+        this.y = y;
+        this.page = page;
     }
 
-    public GradeElement toGradeElement(){
-        return toGradeElement(-1, 0, 0, 0);
-    }
     public GradeElement toGradeElement(double value, int x, int y, int page){
-        return new GradeElement(x, y, page, false, value, total, index, parentPath, name);
+        return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
+    }
+    public GradeElement toGradeElement(double value){
+        return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
     }
 
     public boolean equals(GradeRating gradeRating){
