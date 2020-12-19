@@ -24,6 +24,8 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -32,13 +34,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.TextAlignment;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -57,7 +60,9 @@ public class TextTreeItem extends TreeItem{
 	private long creationDate;
 
 	// Graphics items
+	private HBox spacer = new HBox();
 	public HBox pane = new HBox();
+	public Pane namePane = new Pane();
 	public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png")+"", 0, 0);
 	public ScratchText name = new ScratchText();
 	public ContextMenu menu;
@@ -66,7 +71,7 @@ public class TextTreeItem extends TreeItem{
 	// Link
 	private TextElement core = null;
 	private ChangeListener<String> textChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-		setText(newValue); updateGraphic();
+		setText(newValue); updateGraphic(false);
 	};
 	private ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
 		setColor((Color) newValue);
@@ -82,7 +87,7 @@ public class TextTreeItem extends TreeItem{
 		this.creationDate = creationDate;
 
 		setup();
-		updateGraphic();
+		updateGraphic(false);
 	}
 	public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core) {
 		this.font.set(font);
@@ -110,7 +115,7 @@ public class TextTreeItem extends TreeItem{
 
 		onMouseCLick = (MouseEvent mouseEvent) -> {
 			if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-				addToDocument(false);
+				addToDocument(mouseEvent.isShiftDown());
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
 					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
@@ -121,6 +126,8 @@ public class TextTreeItem extends TreeItem{
 						MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
 					}
 				}
+				MainWindow.textTab.selectItem();
+				mouseEvent.consume();
 			}
 		};
 		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
@@ -130,14 +137,68 @@ public class TextTreeItem extends TreeItem{
 
 		name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
 
+		pane.setAlignment(Pos.CENTER_LEFT);
+		pane.setFocusTraversable(false);
+
+		MainWindow.textTab.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+			Platform.runLater(() -> {
+				if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
+			});
+		});
+
+		pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+		pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
+			if(newValue) pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 1), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+			else pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+		});
+
+		pane.setOnKeyPressed(e -> {
+			if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT){
+				e.consume();
+				if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else lastKeyPressTime = System.currentTimeMillis();
+				MainWindow.textTab.treeView.selectNextInSelection();
+			}else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+				e.consume();
+				if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else lastKeyPressTime = System.currentTimeMillis();
+				MainWindow.textTab.treeView.selectPreviousInSelection();
+			}else if(e.getCode() == KeyCode.ENTER){
+				e.consume();
+				addToDocument(e.isShiftDown());
+				// Update the sorting if is sort by utils
+				if(getType() == TextTreeSection.FAVORITE_TYPE){
+					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
+					}
+				}else if(getType() == TextTreeSection.LAST_TYPE){
+					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+						MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
+					}
+				}
+				MainWindow.textTab.selectItem();
+			}
+		});
+		pane.setOnKeyTyped((e) -> {
+			if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT ||e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+				e.consume();
+			}
+		});
+		pane.setOnKeyReleased((e) -> {
+			if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT ||e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+				e.consume();
+			}
+		});
+
 		updateIcon();
 	}
+	static long lastKeyPressTime = 0;
+	public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
+		int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
+		int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
+		int lineHeight = (int) name.getLayoutBounds().getHeight() / name.getText().split(Pattern.quote("\n")).length - negativePadding;
 
-	public void updateGraphic(){ // Re calcule le Text
-
-		int cellHeight = (Main.settings.textSmall.getValue() ? 14 : 18);
-
-		int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 45);
+		int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 38);
 		if(maxWidth < 0) return;
 
 		Font font = getListFont();
@@ -171,68 +232,56 @@ public class TextTreeItem extends TreeItem{
 		name.setText(wrappedText);
 		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
 
-		pane.setAlignment(Pos.CENTER_LEFT);
-		pane.setFocusTraversable(false);
+		linkImage.setFitWidth(lineHeight-3); linkImage.setFitHeight(lineHeight-3);
+		spacer.setPrefWidth(linkImage.getFitWidth() + 3 + rect.getWidth() + 3);
 
-		MainWindow.textTab.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-			Platform.runLater(() -> {
-				if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
-			});
-		});
+		HBox.setMargin(rect, new Insets(((lineHeight - rect.getHeight()) / 2.0), 3, 0, 3));
+		if(core != null){
+			HBox.setMargin(linkImage, new Insets(((lineHeight - linkImage.getFitHeight()) / 2.0), 0, 0, 0));
+		}
+		HBox.setMargin(namePane, new Insets(-negativePadding/2d, 0, -negativePadding/2d, 0));
 
-		pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue) pane.setStyle("-fx-background-color: #d6a600");
-			else pane.setStyle("");
-		});
-
-		pane.setOnKeyPressed(e -> {
-			if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT){
-				MainWindow.textTab.treeView.selectNextInSelection();
-				e.consume();
-			}else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
-				MainWindow.textTab.treeView.selectPreviousInSelection();
-				e.consume();
-			}else if(e.getCode() == KeyCode.ENTER){
-				addToDocument(e.isShiftDown());
-				e.consume();
-			}
-		});
-		pane.setOnKeyTyped(Event::consume);
-		pane.setOnKeyReleased(Event::consume);
+		if(updateParentHeight && pane.getParent() != null && pane.getParent() instanceof TreeCell){
+			((TreeCell<?>) pane.getParent()).setPrefHeight(cellHeight+4);
+		}
 
 	}
 	Rectangle rect = new Rectangle();
 	public void updateIcon(){ // Re définis les children de la pane
-		int cellHeight = (Main.settings.textSmall.getValue() ? 14 : 18);
+		int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
+		int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
 
-		pane.getChildren().clear();
-
-		HBox spacer = new HBox();
-		spacer.setPrefWidth(15 + (3 + 4 + 3));
-		spacer.setAlignment(Pos.TOP_RIGHT);
-		if(core != null) spacer.getChildren().add(linkImage);
-
-
-		rect.setWidth(4);
-		rect.setHeight(4);
+		rect.setWidth(4); rect.setHeight(4);
 		rect.setFill(StyleManager.invertColorWithTheme(Color.WHITE));
-		HBox.setMargin(rect, new Insets(((cellHeight - 4) / 2.0), 3, 0, 3));
-		spacer.getChildren().add(rect);
 
-		pane.getChildren().addAll(spacer, name);
+		spacer.getChildren().clear();
+		spacer.setAlignment(Pos.TOP_RIGHT);
+
+		if(core != null){
+			spacer.getChildren().add(linkImage);
+		}
+
+		namePane.getChildren().setAll(name);
+		name.setTextOrigin(VPos.TOP);
+
+		spacer.getChildren().add(rect);
+		pane.getChildren().setAll(spacer, namePane);
 
 	}
 	public void updateCell(TreeCell<String> cell){ // Réattribue une cell à la pane
-
 		if(cell == null) return;
-		if(name.getText().isEmpty()) updateGraphic();
+		if(name.getText().isEmpty()) updateGraphic(false);
 
 		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
 		rect.setFill(StyleManager.invertColorWithTheme(Color.WHITE));
 
+		int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
+		int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
+
+		cell.setPrefHeight(cellHeight+4);
 		cell.setGraphic(pane);
 		cell.setStyle(null);
-		cell.setStyle("-fx-padding: 0 -35;");
+		cell.setStyle("-fx-padding: 0 0 0 -38;"); // top - right - bottom - left
 		cell.setContextMenu(menu);
 		cell.setOnMouseClicked(onMouseCLick);
 

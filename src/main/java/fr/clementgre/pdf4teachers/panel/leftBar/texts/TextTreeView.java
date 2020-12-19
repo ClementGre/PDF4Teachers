@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -92,6 +93,13 @@ public class TextTreeView extends TreeView<String>{
                 setContextMenu(null);
                 setOnMouseClicked(null);
             }
+        });
+
+        Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> {
+            refresh();
+        });
+        Main.settings.textOnlyStart.valueProperty().addListener((observable, oldValue, newValue) -> {
+            refresh();
         });
     }
 
@@ -189,7 +197,7 @@ public class TextTreeView extends TreeView<String>{
                 int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) + 1;
 
-                if(toSelectIndex > lastIndex) selectFromSelectedIndex(0);
+                if(toSelectIndex > lastIndex) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
 
@@ -204,17 +212,23 @@ public class TextTreeView extends TreeView<String>{
             }else{
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) - 1;
 
-                if(toSelectIndex < 0) selectFromSelectedIndex(lastIndex);
+                if(toSelectIndex < 0) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
 
         }
     }
-
+    private void selectTextField(){
+        MainWindow.textTab.treeView.scrollTo(0);
+        getSelectionModel().select(null);
+        MainWindow.textTab.txtArea.requestFocus();
+    }
     private void selectFromSelectedIndex(int index){
         MainWindow.textTab.treeView.scrollTo(getSelectionModel().getSelectedIndices().get(index)-3);
-        int realIndex = getSelectionModel().getSelectedIndices().get(index);
-        getSelectionModel().select(realIndex);
+        Platform.runLater(() -> {
+            int realIndex = getSelectionModel().getSelectedIndices().get(index);
+            getSelectionModel().select(realIndex);
+        });
     }
 
 

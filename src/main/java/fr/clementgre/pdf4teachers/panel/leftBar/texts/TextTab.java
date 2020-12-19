@@ -206,7 +206,8 @@ public class TextTab extends Tab {
 		menu.getItems().add(deleteReturn);
 		txtArea.setContextMenu(menu);
 
-		txtArea.focusedProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
+		txtArea.disableProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
+		MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
 
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
@@ -266,13 +267,17 @@ public class TextTab extends Tab {
 				else MainWindow.leftBar.getSelectionModel().select(1);
 
 			}else if(e.getCode() == KeyCode.DOWN){
+				e.consume();
+				if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
 				pane.requestFocus();
 				treeView.selectNextInSelection();
-				e.consume();
 			}else if(e.getCode() == KeyCode.UP){
+				e.consume();
+				if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
 				pane.requestFocus();
 				treeView.selectPreviousInSelection();
-				e.consume();
 			}
 		});
 		colorPicker.setOnAction((ActionEvent e) -> {
