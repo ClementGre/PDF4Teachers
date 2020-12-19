@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
@@ -40,6 +41,25 @@ public class LanguagesUpdater {
         VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
         pane.getChildren().addAll(currentLanguage, loadingBar);
         loadingAlert.getDialogPane().setContent(pane);
+    }
+
+    public static void backgroundCheck(){
+        Platform.runLater(() -> {
+            new LanguagesUpdater().update((hasDownloadedLanguages) -> {
+                if(hasDownloadedLanguages){
+                    TR.updateTranslation();
+
+                    MainWindow.userData.save();
+                    MainWindow.hasToClose = true;
+                    if(MainWindow.mainScreen.closeFile(true)){
+                        Main.window.close();
+                        MainWindow.hasToClose = false;
+                        Platform.runLater(Main::startMainWindow);
+                    }
+                    MainWindow.hasToClose = false;
+                }
+            }, true, true);
+        });
     }
 
     private class Language{
@@ -216,21 +236,28 @@ public class LanguagesUpdater {
 
     private boolean downloadLanguage(Language language, int index, int size){
 
+        int subIndex = 0;
+        int subSize = language.getUrls().size();
         for(Map.Entry<String, String> urls : language.getUrls().entrySet()){
+            subIndex++;
+
+            int finalSubIndex = subIndex;
             Platform.runLater(() -> {
-                this.currentLanguage.setText(language.getDisplayName() + " v" + language.getVersion() + " - " + urls.getKey() + " (" + (index+1) + "/" + size + ")");
-                loadingBar.setProgress(index /((float)size-1));
+                this.currentLanguage.setText(language.getDisplayName() + " v" + language.getVersion() + " - " + urls.getKey() + " (" + (finalSubIndex +1) + "/" + subSize + ")");
+                loadingBar.setProgress(finalSubIndex /((float)subSize-1));
             });
             try{
                 BufferedInputStream in = new BufferedInputStream(new URL(urls.getValue()).openStream());
                 File target = new File(Main.dataFolder + "translations" + File.separator + urls.getKey());
 
                 File closed = null;
-                if(MainWindow.mainScreen.hasDocument(false)){
-                    if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(target.getAbsolutePath())){
-                        closed = MainWindow.mainScreen.document.getFile();
-                        Platform.runLater(() -> MainWindow.mainScreen.closeFile(false));
-                        Thread.sleep(500);
+                if(MainWindow.mainScreen != null){
+                    if(MainWindow.mainScreen.hasDocument(false)){
+                        if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(target.getAbsolutePath())){
+                            closed = MainWindow.mainScreen.document.getFile();
+                            Platform.runLater(() -> MainWindow.mainScreen.closeFile(false));
+                            Thread.sleep(500);
+                        }
                     }
                 }
                 Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);

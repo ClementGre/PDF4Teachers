@@ -216,9 +216,8 @@ public class LanguageWindow extends Stage{
     }
     public static void setup(){
         if(Main.settings.getSettingsVersion().equals("1.2.0") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
-            for (File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
+            for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
         }
-        LanguageWindow.copyFiles(true); // test : force always
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
         if(Main.settings.language.getValue().equals("Français France (Defaut)")){
             Main.settings.language.setValue("fr-fr");

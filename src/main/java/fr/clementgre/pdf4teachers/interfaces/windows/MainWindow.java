@@ -233,9 +233,8 @@ public class MainWindow extends Stage{
                             menuBar.about.setText(TR.tr("À Propos") + " " + TR.tr("(Nouvelle Version Disponible)"));
                         }else{
                             menuBar.about.setStyle("-fx-background-color: #d6a600;");
+                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
                         }
-
-                        Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
 
                         if(Main.settings.checkUpdates.getValue()){
                             new UpdateWindow();

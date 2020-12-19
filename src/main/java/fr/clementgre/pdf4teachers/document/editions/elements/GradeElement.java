@@ -326,7 +326,6 @@ public class GradeElement extends Element {
         text.setFont(GradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
         text.setFill(GradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
         text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
-        System.out.println("alwaysVisible for " + name + " is " + alwaysVisible + " visible=" + isShouldVisible());
         setVisible(isShouldVisible());
     }
     public GradeTreeItem getGradeTreeItem(){

@@ -165,6 +165,9 @@ public class TextTreeItem extends TreeItem{
 				MainWindow.textTab.treeView.selectPreviousInSelection();
 			}else if(e.getCode() == KeyCode.ENTER){
 				e.consume();
+				if(MainWindow.mainScreen.getSelected() instanceof TextElement){
+					MainWindow.mainScreen.getSelected().delete();
+				}
 				addToDocument(e.isShiftDown());
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){

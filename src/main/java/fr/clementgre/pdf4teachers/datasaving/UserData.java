@@ -132,7 +132,10 @@ public class UserData {
             try{
                 new File(Main.dataFolder).mkdirs();
                 File file = new File(Main.dataFolder + "userdata.yml");
-                if(file.createNewFile()) return; // File does not exist or can't create it
+                if(file.createNewFile()){
+                    LanguagesUpdater.backgroundCheck();
+                    return; // File does not exist or can't create it
+                }
 
                 Config config = new Config(file);
                 config.load();
@@ -226,22 +229,7 @@ public class UserData {
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
                 LanguageWindow.loadLanguagesConfig(languages);
 
-                Platform.runLater(() -> {
-                    new LanguagesUpdater().update((hasDownloadedLanguages) -> {
-                        if(hasDownloadedLanguages){
-                            TR.updateTranslation();
-
-                            MainWindow.userData.save();
-                            MainWindow.hasToClose = true;
-                            if(MainWindow.mainScreen.closeFile(true)){
-                                Main.window.close();
-                                MainWindow.hasToClose = false;
-                                Platform.runLater(Main::startMainWindow);
-                            }
-                            MainWindow.hasToClose = false;
-                        }
-                    }, true, true);
-                });
+                LanguagesUpdater.backgroundCheck();
 
             });
         }).start();
