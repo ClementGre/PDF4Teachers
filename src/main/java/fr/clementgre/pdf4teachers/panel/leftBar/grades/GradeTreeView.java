@@ -225,13 +225,13 @@ public class GradeTreeView extends TreeView<String> {
         int i = 0;
         for(GradeTreeItem item : items){
 
-            if(item.getCore().getValue() == -1 && item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
+            if(!item.getCore().isFilled() && item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
                 if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
                 item.getCore().setRealY(0);
             }
 
             // Drop down grades if item is visible
-            if(item.getCore().getValue() != -1){
+            if(item.getCore().isFilled()){
                 // Ramène tous les éléments au niveau de celui-ci
                 for(GradeTreeItem itemToSend : itemsToSend){
                     if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()) itemToSend.getCore().switchPage(item.getCore().getPageNumber());
@@ -243,8 +243,8 @@ public class GradeTreeView extends TreeView<String> {
             if(items.size() > i+1){
                 GradeTreeItem afterItem = items.get(i+1);
 
-                if(afterItem.getCore().getValue() == -1){ // si l'élément d'après n'a pas de valeur
-                    if((item.getCore().getValue() != -1 || item.hasSubGrade()) && !afterItemHaveToDropDown){
+                if(!afterItem.getCore().isFilled()){ // si l'élément d'après n'a pas de valeur
+                    if((item.getCore().isFilled() || item.hasSubGrade()) && !afterItemHaveToDropDown){
                         // Cas 1 : Ramène l'élément d'après à celui-ci
 
                         if(afterItem.getCore().getPageNumber() != item.getCore().getPageNumber()){

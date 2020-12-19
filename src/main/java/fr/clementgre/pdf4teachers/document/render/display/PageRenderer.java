@@ -88,7 +88,6 @@ public class PageRenderer extends Pane{
         setOnMousePressed(e -> {
 
             MainWindow.mainScreen.setSelected(null);
-            MainWindow.gradeTab.treeView.getSelectionModel().select(null);
             menu.hide();
             menu.getItems().clear();
             if(e.getButton() == MouseButton.SECONDARY){
@@ -316,7 +315,14 @@ public class PageRenderer extends Pane{
     // ELEMENTS
 
     public void clearElements(){
-        getChildren().clear();
+        ArrayList<Element> toRemove = new ArrayList<>();
+        for(Object children : getChildren()){
+            if(children instanceof Element) toRemove.add((Element) children);
+        }
+        for(Element element : toRemove){
+            getChildren().remove(element);
+            elements.remove(element);
+        }
         elements = new ArrayList<>();
     }
     public void clearTextElements() {

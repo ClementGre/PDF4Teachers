@@ -253,7 +253,7 @@ public class Edition {
         return new File(Main.dataFolder + "editions" + File.separator + namePath + "!E!" + nameName);
     }
     // get PDF file from YAML file
-    public static File getFileEdit(File editFile){
+    public static File getFileFromEdit(File editFile){
         String path = editFile.getName().replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
         path = StringUtils.removeAfterLastRegex(path, ".yml");
         return new File(path);
@@ -274,7 +274,7 @@ public class Edition {
 
         for(File editFile : new File(Main.dataFolder + "editions" + File.separator).listFiles()){
 
-            File file = getFileEdit(editFile);
+            File file = getFileFromEdit(editFile);
 
             if(file.getName().equals(originFile.getName()) && !file.equals(originFile)){
                 files.put(editFile, file);

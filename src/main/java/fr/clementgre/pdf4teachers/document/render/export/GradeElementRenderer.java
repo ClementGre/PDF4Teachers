@@ -28,7 +28,7 @@ public class GradeElementRenderer {
 
     public void renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
 
-        if(!element.isVisible()) return;
+        if(!element.isShouldVisibleOnExport()) return;
 
         // COLOR
         Color color = element.getColor();

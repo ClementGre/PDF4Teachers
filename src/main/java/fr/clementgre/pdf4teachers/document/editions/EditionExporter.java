@@ -1,8 +1,11 @@
 package fr.clementgre.pdf4teachers.document.editions;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeCopyGradeScaleDialog;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
@@ -12,6 +15,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +28,9 @@ public class EditionExporter {
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?"));
         else dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
+
+        CheckBox copyLocations = new CheckBox(TR.tr("Copier la position des notes"));
+        if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
 
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste"), ButtonBar.ButtonData.OTHER);
@@ -47,111 +54,137 @@ public class EditionExporter {
 
         if(file == null) return;
 
-        try{
-            Config loadedConfig = new Config(file);
-            loadedConfig.load();
-
-            new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>() {
-                @Override
-                public List<String> prepare(boolean recursive) {
-                    if(!recursive){
-                        return Collections.singletonList(MainWindow.mainScreen.document.getFile().getName());
-                    }else{
-                        return loadedConfig.base.keySet().stream().collect(Collectors.toList());
+        GradeCopyGradeScaleDialog gradeCopyGradeScale;
+        if(onlyGrades){
+            gradeCopyGradeScale = new GradeCopyGradeScaleDialog();
+            try{
+                Element[] elements = Edition.simpleLoad(file);
+                for(Element element : elements){
+                    if(element instanceof GradeElement){
+                        gradeCopyGradeScale.ratings.add(((GradeElement) element).toGradeRating());
                     }
                 }
-
-                @Override
-                @SuppressWarnings("unchecked")
-                public Map.Entry<Config, Integer> sortData(String fileName, boolean recursive) throws Exception{
-
-                    if(!recursive){
-                        File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
-
-                        if(loadedConfig.base.containsKey(fileName)){
-                            loadedConfig.base = (HashMap<String, Object>) loadedConfig.base.get(fileName);
-                        }
-
-                        if(onlyGrades){
-                            Config config = new Config(editFile);
-                            config.load();
-                            config.set("grades", loadedConfig.getList("grades"));
-                            loadedConfig.base = config.base;
-                        }
-
-                        loadedConfig.setFile(editFile);
-                        loadedConfig.setName(fileName);
-
-                        return Map.entry(loadedConfig, TwoStepListAction.CODE_OK);
-                    }else{
-                        File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
-
-                        if(pdfFile.exists()){
-                            if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
-                                MainWindow.mainScreen.document.edition.clearEdit(false);
-                            }
-
-                            File editFile = Edition.getEditFile(pdfFile);
-                            Config config = new Config(editFile);
-                            config.setName(fileName);
-
-                            HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
-                            if(onlyGrades){
-                                config.load();
-                                config.set("grades", Config.getList(data, "grades"));
-                            }else{
-                                config.base = data;
-                            }
-
-                            return Map.entry(config, TwoStepListAction.CODE_OK);
-                        }else{
-                            boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition") + " " + fileName,
-                                    TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
-                            if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
-                            else return Map.entry(new Config(), 2); // No match
-                        }
-                    }
-                }
-
-                @Override
-                public String getSortedDataName(Config config, boolean recursive) {
-                    return config.getName();
-                }
-
-                @Override
-                public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
-                    try{
-                        config.save();
-                    }catch(IOException e){
-                        e.printStackTrace();
-                        boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
-                        if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                        if(result) return TwoStepListAction.ProcessResult.STOP;
-                        else return TwoStepListAction.ProcessResult.SKIPPED;
-                    }
-                    if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
-                        MainWindow.mainScreen.document.loadEdition();
-                    }
-                    return TwoStepListAction.ProcessResult.OK;
-                }
-
-                @Override
-                public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+                int result = gradeCopyGradeScale.copyToFile(MainWindow.mainScreen.document.getFile(), false, copyLocations.isSelected());
+                if(result == 0){
                     Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
-                    endAlert.setHeaderText(TR.tr("Les éditions ont bien été importées"));
-                    String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("éditions ignorés car elles n'avaient pas de document correspondant") + ")";
-                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions importés") + noMatchesText);
-
+                    endAlert.setHeaderText(TR.tr("Le barème a bien été importé"));
                     endAlert.show();
                 }
-            });
+                MainWindow.mainScreen.document.updateEdition();
+                MainWindow.filesTab.refresh();
+            }catch(Exception e){
+                e.printStackTrace();
+                DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+            }
+        }else{
+            try{
+                Config loadedConfig = new Config(file);
+                loadedConfig.load();
 
-            MainWindow.filesTab.refresh();
+                new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>() {
+                    @Override
+                    public List<String> prepare(boolean recursive) {
+                        if(!recursive){
+                            return Collections.singletonList(MainWindow.mainScreen.document.getFile().getName());
+                        }else{
+                            return loadedConfig.base.keySet().stream().collect(Collectors.toList());
+                        }
+                    }
 
-        }catch(Exception e){
-            e.printStackTrace();
-            DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+                    @Override
+                    @SuppressWarnings("unchecked")
+                    public Map.Entry<Config, Integer> sortData(String fileName, boolean recursive) throws Exception{
+
+                        if(!recursive){
+                            File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
+
+                            if(loadedConfig.base.containsKey(fileName)){
+                                loadedConfig.base = (HashMap<String, Object>) loadedConfig.base.get(fileName);
+                            }
+
+                            if(onlyGrades){
+                                Config config = new Config(editFile);
+                                config.load();
+                                config.set("grades", loadedConfig.getList("grades"));
+                                loadedConfig.base = config.base;
+                            }
+
+                            loadedConfig.setFile(editFile);
+                            loadedConfig.setName(fileName);
+
+                            return Map.entry(loadedConfig, TwoStepListAction.CODE_OK);
+                        }else{
+                            File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
+
+                            if(pdfFile.exists()){
+                                if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
+                                    MainWindow.mainScreen.document.edition.clearEdit(false);
+                                }
+
+                                File editFile = Edition.getEditFile(pdfFile);
+                                Config config = new Config(editFile);
+                                config.setName(fileName);
+
+                                HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
+                                if(onlyGrades){
+                                    config.load();
+                                    config.set("grades", Config.getList(data, "grades"));
+                                }else{
+                                    config.base = data;
+                                }
+
+                                return Map.entry(config, TwoStepListAction.CODE_OK);
+                            }else{
+                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition") + " " + fileName,
+                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
+                                if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
+                                else return Map.entry(new Config(), 2); // No match
+                            }
+                        }
+                    }
+
+                    @Override
+                    public String getSortedDataName(Config config, boolean recursive) {
+                        return config.getName();
+                    }
+
+                    @Override
+                    public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
+                        try{
+                            config.save();
+                        }catch(IOException e){
+                            e.printStackTrace();
+                            boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
+                            if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                            if(result) return TwoStepListAction.ProcessResult.STOP;
+                            else return TwoStepListAction.ProcessResult.SKIPPED;
+                        }
+                        if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
+                            MainWindow.mainScreen.document.loadEdition();
+                        }
+                        return TwoStepListAction.ProcessResult.OK;
+                    }
+
+                    @Override
+                    public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+                        Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
+                        endAlert.setHeaderText(TR.tr("Les éditions ont bien été importées"));
+                        String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("éditions ignorés car elles n'avaient pas de document correspondant") + ")";
+                        endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions importés") + noMatchesText);
+
+                        endAlert.show();
+                    }
+                });
+
+                MainWindow.filesTab.refresh();
+
+            }catch(Exception e){
+                e.printStackTrace();
+                DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+            }
         }
+
+
     }
     public static void showExportDialog(final boolean onlyGrades){
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Exporter l'édition"));
@@ -218,9 +251,7 @@ public class EditionExporter {
                     for(Object grade : grades){
                         if(grade instanceof HashMap){
                             ((HashMap) grade).put("value", -1);
-                            ((HashMap) grade).put("page", 0);
-                            ((HashMap) grade).put("x", 0);
-                            ((HashMap) grade).put("y", 0);
+                            ((HashMap) grade).remove("alwaysVisible");
                         }
                     }
                     newBase.put("grades", grades);
@@ -279,7 +310,8 @@ public class EditionExporter {
                 Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
                 ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
                 endAlert.getButtonTypes().add(open);
-                endAlert.setHeaderText(TR.tr("Les éditions ont bien été exportées"));
+                if(onlyGrades) endAlert.setHeaderText(TR.tr("Le barème a bien été exporté"));
+                else endAlert.setHeaderText(TR.tr("Les éditions ont bien été exportées"));
 
                 String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'étaient pas dans le même dossier") + ")";
                 String noEditText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition") + ")";

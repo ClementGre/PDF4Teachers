@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -142,6 +143,7 @@ public class TextTab extends Tab {
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
 		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));
 		txtArea.setId("no-vertical-scroll-bar");
+		txtArea.setFocusTraversable(false);
 
 		PaneUtils.setHBoxPosition(deleteBtn, -1, 30, 2.5);
 		deleteBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -203,6 +205,10 @@ public class TextTab extends Tab {
 		});
 		menu.getItems().add(deleteReturn);
 		txtArea.setContextMenu(menu);
+
+		txtArea.disableProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
+		MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
+
 		txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
 			if(newValue.contains("\u0009")){ // TAB
@@ -227,6 +233,7 @@ public class TextTab extends Tab {
 				});
 			}
 
+			treeView.updateAutoComplete();
 
 			updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
 			if(!txtAreaScrollBarListenerIsSetup){
@@ -258,6 +265,19 @@ public class TextTab extends Tab {
 			}else if(e.getCode() == KeyCode.TAB){
 				if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
 				else MainWindow.leftBar.getSelectionModel().select(1);
+
+			}else if(e.getCode() == KeyCode.DOWN){
+				e.consume();
+				if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+				pane.requestFocus();
+				treeView.selectNextInSelection();
+			}else if(e.getCode() == KeyCode.UP){
+				e.consume();
+				if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
+				else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+				pane.requestFocus();
+				treeView.selectPreviousInSelection();
 			}
 		});
 		colorPicker.setOnAction((ActionEvent e) -> {
@@ -286,6 +306,7 @@ public class TextTab extends Tab {
                     true, txtArea.getText(), colorPicker.getValue(), getFont());
 
 			page.addElement(current, true);
+			current.centerOnCoordinatesY();
 			MainWindow.mainScreen.setSelected(current);
 			isNew = true;
 

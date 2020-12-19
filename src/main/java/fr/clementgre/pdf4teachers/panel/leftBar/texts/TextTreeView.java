@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -20,7 +21,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class TextTreeView extends TreeView<String>{
 
@@ -36,6 +39,7 @@ public class TextTreeView extends TreeView<String>{
         setShowRoot(false);
         setEditable(true);
         setRoot(treeViewRoot);
+        getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         treeViewRoot.getChildren().addAll(favoritesSection, lastsSection, onFileSection);
 
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
@@ -90,6 +94,13 @@ public class TextTreeView extends TreeView<String>{
                 setOnMouseClicked(null);
             }
         });
+
+        Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> {
+            refresh();
+        });
+        Main.settings.textOnlyStart.valueProperty().addListener((observable, oldValue, newValue) -> {
+            refresh();
+        });
     }
 
     public static ContextMenu getCategoryMenu(TextTreeSection section){
@@ -133,6 +144,93 @@ public class TextTreeView extends TreeView<String>{
         NodeMenuItem.setupMenu(menu);
         return menu;
     }
+
+    public void updateAutoComplete(){
+
+        getSelectionModel().clearSelection();
+        String matchText = MainWindow.textTab.txtArea.getText();
+
+        if(!MainWindow.textTab.txtArea.isDisabled() && !matchText.isBlank()){
+
+
+            int totalIndex = 1;
+            int i;
+            for(i = 0; i < favoritesSection.getChildren().size(); i++){
+                if(favoritesSection.getChildren().get(i) instanceof TextTreeItem){
+                    TextTreeItem item = (TextTreeItem) favoritesSection.getChildren().get(i);
+                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
+                    }
+                }
+            }
+            totalIndex += i + 1;
+
+            for(i = 0; i < lastsSection.getChildren().size(); i++){
+                if(lastsSection.getChildren().get(i) instanceof TextTreeItem){
+                    TextTreeItem item = (TextTreeItem) lastsSection.getChildren().get(i);
+                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
+                    }
+                }
+            }
+            totalIndex += i + 1;
+
+            for(i = 0; i < onFileSection.getChildren().size(); i++){
+                if(onFileSection.getChildren().get(i) instanceof TextTreeItem){
+                    TextTreeItem item = (TextTreeItem) onFileSection.getChildren().get(i);
+                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
+                    }
+                }
+            }
+
+        }
+        getSelectionModel().select(null);
+
+    }
+    public void selectNextInSelection(){
+        if(getSelectionModel().getSelectedIndices().size() != 0){
+
+            if(getSelectionModel().getSelectedItem() == null){
+                selectFromSelectedIndex(0);
+            }else{
+                int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
+                int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) + 1;
+
+                if(toSelectIndex > lastIndex) selectTextField();
+                else selectFromSelectedIndex(toSelectIndex);
+            }
+
+        }
+    }
+    public void selectPreviousInSelection(){
+        if(getSelectionModel().getSelectedIndices().size() != 0){
+            int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
+
+            if(getSelectionModel().getSelectedItem() == null){
+                selectFromSelectedIndex(lastIndex);
+            }else{
+                int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) - 1;
+
+                if(toSelectIndex < 0) selectTextField();
+                else selectFromSelectedIndex(toSelectIndex);
+            }
+
+        }
+    }
+    private void selectTextField(){
+        MainWindow.textTab.treeView.scrollTo(0);
+        getSelectionModel().select(null);
+        MainWindow.textTab.txtArea.requestFocus();
+    }
+    private void selectFromSelectedIndex(int index){
+        MainWindow.textTab.treeView.scrollTo(getSelectionModel().getSelectedIndices().get(index)-3);
+        Platform.runLater(() -> {
+            int realIndex = getSelectionModel().getSelectedIndices().get(index);
+            getSelectionModel().select(realIndex);
+        });
+    }
+
 
     public static ContextMenu getNewMenu(TextTreeItem element){
 

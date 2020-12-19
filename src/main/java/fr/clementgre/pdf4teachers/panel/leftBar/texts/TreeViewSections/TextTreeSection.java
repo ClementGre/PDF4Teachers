@@ -120,6 +120,7 @@ public abstract class TextTreeSection extends TreeItem {
     public void updateCell(TreeCell cell){
         cell.setOnMouseClicked(null);
 
+        cell.setPrefHeight(30);
         cell.setMaxHeight(30);
         cell.setStyle("-fx-padding: 6 6 6 2; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
         cell.setContextMenu(menu);
@@ -129,7 +130,7 @@ public abstract class TextTreeSection extends TreeItem {
 
     public void updateChildrenGraphics(){
         for(Object item : getChildren()){
-            if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic();
+            if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic(true);
         }
     }
 

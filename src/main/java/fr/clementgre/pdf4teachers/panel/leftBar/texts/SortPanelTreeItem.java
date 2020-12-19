@@ -14,6 +14,7 @@ public class SortPanelTreeItem extends TreeItem {
     }
 
     public void updateCell(TreeCell cell) {
+        cell.setPrefHeight(pane.getPrefHeight());
         cell.setContextMenu(null);
         cell.setOnMouseClicked(null);
         cell.setStyle("-fx-padding: 0 0 0 -40; -fx-margin: 0; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");

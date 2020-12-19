@@ -164,6 +164,9 @@ public abstract class Element extends Region {
 		layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
 	}
 
+	public void centerOnCoordinatesY(){
+		setRealY(getRealY() - getRealHeight()/2);
+	}
 	// READER AND WRITERS
 
 	public abstract LinkedHashMap<Object, Object> getYAMLData();

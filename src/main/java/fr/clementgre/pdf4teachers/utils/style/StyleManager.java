@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.utils.style;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -73,16 +74,38 @@ public class StyleManager {
             return "#cccccc";
         }
     }
-    public static Color convertColor(Color color){
+    public static Color invertColorWithTheme(Color color){
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             if(color.getBrightness() <= 0.4){
                 return Color.WHITE;
             }else return color;
         }else{
+            double targetBrightness = 0.8;
+
             if(color.getBrightness() >= 0.9){
                 return Color.BLACK;
             }else return color;
         }
     }
+    static int i = 0;
+    public static Color shiftColorWithTheme(Color color){
+
+        if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
+            return Color.color(
+                    StringUtils.clamp(0.6 + color.getRed()*0.4, 0, 1),
+                    StringUtils.clamp(0.6 + color.getGreen()*0.4, 0, 1),
+                    StringUtils.clamp(0.6 + color.getBlue()*0.4, 0, 1)
+            );
+        }else{
+            return Color.color(
+                    StringUtils.clamp(color.getRed()*0.4, 0, 1),
+                    StringUtils.clamp(color.getGreen()*0.4, 0, 1),
+                    StringUtils.clamp(color.getBlue()*0.4, 0, 1)
+            );
+        }
+    }
+
+
+
 
 }

@@ -86,6 +86,15 @@ public class Document {
         this.edition = new Edition(file, this);
         if(!documentSaver.isAlive()) documentSaver.start();
     }
+    public void updateEdition(){
+        MainWindow.mainScreen.setSelected(null);
+        for(PageRenderer page : pages){
+            page.clearElements();
+        }
+        MainWindow.textTab.treeView.onFileSection.updateElementsList();
+        MainWindow.gradeTab.treeView.clear();
+        this.edition.load();
+    }
     public void close(){
         pdfPagesRender.close();
         for(int i = 0 ; i < totalPages ; i++){

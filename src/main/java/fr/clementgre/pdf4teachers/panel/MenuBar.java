@@ -114,12 +114,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), "export",
 			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
 
-		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition/barème"), null, null,
+		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
 				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
 		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
-	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition"), "import",
+	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), "import",
 			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
 		MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
