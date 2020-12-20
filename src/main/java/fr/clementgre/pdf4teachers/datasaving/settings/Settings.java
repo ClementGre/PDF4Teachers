@@ -63,6 +63,10 @@ public class Settings {
     public StringSetting mainScreenSize = new StringSetting("1200;675;-1;-1;false", null, "mainScreenSize",
             "", "");
 
+    @SettingObject
+    public BooleanSetting allowAutoTips = new BooleanSetting(true, "info", "allowAutoTips",
+            TR.ct("Conseils automatiques"), TR.ct("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions qui sont faites. Cliquer sur OK empêchera un conseil de réapparaitre. Désactiver puis réactiver l'option réinitialise la liste des conseils lus."));
+
     public Settings(){
         loadSettings();
 

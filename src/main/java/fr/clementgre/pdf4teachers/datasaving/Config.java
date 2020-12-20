@@ -1,6 +1,8 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -18,11 +20,17 @@ public class Config {
     private File destFile;
     private String name;
     public Config(){
-        yaml = new Yaml(new SafeConstructor());
+        setupYAML();
     }
     public Config(File file) throws IOException{
         file.createNewFile();
         this.file = file;
+        setupYAML();
+    }
+
+    private void setupYAML(){
+        DumperOptions dumperOptions = new DumperOptions();
+        dumperOptions.setPrettyFlow(true);
         yaml = new Yaml(new SafeConstructor());
     }
 

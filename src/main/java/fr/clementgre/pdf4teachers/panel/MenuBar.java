@@ -189,9 +189,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			}
 		}
 		settings.getItems().addAll(
-				s.language.getMenuItem(), s.restoreLastSession.getMenuItem(), s.checkUpdates.getMenuItem(), s.sendStats.getMenuItem(), s.defaultZoom.getMenuItem(), s.zoomAnimations.getMenuItem(), s.darkTheme.getMenuItem(),
+				s.language.getMenuItem(), s.checkUpdates.getMenuItem(), s.sendStats.getMenuItem(),
+				new SeparatorMenuItem(), s.restoreLastSession.getMenuItem(), s.defaultZoom.getMenuItem(), s.zoomAnimations.getMenuItem(), s.darkTheme.getMenuItem(),
 				new SeparatorMenuItem(), s.autoSave.getMenuItem(), s.regularSave.getMenuItem(),
-				new SeparatorMenuItem(), s.textAutoRemove.getMenuItem(), s.textOnlyStart.getMenuItem(), s.textSmall.getMenuItem());
+				new SeparatorMenuItem(), s.textAutoRemove.getMenuItem(), s.textOnlyStart.getMenuItem(), s.textSmall.getMenuItem(),
+				new SeparatorMenuItem(), s.allowAutoTips.getMenuItem());
 
 		////////// HELP //////////
 

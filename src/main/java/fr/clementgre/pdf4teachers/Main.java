@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers;
 import java.io.*;
 import java.util.List;
 
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
@@ -70,6 +71,7 @@ public class Main extends Application {
 		// setups
 		LanguageWindow.setup();
 		StyleManager.setup();
+		AutoTipsManager.setup();
 
 		if(languageAsk()){
 			if(licenceAsk()){

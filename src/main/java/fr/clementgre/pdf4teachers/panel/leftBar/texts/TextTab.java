@@ -5,6 +5,8 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipTooltip;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -313,6 +315,8 @@ public class TextTab extends Tab {
 			txtArea.setText("");
 			TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
 			txtArea.requestFocus();
+
+			AutoTipsManager.showByAction("newtextelement");
 		});
 		deleteBtn.setOnAction(e -> {
 			MainWindow.mainScreen.getSelected().delete();

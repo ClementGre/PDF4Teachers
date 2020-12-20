@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -113,7 +114,12 @@ public class UserData {
     @UserDataObject(path = "convert.settings.convertVoidFile")
     public boolean settingsConvertVoidFiles = true;
 
+    // text elements (last)
     private TextElementsData textElementsData;
+
+    // auto tips
+    @UserDataObject(path = "AutoTipsValidated")
+    public List<Object> autoTipsValidated = new ArrayList<>();
 
     public UserData(){
 
@@ -134,6 +140,7 @@ public class UserData {
                 File file = new File(Main.dataFolder + "userdata.yml");
                 if(file.createNewFile()){
                     LanguagesUpdater.backgroundCheck();
+                    AutoTipsManager.load();
                     return; // File does not exist or can't create it
                 }
 
@@ -231,6 +238,8 @@ public class UserData {
 
                 LanguagesUpdater.backgroundCheck();
 
+                AutoTipsManager.load();
+
             });
         }).start();
     }
@@ -258,6 +267,7 @@ public class UserData {
         lockGradeScale = MainWindow.gradeTab.lockGradeScale.isSelected();
         sumByDecrement = MainWindow.gradeTab.sumByDecrement.isSelected();
 
+        autoTipsValidated = AutoTipsManager.getCompletedAutoTips().stream().map(item -> (Object) item).collect(Collectors.toList());
 
         try{
             new File(Main.dataFolder).mkdirs();
