@@ -18,13 +18,13 @@ import java.util.ArrayList;
 
 public class PageEditPane extends VBox {
 
-    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, "Monte cette page au dessus de la page précédente", -90);
-    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, "Descend cette page au dessous de la page suivante", 90);
-    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, "Tourne la page de 90° vers la gauche");
-    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, "Tourne la page de 90° vers la droite");
-    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, "Supprime cette page", 45);
-    Button newButton = getCustomButton(SVGPathIcons.PLUS, "Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page");
-    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, "Capturer la page sous forme d'image");
+    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("Monte cette page au dessus de la page précédente"), -90);
+    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("Descend cette page au dessous de la page suivante"), 90);
+    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.tr("Tourne la page de 90° vers la gauche"));
+    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("Tourne la page de 90° vers la droite"));
+    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Supprime cette page"), 45);
+    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page"));
+    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, TR.tr("Capturer la page sous forme d'image"));
 
     ContextMenu menu = new ContextMenu();
 
@@ -133,16 +133,16 @@ public class PageEditPane extends VBox {
         if(vanillaItem) return new MenuItem(title);
         else return new NodeMenuItem(new HBox(), title, false);
     }
-    private Button getCustomButton(String path, String nonTranslatedToolTip){
-        return getCustomButton(path, nonTranslatedToolTip, 0);
+    private Button getCustomButton(String path, String text){
+        return getCustomButton(path, text, 0);
     }
-    private Button getCustomButton(String path, String nonTranslatedToolTip, int rotate){
+    private Button getCustomButton(String path, String text, int rotate){
         Button button = new Button();
         button.setStyle("-fx-background-color: white;");
         PaneUtils.setHBoxPosition(button, 30, 30, 0);
         button.setCursor(Cursor.HAND);
         button.setGraphic(SVGPathIcons.generateImage(path, "#dc3e3e", 3, 30, 30, rotate));
-        button.setTooltip(PaneUtils.genToolTip(TR.tr(nonTranslatedToolTip)));
+        button.setTooltip(PaneUtils.genToolTip(text));
         return button;
     }
 

@@ -254,8 +254,16 @@ public class Edition {
     }
     // get PDF file from YAML file
     public static File getFileFromEdit(File editFile){
-        String path = editFile.getName().replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
+        String path = editFile.getName();
+        path = path.replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
         path = StringUtils.removeAfterLastRegex(path, ".yml");
+
+        if(!editFile.getName().contains("!P!") && Main.isWindows()){
+            return new File(File.separator + path);
+        }
+        if(!editFile.getName().startsWith("!E!") && !Main.isWindows()){
+            return new File(File.separator + path);
+        }
         return new File(path);
     }
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){

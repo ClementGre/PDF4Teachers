@@ -319,7 +319,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			int i = 0;
 			for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
 
-				MenuItem item = new MenuItem(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
+				MenuItem item = new MenuItem(files.getValue().getAbsolutePath());
+				if(files.getValue().getParentFile() != null){
+					item.setText(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
+				}
+
+
 				tools5SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
 					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));

@@ -1,459 +1,559 @@
-# PageRenderer
-# CallBack
-# PageStatus
-# LBFileTab
-Date d'Ajout=Added on
-Dossier=Folder
-Édition=Edit
-Nom=Name
-# FilesUtils
-# NodeMenuItem
+# EditionExporter
+Charger une autre édition=Load another edit
+Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?=
+Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?=
+Copier la position des notes=
+Oui, choisir un fichier=
+Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste=
+Fichier d'édition YAML=
+Importation terminée=
+Le barème a bien été importé=
+Une erreur est survenue=
+Aucun document ne correspond à l'édition=
+Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition.=
+Impossible d'enregistrer le fichier=
+Correspond au document=
+Les éditions ont bien été importées=
+éditions ignorés car elles n'avaient pas de document correspondant=
+éditions importés=
+Exporter l'édition=
+Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier.=
+Vous allez exporter le barème du document sous forme de fichier.=
+Exporter pour ce document=
+Exporter pour tous les documents\nde la liste et du même dossier=
+Exporter pour tous les documents\nde la liste et du même dossier\nen un seul fichier=
+Correspond à l'édition=
+Exportation terminée=Export finished
+Ouvrir le dossier=
+Le barème a bien été exporté=
+Les éditions ont bien été exportées=
+documents ignorés car ils n'étaient pas dans le même dossier=
+documents ignorés car ils n'avaient pas d'édition=
+documents ignorés car ils existaient déjà=
+éditions exportées=
 # TextTreeLasts
+Éléments Précédents=Previous Elements
 # ExportWindow
-Le document a bien été exporté !=Document successfully exported !
-Nom du document=Document's name
-Remplacer=Replace
-Aucun document n'a été exporté !=No document was exported !
-Dessins=Drawings
-Exportation...=Exporting...
-documents ont été exportés !=documents exported !
-Erreur d'exportation=Export error
 Exporter=Export
-Suffixe=Suffix
-Parcourir=Browse
-Exporter uniquement les documents édités=Only export edited documents
 documents)=documents)
-Créer les dossiers manquants=Create missing folders
-Notes=Grades
-par=to
-Decimal separator=.
-Une erreur d'exportation s'est produite avec le document :=Export error on this document :
-L'erreur survenue est la suivante :=Following error happened :
 Vous allez exporter un document pour former un nouveau fichier PDF.=You are about to export a document, this will create a new PDF file
 Chemin du dossier d'exportation=Path of export folder
-Continuer=Continue
-Les documents exportés se trouvent dans le dossier choisi=Documents can be found in selected folder
-Choisissez une action.=Choose an action
-Supprimer les éditions aprés exportation=delete editing after export
 Texte=Text
-Exportation terminée=Export finished
+Notes=Grades
+Dessins=Drawings
+Supprimer les éditions aprés exportation=delete editing after export
 Préfixe=Prefix
-Arreter tout=Stop all
-# GradeElementRenderer
-# ConvertedFile
+Suffixe=Suffix
+Remplacer=Replace
+par=to
+Exporter uniquement les documents édités=Only export edited documents
+Une erreur d'exportation s'est produite avec le document :=Export error on this document :
+Aucun document n'a été exporté !=No document was exported !
+Le document a bien été exporté !=Document successfully exported !
+documents ont été exportés !=documents exported !
+documents exportées=
 # Document
 Édition non sauvegardée=Edits not saved
-Oui=Yes
 L'édition du document n'est pas enregistrée.=Document edit is not saved.
-Annuler=Cancel
-Non=No
 Voulez-vous l'enregistrer ?=Do you want to save ?
-# TextElementRenderer
-# SortPanelTreeItem
-# SortManager
-# LBPaintTab
-Cette fonctionnalité est en cours de développement.=Tool under construction
-Elle vous permettra de mettre des images, des icones/emojis, des rectangles, des cercles etc.=It will allow images / icons / shapes insertion
-# ExportRenderer
-Créer le dossier, ou modifier la destination ?=Create folder or change destination ?
-Dossier introuvable=Folder missing
-Écraser=Overwrite
-Sauter=Skip
-Le dossier d'exportation n'existe pas=The export folder does not exist
-Le fichier de destination=Destination file
-Voulez-vous l'écraser ?=Do you want to want to overwrite ?
-Modifier la destination=Change destination
-Fichier déjà existant=File already existing
-Tout Arrêter=Stop all
-Renommer=Rename
-Créer le dossier=Create folder
-existe déjà=is already existing
-Toujours écraser=Always overwrite
-# CustomPrintStream
-# GradeTreeItem
-Clic sur le cadenas pour éditer le barème=Clic on the lock to edit the grade scale
-Créer une nouvelle sous-note de=Add new sub-grade
-# MainWindow
-Une nouvelle version est disponible !=New version available !
-PDF4Teachers - Aucun document=PDF4Teachers - No document
-# Sorter
+Oui=Yes
+Non=No
+Annuler=Cancel
+# LanguagesUpdater
+Téléchargement des derniers packs de languages=
+Actualisation de la base de donnée...=
+Téléchargement des derniers packs de languages...=
 # ConvertWindow
+Portrait=Portrait
+Paysage=Landscape
 PDF4Teachers - Convertir=PDF4Teachers - Convert
+Convertir des images en documents PDF=Convert pictures in PDF documents
+Convertir des images en pages de document PDF=Convert pictures in PDF document pages 
+Ce document=This document
+Convertir des dossiers en plusieurs documents=Convert folders in several documents
 Convertir des fichiers en un document=Convert files in one PDF document
 Convertir des fichiers en pages=Convert files in pages
-Ce document=This document
-Convertir plusieurs images en pages à ajouter au document=Convert several pictures in pages to add to the document
-Impossible de créer un fichier sans nom=Can't create unnamed file
-Convertir plusieurs dossiers en plusieurs documents PDF=Convert several folders in several documents
-Convertir les chemins de fichiers invalides (mauvais format ou non existant) en pages blanches=Convert invalid files paths (inexistant path or bad file format) in blank pages
-Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)=Convert several pictures in a PDF (each picture will become a page)
-Définition des images=Image resolution
-Image=Picture
-Format des pages=Pages format
-Convertir des dossiers en plusieurs documents=Convert folders in several documents
-Convertir des images en pages de document PDF=Convert pictures in PDF document pages 
-Dossier contenant les dossiers à convertir=Parent folder of the folders to be converted
-Chaque dossier sera converti en un document, les images contenues dans le dossier représentent les pages=Each folder will be converted in a PDF, one page per picture in the folder
-Il sera toujours possible de déplacer les pages après.=Pages may be moved later in the file
-Paysage=Landscape
-Veuillez entrer le nom du document dans le champ prévus.=Please provide the document name in the appropriate field
-PDF4Teachers génère vos documents...=PDF4Teachers is generating your documents
-Erreur de conversion=Conversion error
-Convertir=Convert
-L'ordre des pages est pris en fonction de l'ordre alphabétique.=Pages are created in alphabetical order
-Conversion...=Converting...
-Portrait=Portrait
-Une erreur de conversion est survenue=A conversion error occurred
-Sélectionner=select
-Fichiers à convertir=Files to convert
-Convertir des images en documents PDF=Convert pictures in PDF documents
 Convertir aussi les images du dossier source en documents (un document par image)=Also convert pictures located in the source folder (one PDF per picture)
+Convertir les chemins de fichiers invalides (mauvais format ou non existant) en pages blanches=Convert invalid files paths (inexistant path or bad file format) in blank pages
+Convertir plusieurs dossiers en plusieurs documents PDF=Convert several folders in several documents
+Chaque dossier sera converti en un document, les images contenues dans le dossier représentent les pages=Each folder will be converted in a PDF, one page per picture in the folder
+L'ordre des pages est pris en fonction de l'ordre alphabétique.=Pages are created in alphabetical order
+Il sera toujours possible de déplacer les pages après.=Pages may be moved later in the file
+Convertir plusieurs images en pages à ajouter au document=Convert several pictures in pages to add to the document
+Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)=Convert several pictures in a PDF (each picture will become a page)
+Dossier contenant les dossiers à convertir=Parent folder of the folders to be converted
+Parcourir=Browse
+Sélectionner un dossier=Select a folder
+Fichiers à convertir=Files to convert
+Sélectionner=select
+Sélectionner un ou plusieurs fichier=Select one or more files
+Image=Picture
+Nom du document=Document's name
+Dossier d'exportation=Export folder
+Définition des images=Image resolution
+Format des pages=Pages format
+Paramètres=Settings
+Convertir=Convert
 Paramètres incorrects=Bad settings
+Impossible de créer un fichier sans nom=Can't create unnamed file
+Veuillez entrer le nom du document dans le champ prévus.=Please provide the document name in the appropriate field
 Impossible de générer des images/pages de 0 pixels=Can't generate pictures/pages of 0 pixel resolution
 Veuillez changer la définition des images ou le format des pages.=Please change pictures resolution of pages format
-# PlatformTools
+Conversion...=Converting...
+PDF4Teachers génère vos documents...=PDF4Teachers is generating your documents
+Erreur de conversion=Conversion error
+Une erreur de conversion est survenue=A conversion error occurred
+L'erreur survenue est la suivante :=Following error happened :
+# FileTab
+Nom=Name
+Dossier=Folder
+Édition=Edit
+Date d'Ajout=Added on
+Ouvrir un ou plusieurs fichiers=Open file(s)
+Ouvrir un dossier=Open folder
 # Settings
-# FontUtils
+Langage (Français France)=Language (English US)
+Définit la langue de l'interface=Sets the interface language
+Toujours restaurer la session précédente=Always restore previous session
+Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application.=Reopens previously opened files at launch
+Alerter quand une mise à jour est disponible=Notify when an update is available
+Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur=Shows a pop-up when launching PDF4Teachers if a new version is available. If not activated, PDF4Teachers will still check, and if an update is available, About menu will be highlighted
+Envoyer des statistiques d'utilisation anonymes=
+Partage le temps total passé sur l'application et le nombre de lancements de l'application. Même avec cette option désactivée, l'application enverra des requêtes de statistiques (sans passer de valeurs).=
+Zoom lors de l'ouverture d'un document=Zoom level when opening a document
+Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad=Sets the default zoom when opening a document. Zoom is also controled with ctrl + scroll wheel or pinch on trackpad
+Animations de zoom ou défilement=Smoothing effects on zoom an scrolling
+Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad=Enables smoother zooms and scrollings. Should be deactivated when computer is slow at zooming. Should be deactivated when using a trackpad
+Thème sombre=Dark Theme
+Change les couleurs de l'interface vers un thème plus sombre.=Switches window colors to a darker theme
+Sauvegarder automatiquement=Autosave on close
+Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application.=Saves automatically document edits when closing document or application
+Sauvegarder régulièrement=Periodical autosave
+Sauvegarde l'édition du document automatiquement toutes les x minutes.=Autosaves edits every x minutes
+Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris=Remove element from previous elements list\nwhen element added to favorites
+Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris.=Autoremoves an element from the Previous Elements list when it is added to Favorites Elements list
+N'afficher que le début des éléments textuels=Only display the beginning of text elements
+Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément.=In the text elements lists, displays only the first 2 lines of the element
+Réduire la taille des éléments dans les listes=Smaller display size in element lists
+Dans les liste des éléments textuels, affiche les éléments en plus petit.=In text elements lists, displays elements with a smaller font
+Conseils automatiques=
+Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions qui sont faites. Cliquer sur OK empêchera un conseil de réapparaitre. Désactiver puis réactiver l'option réinitialise la liste des conseils lus.=
 # ConvertDocument
-Le document a bien été créé !=Document creation successful !
-Les documents ont été ouverts dans le panneau latéral=Documents opened in left panel
-documents ont été créées !=documents created !
+Fichier déjà existant=File already existing
+Le fichier de destination=Destination file
+existe déjà=is already existing
+Voulez-vous l'écraser ?=Do you want to want to overwrite ?
+Écraser=Overwrite
+Toujours écraser=Always overwrite
+Renommer=Rename
+Sauter=Skip
+Tout Arrêter=Stop all
 Conversion terminée=Conversion done
-Le document a été ouvert dans le panneau latéral=Document opened in left panel
 Aucun document n'a été converti !=No document converted !
+Le document a bien été créé !=Document creation successful !
+documents ont été créées !=documents created !
+Les documents ont été ouverts dans le panneau latéral=Documents opened in left panel
+Le document a été ouvert dans le panneau latéral=Document opened in left panel
 # PDFPagesEditor
 Vous allez supprimer la page=This will delete the page
-Les éléments de cette page seront supprimés et les notes seront réinitialisées=Elements of this page will be deleted and grades reset
 du document=of document
-# ZoomOperator
+Les éléments de cette page seront supprimés et les notes seront réinitialisées=Elements of this page will be deleted and grades reset
+Fichier PDF=PDF file
+Sélectionner un fichier=
+Définition d'affichage du document=
+Capture de pages sous forme d'image=
+Choisissez une définition (Le nombre de pixels est basé sur un format A4, la définition varie en fonction de la hauteur de la page)=
+Fichier PNG=
+Enregistrement terminée=
+Les captures ont bien été enregistrées=
+images ignorées car elles existaient déjà=
 # Edition
 Impossible de copier le fichier=Cannot copy file
-Total=Total
 vers=to
-Ctrl+Alt+C pour accéder aux logs=Ctrl+Alt+C to view logs
-Êtes vous sûr de vouloir supprimer l'édition de ce document ?=Do you really want to delete this document editing ?
 Confirmation=Confirmation
+Êtes vous sûr de vouloir supprimer l'édition de ce document ?=Do you really want to delete this document editing ?
 Cette action est irréversible.=This action can't be canceled
-# ReturnCallBack
-# SortEvent
 # LogWindow
 PDF4Teachers - Console=PDF4Teachers - Console
-# ExportFile
-# FooterBar
-Aucun fichier ouvert=No opened file
-Mode Texte=Text Mode
-Zoom=Zoom
-Mode Dessin=Drawings mode
-Mode Fichiers=File mode
-Mode Notes=Grades Mode
 # AboutWindow
-Développeur :=Developer :
-Impossible de récupérer la dernière version=Cannot get the last version
-Concepteur :=Designer :
-Une nouvelle avant-première est disponible !=A new pre release version is available
 PDF4Teachers - À Propos=PDF4Teachers - About
 Version=Version
-Projet GitHub :=GitHub project :
+Une nouvelle version est disponible !=New version available !
+Une nouvelle avant-première est disponible !=A new pre release version is available
+Impossible de récupérer la dernière version=Cannot get the last version
 Vous exécutez la dernière version !=You are using the up to date version
+Développeur :=Developer :
+Concepteur :=Designer :
 Traducteur : <Votre nom>=Translator : Vincent Grennerat
+Projet GitHub :=GitHub project :
+Faire un don : =
 Dépendances :=Dependencies :
-# LanguageWindow
-Télécharger les fichier de traduction=Download translation files
-Enregistrer les fichiers déjà traduits en Anglais=Save files already translated in English
-PDF4Teachers - Langage=PDF4Teachers - Language
-Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue.\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation=Download a template translation file in order to translate the application from its original language (French).\nYou will have to create :\n- A .txt file for PDF4Teachers interface translations\n- A .odt file for documentation translation
-Valider=Ok
-Créer une nouvelle traduction=Create new translation
-Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=These files must then be copied to <AppData>/Roaming/PDF4Teachers/translations/ (Win10) or in\n<User home folder>/.PDF4Teachers/translations/ (OSX and Linux) in order to make translation available in language listing.\nYou should also add an icon flag in .png format. All files must have the same name (except extension).\nYou may also send the files on GitHub so this new language can be added to releases.
-Choisissez votre langage=Select your language
-Enregistrer les fichiers=Save files
+Licence=
+Vous avez passé=
+heures sur PDF4Teachers,\net avez ouvert l'application=
+fois.=
 # MainScreen
 Aucun document ouvert=No opened document
 Impossible de charger ce document=Document loading failed
-Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :=Delete edit or repair it by modifying the edit (YAML) file in :
-Aucun document n'est ouvert !=No opened document!
-Erreur=Error
-Cette action est censée s'éxécuter sur un document ouvert=This action is supposed to be done on an opened document
-et que l'utilisateur a les droits de lecture sur ce fichier.=and user has read access to file
 Vérifiez que le fichier n'est pas corrompu=Please check file is not corrupted
-zoom=zoom
+et que l'utilisateur a les droits de lecture sur ce fichier.=and user has read access to file
 Impossible de charger l'édition du document=Cannot load edits of the document
+Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :=Delete edit or repair it by modifying the edit (YAML) file in :
 (Non sauvegardé)=(unsaved)
-# TextTreeView
-Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.=Use rate of each element is recorded. This will reset this recording, and consequently reset the sorting by use rate
-Supprimer les donnés d'utilisation=Delete elements use stats
-Ajouter aux favoris=Add to favorites
-Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste.=Adds this element to the edit, and links the edit element with the list element. Further modification of the element in the document edit will affect the element of the list
-Dé-lier l'élément=Unlink element
-Supprimer tous les éléments textuels=Delete all text elements
-Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document.=Removes all elements from list. Does not affect the elements inserted on the document
-Éléments Précédents=Previous Elements
-Éléments sur ce document=Current Document Elements
-L'élément de la liste ne sera plus synchronisé avec l'élément du document=This list element will not be synchronized with the document element anymore
-Ajouter et lier=Add and link
-Éléments Favoris=Favorite Elements
-Supprime tous les éléments textuels ajoutés au document, cela va donc supprimer une partie de l'édition.=Delete all text elments inserted on the document : this will remove a part of the edits
-Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité=Removes element from list. In the Current Document Elements list, this will also remove the element in the document edit
+zoom=zoom
+Erreur=Error
+Aucun document n'est ouvert !=No opened document!
+Cette action est censée s'éxécuter sur un document ouvert=This action is supposed to be done on an opened document
 # PDFPagesRender
-Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement.=Some special chars (unbreakable space, tabs, etc...) may not display properly in exported file
 Erreur de rendu=Render error
 Des erreurs sont apparues lors du rendu du document PDF.=Errors happened while rendering PDF
-# TextListItem
-# UserData
-# LBTextTab
-Nouveau=New
-Ajout=Add
-Couleur=Color
-Commencez par $ pour écrire du LaTeX=Start LaTeX expressions by $
-Position=Position
-Utilisation=Use
-Taille=Size
-Supprimer les retours à la ligne inutiles=Delete useless returns
-Police=Font
-Trier=Sort
-# Macro
-# Config
-# Element
-# MenuBar
-Demander de l'aide ou signaler un Bug sur GitHub=Ask for help or report a bug on GitHub
-Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad=Enables smoother zooms and scrollings. Should be deactivated when computer is slow at zooming. Should be deactivated when using a trackpad
-Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?=Are you sure you want to replace current edit by this one ?
-Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers=Deletes all edits, on all opened files listed in the files panel
-Fichier=File
-Éditions des documents du même nom=Edits of documents with same name
-Supression terminée=Deleted done
-Permet de convertir des images en fichiers PDF=Converts image files in PDF files
-Tout Arreter=Stop all
-Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés=Creates a new PDF file, with all edits included
-Vide la liste des fichiers=Empty the file list
-Le fichier=File
-Sélectionner un dossier=Select a folder
-Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément.=In the text elements lists, displays only the first 2 lines of the element
-Supprimer les éditions=Delete edits
-Charger une autre édition=Load another edit
-Fichier introuvable=File not found
-Vos éditions ont bien été supprimés.=Edits were successfully deleted
-Change les couleurs de l'interface vers un thème plus sombre.=Switches window colors to a darker theme
-Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier=Yes, repeat this action for all files from the\nlist and from the same folder
-Ferme la vue du document courant=Closes current document view
-n'a pas d'édition.=does not have any edit
-Alerter quand une mise à jour est disponible=Notify when an update is available
-dans=in
-Réduire la taille des éléments dans les listes=Smaller display size in element lists
-Sauvegarder l'édition=Save edits
-Langage (Français France)=Language (English US)
-Supprime les éléments d'édition du document courant=Deletes all edits on the current document
-Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=Adds one or several PDF files to the files panel
-Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié=Saves the edits of the current document. This will NOT modify the source PDF file
-Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris=Remove element from previous elements list\nwhen element added to favorites
-Fichier PDF=PDF file
-Animations de zoom ou défilement=Smoothing effects on zoom an scrolling
-Définit la langue de l'interface=Sets the interface language
-Sauvegarde l'édition du document automatiquement toutes les x minutes.=Autosaves edits every x minutes
-Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction=Moves the edits of this document to another document with the same name. This is useful if a file has been moved in the filesystem : in this case, PDF4Teachers would not recover the edits informations, unless using this functionality
-Zoom par défaut lors de l'ouverture d'un document=Default zoom when opening a document
-Nous contacter sur Twitter=Contact us on Twitter
-Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris.=Autoremoves an element from the Previous Elements list when it is added to Favorites Elements list
-Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application.=Reopens previously opened files at launch
-Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur=Shows a pop-up when launching PDF4Teachers if a new version is available. If not activated, PDF4Teachers will still check, and if an update is available, About menu will be highlighted
-Tout exporter=Export All
-Préférences=Settings
-Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers=Add all PDF files of a folder to the files panel
-Aide=Help
-Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?=Are you sure you want to delete all edits of all the files listed in the panel ?
-Sélectionner un ou plusieurs fichier=Select one or more files
-À propos=About
-Toujours restaurer la session précédente=Always restore previous session
-Demander de l'aide ou signaler un Bug=Ask for help or report a bug
-Zoom par défaut=Default zoom
-Ouvrir un ou plusieurs fichiers=Open file(s)
-N'afficher que le début des éléments textuels=Only display the beginning of text elements
-Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition=Creates new PDF files from each file opened in the file panel, with all edits included
-Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application.=Saves automatically document edits when closing document or application
-Aucune édition trouvée=No edit found
-Sauvegarder automatiquement=Autosave on close
-Dans les liste des éléments textuels, affiche les éléments en plus petit.=In text elements lists, displays elements with a smaller font
-Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad=Sets the default zoom when opening a document. Zoom is also controled with ctrl + scroll wheel or pinch on trackpad
-Définir le nombre de minutes entre deux sauvegardes automatiques.=Define minutes interval between autosaves
-Exporter (Regénérer le PDF)=Export (Regenerate PDF)
-Sauvegarde régulière=Periodic save
-Charger le document d'aide=Load Help documentation
-Thème sombre=Dark Theme
-Sauvegarder régulièrement=Periodical autosave
-Vous avez supprimé=You have deleted
-Choisir un pourcentage :=Select ratio
-Ouvrir un dossier=Open folder
-Activer=Activate
-Supprimer les éditions des fichiers ouverts=Delete edits on all opened files
-Zoom lors de l'ouverture d'un document=Zoom level when opening a document
-Supprimer l'ensemble des\néditions enregistrées=Delete all\nsaved edits
-Fermer le document=Close document
-# ListsManager
-Nouvelle liste=New list
-La liste pourra être chargée via le bouton de liste=Lists are loaded with the import button
-Liste sauvegardée=Saved list
-Liste supprimée=List deleted
-- Supprimer supprimera la liste de la base de donnée=Delete will remove the list from the database
-Sauvegarder les éléments favoris en tant qu'une nouvelle liste=Save favorite elements as a new list
-La liste=List
-Liste déjà existante=List already existing
-a bien été supprimé.=was deleted successfully
-- Vider et charger remplacera la liste des éléments favoris par celle ci=- Flush and load will replace the current Favorites List with this one
-Aucune liste sauvegardée=No saved list
-Afficher les listes d'éléments enregistrés=Display saved lists of elements
-Actions de listes=Actions for lists
-Une liste du même nom existe déjà.=A list with the same name already exists
-Enregistrer les éléments favoris=Save favorite elements
-Ces actions sont irréversibles.=These actions cannot be undone
-Vous allez enregistrer les éléments favoris dans une nouvelle liste.=Favorite elements will be saved in a new list
-Choisissez une action a effectuer avec la liste d'éléments.=Choose an action for this elements list
-La liste a bien été sauvegardée !=List saved successfully !
-- Charger ajoutera cette liste d'éléments à la liste des éléments favoris=- Load will add the elements from this list to the current Favorites List
-Donner un nom à votre liste=Name for the list
-Charger=Load
-Vider et charger=Flush and load
-# Builders
-# UpdateWindow
-Une nouvelle avant-première de PDF4Teachers est disponible !=A new PDF4Teachers pre release is available !
-Une nouvelle version de PDF4Teachers est disponible !=A new version of PDF4Teachers is available !
-et la version=and version
-Description :=Description :
-Voir sur GitHub=Check out on GitHub
-Vous utilisez la version=You are using version
-est disponible.=is available
-Téléchargement direct=Direct download
-PDF4Teachers - Nouvelle Version=PDF4Teachers - New version
-Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=Pre releases are for users willing to contribute to the project, by testing\nPDF4Teachers versions before their release.
-et l'avant-première=and pre release
-# FileDrop
+Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement.=Some special chars (unbreakable space, tabs, etc...) may not display properly in exported file
+# GraphicElement
+Supprimer=Delete
+Supprime cet élément. Il sera donc retiré de l'édition.=Delete this element. It will be removed from edit
+Dupliquer=Copy
+Crée un second élément identique à celui-ci.=Creates a new element, identical to this one
 # GradeCopyGradeScaleDialog
-Vous serez avertis si une note va être écrasée.=You will be warned if a grade should be overwritten
-Barème déjà présent=Grade scale already exists
 Copier le barème sur d'autres éditions=Copy grade scale on other documents edits
-contient déjà un barème=already includes a grade scale
-PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.=PDF4Teachers will try to include old grade scale into new one.
+Cette action va copier le barème entré dans cette édition sur d'autres éditions.=This will copy the grade scale of this document in other documents edits
 Copier sur les documents\nouverts du même dossier.=Copy on opened docs\nof same folder
+Copier sur tous les\ndocuments ouverts=Copy on all\nopened documents
 Barème copiés=grade scale copied
 Votre barème a bien été copié.=Grade scale copy successful
-Aucune note du nouveau barème ne correspond à :=No grade from new grade scale matches to :
-Copier sur tous les\ndocuments ouverts=Copy on all\nopened documents
-Cette action va copier le barème entré dans cette édition sur d'autres éditions.=This will copy the grade scale of this document in other documents edits
 éditions affectées=Edits affected
-Toujours continuer=Always continue
-Tout arrêter=Stop all
+Barème déjà présent=Grade scale already exists
 L'édition du fichier=The edit of the document
-Dans le document=in document
-Écraser les notes non correspondantes=Overwrite not matching grades
+contient déjà un barème=already includes a grade scale
+PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.=PDF4Teachers will try to include old grade scale into new one.
+Vous serez avertis si une note va être écrasée.=You will be warned if a grade should be overwritten
+Toujours continuer=Always continue
 Tout annuler=Cancel all
+Écraser les notes non correspondantes=Overwrite not matching grades
+Aucune note du nouveau barème ne correspond à :=No grade from new grade scale matches to :
+Dans le document=in document
 Arrêter=Stop
-# TextElement
-Ajouter aux éléments Favoris=Add to favorites elements
-Supprime cet élément. Il sera donc retiré de l'édition.=Delete this element. It will be removed from edit
-Commande/Symbole~inconnu~:=unknown~command/symbol~:
-Dupliquer=Copy
-Ajouter aux éléments précédents=Add to previous elements
-Ajoute cet élément à la liste des éléments favoris.=Add this element to the favorites elements list
-Supprimer=Delete
-Crée un second élément identique à celui-ci.=Creates a new element, identical to this one
-Ajoute cet élément à la liste des éléments précédents.=Add this element to previous elements list
-Erreur~:=Error~:
-Impossible~de~lire~la~formule=Error~while~parsing~formula
-# NodeRadioMenuItem
+Tout arrêter=Stop all
 # TextTreeItem
-# StringUtils
-# Style
-# GradeElement
-Nouvelle note=New grade
-Place toutes les sous-notes à leur valeur maximale=sets all sub-grades to their maximum value
-Supprime cet élément du barème et de l'édition=Deletes this element from the grade scale and from edits
-Supprimer du barème=Delete from grading scale
-Attribuer tous les points=Set maximum grade
-Réinitialise la note et toutes ses sous-notes=Resets the grade and all its sub-grades
-Donne la valeur 0 à toutes les sous-notes=Set to 0 all sub-grades
-Bonus=Bonus
-Mettre 0 à toutes les sous-notes=Set to 0 all grades
-Réinitialiser=Reset
-# ScratchText
+Utilisation=Use
 # GradeSettingsWindow
-Afficher le nom de la note=Display grade name
-Configuration des polices pour chaque catégorie de note=Set fonts for each kind of grade
-Niveau=Level
-Ces paramètres sonts indépendants de l'édition du document.=These settings are not related to comment edits
 PDF4Teachers - Polices et Couleurs des Notes=PDF4Teachers - Fonts and colors of grades
-# GradeRating
+Configuration des polices pour chaque catégorie de note=Set fonts for each kind of grade
+Ces paramètres sonts indépendants de l'édition du document.=These settings are not related to comment edits
+Afficher le nom de la note=Display grade name
+Cacher la note=
+Niveau=Level
 # ConvertRenderer
 Adapter à l'image=Fit to picture
 # GradeExportRenderer
+Erreur d'exportation=Export error
+Une erreur s'est produite lors de la génération du document=An error occurred while generating document
+Impossible d'exporter.=Impossible to export
+Choisissez une action.=Choose an action
+Arreter tout=Stop all
+Continuer=Continue
 Parties=Parts
 Barème=Grade scale
 Moyenne=Average
 Impossible de lire les notes=Impossible to read grades
 Une erreur d'exportation s'est produite lors de la lecture des notes du document :=An export error happened while reading grades of document :
-Une erreur s'est produite lors de la génération du document=An error occurred while generating document
-Impossible d'exporter.=Impossible to export
 Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer=This is the main document in this export, export must stop
-OK=OK
-# FileListItem
-Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.=Removes all files from list. Files will NOT be removed from filesystem
-Vider la liste=Empty list
-Éléments=Elements
-Supprimer le fichier=Delete file
-Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.=Remove file from list. It will NOT be deleted on file system.
-et son édition ?=and its edits ?
-Figures=Figures
-Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés.=Creates a new PDF file from this one, with added elements
-Supprime le fichier PDF sur l'ordinateur.=Delete PDF file from filesystem
-Impossible de récupérer les informations=Impossible to get content
-Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.=Opens file to edit in PDF4Teachers. Can also be opened with a double clic.
-Êtes vous sûr de vouloir supprimer le document=Are you sure you want to delete the document
-Non édité=Not edited
-Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant.=Resets document editing : removes all previously added elements
-Supprimer l'édition=Delete edit
-Commentaires=Comments
-Retirer=Remove
-Ouvrir=Open
-Barèmes=Grade scales
 # PageEditPane
-Ajouter des pages converties au dessus=Add converted pages above
+Monte cette page au dessus de la page précédente=
+Descend cette page au dessous de la page suivante=
+Tourne la page de 90° vers la gauche=
+Tourne la page de 90° vers la droite=
+Supprime cette page=
+Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page=
+Capturer la page sous forme d'image=
 Ajouter une page blanche au dessus=Add a white page above
-Ajouter des pages converties=Add converted pages
+Ajouter des pages converties au dessus=Add converted pages above
+Ajouter les pages d'un fichier PDF au dessus=
 Ajouter une page blanche=Add a white page
+Ajouter des pages converties=Add converted pages
+Ajouter les pages d'un fichier PDF=
+Capturer toute la page=
+Sélectionner une zone=
+Capturer toute les pages du document=
 # GradeExportWindow
 Tout exporter ensemble=Export all together
-Exporter uniquement les notes des documents avec toutes les notes remplies=Only export documents with all grades filled in
 Tout exporter séparément=Export all separately
-Ajouter des lignes pour les commentaires (Éléments textuels).=Add rows for comments (text elements)
-Niveaux de note exportés :=grade hierarchical levels to export :
-Exporter les notes des fichiers ouverts dans un tableau CSV=Export grades of opened files in a csv spreadsheet
-Paramètres=Settings
-Dossier d'exportation=Export folder
-Exporter uniquement les notes des documents avec le même barème=Only export documents with same grade scale
-Ajouter une ligne pour le barème=Add a row for grade scale
-PDF4Teachers - Exporter les notes=PDF4Teachers - Export grades
-Exporter uniquement les notes des documents du même dossier=Only export documents from same folder
-Ajouter une ligne pour la moyenne des notes=Add a row for grades average
-Vous pouvez retrouver le fichier CSV dans le dossier choisi.=CSV file can be found in selected folder
-Nom de l'élève=Learner name
-Nom de l'élève (Basé sur le nom du document)=Learner name (based on filename)
 Exporter uniquement ce fichier=Export only this file
+PDF4Teachers - Exporter les notes=PDF4Teachers - Export grades
+Exporter les notes des fichiers ouverts dans un tableau CSV=Export grades of opened files in a csv spreadsheet
 Lors de l'importation dans un tableur, la langue du fichier sera à régler sur Anglais=While importing .CSV in spreadsheet application, file language should be set on English
+Exporter uniquement les notes des documents avec le même barème=Only export documents with same grade scale
+Exporter uniquement les notes des documents avec toutes les notes remplies=Only export documents with all grades filled in
+Exporter uniquement les notes des documents du même dossier=Only export documents from same folder
+Ajouter une ligne pour le barème=Add a row for grade scale
+Ajouter une ligne pour la moyenne des notes=Add a row for grades average
+Ajouter des lignes pour les commentaires (Éléments textuels).=Add rows for comments (text elements)
+Nom de l'élève (Basé sur le nom du document)=Learner name (based on filename)
+Nom de l'élève=Learner name
+Niveaux de note exportés :=grade hierarchical levels to export :
 Vous pouvez retrouver les fichiers CSV dans le dossier choisi.=CSV files can be found in selected folder
-# LicenseWindow
-PDF4Teachers - Licence=PDF4Teachers - License
-Refuser=Deny
-Vous devez accepter la licence pour accéder à l'application=License must be agreed to open application
-Accepter=Agree
-# FileListView
-# TextWrapper
-# LBGradeTab
+Vous pouvez retrouver le fichier CSV dans le dossier choisi.=CSV file can be found in selected folder
+# GradeTab
+Compter les points par retranchement=
+La note par défaut sera le Total et chaque note entrée sera compté négativement.=
 Vérouiller le barème, il ne pourra plus être modifié.=Lock grade scale : disables its modification
-Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=Export grades of one or several documents, in one or several CSV files. This allows grades import in spreadsheet application
 Modifier les polices, couleurs et préfixe de chaque niveau de grades.=Modify fonts, colors and the prefix of each grade level
 Envoyer le barème sur d'autres éditions.=Send grade scale on other edits
-# TextTreeFavorites
-# StyleManager
-# Main
-# TextTreeOnFile
+Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=Export grades of one or several documents, in one or several CSV files. This allows grades import in spreadsheet application
+# LicenseWindow
+PDF4Teachers - Licence=PDF4Teachers - License
+Vous devez accepter la licence pour accéder à l'application=License must be agreed to open application
+Refuser=Deny
+Accepter=Agree
+# PaintTab
+Cette fonctionnalité est en cours de développement.=Tool under construction
+Elle vous permettra de mettre des images, des icones/emojis, des rectangles, des cercles etc.=It will allow images / icons / shapes insertion
 # TextTreeSection
-# GradeTreeView
-# TR
+Trier=Sort
+# GradeTreeItem
+Clic sur le cadenas pour éditer le barème=Clic on the lock to edit the grade scale
+Créer une nouvelle sous-note de=Add new sub-grade
+# MainWindow
+Statistiques=
+heures sur PDF4Teachers.=
+Remerciez-moi avec un don pour toutes les heures que vous avez gagnés.=
+Paypal=
+GitHub Sponsors=
+Ignorer=
+PDF4Teachers - Aucun document=PDF4Teachers - No document
+À Propos=
+(Nouvelle Version Disponible)=
+Decimal separator=.
+# DialogBuilder
+Ctrl+Alt+C pour accéder aux logs=Ctrl+Alt+C to view logs
+Enregistrer un fichier=
+# TwoStepListAction
+Exportation...=Exporting...
+# AutoTipsManager
+Faites un clic droit sur la page pour effectuer des actions rapides.=
+Utilisez Ctrl + Molette pour zoomer=
+Vous pouvez enregistrer les éléments favoris / précédents à part avec l'icône de sauvegarde. Pour recharger la liste d'éléments, utilisez l'icône de liste.=
+Vous pouvez trier les éléments textuels grâce à l'icône de tri.=
+Utilisez Shift+Clic (ou Shift + Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.=
+Utilisez Ctrl+[1-9] pour ajouter l'élément favoris qui correspond au chiffre entré.=
+Vous pouvez réduire la taille d'affichage des éléments dans les listes via le menu préférences de la barre de menu.=
+Cliquez sur le bouton engrenage pour modifier les polices et les comportements des notes.=
+Cliquez sur le bouton exportation pour exporter vos notes dans un tableur (.csv)=
+Cliquez sur le bouton lien pour copier le barème sur d'autres documents.=
+Toutes les modifications apportés au document sont enregistrés à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. (Les modifications de pages (rotations, suppressions, ajout de pages) modifieront le fichier d'origine.)=
+Faites un double clic sur le document pour ajouter un élément textuel plus rapidement. Vous pouvez aussi utiliser Ctrl+T=
+Vous venez de vérouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.=
+Le mode de comptage des points par retranchement utilise le total comme note par défaut et compte négativement les points entrés.=
+Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.=
+Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionné, cliquez sur le + de sa note parente, ou pressez Ctrl+G=
+Vous pouvez appeler une note \"Bonus [...]\" pour que son total ne soit pas compté.=
+Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du barème.=
+Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.=
+Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de texte pour supprimer les retours à la ligne inutiles (si la taille de police a baissé ou si vous avez édité le texte au milieu par exemple).=
+Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=
+Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=
+Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).=
+Double cliquez sur un élément textuel pour le dupliquer.=
+Double cliquez sur une note pour la mettre à 0.=
+# FooterBar
+Zoom=Zoom
+Mode Fichiers=File mode
+Mode Texte=Text Mode
+Mode Notes=Grades Mode
+Mode Dessin=Drawings mode
+Aucun fichier ouvert=No opened file
+# LanguageWindow
+PDF4Teachers - Langage=PDF4Teachers - Language
+Choisissez votre langage=Select your language
+Créer une nouvelle traduction=Create new translation
+Valider=Ok
+Télécharger les fichier de traduction=Download translation files
+Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue.\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation=Download a template translation file in order to translate the application from its original language (French).\nYou will have to create :\n- A .txt file for PDF4Teachers interface translations\n- A .odt file for documentation translation
+Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=These files must then be copied to <AppData>/Roaming/PDF4Teachers/translations/ (Win10) or in\n<User home folder>/.PDF4Teachers/translations/ (OSX and Linux) in order to make translation available in language listing.\nYou should also add an icon flag in .png format. All files must have the same name (except extension).\nYou may also send the files on GitHub so this new language can be added to releases.
+Enregistrer les fichiers=Save files
+Enregistrer les fichiers déjà traduits en Anglais=Save files already translated in English
+# TextTab
+Nouveau=New
+Commencez par $ pour écrire du LaTeX=Start LaTeX expressions by $
+Supprimer les retours à la ligne inutiles=Delete useless returns
+# TextTreeView
+Supprimer tous les éléments textuels=Delete all text elements
+Supprime tous les éléments textuels ajoutés au document, cela va donc supprimer une partie de l'édition.=Delete all text elments inserted on the document : this will remove a part of the edits
+Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document.=Removes all elements from list. Does not affect the elements inserted on the document
+Supprimer les donnés d'utilisation=Delete elements use stats
+Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.=Use rate of each element is recorded. This will reset this recording, and consequently reset the sorting by use rate
+Ajouter et lier=Add and link
+Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste.=Adds this element to the edit, and links the edit element with the list element. Further modification of the element in the document edit will affect the element of the list
+Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité=Removes element from list. In the Current Document Elements list, this will also remove the element in the document edit
+Ajouter aux favoris=Add to favorites
+Dé-lier l'élément=Unlink element
+L'élément de la liste ne sera plus synchronisé avec l'élément du document=This list element will not be synchronized with the document element anymore
+Ajout=Add
+Police=Font
+Taille=Size
+Couleur=Color
+Position=Position
+# AlreadyExistDialog
+Passer=
+Toujours Passer=
+Toujours Renommer=
+Toujours Écraser=
+Situé dans le dossier : =
+# MenuBar
+Fichier=File
+Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=Adds one or several PDF files to the files panel
+Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers=Add all PDF files of a folder to the files panel
+Vide la liste des fichiers=Empty the file list
+Sauvegarder l'édition=Save edits
+Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié=Saves the edits of the current document. This will NOT modify the source PDF file
+Supprime les éléments d'édition du document courant=Deletes all edits on the current document
+Fermer le document=Close document
+Ferme la vue du document courant=Closes current document view
+Exporter (Regénérer le PDF)=Export (Regenerate PDF)
+Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés=Creates a new PDF file, with all edits included
+Tout exporter=Export All
+Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition=Creates new PDF files from each file opened in the file panel, with all edits included
+Outils=
+Permet de convertir des images en fichiers PDF=Converts image files in PDF files
+Générer un QR Code=
+Permet d'ajouter un QR Code généré par l'application au document PDF ouvert=
+Ajouter des pages=
+Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages=
+Supprimer les éditions des fichiers ouverts=Delete edits on all opened files
+Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers=Deletes all edits, on all opened files listed in the files panel
+Éditions des documents du même nom=Edits of documents with same name
+Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction=Moves the edits of this document to another document with the same name. This is useful if a file has been moved in the filesystem : in this case, PDF4Teachers would not recover the edits informations, unless using this functionality
+Aucune édition trouvée=No edit found
+Exporter l'édition/barème=
+Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document=
+Génère un fichier contenant l'édition du document=
+Exporter le barème=
+Remplace le barème du document ouvert par celui d'un fichier de barème=
+Importer une édition/barème=
+Remplace l'édition du document ouvert par celle d'un fichier d'édition=
+Importer une édition=
+Importer un barème=
+Remplace le barème du document ouvert par celle d'un fichier de barème=
+Mode plein écran=
+Passe l'application en mode plein écran=
+Débug=
+Options plus complexes qui vous demandent une certaine connaissance en informatique.=
+Ouvrir la console d'exécution=
+Ouvre la console de l'application=
+Ouvrir le dossier de données=
+Ouvre le dossier où PDF4Teachers enregistre toutes ses données=
+Ouvrir le fichier d'édition=
+Ouvre le fichier qui contient les données de l'édition actuelle=
+Préférences=Settings
+Aide=Help
+Charger le document d'aide=Load Help documentation
+Demander de l'aide ou signaler un Bug sur GitHub=Ask for help or report a bug on GitHub
+Nous contacter sur Twitter=Contact us on Twitter
+Site Web de PDF4Teachers=
+Supprimer les éditions=Delete edits
+Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?=Are you sure you want to delete all edits of all the files listed in the panel ?
+Supprimer l'ensemble des\néditions enregistrées=Delete all\nsaved edits
+Supression terminée=Deleted done
+Vos éditions ont bien été supprimés.=Edits were successfully deleted
+Vous avez supprimé=You have deleted
+Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?=Are you sure you want to replace current edit by this one ?
+Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier=Yes, repeat this action for all files from the\nlist and from the same folder
+Fichier introuvable=File not found
+Le fichier=File
+dans=in
+n'a pas d'édition.=does not have any edit
+Tout Arreter=Stop all
+Zoom par défaut=Default zoom
+Zoom par défaut lors de l'ouverture d'un document=Default zoom when opening a document
+Choisir un pourcentage :=Select ratio
+Sauvegarde régulière=Periodic save
+Activer=Activate
+Définir le nombre de minutes entre deux sauvegardes automatiques.=Define minutes interval between autosaves
+À propos=About
+Fenêtre à Propos=
+# ListsManager
+Afficher les listes d'éléments enregistrés=Display saved lists of elements
+Sauvegarder les éléments favoris en tant qu'une nouvelle liste=Save favorite elements as a new list
+Nouvelle liste=New list
+Enregistrer les éléments de cette catégorie=
+Vous allez enregistrer les éléments de cette catégorie dans une nouvelle liste.=
+Donner un nom à votre liste=Name for the list
+Liste déjà existante=List already existing
+Une liste du même nom existe déjà.=A list with the same name already exists
+Actions de listes=Actions for lists
+Choisissez une action a effectuer avec la liste d'éléments.=Choose an action for this elements list
+Ces actions sont irréversibles.=These actions cannot be undone
+- Vider et charger remplacera la liste des éléments favoris/précédents par celle ci=
+- Charger ajoutera cette liste d'éléments à la liste des éléments favoris/précédents=
+- Supprimer supprimera la liste de la base de donnée=Delete will remove the list from the database
+Charger=Load
+Vider et charger=Flush and load
+Aucune liste sauvegardée=No saved list
+Liste non sauvegardée=
+Impossible de sauvegarder la liste=
+Il n'y a aucun élément à enregistrer=
+Liste sauvegardée=Saved list
+La liste a bien été sauvegardée !=List saved successfully !
+La liste pourra être chargée via le bouton de liste=Lists are loaded with the import button
+Liste supprimée=List deleted
+La liste=List
+a bien été supprimé.=was deleted successfully
+# UpdateWindow
+PDF4Teachers - Nouvelle Version=PDF4Teachers - New version
+Une nouvelle avant-première de PDF4Teachers est disponible !=A new PDF4Teachers pre release is available !
+Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie.=Pre releases are for users willing to contribute to the project, by testing\nPDF4Teachers versions before their release.
+Vous utilisez la version=You are using version
+et l'avant-première=and pre release
+est disponible.=is available
+Description :=Description :
+Une nouvelle version de PDF4Teachers est disponible !=A new version of PDF4Teachers is available !
+et la version=and version
+Voir sur le site WEB=
+Téléchargement direct=Direct download
+# TextElement
+Ajouter aux éléments précédents=Add to previous elements
+Ajoute cet élément à la liste des éléments précédents.=Add this element to previous elements list
+Ajouter aux éléments Favoris=Add to favorites elements
+Ajoute cet élément à la liste des éléments favoris.=Add this element to the favorites elements list
+Commande/Symbole~inconnu~:=unknown~command/symbol~:
+Erreur~:=Error~:
+Impossible~de~lire~la~formule=Error~while~parsing~formula
+# AutoTipTooltip
+OK=OK
+# GradeElement
+Nouvelle note=New grade
+Attribuer tous les points=Set maximum grade
+Place toutes les sous-notes à leur valeur maximale=sets all sub-grades to their maximum value
+Réinitialiser=Reset
+Réinitialise la note et toutes ses sous-notes=Resets the grade and all its sub-grades
+Supprimer du barème=Delete from grading scale
+Supprime cet élément du barème et de l'édition=Deletes this element from the grade scale and from edits
+Mettre 0 à toutes les sous-notes=Set to 0 all grades
+Donne la valeur 0 à toutes les sous-notes=Set to 0 all sub-grades
+Cacher les sous-notes non saisies=
+Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles même sans valeur. Il est possible de réinitialiser leur position et de les cacher avec cette option.=
+Total=Total
+Bonus=Bonus
+# FileListItem
+Éléments=Elements
+Commentaires=Comments
+Figures=Figures
+Non édité=Not edited
+Barèmes=Grade scales
+Impossible de récupérer les informations=Impossible to get content
+Ouvrir=Open
+Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.=Opens file to edit in PDF4Teachers. Can also be opened with a double clic.
+Retirer=Remove
+Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.=Remove file from list. It will NOT be deleted on file system.
+Supprimer l'édition=Delete edit
+Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant.=Resets document editing : removes all previously added elements
+Supprimer le fichier=Delete file
+Supprime le fichier PDF sur l'ordinateur.=Delete PDF file from filesystem
+Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés.=Creates a new PDF file from this one, with added elements
+Vider la liste=Empty list
+Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.=Removes all files from list. Files will NOT be removed from filesystem
+Êtes vous sûr de vouloir supprimer le document=Are you sure you want to delete the document
+et son édition ?=and its edits ?
+# TextTreeFavorites
+Éléments Favoris=Favorite Elements
+# TextTreeOnFile
+Éléments sur ce document=Current Document Elements

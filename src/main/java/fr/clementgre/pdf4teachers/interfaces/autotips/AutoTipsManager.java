@@ -117,8 +117,6 @@ public class AutoTipsManager {
 
                         if(data.actionKey().isEmpty()) stillHasAuto = true;
 
-                    }else{
-                        System.out.println("skiped " + name + " because of validated");
                     }
 
                 }catch(Exception e){
@@ -149,8 +147,6 @@ public class AutoTipsManager {
                     String name = field.getName();
                     if(!uiTips.containsKey(name)){
                         completed.add(name);
-                    }else{
-                        System.out.println("skiped " + name + " because of existing in the list");
                     }
 
                 }catch(Exception e){
