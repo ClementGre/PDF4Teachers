@@ -17,12 +17,11 @@ public class AutoTipsManager {
     @ToolTipVar(actionKey = "", prerequisiteKey = "document", objectWhereDisplay = "mainscreen")
     private static final String documentZoom = TR.ct("Utilisez Ctrl + Molette pour zoomer");
 
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    private static final String textElementsLists = TR.ct("Vous pouvez enregistrer les éléments favoris / précédents à part avec l'icône de sauvegarde. Pour recharger la liste d'éléments, utilisez l'icône de liste.");
 
     @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
-    private static final String textElementsLists = TR.ct("Vous pouvez enregistrer les éléments favoris / précédents à part avec l'icone de sauvegarde. Pour recharger la liste d'éléments, utilisez l'icone de liste.");
-
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
-    private static final String textElementsSort = TR.ct("Vous pouvez trier les éléments textuels grâce à l'icone de tri.");
+    private static final String textElementsSort = TR.ct("Vous pouvez trier les éléments textuels grâce à l'icône de tri.");
 
     @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
     private static final String textAddLink = TR.ct("Utilisez Shift+Clic (ou Shift + Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.");
@@ -43,14 +42,14 @@ public class AutoTipsManager {
     private static final String gradeCopyGradeScale = TR.ct("Cliquez sur le bouton lien pour copier le barème sur d'autres documents.");
 
 
-		@ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String textAddLink = TR.ct("Toutes les modifications apportés au document sont enregistrés à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. (Les modifications de pages (rotations, supressions, ajout de pages) modifieront le fichier d'origine.)");
+    @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
+    private static final String editSystemAndExportation = TR.ct("Toutes les modifications apportés au document sont enregistrés à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. (Les modifications de pages (rotations, suppressions, ajout de pages) modifieront le fichier d'origine.)");
 
     @ToolTipVar(actionKey = "newtextelement", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String newTextElement = TR.ct("Faites un double clic sur le document pour ajouter un élément textuel plus rapidement. Vous pouvez aussi utiliser Ctrl+T");
 
     @ToolTipVar(actionKey = "gradescalelock", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String gradeScaleLock = TR.ct("Vous venez de veerouiller le barème. Vous ne pourrez plus l'éditer.");
+    private static final String gradeScaleLock = TR.ct("Vous venez de vérouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.");
 
     @ToolTipVar(actionKey = "gradescaleinvert", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeScaleInvert = TR.ct("Le mode de comptage des points par retranchement utilise le total comme note par défaut et compte négativement les points entrés.");
@@ -59,28 +58,34 @@ public class AutoTipsManager {
     private static final String gradeContextMenu = TR.ct("Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.");
 
     @ToolTipVar(actionKey = "gradecreate", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String createGradeSameTiers = TR.ct("Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélexionné, cliquez sur le + de sa note parente, ou pressez Ctrl+G");
+    private static final String createGradeSameTiers = TR.ct("Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionné, cliquez sur le + de sa note parente, ou pressez Ctrl+G");
 
     @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeBonus = TR.ct("Vous pouvez appeler une note \"Bonus [...]\" pour que son total ne soit pas compté.");
 
     @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String gradeKeyboardShortcuts = TR.ct("Utilisez TAB et Entrée pour vous déplacer plus rapidement parmis les notes du barème.");
+    private static final String gradeKeyboardShortcuts = TR.ct("Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du barème.");
 
-    @ToolTipVar(actionKey = "textEdit", prerequisiteKey = "hastextsimilarelements", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "hastextsimilarelements", objectWhereDisplay = "")
     private static final String textAutoCompletion = TR.ct("Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.");
 
-    @ToolTipVar(actionKey = "textEdit", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String textAutoWrap = TR.ct("Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de texte pour supprimer les retours à la ligne inutiles (si la taile de police a baissé ou si vous avez édité le texte au milieu par exemple).");
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
+    private static final String textAutoWrap = TR.ct("Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de texte pour supprimer les retours à la ligne inutiles (si la taille de police a baissé ou si vous avez édité le texte au milieu par exemple).");
 
-    @ToolTipVar(actionKey = "textEdit", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textLatex = TR.ct("Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.");
 
-    @ToolTipVar(actionKey = "textEdit", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textUrl = TR.ct("Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.");
 
     @ToolTipVar(actionKey = "textselect", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textContextMenu = TR.ct("Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).");
+
+    @ToolTipVar(actionKey = "textdoubleclick", prerequisiteKey = "", objectWhereDisplay = "")
+    private static final String textDuplicate = TR.ct("Double cliquez sur un élément textuel pour le dupliquer.");
+
+    @ToolTipVar(actionKey = "gradedoubleclick", prerequisiteKey = "", objectWhereDisplay = "")
+    private static final String gradeSet0WithDoubleClick = TR.ct("Double cliquez sur une note pour la mettre à 0.");
 
     private static HashMap<String, AutoTipTooltip> uiTips = new HashMap<>();
 
@@ -207,6 +212,15 @@ public class AutoTipsManager {
         switch (prerequisiteKey){
             case "document" -> {
                 return MainWindow.mainScreen.hasDocument(false);
+            }
+            case "texttabselected" -> {
+                return MainWindow.textTab.isSelected();
+            }
+            case "gradetabselected" -> {
+                return MainWindow.gradeTab.isSelected();
+            }
+            case "hastextsimilarelements" -> {
+                return MainWindow.textTab.treeView.getSelectionModel().getSelectedIndices().size() >= 2;
             }
         }
         return false;

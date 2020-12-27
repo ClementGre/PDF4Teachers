@@ -166,9 +166,11 @@ public class TextTreeItem extends TreeItem{
 			}else if(e.getCode() == KeyCode.ENTER){
 				e.consume();
 				if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-					MainWindow.mainScreen.getSelected().delete();
-				}
-				addToDocument(e.isShiftDown());
+					TextElement oldElement = (TextElement) MainWindow.mainScreen.getSelected();
+					oldElement.delete();
+					addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
+				}else addToDocument(e.isShiftDown());
+
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
 					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
@@ -368,13 +370,20 @@ public class TextTreeItem extends TreeItem{
 	public void addToDocument(boolean link){
 
 		if(MainWindow.mainScreen.hasDocument(false)){
-			uses++;
 			PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
 			if(MainWindow.mainScreen.document.getCurrentPage() != -1)
 				page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
 
 			int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
 			int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
+			addToDocument(link, page, x, y, true);
+		}
+
+	}
+	public void addToDocument(boolean link, PageRenderer page, int x, int y, boolean centerOnY){
+
+		if(MainWindow.mainScreen.hasDocument(false)){
+			uses++;
 			TextElement realElement = toRealTextElement(x, y, page.getPage());
 
 			if(link){
@@ -390,7 +399,7 @@ public class TextTreeItem extends TreeItem{
 			}
 
 			page.addElement(realElement, true);
-			realElement.centerOnCoordinatesY();
+			if(centerOnY) realElement.centerOnCoordinatesY();
 			MainWindow.mainScreen.selectedProperty().setValue(realElement);
 		}
 

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -298,6 +299,7 @@ public class MainScreen extends Pane {
 		repaint();
 		MainWindow.footerBar.repaint();
 		Platform.runLater(() -> zoomOperator.updatePaneHeight(0, 0.5));
+		AutoTipsManager.showByAction("opendocument");
 	}
 	public void failOpen(){
 

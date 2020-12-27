@@ -38,6 +38,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.util.StringConverter;
 
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -243,6 +244,7 @@ public class TextTab extends Tab {
 				txtAreaScrollBarListenerIsSetup = true;
 			}
 			((TextElement) MainWindow.mainScreen.getSelected()).setText(newValue);
+			if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
 		});
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
 			String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();

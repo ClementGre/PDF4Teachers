@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.leftBar.grades;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScratchText;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
@@ -24,6 +25,7 @@ import javafx.scene.text.Text;
 
 import javax.print.attribute.standard.MediaSize;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class GradeTreeItem extends TreeItem {
@@ -130,6 +132,7 @@ public class GradeTreeItem extends TreeItem {
 
             // Update total (Fix the bug when a total is predefined (with no children))
             makeSum(false);
+            AutoTipsManager.showByAction("gradecreate");
         });
 
     }
@@ -531,6 +534,7 @@ public class GradeTreeItem extends TreeItem {
             switch (type){
                 case NAME:
                     core.setName(newText);
+                    if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("graderename");
                     break;
                 case GRADE:
                     // dont accept a value higher than the total

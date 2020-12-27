@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
@@ -111,10 +112,12 @@ public class TextElement extends Element {
 		super.selectPartial();
 		MainWindow.leftBar.getSelectionModel().select(1);
 		MainWindow.textTab.selectItem();
+		AutoTipsManager.showByAction("textselect");
 	}
 	@Override
 	public void doubleClick() {
 		cloneOnDocument();
+		AutoTipsManager.showByAction("textdoubleclick");
 	}
 	@Override
 	public void addedToDocument(boolean silent) {

@@ -45,8 +45,8 @@ CheckBox {
  ******************************************************************************/
 
 .tooltip-autotip{
-    -fx-background-radius: 5;
-    -fx-border-radius: 5;
+    -fx-background-radius: 3;
+    -fx-border-radius: 3;
 }
 
 

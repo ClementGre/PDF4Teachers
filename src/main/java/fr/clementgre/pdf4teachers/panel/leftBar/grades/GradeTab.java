@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.leftBar.grades;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.export.GradeExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -65,13 +66,8 @@ public class GradeTab extends Tab {
         sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, ImageUtils.defaultDarkColorAdjust));
         sumByDecrement.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             treeView.updateAllSum();
-        });
-        sumByDecrement.setOnAction((e) -> {
-            if(sumByDecrement.isSelected()){
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Activation du comptage par retranchement"));
-                alert.setHeaderText(TR.tr("Activation du comptage par retranchement"));
-                alert.setContentText(TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.") + "\n" + TR.tr("Les totaux des autres éditions ne s'actualiseront que lors de l'ouverture."));
-                alert.show();
+            if(newValue){
+                AutoTipsManager.showByAction("gradescaleinvert");
             }
         });
         sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.")));
@@ -81,7 +77,10 @@ public class GradeTab extends Tab {
         lockGradeScale.setSelected(false);
         lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
+            if(newValue){
+                lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
+                AutoTipsManager.showByAction("gradescalelock");
+            }
             else lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
 
             // Update the selected cell

@@ -4,13 +4,10 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
@@ -35,7 +32,7 @@ public class AutoTipTooltip extends Tooltip{
         this.objectWhereDisplay = objectWhereDisplay;
 
         setAutoHide(false);
-        setOpacity(0.9);
+        setOpacity(0.95);
         setHideDelay(Duration.INDEFINITE);
 
         setMaxWidth(300);
@@ -69,11 +66,11 @@ public class AutoTipTooltip extends Tooltip{
 
         }else switch(objectWhereDisplay){
             case "mainscreen" -> showOnPane(MainWindow.mainScreen);
-
+            case "leftbar" -> showOnPane(MainWindow.leftBar);
         }
     }
 
-    private void showOnPane(Pane region){
+    private void showOnPane(Region region){
         super.show(region, Main.window.getX() + region.getWidth()/2, Main.window.getY() + region.getHeight()/2);
     }
 

@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeRating;
 import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeItem;
@@ -226,10 +227,12 @@ public class GradeElement extends Element {
         super.selectPartial();
         // Sélectionne l'élément associé dans l'arbre
         MainWindow.gradeTab.treeView.getSelectionModel().select(getGradeTreeItem());
+        AutoTipsManager.showByAction("gradeselect");
     }
     @Override
     public void doubleClick() {
-
+        setValue(0);
+        AutoTipsManager.showByAction("gradedoubleclick");
     }
     @Override
     public void delete(){

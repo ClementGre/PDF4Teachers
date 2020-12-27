@@ -30,7 +30,7 @@ public class Config {
 
     private void setupYAML(){
         DumperOptions dumperOptions = new DumperOptions();
-        dumperOptions.setPrettyFlow(true);
+        dumperOptions.setWidth(120);
         yaml = new Yaml(new SafeConstructor());
     }
 
