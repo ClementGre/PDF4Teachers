@@ -231,8 +231,10 @@ public class GradeElement extends Element {
     }
     @Override
     public void doubleClick() {
-        setValue(0);
-        AutoTipsManager.showByAction("gradedoubleclick");
+        if(!getGradeTreeItem().hasSubGrade()){
+            setValue(0);
+            AutoTipsManager.showByAction("gradedoubleclick");
+        }
     }
     @Override
     public void delete(){

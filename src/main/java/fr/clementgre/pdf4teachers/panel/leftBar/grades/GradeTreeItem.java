@@ -23,8 +23,6 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
-import javax.print.attribute.standard.MediaSize;
-import java.util.Locale;
 import java.util.Random;
 import java.util.regex.Pattern;
 

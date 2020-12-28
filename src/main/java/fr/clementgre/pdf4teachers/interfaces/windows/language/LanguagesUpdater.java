@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -47,18 +48,19 @@ public class LanguagesUpdater {
         Platform.runLater(() -> {
             new LanguagesUpdater().update((hasDownloadedLanguages) -> {
                 if(hasDownloadedLanguages){
-                    TR.updateTranslation();
-
-                    MainWindow.userData.save();
-                    MainWindow.hasToClose = true;
-                    if(MainWindow.mainScreen.closeFile(true)){
-                        Main.window.close();
-                        MainWindow.hasToClose = false;
-                        Platform.runLater(Main::startMainWindow);
-                    }
-                    MainWindow.hasToClose = false;
+                    Main.window.restart();
                 }
             }, true, true);
+        });
+    }
+    public static void backgroundStats(){
+        Platform.runLater(() -> {
+            new LanguagesUpdater().updateStats(null);
+        });
+    }
+    public static void backgroundStats(CallBack callBack){
+        Platform.runLater(() -> {
+            new LanguagesUpdater().updateStats(callBack);
         });
     }
 
@@ -109,6 +111,28 @@ public class LanguagesUpdater {
                     '}';
         }
     }
+    public void updateStats(CallBack callBack){
+        new Thread(() -> {
+            String uuid = Main.DEBUG ? "DEBUG" : MainWindow.userData.uuid;
+            try {
+                URL url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
+                        "&starts=" + MainWindow.userData.startsCount +
+                        "&version=" + Main.VERSION +
+                        "&id=" + uuid);
+                if(!Main.settings.sendStats.getValue()){
+                    url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + uuid);
+                }
+                HttpURLConnection con = (HttpURLConnection) url.openConnection();
+                con.setDoOutput(false);
+                int responseCode = con.getResponseCode();
+                if(Main.DEBUG) System.out.println("updating stats with response code " + responseCode);
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            if(callBack != null) callBack.call();
+        }).start();
+
+    }
 
     public void update(CallBackArg<Boolean> callBack, boolean hideFirstDialogState, boolean provideData){
 
@@ -118,10 +142,14 @@ public class LanguagesUpdater {
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/");
                 if(provideData){
+                    String uuid = Main.DEBUG ? "DEBUG" : MainWindow.userData.uuid;
                     if(Main.settings.sendStats.getValue()){
-                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime + "&starts=" + MainWindow.userData.startsCount + "&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
+                                "&starts=" + MainWindow.userData.startsCount +
+                                "&version=" + Main.VERSION +
+                                "&id=" + uuid);
                     }else{
-                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + MainWindow.userData.uuid);
+                        url = new URL("https://api.pdf4teachers.org/startupdate/?time=0&starts=0&version=" + Main.VERSION + "&id=" + uuid);
                     }
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();

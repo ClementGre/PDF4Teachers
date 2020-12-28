@@ -1,12 +1,16 @@
 package fr.clementgre.pdf4teachers;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.LicenseWindow;
@@ -72,6 +76,8 @@ public class Main extends Application {
 		LanguageWindow.setup();
 		StyleManager.setup();
 		AutoTipsManager.setup();
+		ImageUtils.setupListeners();
+
 
 		if(languageAsk()){
 			if(licenceAsk()){
@@ -131,6 +137,8 @@ public class Main extends Application {
 	public static boolean isLinux(){
 		return !isWindows() && !isOSX();
 	}
+
+
 
 
 }

@@ -69,13 +69,14 @@ targetCompatibility = 15
 jlink {
     options = [
                 '--strip-debug',
-               '--compress', '2',
-               '--no-header-files',
-               '--no-man-pages',
+                '--compress', '2',
+                '--no-header-files',
+                '--no-man-pages',
             ] as List<String>
     launcher {
         name = 'PDF4Teachers'
     }
+
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
         targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-15.0.1.9-hotspot')
     }else if(Os.isFamily(Os.FAMILY_MAC)){

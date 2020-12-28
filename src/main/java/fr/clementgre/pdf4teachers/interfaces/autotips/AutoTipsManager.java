@@ -98,6 +98,17 @@ public class AutoTipsManager {
             }
         });
     }
+
+    private static Thread autoTipsThread = new Thread(() -> {
+        while (true){
+            try{
+                Thread.sleep(3*60*1000);
+            }catch(InterruptedException e){ e.printStackTrace(); }
+
+            Platform.runLater(AutoTipsManager::showRandom);
+        }
+    }, "AutoTipsTimer");
+
     public static void load(){
         uiTips.clear();
 
@@ -126,16 +137,8 @@ public class AutoTipsManager {
         }
 
         if(!stillHasAuto) return;
+        if(!autoTipsThread.isAlive()) autoTipsThread.start();
 
-        new Thread(() -> {
-            while (true){
-                try{
-                    Thread.sleep(10*1000);
-                }catch(InterruptedException e){ e.printStackTrace(); }
-
-                Platform.runLater(AutoTipsManager::showRandom);
-            }
-        }, "AutoTipsTimer").start();
     }
     public static List<String> getCompletedAutoTips(){
 

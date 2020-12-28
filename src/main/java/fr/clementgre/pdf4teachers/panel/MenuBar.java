@@ -150,7 +150,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public Menu about = new Menu();
 
 	Menu help = new Menu(TR.tr("Aide"));
-	MenuItem help1LoadDoc = new MenuItem(TR.tr("Charger le document d'aide"));
+	MenuItem help1LoadDoc = new MenuItem(TR.tr("Charger la documentation"));
 	MenuItem help2GitHubIssue = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
 	MenuItem help3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
 	MenuItem help4Website = new MenuItem(TR.tr("Site Web de PDF4Teachers"));
@@ -397,16 +397,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()){
 					Main.settings.language.setValue(value);
-					TR.updateTranslation();
-
-					MainWindow.userData.save();
-					MainWindow.hasToClose = true;
-					if(MainWindow.mainScreen.closeFile(true)){
-						Main.window.close();
-						MainWindow.hasToClose = false;
-						Platform.runLater(Main::startMainWindow);
-					}
-					MainWindow.hasToClose = false;
+					Main.window.restart();
 				}
 			});
 		});

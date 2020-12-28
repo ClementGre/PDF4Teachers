@@ -12,7 +12,12 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+
 import java.io.*;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -121,7 +126,38 @@ public class UserData {
     @UserDataObject(path = "AutoTipsValidated")
     public List<Object> autoTipsValidated = new ArrayList<>();
 
+    private static Thread userDataSaver = new Thread(() -> {
+        while(true){
+            try{ Thread.sleep(1000*60); }catch(InterruptedException e){ e.printStackTrace(); }
+            if(Main.window.isFocused()){
+                MainWindow.userData.foregroundTime++;
+                if(MainWindow.userData.foregroundTime % (60*50) == 0){
+                    Platform.runLater(() -> {
+                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Statistiques"),
+                                TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.tr("heures sur PDF4Teachers."),
+                                TR.tr("Remerciez-moi avec un don pour toutes les heures que vous avez gagnés."));
+                        ButtonType paypal = new ButtonType(TR.tr("Paypal"), ButtonBar.ButtonData.OTHER);
+                        ButtonType github = new ButtonType(TR.tr("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
+                        ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.YES);
+                        alert.getButtonTypes().setAll(paypal, github, ignore);
+                        Optional<ButtonType> option = alert.showAndWait();
+                        if(option.get() == paypal){
+                            Main.hostServices.showDocument("https://paypal.me/themsou");
+                        }else if (option.get() == github){
+                            Main.hostServices.showDocument("https://github.com/sponsors/ClementGre");
+                        }
+                    });
+                }
+                if(MainWindow.userData.foregroundTime % (60) == 0){
+                    LanguagesUpdater.backgroundStats();
+                }
+            }
+            MainWindow.userData.save();
+        }
+    }, "userData AutoSaver");
+
     public UserData(){
+        if(!userDataSaver.isAlive()) userDataSaver.start();
 
         loadDataFromYAML();
         textElementsData = new TextElementsData();

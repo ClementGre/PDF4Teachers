@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.geometry.Insets;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
@@ -71,6 +72,10 @@ public class AutoTipTooltip extends Tooltip{
     }
 
     private void showOnPane(Region region){
+        if(region == null) return;
+        final Scene scene = region.getScene();
+        if((scene == null) || (scene.getWindow() == null)) return;
+
         super.show(region, Main.window.getX() + region.getWidth()/2, Main.window.getY() + region.getHeight()/2);
     }
 

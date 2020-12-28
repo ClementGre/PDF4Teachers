@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
@@ -13,8 +14,6 @@ import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
@@ -35,16 +34,11 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
 
-    public static boolean hasToClose = false;
     public static UserData userData;
-
-    public static DecimalFormat format;
-    public static DecimalFormat twoDigFormat;
 
     public static BorderPane root;
     public static SplitPane mainPane;
@@ -59,38 +53,13 @@ public class MainWindow extends Stage{
     public static GradeTab gradeTab;
     public static PaintTab paintTab;
 
+
+    public static DecimalFormat format;
+    public static DecimalFormat twoDigFormat;
+
     public OSXTouchBarManager osxTouchBarManager;
 
-    Thread userDataSaver = new Thread(() -> {
-        while(true){
-            try{ Thread.sleep(1000*60); }catch(InterruptedException e){ e.printStackTrace(); }
-            if(isFocused()){
-                MainWindow.userData.foregroundTime++;
-                if(MainWindow.userData.foregroundTime % (60*50) == 0){
-                    Platform.runLater(() -> {
-                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Statistiques"),
-                                TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.tr("heures sur PDF4Teachers."),
-                                TR.tr("Remerciez-moi avec un don pour toutes les heures que vous avez gagnés."));
-                        ButtonType paypal = new ButtonType(TR.tr("Paypal"), ButtonBar.ButtonData.OTHER);
-                        ButtonType github = new ButtonType(TR.tr("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
-                        ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.YES);
-                        alert.getButtonTypes().setAll(paypal, github, ignore);
-                        Optional<ButtonType> option = alert.showAndWait();
-                        if(option.get() == paypal){
-                            Main.hostServices.showDocument("https://paypal.me/themsou");
-                        }else if (option.get() == github){
-                            Main.hostServices.showDocument("https://github.com/sponsors/ClementGre");
-                        }
-                    });
-                }
-            }
-            MainWindow.userData.save();
-        }
-    }, "userData AutoSaver");
-
     public MainWindow(){
-
-        setupDecimalFormat();
 
         root = new BorderPane();
 
@@ -98,6 +67,7 @@ public class MainWindow extends Stage{
 
         Scene scene = new Scene(root);
         loadDimensions();
+        setupDecimalFormat();
 
         setTitle(TR.tr("PDF4Teachers - Aucun document"));
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
@@ -110,15 +80,18 @@ public class MainWindow extends Stage{
         new Macro(scene);
 
         setOnCloseRequest(e -> {
+            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())) {
+                e.consume(); return;
+            }
+
             userData.save();
             Main.params = new ArrayList<>();
-            if(e.getSource().equals(menuBar)) return;
-            hasToClose = true;
 
-            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())) {
-                e.consume(); hasToClose = false; return;
-            }
-            System.exit(0);
+            LanguagesUpdater.backgroundStats(() -> {
+                System.out.println("Closing PDF4Teachers");
+                System.exit(0);
+            });
+
         });
 
         widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -159,6 +132,7 @@ public class MainWindow extends Stage{
 //		PANELS
 
         show();
+        requestFocus();
 
         mainPane.getItems().addAll(leftBar, mainScreen);
         mainPane.setDividerPositions(270 / root.getWidth());
@@ -191,15 +165,13 @@ public class MainWindow extends Stage{
             }
         });
 
-        ImageUtils.setupListeners();
-        setupDesktopEvents();
-
 //		SHOWING
 
-        userDataSaver.start();
+        setupDesktopEvents();
         mainScreen.repaint();
+        //osxTouchBarManager = new OSXTouchBarManager(this);
 
-//      OPEN DOC
+//      OPEN DOC WITH PARAMS OR Auto Documentation
 
         List<File> toOpenFiles = new ArrayList<>();
         for(String param : Main.params){
@@ -217,9 +189,6 @@ public class MainWindow extends Stage{
             }
         }
 
-//      Other interfaces
-
-        //osxTouchBarManager = new OSXTouchBarManager(this);
 
 //      CHECK UPDATES
         new Thread(() -> {
@@ -245,6 +214,17 @@ public class MainWindow extends Stage{
         }).start();
 
     }
+
+    public void restart(){
+        TR.updateTranslation();
+
+        userData.save();
+        if(MainWindow.mainScreen.closeFile(true)){
+            close();
+            Platform.runLater(Main::startMainWindow);
+        }
+    }
+
     public void loadDimensions(){
 
         String[] size = Main.settings.mainScreenSize.getValue().split(Pattern.quote(";"));
@@ -357,8 +337,8 @@ public class MainWindow extends Stage{
         if(separator == 'D') separator = ',';
         else if(separator != ',' && separator != '.') separator = '.';
         symbols.setDecimalSeparator(separator);
-        MainWindow.format = new DecimalFormat("0.####", symbols);
-        MainWindow.twoDigFormat = new DecimalFormat("0.##", symbols);
+        format = new DecimalFormat("0.####", symbols);
+        twoDigFormat = new DecimalFormat("0.##", symbols);
     }
 
 }

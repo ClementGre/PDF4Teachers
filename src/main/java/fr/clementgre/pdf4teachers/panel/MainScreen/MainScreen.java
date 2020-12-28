@@ -53,18 +53,18 @@ public class MainScreen extends Pane {
 		public static final int ERROR_EDITION = 3;
 	}
 
-	int dragNScrollFactor = 0;
+	private static int dragNScrollFactor = 0;
 	double dragStartX;
 	double dragStartY;
 
-	public Thread dragNScrollThread = new Thread(() -> {
+	private static final Thread dragNScrollThread = new Thread(() -> {
 		while(true){
 			if(dragNScrollFactor != 0){
 				Platform.runLater(() -> {
 					if(dragNScrollFactor < 0){
-						zoomOperator.scrollUp((dragNScrollFactor+50)/2, true);
+						MainWindow.mainScreen.zoomOperator.scrollUp((dragNScrollFactor+50)/2, true);
 					}else if(dragNScrollFactor > 0){
-						zoomOperator.scrollDown(dragNScrollFactor/2, true);
+						MainWindow.mainScreen.zoomOperator.scrollDown(dragNScrollFactor/2, true);
 					}
 				});
 				try{ Thread.sleep(20); }catch(InterruptedException ex){ ex.printStackTrace(); }
@@ -259,7 +259,7 @@ public class MainScreen extends Pane {
 		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
 
 		// Start the Drag and Scroll Thread
-		dragNScrollThread.start();
+		if(!dragNScrollThread.isAlive()) dragNScrollThread.start();
 
 	}
 	public void openFile(File file){

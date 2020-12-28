@@ -278,7 +278,7 @@ public class LanguageWindow extends Stage{
         Config.set(data, "en-us.name", "English US");
 
         Config.set(data, "it-it.version", 0);
-        Config.set(data, "it-it.name", "Italiano");
+        Config.set(data, "it-it.name", "Italiano (Incompleto)");
 
         return data;
     }
