@@ -18,6 +18,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -66,28 +67,28 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	////////// FILE //////////
 
 	Menu file = new Menu(TR.tr("Fichier"));
-	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Vide la liste des fichiers"), false, true, false);
 
-	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
+	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), SVGPathIcons.TRASH, null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
@@ -95,23 +96,23 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu tools = new Menu(TR.tr("Outils"));
 
-	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
 
 	MenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
 			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
 
-	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
+	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), SVGPathIcons.PLUS,
 			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
 
-	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
+	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), SVGPathIcons.TRASH, null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
-	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), "cross-way",
+	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), SVGPathIcons.EXCHANGE,
 			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
 	MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
-	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), "export",
+	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), SVGPathIcons.EXPORT,
 			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
 
 		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
@@ -119,7 +120,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
-	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), "import",
+	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), SVGPathIcons.IMPORT,
 			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
 		MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
@@ -127,10 +128,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), "fullscreen", null,
+	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), SVGPathIcons.FULL_SCREEN, null,
 			TR.tr("Passe l'application en mode plein écran"));
 
-	Menu tools9Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
+	Menu tools9Debug = createSubMenu(TR.tr("Débug"), SVGPathIcons.COMMAND_PROMPT,
 			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), false);
 
 		MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
@@ -487,7 +488,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public static Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
 		return createSubMenu(name, imgName, toolTip, disableIfNoDoc, true);
 	}
-	public static Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc, boolean fat){
+	public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc, boolean fat){
 
 		if(isSystemMenuBarSupported()){
 			Menu menu = new Menu(name);
@@ -504,9 +505,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			Label text = new Label(name);
 
-			if(imgName != null){
-				ImageView icon = ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0, colorAdjust);
-				pane.getChildren().add(icon);
+			if(image != null){
+				if(image.length() >= 30){
+					pane.getChildren().add(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+				}else{
+					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
+					else pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
+				}
 
 				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
 				else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 10;");
@@ -528,7 +533,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			return menu;
 		}
 	}
-	public static MenuItem createRadioMenuItem(String text, String imgName, String toolTip, boolean autoUpdate){
+	public static MenuItem createRadioMenuItem(String text, String image, String toolTip, boolean autoUpdate){
 
 		if(isSystemMenuBarSupported()){
 			RadioMenuItem menuItem = new RadioMenuItem(text);
@@ -550,7 +555,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		}else{
 			NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
 
-			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+
+			if(image != null){
+				if(image.length() >= 30){
+					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+				}else{
+					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
+					else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
+				}
+
+			}
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 
 			return menuItem;
@@ -561,7 +575,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
 		return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
 	}
-	public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
+	public static MenuItem createMenuItem(String text, String image, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
 		if(isSystemMenuBarSupported()){
 			MenuItem menuItem = new MenuItem(text);
 			//if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
@@ -575,7 +589,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		}else{
 			NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
 
-			if(imgName != null) menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0, colorAdjust));
+			if(image != null){
+				if(image.length() >= 30){
+					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+				}else{
+					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
+					else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
+				}
+
+			}
 			if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
 			if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
 			if(leftMargin) menuItem.setFalseLeftData();

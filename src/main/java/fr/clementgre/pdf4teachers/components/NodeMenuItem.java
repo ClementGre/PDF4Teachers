@@ -81,7 +81,7 @@ public class NodeMenuItem extends CustomMenuItem {
         spacer.setPrefWidth(30);
         getNode().getChildren().set(0, spacer);
     }
-    public void setImage(ImageView image){
+    public void setImage(Node image){
         Pane pane = new Pane();
         if(fat){
             pane.setStyle("-fx-padding: 7 0 7 10;"); // top - right - bottom - left

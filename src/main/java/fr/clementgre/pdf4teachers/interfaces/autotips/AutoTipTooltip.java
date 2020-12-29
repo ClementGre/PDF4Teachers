@@ -12,6 +12,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
+import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 
 public class AutoTipTooltip extends Tooltip{
@@ -34,7 +35,7 @@ public class AutoTipTooltip extends Tooltip{
 
         setAutoHide(false);
         setOpacity(0.95);
-        setHideDelay(Duration.INDEFINITE);
+        setHideDelay(new Duration(1000*60));
 
         setMaxWidth(300);
         setWrapText(true);

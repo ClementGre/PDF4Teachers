@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,7 +25,7 @@ public class Settings {
     public StringSetting language = new StringSetting("", "language", "language",
             TR.ct("Langage (Français France)"), TR.ct("Définit la langue de l'interface"));
     @SettingObject
-    public BooleanSetting restoreLastSession = new BooleanSetting(true, "recharger", "restoreLastSession",
+    public BooleanSetting restoreLastSession = new BooleanSetting(true, SVGPathIcons.REDO, "restoreLastSession",
             TR.ct("Toujours restaurer la session précédente"), TR.ct("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."));
     @SettingObject
     public BooleanSetting checkUpdates = new BooleanSetting(true, "wifi", "checkUpdates",
@@ -39,24 +40,24 @@ public class Settings {
     public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), "cloud", "zoomAnimations",
             TR.ct("Animations de zoom ou défilement"), TR.ct("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"));
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(true, "settings", "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(true, "light", "darkTheme",
             TR.ct("Thème sombre"), TR.ct("Change les couleurs de l'interface vers un thème plus sombre."));
 
     @SettingObject
-    public BooleanSetting autoSave = new BooleanSetting(true, "sauvegarder", "autoSave",
+    public BooleanSetting autoSave = new BooleanSetting(true, "save", "autoSave",
             TR.ct("Sauvegarder automatiquement"), TR.ct("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."));
     @SettingObject
-    public IntSetting regularSave = new IntSetting(-1, "sauvegarder-recharger", "regularSave",
+    public IntSetting regularSave = new IntSetting(-1, "auto-save", "regularSave",
             TR.ct("Sauvegarder régulièrement"), TR.ct("Sauvegarde l'édition du document automatiquement toutes les x minutes."));
 
     @SettingObject
-    public BooleanSetting textAutoRemove = new BooleanSetting(true, "favoris", "textAutoRemove",
+    public BooleanSetting textAutoRemove = new BooleanSetting(true, "star", "textAutoRemove",
             TR.ct("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), TR.ct("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."));
     @SettingObject
     public BooleanSetting textOnlyStart = new BooleanSetting(true, "lines", "textOnlyStart",
             TR.ct("N'afficher que le début des éléments textuels"), TR.ct("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."));
     @SettingObject
-    public BooleanSetting textSmall = new BooleanSetting(false, "cursor", "textSmall",
+    public BooleanSetting textSmall = new BooleanSetting(false, "text-cursor", "textSmall",
             TR.ct("Réduire la taille des éléments dans les listes"), TR.ct("Dans les liste des éléments textuels, affiche les éléments en plus petit."));
 
     @SettingObject
