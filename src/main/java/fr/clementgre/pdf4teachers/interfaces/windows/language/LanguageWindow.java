@@ -2,13 +2,11 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
@@ -19,10 +17,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
@@ -31,7 +27,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LanguageWindow extends Stage{
 
-    HashMap<String, ImageView> languagesComponents = new HashMap<>();
+    ArrayList<Language> languagesComponents = new ArrayList<>();
     private static HashMap<String, Object> languages = getLanguagesDefaultConfig();
 
     CallBackArg<String> callBack;
@@ -66,6 +62,56 @@ public class LanguageWindow extends Stage{
         }, false, false);
     }
 
+    private static class Language{
+        private String shortName;
+        private String name;
+        private int perMilleCompleted = -1;
+        private int version;
+        private ImageView image = null;
+
+        public Language(File txtFile) {
+            shortName = StringUtils.removeAfterLastRegex(txtFile.getName(), ".txt");
+            name = getLanguageName(shortName);
+            version = getLanguageVersion(shortName);
+
+            if(!shortName.equals("fr-fr")){
+                int[] stats = TR.getTranslationFileStats(txtFile);
+                if(stats[0] != 0){
+                    perMilleCompleted = (int) (stats[1] / ((double) stats[0]) * 1000d);
+                }
+            }
+
+            if(getFile(".png").exists()) {
+                try{
+                    image = ImageUtils.buildImage(new FileInputStream(getPath(".png")), 88, 50);
+                }catch(FileNotFoundException e){ e.printStackTrace(); }
+            }
+        }
+
+        public File getFile(String extension){
+            return new File(getPath(extension));
+        }
+        public String getPath(String extension){
+            return Main.dataFolder + "translations" + File.separator + shortName + extension;
+        }
+
+        public String getShortName() {
+            return shortName;
+        }
+        public String getName() {
+            return name;
+        }
+        public int getPerMilleCompleted() {
+            return perMilleCompleted;
+        }
+        public int getVersion() {
+            return version;
+        }
+        public ImageView getImage() {
+            return image;
+        }
+    }
+
     public static String getLanguageFromComputerLanguage(){
         String language = System.getProperty("user.language").toLowerCase();
         String country = System.getProperty("user.country").toLowerCase();
@@ -88,11 +134,7 @@ public class LanguageWindow extends Stage{
 
             for(File file : dir.listFiles()){
                 if(FilesUtils.getExtension(file.getName()).equals("txt")){
-                    ImageView image = new ImageView();
-                    if(new File(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRegex(file.getName(), ".txt") + ".png").exists()) {
-                        image = ImageUtils.buildImage(new FileInputStream(Main.dataFolder + "translations" + File.separator + StringUtils.removeAfterLastRegex(file.getName(), ".txt") + ".png"), 88, 50);
-                    }
-                    languagesComponents.put(StringUtils.removeAfterLastRegex(file.getName(), ".txt"), image);
+                    languagesComponents.add(new Language(file));
                 }
             }
         }catch(Exception e){
@@ -108,26 +150,37 @@ public class LanguageWindow extends Stage{
         ListView<HBox> languages = new ListView<>();
         languages.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
-        for(Map.Entry<String, ImageView> language : this.languagesComponents.entrySet()){
+        for(Language language : this.languagesComponents){
             HBox box = new HBox();
             box.setStyle("-fx-padding: -5;");
 
-            Label label = new Label(getLanguageName(language.getKey()));
+            Label label = new Label(language.getName());
+            if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000){
+                label.setText(label.getText() + " (" + TR.tr("Traduit à") + " " + (language.getPerMilleCompleted()/10d) + "%)");
+            }
+
             label.setPrefHeight(50);
             HBox.setMargin(label, new Insets(0, 5, 0, 10));
 
-            Label shortName = new Label(language.getKey());
+            Label shortName = new Label(language.getShortName());
             shortName.setPrefHeight(50);
             shortName.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
             HBox.setMargin(shortName, new Insets(0, 3, 0, 0));
 
-            Label version = new Label("v" + getLanguageVersion(language.getKey()));
+            Label version = new Label("v" + language.getVersion());
             version.setPrefHeight(50);
             version.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
 
-            box.getChildren().addAll(language.getValue(), label, shortName, version);
+            if(language.getImage() != null){
+                box.getChildren().addAll(language.getImage(), label, shortName, version);
+            }else{
+                Region spacer = new Region();
+                spacer.setPrefWidth(88);
+                box.getChildren().addAll(spacer, label, shortName, version);
+            }
+
             languages.getItems().add(box);
-            if(Main.settings.language.getValue().equals(language.getKey())) languages.getSelectionModel().select(box);
+            if(Main.settings.language.getValue().equals(language.getShortName())) languages.getSelectionModel().select(box);
         }
 
         VBox.setVgrow(languages, Priority.ALWAYS);
@@ -153,44 +206,7 @@ public class LanguageWindow extends Stage{
             close();
             callBack.call(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(2)).getText());
         });
-        newTrans.setOnAction((ActionEvent event) -> {
-
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Télécharger les fichier de traduction"));
-
-            alert.setHeaderText(TR.tr("Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue." +
-                    "\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation"));
-
-            alert.setContentText(TR.tr("Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\n" +
-                    "Vous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application."));
-
-            ButtonType originFile = new ButtonType(TR.tr("Enregistrer les fichiers"), ButtonBar.ButtonData.YES);
-            ButtonType englishFile = new ButtonType(TR.tr("Enregistrer les fichiers déjà traduits en Anglais"), ButtonBar.ButtonData.NO);
-            ButtonType cancelButton = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(originFile, englishFile, cancelButton);
-
-            Optional<ButtonType> option = alert.showAndWait();
-
-            String name;
-            if(option.get() == originFile) name = "fr-fr";
-            else if(option.get() == englishFile) name = "rn-us";
-            else return;
-
-
-            final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("Sélectionner un dossier"));
-            chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
-
-            File dir = chooser.showDialog(Main.window);
-            if(dir != null) {
-                try {
-                    Files.copy(new File(Main.dataFolder + "translations" + File.separator + name + ".txt").toPath(), new File(dir.getAbsoluteFile() + File.separator + name + ".txt").toPath(), REPLACE_EXISTING);
-                    Files.copy(new File(Main.dataFolder + "translations" + File.separator + name + ".odt").toPath(), new File(dir.getAbsoluteFile() + File.separator + name + ".odt").toPath(), REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        });
+        newTrans.setOnAction((ActionEvent event) -> Main.hostServices.showDocument("https://pdf4teachers.org/Contribute/"));
 
     }
 

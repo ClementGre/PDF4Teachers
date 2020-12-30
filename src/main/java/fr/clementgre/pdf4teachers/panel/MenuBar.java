@@ -58,7 +58,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// ICONS COLOR //////////
 
-	private static ColorAdjust colorAdjust = new ColorAdjust();
+	public static ColorAdjust colorAdjust = new ColorAdjust();
 	static {
 		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
 		else colorAdjust.setBrightness(-1);
@@ -67,28 +67,28 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	////////// FILE //////////
 
 	Menu file = new Menu(TR.tr("Fichier"));
-	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), "ouvrir", new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), "directory", new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), "vider", new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Vide la liste des fichiers"), false, true, false);
 
-	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), "sauvegarder", new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), "supprimer", null,
+	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), SVGPathIcons.TRASH, null,
 			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), "fermer", new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Ferme la vue du document courant"), true, false, false);
 
-	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), "export", new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), "export-all", new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
@@ -96,7 +96,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	public Menu tools = new Menu(TR.tr("Outils"));
 
-	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), "convert", new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
 			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
 
 	MenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
@@ -105,12 +105,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), SVGPathIcons.PLUS,
 			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons latéraux des pages"), true);
 
-	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
+	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), SVGPathIcons.TRASH, null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
-	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), "cross-way",
+	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), SVGPathIcons.EXCHANGE,
 			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
-	MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+		MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
 	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), SVGPathIcons.EXPORT,
 			TR.tr("Générer un fichier indépendant, contenant les informations d'édition de ce document"), true);
@@ -120,7 +120,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
-	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), "import",
+	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), SVGPathIcons.IMPORT,
 			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
 		MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
@@ -128,7 +128,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
 				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), "fullscreen", null,
+	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), SVGPathIcons.FULL_SCREEN, null,
 			TR.tr("Passe l'application en mode plein écran"));
 
 	Menu tools9Debug = createSubMenu(TR.tr("Débug"), SVGPathIcons.COMMAND_PROMPT,
@@ -199,10 +199,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		////////// HELP //////////
 
 		if(!isSystemMenuBarSupported()){
-			help1LoadDoc.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
-			help2GitHubIssue.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
-			help3Twitter.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
-			help4Website.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+			help1LoadDoc.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.INFO, "white", 0, 15, 15, colorAdjust));
+			help2GitHubIssue.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GITHUB, "white", 0, 15, 15, colorAdjust));
+			help3Twitter.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TWITTER, "white", 0, 15, 15, colorAdjust));
+			help4Website.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GLOBE, "white", 0, 15, 15, colorAdjust));
 		}
 		help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
 
