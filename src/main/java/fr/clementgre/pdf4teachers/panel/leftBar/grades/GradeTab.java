@@ -70,7 +70,7 @@ public class GradeTab extends Tab {
                 AutoTipsManager.showByAction("gradescaleinvert");
             }
         });
-        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0")));
+        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.")));
 
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);

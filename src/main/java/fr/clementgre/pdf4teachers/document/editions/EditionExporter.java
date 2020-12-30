@@ -135,8 +135,8 @@ public class EditionExporter {
 
                                 return Map.entry(config, TwoStepListAction.CODE_OK);
                             }else{
-                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun nom de document ne correspond à une édition :") + " " + fileName,
-                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation des l'éditions."), true);
+                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition :") + " " + fileName,
+                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
                                 if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
                                 else return Map.entry(new Config(), 2); // No match
                             }
@@ -315,7 +315,7 @@ public class EditionExporter {
 
                 String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'étaient pas dans le même dossier") + ")";
                 String noEditText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition") + ")";
-                String alreadyExistText = !excludedReasons.containsKey(3) ? "" : "\n(" + excludedReasons.get(3) + " " + TR.tr("documents ignorés car ils existaient déjà") + ")";
+                String alreadyExistText = !excludedReasons.containsKey(3) ? "" : "\n(" + excludedReasons.get(3) + " " + TR.tr("documents ignorés car leur fichier YAML existait déjà") + ")";
                 endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions exportées") + badFolderText + noEditText + alreadyExistText);
 
                 Optional<ButtonType> optionSelected = endAlert.showAndWait();

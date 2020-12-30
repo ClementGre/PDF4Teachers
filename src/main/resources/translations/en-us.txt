@@ -25,7 +25,7 @@ Les éditions ont bien été exportées=Editings successfully exported
 documents ignorés car ils n'étaient pas dans le même dossier=ignored documents because they do not belong to the same folder
 documents ignorés car ils n'avaient pas d'édition=ignored documents because they do not contain an editing
 documents ignorés car leur fichier YAML existait déjà=ignored documents because their YAML file already existed
-images exportées=exported images
+éditions exportées=exported editings
 # TextTreeLasts
 Éléments Précédents=Previous Elements
 # ExportWindow
@@ -121,12 +121,12 @@ du document=of document
 Les éléments de cette page seront supprimés et les notes seront réinitialisées=Elements of this page will be deleted and marks reset
 Définition d'affichage du document=Document's display resolution
 Capture de page sous forme d'image=Image capture of page
-Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)=
-Choose a resolution\n(pixels number is estimated for an A4 print width, it will be determined by the actual selection size)
+Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)=Choose a resolution\n(pixels number is estimated for an A4 print width, it will be determined by the actual selection size)
 Fichier PNG=PNG File
 Enregistrement terminé=Write done
 Les captures ont bien été enregistrées=Image captures successfully exported
 images ignorées car elles existaient déjà=already existing ignored images
+images exportées=exported images
 # Edition
 Impossible de copier le fichier=Cannot copy file
 vers=to
@@ -318,7 +318,7 @@ Faites un clic droit sur la page pour effectuer des actions rapides.=Use right c
 Utilisez Ctrl + Molette pour zoomer=Use Ctrl + Wheel to zoom
 Vous pouvez enregistrer les éléments favoris / précédents à part avec l'icône de sauvegarde. Pour recharger la liste d'éléments, utilisez l'icône de liste.=You can save the favorites and previous elements lists with the save icon. To load a saved elements list, use the list icon.
 Vous pouvez trier les éléments textuels grâce à l'icône de tri.=Text elements can be sorted with the sorting icon.
-Utilisez Shift+Clic (ou Shift+Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.=Use Shift + Click (or Shift + Enter) to insert an element and link it: further modifications to the element on the page will also affect the list element.
+Utilisez Shift+Clic (ou Shift+Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliquée à l'élément de la liste.=Use Shift + Click (or Shift + Enter) to insert an element and link it: further modifications to the element on the page will also affect the list element.
 Utilisez Ctrl+[1-9] pour ajouter l'élément favoris qui correspond au chiffre entré.=Use Ctrl+[1-9] to insert one of the 9 first favorites elements.
 Vous pouvez réduire la taille d'affichage des éléments dans les listes via le menu préférences de la barre de menu.=Display size of the elements in the lists can be changed in the Settings menu (menu bar).
 Cliquez sur le bouton engrenage pour modifier les polices et les comportements des notes.=Click on the gear icon to modify marks fonts et marks behavior.
@@ -326,7 +326,7 @@ Cliquez sur le bouton exportation pour exporter vos notes dans un tableur (.csv)
 Cliquez sur le bouton lien pour copier le barème sur d'autres documents.=Click on link icon to copy the marking scale on other documents.
 Toutes les modifications apportés au document sont enregistrés dans un fichier spécial, à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. Attention : les modifications de pages (rotations, suppression / ajout de pages) modifient immédiatement le fichier d'origine.=Modifications of the PDF document are saved in a special file. Use the menu File -> Export to regenerate the PDF file. Caution: pages properties modifications (rotation, add / suppr) immediately affect the original file.
 Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T).=Double click on the document to quickly add a new text element (or use Ctrl+T)
-Vous venez de vérouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.=You have locked the marking scale. Modification of marks names, add / suppr of marks are disabled.
+Vous venez de verrouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.=You have locked the marking scale. Modification of marks names, add / suppr of marks are disabled.
 Le mode de comptage des points par retranchement initialise chaque note à son total au lieu de 0. L'absence de saisie de note mène donc à la note totale maximale.=The substracting marks counting mode initializes each mark to its total instead of 0. Not entering marks thus leads to the maximum total mark.
 Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.=Right click on an entered mark to edit its value and access other options.
 Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.=The marking scale scheme is hierarchical. To add a mark with the same level as the selected one, click on the + of the PARENT mark, or Ctrl+G.
@@ -336,7 +336,6 @@ Utilisez les flèches du clavier puis entrée pour ajouter un élément semblabl
 Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).=Carriage returns are automatically added when elements are longer than page width. Right click in text input field to remove useless carriage returns (for instance, if font size was reduced)
 Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=Text elements can be written in LaTeX language if starting with $. LaTeX is useful for maths equations and symbols.
 Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=
-Text elements starting with www. or http:// or https:// will be transformed in clickable URLs when exporting.
 Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).=Add a text element to Favorites thanks to a right click on it.
 Double cliquez sur un élément textuel pour le dupliquer.=Double click on a text element to duplicate it.
 Double cliquez sur une note pour la mettre à 0.=Double click on a mark to reset it to 0.
@@ -533,8 +532,7 @@ Supprime cet élément du barème et de l'édition=Deletes this element from the
 Mettre 0 à toutes les sous-notes=Set to 0 all marks
 Donne la valeur 0 à toutes les sous-notes=Set to 0 all sub-marks
 Cacher les sous-notes non saisies=Hide marks not entered
-Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles dans l'application même sans valeur saisie. Il est possible de réinitialiser leur position et de les cacher avec cette option.=
-If the marking scale was imported with the marks position memorisation, marks will be visible in tha application even with no value entered. Unentered marks can be hidden and position reinitialized with this option.
+Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles dans l'application même sans valeur saisie. Il est possible de réinitialiser leur position et de les cacher avec cette option.=If the marking scale was imported with the marks position memorisation, marks will be visible in tha application even with no value entered. Unentered marks can be hidden and position reinitialized with this option.
 Bonus=Bonus
 # FileListItem
 Éléments=Elements

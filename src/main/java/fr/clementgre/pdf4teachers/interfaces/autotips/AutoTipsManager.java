@@ -24,7 +24,7 @@ public class AutoTipsManager {
     private static final String textElementsSort = TR.ct("Vous pouvez trier les éléments textuels grâce à l'icône de tri.");
 
     @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
-    private static final String textAddLink = TR.ct("Utilisez Shift+Clic (ou Shift + Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.");
+    private static final String textAddLink = TR.ct("Utilisez Shift+Clic (ou Shift+Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliquée à l'élément de la liste.");
 
     @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
     private static final String textKeyboardShortcutAddFavorite = TR.ct("Utilisez Ctrl+[1-9] pour ajouter l'élément favoris qui correspond au chiffre entré.");
@@ -46,7 +46,7 @@ public class AutoTipsManager {
     private static final String editSystemAndExportation = TR.ct("Toutes les modifications apportés au document sont enregistrés dans un fichier spécial, à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. Attention : les modifications de pages (rotations, suppression / ajout de pages) modifient immédiatement le fichier d'origine.");
 
     @ToolTipVar(actionKey = "newtextelement", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String newTextElement = TR.ct("Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T)");
+    private static final String newTextElement = TR.ct("Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T).");
 
     @ToolTipVar(actionKey = "gradescalelock", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeScaleLock = TR.ct("Vous venez de verrouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.");
@@ -61,7 +61,7 @@ public class AutoTipsManager {
     private static final String createGradeSameTiers = TR.ct("Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.");
 
     @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String gradeBonus = TR.ct("Vous pouvez appeler une note \"Bonus [...]\" pour que son total ne soit pas compté.");
+    private static final String gradeBonus = TR.ct("Vous pouvez appeler une note \"Bonus<...>\" pour qu'elle ne soit pas comptée dans le total du barème (mais comptée dans la note).");
 
     @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeKeyboardShortcuts = TR.ct("Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du barème.");
