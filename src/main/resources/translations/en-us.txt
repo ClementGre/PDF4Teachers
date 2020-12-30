@@ -301,8 +301,8 @@ Une erreur est survenue=An error occured
 Ctrl+Alt+C pour accéder aux logs=Ctrl+Alt+C to view logs
 Fichier PDF=PDF file
 Sélectionner un ou plusieurs fichier=Select one or more files
-Sélectionner un fichier=
-Enregistrer un fichier=
+Sélectionner un fichier=File selection
+Enregistrer un fichier=File save
 # TwoStepListAction
 Exportation...=Exporting...
 PDF4Teachers génère vos documents...=PDF4Teachers is generating your documents
@@ -335,7 +335,7 @@ Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du b
 Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.=Use keyboard arrows and Enter to navigate in lists and add an element similar to an already existing one.
 Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).=Carriage returns are automatically added when elements are longer than page width. Right click in text input field to remove useless carriage returns (for instance, if font size was reduced)
 Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=Text elements can be written in LaTeX language if starting with $. LaTeX is useful for maths equations and symbols.
-Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=
+Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=Text elements starting with www. or http:// or https:// will be transformed in clickable URLs when exporting.
 Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).=Add a text element to Favorites thanks to a right click on it.
 Double cliquez sur un élément textuel pour le dupliquer.=Double click on a text element to duplicate it.
 Double cliquez sur une note pour la mettre à 0.=Double click on a mark to reset it to 0.
