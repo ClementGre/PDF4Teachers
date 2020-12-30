@@ -101,7 +101,7 @@ public class ExportWindow {
 
 
         VBox settings = new VBox();
-            CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
+            CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions après exportation"));
         settings.getChildren().addAll(delEdit);
 
         HBox btns = new HBox();
@@ -222,7 +222,7 @@ public class ExportWindow {
         VBox settings = new VBox();
         CheckBox onlyEdited = new CheckBox(TR.tr("Exporter uniquement les documents édités"));
         onlyEdited.setSelected(true);
-        CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions aprés exportation"));
+        CheckBox delEdit = new CheckBox(TR.tr("Supprimer les éditions après exportation"));
         settings.getChildren().addAll(onlyEdited, delEdit);
 
         HBox btns = new HBox();
