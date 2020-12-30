@@ -290,7 +290,7 @@ Trier=Sort
 # GradeTreeView
 Total=Total
 # GradeTreeItem
-Clic sur le cadenas pour éditer le barème=Clic on the lock to edit the marking scale
+Clic sur le cadenas pour éditer le barème=Click on the lock to edit the marking scale
 Créer une nouvelle sous-note de=Add new sub-mark
 # MainWindow
 À Propos=About
@@ -314,26 +314,26 @@ Mode Notes=Marks Mode
 Mode Dessin=Drawings mode
 Aucun fichier ouvert=No opened file
 # AutoTipsManager
-Faites un clic droit sur la page pour effectuer des actions rapides.=Use right clic on page to display quick actions
+Faites un clic droit sur la page pour effectuer des actions rapides.=Use right click on page to display quick actions
 Utilisez Ctrl + Molette pour zoomer=Use Ctrl + Wheel to zoom
 Vous pouvez enregistrer les éléments favoris / précédents à part avec l'icône de sauvegarde. Pour recharger la liste d'éléments, utilisez l'icône de liste.=You can save the favorites and previous elements lists with the save icon. To load a saved elements list, use the list icon.
 Vous pouvez trier les éléments textuels grâce à l'icône de tri.=Text elements can be sorted with the sorting icon.
-Utilisez Shift+Clic (ou Shift+Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.=Use Shift + Clic (or Shift + Enter) to insert an element and link it: further modifications to the element on the page will also affect the list element.
+Utilisez Shift+Clic (ou Shift+Entrée) pour ajouter et lier : toute modification apportée à l'élément sur le document sera appliqué à l'élément de la liste.=Use Shift + Click (or Shift + Enter) to insert an element and link it: further modifications to the element on the page will also affect the list element.
 Utilisez Ctrl+[1-9] pour ajouter l'élément favoris qui correspond au chiffre entré.=Use Ctrl+[1-9] to insert one of the 9 first favorites elements.
 Vous pouvez réduire la taille d'affichage des éléments dans les listes via le menu préférences de la barre de menu.=Display size of the elements in the lists can be changed in the Settings menu (menu bar).
-Cliquez sur le bouton engrenage pour modifier les polices et les comportements des notes.=Clic on the gear icon to modify marks fonts et marks behavior.
-Cliquez sur le bouton exportation pour exporter vos notes dans un tableur (.csv)=Clic on export icon to export marks in a spreadsheet (csv).
-Cliquez sur le bouton lien pour copier le barème sur d'autres documents.=Clic on link icon to copy the marking scale on other documents.
+Cliquez sur le bouton engrenage pour modifier les polices et les comportements des notes.=Click on the gear icon to modify marks fonts et marks behavior.
+Cliquez sur le bouton exportation pour exporter vos notes dans un tableur (.csv)=Click on export icon to export marks in a spreadsheet (csv).
+Cliquez sur le bouton lien pour copier le barème sur d'autres documents.=Click on link icon to copy the marking scale on other documents.
 Toutes les modifications apportés au document sont enregistrés dans un fichier spécial, à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. Attention : les modifications de pages (rotations, suppression / ajout de pages) modifient immédiatement le fichier d'origine.=Modifications of the PDF document are saved in a special file. Use the menu File -> Export to regenerate the PDF file. Caution: pages properties modifications (rotation, add / suppr) immediately affect the original file.
-Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T).=Double clic on the document to quickly add a new text element (or use Ctrl+T)
+Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T).=Double click on the document to quickly add a new text element (or use Ctrl+T)
 Vous venez de vérouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.=You have locked the marking scale. Modification of marks names, add / suppr of marks are disabled.
 Le mode de comptage des points par retranchement initialise chaque note à son total au lieu de 0. L'absence de saisie de note mène donc à la note totale maximale.=The substracting marks counting mode initializes each mark to its total instead of 0. Not entering marks thus leads to the maximum total mark.
-Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.=Right clic on an entered mark to edit its value and access other options.
-Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.=The marking scale scheme is hierarchical. To add a mark with the same level as the selected one, clic on the + of the PARENT mark, or Ctrl+G.
+Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.=Right click on an entered mark to edit its value and access other options.
+Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.=The marking scale scheme is hierarchical. To add a mark with the same level as the selected one, click on the + of the PARENT mark, or Ctrl+G.
 Vous pouvez appeler une note \"Bonus<...>\" pour qu'elle ne soit pas comptée dans le total du barème (mais comptée dans la note).=You can name a mark \"Bonus<...>\", so it is not added to the total of the marking scale (but is added to the total mark).
 Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du barème.=Use TAB and Enter to navigate and quikly setup the marking scale.
 Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.=Use keyboard arrows and Enter to navigate in lists and add an element similar to an already existing one.
-Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).=Carriage returns are automatically added when elements are longer than page width. Right clic in text input field to remove useless carriage returns (for instance, if font size was reduced)
+Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).=Carriage returns are automatically added when elements are longer than page width. Right click in text input field to remove useless carriage returns (for instance, if font size was reduced)
 Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=Text elements can be written in LaTeX language if starting with $. LaTeX is useful for maths equations and symbols.
 Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=
 Text elements starting with www. or http:// or https:// will be transformed in clickable URLs when exporting.
@@ -544,7 +544,7 @@ Non édité=Not edited
 Barèmes=Marking scales
 Impossible de récupérer les informations=Impossible to get content
 Ouvrir=Open
-Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.=Opens file to edit in PDF4Teachers. Can also be opened with a double clic.
+Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.=Opens file to edit in PDF4Teachers. Can also be opened with a double click.
 Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.=Remove file from list. It will NOT be deleted on file system.
 Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant.=Resets document editing : removes all previously added elements
 Supprimer le fichier=Delete file
