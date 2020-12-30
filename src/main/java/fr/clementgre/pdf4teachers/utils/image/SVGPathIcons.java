@@ -1,5 +1,7 @@
 package fr.clementgre.pdf4teachers.utils.image;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MenuBar;
 import javafx.geometry.Insets;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.*;
@@ -53,16 +55,16 @@ public class SVGPathIcons {
 
 
     public static Region generateImage(String path, String bgColor, int width, int height){
-        return generateImage(path, bgColor, 0, width, height, 0, new int[]{1, 1}, null);
+        return generateImage(path, bgColor, 0, width, height, 0, null, null);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height){
-        return generateImage(path, bgColor, padding, width, height, 0, new int[]{1, 1}, null);
+        return generateImage(path, bgColor, padding, width, height, 0, null, null);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, ColorAdjust effect){
-        return generateImage(path, bgColor, padding, width, height, 0, new int[]{1, 1}, effect);
+        return generateImage(path, bgColor, padding, width, height, 0, null, effect);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate){
-        return generateImage(path, bgColor, padding, width, height, rotate, new int[]{1, 1}, null);
+        return generateImage(path, bgColor, padding, width, height, rotate, null, null);
     }
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio){
         return generateImage(path, bgColor, padding, width, height, rotate, ratio, null);
@@ -85,35 +87,29 @@ public class SVGPathIcons {
             imageRegion.setEffect(effect);
         }
 
+        int w = width - padding*2;
         StackPane imagePane = new StackPane();
-        if(width != 0 && height != 0){
-            int w = width - padding*2;
 
-
-            if(ratio[0] == 1 && ratio[1] == 1 && image.getLayoutBounds().getWidth() != image.getLayoutBounds().getHeight() && width == height){
-                double rw = image.getLayoutBounds().getWidth();
-                double rh = image.getLayoutBounds().getHeight();
-                if(rw < rh){
-                    imageRegion.setMinWidth(w/rh*rw);
-                    imageRegion.setMinHeight(w);
-                    double dif = (w - w/rh*rw) / 2.0;
-                    imagePane.setPadding(new Insets(0, dif, 0, dif));
-                }else{
-                    imageRegion.setMinWidth(w);
-                    imageRegion.setMinHeight(w/rw*rh);
-                    double dif = (w - w/rw*rh) / 2;
-                    imagePane.setPadding(new Insets(dif, 0, dif,0));
-                }
-                imagePane.getChildren().add(imageRegion);
-                return imagePane;
+        if(ratio == null){
+            double rw = image.getLayoutBounds().getWidth();
+            double rh = image.getLayoutBounds().getHeight();
+            if(rw < rh){
+                imageRegion.setMinWidth((int) (w/rh*rw));
+                imageRegion.setMinHeight(w);
+                double dif = (w - (int) (w/rh*rw)) / 2d;
+                imagePane.setPadding(new Insets(0, (int) dif, 0, Math.ceil(dif)));
+            }else if(rw > rh){
+                imageRegion.setMinWidth(w);
+                imageRegion.setMinHeight(w/rw*rh);
+                double dif = (w - (int) (w/rw*rh)) / 2d;
+                imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif),0));
             }else{
                 imageRegion.setMinWidth(w);
-                imageRegion.setMinHeight(w / ((double) width) * height);
+                imageRegion.setMinHeight(w);
                 return imageRegion;
             }
-        }else{
 
-            int w = width - padding*2;
+        }else{
             int h = height - padding*2;
 
             if(height == 0){
@@ -124,12 +120,12 @@ public class SVGPathIcons {
                 imagePane.setPadding(new Insets(0, (h-w)/2d, 0, (h-w)/2d));
             }
 
-
             imageRegion.setMinWidth(w);
             imageRegion.setMinHeight(h);
-            imagePane.getChildren().add(imageRegion);
-            return imagePane;
         }
+
+        imagePane.getChildren().add(imageRegion);
+        return imagePane;
 
     }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
@@ -117,6 +118,7 @@ public class LanguagesUpdater {
             try {
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                         "&starts=" + MainWindow.userData.startsCount +
+                        "&lang=" + Main.settings.language.getValue() +
                         "&version=" + Main.VERSION +
                         "&id=" + uuid);
                 if(!Main.settings.sendStats.getValue()){
@@ -124,8 +126,10 @@ public class LanguagesUpdater {
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(false);
-                int responseCode = con.getResponseCode();
-                if(Main.DEBUG) System.out.println("updating stats with response code " + responseCode);
+                if(Main.DEBUG){
+                    int responseCode = con.getResponseCode();
+                    System.out.println("updating stats with response code " + responseCode);
+                }
             }catch(IOException e){
                 e.printStackTrace();
             }
@@ -146,6 +150,7 @@ public class LanguagesUpdater {
                     if(Main.settings.sendStats.getValue()){
                         url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                                 "&starts=" + MainWindow.userData.startsCount +
+                                "&lang=" + Main.settings.language.getValue() +
                                 "&version=" + Main.VERSION +
                                 "&id=" + uuid);
                     }else{
@@ -155,6 +160,12 @@ public class LanguagesUpdater {
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
+                if(Main.DEBUG){
+                    int responseCode = con.getResponseCode();
+                    System.out.println("updating language with response code " + responseCode);
+                    if(responseCode != 200) System.out.println(con.getResponseMessage());
+                }
+
 
                 JsonFactory jfactory = new JsonFactory();
                 JsonParser jParser = jfactory.createParser(con.getInputStream());

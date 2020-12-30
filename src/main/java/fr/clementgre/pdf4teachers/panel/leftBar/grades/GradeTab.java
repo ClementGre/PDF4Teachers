@@ -63,7 +63,7 @@ public class GradeTab extends Tab {
         PaneUtils.setHBoxPosition(sumByDecrement, 45, 35, 0);
         sumByDecrement.setCursor(Cursor.HAND);
         sumByDecrement.setSelected(false);
-        sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, ImageUtils.defaultDarkColorAdjust));
+        sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, 0, new int[]{1, 1}, ImageUtils.defaultDarkColorAdjust));
         sumByDecrement.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
             treeView.updateAllSum();
             if(newValue){

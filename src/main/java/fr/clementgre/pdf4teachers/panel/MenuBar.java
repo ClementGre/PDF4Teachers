@@ -58,7 +58,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// ICONS COLOR //////////
 
-	private static ColorAdjust colorAdjust = new ColorAdjust();
+	public static ColorAdjust colorAdjust = new ColorAdjust();
 	static {
 		if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
 		else colorAdjust.setBrightness(-1);
@@ -515,7 +515,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					else pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
 				}
 
-				text.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 10;"); // top - right - bottom - left
+				text.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 8;"); // top - right - bottom - left
 			}else{
 				text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;");
 			}
