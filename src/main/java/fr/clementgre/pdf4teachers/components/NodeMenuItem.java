@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -28,11 +29,11 @@ public class NodeMenuItem extends CustomMenuItem {
 
     /////////// FAT MODE ////////////////
     // Default text Height is 16
-    // text top/bottom margin = 2*9 = 18
-    // total height is 34
+    // text top/bottom margin = 2*7 = 14
+    // total height is 30
 
-    // Images is 20*20
-    // 34 - 20 = 14 and 14/2 = 7
+    // Images is 16*16
+    // 30 - 16 = 14 and 14/2 = 7
     // So images has 7px top/bottom margin
     public NodeMenuItem(HBox node, String text, boolean fat){
         super(new Pane());
@@ -78,7 +79,7 @@ public class NodeMenuItem extends CustomMenuItem {
     }
     public void setFalseLeftData(){
         Region spacer = new Region();
-        spacer.setPrefWidth(30);
+        spacer.setPrefWidth(26);
         getNode().getChildren().set(0, spacer);
     }
     public void setImage(Node image){
@@ -86,16 +87,18 @@ public class NodeMenuItem extends CustomMenuItem {
         if(fat){
             pane.setStyle("-fx-padding: 7 0 7 10;"); // top - right - bottom - left
             image.setTranslateY(7);
-        }else{ pane.setStyle("-fx-padding: 3 0 3 10;"); // top - right - bottom - left
-            image.setTranslateY(3);
-        } image.setTranslateX(10);
+        }else{
+            pane.setStyle("-fx-padding: 3 0 3 10;"); // top - right - bottom - left
+            image.setTranslateY(6);
+        }
+        image.setTranslateX(10);
 
         pane.getChildren().add(image);
         getNode().getChildren().set(1, pane);
     }
     public void setName(String text){
         Label textLabel = new Label(text);
-        if(fat) textLabel.setStyle("-fx-font-size: 13; -fx-padding: 9 10 9 10;"); // top - right - bottom - left
+        if(fat) textLabel.setStyle("-fx-font-size: 13; -fx-padding: 7 10 7 10;"); // top - right - bottom - left
         else textLabel.setStyle("-fx-font-size: 13; -fx-padding: 5 10 5 10;"); // top - right - bottom - left
         getNode().getChildren().set(2, textLabel);
     }
@@ -103,7 +106,7 @@ public class NodeMenuItem extends CustomMenuItem {
     public void setKeyCombinaison(KeyCombination keyCombinaison){
 
         Label acceleratorLabel = new Label(keyCombinaison.getDisplayText());
-        if(fat) acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 9 10 9 10;"); // top - right - bottom - left
+        if(fat) acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 7 10 7 10; -fx-text-fill: #d0d0d0;"); // top - right - bottom - left
         else acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 5 10 5 10;");  // top - right - bottom - left
         getNode().getChildren().set(4, acceleratorLabel);
 

@@ -199,10 +199,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		////////// HELP //////////
 
 		if(!isSystemMenuBarSupported()){
-			help1LoadDoc.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/info.png")+"", 0, 0, colorAdjust));
-			help2GitHubIssue.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/partager.png")+"", 0, 0, colorAdjust));
-			help3Twitter.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/twitter.png")+"", 0, 0, colorAdjust));
-			help4Website.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/language.png")+"", 0, 0, colorAdjust));
+			help1LoadDoc.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.INFO, "white", 0, 15, 15, colorAdjust));
+			help2GitHubIssue.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GITHUB, "white", 0, 15, 15, colorAdjust));
+			help3Twitter.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TWITTER, "white", 0, 15, 15, colorAdjust));
+			help4Website.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GLOBE, "white", 0, 15, 15, colorAdjust));
 		}
 		help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
 
@@ -483,12 +483,14 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		StyleManager.putStyle(this, Style.ACCENT);
 		getMenus().addAll(file, tools, settings, help, about);
 
+		if(!isSystemMenuBarSupported()){
+			for(Menu menu : getMenus()){
+				menu.setStyle("-fx-padding: 5 7 5 7;");
+			}
+		}
 
 	}
-	public static Menu createSubMenu(String name, String imgName, String toolTip, boolean disableIfNoDoc){
-		return createSubMenu(name, imgName, toolTip, disableIfNoDoc, true);
-	}
-	public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc, boolean fat){
+	public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc){
 
 		if(isSystemMenuBarSupported()){
 			Menu menu = new Menu(name);
@@ -507,17 +509,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			if(image != null){
 				if(image.length() >= 30){
-					pane.getChildren().add(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+					pane.getChildren().add(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
 				}else{
 					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
 					else pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
 				}
 
-				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 10;"); // top - right - bottom - left
-				else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 10;");
+				text.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 10;"); // top - right - bottom - left
 			}else{
-				if(fat) text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;"); // top - right - bottom - left
-				else text.setStyle("-fx-font-size: 13; -fx-padding: -15 0 -15 0;");
+				text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;");
 			}
 			pane.getChildren().add(text);
 
@@ -558,7 +558,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			if(image != null){
 				if(image.length() >= 30){
-					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
 				}else{
 					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
 					else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
@@ -591,7 +591,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 			if(image != null){
 				if(image.length() >= 30){
-					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 20, 20, colorAdjust));
+					menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
 				}else{
 					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
 					else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
