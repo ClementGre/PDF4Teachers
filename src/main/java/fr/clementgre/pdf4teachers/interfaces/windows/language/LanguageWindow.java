@@ -34,7 +34,7 @@ public class LanguageWindow extends Stage{
     public LanguageWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
 
-        new LanguagesUpdater().update((hasDownloadedLanguage) -> {
+        new LanguagesUpdater().update((downloaded) -> {
             VBox root = new VBox();
             Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
 

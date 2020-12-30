@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -47,10 +45,16 @@ public class LanguagesUpdater {
 
     public static void backgroundCheck(){
         Platform.runLater(() -> {
-            new LanguagesUpdater().update((hasDownloadedLanguages) -> {
-                if(hasDownloadedLanguages){
-                    Main.window.restart();
+            new LanguagesUpdater().update((downloaded) -> {
+                for(Language language : downloaded){
+                    if(language.getName().equalsIgnoreCase(Main.settings.language.getValue())){
+                        if(language.containsTxtFile()){
+                            Main.window.restart();
+                        }
+                        break;
+                    }
                 }
+
             }, true, true);
         });
     }
@@ -65,7 +69,7 @@ public class LanguagesUpdater {
         });
     }
 
-    private class Language{
+    public class Language{
         private HashMap<String, String> urls = new HashMap<>();
         private String release;
         private int version;
@@ -111,6 +115,12 @@ public class LanguagesUpdater {
                     ", displayName='" + displayName + '\'' +
                     '}';
         }
+        public boolean containsTxtFile(){
+            for(String fileName : urls.keySet()){
+                if(fileName.endsWith(".txt")) return true;
+            }
+            return false;
+        }
     }
     public void updateStats(CallBack callBack){
         new Thread(() -> {
@@ -138,7 +148,7 @@ public class LanguagesUpdater {
 
     }
 
-    public void update(CallBackArg<Boolean> callBack, boolean hideFirstDialogState, boolean provideData){
+    public void update(CallBackArg<List<Language>> callBack, boolean hideFirstDialogState, boolean provideData){
 
         if(!hideFirstDialogState) loadingAlert.show();
 
@@ -225,35 +235,34 @@ public class LanguagesUpdater {
                 }
 
 
-                Boolean haveToDownloadLanguages = toDownloadLanguages.size() != 0;
-                if(haveToDownloadLanguages){
+                if(toDownloadLanguages.size() != 0){
                     Platform.runLater(loadingAlert::show);
                 }
 
                 int i = 0;
                 for(Language language : toDownloadLanguages){
                     if(!downloadLanguage(language, i, toDownloadLanguages.size())){
-                        complete(callBack, false);
+                        complete(callBack, new ArrayList<>());
                         return;
                     }
                     i++;
                 }
 
-                complete(callBack, haveToDownloadLanguages);
+                complete(callBack, toDownloadLanguages);
 
             }catch(IOException e){
                 e.printStackTrace();
-                complete(callBack, false);
+                complete(callBack, new ArrayList<>());
             }
 
         }, "Languages Updater").start();
 
 
     }
-    private void complete(CallBackArg<Boolean> callBack, Boolean hasDownloadedLanguages){
+    private void complete(CallBackArg<List<Language>> callBack, List<Language> downloaded){
         Platform.runLater(() -> {
             loadingAlert.close();
-            callBack.call(hasDownloadedLanguages);
+            callBack.call(downloaded);
         });
     }
 
