@@ -56,8 +56,17 @@ public class ImageUtils {
     }
 
     public static ImageView buildImage(String imgPath, int width, int height, Effect effect) {
-        Image image = new Image(imgPath);
-        ImageView imageView = new ImageView(image);
+        Image image;
+        ImageView imageView;
+        try {
+            image = new Image(imgPath);
+            imageView = new ImageView(image);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+            System.err.println("Image " + imgPath + " does not exist");
+            System.err.println(e.getMessage());
+            imageView = new ImageView();
+        }
 
         if(effect != null) imageView.setEffect(effect);
 

@@ -80,11 +80,11 @@ public class MainWindow extends Stage{
         new Macro(scene);
 
         setOnCloseRequest(e -> {
+            userData.save();
             if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())) {
                 e.consume(); return;
             }
 
-            userData.save();
             Main.params = new ArrayList<>();
 
             LanguagesUpdater.backgroundStats(() -> {
@@ -198,10 +198,10 @@ public class MainWindow extends Stage{
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
-                        if(menuBar.isSystemMenuBarSupported()){
+                        if(MenuBar.isSystemMenuBarSupported()){
                             menuBar.about.setText(TR.tr("À Propos") + " " + TR.tr("(Nouvelle Version Disponible)"));
                         }else{
-                            menuBar.about.setStyle("-fx-background-color: #d6a600;");
+                            menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
                             Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
                         }
 

@@ -10,8 +10,8 @@ import javafx.scene.layout.HBox;
 public class NodeRadioMenuItem extends NodeMenuItem {
 
     private BooleanProperty selected = new SimpleBooleanProperty(false);
-    private ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png")+"", 0, 0);
-    private ImageView NONSELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png")+"", 0, 0);
+    private ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png")+"", 16, 16);
+    private ImageView NONSELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png")+"", 16, 16);
 
     private boolean autoUpdate;
 
