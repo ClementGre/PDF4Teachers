@@ -70,7 +70,7 @@ public class GradeTab extends Tab {
                 AutoTipsManager.showByAction("gradescaleinvert");
             }
         });
-        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("La note par défaut sera le Total et chaque note entrée sera compté négativement.")));
+        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0")));
 
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
@@ -96,7 +96,7 @@ public class GradeTab extends Tab {
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(PaneUtils.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de grades.")));
+        settings.setTooltip(PaneUtils.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
 
         PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);

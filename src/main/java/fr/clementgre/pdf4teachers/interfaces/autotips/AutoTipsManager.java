@@ -43,22 +43,22 @@ public class AutoTipsManager {
 
 
     @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
-    private static final String editSystemAndExportation = TR.ct("Toutes les modifications apportés au document sont enregistrés à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. (Les modifications de pages (rotations, suppressions, ajout de pages) modifieront le fichier d'origine.)");
+    private static final String editSystemAndExportation = TR.ct("Toutes les modifications apportés au document sont enregistrés dans un fichier spécial, à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. Attention : les modifications de pages (rotations, suppression / ajout de pages) modifient immédiatement le fichier d'origine.");
 
     @ToolTipVar(actionKey = "newtextelement", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String newTextElement = TR.ct("Faites un double clic sur le document pour ajouter un élément textuel plus rapidement. Vous pouvez aussi utiliser Ctrl+T");
+    private static final String newTextElement = TR.ct("Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T)");
 
     @ToolTipVar(actionKey = "gradescalelock", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String gradeScaleLock = TR.ct("Vous venez de vérouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.");
+    private static final String gradeScaleLock = TR.ct("Vous venez de verrouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.");
 
     @ToolTipVar(actionKey = "gradescaleinvert", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String gradeScaleInvert = TR.ct("Le mode de comptage des points par retranchement utilise le total comme note par défaut et compte négativement les points entrés.");
+    private static final String gradeScaleInvert = TR.ct("Le mode de comptage des points par retranchement initialise chaque note à son total au lieu de 0. L'absence de saisie de note mène donc à la note totale maximale.");
 
     @ToolTipVar(actionKey = "gradeselect", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeContextMenu = TR.ct("Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.");
 
     @ToolTipVar(actionKey = "gradecreate", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String createGradeSameTiers = TR.ct("Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionné, cliquez sur le + de sa note parente, ou pressez Ctrl+G");
+    private static final String createGradeSameTiers = TR.ct("Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.");
 
     @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeBonus = TR.ct("Vous pouvez appeler une note \"Bonus [...]\" pour que son total ne soit pas compté.");
@@ -70,7 +70,7 @@ public class AutoTipsManager {
     private static final String textAutoCompletion = TR.ct("Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.");
 
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String textAutoWrap = TR.ct("Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de texte pour supprimer les retours à la ligne inutiles (si la taille de police a baissé ou si vous avez édité le texte au milieu par exemple).");
+    private static final String textAutoWrap = TR.ct("Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).");
 
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textLatex = TR.ct("Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.");

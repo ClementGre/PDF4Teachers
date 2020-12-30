@@ -365,8 +365,8 @@ public class ExportWindow {
                 else alert.setHeaderText(completedSize + " " + TR.tr("documents ont été exportés !"));
 
                 String noEditText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition") + ")";
-                String alreadyExistText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils existaient déjà") + ")";
-                alert.setContentText(completedSize + "/" + originSize + " " + TR.tr("documents exportées") + noEditText + alreadyExistText);
+                String alreadyExistText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car leur fichier YAML existait déjà") + ")";
+                alert.setContentText(completedSize + "/" + originSize + " " + TR.tr("documents exportés") + noEditText + alreadyExistText);
 
                 Optional<ButtonType> optionSelected = alert.showAndWait();
                 if(optionSelected.get() == open){

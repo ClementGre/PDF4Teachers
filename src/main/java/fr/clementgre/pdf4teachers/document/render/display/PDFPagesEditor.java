@@ -322,13 +322,13 @@ public class PDFPagesEditor{
         definitions.set(0, (images.get(0).getWidth() * images.get(0).getHeight()) / 1000000d + "Mp (" + TR.tr("Définition d'affichage du document") + ")");
 
         ChoiceDialog<String> alert = DialogBuilder.getChoiceDialog(definitions.get(0), definitions);
-        alert.setTitle(TR.tr("Capture de pages sous forme d'image"));
-        alert.setHeaderText(TR.tr("Capture de pages sous forme d'image"));
-        Label contentText = new Label(TR.tr("Choisissez une définition (Le nombre de pixels est basé sur un format A4, la définition varie en fonction de la hauteur de la page)"));
+        alert.setTitle(TR.tr("Capture de page sous forme d'image"));
+        alert.setHeaderText(TR.tr("Capture de page sous forme d'image"));
+        Label contentText = new Label(TR.tr("Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)"));
 
         ImageView graphic = new ImageView(images.get(0));
-        graphic.setFitHeight(500);
-        graphic.setFitWidth(800);
+        graphic.setFitHeight(400);
+        graphic.setFitWidth(600);
         graphic.setPreserveRatio(true);
 
         VBox.setMargin(contentText, new Insets(10, 0, 10, 10));
@@ -411,13 +411,13 @@ public class PDFPagesEditor{
 
                 @Override
                 public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
-                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Enregistrement terminée"));
+                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Enregistrement terminé"));
                     ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
                     endAlert.getButtonTypes().add(open);
                     endAlert.setHeaderText(TR.tr("Les captures ont bien été enregistrées"));
 
                     String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("images ignorées car elles existaient déjà") + ")";
-                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions exportées") + alreadyExistText);
+                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("images exportées") + alreadyExistText);
 
                     Optional<ButtonType> optionSelected = endAlert.showAndWait();
                     if(optionSelected.get() == open){
@@ -447,20 +447,14 @@ public class PDFPagesEditor{
     }
     private BufferedImage capturePage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
 
-        if(dimensions == null){
-            int width = (int) (Math.sqrt(pixels) / (841d / 594d));
-            int height = (int) (width * (page.getHeight() / page.getWidth()));
+        int width = (int) (Math.sqrt(pixels) / (841d / 594d));
+        int height = (int) (width * (page.getHeight() / page.getWidth()));
 
-            BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), width, height);
+        BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), width, height);
+
+        if(dimensions == null){
             return image;
         }else{
-            int width = (int) (Math.sqrt(pixels) / (841d / 594d));
-            int height = (int) (width * (dimensions.getHeight() / dimensions.getWidth()));
-
-            int renderWidth = (int) (width / dimensions.getWidth() * page.getWidth());
-            int renderHeight = (int) (height / dimensions.getHeight() * page.getHeight());
-            BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), renderWidth, renderHeight);
-
             double factor = image.getHeight() / page.getHeight();
             int subX = (int) (dimensions.getX() * factor);
             int subY = (int) (dimensions.getY() * factor);

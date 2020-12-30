@@ -135,7 +135,7 @@ public class UserData {
                     Platform.runLater(() -> {
                         Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Statistiques"),
                                 TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.tr("heures sur PDF4Teachers."),
-                                TR.tr("Remerciez-moi avec un don pour toutes les heures que vous avez gagnés."));
+                                TR.tr("Vous pouvez soutenir PDF4Teachers avec un don :"));
                         ButtonType paypal = new ButtonType(TR.tr("Paypal"), ButtonBar.ButtonData.OTHER);
                         ButtonType github = new ButtonType(TR.tr("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
                         ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.YES);

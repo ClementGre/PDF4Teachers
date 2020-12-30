@@ -33,7 +33,7 @@ public class EditionExporter {
         if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
 
         ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient plusieurs éditions pour\nchacun des documents de la liste"), ButtonBar.ButtonData.OTHER);
+        ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient une édition par\ndocument de la liste"), ButtonBar.ButtonData.OTHER);
 
         if(!onlyGrades)  dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
         else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
@@ -135,8 +135,8 @@ public class EditionExporter {
 
                                 return Map.entry(config, TwoStepListAction.CODE_OK);
                             }else{
-                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition") + " " + fileName,
-                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
+                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun nom de document ne correspond à une édition :") + " " + fileName,
+                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation des l'éditions."), true);
                                 if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
                                 else return Map.entry(new Config(), 2); // No match
                             }
@@ -154,7 +154,7 @@ public class EditionExporter {
                             config.save();
                         }catch(IOException e){
                             e.printStackTrace();
-                            boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
+                            boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document :") + " \"" + config.getName() + "\")", e.getMessage(), recursive);
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
                             else return TwoStepListAction.ProcessResult.SKIPPED;

@@ -164,7 +164,7 @@ public class GradeElement extends Element {
         NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Mettre 0 à toutes les sous-notes"), false);
         item4.setToolTip(TR.tr("Donne la valeur 0 à toutes les sous-notes"));
         NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Cacher les sous-notes non saisies"), false);
-        item5.setToolTip(TR.tr("Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles même sans valeur. Il est possible de réinitialiser leur position et de les cacher avec cette option."));
+        item5.setToolTip(TR.tr("Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles dans l'application même sans valeur saisie. Il est possible de réinitialiser leur position et de les cacher avec cette option."));
 
 
         menu.setOnShowing((e) -> {

@@ -102,7 +102,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
 
 	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), "more",
-			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons aux pieds de pages"), true);
+			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons latéraux des pages"), true);
 
 	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), "delete", null,
 			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
@@ -112,7 +112,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 	MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
 
 	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), "export",
-			TR.tr("Générer un fichier qui peut être enregistré sur votre ordinateur à partir de l'édition de ce document"), true);
+			TR.tr("Générer un fichier indépendant, contenant les informations d'édition de ce document"), true);
 
 		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
 				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
@@ -131,7 +131,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			TR.tr("Passe l'application en mode plein écran"));
 
 	Menu tools9Debug = createSubMenu(TR.tr("Débug"), "command-prompt",
-			TR.tr("Options plus complexes qui vous demandent une certaine connaissance en informatique."), false);
+			TR.tr("Options plus complexes demandant des compétences informatiques."), false);
 
 		MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
 				TR.tr("Ouvre la console de l'application"), false, false, false, false);

@@ -31,7 +31,7 @@ public class Settings {
             TR.ct("Alerter quand une mise à jour est disponible"), TR.ct("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur"));
     @SettingObject
     public BooleanSetting sendStats = new BooleanSetting(true, "wifi", "sendStatistics",
-            TR.ct("Envoyer des statistiques d'utilisation anonymes"), TR.ct("Partage le temps total passé sur l'application et le nombre de lancements de l'application. Même avec cette option désactivée, l'application enverra des requêtes de statistiques (sans passer de valeurs)."));
+            TR.ct("Envoyer des statistiques d'utilisation anonymes"), TR.ct("Envoie à PDF4Teachers.org le temps total d'exécution de l'application, son nombre de lancements et la langue utilisée (sans aucune information d'identification). Avec cette option désactivée, l'application n'envoie qu'un signal de lancement à PDF4Teachers.org."));
     @SettingObject
     public IntSetting defaultZoom = new IntSetting(130, "zoom", "defaultZoom",
             TR.ct("Zoom lors de l'ouverture d'un document"), TR.ct("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
@@ -65,7 +65,7 @@ public class Settings {
 
     @SettingObject
     public BooleanSetting allowAutoTips = new BooleanSetting(true, "info", "allowAutoTips",
-            TR.ct("Conseils automatiques"), TR.ct("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions qui sont faites. Cliquer sur OK empêchera un conseil de réapparaitre. Désactiver puis réactiver l'option réinitialise la liste des conseils lus."));
+            TR.ct("Conseils automatiques"), TR.ct("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions réalisées. Chaque conseil n'apparaitra qu'une seule fois. Désactiver puis réactiver l'option réinitialise la liste des conseils déjà lus."));
 
     public Settings(){
         loadSettings();

@@ -37,14 +37,12 @@ public class ConvertWindow extends Stage {
 
     public static ObservableList<String> definitions = FXCollections.observableArrayList(
             TR.tr("Adapter à l'image"),
-            "0.501832Mp (A4 72 dpi)",
-            "0.777600Mp (HD)",
-            "0.967590Mp (A4 100dpi)",
-            "2.073600Mp (Full HD)",
-            "3.686400Mp (Quad HD)",
-            "3.868706Mp (A4 200dpi)",
-            "8.294400Mp (Ultra HD 4k)",
-            "8.699840Mp (A4 300dpi)");
+            "0.501832Mpix A4 72 dpi",
+            "0.967000Mpix A4 100dpi (HD)",
+            "2.175750Mpix A4 150dpi (Full HD)",
+            "3.868000Mpix A4 200dpi (Quad HD)",
+            "8.699840Mpix A4 300dpi (Ultra HD 4k)",
+            "34.81200Mpix A4 600dpi");
 
     public static ObservableList<String> formats = FXCollections.observableArrayList(
             TR.tr("Adapter à l'image"),
@@ -322,7 +320,7 @@ public class ConvertWindow extends Stage {
             definition.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 updateDefaultValues();
 
-                String data = StringUtils.removeAfterLastRegex(newValue, "Mp");
+                String data = StringUtils.removeAfterLastRegex(newValue, "Mpix");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
                     this.mp = mp;
@@ -381,7 +379,7 @@ public class ConvertWindow extends Stage {
                 if(mp != null){
                     definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
 
-                }else definition.getSelectionModel().select(4);
+                }else definition.getSelectionModel().select(3);
             }
 
             if(formats.contains(MainWindow.userData.lastConvertFormat)) format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);

@@ -294,7 +294,7 @@ Vous pouvez retrouver les fichiers CSV dans le dossier choisi.=
 Vous pouvez retrouver le fichier CSV dans le dossier choisi.=
 # GradeTab
 Compter les points par retranchement=
-La note par défaut sera le Total et chaque note entrée sera compté négativement.=
+La note par défaut sera le Total et chaque note entrée sera comptée négativement.=
 Vérouiller le barème, il ne pourra plus être modifié.=
 Modifier les polices, couleurs et préfixe de chaque niveau de grades.=
 Envoyer le barème sur d'autres éditions.=

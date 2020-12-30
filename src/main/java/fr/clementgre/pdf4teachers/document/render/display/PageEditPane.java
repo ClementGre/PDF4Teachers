@@ -23,7 +23,7 @@ public class PageEditPane extends VBox {
     Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.tr("Tourne la page de 90° vers la gauche"));
     Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("Tourne la page de 90° vers la droite"));
     Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Supprime cette page"), 45);
-    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Ajoute une page blanche ou une/des images converties en PDF en dessous de cette page"));
+    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Ajoute une page blanche ou des pages de fichiers PDF ou images, en dessous de cette page"));
     Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, TR.tr("Capturer la page sous forme d'image"));
 
     ContextMenu menu = new ContextMenu();
@@ -119,7 +119,7 @@ public class PageEditPane extends VBox {
 
 
         if(MainWindow.mainScreen.document.totalPages != 1){
-            MenuItem captureDocument = getMenuItem(TR.tr("Capturer toute les pages du document"), vanillaMenu);
+            MenuItem captureDocument = getMenuItem(TR.tr("Capturer toutes les pages du document"), vanillaMenu);
             menus.add(captureDocument);
 
             captureDocument.setOnAction(ignored -> {
