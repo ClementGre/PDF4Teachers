@@ -95,4 +95,50 @@ public class TR {
         fileInputStream.close();
         return i >= 1;
     }
+
+    // Return numbers :
+    // 1 : total translations
+    // 2 : translated translations
+    public static int[] getTranslationFileStats(File file) {
+
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader inputStream = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(inputStream);
+
+            int total = 0;
+            int translated = 0;
+
+            String line;
+            while((line = reader.readLine()) != null){
+
+                if(!line.isBlank()){
+                    if(line.startsWith("#")) continue;
+
+                    String key = line.split(Pattern.quote("="))[0];
+                    String value = StringUtils.removeBeforeNotEscaped(line, "=");
+
+                    if(key != null){
+                        if(!key.isBlank()){
+                            total++;
+                            if(!value.isBlank()){
+                                translated++;
+                            }
+                        }
+                    }
+
+                }
+            }
+            reader.close();
+            inputStream.close();
+            fileInputStream.close();
+
+            return new int[]{total, translated};
+
+        }catch(IOException e) {
+            e.printStackTrace();
+        }
+        return new int[]{0, 0};
+
+    }
 }

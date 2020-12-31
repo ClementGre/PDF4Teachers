@@ -1,11 +1,14 @@
 # EditionExporter
+Charger une autre édition=
 Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?=
 Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?=
+Copier la position des notes=
 Oui, choisir un fichier=
 Oui, choisir un fichier\nqui contient une édition par\ndocument de la liste=
 Fichier d'édition YAML=
 Importation terminée=
 Le barème a bien été importé=
+Une erreur est survenue=
 Aucun document ne correspond à l'édition :=
 Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition.=
 Impossible d'enregistrer le fichier=
@@ -13,12 +16,14 @@ Correspond au document :=
 Les éditions ont bien été importées=
 éditions ignorés car elles n'avaient pas de document correspondant=
 éditions importés=
+Exporter l'édition=
 Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier.=
 Vous allez exporter le barème du document sous forme de fichier.=
 Exporter pour ce document=
 Exporter pour tous les documents\nde la liste et du même dossier=
 Exporter pour tous les documents\nde la liste et du même dossier\nen un seul fichier=
 Correspond à l'édition=
+Exportation terminée=
 Ouvrir le dossier=
 Le barème a bien été exporté=
 Les éditions ont bien été exportées=
@@ -29,19 +34,31 @@ documents ignorés car leur fichier YAML existait déjà=
 # TextTreeLasts
 Éléments Précédents=
 # ExportWindow
+Exporter=
 documents)=
 Vous allez exporter un document pour former un nouveau fichier PDF.=
 Chemin du dossier d'exportation=
 Texte=
+Notes=
 Dessins=
 Supprimer les éditions après exportation=
+Préfixe=
+Suffixe=
+Remplacer=
+par=
 Exporter uniquement les documents édités=
 Une erreur d'exportation s'est produite avec le document :=
+Aucun document n'a été exporté !=
+Le document a bien été exporté !=
+documents ont été exportés !=
 documents exportés=
 # Document
 Édition non sauvegardée=
 L'édition du document n'est pas enregistrée.=
 Voulez-vous l'enregistrer ?=
+Oui=
+Non=
+Annuler=
 # LanguagesUpdater
 Téléchargement des derniers packs de langues=
 Actualisation de la base de donnée...=
@@ -50,6 +67,7 @@ Téléchargement des derniers packs de langues...=
 Portrait=
 Paysage=
 PDF4Teachers - Convertir=
+Convertir des images en documents PDF=
 Convertir des images en pages de document PDF=
 Ce document=
 Convertir des dossiers en plusieurs documents=
@@ -64,23 +82,35 @@ Il sera toujours possible de déplacer les pages après.=
 Convertir plusieurs images en pages à ajouter au document=
 Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)=
 Dossier contenant les dossiers à convertir=
+Parcourir=
+Sélectionner un dossier=
 Fichiers à convertir=
 Sélectionner=
+Sélectionner un ou plusieurs fichier=
 Image=
+Nom du document=
+Dossier d'exportation=
 Définition des images=
 Format des pages=
+Paramètres=
+Convertir=
 Paramètres incorrects=
 Impossible de créer un fichier sans nom=
 Veuillez entrer le nom du document dans le champ prévus.=
 Impossible de générer des images/pages de 0 pixels=
 Veuillez changer la définition des images ou le format des pages.=
 Conversion...=
+PDF4Teachers génère vos documents...=
 Erreur de conversion=
 Une erreur de conversion est survenue=
+L'erreur survenue est la suivante :=
 # FileTab
+Nom=
 Dossier=
 Édition=
 Date d'Ajout=
+Ouvrir un ou plusieurs fichiers=
+Ouvrir un dossier=
 # Settings
 Langage (Français France)=
 Définit la langue de l'interface=
@@ -109,6 +139,15 @@ Dans les liste des éléments textuels, affiche les éléments en plus petit.=
 Conseils automatiques=
 Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions réalisées. Chaque conseil n'apparaitra qu'une seule fois. Désactiver puis réactiver l'option réinitialise la liste des conseils déjà lus.=
 # ConvertDocument
+Fichier déjà existant=
+Le fichier de destination=
+existe déjà=
+Voulez-vous l'écraser ?=
+Écraser=
+Toujours écraser=
+Renommer=
+Sauter=
+Tout Arrêter=
 Conversion terminée=
 Aucun document n'a été converti !=
 Le document a bien été créé !=
@@ -119,6 +158,8 @@ Le document a été ouvert dans le panneau latéral=
 Vous allez supprimer la page=
 du document=
 Les éléments de cette page seront supprimés et les notes seront réinitialisées=
+Fichier PDF=
+Sélectionner un fichier=
 Définition d'affichage du document=
 Capture de page sous forme d'image=
 Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)=
@@ -130,7 +171,9 @@ images exportées=
 # Edition
 Impossible de copier le fichier=
 vers=
+Confirmation=
 Êtes vous sûr de vouloir supprimer l'édition de ce document ?=
+Cette action est irréversible.=
 # LogWindow
 PDF4Teachers - Console=
 # AboutWindow
@@ -151,14 +194,12 @@ heures sur PDF4Teachers,\net avez ouvert l'application=
 fois.=
 # MainScreen
 Aucun document ouvert=
-Convertir des images en documents PDF=
 Impossible de charger ce document=
 Vérifiez que le fichier n'est pas corrompu=
 et que l'utilisateur a les droits de lecture sur ce fichier.=
 Impossible de charger l'édition du document=
 Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :=
 (Non sauvegardé)=
-PDF4Teachers - Aucun document=
 zoom=
 Erreur=
 Aucun document n'est ouvert !=
@@ -167,10 +208,14 @@ Cette action est censée s'éxécuter sur un document ouvert=
 Erreur de rendu=
 Des erreurs sont apparues lors du rendu du document PDF.=
 Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement.=
+# GraphicElement
+Supprimer=
+Supprime cet élément. Il sera donc retiré de l'édition.=
+Dupliquer=
+Crée un second élément identique à celui-ci.=
 # GradeCopyGradeScaleDialog
 Copier le barème sur d'autres éditions=
 Cette action va copier le barème entré dans cette édition sur d'autres éditions.=
-Copier la position des notes=
 Copier sur les documents\nouverts du même dossier.=
 Copier sur tous les\ndocuments ouverts=
 Barème copiés=
@@ -188,6 +233,8 @@ Aucune note du nouveau barème ne correspond à :=
 Dans le document=
 Arrêter=
 Tout arrêter=
+# TextTreeItem
+Utilisation=
 # GradeSettingsWindow
 PDF4Teachers - Polices et Couleurs des Notes=
 Configuration des polices pour chaque catégorie de note=
@@ -201,25 +248,15 @@ Adapter à l'image=
 Erreur d'exportation=
 Une erreur s'est produite lors de la génération du document=
 Impossible d'exporter.=
-L'erreur survenue est la suivante :=
 Choisissez une action.=
 Arreter tout=
 Continuer=
 Parties=
 Barème=
 Moyenne=
-Commentaires=
 Impossible de lire les notes=
 Une erreur d'exportation s'est produite lors de la lecture des notes du document :=
 Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer=
-Fichier déjà existant=
-Le fichier de destination=
-existe déjà=
-Voulez-vous l'écraser ?=
-Écraser=
-Toujours écraser=
-Renommer=
-Tout Arrêter=
 # PageEditPane
 Monte cette page au dessus de la page précédente=
 Descend cette page au dessous de la page suivante=
@@ -237,14 +274,6 @@ Ajouter les pages d'un fichier PDF=
 Capturer toute la page=
 Sélectionner une zone=
 Capturer toutes les pages du document=
-# GradeTab
-Compter les points par retranchement=
-Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.=
-Vérouiller le barème, il ne pourra plus être modifié.=
-Modifier les polices, couleurs et préfixe de chaque niveau de notes.=
-Envoyer le barème sur d'autres éditions.=
-Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=
-Nouvelle note=
 # GradeExportWindow
 Tout exporter ensemble=
 Tout exporter séparément=
@@ -258,25 +287,18 @@ Exporter uniquement les notes des documents du même dossier=
 Ajouter une ligne pour le barème=
 Ajouter une ligne pour la moyenne des notes=
 Ajouter des lignes pour les commentaires (Éléments textuels).=
-Nom du document=
-Préfixe=
-Suffixe=
-Remplacer=
-par=
 Nom de l'élève (Basé sur le nom du document)=
 Nom de l'élève=
-Dossier d'exportation=
-Parcourir=
-Sélectionner un dossier=
-Paramètres=
 Niveaux de note exportés :=
-Exporter=
-Exportation terminée=
-Aucun document n'a été exporté !=
-Le document a bien été exporté !=
-documents ont été exportés !=
 Vous pouvez retrouver les fichiers CSV dans le dossier choisi.=
 Vous pouvez retrouver le fichier CSV dans le dossier choisi.=
+# GradeTab
+Compter les points par retranchement=
+Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.=
+Vérouiller le barème, il ne pourra plus être modifié.=
+Modifier les polices, couleurs et préfixe de chaque niveau de notes.=
+Envoyer le barème sur d'autres éditions.=
+Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur=
 # LicenseWindow
 PDF4Teachers - Licence=
 Vous devez accepter la licence pour accéder à l'application=
@@ -287,32 +309,19 @@ Cette fonctionnalité est en cours de développement.=
 Elle vous permettra de mettre des images, des icones/emojis, des rectangles, des cercles etc.=
 # TextTreeSection
 Trier=
-# GradeTreeView
-Total=
 # GradeTreeItem
 Clic sur le cadenas pour éditer le barème=
 Créer une nouvelle sous-note de=
 # MainWindow
+PDF4Teachers - Aucun document=
 À Propos=
 (Nouvelle Version Disponible)=
 Decimal separator=
 # DialogBuilder
-Une erreur est survenue=
 Ctrl+Alt+C pour accéder aux logs=
-Fichier PDF=
-Sélectionner un ou plusieurs fichier=
-Sélectionner un fichier=
 Enregistrer un fichier=
 # TwoStepListAction
 Exportation...=
-PDF4Teachers génère vos documents...=
-# FooterBar
-Zoom=
-Mode Fichiers=
-Mode Texte=
-Mode Notes=
-Mode Dessin=
-Aucun fichier ouvert=
 # AutoTipsManager
 Faites un clic droit sur la page pour effectuer des actions rapides.=
 Utilisez Ctrl + Molette pour zoomer=
@@ -339,18 +348,20 @@ Les éléments textuels commençant par www. ou http:// ou https:// seront tradu
 Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).=
 Double cliquez sur un élément textuel pour le dupliquer.=
 Double cliquez sur une note pour la mettre à 0.=
+# FooterBar
+Zoom=
+Mode Fichiers=
+Mode Texte=
+Mode Notes=
+Mode Dessin=
+Aucun fichier ouvert=
 # LanguageWindow
 PDF4Teachers - Langage=
 Choisissez votre langage=
+Traduit à=
 Créer une nouvelle traduction=
 Valider=
-Télécharger les fichier de traduction=
-Télécharger un fichier de traduction pour traduire la langue d'origine de l'application (Français) en une autre langue.\nVous enregistrerez :\n- Un fichier .txt pour les traductions de l'interface de PDF4Teachers\n- Un fichier .odt pour la traduction de la documentation=
-Vous pourrez ensuite placer ces fichiers dans <AppData>/Roaming/PDF4Teachers/translations/ sous Windows ou dans <Dossier d'utilisateur>/.PDF4Teachers/translations/ sous OSX et Linux, pour voir la traduction dans la liste des langues. Vous pouvez aussi ajouter un drapeau en .png. Tous les fichiers doivent avoir le même nom (Sans compter l'extension).\nVous pouvez aussi nous envoyer le fichier pour que nous puissions intégrer ce langage à l'application.=
-Enregistrer les fichiers=
-Enregistrer les fichiers déjà traduits en Anglais=
 # TextTab
-Supprimer=
 Nouveau=
 Commencez par $ pour écrire du LaTeX=
 Supprimer les retours à la ligne inutiles=
@@ -360,19 +371,13 @@ Supprime tous les éléments textuels ajoutés au document, cela va donc supprim
 Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document.=
 Supprimer les donnés d'utilisation=
 Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation.=
-Utilisation=
 Ajouter et lier=
 Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste.=
-Retirer=
 Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité=
 Ajouter aux favoris=
-Ajoute cet élément à la liste des éléments précédents.=
-Ajouter aux éléments précédents=
-Ajoute cet élément à la liste des éléments favoris.=
 Dé-lier l'élément=
 L'élément de la liste ne sera plus synchronisé avec l'élément du document=
 Ajout=
-Nom=
 Police=
 Taille=
 Couleur=
@@ -393,15 +398,11 @@ GitHub Sponsors=
 Ignorer=
 # MenuBar
 Fichier=
-Ouvrir un ou plusieurs fichiers=
 Ajoute un ou plusieurs fichiers dans le panneau des fichiers.=
-Ouvrir un dossier=
 Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers=
-Vider la liste=
 Vide la liste des fichiers=
 Sauvegarder l'édition=
 Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié=
-Supprimer l'édition=
 Supprime les éléments d'édition du document courant=
 Fermer le document=
 Ferme la vue du document courant=
@@ -410,7 +411,6 @@ Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléme
 Tout exporter=
 Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition=
 Outils=
-Convertir=
 Permet de convertir des images en fichiers PDF=
 Générer un QR Code=
 Permet d'ajouter un QR Code généré par l'application au document PDF ouvert=
@@ -423,7 +423,6 @@ Déplace l'édition de ce document sur un autre document qui porte le même nom.
 Aucune édition trouvée=
 Exporter l'édition/barème=
 Générer un fichier indépendant, contenant les informations d'édition de ce document=
-Exporter l'édition=
 Génère un fichier contenant l'édition du document=
 Exporter le barème=
 Remplace le barème du document ouvert par celui d'un fichier de barème=
@@ -450,20 +449,16 @@ Nous contacter sur Twitter=
 Site Web de PDF4Teachers=
 Supprimer les éditions=
 Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?=
-Non=
-Oui=
 Supprimer l'ensemble des\néditions enregistrées=
 Supression terminée=
 Vos éditions ont bien été supprimés.=
 Vous avez supprimé=
-Charger une autre édition=
 Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?=
 Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier=
 Fichier introuvable=
 Le fichier=
 dans=
 n'a pas d'édition.=
-Sauter=
 Tout Arreter=
 Zoom par défaut=
 Zoom par défaut lors de l'ouverture d'un document=
@@ -471,8 +466,6 @@ Choisir un pourcentage :=
 Sauvegarde régulière=
 Activer=
 Définir le nombre de minutes entre deux sauvegardes automatiques.=
-Annuler=
-OK=
 À propos=
 Fenêtre à Propos=
 # ListsManager
@@ -515,14 +508,17 @@ et la version=
 Voir sur le site WEB=
 Téléchargement direct=
 # TextElement
-Supprime cet élément. Il sera donc retiré de l'édition.=
-Dupliquer=
-Crée un second élément identique à celui-ci.=
+Ajouter aux éléments précédents=
+Ajoute cet élément à la liste des éléments précédents.=
 Ajouter aux éléments Favoris=
+Ajoute cet élément à la liste des éléments favoris.=
 Commande/Symbole~inconnu~:=
 Erreur~:=
 Impossible~de~lire~la~formule=
+# AutoTipTooltip
+OK=
 # GradeElement
+Nouvelle note=
 Attribuer tous les points=
 Place toutes les sous-notes à leur valeur maximale=
 Réinitialiser=
@@ -533,26 +529,28 @@ Mettre 0 à toutes les sous-notes=
 Donne la valeur 0 à toutes les sous-notes=
 Cacher les sous-notes non saisies=
 Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles dans l'application même sans valeur saisie. Il est possible de réinitialiser leur position et de les cacher avec cette option.=
+Total=
 Bonus=
 # FileListItem
 Éléments=
-Notes=
+Commentaires=
 Figures=
 Non édité=
 Barèmes=
 Impossible de récupérer les informations=
 Ouvrir=
 Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic.=
+Retirer=
 Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé.=
+Supprimer l'édition=
 Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant.=
 Supprimer le fichier=
 Supprime le fichier PDF sur l'ordinateur.=
 Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés.=
+Vider la liste=
 Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé.=
-Confirmation=
 Êtes vous sûr de vouloir supprimer le document=
 et son édition ?=
-Cette action est irréversible.=
 # TextTreeFavorites
 Éléments Favoris=
 # TextTreeOnFile
