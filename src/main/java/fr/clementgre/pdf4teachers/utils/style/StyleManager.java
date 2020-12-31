@@ -89,20 +89,67 @@ public class StyleManager {
     }
     static int i = 0;
     public static Color shiftColorWithTheme(Color color){
-
+/*
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             return Color.color(
                     StringUtils.clamp(0.6 + color.getRed()*0.4, 0, 1),
                     StringUtils.clamp(0.6 + color.getGreen()*0.4, 0, 1),
                     StringUtils.clamp(0.6 + color.getBlue()*0.4, 0, 1)
             );
-        }else{
+        }else if(true){
             return Color.color(
                     StringUtils.clamp(color.getRed()*0.4, 0, 1),
                     StringUtils.clamp(color.getGreen()*0.4, 0, 1),
                     StringUtils.clamp(color.getBlue()*0.4, 0, 1)
             );
+        }*/
+
+        int r = Math.max((int) (color.getRed() * 255), 1);
+        int g = Math.max((int) (color.getGreen() * 255), 1);
+        int b = Math.max((int) (color.getBlue() * 255), 1);
+        double brt = (r + g + b) / 3d;
+
+        double nr;
+        double ng;
+        double nb;
+
+        if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
+
+            double minBrt = (int) (255*0.8);
+            double keepRatioPerOne = .7;
+
+            if(brt < minBrt){
+                double difBrt = minBrt-brt;
+                double rDifBrt = (difBrt*keepRatioPerOne) * r / ((r+g+b) / 3d);
+                double gDifBrt = (difBrt*keepRatioPerOne) * g / ((r+g+b) / 3d);
+                double bDifBrt = (difBrt*keepRatioPerOne) * b / ((r+g+b) / 3d);
+
+                nr = r + rDifBrt + (difBrt*(1-keepRatioPerOne));
+                ng = g + gDifBrt + (difBrt*(1-keepRatioPerOne));
+                nb = b + bDifBrt + (difBrt*(1-keepRatioPerOne));
+            }else return color;
+        }else{
+
+            double maxBrt = (int) (255*0.2);
+            double keepRatioPerOne = .1;
+
+            if(brt > maxBrt){
+                double difBrt = -maxBrt+brt;
+                double rDifBrt = (difBrt*keepRatioPerOne) * r / ((r+g+b) / 3d);
+                double gDifBrt = (difBrt*keepRatioPerOne) * g / ((r+g+b) / 3d);
+                double bDifBrt = (difBrt*keepRatioPerOne) * b / ((r+g+b) / 3d);
+
+                nr = r - rDifBrt - (difBrt*(1-keepRatioPerOne));
+                ng = g - gDifBrt - (difBrt*(1-keepRatioPerOne));
+                nb = b - bDifBrt - (difBrt*(1-keepRatioPerOne));
+            }else return color;
         }
+
+        return Color.color(
+                StringUtils.clamp(nr/255d, 0, 1),
+                StringUtils.clamp(ng/255d, 0, 1),
+                StringUtils.clamp(nb/255d, 0, 1)
+        );
     }
 
 
