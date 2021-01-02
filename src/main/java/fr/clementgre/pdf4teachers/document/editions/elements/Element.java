@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -233,5 +234,6 @@ public abstract class Element extends Region {
 		element.setRealY(getRealY() + 50);
 		element.getPage().addElement(element, true);
 		element.select();
+		AutoTipsManager.showByAction("textclone");
 	}
 }

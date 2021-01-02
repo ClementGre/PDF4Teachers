@@ -45,6 +45,7 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
@@ -71,7 +72,7 @@ public class TextTreeItem extends TreeItem{
 	// Link
 	private TextElement core = null;
 	private ChangeListener<String> textChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-		setText(newValue); updateGraphic(false);
+		setText(newValue); updateGraphic(true);
 	};
 	private ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
 		setColor((Color) newValue);
@@ -199,36 +200,32 @@ public class TextTreeItem extends TreeItem{
 	}
 	static long lastKeyPressTime = 0;
 	public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
-		int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
-		int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
-		int lineHeight = (int) name.getLayoutBounds().getHeight() / name.getText().split(Pattern.quote("\n")).length - negativePadding;
-
 		int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 38);
 		if(maxWidth < 0) return;
 
 		Font font = getListFont();
 		String wrappedText = "";
-		final String[] splittedText = getText().split("\\n");
+		final String[] splitText = getText().split(Pattern.quote("\n"));
 
-		if(splittedText.length != 0){
+		if(splitText.length != 0){
 			if(Main.settings.textOnlyStart.getValue()){
 
-				String text = splittedText[0];
+				String text = splitText[0];
 				wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
 				text = text.replaceFirst(Pattern.quote(wrappedText), "");
 
 				// SECOND LINE
-				if(!text.isEmpty()){
+				if(!text.isBlank()){
 					String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
 					wrappedText += "\n" + wrapped;
 					if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
-				}else if(splittedText.length > 1){
-					String wrapped = new TextWrapper(splittedText[1], font, maxWidth - 13).wrapFirstLine();
+				}else if(splitText.length > 1){
+					String wrapped = new TextWrapper(splitText[1], font, maxWidth - 13).wrapFirstLine();
 					wrappedText += "\n" + wrapped;
-					if(!splittedText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+					if(!splitText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
 				}
 			}else{
-				for(String text : splittedText){
+				for(String text : splitText){
 					wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
 				}
 			}
@@ -236,6 +233,11 @@ public class TextTreeItem extends TreeItem{
 
 		name.setText(wrappedText);
 		name.setFill(StyleManager.shiftColorWithTheme(color.get()));
+
+		// VARS DEFINED
+		int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
+		int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
+		int lineHeight = (int) name.getLayoutBounds().getHeight() / name.getText().split(Pattern.quote("\n")).length - negativePadding;
 
 		linkImage.setFitWidth(lineHeight-3); linkImage.setFitHeight(lineHeight-3);
 		spacer.setPrefWidth(linkImage.getFitWidth() + 3 + rect.getWidth() + 3);
@@ -245,6 +247,7 @@ public class TextTreeItem extends TreeItem{
 			HBox.setMargin(linkImage, new Insets(((lineHeight - linkImage.getFitHeight()) / 2.0), 0, 0, 0));
 		}
 		HBox.setMargin(namePane, new Insets(-negativePadding/2d, 0, -negativePadding/2d, 0));
+
 
 		if(updateParentHeight && pane.getParent() != null && pane.getParent() instanceof TreeCell){
 			((TreeCell<?>) pane.getParent()).setPrefHeight(cellHeight+4);
