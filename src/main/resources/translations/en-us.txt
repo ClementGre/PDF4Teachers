@@ -344,7 +344,7 @@ Vous pouvez appeler une note \"Bonus<...>\" pour qu'elle ne soit pas comptée da
 Utilisez TAB et Entrée pour vous déplacer plus rapidement parmi les notes du barème.=Use TAB and Enter to navigate and quikly setup the marking scale.
 Utilisez les flèches du clavier puis entrée pour ajouter un élément semblable de la liste.=Use keyboard arrows and Enter to navigate in lists and add an element similar to an already existing one.
 Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).=Carriage returns are automatically added when elements are longer than page width. Right click in text input field to remove useless carriage returns (for instance, if font size was reduced)
-Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=Text elements can be written in LaTeX language if starting with $. LaTeX is useful for maths equations and symbols.
+Les éléments textuels peuvent être écrits en LaTeX si les expressions LaTeX sont entourées par $$. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.=Text elements can be written in LaTeX language if enclosed with $$. LaTeX is useful for maths equations and symbols.
 Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.=Text elements starting with www. or http:// or https:// will be transformed into clickable URLs when exporting.
 Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).=Add a text element to Favorites thanks to a right click on it.
 Double cliquez sur un élément textuel pour le dupliquer.=Double click on a text element to duplicate it.
@@ -364,7 +364,7 @@ Créer une nouvelle traduction=Create new translation
 Valider=Ok
 # TextTab
 Nouveau=New
-Commencez par $ pour écrire du LaTeX=Start LaTeX expressions by $
+Entourez le LaTeX par $$=Enclose LaTeX expressions with $$
 Supprimer les retours à la ligne inutiles=Delete useless returns
 # TextTreeView
 Supprimer tous les éléments textuels=Delete all text elements
@@ -513,9 +513,9 @@ Ajouter aux éléments précédents=Add to previous elements
 Ajoute cet élément à la liste des éléments précédents.=Add this element to previous elements list
 Ajouter aux éléments Favoris=Add to favorites elements
 Ajoute cet élément à la liste des éléments favoris.=Add this element to the favorites elements list
-Commande/Symbole~inconnu~:=unknown~command/symbol~:
-Erreur~:=Error~:
-Impossible~de~lire~la~formule=Error~while~parsing~formula
+Commande/Symbole inconnu :=unknown command/symbol:
+Erreur :=Error:
+Impossible de lire la formule=Error while parsing formula
 # AutoTipTooltip
 OK=OK
 # GradeElement

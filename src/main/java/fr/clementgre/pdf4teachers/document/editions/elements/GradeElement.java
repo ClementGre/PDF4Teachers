@@ -210,6 +210,9 @@ public class GradeElement extends Element {
             else treeItemElement = MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
             treeItemElement.gradeField.setText("0");
             treeItemElement.setChildrenValuesTo0();
+            if(!getGradeTreeItem().hasSubGrade()){
+                AutoTipsManager.showByAction("gradereset");
+            }
         });
         item5.setOnAction(e -> {
             setAlwaysVisible(false);
@@ -233,7 +236,7 @@ public class GradeElement extends Element {
     public void doubleClick() {
         if(!getGradeTreeItem().hasSubGrade()){
             setValue(0);
-            AutoTipsManager.showByAction("gradedoubleclick");
+            AutoTipsManager.showByAction("gradereset");
         }
     }
     @Override

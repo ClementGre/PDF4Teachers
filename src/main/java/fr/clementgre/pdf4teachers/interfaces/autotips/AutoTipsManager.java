@@ -73,7 +73,7 @@ public class AutoTipsManager {
     private static final String textAutoWrap = TR.ct("Des retours à la ligne sont ajoutés automatiquement si l'élément est plus large que la page. Faites un clic droit sur le champ de saisie de texte pour supprimer les retours à la ligne inutiles (par exemple si la taille de police a été réduite).");
 
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
-    private static final String textLatex = TR.ct("Les éléments textuels peuvent être écrits en LaTeX s'il commencent par $. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.");
+    private static final String textLatex = TR.ct("Les éléments textuels peuvent être écrits en LaTeX si les expressions LaTeX sont entourées par $$. Le LaTeX permet d'écrire des équations mathématiques et d'afficher des symboles spéciaux.");
 
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textUrl = TR.ct("Les éléments textuels commençant par www. ou http:// ou https:// seront traduits en liens cliquables lors de l'exportation.");
@@ -81,10 +81,10 @@ public class AutoTipsManager {
     @ToolTipVar(actionKey = "textselect", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textContextMenu = TR.ct("Ajoutez un élément textuel aux favoris grâce à son menu contextuel (clic droit).");
 
-    @ToolTipVar(actionKey = "textdoubleclick", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textclone", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textDuplicate = TR.ct("Double cliquez sur un élément textuel pour le dupliquer.");
 
-    @ToolTipVar(actionKey = "gradedoubleclick", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "gradereset", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeSet0WithDoubleClick = TR.ct("Double cliquez sur une note pour la mettre à 0.");
 
     private static HashMap<String, AutoTipTooltip> uiTips = new HashMap<>();
