@@ -37,12 +37,12 @@ public class ConvertWindow extends Stage {
 
     public static ObservableList<String> definitions = FXCollections.observableArrayList(
             TR.tr("Adapter à l'image"),
-            "0.501832Mpix A4 72 dpi",
-            "0.967000Mpix A4 100dpi (HD)",
-            "2.175750Mpix A4 150dpi (Full HD)",
-            "3.868000Mpix A4 200dpi (Quad HD)",
-            "8.699840Mpix A4 300dpi (Ultra HD 4k)",
-            "34.81200Mpix A4 600dpi");
+            "0.501832Mpix A4, 72 dpi (~90kB)",
+            "0.967000Mpix A4, 100dpi (~150kB)",
+            "2.175750Mpix A4, 150dpi (~280kB)",
+            "3.868000Mpix A4, 200dpi (~450kB)",
+            "8.699840Mpix A4, 300dpi (~800kB)",
+            "34.81200Mpix A4, 600dpi (1.2MB)");
 
     public static ObservableList<String> formats = FXCollections.observableArrayList(
             TR.tr("Adapter à l'image"),
@@ -153,14 +153,14 @@ public class ConvertWindow extends Stage {
 
             if(convertDirs){
                 desc.setText(TR.tr("Convertir plusieurs dossiers en plusieurs documents PDF") + "\n   " +
-                        TR.tr("Chaque dossier sera converti en un document, les images contenues dans le dossier représentent les pages") + "\n   " +
+                        TR.tr("Chaque dossier sera converti en un document, une page par image contenue dans chaque dossier.") + "\n   " +
                         TR.tr("L'ordre des pages est pris en fonction de l'ordre alphabétique.") + "\n   " +
                         TR.tr("Il sera toujours possible de déplacer les pages après."));
             }else{
                 if(defaultSize != null){
                     desc.setText(TR.tr("Convertir plusieurs images en pages à ajouter au document"));
                 }else{
-                    desc.setText(TR.tr("Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)"));
+                    desc.setText(TR.tr("Convertir plusieurs images en un document PDF (Chaque image sera convertie en une page)."));
                 }
             }
 
@@ -258,7 +258,7 @@ public class ConvertWindow extends Stage {
         public void setupOutDirForm(){
 
             if(defaultSize == null){
-                VBox info = generateInfo(TR.tr("Dossier d'exportation") + " :", true);
+                VBox info = generateInfo(TR.tr("Dossier destination") + " :", true);
 
                 HBox filePathBox = new HBox();
 
@@ -297,11 +297,14 @@ public class ConvertWindow extends Stage {
             Separator separator = new Separator();
             PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
 
+            Label info = new Label(TR.tr("La sélection de la résolution estime la taille d'un fichier d'une seule page (entre parenthèses) :"));
+            PaneUtils.setVBoxPosition(info, 0, 0, new Insets(5, 0, 0, 2.5));
+
             HBox columns = new HBox();
             columns.setSpacing(10);
 
             // Definition COLUMN
-            VBox definitionColumn = generateInfo(TR.tr("Définition des images") + " :", false);
+            VBox definitionColumn = generateInfo(TR.tr("Résolution des images") + " :", false);
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
@@ -347,7 +350,7 @@ public class ConvertWindow extends Stage {
             /////////////////
 
             columns.getChildren().addAll(definitionColumn, formatColumn);
-            root.getChildren().addAll(separator, columns);
+            root.getChildren().addAll(separator, info, columns);
 
         }
         private void updateWidthAndHeight(){
@@ -443,13 +446,13 @@ public class ConvertWindow extends Stage {
                     }else{
                         Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                         alert.setHeaderText(TR.tr("Impossible de créer un fichier sans nom"));
-                        alert.setContentText(TR.tr("Veuillez entrer le nom du document dans le champ prévus."));
+                        alert.setContentText(TR.tr("Veuillez entrer le nom du document dans le champ prévu."));
                         alert.show();
                     }
                 }else{
                     Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                     alert.setHeaderText(TR.tr("Impossible de générer des images/pages de 0 pixels"));
-                    alert.setContentText(TR.tr("Veuillez changer la définition des images ou le format des pages."));
+                    alert.setContentText(TR.tr("Veuillez changer la résolution des images ou le format des pages."));
                     alert.show();
                 }
             });
