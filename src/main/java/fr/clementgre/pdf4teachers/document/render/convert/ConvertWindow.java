@@ -297,14 +297,14 @@ public class ConvertWindow extends Stage {
             Separator separator = new Separator();
             PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
 
-            Label info = new Label(TR.tr("La sélection de la résolution estime la taille d'un fichier d'une seule page (entre parenthèses) :"));
+            Label info = new Label(TR.tr("La sélection de la définition estime la taille d'un fichier d'une seule page (entre parenthèses) :"));
             PaneUtils.setVBoxPosition(info, 0, 0, new Insets(5, 0, 0, 2.5));
 
             HBox columns = new HBox();
             columns.setSpacing(10);
 
             // Definition COLUMN
-            VBox definitionColumn = generateInfo(TR.tr("Résolution des images") + " :", false);
+            VBox definitionColumn = generateInfo(TR.tr("Définition des images") + " :", false);
             definition = new ComboBox<>(definitions);
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
@@ -433,8 +433,8 @@ public class ConvertWindow extends Stage {
             btnBox.getChildren().addAll(cancel, export);
             btnBox.setAlignment(Pos.CENTER_RIGHT);
 
-            HBox.setMargin(cancel, new Insets(50, 5, 0, 10));
-            HBox.setMargin(export, new Insets(50, 10, 0, 5));
+            HBox.setMargin(cancel, new Insets(20, 5, 0, 10));
+            HBox.setMargin(export, new Insets(20, 10, 0, 5));
 
             Region spacer = new Region();
             VBox.setVgrow(spacer, Priority.ALWAYS);
@@ -452,7 +452,7 @@ public class ConvertWindow extends Stage {
                 }else{
                     Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Paramètres incorrects"));
                     alert.setHeaderText(TR.tr("Impossible de générer des images/pages de 0 pixels"));
-                    alert.setContentText(TR.tr("Veuillez changer la résolution des images ou le format des pages."));
+                    alert.setContentText(TR.tr("Veuillez changer la définition des images ou le format des pages."));
                     alert.show();
                 }
             });

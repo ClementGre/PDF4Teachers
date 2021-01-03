@@ -125,8 +125,8 @@ public class ExportWindow {
 
         VBox.setMargin(delEdit, new Insets(20, 10, 0, 10));
 
-        HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
-        HBox.setMargin(export, new Insets(50, 10, 10, 5));
+        HBox.setMargin(cancel, new Insets(20, 5, 10, 10));
+        HBox.setMargin(export, new Insets(20, 10, 10, 5));
 
         changePath.setOnAction(event -> {
 

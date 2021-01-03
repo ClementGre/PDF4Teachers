@@ -188,7 +188,7 @@ public class GradeExportWindow extends Stage {
         }
         public void setupPathForm(){
 
-            VBox info = generateInfo(TR.tr("Dossier d'exportation") + " :", true);
+            VBox info = generateInfo(TR.tr("Dossier destination") + " :", true);
 
             HBox filePathBox = new HBox();
 
@@ -273,8 +273,8 @@ public class GradeExportWindow extends Stage {
             btnBox.getChildren().addAll(cancel, export);
             btnBox.setAlignment(Pos.CENTER_RIGHT);
 
-            HBox.setMargin(cancel, new Insets(50, 5, 0, 10));
-            HBox.setMargin(export, new Insets(50, 10, 0, 5));
+            HBox.setMargin(cancel, new Insets(20, 5, 0, 10));
+            HBox.setMargin(export, new Insets(20, 10, 0, 5));
 
             Region spacer = new Region();
             VBox.setVgrow(spacer, Priority.ALWAYS);
