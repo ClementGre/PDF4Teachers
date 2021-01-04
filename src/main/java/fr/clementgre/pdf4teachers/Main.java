@@ -31,7 +31,7 @@ public class Main extends Application {
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "1.2.1";
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	public static final boolean COPY_CONSOLE = true;
 
 	public static boolean firstLaunch;
