@@ -41,7 +41,7 @@ dependencies{
 
 }
 javafx {
-    version = '15.0.1'
+    version = '14'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -64,8 +64,12 @@ task packageDeb(type: Exec){
     workingDir project.projectDir
     commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
 }
-sourceCompatibility = 15
-targetCompatibility = 15
+task packageRpm(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=rpm"]
+}
+sourceCompatibility = 14
+targetCompatibility = 14
 jlink {
     options = [
                 '--strip-debug',
@@ -78,7 +82,8 @@ jlink {
     }
 
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
-        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-15.0.1.9-hotspot')
+        //targetPlatform('win', 'C:\\Program Files\\Java\\Libertica-15')
+        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
     }else if(Os.isFamily(Os.FAMILY_MAC)){
         targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/openjdk-15.0.1/Contents/Home')
     }else if(Os.isFamily(Os.FAMILY_UNIX)){
@@ -86,14 +91,18 @@ jlink {
     }
 
     jpackage {
+
+        installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
+
         installerOptions = [
                 '--description', project.description,
                 //'--copyright', 'Copyrigth 2019 Clément Grennerat',
                 '--app-version', project.version,
-                '--vendor', "Clément Grennerat"
+                '--vendor', "Clément Grennerat",
+                '--type', installerType
         ] as List<String>
 
-        installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
+
 
         if(installerType == 'msi'){ // WINDOWS
             imageOptions += ['--icon', 'src/main/resources/logo.ico']
@@ -108,14 +117,16 @@ jlink {
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
                     "--mac-package-name", "PDF4Teachers",
-                    '--file-associations', 'association-osx.properties'
+                    '--file-associations', 'association-osx.properties',
+                    '--icon', 'src/main/resources/logo.icns'
             ]
         }else if(installerType in ['deb', 'rpm']){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
-                    '--linux-menu-group', 'Office',
+                    '--linux-menu-group', 'Education;Office',
                     '--linux-shortcut',
-                    '--file-associations', 'association-lin.properties'
+                    '--file-associations', 'association-lin.properties',
+                    '--icon', 'src/main/resources/logo.png'
             ]
             if(installerType == 'deb'){
                 installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
