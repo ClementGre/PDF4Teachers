@@ -30,9 +30,9 @@ public class Main extends Application {
 	public static HostServices hostServices;
 
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
-	public static final String VERSION = "Snapshot 1.3.0";
-	public static final boolean DEBUG = false;
-	public static final boolean COPY_CONSOLE = true;
+	public static final String VERSION = "sn-1.3.0";
+	public static final boolean DEBUG = true;
+	public static final boolean COPY_CONSOLE = false;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
