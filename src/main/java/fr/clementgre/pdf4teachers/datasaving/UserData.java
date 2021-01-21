@@ -159,8 +159,11 @@ public class UserData {
     public UserData(){
         if(!userDataSaver.isAlive()) userDataSaver.start();
 
-        loadDataFromYAML();
-        textElementsData = new TextElementsData();
+        Platform.runLater(() -> {
+            loadDataFromYAML();
+            textElementsData = new TextElementsData();
+        });
+
     }
     public void save(){
         saveData();

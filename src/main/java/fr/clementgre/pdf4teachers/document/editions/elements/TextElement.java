@@ -57,7 +57,7 @@ public class TextElement extends Element {
 		this.text.setTextOrigin(VPos.TOP);
 
 		if(hasPage && getPage() != null){
-			setupGeneral(isLaTeX() ? this.image : this.text);
+			setupGeneral(isLatex() ? this.image : this.text);
 			updateLaTeX();
 			this.text.setUnderline(isURL());
 		}
@@ -70,7 +70,6 @@ public class TextElement extends Element {
 	protected void setupBindings(){
 		this.text.textProperty().addListener((observable, oldValue, newValue) -> {
 			updateLaTeX();
-			checkLocation(getLayoutX(), getLayoutY(), false);
 			this.text.setUnderline(isURL());
 		});
 		this.text.fillProperty().addListener((observable, oldValue, newValue) -> {
@@ -78,6 +77,9 @@ public class TextElement extends Element {
 		});
 		this.text.fontProperty().addListener((observable, oldValue, newValue) -> {
 			updateLaTeX();
+		});
+		widthProperty().addListener((observable, oldValue, newValue) -> {
+			checkLocation(getLayoutX(), getLayoutY(), false);
 		});
 	}
 	@Override
@@ -117,7 +119,6 @@ public class TextElement extends Element {
 	@Override
 	public void doubleClick() {
 		cloneOnDocument();
-		AutoTipsManager.showByAction("textdoubleclick");
 	}
 	@Override
 	public void addedToDocument(boolean silent) {
@@ -202,12 +203,38 @@ public class TextElement extends Element {
 	public boolean isURL(){
 		return text.getText().startsWith("http://") || text.getText().startsWith("https://") || text.getText().startsWith("www.");
 	}
-	public boolean isLaTeX(){
-		return text.getText().startsWith("$");
+	public boolean isLatex(){
+		return isLatex(text.getText());
+	}
+	public static boolean isLatex(String text){
+		return text.split(Pattern.quote("$$")).length > 1;
 	}
 
 	public String getLaTeXText(){
-		return text.getText().replaceFirst(Pattern.quote("$"), "");
+
+		String latexText = "";
+		boolean isText = !text.getText().startsWith(Pattern.quote("$$"));
+		for(String part : text.getText().split(Pattern.quote("$$"))){
+			//if(part.startsWith(" ")) part = part.substring(1);
+			//if(part.endsWith(" ")) part = part.substring(0, part.length()-1);
+
+			if(isText) latexText += formatLatexText(part);
+			else latexText += part;
+
+			isText = !isText;
+		}
+		return latexText;
+	}
+	public static String formatLatexText(String text){
+		return "\\text{" + text.replace("\\", "\\\\")
+				.replace("{", "\\{")
+				.replace("}", "\\}")
+				.replace("$", "\\$")
+				.replace("%", "\\%")
+				.replace("^", "\\^")
+				.replace("&", "\\&")
+				.replace("_", "\\_")
+				.replace("~", "\\~") + "}";
 	}
 	public java.awt.Color getAwtColor(){
 		return new java.awt.Color((float) getColor().getRed(),
@@ -216,7 +243,7 @@ public class TextElement extends Element {
 				(float) getColor().getOpacity());
 	}
 	public void updateLaTeX(){
-		if(isLaTeX()){ // LaTeX
+		if(isLatex()){ // LaTeX
 
 			if(getChildren().contains(text)){
 				getChildren().remove(text);
@@ -258,7 +285,7 @@ public class TextElement extends Element {
 			TeXFormula formula = new TeXFormula(text);
 			formula.setColor(color);
 
-			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size*imageFactor);
+			TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, size*imageFactor);
 
 			icon.setInsets(new Insets((int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7), (int) (-size*imageFactor/7)));
 
@@ -276,12 +303,12 @@ public class TextElement extends Element {
 				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 			}
 			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
-				return renderLatex("$" + TR.tr("Commande/Symbole~inconnu~:") + "\\\\" +
-						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), ""), color, size, calls+1);
-			}else if(text.startsWith(TR.tr("Erreur~:") + "\\\\")){
-				return renderLatex(TR.tr("Impossible~de~lire~la~formule"), color, size, calls+1);
+				return renderLatex(formatLatexText(TR.tr("Commande/Symbole inconnu :") + "\\" +
+						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), "")), color, size, calls+1);
+			}else if(text.startsWith(TR.tr("Erreur :") + "\\")){
+				return renderLatex(formatLatexText(TR.tr("Impossible de lire la formule")), color, size, calls+1);
 			}else{
-				return renderLatex(TR.tr("Erreur~:") + "\\\\" + ex.getMessage(), color, size, calls+1);
+				return renderLatex(formatLatexText(TR.tr("Erreur :") + "\\" + ex.getMessage()), color, size, calls+1);
 			}
 		}
 	}

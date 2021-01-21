@@ -144,7 +144,7 @@ public class TextTab extends Tab {
 		if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
 		else txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-		txtArea.setPromptText(TR.tr("Commencez par $ pour écrire du LaTeX"));
+		txtArea.setPromptText(TR.tr("Entourez le LaTeX par $$"));
 		txtArea.setId("no-vertical-scroll-bar");
 		txtArea.setFocusTraversable(false);
 
@@ -219,7 +219,7 @@ public class TextTab extends Tab {
 				return;
 			}
 
-			if(!newValue.startsWith("$")){
+			if(!TextElement.isLatex(newValue)){
 				// WRAP TEXT
 				if(MainWindow.mainScreen.getSelected() == null) return;
 				Platform.runLater(() -> {
@@ -247,15 +247,16 @@ public class TextTab extends Tab {
 			if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
 		});
 		sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-			String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-			if(txtArea.getText().endsWith(" ")) wrapped += " ";
+			if(!((TextElement) MainWindow.mainScreen.getSelected()).isLatex()){
+				String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+				if(txtArea.getText().endsWith(" ")) wrapped += " ";
 
-			if(!wrapped.equals(txtArea.getText())){
-				int positionCaret = txtArea.getCaretPosition();
-				txtArea.setText(wrapped);
-				txtArea.positionCaret(positionCaret);
+				if(!wrapped.equals(txtArea.getText())){
+					int positionCaret = txtArea.getCaretPosition();
+					txtArea.setText(wrapped);
+					txtArea.positionCaret(positionCaret);
+				}
 			}
-			Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
 		}));
 		txtArea.setOnKeyPressed(e -> {
 			if(e.getCode() == KeyCode.DELETE){

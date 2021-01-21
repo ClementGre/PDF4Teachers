@@ -235,11 +235,13 @@ public class LanguageWindow extends Stage{
             for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
         }
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
+
         if(Main.settings.language.getValue().equals("Français France (Defaut)")){
             Main.settings.language.setValue("fr-fr");
         }else if(Main.settings.language.getValue().equals("English US")){
             Main.settings.language.setValue("en-us");
         }
+
         TR.setup();
     }
     public static void copyFiles(boolean force){
@@ -279,9 +281,17 @@ public class LanguageWindow extends Stage{
         return languages;
     }
     public static void loadLanguagesConfig(HashMap<String, Object> data){
+
+        // return if the version has changed -> keep the default values
+        if(!Main.settings.getSettingsVersion().equals(Main.VERSION)){
+            return;
+        }
+
+        // add default languages if they was deleted
         for(Map.Entry<String, Object> language : LanguageWindow.getLanguagesDefaultConfig().entrySet()){
             if(!data.containsKey(language.getKey())) data.put(language.getKey(), language.getValue());
         }
+
         languages = data;
     }
     public static HashMap<String, Object> getLanguagesDefaultConfig(){
@@ -294,7 +304,7 @@ public class LanguageWindow extends Stage{
         Config.set(data, "en-us.name", "English US");
 
         Config.set(data, "it-it.version", 0);
-        Config.set(data, "it-it.name", "Italiano (Incompleto)");
+        Config.set(data, "it-it.name", "Italiano Italia");
 
         return data;
     }

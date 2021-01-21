@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -224,7 +225,11 @@ public class FileTab extends Tab {
 	}
 
 	public File getCurrentDir(){
-		if(MainWindow.mainScreen.hasDocument(false)) return MainWindow.mainScreen.document.getFile().getParentFile();
+		if(MainWindow.mainScreen.hasDocument(false)){
+			if(!MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(LanguageWindow.getDocFile().getAbsolutePath())){
+				return MainWindow.mainScreen.document.getFile().getParentFile();
+			}
+		}
 		if(files.getItems().size() != 0) return files.getItems().get(0).getParentFile();
 		return null;
 	}

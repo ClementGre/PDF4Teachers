@@ -80,7 +80,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
             HBox filePathPane = new HBox();
-                TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
+                TextField filePath = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
                 filePath.setPromptText(TR.tr("Chemin du dossier d'exportation"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
@@ -125,8 +125,8 @@ public class ExportWindow {
 
         VBox.setMargin(delEdit, new Insets(20, 10, 0, 10));
 
-        HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
-        HBox.setMargin(export, new Insets(50, 10, 10, 5));
+        HBox.setMargin(cancel, new Insets(20, 5, 10, 10));
+        HBox.setMargin(export, new Insets(20, 10, 10, 5));
 
         changePath.setOnAction(event -> {
 
@@ -200,7 +200,7 @@ public class ExportWindow {
 
         HBox path = new HBox();
         HBox filePathPane = new HBox();
-        TextField filePath = new TextField(files.get(0).getParentFile().getPath() + File.separator);
+        TextField filePath = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
         filePath.setMinWidth(1);
         filePath.setMinHeight(30);
         HBox.setHgrow(filePath, Priority.ALWAYS);
