@@ -11,6 +11,8 @@ import java.util.concurrent.atomic.AtomicReference;
 public class PlatformUtils {
 
     
+    // Running code on JavaFX Thread from another Thre
+    // and waiting this acting is completed before continuing the other Thread
     public static <T> T runAndWait(ReturnCallBack<T> action) {
         if (action == null)
             throw new NullPointerException("action");
