@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeView;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;

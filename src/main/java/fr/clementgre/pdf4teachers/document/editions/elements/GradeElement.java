@@ -2,10 +2,10 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeRating;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeRating;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;

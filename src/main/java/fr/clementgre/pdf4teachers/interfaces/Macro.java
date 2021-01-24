@@ -4,11 +4,11 @@ package fr.clementgre.pdf4teachers.interfaces;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTreeView;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -21,8 +21,8 @@ public class Macro {
 
         main.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
-                if(MainWindow.leftBar.getSelectionModel().getSelectedIndex() == 1) MainWindow.leftBar.getSelectionModel().select(2);
-                else MainWindow.leftBar.getSelectionModel().select(1);
+                if(MainWindow.leftBar.getSelectionModel().getSelectedItem() == MainWindow.textTab) MainWindow.leftBar.getSelectionModel().select(MainWindow.gradeTab);
+                else MainWindow.leftBar.getSelectionModel().select(MainWindow.textTab);
                 return;
             }
 

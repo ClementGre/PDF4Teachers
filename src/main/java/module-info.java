@@ -46,12 +46,14 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.document.editions;
     exports fr.clementgre.pdf4teachers.document.editions.elements;
     exports fr.clementgre.pdf4teachers.panel;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.files;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.texts;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.grades;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.paint;
-    exports fr.clementgre.pdf4teachers.panel.leftBar.grades.export;
+    exports fr.clementgre.pdf4teachers.panel.MainScreen;
+    exports fr.clementgre.pdf4teachers.panel.sidebar;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.files;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.texts;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.grades;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.paint;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
     exports fr.clementgre.pdf4teachers.utils;
     exports fr.clementgre.pdf4teachers.interfaces.windows;
 

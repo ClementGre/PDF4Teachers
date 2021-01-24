@@ -41,7 +41,7 @@ dependencies{
 
 }
 javafx {
-    version = '14'
+    version = '15'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -83,7 +83,7 @@ jlink {
 
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
         //targetPlatform('win', 'C:\\Program Files\\Java\\Libertica-15')
-        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-14.0.1.7-hotspot')
+        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-15.0.1.7-hotspot')
     }else if(Os.isFamily(Os.FAMILY_MAC)){
         targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/openjdk-15.0.1/Contents/Home')
     }else if(Os.isFamily(Os.FAMILY_UNIX)){

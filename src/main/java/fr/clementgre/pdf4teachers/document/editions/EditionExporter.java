@@ -5,7 +5,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeCopyGradeScaleDialog;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeCopyGradeScaleDialog;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;

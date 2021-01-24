@@ -80,6 +80,8 @@ public class MainScreen extends Pane {
 
 		//if(Main.isOSX()) PageRenderer.PAGE_HORIZONTAL_MARGIN = 15;
 
+		setPrefWidth(Double.MAX_VALUE);
+
 		setup();
 		repaint();
 

@@ -2,10 +2,10 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.ListsManager;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextListItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.ListsManager;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import javafx.application.Platform;
 
 import java.io.File;

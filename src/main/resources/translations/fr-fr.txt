@@ -295,7 +295,7 @@ Vous pouvez retrouver les fichiers CSV dans le dossier choisi.=
 Vous pouvez retrouver le fichier CSV dans le dossier choisi.=
 # GradeTab
 Compter les points par retranchement=
-Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.=
+Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.=Les notes sans valeur prennent leur valeur maximal et les points attribués sont soustraits au total pour donner la note finale. Attention, les notes affichés seront donc fausses, il est conseillé de cacher les notes de bas niveau avec cette option activée.
 Vérouiller le barème, il ne pourra plus être modifié.=
 Modifier les polices, couleurs et préfixe de chaque niveau de notes.=
 Envoyer le barème sur d'autres éditions.=
@@ -337,7 +337,7 @@ Cliquez sur le bouton lien pour copier le barème sur d'autres documents.=
 Toutes les modifications apportés au document sont enregistrés dans un fichier spécial, à part. Utilisez le menu Fichier > Exporter pour regénérer le fichier PDF. Attention : les modifications de pages (rotations, suppression / ajout de pages) modifient immédiatement le fichier d'origine.=
 Faites un double clic sur le document pour ajouter un nouvel élément textuel plus rapidement (ou Ctrl+T).=
 Vous venez de verrouiller le barème. Vous ne pourrez plus créer ou supprimer de notes et modifier le total ou le nom des notes.=
-Le mode de comptage des points par retranchement initialise chaque note à son total au lieu de 0. L'absence de saisie de note mène donc à la note totale maximale.=
+Le mode de comptage des points par retranchement initialise chaque note à son total au lieu de 0. L'absence de saisie de note mène donc à la note totale maximale.=Le mode de comptage des points par retranchement donne aux notes sans valeur leur valeur maximale et les points attribués sont soustraits au total pour donner la note finale. Attention, les notes affichés seront donc fausses, il est conseillé de cacher les notes de bas niveau avec cette option activée.
 Faites un clic droit sur une note pour éditer sa valeur et accéder à de nombreuses options.=
 Le système de barème fonctionne hiérarchiquement. Pour créer une note de même niveau que celle sélectionnée, cliquez sur le + de sa note parente, ou pressez Ctrl+G.=
 Vous pouvez appeler une note \"Bonus<...>\" pour qu'elle ne soit pas comptée dans le total du barème (mais comptée dans la note).=

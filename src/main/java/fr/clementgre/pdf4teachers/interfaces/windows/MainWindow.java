@@ -7,10 +7,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
-import fr.clementgre.pdf4teachers.panel.leftBar.files.FileTab;
-import fr.clementgre.pdf4teachers.panel.leftBar.grades.GradeTab;
-import fr.clementgre.pdf4teachers.panel.leftBar.paint.PaintTab;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
+import fr.clementgre.pdf4teachers.panel.sidebar.files.FileTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -47,7 +48,10 @@ public class MainWindow extends Stage{
     public static FooterBar footerBar;
     public static MenuBar menuBar;
 
-    public static TabPane leftBar;
+
+    public static SideBar leftBar;
+    public static SideBar rightBar;
+
     public static FileTab filesTab;
     public static TextTab textTab;
     public static GradeTab gradeTab;
@@ -113,8 +117,9 @@ public class MainWindow extends Stage{
         //		SETUPS
 
         mainPane = new SplitPane();
-        leftBar = new TabPane();
-        leftBar.setStyle("-fx-tab-max-width: 22px;");
+
+        leftBar = new SideBar(true);
+        rightBar = new SideBar(false);
 
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
@@ -134,33 +139,22 @@ public class MainWindow extends Stage{
         show();
         requestFocus();
 
-        mainPane.getItems().addAll(leftBar, mainScreen);
-        mainPane.setDividerPositions(270 / root.getWidth());
-        mainPane.getDividers().get(0).positionProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            double width = newValue.doubleValue() * root.getWidth();
-            if(width >= 400){
-                mainPane.setDividerPositions(400 / root.getWidth());
-            }
-        });
-
-        root.widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            double width = mainPane.getDividerPositions()[0] * oldValue.doubleValue();
-            mainPane.setDividerPositions(width / newValue.doubleValue());
-        });
+        mainPane.getItems().addAll(leftBar, mainScreen, rightBar);
+        SideBar.setupDividers(mainPane);
 
         root.setCenter(mainPane);
         root.setTop(menuBar);
         root.setBottom(footerBar);
 
+
         Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) root.setBottom(null);
             else root.setBottom(footerBar);
         });
-
         root.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
-                if(leftBar.getSelectionModel().getSelectedIndex() == 1) leftBar.getSelectionModel().select(2);
-                else leftBar.getSelectionModel().select(1);
+                if(leftBar.getSelectionModel().getSelectedItem() == MainWindow.textTab) leftBar.getSelectionModel().select(MainWindow.gradeTab);
+                else leftBar.getSelectionModel().select(MainWindow.textTab);
                 e.consume();
             }
         });

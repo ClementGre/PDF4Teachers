@@ -3,9 +3,15 @@ package fr.clementgre.pdf4teachers.utils.image;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
 import javafx.geometry.Insets;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.effect.Effect;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
+import javafx.scene.transform.Transform;
 
 public class SVGPathIcons {
 
@@ -129,4 +135,23 @@ public class SVGPathIcons {
 
     }
 
+    public static Image generateNonSvgImage(String path, Color color, Effect effect, double scaleFactor) {
+
+        SVGPath svg = new SVGPath();
+        svg.setContent(path);
+        svg.setFill(color);
+        if(effect != null) svg.setEffect(effect);
+
+        SnapshotParameters sn = new SnapshotParameters();
+        sn.setFill(Color.TRANSPARENT);
+
+        if(scaleFactor == 1)  return svg.snapshot(sn, null);
+
+        // With a scaleFactor
+        WritableImage resized = new WritableImage((int) (svg.getLayoutBounds().getWidth() * scaleFactor), (int) (svg.getLayoutBounds().getHeight() * scaleFactor));
+        sn.setTransform(Transform.scale(scaleFactor, scaleFactor));
+        return svg.snapshot(sn, resized);
+
+
+    }
 }

@@ -6,9 +6,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 
@@ -28,15 +30,15 @@ public class FooterBar extends AnchorPane {
 
 		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (MainWindow.mainScreen.getZoomPercent()) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
 
-		switch (MainWindow.leftBar.getSelectionModel().getSelectedIndex()){
-			case 0:
-				middleInfo.setText(TR.tr("Mode Fichiers")); break;
-			case 1:
-				middleInfo.setText(TR.tr("Mode Texte")); break;
-			case 2:
-				middleInfo.setText(TR.tr("Mode Notes")); break;
-			case 3:
-				middleInfo.setText(TR.tr("Mode Dessin")); break;
+		Tab selectedItem = MainWindow.leftBar.getSelectionModel().getSelectedItem();
+		if(MainWindow.filesTab.equals(selectedItem)){
+			middleInfo.setText(TR.tr("Mode Fichiers"));
+		}else if(MainWindow.textTab.equals(selectedItem)){
+			middleInfo.setText(TR.tr("Mode Texte"));
+		}else if(MainWindow.gradeTab.equals(selectedItem)){
+			middleInfo.setText(TR.tr("Mode Notes"));
+		}else if(MainWindow.paintTab.equals(selectedItem)){
+			middleInfo.setText(TR.tr("Mode Dessin"));
 		}
 
 		if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
@@ -73,7 +75,7 @@ public class FooterBar extends AnchorPane {
 		getChildren().add(middleInfo);
 		getChildren().add(rightInfo);
 
-		MainWindow.leftBar.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> repaint());
+		Platform.runLater(() -> MainWindow.leftBar.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> repaint()));
 
 	}
 }

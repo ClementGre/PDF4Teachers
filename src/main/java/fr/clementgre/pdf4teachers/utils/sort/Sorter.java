@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.utils.sort;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
-import fr.clementgre.pdf4teachers.panel.leftBar.texts.TextTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 
 import java.io.File;
 import java.util.Comparator;
