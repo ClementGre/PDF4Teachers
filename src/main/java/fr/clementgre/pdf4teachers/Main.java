@@ -18,6 +18,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.input.DataFormat;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -38,6 +39,8 @@ public class Main extends Application {
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
 	public static String systemShortcut = "Ctrl";
 	public static List<String> params;
+
+	public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
 
 	public static void main(String[] args){
 		if(COPY_CONSOLE) LogWindow.copyLogs();

@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -25,16 +26,21 @@ public class SideTab extends Tab {
 
     public void setupDragAndDrop(String iconPath){
 
-        getGraphic().setOnDragDetected(event -> {
+        getGraphic().setOnDragDetected(e -> {
             Dragboard dragboard = getGraphic().startDragAndDrop(TransferMode.MOVE);
-
             dragboard.setDragView(SVGPathIcons.generateNonSvgImage(iconPath, Color.GRAY, ImageUtils.defaultGrayColorAdjust, .08));
 
             ClipboardContent clipboardContent = new ClipboardContent();
-            clipboardContent.putString(SideBar.DRAG_TAB_KEY);
+            clipboardContent.put(Main.INTERNAL_FORMAT, SideBar.TAB_DRAG_KEY);
             dragboard.setContent(clipboardContent);
+
             SideBar.draggingTab = this;
-            event.consume();
+            SideBar.showDragSpaces();
+            e.consume();
+        });
+
+        getGraphic().setOnDragDone(e -> {
+            SideBar.hideDragSpaces();
         });
 
     }

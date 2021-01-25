@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
+      fx:id="root">
+
+    <VBox fx:id="optionPane" spacing="5">
+        <VBox.margin><Insets top="5" bottom="5"/></VBox.margin>
+
+        <HBox spacing="5">
+            <Button text="Nouvelle Image" fx:id="newImage" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button text="Image Vectorielle" fx:id="newVector" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+        </HBox>
+
+        <TitledPane text="Paramètres de redimensionnement">
+            <Button text="test"/>
+        </TitledPane>
+
+        <TitledPane text="Paramètres des vecteurs">
+
+        </TitledPane>
+
+    </VBox>
+
+
+</VBox>

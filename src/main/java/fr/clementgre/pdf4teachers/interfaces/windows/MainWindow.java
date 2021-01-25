@@ -20,6 +20,7 @@ import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -30,6 +31,7 @@ import javafx.stage.Window;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -127,7 +129,12 @@ public class MainWindow extends Stage{
         filesTab = new FileTab();
         textTab = new TextTab();
         gradeTab = new GradeTab();
-        paintTab = new PaintTab();
+        try{
+            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"));
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
 
         menuBar = new MenuBar();
 
