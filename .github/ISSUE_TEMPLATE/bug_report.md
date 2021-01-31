@@ -24,6 +24,10 @@ Steps to reproduce the behavior:
 You can open the console window by pressing Ctrl/Cmd + Alt + C while the main window of PDF4Teachers is selected.
 Please provide a screenshot of the console if it is not empty.
 
+**Edits**
+If applicable, export the concerned edit with Tools > Export Edit/Grade scale > Export edit 
+You can rename file(s) name/text elements or delete all ``texts:`` section if the text elements are not concerned.
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
