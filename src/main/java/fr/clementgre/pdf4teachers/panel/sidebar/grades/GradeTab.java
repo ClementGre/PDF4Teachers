@@ -44,7 +44,7 @@ public class GradeTab extends SideTab {
     private Button export = new Button();
 
     public GradeTab(){
-        super(false, SVGPathIcons.ON_TWENTY, 29, 0, new int[]{500, 440});
+        super("grades", SVGPathIcons.ON_TWENTY, 29, 0, new int[]{500, 440});
 
         setContent(pane);
         setup();

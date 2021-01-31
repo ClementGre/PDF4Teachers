@@ -168,6 +168,7 @@ public class UserData {
     public void save(){
         saveData();
         textElementsData.saveData();
+        Main.syncUserData.save();
     }
 
     private void loadDataFromYAML(){

@@ -6,6 +6,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.List;
 import java.util.Locale;
 
+import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -27,6 +28,7 @@ public class Main extends Application {
 	public static MainWindow window;
 
 	public static Settings settings;
+	public static SyncUserData syncUserData;
 
 	public static HostServices hostServices;
 
@@ -74,6 +76,7 @@ public class Main extends Application {
 		// PREPARATION
 
 		settings = new Settings();
+		syncUserData = new SyncUserData();
 
 		// setups
 		LanguageWindow.setup();

@@ -76,7 +76,7 @@ public class TextTab extends SideTab {
 	private boolean txtAreaScrollBarListenerIsSetup = false;
 
 	public TextTab(){
-		super(true, SVGPathIcons.TEXT_LETTER, 0, 28, new int[]{460, 500});
+		super("text", SVGPathIcons.TEXT_LETTER, 0, 28, new int[]{460, 500});
 
 		setContent(pane);
 		setup();

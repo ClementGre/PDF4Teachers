@@ -4,27 +4,16 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
-import javafx.scene.effect.ColorAdjust;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 
-import java.awt.*;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.concurrent.Callable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class SideBar extends TabPane {
@@ -134,6 +123,12 @@ public class SideBar extends TabPane {
             }
         });
 
+        Platform.runLater(() -> {
+            getTabs().addListener((ListChangeListener<Tab>) c -> {
+                saveBarsOrganization();
+            });
+        });
+
     }
 
     public void setWidthByEditingDivider(double width){
@@ -144,14 +139,9 @@ public class SideBar extends TabPane {
         }
     }
 
-    public static void moveTab(Tab tab){
-        if(isIntoLeftBar(tab)){
-            MainWindow.leftBar.getSelectionModel().select(tab);
-        }else if(isIntoRightBar(tab)){
-            MainWindow.rightBar.getSelectionModel().select(tab);
-        }
+    public static void selectTab(String tab){
+        selectTab(SideTab.getByName(tab));
     }
-
     public static void selectTab(Tab tab){
         if(isIntoLeftBar(tab)){
             MainWindow.leftBar.getSelectionModel().select(tab);
@@ -195,5 +185,36 @@ public class SideBar extends TabPane {
             setWidthByEditingDivider(0);
             setMaxWidth(0);
         }
+    }
+
+    public List<String> getTabsList(){
+        ArrayList<String> tabs = new ArrayList<>();
+
+        for(Tab tab : getTabs()){
+            SideTab sideTab = (SideTab) tab;
+            tabs.add(sideTab.getName());
+        }
+
+        return tabs;
+    }
+    public void loadTabsList(List<String> tabsName){
+        for(String tabName : tabsName){
+            SideTab tab = SideTab.getByName(tabName);
+            if(tab != null){
+                if(tab.getTabPane() != null) tab.getTabPane().getTabs().remove(tab);
+                getTabs().add(tab);
+                System.out.println("add " + tabName + " to " + (left ? "left" : "right"));
+            }
+        }
+        hideDragSpace();
+    }
+
+    public static void saveBarsOrganization(){
+        Main.syncUserData.leftBarOrganization = MainWindow.leftBar.getTabsList();
+        Main.syncUserData.rightBarOrganization = MainWindow.rightBar.getTabsList();
+    }
+    public static void loadBarsOrganization(){
+        MainWindow.leftBar.loadTabsList(Main.syncUserData.leftBarOrganization);
+        MainWindow.rightBar.loadTabsList(Main.syncUserData.rightBarOrganization);
     }
 }

@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -12,15 +13,22 @@ import javafx.scene.paint.Color;
 
 public class SideTab extends Tab {
 
-    public SideTab(boolean defaultLeft, String iconPath, int width, int height, int[] ratio){
+    private final String name;
+    public SideTab(String name, String iconPath, int width, int height, int[] ratio){
+        this.name = name;
 
         setClosable(false);
 
         setGraphic(SVGPathIcons.generateImage(iconPath, "gray", 0, width, height, 0, ratio, ImageUtils.defaultGrayColorAdjust));
 
         setupDragAndDrop(iconPath);
-        if(defaultLeft) MainWindow.leftBar.getTabs().add(this);
-        else MainWindow.rightBar.getTabs().add(this);
+        
+        Platform.runLater(() -> {
+            if(getTabPane() == null){
+                MainWindow.leftBar.getTabs().add(this);
+            }
+        });
+
     }
 
 
@@ -43,6 +51,26 @@ public class SideTab extends Tab {
             SideBar.hideDragSpaces();
         });
 
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public static SideTab getByName(String name){
+        if(MainWindow.filesTab.getName().equals(name)){
+            return MainWindow.filesTab;
+
+        }else if(MainWindow.textTab.getName().equals(name)){
+            return MainWindow.textTab;
+
+        }else if(MainWindow.gradeTab.getName().equals(name)){
+            return MainWindow.gradeTab;
+
+        }else if(MainWindow.paintTab.getName().equals(name)){
+            return MainWindow.paintTab;
+        }
+        return null;
     }
 
 }

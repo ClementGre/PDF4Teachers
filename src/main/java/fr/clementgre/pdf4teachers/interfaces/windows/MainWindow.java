@@ -135,7 +135,6 @@ public class MainWindow extends Stage{
             e.printStackTrace();
         }
 
-
         menuBar = new MenuBar();
 
         mainScreen.repaint();
@@ -148,6 +147,7 @@ public class MainWindow extends Stage{
 
         mainPane.getItems().addAll(leftBar, mainScreen, rightBar);
         SideBar.setupDividers(mainPane);
+        SideBar.loadBarsOrganization();
 
         root.setCenter(mainPane);
         root.setTop(menuBar);

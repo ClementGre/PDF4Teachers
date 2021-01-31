@@ -17,7 +17,7 @@ public class PaintTab extends SideTab {
 
 
     public PaintTab(){
-        super(false, SVGPathIcons.DRAW_POLYGON, 28, 30, null);
+        super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
         MainWindow.paintTab = this;
     }
 
