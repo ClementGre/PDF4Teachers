@@ -203,7 +203,6 @@ public class SideBar extends TabPane {
             if(tab != null){
                 if(tab.getTabPane() != null) tab.getTabPane().getTabs().remove(tab);
                 getTabs().add(tab);
-                System.out.println("add " + tabName + " to " + (left ? "left" : "right"));
             }
         }
         hideDragSpace();

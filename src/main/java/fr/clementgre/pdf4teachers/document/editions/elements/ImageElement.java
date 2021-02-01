@@ -10,8 +10,8 @@ public class ImageElement extends GraphicElement{
 
     // imageId
 
-    public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, String imageId) {
-        super(x, y, pageNumber, hasPage, width, height);
+    public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode, String imageId) {
+        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
 
 
 
@@ -69,7 +69,11 @@ public class ImageElement extends GraphicElement{
         int height = (int) Config.getLong(data, "height");
         String imageId = Config.getString(data, "imageId");
 
-        return new ImageElement(x, y, page, hasPage, width, height, imageId);
+        RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
+        ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
+        RotateMode rotateMode = RotateMode.valueOf(Config.getString(data, "rotateMode"));
+
+        return new ImageElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, rotateMode, imageId);
     }
 
     // SPECIFIC METHODS

@@ -8,8 +8,9 @@ import java.util.LinkedHashMap;
 
 public class VectorElement extends GraphicElement{
 
-    public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, Color fill, Color stroke, int strokeWidth, String path) {
-        super(x, y, pageNumber, hasPage, width, height);
+    public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode,
+                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path){
+        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
 
 
     }
@@ -49,7 +50,8 @@ public class VectorElement extends GraphicElement{
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
-        /*data.put("fill", fill.toString());
+        /*data.put("doFill", doFill);
+        data.put("fill", fill.toString());
         data.put("stroke", stroke.toString());
         data.put("strokeWidth", strokeWidth);
         data.put("path", path);*/
@@ -67,12 +69,17 @@ public class VectorElement extends GraphicElement{
         int y = (int) Config.getLong(data, "y");
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
+        boolean doFill = Config.getBoolean(data, "doFill");
         Color fill = Color.valueOf(Config.getString(data, "fill"));
         Color stroke = Color.valueOf(Config.getString(data, "stroke"));
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");
 
-        return new VectorElement(x, y, page, hasPage, width, height, fill, stroke, strokeWidth, path);
+        RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
+        ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
+        RotateMode rotateMode = RotateMode.valueOf(Config.getString(data, "rotateMode"));
+
+        return new VectorElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, rotateMode, doFill, fill, stroke, strokeWidth, path);
     }
 
     // SPECIFIC METHODS
