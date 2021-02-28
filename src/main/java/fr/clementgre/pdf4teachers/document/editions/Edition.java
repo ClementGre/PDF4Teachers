@@ -72,6 +72,8 @@ public class Edition {
             }
 
         }catch (IOException e){ e.printStackTrace(); }
+
+
         MainWindow.gradeTab.treeView.updateAllSum();
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }

@@ -10,8 +10,10 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class ExportFile{
@@ -40,24 +42,23 @@ public class ExportFile{
 
         grades.removeIf(grade -> GradeTreeView.getElementTier(grade.getParentPath()) >= exportTier);
 
-        grades.sort(Comparator.comparing(grade -> {
+        grades = GradeElement.sortGrades(grades);
+    }
 
-            String[] parentPath = StringUtils.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
-            String lastParentPath = grade.getParentPath();
+    private int getGradeSortIndex(GradeElement grade){
+        String[] parentPath = StringUtils.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
 
-            StringBuilder indexes = new StringBuilder(grade.getIndex() + "");
+        if(grade.isRoot()) return 0;
 
-            while(parentPath.length != 0){
-                for(GradeElement parent : grades){
-                    if((parent.getParentPath() + "\\" + parent.getName()).equals(lastParentPath)){
-                        indexes.insert(0, parent.getIndex());
-                        lastParentPath = "\\" + String.join("\\", parentPath);
-                        parentPath = StringUtils.cleanArray(parent.getParentPath().split(Pattern.quote("\\")));
-                    }
-                }
+        int index = (int) (-grade.getIndex() * Math.pow(10, parentPath.length));
+
+        for(GradeElement parent : grades){
+            if((parent.getParentPath() + "\\" + parent.getName()).equals(grade.getParentPath())){ // parent is direct parent of grade
+                index += getGradeSortIndex(parent);
             }
-            return indexes.toString();
-        }));
+        }
+
+        return index;
     }
 
     public boolean isSameGradeScale(ArrayList<GradeRating> gradeScale){

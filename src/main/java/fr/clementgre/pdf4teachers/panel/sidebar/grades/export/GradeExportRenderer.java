@@ -39,13 +39,13 @@ public class GradeExportRenderer {
     }
 
     public int start(){
-
         if(!getFiles()){
             return exported;
         }
 
         if(pane.type != 1){
             try{
+
                 if(pane.settingsAttributeTotalLine.isSelected()){
                     generateNamesLine(false);
                     generateGradeScaleLine();
@@ -55,11 +55,9 @@ public class GradeExportRenderer {
                 if(pane.settingsAttributeMoyLine.isSelected()){
                     generateMoyLine();
                 }
-
                 for(ExportFile file : files){
                     generateStudentLine(file);
                 }
-
                 if(!save(null)) return exported;
             }catch(Exception e){
                 e.printStackTrace();
@@ -243,9 +241,12 @@ public class GradeExportRenderer {
 
         try {
             ExportFile defaultFile = new ExportFile(MainWindow.mainScreen.document.getFile(), exportTier, pane.settingsWithTxtElements.isSelected());
-
             gradeScale = defaultFile.generateGradeScale();
-            if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())) files.add(defaultFile);
+
+            if(!(pane.settingsOnlyCompleted.isSelected() && !defaultFile.isCompleted())){
+                files.add(defaultFile);
+            }
+
         }catch(Exception e){
             e.printStackTrace();
             Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
@@ -269,7 +270,6 @@ public class GradeExportRenderer {
 
         if(pane.type != 2){
             for(File file : MainWindow.filesTab.files.getItems()){
-
                 try{
                     if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                     if(pane.settingsOnlySameDir.isSelected() && !MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())) continue;
@@ -278,6 +278,7 @@ public class GradeExportRenderer {
 
                     if(pane.settingsOnlySameGradeScale.isSelected() && !exportFile.isSameGradeScale(gradeScale)) continue;
                     if(pane.settingsOnlyCompleted.isSelected() && !exportFile.isCompleted()) continue;
+
                     files.add(exportFile);
 
                 }catch(Exception e) {

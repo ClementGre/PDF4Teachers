@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -11,7 +12,10 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class PaintTab extends SideTab {
@@ -71,7 +75,7 @@ public class PaintTab extends SideTab {
 
         vectorCreateCurve.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.CURVE, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        vectorModeDraw.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PAINT_BRUSH, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
+        vectorModeDraw.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PAINT_BRUSH, "black", 0, 21, 21, ImageUtils.defaultDarkColorAdjust));
         vectorModePoint.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
 
         vectorUndoPath.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.UNDO, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
@@ -89,7 +93,24 @@ public class PaintTab extends SideTab {
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).maxProperty().bind();
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).maxProperty().bind();
 
+        translate(root);
+
         setup();
+    }
+
+    public void translate(Node root){
+        if(root instanceof Pane){
+            for(Node children : ((Pane) root).getChildren()){
+                translate(children);
+            }
+        }else{
+            if(root instanceof Button){
+                ((Button) root).setText(TR.tr(((Button) root).getText()));
+            }else if(root instanceof Label){
+
+            }
+
+        }
     }
 
     public void setup(){

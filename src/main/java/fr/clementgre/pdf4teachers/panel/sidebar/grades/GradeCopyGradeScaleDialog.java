@@ -163,12 +163,7 @@ public class GradeCopyGradeScaleDialog {
                 }
             }
 
-            otherElements.sort((o1, o2) -> {
-                if(o1 instanceof GradeElement && o2 instanceof GradeElement){
-                    return GradeTreeView.getElementTier(((GradeElement) o1).getParentPath()) - GradeTreeView.getElementTier(((GradeElement) o2).getParentPath());
-                }
-                return 0;
-            });
+            otherElements = GradeElement.sortGradesBetweenNormalElements(otherElements);
 
             Edition.simpleSave(editFile, otherElements.toArray(new Element[0]));
             return 0;
