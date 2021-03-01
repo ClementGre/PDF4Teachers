@@ -70,7 +70,7 @@ public class LanguageWindow extends Stage{
         private ImageView image = null;
 
         public Language(File txtFile) {
-            shortName = StringUtils.removeAfterLastRegex(txtFile.getName(), ".txt");
+            shortName = txtFile.getName().replace(".properties", "").replace("strings_", "");
             name = getLanguageName(shortName);
             version = getLanguageVersion(shortName);
 
@@ -117,11 +117,11 @@ public class LanguageWindow extends Stage{
         String country = System.getProperty("user.country").toLowerCase();
 
         if(language.equals("fr")){
-            return "fr-fr";
+            return "fr_fr";
         }else if(language.equals("en")){
-            return "en-us";
+            return "en_us";
         }else if(language.equals("it")){
-            return "it-it";
+            return "it_it";
         }
 
         return null;
@@ -231,7 +231,7 @@ public class LanguageWindow extends Stage{
         return 0;
     }
     public static void setup(){
-        if(Main.settings.getSettingsVersion().equals("1.2.0") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
+        if(Main.settings.getSettingsVersion().startsWith("1.2") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
             for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
         }
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
@@ -250,7 +250,7 @@ public class LanguageWindow extends Stage{
             translationsDir.mkdirs();
 
             for(String name : LanguageWindow.getLanguagesDefaultConfig().keySet()){
-                copyFile(name + ".txt", force);
+                copyFile("strings_" + name + ".properties", force);
                 copyFile(name + ".pdf", force);
                 copyFile(name + ".png", force);
                 copyFile(name + ".odt", force);
@@ -297,14 +297,14 @@ public class LanguageWindow extends Stage{
     public static HashMap<String, Object> getLanguagesDefaultConfig(){
         HashMap<String, Object> data = new HashMap<>();
 
-        Config.set(data, "fr-fr.version", 0);
-        Config.set(data, "fr-fr.name", "Français France");
+        Config.set(data, "fr_fr.version", 0);
+        Config.set(data, "fr_fr.name", "Français France");
 
-        Config.set(data, "en-us.version", 0);
-        Config.set(data, "en-us.name", "English US");
+        Config.set(data, "en_us.version", 0);
+        Config.set(data, "en_us.name", "English US");
 
-        Config.set(data, "it-it.version", 0);
-        Config.set(data, "it-it.name", "Italiano Italia");
+        Config.set(data, "it_it.version", 0);
+        Config.set(data, "it_it.name", "Italiano Italia");
 
         return data;
     }

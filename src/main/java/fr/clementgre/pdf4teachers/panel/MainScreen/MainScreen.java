@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
+
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -12,11 +14,13 @@ import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TranslationsManager;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -257,12 +261,28 @@ public class MainScreen extends Pane {
 			paneMouseX = e.getX();
 		});
 
-		// bind window's name
-		Main.window.titleProperty().bind(Bindings.createStringBinding(() -> status.get() == Status.OPEN ? "PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : " "+TR.tr("(Non sauvegardé)")) : TR.tr("PDF4Teachers - Aucun document"), status, Edition.isSaveProperty()));
+		// window's name
+		status.addListener((observable, oldValue, newValue) -> {
+			updateWindowName();
+		});
+		Edition.isSaveProperty().addListener((observable, oldValue, newValue) -> {
+			updateWindowName();
+		});
 
 		// Start the Drag and Scroll Thread
 		if(!dragNScrollThread.isAlive()) dragNScrollThread.start();
 
+	}
+	private void updateWindowName(){
+		if(status.get() == Status.OPEN){
+			if(Edition.isSave()){
+				TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.document", document.getFile().getName());
+			}else{
+				TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.documentUnsaved", document.getFile().getName());
+			}
+		}else{
+			TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.noDocument");
+		}
 	}
 	public void openFile(File file){
 

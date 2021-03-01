@@ -77,7 +77,7 @@
         </HBox>
     </VBox>
 
-    <TitledPane text="Options avancés" expanded="false"> <!-- advanced Options -->
+    <TitledPane text="%paintTab.title.advanceOptions" expanded="false"> <!-- advanced Options -->
 
         <VBox>
             <padding><Insets topRightBottomLeft="3"/></padding>

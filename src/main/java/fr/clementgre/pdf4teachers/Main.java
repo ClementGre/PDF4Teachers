@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TranslationsManager;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
@@ -36,6 +37,7 @@ public class Main extends Application {
 	public static final String VERSION = "sn-1.3.0";
 	public static final boolean DEBUG = true;
 	public static final boolean COPY_CONSOLE = false;
+	public static final boolean TRANSLATIONS_IN_CODE = false;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -83,6 +85,7 @@ public class Main extends Application {
 		StyleManager.setup();
 		AutoTipsManager.setup();
 		ImageUtils.setupListeners();
+		TranslationsManager.setup();
 
 
 		if(languageAsk()){

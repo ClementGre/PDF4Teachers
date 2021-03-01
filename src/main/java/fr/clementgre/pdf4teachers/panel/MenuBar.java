@@ -398,7 +398,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()){
 					Main.settings.language.setValue(value);
-					Main.window.restart();
+					//Main.window.restart();
 				}
 			});
 		});

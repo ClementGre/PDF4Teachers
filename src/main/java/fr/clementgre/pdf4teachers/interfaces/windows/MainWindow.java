@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TranslationsManager;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
@@ -37,6 +38,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
@@ -75,7 +77,8 @@ public class MainWindow extends Stage{
         loadDimensions();
         setupDecimalFormat();
 
-        setTitle(TR.tr("PDF4Teachers - Aucun document"));
+        TranslationsManager.trA(titleProperty(), "mainWindow.title.noDocument", new Random().nextInt(10)+"");
+
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 
         setMinWidth(700);
@@ -130,7 +133,7 @@ public class MainWindow extends Stage{
         textTab = new TextTab();
         gradeTab = new GradeTab();
         try{
-            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"));
+            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"), TranslationsManager.bundle);
         }catch(IOException e){
             e.printStackTrace();
         }
