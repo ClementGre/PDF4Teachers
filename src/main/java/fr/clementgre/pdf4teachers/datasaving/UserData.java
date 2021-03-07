@@ -133,12 +133,12 @@ public class UserData {
                 MainWindow.userData.foregroundTime++;
                 if(MainWindow.userData.foregroundTime % (60*50) == 0){
                     Platform.runLater(() -> {
-                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Statistiques"),
-                                TR.tr("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.tr("heures sur PDF4Teachers."),
-                                TR.tr("Vous pouvez soutenir PDF4Teachers avec un don :"));
-                        ButtonType paypal = new ButtonType(TR.tr("Paypal"), ButtonBar.ButtonData.OTHER);
-                        ButtonType github = new ButtonType(TR.tr("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
-                        ButtonType ignore = new ButtonType(TR.tr("Ignorer"), ButtonBar.ButtonData.YES);
+                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Statistiques"),
+                                TR.trO("Vous avez passé") + " " + MainWindow.userData.foregroundTime/60 + " " + TR.trO("heures sur PDF4Teachers."),
+                                TR.trO("Vous pouvez soutenir PDF4Teachers avec un don :"));
+                        ButtonType paypal = new ButtonType(TR.trO("Paypal"), ButtonBar.ButtonData.OTHER);
+                        ButtonType github = new ButtonType(TR.trO("GitHub Sponsors"), ButtonBar.ButtonData.OTHER);
+                        ButtonType ignore = new ButtonType(TR.trO("Ignorer"), ButtonBar.ButtonData.YES);
                         alert.getButtonTypes().setAll(paypal, github, ignore);
                         Optional<ButtonType> option = alert.showAndWait();
                         if(option.get() == paypal){

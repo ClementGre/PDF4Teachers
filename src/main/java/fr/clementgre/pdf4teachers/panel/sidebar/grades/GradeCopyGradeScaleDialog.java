@@ -26,15 +26,15 @@ public class GradeCopyGradeScaleDialog {
 
     public void show(){
 
-        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Copier le barème sur d'autres éditions"));
-        dialog.setHeaderText(TR.tr("Cette action va copier le barème entré dans cette édition sur d'autres éditions."));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("grades.copyGradeScaleDialog.confirmation.title"));
+        dialog.setHeaderText(TR.tr("grades.copyGradeScaleDialog.confirmation.info"));
 
-        CheckBox copyLocations = new CheckBox(TR.tr("Copier la position des notes"));
+        CheckBox copyLocations = new CheckBox(TR.tr("grades.copyGradeScaleDialog.confirmation.copyLocations"));
         dialog.getDialogPane().setContent(copyLocations);
 
-        ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType yes = new ButtonType(TR.tr("Copier sur les documents\nouverts du même dossier."), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Copier sur tous les\ndocuments ouverts"), ButtonBar.ButtonData.OTHER);
+        ButtonType cancel = new ButtonType(TR.trO("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType yes = new ButtonType(TR.trO("Copier sur les documents\nouverts du même dossier."), ButtonBar.ButtonData.OK_DONE);
+        ButtonType yesAll = new ButtonType(TR.trO("Copier sur tous les\ndocuments ouverts"), ButtonBar.ButtonData.OTHER);
         dialog.getButtonTypes().setAll(yesAll, yes, cancel);
 
         Optional<ButtonType> option = dialog.showAndWait();
@@ -61,9 +61,9 @@ public class GradeCopyGradeScaleDialog {
             }
         }else return;
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Barème copiés"));
-        alert.setHeaderText(TR.tr("Votre barème a bien été copié."));
-        alert.setContentText("(" + copiedEditions + " " + TR.tr("éditions affectées") + ".)");
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Barème copiés"));
+        alert.setHeaderText(TR.trO("Votre barème a bien été copié."));
+        alert.setContentText("(" + copiedEditions + " " + TR.trO("éditions affectées") + ".)");
         alert.show();
 
         MainWindow.filesTab.refresh();
@@ -98,14 +98,14 @@ public class GradeCopyGradeScaleDialog {
             }
 
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Barème déjà présent"));
-                dialog.setHeaderText(TR.tr("L'édition du fichier") + " " + file.getName() + " " + TR.tr("contient déjà un barème"));
-                dialog.setContentText(TR.tr("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.tr("Vous serez avertis si une note va être écrasée."));
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Barème déjà présent"));
+                dialog.setHeaderText(TR.trO("L'édition du fichier") + " " + file.getName() + " " + TR.trO("contient déjà un barème"));
+                dialog.setContentText(TR.trO("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.trO("Vous serez avertis si une note va être écrasée."));
 
-                ButtonType ignore = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.tr("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.tr("Tout annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType ignore = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.trO("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.trO("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.trO("Tout annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
                 if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else dialog.getButtonTypes().setAll(ignore, stopAll);
@@ -142,13 +142,13 @@ public class GradeCopyGradeScaleDialog {
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.format.format(grade.getTotal()) + ")";
                 }
 
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Écraser les notes non correspondantes"));
-                dialog.setHeaderText(TR.tr("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.tr("Dans le document") + " : " + file.getName());
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Écraser les notes non correspondantes"));
+                dialog.setHeaderText(TR.trO("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.trO("Dans le document") + " : " + file.getName());
 
-                ButtonType ignore = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.tr("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.tr("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType ignore = new ButtonType(TR.trO("Écraser"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.trO("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.trO("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.trO("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
                 if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else dialog.getButtonTypes().setAll(ignore, stop);

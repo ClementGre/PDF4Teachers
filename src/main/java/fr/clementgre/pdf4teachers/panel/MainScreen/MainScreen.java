@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Random;
 
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -14,13 +13,11 @@ import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TranslationsManager;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -97,20 +94,20 @@ public class MainScreen extends Pane {
 
 			if(status.get() == Status.CLOSED){
 				infoLink.setVisible(true);
-				info.setText(TR.tr("Aucun document ouvert"));
-				infoLink.setText(TR.tr("Convertir des images en documents PDF"));
+				info.setText(TR.trO("Aucun document ouvert"));
+				infoLink.setText(TR.trO("Convertir des images en documents PDF"));
 				infoLink.setOnAction(e -> new ConvertDocument());
 
 			}else if(status.get() == Status.ERROR){
-				info.setText(TR.tr("Impossible de charger ce document") + "\n\n" +
-						TR.tr("Vérifiez que le fichier n'est pas corrompu") + "\n" +
-						TR.tr("et que l'utilisateur a les droits de lecture sur ce fichier."));
+				info.setText(TR.trO("Impossible de charger ce document") + "\n\n" +
+						TR.trO("Vérifiez que le fichier n'est pas corrompu") + "\n" +
+						TR.trO("et que l'utilisateur a les droits de lecture sur ce fichier."));
 				infoLink.setVisible(false);
 
 			}else if(status.get() == Status.ERROR_EDITION){
 				infoLink.setVisible(true);
-				info.setText(TR.tr("Impossible de charger l'édition du document") + "\n\n" +
-						TR.tr("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
+				info.setText(TR.trO("Impossible de charger l'édition du document") + "\n\n" +
+						TR.trO("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
 				infoLink.setOnAction(e -> PlatformUtils.openDirectory(failedEditFile));
 			}
@@ -275,13 +272,9 @@ public class MainScreen extends Pane {
 	}
 	private void updateWindowName(){
 		if(status.get() == Status.OPEN){
-			if(Edition.isSave()){
-				TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.document", document.getFile().getName());
-			}else{
-				TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.documentUnsaved", document.getFile().getName());
-			}
+			Main.window.setTitle("PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : "*"));
 		}else{
-			TranslationsManager.trA(Main.window.titleProperty(), "mainWindow.title.noDocument");
+			Main.window.setTitle(TR.tr("mainWindow.title.noDocument"));
 		}
 	}
 	public void openFile(File file){
@@ -302,7 +295,7 @@ public class MainScreen extends Pane {
 		}
 
 		// FINISH OPEN
-		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
+		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.trO("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		status.set(Status.OPEN);
 		MainWindow.filesTab.files.getSelectionModel().select(file);
@@ -368,9 +361,9 @@ public class MainScreen extends Pane {
 
 		if(status.get() != Status.OPEN){
 			if(confirm){
-				Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur"));
-				alert.setHeaderText(TR.tr("Aucun document n'est ouvert !"));
-				alert.setContentText(TR.tr("Cette action est censée s'éxécuter sur un document ouvert"));
+				Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur"));
+				alert.setHeaderText(TR.trO("Aucun document n'est ouvert !"));
+				alert.setContentText(TR.trO("Cette action est censée s'éxécuter sur un document ouvert"));
 
 				alert.showAndWait();
 			}

@@ -29,13 +29,13 @@ import java.util.Map;
 
 public class LanguagesUpdater {
 
-    private final Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Téléchargement des derniers packs de langues"));
+    private final Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Téléchargement des derniers packs de langues"));
     private final ProgressBar loadingBar = new ProgressBar();
-    private final Label currentLanguage = new Label(TR.tr("Actualisation de la base de donnée..."));
+    private final Label currentLanguage = new Label(TR.trO("Actualisation de la base de donnée..."));
 
     public LanguagesUpdater(){
         loadingAlert.setWidth(600);
-        loadingAlert.setHeaderText(TR.tr("Téléchargement des derniers packs de langues..."));
+        loadingAlert.setHeaderText(TR.trO("Téléchargement des derniers packs de langues..."));
         VBox pane = new VBox();
         loadingBar.setMinHeight(10);
         VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));

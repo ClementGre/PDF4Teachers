@@ -15,42 +15,42 @@ public class Settings {
 
     @SettingObject
     public StringSetting language = new StringSetting("", SVGPathIcons.GLOBE, "language",
-            TR.ct("Langage (Français France)"), TR.ct("Définit la langue de l'interface"));
+            TR.ctO("Langage (Français France)"), TR.ctO("Définit la langue de l'interface"));
     @SettingObject
     public BooleanSetting restoreLastSession = new BooleanSetting(true, SVGPathIcons.REDO, "restoreLastSession",
-            TR.ct("Toujours restaurer la session précédente"), TR.ct("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."));
+            TR.ctO("Toujours restaurer la session précédente"), TR.ctO("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."));
     @SettingObject
     public BooleanSetting checkUpdates = new BooleanSetting(true, SVGPathIcons.WIFI, "checkUpdates",
-            TR.ct("Alerter quand une mise à jour est disponible"), TR.ct("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur"));
+            TR.ctO("Alerter quand une mise à jour est disponible"), TR.ctO("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur"));
     @SettingObject
     public BooleanSetting sendStats = new BooleanSetting(true, SVGPathIcons.STATS, "sendStatistics",
-            TR.ct("Envoyer des statistiques d'utilisation anonymes"), TR.ct("Envoie à PDF4Teachers.org le temps total d'exécution de l'application, son nombre de lancements et la langue utilisée (sans aucune information d'identification). Avec cette option désactivée, l'application n'envoie qu'un signal de lancement à PDF4Teachers.org."));
+            TR.ctO("Envoyer des statistiques d'utilisation anonymes"), TR.ctO("Envoie à PDF4Teachers.org le temps total d'exécution de l'application, son nombre de lancements et la langue utilisée (sans aucune information d'identification). Avec cette option désactivée, l'application n'envoie qu'un signal de lancement à PDF4Teachers.org."));
     @SettingObject
     public IntSetting defaultZoom = new IntSetting(130, SVGPathIcons.SEARCH, "defaultZoom",
-            TR.ct("Zoom lors de l'ouverture d'un document"), TR.ct("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
+            TR.ctO("Zoom lors de l'ouverture d'un document"), TR.ctO("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
     @SettingObject
     public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), SVGPathIcons.LAYERS, "zoomAnimations",
-            TR.ct("Animations de zoom ou défilement"), TR.ct("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"));
+            TR.ctO("Animations de zoom ou défilement"), TR.ctO("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"));
     @SettingObject
     public BooleanSetting darkTheme = new BooleanSetting(true, SVGPathIcons.SUN, "darkTheme",
-            TR.ct("Thème sombre"), TR.ct("Change les couleurs de l'interface vers un thème plus sombre."));
+            TR.ctO("Thème sombre"), TR.ctO("Change les couleurs de l'interface vers un thème plus sombre."));
 
     @SettingObject
     public BooleanSetting autoSave = new BooleanSetting(true, SVGPathIcons.SAVE, "autoSave",
-            TR.ct("Sauvegarder automatiquement"), TR.ct("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."));
+            TR.ctO("Sauvegarder automatiquement"), TR.ctO("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."));
     @SettingObject
     public IntSetting regularSave = new IntSetting(-1, SVGPathIcons.CLOCK, "regularSave",
-            TR.ct("Sauvegarder régulièrement"), TR.ct("Sauvegarde l'édition du document automatiquement toutes les x minutes."));
+            TR.ctO("Sauvegarder régulièrement"), TR.ctO("Sauvegarde l'édition du document automatiquement toutes les x minutes."));
 
     @SettingObject
     public BooleanSetting textAutoRemove = new BooleanSetting(true, SVGPathIcons.STAR, "textAutoRemove",
-            TR.ct("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), TR.ct("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."));
+            TR.ctO("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), TR.ctO("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."));
     @SettingObject
     public BooleanSetting textOnlyStart = new BooleanSetting(true, SVGPathIcons.LIST, "textOnlyStart",
-            TR.ct("N'afficher que le début des éléments textuels"), TR.ct("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."));
+            TR.ctO("N'afficher que le début des éléments textuels"), TR.ctO("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."));
     @SettingObject
     public BooleanSetting textSmall = new BooleanSetting(false, SVGPathIcons.TEXT_HEIGHT, "textSmall",
-            TR.ct("Réduire la taille des éléments dans les listes"), TR.ct("Dans les liste des éléments textuels, affiche les éléments en plus petit."));
+            TR.ctO("Réduire la taille des éléments dans les listes"), TR.ctO("Dans les liste des éléments textuels, affiche les éléments en plus petit."));
 
     @SettingObject
     public StringSetting mainScreenSize = new StringSetting("1200;675;-1;-1;false", null, "mainScreenSize",
@@ -58,7 +58,7 @@ public class Settings {
 
     @SettingObject
     public BooleanSetting allowAutoTips = new BooleanSetting(true, SVGPathIcons.TOOLTIP, "allowAutoTips",
-            TR.ct("Conseils automatiques"), TR.ct("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions réalisées. Chaque conseil n'apparaitra qu'une seule fois. Désactiver puis réactiver l'option réinitialise la liste des conseils déjà lus."));
+            TR.ctO("Conseils automatiques"), TR.ctO("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions réalisées. Chaque conseil n'apparaitra qu'une seule fois. Désactiver puis réactiver l'option réinitialise la liste des conseils déjà lus."));
 
     public Settings(){
         loadSettings();

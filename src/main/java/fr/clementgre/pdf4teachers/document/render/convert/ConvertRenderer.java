@@ -69,7 +69,7 @@ public class ConvertRenderer {
         double pageWidth = convertPane.widthFactor*pageHeight/convertPane.heightFactor;
         PDRectangle pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
         PDRectangle defaultPageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
-        if(convertPane.format.getEditor().getText().equals(TR.tr("Adapter à l'image"))) defaultPageSize = PDRectangle.A4;
+        if(convertPane.format.getEditor().getText().equals(TR.trO("Adapter à l'image"))) defaultPageSize = PDRectangle.A4;
 
         for(File file : files){
             if(isGoodFormat(file)){
@@ -77,7 +77,7 @@ public class ConvertRenderer {
 
                 PDImageXObject pdImage = PDImageXObject.createFromFileByContent(file, convertedFile.document);
 
-                if(convertPane.format.getEditor().getText().equals(TR.tr("Adapter à l'image"))){
+                if(convertPane.format.getEditor().getText().equals(TR.trO("Adapter à l'image"))){
                     // redefine the page size with the image size
                     pageWidth = pdImage.getWidth()*pageHeight/pdImage.getHeight();
                     pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
@@ -100,7 +100,7 @@ public class ConvertRenderer {
                     height = pageHeight;
 
                     // resize image only if we don't adapt
-                    if(!convertPane.definition.getEditor().getText().equals(TR.tr("Adapter à l'image"))){
+                    if(!convertPane.definition.getEditor().getText().equals(TR.trO("Adapter à l'image"))){
                         // set image resolution by height
                         if(convertPane.height < pdImage.getHeight()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
                             int imagePixelsWidth = (int) (((double) pdImage.getWidth()) / pdImage.getHeight() * convertPane.height); // calculate image resolution width
@@ -110,7 +110,7 @@ public class ConvertRenderer {
                     }
                 }else{
                     // resize image only if we don't adapt
-                    if(!convertPane.definition.getEditor().getText().equals(TR.tr("Adapter à l'image"))){
+                    if(!convertPane.definition.getEditor().getText().equals(TR.trO("Adapter à l'image"))){
                         // set image resolution by width
                         if(convertPane.width < pdImage.getWidth()){ // don't redefine size if the image has a less quality than we want, we want to reduce image size, not increase it
                             int imagePixelsHeight = (int) (((double) pdImage.getHeight()) / pdImage.getWidth() * convertPane.width); // calculate image resolution height

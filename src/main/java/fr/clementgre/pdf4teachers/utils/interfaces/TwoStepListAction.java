@@ -5,12 +5,10 @@ import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +75,7 @@ public class TwoStepListAction<T, D> {
                 }
             }catch(Exception e){
                 e.printStackTrace();
-                boolean result = DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), data.size() > 1);
+                boolean result = DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), data.size() > 1);
                 if(data.size() <= 1) return false;
                 if(result) return false;
             }
@@ -96,9 +94,9 @@ public class TwoStepListAction<T, D> {
     }
 
     public void processDataAsync(TwoStepListInterface<T, D> caller, CallBack callBack){
-        Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation..."));
+        Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Exportation..."));
         loadingAlert.setWidth(600);
-        loadingAlert.setHeaderText(TR.tr("PDF4Teachers génère vos documents..."));
+        loadingAlert.setHeaderText(TR.trO("PDF4Teachers génère vos documents..."));
         VBox pane = new VBox();
         Label currentDocument = new Label();
         ProgressBar loadingBar = new ProgressBar();

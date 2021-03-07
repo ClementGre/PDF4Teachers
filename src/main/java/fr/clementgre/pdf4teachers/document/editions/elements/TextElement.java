@@ -89,15 +89,15 @@ public class TextElement extends Element {
 	@Override
 	protected void setupMenu(){
 
-		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Supprimer"), false);
+		NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Supprimer"), false);
 		item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
-		item1.setToolTip(TR.tr("Supprime cet élément. Il sera donc retiré de l'édition."));
-		NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Dupliquer"), false);
-		item2.setToolTip(TR.tr("Crée un second élément identique à celui-ci."));
-		NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments précédents"), false);
-		item3.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments précédents."));
-		NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Ajouter aux éléments Favoris"), false);
-		item4.setToolTip(TR.tr("Ajoute cet élément à la liste des éléments favoris."));
+		item1.setToolTip(TR.trO("Supprime cet élément. Il sera donc retiré de l'édition."));
+		NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Dupliquer"), false);
+		item2.setToolTip(TR.trO("Crée un second élément identique à celui-ci."));
+		NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.trO("Ajouter aux éléments précédents"), false);
+		item3.setToolTip(TR.trO("Ajoute cet élément à la liste des éléments précédents."));
+		NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.trO("Ajouter aux éléments Favoris"), false);
+		item4.setToolTip(TR.trO("Ajoute cet élément à la liste des éléments favoris."));
 		menu.getItems().addAll(item1, item2, item4, item3);
 		NodeMenuItem.setupMenu(menu);
 
@@ -303,12 +303,12 @@ public class TextElement extends Element {
 				return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 			}
 			if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
-				return renderLatex(formatLatexText(TR.tr("Commande/Symbole inconnu :") + "\\" +
+				return renderLatex(formatLatexText(TR.trO("Commande/Symbole inconnu :") + "\\" +
 						ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), "")), color, size, calls+1);
-			}else if(text.startsWith(TR.tr("Erreur :") + "\\")){
-				return renderLatex(formatLatexText(TR.tr("Impossible de lire la formule")), color, size, calls+1);
+			}else if(text.startsWith(TR.trO("Erreur :") + "\\")){
+				return renderLatex(formatLatexText(TR.trO("Impossible de lire la formule")), color, size, calls+1);
 			}else{
-				return renderLatex(formatLatexText(TR.tr("Erreur :") + "\\" + ex.getMessage()), color, size, calls+1);
+				return renderLatex(formatLatexText(TR.trO("Erreur :") + "\\" + ex.getMessage()), color, size, calls+1);
 			}
 		}
 	}

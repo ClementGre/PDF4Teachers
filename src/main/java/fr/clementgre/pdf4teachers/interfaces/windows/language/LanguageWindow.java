@@ -3,7 +3,6 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -43,7 +42,7 @@ public class LanguageWindow extends Stage{
             getIcons().add(new Image(getClass().getResource("/logo.png")+""));
             setWidth(545);
             setHeight(720);
-            setTitle(TR.tr("PDF4Teachers - Langage"));
+            setTitle(TR.trO("PDF4Teachers - Langage"));
             setScene(scene);
             setOnCloseRequest(event -> {
                 callBack.call("");
@@ -74,7 +73,7 @@ public class LanguageWindow extends Stage{
             name = getLanguageName(shortName);
             version = getLanguageVersion(shortName);
 
-            if(!shortName.equals("fr-fr")){
+            if(!shortName.equals("fr_fr")){
                 int[] stats = TR.getTranslationFileStats(txtFile);
                 if(stats[0] != 0){
                     perMilleCompleted = (int) (stats[1] / ((double) stats[0]) * 1000d);
@@ -133,7 +132,7 @@ public class LanguageWindow extends Stage{
             File dir = new File(Main.dataFolder + "translations" + File.separator);
 
             for(File file : dir.listFiles()){
-                if(FilesUtils.getExtension(file.getName()).equals("txt")){
+                if(FilesUtils.getExtension(file.getName()).equals("properties")){
                     languagesComponents.add(new Language(file));
                 }
             }
@@ -145,7 +144,7 @@ public class LanguageWindow extends Stage{
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.tr("Choisissez votre langage"));
+        Text info = new Text(TR.trO("Choisissez votre langage"));
 
         ListView<HBox> languages = new ListView<>();
         languages.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -156,7 +155,7 @@ public class LanguageWindow extends Stage{
 
             Label label = new Label(language.getName());
             if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000){
-                label.setText(label.getText() + " (" + TR.tr("Traduit à") + " " + (language.getPerMilleCompleted()/10d) + "%)");
+                label.setText(label.getText() + " (" + TR.trO("Traduit à") + " " + (language.getPerMilleCompleted()/10d) + "%)");
             }
 
             label.setPrefHeight(50);
@@ -187,8 +186,8 @@ public class LanguageWindow extends Stage{
 
         HBox btns = new HBox();
 
-        Button newTrans = new Button(TR.tr("Créer une nouvelle traduction"));
-        Button accept = new Button(TR.tr("Valider"));
+        Button newTrans = new Button(TR.trO("Créer une nouvelle traduction"));
+        Button accept = new Button(TR.trO("Valider"));
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
@@ -202,7 +201,8 @@ public class LanguageWindow extends Stage{
         HBox.setMargin(newTrans, new Insets(20, 0, 0, 5));
 
         accept.setOnAction((ActionEvent event) -> {
-            TR.updateTranslation();
+            TR.updateLocale();
+            //TR.updateTranslation();
             close();
             callBack.call(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(2)).getText());
         });
@@ -237,12 +237,12 @@ public class LanguageWindow extends Stage{
         LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
 
         if(Main.settings.language.getValue().equals("Français France (Defaut)")){
-            Main.settings.language.setValue("fr-fr");
+            Main.settings.language.setValue("fr_fr");
         }else if(Main.settings.language.getValue().equals("English US")){
-            Main.settings.language.setValue("en-us");
+            Main.settings.language.setValue("en_us");
         }
 
-        TR.setup();
+        //TR.setup();
     }
     public static void copyFiles(boolean force){
         try{
@@ -272,7 +272,7 @@ public class LanguageWindow extends Stage{
 
         File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.language.getValue() + ".pdf");
         if(!doc.exists()){
-            return new File(Main.dataFolder + "translations" + File.separator + "en-us.pdf");
+            return new File(Main.dataFolder + "translations" + File.separator + "en_us.pdf");
         }
         return doc;
 

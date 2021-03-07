@@ -12,19 +12,18 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 
 public class PageEditPane extends VBox {
 
-    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("Monte cette page au dessus de la page précédente"), -90);
-    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("Descend cette page au dessous de la page suivante"), 90);
-    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.tr("Tourne la page de 90° vers la gauche"));
-    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("Tourne la page de 90° vers la droite"));
-    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Supprime cette page"), 45);
-    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("Ajoute une page blanche ou des pages de fichiers PDF ou images, en dessous de cette page"));
-    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, TR.tr("Capturer la page sous forme d'image"));
+    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.trO("Monte cette page au dessus de la page précédente"), -90);
+    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.trO("Descend cette page au dessous de la page suivante"), 90);
+    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.trO("Tourne la page de 90° vers la gauche"));
+    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.trO("Tourne la page de 90° vers la droite"));
+    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.trO("Supprime cette page"), 45);
+    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.trO("Ajoute une page blanche ou des pages de fichiers PDF ou images, en dessous de cette page"));
+    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, TR.trO("Capturer la page sous forme d'image"));
 
     ContextMenu menu = new ContextMenu();
 
@@ -70,9 +69,9 @@ public class PageEditPane extends VBox {
     public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd, boolean vanillaMenu){
         ArrayList<MenuItem> menus = new ArrayList<>();
         if(page == 0){
-            MenuItem addTopBlank = getMenuItem(TR.tr("Ajouter une page blanche au dessus"), vanillaMenu);
-            MenuItem addTopConvert = getMenuItem(TR.tr("Ajouter des pages converties au dessus"), vanillaMenu);
-            MenuItem addTopPdf = getMenuItem(TR.tr("Ajouter les pages d'un fichier PDF au dessus"), vanillaMenu);
+            MenuItem addTopBlank = getMenuItem(TR.trO("Ajouter une page blanche au dessus"), vanillaMenu);
+            MenuItem addTopConvert = getMenuItem(TR.trO("Ajouter des pages converties au dessus"), vanillaMenu);
+            MenuItem addTopPdf = getMenuItem(TR.trO("Ajouter les pages d'un fichier PDF au dessus"), vanillaMenu);
             menus.add(addTopBlank);
             menus.add(addTopConvert);
             menus.add(addTopPdf);
@@ -83,9 +82,9 @@ public class PageEditPane extends VBox {
             addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(page));
         }
 
-        MenuItem addBlank = getMenuItem(TR.tr("Ajouter une page blanche"), vanillaMenu);
-        MenuItem addConvert = getMenuItem(TR.tr("Ajouter des pages converties"), vanillaMenu);
-        MenuItem addTopPdf = getMenuItem(TR.tr("Ajouter les pages d'un fichier PDF"), vanillaMenu);
+        MenuItem addBlank = getMenuItem(TR.trO("Ajouter une page blanche"), vanillaMenu);
+        MenuItem addConvert = getMenuItem(TR.trO("Ajouter des pages converties"), vanillaMenu);
+        MenuItem addTopPdf = getMenuItem(TR.trO("Ajouter les pages d'un fichier PDF"), vanillaMenu);
         menus.add(addBlank);
         menus.add(addConvert);
         menus.add(addTopPdf);
@@ -99,14 +98,14 @@ public class PageEditPane extends VBox {
     public static ArrayList<MenuItem> getCaptureMenu(PageRenderer page, boolean vanillaMenu){
         ArrayList<MenuItem> menus = new ArrayList<>();
 
-        MenuItem capturePage = getMenuItem(TR.tr("Capturer toute la page"), vanillaMenu);
+        MenuItem capturePage = getMenuItem(TR.trO("Capturer toute la page"), vanillaMenu);
         menus.add(capturePage);
         capturePage.setOnAction(ignored -> {
             MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), null);
         });
 
 
-        MenuItem captureSelection = getMenuItem(TR.tr("Sélectionner une zone"), vanillaMenu);
+        MenuItem captureSelection = getMenuItem(TR.trO("Sélectionner une zone"), vanillaMenu);
         menus.add(captureSelection);
         captureSelection.setOnAction(ignored -> {
             PageZoneSelector recorder = page.getPageCursorRecord();
@@ -119,7 +118,7 @@ public class PageEditPane extends VBox {
 
 
         if(MainWindow.mainScreen.document.totalPages != 1){
-            MenuItem captureDocument = getMenuItem(TR.tr("Capturer toutes les pages du document"), vanillaMenu);
+            MenuItem captureDocument = getMenuItem(TR.trO("Capturer toutes les pages du document"), vanillaMenu);
             menus.add(captureDocument);
 
             captureDocument.setOnAction(ignored -> {

@@ -4,7 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TranslationsManager;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
@@ -14,13 +14,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -38,7 +36,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
@@ -77,7 +74,7 @@ public class MainWindow extends Stage{
         loadDimensions();
         setupDecimalFormat();
 
-        TranslationsManager.trA(titleProperty(), "mainWindow.title.noDocument", new Random().nextInt(10)+"");
+        setTitle(TR.tr("mainWindow.title.noDocument"));
 
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
 
@@ -133,7 +130,7 @@ public class MainWindow extends Stage{
         textTab = new TextTab();
         gradeTab = new GradeTab();
         try{
-            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"), TranslationsManager.bundle);
+            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -203,10 +200,10 @@ public class MainWindow extends Stage{
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
                         if(MenuBar.isSystemMenuBarSupported()){
-                            menuBar.about.setText(TR.tr("À Propos") + " " + TR.tr("(Nouvelle Version Disponible)"));
+                            menuBar.about.setText(TR.trO("À Propos") + " " + TR.trO("(Nouvelle Version Disponible)"));
                         }else{
                             menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
-                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("Une nouvelle version est disponible !")));
+                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.trO("Une nouvelle version est disponible !")));
                         }
 
                         if(Main.settings.checkUpdates.getValue()){
@@ -220,7 +217,8 @@ public class MainWindow extends Stage{
     }
 
     public void restart(){
-        TR.updateTranslation();
+        TR.updateLocale();
+        //TR.updateTranslation();
 
         userData.save();
         if(MainWindow.mainScreen.closeFile(true)){
@@ -337,7 +335,7 @@ public class MainWindow extends Stage{
 
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        char separator = TR.tr("Decimal separator").charAt(0);
+        char separator = TR.trO("Decimal separator").charAt(0);
         if(separator == 'D') separator = ',';
         else if(separator != ',' && separator != '.') separator = '.';
         symbols.setDecimalSeparator(separator);

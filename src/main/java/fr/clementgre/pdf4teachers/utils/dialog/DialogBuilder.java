@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.utils.dialog;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
@@ -61,13 +60,13 @@ public class DialogBuilder {
     }
 
     public static boolean showWrongAlert(String headerText, String contentText, boolean continueAsk){
-        Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("Une erreur est survenue"));
+        Alert alert = getAlert(Alert.AlertType.ERROR, TR.trO("Une erreur est survenue"));
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
 
         if(continueAsk){
-            ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.NO);
-            ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.YES);
+            ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.YES);
             alert.getButtonTypes().setAll(stopAll, continueRender);
 
             Optional<ButtonType> option = alert.showAndWait();
@@ -78,22 +77,22 @@ public class DialogBuilder {
         return false;
     }
     public static boolean showErrorAlert(String headerText, String error, boolean continueAsk){
-        Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("Une erreur est survenue"));
+        Alert alert = getAlert(Alert.AlertType.ERROR, TR.trO("Une erreur est survenue"));
         alert.setHeaderText(headerText);
-        alert.setContentText(TR.tr("Ctrl+Alt+C pour accéder aux logs"));
+        alert.setContentText(TR.trO("Ctrl+Alt+C pour accéder aux logs"));
 
         TextArea textArea = new TextArea(error);
         textArea.setEditable(false);
         textArea.setWrapText(true);
         GridPane expContent = new GridPane();
         expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+        expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
         expContent.add(textArea, 0, 1);
         alert.getDialogPane().setExpandableContent(expContent);
 
         if(continueAsk){
-            ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.NO);
-            ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.YES);
+            ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.YES);
             alert.getButtonTypes().setAll(stopAll, continueRender);
 
             Optional<ButtonType> option = alert.showAndWait();
@@ -104,7 +103,7 @@ public class DialogBuilder {
         return false;
     }
     public static File showFileDialog(boolean syncWithLastOpenDir){
-        File[] files = showFilesDialog(syncWithLastOpenDir, false, TR.tr("Fichier PDF"), "*.pdf");
+        File[] files = showFilesDialog(syncWithLastOpenDir, false, TR.trO("Fichier PDF"), "*.pdf");
         return files == null ? null : files[0];
     }
     public static File showFileDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
@@ -112,7 +111,7 @@ public class DialogBuilder {
         return files == null ? null : files[0];
     }
     public static File[] showFilesDialog(boolean syncWithLastOpenDir){
-        return showFilesDialog(syncWithLastOpenDir, true, TR.tr("Fichier PDF"), "*.pdf");
+        return showFilesDialog(syncWithLastOpenDir, true, TR.trO("Fichier PDF"), "*.pdf");
     }
     public static File[] showFilesDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
         return showFilesDialog(syncWithLastOpenDir, true, extensionsName, extensions);
@@ -120,8 +119,8 @@ public class DialogBuilder {
     public static File[] showFilesDialog(boolean syncWithLastOpenDir, boolean multiple, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        if(multiple) chooser.setTitle(TR.tr("Sélectionner un ou plusieurs fichier"));
-        else chooser.setTitle(TR.tr("Sélectionner un fichier"));
+        if(multiple) chooser.setTitle(TR.trO("Sélectionner un ou plusieurs fichier"));
+        else chooser.setTitle(TR.trO("Sélectionner un fichier"));
         chooser.setInitialDirectory((syncWithLastOpenDir && new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         List<File> listFiles = null;
@@ -143,7 +142,7 @@ public class DialogBuilder {
 
     public static File showDirectoryDialog(boolean syncWithLastOpenDir){
         final DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle(TR.tr("Sélectionner un dossier"));
+        chooser.setTitle(TR.trO("Sélectionner un dossier"));
         chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         File file = chooser.showDialog(Main.window);
@@ -157,7 +156,7 @@ public class DialogBuilder {
     public static File showSaveDialog(boolean syncWithLastOpenDir, String initialFileName, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        chooser.setTitle(TR.tr("Enregistrer un fichier"));
+        chooser.setTitle(TR.trO("Enregistrer un fichier"));
         chooser.setInitialFileName(initialFileName);
         chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 

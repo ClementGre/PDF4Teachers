@@ -2,20 +2,20 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class PaintTab extends SideTab {
 
@@ -50,6 +50,11 @@ public class PaintTab extends SideTab {
 
     // advanced Options
 
+    public TitledPane advancedOptionsPane;
+
+    public Label widthTitle;
+    public Label heightTitle;
+
     public Spinner<Integer> spinnerX;
     public Spinner<Integer> spinnerY;
     public Spinner<Integer> spinnerWidth;
@@ -58,6 +63,10 @@ public class PaintTab extends SideTab {
     public ComboBox<String> repeatMode;
     public ComboBox<String> resizeMode;
     public ComboBox<String> rotateMode;
+
+
+
+
 
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -91,24 +100,27 @@ public class PaintTab extends SideTab {
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).maxProperty().bind();
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).maxProperty().bind();
 
-        translate(root);
+        repeatMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RepeatMode.values())
+                        .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
+        repeatMode.getSelectionModel().select(0);
+
+        resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
+                .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
+        resizeMode.getSelectionModel().select(0);
+
+        rotateMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RotateMode.values())
+                .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
+        rotateMode.getSelectionModel().select(0);
+
+        translate();
 
         setup();
     }
 
-    public void translate(Node root){
-        if(root instanceof Pane){
-            for(Node children : ((Pane) root).getChildren()){
-                translate(children);
-            }
-        }else{
-            if(root instanceof Button){
-                ((Button) root).setText(TR.tr(((Button) root).getText()));
-            }else if(root instanceof Label){
-
-            }
-
-        }
+    public void translate(){
+        advancedOptionsPane.setText(TR.tr("paint.title.advancedOptions"));
+        widthTitle.setText(TR.tr("letter.width"));
+        heightTitle.setText(TR.tr("letter.height"));
     }
 
     public void setup(){

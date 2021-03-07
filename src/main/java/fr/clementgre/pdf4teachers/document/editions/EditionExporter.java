@@ -25,15 +25,15 @@ import java.util.stream.Collectors;
 public class EditionExporter {
 
     public static void showImportDialog(boolean onlyGrades){
-        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
-        if(!onlyGrades) dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?"));
-        else dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Charger une autre édition"));
+        if(!onlyGrades) dialog.setHeaderText(TR.trO("Êtes vous sûr de vouloir remplacer l'édition courante par une autre ?"));
+        else dialog.setHeaderText(TR.trO("Êtes vous sûr de vouloir remplacer le barème courant par celui d'une autre édition ?"));
 
-        CheckBox copyLocations = new CheckBox(TR.tr("Copier la position des notes"));
+        CheckBox copyLocations = new CheckBox(TR.trO("Copier la position des notes"));
         if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
 
-        ButtonType yes = new ButtonType(TR.tr("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Oui, choisir un fichier\nqui contient une édition par\ndocument de la liste"), ButtonBar.ButtonData.OTHER);
+        ButtonType yes = new ButtonType(TR.trO("Oui, choisir un fichier"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType yesAll = new ButtonType(TR.trO("Oui, choisir un fichier\nqui contient une édition par\ndocument de la liste"), ButtonBar.ButtonData.OTHER);
 
         if(!onlyGrades)  dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
         else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
@@ -44,9 +44,9 @@ public class EditionExporter {
         if(MainWindow.mainScreen.hasDocument(true)){
             if(MainWindow.mainScreen.document.save()){
                 if(option.get() == yes){
-                    file = DialogBuilder.showFileDialog(true, TR.tr("Fichier d'édition YAML"), "*.yml");
+                    file = DialogBuilder.showFileDialog(true, TR.trO("Fichier d'édition YAML"), "*.yml");
                 }else if(option.get() == yesAll){
-                    file = DialogBuilder.showFileDialog(true, TR.tr("Fichier d'édition YAML"), "*.yml");
+                    file = DialogBuilder.showFileDialog(true, TR.trO("Fichier d'édition YAML"), "*.yml");
                     recursive = true;
                 }
             }
@@ -66,15 +66,15 @@ public class EditionExporter {
                 }
                 int result = gradeCopyGradeScale.copyToFile(MainWindow.mainScreen.document.getFile(), false, copyLocations.isSelected());
                 if(result == 0){
-                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
-                    endAlert.setHeaderText(TR.tr("Le barème a bien été importé"));
+                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Importation terminée"));
+                    endAlert.setHeaderText(TR.trO("Le barème a bien été importé"));
                     endAlert.show();
                 }
                 MainWindow.mainScreen.document.updateEdition();
                 MainWindow.filesTab.refresh();
             }catch(Exception e){
                 e.printStackTrace();
-                DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+                DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), false);
             }
         }else{
             try{
@@ -135,8 +135,8 @@ public class EditionExporter {
 
                                 return Map.entry(config, TwoStepListAction.CODE_OK);
                             }else{
-                                boolean result = DialogBuilder.showWrongAlert(TR.tr("Aucun document ne correspond à l'édition :") + " " + fileName,
-                                        TR.tr("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
+                                boolean result = DialogBuilder.showWrongAlert(TR.trO("Aucun document ne correspond à l'édition :") + " " + fileName,
+                                        TR.trO("Les fichiers PDF doivent avoir les mêmes noms que lors de l'exportation de l'édition."), true);
                                 if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
                                 else return Map.entry(new Config(), 2); // No match
                             }
@@ -154,7 +154,7 @@ public class EditionExporter {
                             config.save();
                         }catch(IOException e){
                             e.printStackTrace();
-                            boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.tr("Correspond au document :") + " \"" + config.getName() + "\")", e.getMessage(), recursive);
+                            boolean result = DialogBuilder.showErrorAlert(TR.trO("Impossible d'enregistrer le fichier") + " \"" + config.getFile().toPath() + "\" (" + TR.trO("Correspond au document :") + " \"" + config.getName() + "\")", e.getMessage(), recursive);
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
                             else return TwoStepListAction.ProcessResult.SKIPPED;
@@ -167,10 +167,10 @@ public class EditionExporter {
 
                     @Override
                     public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
-                        Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Importation terminée"));
-                        endAlert.setHeaderText(TR.tr("Les éditions ont bien été importées"));
-                        String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("éditions ignorés car elles n'avaient pas de document correspondant") + ")";
-                        endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions importés") + noMatchesText);
+                        Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Importation terminée"));
+                        endAlert.setHeaderText(TR.trO("Les éditions ont bien été importées"));
+                        String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.trO("éditions ignorés car elles n'avaient pas de document correspondant") + ")";
+                        endAlert.setContentText(completedSize + "/" + originSize + " " + TR.trO("éditions importés") + noMatchesText);
 
                         endAlert.show();
                     }
@@ -180,20 +180,20 @@ public class EditionExporter {
 
             }catch(Exception e){
                 e.printStackTrace();
-                DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), false);
+                DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), false);
             }
         }
 
 
     }
     public static void showExportDialog(final boolean onlyGrades){
-        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Exporter l'édition"));
-        if(!onlyGrades) dialog.setHeaderText(TR.tr("Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier."));
-        else dialog.setHeaderText(TR.tr("Vous allez exporter le barème du document sous forme de fichier."));
+        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Exporter l'édition"));
+        if(!onlyGrades) dialog.setHeaderText(TR.trO("Vous allez exporter l'édition complète du document (annotations, notes, images...) sous forme de fichier."));
+        else dialog.setHeaderText(TR.trO("Vous allez exporter le barème du document sous forme de fichier."));
 
-        ButtonType yes = new ButtonType(TR.tr("Exporter pour ce document"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("Exporter pour tous les documents\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
-        ButtonType yesAllOneFile = new ButtonType(TR.tr("Exporter pour tous les documents\nde la liste et du même dossier\nen un seul fichier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yes = new ButtonType(TR.trO("Exporter pour ce document"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType yesAll = new ButtonType(TR.trO("Exporter pour tous les documents\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+        ButtonType yesAllOneFile = new ButtonType(TR.trO("Exporter pour tous les documents\nde la liste et du même dossier\nen un seul fichier"), ButtonBar.ButtonData.OTHER);
         if(!onlyGrades){
             dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll, yesAllOneFile);
             dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
@@ -287,7 +287,7 @@ public class EditionExporter {
                     config.saveToDestFile();
                 }catch(IOException e){
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + config.getDestFile().toPath() + "\" (" + TR.tr("Correspond à l'édition") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
+                    boolean result = DialogBuilder.showErrorAlert(TR.trO("Impossible d'enregistrer le fichier") + " \"" + config.getDestFile().toPath() + "\" (" + TR.trO("Correspond à l'édition") + " \"" + config.getName() + "\"", e.getMessage(), recursive);
                     if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     if(result) return TwoStepListAction.ProcessResult.STOP;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
@@ -302,21 +302,21 @@ public class EditionExporter {
                         oneFileConfig.save();
                     }catch(IOException e){
                         e.printStackTrace();
-                        DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + oneFileConfig.getDestFile().toPath() + "\"", e.getMessage(), false);
+                        DialogBuilder.showErrorAlert(TR.trO("Impossible d'enregistrer le fichier") + " \"" + oneFileConfig.getDestFile().toPath() + "\"", e.getMessage(), false);
                         return;
                     }
                 }
 
-                Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Exportation terminée"));
-                ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
+                Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Exportation terminée"));
+                ButtonType open = new ButtonType(TR.trO("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
                 endAlert.getButtonTypes().add(open);
-                if(onlyGrades) endAlert.setHeaderText(TR.tr("Le barème a bien été exporté"));
-                else endAlert.setHeaderText(TR.tr("Les éditions ont bien été exportées"));
+                if(onlyGrades) endAlert.setHeaderText(TR.trO("Le barème a bien été exporté"));
+                else endAlert.setHeaderText(TR.trO("Les éditions ont bien été exportées"));
 
-                String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("documents ignorés car ils n'étaient pas dans le même dossier") + ")";
-                String noEditText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.tr("documents ignorés car ils n'avaient pas d'édition") + ")";
-                String alreadyExistText = !excludedReasons.containsKey(3) ? "" : "\n(" + excludedReasons.get(3) + " " + TR.tr("documents ignorés car leur fichier YAML existait déjà") + ")";
-                endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("éditions exportées") + badFolderText + noEditText + alreadyExistText);
+                String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.trO("documents ignorés car ils n'étaient pas dans le même dossier") + ")";
+                String noEditText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.trO("documents ignorés car ils n'avaient pas d'édition") + ")";
+                String alreadyExistText = !excludedReasons.containsKey(3) ? "" : "\n(" + excludedReasons.get(3) + " " + TR.trO("documents ignorés car leur fichier YAML existait déjà") + ")";
+                endAlert.setContentText(completedSize + "/" + originSize + " " + TR.trO("éditions exportées") + badFolderText + noEditText + alreadyExistText);
 
                 Optional<ButtonType> optionSelected = endAlert.showAndWait();
                 if(optionSelected.get() == open){

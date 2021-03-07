@@ -273,7 +273,7 @@ public class Edition {
             Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
             e.printStackTrace();
-            DialogBuilder.showErrorAlert(TR.tr("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.tr("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
+            DialogBuilder.showErrorAlert(TR.trO("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.trO("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
         }
         fromEdit.delete();
     }
@@ -297,9 +297,9 @@ public class Edition {
     public static void clearEdit(File file, boolean confirm){
 
         if(confirm){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
-            alert.setContentText(TR.tr("Cette action est irréversible."));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
+            alert.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
+            alert.setContentText(TR.trO("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.isEmpty()) return;
@@ -322,9 +322,9 @@ public class Edition {
 
     public void clearEdit(boolean confirm){
         if(confirm){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-            alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
-            alert.setContentText(TR.tr("Cette action est irréversible."));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
+            alert.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
+            alert.setContentText(TR.trO("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){

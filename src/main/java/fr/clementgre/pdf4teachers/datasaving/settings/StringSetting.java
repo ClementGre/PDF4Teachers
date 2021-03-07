@@ -21,7 +21,7 @@ public class StringSetting extends Setting<String>{
 
     @Override
     public void setupMenuItem() {
-        menuItem = MenuBar.createMenuItem(TR.tr(title), icon, null, TR.tr(description), true);
+        menuItem = MenuBar.createMenuItem(TR.trO(title), icon, null, TR.trO(description), true);
     }
 
     public StringProperty valueProperty() {

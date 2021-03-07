@@ -12,7 +12,6 @@ import javafx.scene.layout.Region;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-import javax.swing.plaf.DimensionUIResource;
 import java.awt.*;
 
 public class AutoTipTooltip extends Tooltip{
@@ -22,12 +21,12 @@ public class AutoTipTooltip extends Tooltip{
     private String prerequisiteKey;
     private String objectWhereDisplay;
 
-    private Button okButton = new Button(TR.tr("OK"));
+    private Button okButton = new Button(TR.trO("OK"));
 
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay, String text) {
         super(Main.isOSX()
-                ? TR.tr(text).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
-                : TR.tr(text));
+                ? TR.trO(text).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
+                : TR.trO(text));
         this.name = name;
         this.actionKey = actionKey;
         this.prerequisiteKey = prerequisiteKey;

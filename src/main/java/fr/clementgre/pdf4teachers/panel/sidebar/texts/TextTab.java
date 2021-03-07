@@ -61,8 +61,8 @@ public class TextTab extends SideTab {
 	public TextArea txtArea = new TextArea();
 
 	private HBox btnBox = new HBox();
-	private Button deleteBtn = new Button(TR.tr("Supprimer"));
-	public Button newBtn = new Button(TR.tr("Nouveau"));
+	private Button deleteBtn = new Button(TR.trO("Supprimer"));
+	public Button newBtn = new Button(TR.trO("Nouveau"));
 
 	// FIELDS
 
@@ -139,7 +139,7 @@ public class TextTab extends SideTab {
 		if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
 		else txtArea.setStyle("-fx-font-size: 13");
 		txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-		txtArea.setPromptText(TR.tr("Entourez le LaTeX par $$"));
+		txtArea.setPromptText(TR.trO("Entourez le LaTeX par $$"));
 		txtArea.setId("no-vertical-scroll-bar");
 		txtArea.setFocusTraversable(false);
 
@@ -189,7 +189,7 @@ public class TextTab extends SideTab {
 		});
 
 		ContextMenu menu = new ContextMenu();
-		MenuItem deleteReturn = new MenuItem(TR.tr("Supprimer les retours à la ligne inutiles"));
+		MenuItem deleteReturn = new MenuItem(TR.trO("Supprimer les retours à la ligne inutiles"));
 		deleteReturn.setOnAction(event -> {
 			String wrapped = new TextWrapper(txtArea.getText().replaceAll(Pattern.quote("\n"), " "), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
 			if(txtArea.getText().endsWith(" ")) wrapped += " ";

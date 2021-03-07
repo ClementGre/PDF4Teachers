@@ -182,7 +182,7 @@ public class UpdateWindow extends Stage {
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(600);
         setResizable(false);
-        setTitle(TR.tr("PDF4Teachers - Nouvelle Version"));
+        setTitle(TR.trO("PDF4Teachers - Nouvelle Version"));
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
 
@@ -196,11 +196,11 @@ public class UpdateWindow extends Stage {
         Text info;
         Text version;
         if(newPre){
-            info = new Text(TR.tr("Une nouvelle avant-première de PDF4Teachers est disponible !") + "\n" + TR.tr("Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie."));
-            version = new Text(TR.tr("Vous utilisez la version") + " " + Main.VERSION + " " + TR.tr("et l'avant-première") + " " + UpdateWindow.version + " " + TR.tr("est disponible.") + "\n\n" + TR.tr("Description :"));
+            info = new Text(TR.trO("Une nouvelle avant-première de PDF4Teachers est disponible !") + "\n" + TR.trO("Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie."));
+            version = new Text(TR.trO("Vous utilisez la version") + " " + Main.VERSION + " " + TR.trO("et l'avant-première") + " " + UpdateWindow.version + " " + TR.trO("est disponible.") + "\n\n" + TR.trO("Description :"));
         }else{
-            info = new Text(TR.tr("Une nouvelle version de PDF4Teachers est disponible !"));
-            version = new Text(TR.tr("Vous utilisez la version") + " " + Main.VERSION + " " + TR.tr("et la version") + " " + UpdateWindow.version + " " + TR.tr("est disponible.") + "\n\n" + TR.tr("Description :"));
+            info = new Text(TR.trO("Une nouvelle version de PDF4Teachers est disponible !"));
+            version = new Text(TR.trO("Vous utilisez la version") + " " + Main.VERSION + " " + TR.trO("et la version") + " " + UpdateWindow.version + " " + TR.trO("est disponible.") + "\n\n" + TR.trO("Description :"));
         }
 
         HBox buttons = new HBox();
@@ -212,7 +212,7 @@ public class UpdateWindow extends Stage {
         descriptionPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         descriptionPane.setMaxHeight(500); descriptionPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-        Button see = new Button(TR.tr("Voir sur le site WEB"));
+        Button see = new Button(TR.trO("Voir sur le site WEB"));
         see.setOnAction(t -> Main.hostServices.showDocument("https://pdf4teachers.org/Download/?v=" + UpdateWindow.version));
         //see.setStyle("-fx-background-color: #ba6800;");
         see.setAlignment(Pos.BASELINE_CENTER);
@@ -226,7 +226,7 @@ public class UpdateWindow extends Stage {
         }
         String url = "https://github.com/ClementGre/PDF4Teachers/releases/download/" + UpdateWindow.version + "/PDF4Teachers-" + platform + "-" + UpdateWindow.version + "." + extension;
 
-        Button maj = new Button(TR.tr("Téléchargement direct"));
+        Button maj = new Button(TR.trO("Téléchargement direct"));
         maj.setOnAction(t -> Main.hostServices.showDocument(url));
         //maj.setStyle("-fx-background-color: #ba6800;");
         maj.setAlignment(Pos.BASELINE_CENTER);

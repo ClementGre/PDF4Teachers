@@ -105,9 +105,9 @@ public class PDFPagesEditor{
     public void deletePage(PageRenderer page){
 
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-            alert.setHeaderText(TR.tr("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.tr("du document") + "\n" + TR.tr("Les éléments de cette page seront supprimés et les notes seront réinitialisées"));
-            alert.setContentText(TR.tr("Cette action est irréversible."));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
+            alert.setHeaderText(TR.trO("Vous allez supprimer la page") + " n°" + (page.getPage()+1) + " " + TR.trO("du document") + "\n" + TR.trO("Les éléments de cette page seront supprimés et les notes seront réinitialisées"));
+            alert.setContentText(TR.trO("Cette action est irréversible."));
 
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){
@@ -219,8 +219,8 @@ public class PDFPagesEditor{
         Document document = MainWindow.mainScreen.document;
 
         final FileChooser chooser = new FileChooser();
-        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("Fichier PDF"), "*.pdf"));
-        chooser.setTitle(TR.tr("Sélectionner un fichier"));
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.trO("Fichier PDF"), "*.pdf"));
+        chooser.setTitle(TR.trO("Sélectionner un fichier"));
         chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
 
         File file = chooser.showOpenDialog(Main.window);
@@ -319,12 +319,12 @@ public class PDFPagesEditor{
         }
 
         List<String> definitions = ConvertWindow.definitions;
-        definitions.set(0, (images.get(0).getWidth() * images.get(0).getHeight()) / 1000000d + "Mp (" + TR.tr("Définition d'affichage du document") + ")");
+        definitions.set(0, (images.get(0).getWidth() * images.get(0).getHeight()) / 1000000d + "Mp (" + TR.trO("Définition d'affichage du document") + ")");
 
         ChoiceDialog<String> alert = DialogBuilder.getChoiceDialog(definitions.get(0), definitions);
-        alert.setTitle(TR.tr("Capture de page sous forme d'image"));
-        alert.setHeaderText(TR.tr("Capture de page sous forme d'image"));
-        Label contentText = new Label(TR.tr("Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)"));
+        alert.setTitle(TR.trO("Capture de page sous forme d'image"));
+        alert.setHeaderText(TR.trO("Capture de page sous forme d'image"));
+        Label contentText = new Label(TR.trO("Choisissez une définition\n(Le nombre de pixels est estimé pour une largeur imprimable A4, il dépendra de la taille de selection)"));
 
         ImageView graphic = new ImageView(images.get(0));
         graphic.setFitHeight(400);
@@ -360,7 +360,7 @@ public class PDFPagesEditor{
                 public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive) throws IOException, Exception {
                     File file;
                     if(!recursive){
-                        file = DialogBuilder.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex+1) + "-" + MainWindow.mainScreen.document.pages.size()  + ").png", TR.tr("Fichier PNG"), ".png");
+                        file = DialogBuilder.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex+1) + "-" + MainWindow.mainScreen.document.pages.size()  + ").png", TR.trO("Fichier PNG"), ".png");
                         if(file == null) return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         exportDir = file.getParentFile();
 
@@ -394,14 +394,14 @@ public class PDFPagesEditor{
                             ImageIO.write(image, "png", data.getKey());
                         }catch(IOException e){
                             e.printStackTrace();
-                            boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("Impossible d'enregistrer le fichier") + " \"" + data.getKey().getAbsolutePath() + "\"", e.getMessage(), recursive));
+                            boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.trO("Impossible d'enregistrer le fichier") + " \"" + data.getKey().getAbsolutePath() + "\"", e.getMessage(), recursive));
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
                             else return TwoStepListAction.ProcessResult.SKIPPED;
                         }
                     }catch(Exception e){
                         e.printStackTrace();
-                        boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("Une erreur est survenue"), e.getMessage(), recursive));
+                        boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), recursive));
                         if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                         if(result) return TwoStepListAction.ProcessResult.STOP;
                         else return TwoStepListAction.ProcessResult.SKIPPED;
@@ -411,13 +411,13 @@ public class PDFPagesEditor{
 
                 @Override
                 public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
-                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Enregistrement terminé"));
-                    ButtonType open = new ButtonType(TR.tr("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
+                    Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Enregistrement terminé"));
+                    ButtonType open = new ButtonType(TR.trO("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
                     endAlert.getButtonTypes().add(open);
-                    endAlert.setHeaderText(TR.tr("Les captures ont bien été enregistrées"));
+                    endAlert.setHeaderText(TR.trO("Les captures ont bien été enregistrées"));
 
-                    String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.tr("images ignorées car elles existaient déjà") + ")";
-                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.tr("images exportées") + alreadyExistText);
+                    String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.trO("images ignorées car elles existaient déjà") + ")";
+                    endAlert.setContentText(completedSize + "/" + originSize + " " + TR.trO("images exportées") + alreadyExistText);
 
                     Optional<ButtonType> optionSelected = endAlert.showAndWait();
                     if(optionSelected.get() == open){

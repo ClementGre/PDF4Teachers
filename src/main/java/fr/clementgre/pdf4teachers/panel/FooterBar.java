@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.panel;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -8,8 +7,6 @@ import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
@@ -28,17 +25,17 @@ public class FooterBar extends AnchorPane {
 
 	public void repaint(){
 
-		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.tr("Zoom") + " : " + (int) (MainWindow.mainScreen.getZoomPercent()) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
+		leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.trO("Zoom") + " : " + (int) (MainWindow.mainScreen.getZoomPercent()) + "% (Ctrl+Scroll)", MainWindow.mainScreen.pane.scaleXProperty()));
 
 		Tab selectedItem = MainWindow.leftBar.getSelectionModel().getSelectedItem();
 		if(MainWindow.filesTab.equals(selectedItem)){
-			middleInfo.setText(TR.tr("Mode Fichiers"));
+			middleInfo.setText(TR.trO("Mode Fichiers"));
 		}else if(MainWindow.textTab.equals(selectedItem)){
-			middleInfo.setText(TR.tr("Mode Texte"));
+			middleInfo.setText(TR.trO("Mode Texte"));
 		}else if(MainWindow.gradeTab.equals(selectedItem)){
-			middleInfo.setText(TR.tr("Mode Notes"));
+			middleInfo.setText(TR.trO("Mode Notes"));
 		}else if(MainWindow.paintTab.equals(selectedItem)){
-			middleInfo.setText(TR.tr("Mode Dessin"));
+			middleInfo.setText(TR.trO("Mode Dessin"));
 		}
 
 		if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
@@ -49,7 +46,7 @@ public class FooterBar extends AnchorPane {
 				rightInfo.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getCurrentPage()+1) + "/" + MainWindow.mainScreen.document.totalPages);
 			}
 		}else{
-			rightInfo.setText(TR.tr("Aucun fichier ouvert"));
+			rightInfo.setText(TR.trO("Aucun fichier ouvert"));
 		}
 	}
 

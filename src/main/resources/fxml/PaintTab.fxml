@@ -77,28 +77,28 @@
         </HBox>
     </VBox>
 
-    <TitledPane text="%paintTab.title.advanceOptions" expanded="false"> <!-- advanced Options -->
+    <TitledPane fx:id="advancedOptionsPane" expanded="false"> <!-- advanced Options -->
 
         <VBox>
             <padding><Insets topRightBottomLeft="3"/></padding>
 
             <GridPane hgap="5" vgap="2">
-                <Label text="x" prefHeight="27"
+                <Label text="x" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="0"/>
                 <Spinner fx:id="spinnerX" min="0" initialValue="10" amountToStepBy="10" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-                <Label text="y" prefHeight="27"
+                <Label text="y" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
                 <Spinner fx:id="spinnerY" min="0" initialValue="10" amountToStepBy="10" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="0"/>
 
-                <Label text="l" prefHeight="27"
+                <Label fx:id="widthTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="1"/>
                 <Spinner fx:id="spinnerWidth" min="0" initialValue="10" amountToStepBy="10" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                <Label text="L" prefHeight="27"
+                <Label fx:id="heightTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="1"/>
                 <Spinner fx:id="spinnerHeight" min="0" initialValue="10" amountToStepBy="10" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="1"/>
@@ -108,17 +108,6 @@
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
             <ComboBox fx:id="repeatMode">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Auto" />
-                        <String fx:value="Étirer" />
-                        <String fx:value="Garder les proportions" />
-                        <String fx:value="Rogner" />
-                        <String fx:value="Multiplier sur l'axe X" />
-                        <String fx:value="Multiplier sur l'axe Y" />
-                    </FXCollections>
-                </items>
-                <value><String fx:value="Auto" /></value>
             </ComboBox>
 
             <Label text="Prises de redimensionnement" style="-fx-font-size: 12px;">

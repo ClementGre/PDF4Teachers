@@ -41,9 +41,9 @@ public class IntSetting extends Setting<Integer>{
     @Override
     public void setupMenuItem(){
         if(hideCheck){
-            menuItem = MenuBar.createMenuItem(TR.tr(title), icon, null, TR.tr(description), true);
+            menuItem = MenuBar.createMenuItem(TR.trO(title), icon, null, TR.trO(description), true);
         }else{
-            menuItem = MenuBar.createRadioMenuItem(TR.tr(title), icon, TR.tr(description), false);
+            menuItem = MenuBar.createRadioMenuItem(TR.trO(title), icon, TR.trO(description), false);
             if(menuItem instanceof RadioMenuItem){
                 ((RadioMenuItem) menuItem).setSelected(this.value.get() != -1);
             }else if(menuItem instanceof NodeRadioMenuItem){

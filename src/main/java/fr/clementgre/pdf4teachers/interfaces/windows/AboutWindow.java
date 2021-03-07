@@ -47,7 +47,7 @@ public class AboutWindow extends Stage {
         initModality(Modality.WINDOW_MODAL);
 
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setTitle(TR.tr("PDF4Teachers - À Propos"));
+        setTitle(TR.tr("aboutWindow.title"));
         setResizable(false);
         setScene(scene);
         setOnCloseRequest(e -> close());
@@ -64,43 +64,43 @@ public class AboutWindow extends Stage {
 
         setupChildrenHyperlinks(root);
 
-        versionName.setText(TR.tr("Version") + " " + Main.VERSION);
+        versionName.setText(TR.tr("aboutWindow.version", Main.VERSION));
 
         if(UpdateWindow.newVersion){
-            newRelease.setText(TR.tr("Une nouvelle version est disponible !"));
+            newRelease.setText(TR.tr("aboutWindow.version.update.available"));
             newRelease.setStyle("-fx-background-color: #e5b100;");
             newRelease.setOnAction(event -> new UpdateWindow());
         }else if(UpdateWindow.newPre){
-            newRelease.setText(TR.tr("Une nouvelle avant-première est disponible !"));
+            newRelease.setText(TR.tr("aboutWindow.version.update.preRelease"));
             newRelease.setStyle("-fx-background-color: #24bcfe;");
             newRelease.setOnAction(event -> new UpdateWindow());
         }else if(UpdateWindow.error){
-            newRelease.setText(TR.tr("Impossible de récupérer la dernière version"));
+            newRelease.setText(TR.tr("aboutWindow.version.update.error"));
             newRelease.setStyle("-fx-background-color: #ff3434;");
         }else{
-            newRelease.setText(TR.tr("Vous exécutez la dernière version !"));
+            newRelease.setText(TR.tr("aboutWindow.version.update.good"));
             newRelease.setStyle("-fx-background-color: #5bd600;");
         }
 
-        developerLabel.setText(TR.tr("Développeur :") + " ");
-        designerLabel.setText(TR.tr("Concepteur :") + " ");
-        if(!TR.tr("Traducteur : <Votre nom>").equals("Traducteur : <Votre nom>")){
-            translatorText.setText(TR.tr("Traducteur : <Votre nom>"));
+        developerLabel.setText(TR.tr("aboutWindow.info.developer") + " ");
+        designerLabel.setText(TR.tr("aboutWindow.info.designer") + " ");
+        if(!TR.tr("aboutWindow.info.translator").equals("Traducteur : <Votre nom>")){
+            translatorText.setText(TR.tr("aboutWindow.info.translator"));
         }else root.getChildren().remove(translatorText);
 
-        githubLabel.setText(TR.tr("Projet GitHub :") + " ");
+        githubLabel.setText(TR.tr("aboutWindow.info.gitHubProject") + " ");
 
-        donateLabel.setText(TR.tr("Faire un don : "));
+        donateLabel.setText(TR.tr("aboutWindow.info.donate") + " ");
         paypalLinkPane.setPrefWidth(150);
         githubSponsorsPane.setPrefWidth(150);
 
-        dependenciesLabel.setText(TR.tr("Dépendances :"));
+        dependenciesLabel.setText(TR.tr("aboutWindow.info.dependencies"));
         dependenciesLeft.setPrefWidth(160);
         dependenciesRight.setPrefWidth(160);
 
-        liscenselabel.setText(TR.tr("Licence") + " Apache 2");
+        liscenselabel.setText(TR.tr("aboutWindow.info.license", "Apache 2"));
 
-        statsLabel.setText(TR.tr("Vous avez passé") + " " + MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime/61d) + " " + TR.tr("heures sur PDF4Teachers,\net avez ouvert l'application") + " " +  MainWindow.userData.startsCount + " " + TR.tr("fois."));
+        statsLabel.setText(TR.tr("aboutWindow.statistics", MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime/61d), (String) MainWindow.userData.startsCount));
         statsLabel.setWrapText(true);
         statsLabel.setTextAlignment(TextAlignment.CENTER);
     }

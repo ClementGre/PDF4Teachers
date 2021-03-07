@@ -62,20 +62,20 @@ public class GradeExportRenderer {
             }catch(Exception e){
                 e.printStackTrace();
 
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
-                alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document"));
-                alert.setContentText(TR.tr("Impossible d'exporter."));
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur d'exportation"));
+                alert.setHeaderText(TR.trO("Une erreur s'est produite lors de la génération du document"));
+                alert.setContentText(TR.trO("Impossible d'exporter."));
 
                 TextArea textArea = new TextArea(e.getMessage());
                 textArea.setEditable(false);
                 textArea.setWrapText(true);
                 GridPane expContent = new GridPane();
                 expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
                 expContent.add(textArea, 0, 1);
                 alert.getDialogPane().setExpandableContent(expContent);
 
-                alert.getButtonTypes().setAll(new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE));
+                alert.getButtonTypes().setAll(new ButtonType(TR.trO("OK"), ButtonBar.ButtonData.OK_DONE));
                 alert.showAndWait();
                 return exported;
             }
@@ -97,21 +97,21 @@ public class GradeExportRenderer {
                 }catch(Exception e){
                     e.printStackTrace();
 
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Erreur d'exportation"));
-                    alert.setHeaderText(TR.tr("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
-                    alert.setContentText(TR.tr("Choisissez une action."));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur d'exportation"));
+                    alert.setHeaderText(TR.trO("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
+                    alert.setContentText(TR.trO("Choisissez une action."));
 
                     TextArea textArea = new TextArea(e.getMessage());
                     textArea.setEditable(false);
                     textArea.setWrapText(true);
                     GridPane expContent = new GridPane();
                     expContent.setMaxWidth(Double.MAX_VALUE);
-                    expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                    expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
                     expContent.add(textArea, 0, 1);
                     alert.getDialogPane().setExpandableContent(expContent);
 
-                    ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+                    ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
                     alert.getButtonTypes().setAll(stopAll, continueRender);
 
                     Optional<ButtonType> option = alert.showAndWait();
@@ -129,7 +129,7 @@ public class GradeExportRenderer {
 
     public void generateNamesLine(boolean includeGradeScale){
 
-        text += TR.tr("Parties");
+        text += TR.trO("Parties");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
@@ -138,7 +138,7 @@ public class GradeExportRenderer {
     }
     public void generateGradeScaleLine(){
 
-        text += TR.tr("Barème");
+        text += TR.trO("Barème");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.total;
@@ -152,7 +152,7 @@ public class GradeExportRenderer {
         int startY = pane.settingsAttributeTotalLine.isSelected() ? 4 : 3;
         int endY = startY + files.size()-1;
 
-        text += TR.tr("Moyenne");
+        text += TR.trO("Moyenne");
 
         for(GradeRating rating : gradeScale){
             text += ";=AVERAGE(" + x + startY + ":" + x + endY + ")";
@@ -179,7 +179,7 @@ public class GradeExportRenderer {
     }
     public void generateCommentsLines(ExportFile file){
 
-        text += TR.tr("Commentaires");
+        text += TR.trO("Commentaires");
 
         if(file.comments.size() >= 1){
             ArrayList<String> lines = new ArrayList<>();
@@ -249,20 +249,20 @@ public class GradeExportRenderer {
 
         }catch(Exception e){
             e.printStackTrace();
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
-            alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
-            alert.setContentText(TR.tr("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Impossible de lire les notes"));
+            alert.setHeaderText(TR.trO("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
+            alert.setContentText(TR.trO("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
 
             TextArea textArea = new TextArea(e.getMessage());
             textArea.setEditable(false);
             textArea.setWrapText(true);
             GridPane expContent = new GridPane();
             expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+            expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
             expContent.add(textArea, 0, 1);
             alert.getDialogPane().setExpandableContent(expContent);
 
-            alert.getButtonTypes().add(new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.CANCEL_CLOSE));
+            alert.getButtonTypes().add(new ButtonType(TR.trO("OK"), ButtonBar.ButtonData.CANCEL_CLOSE));
             alert.showAndWait();
             return false;
         }
@@ -283,21 +283,21 @@ public class GradeExportRenderer {
 
                 }catch(Exception e) {
                     e.printStackTrace();
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Impossible de lire les notes"));
-                    alert.setHeaderText(TR.tr("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
-                    alert.setContentText(TR.tr("Choisissez une action."));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Impossible de lire les notes"));
+                    alert.setHeaderText(TR.trO("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
+                    alert.setContentText(TR.trO("Choisissez une action."));
 
                     TextArea textArea = new TextArea(e.getMessage());
                     textArea.setEditable(false);
                     textArea.setWrapText(true);
                     GridPane expContent = new GridPane();
                     expContent.setMaxWidth(Double.MAX_VALUE);
-                    expContent.add(new Label(TR.tr("L'erreur survenue est la suivante :")), 0, 0);
+                    expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
                     expContent.add(textArea, 0, 1);
                     alert.getDialogPane().setExpandableContent(expContent);
 
-                    ButtonType stopAll = new ButtonType(TR.tr("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.tr("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+                    ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
                     alert.getButtonTypes().setAll(stopAll, continueRender);
 
                     Optional<ButtonType> option = alert.showAndWait();
@@ -355,15 +355,15 @@ public class GradeExportRenderer {
 
     public int fileAlreadyExist(File file){
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Fichier déjà existant"));
-        alert.setHeaderText(TR.tr("Le fichier de destination") + " \"" + file.getAbsolutePath() + "\" " + TR.tr("existe déjà"));
-        alert.setContentText(TR.tr("Voulez-vous l'écraser ?"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Fichier déjà existant"));
+        alert.setHeaderText(TR.trO("Le fichier de destination") + " \"" + file.getAbsolutePath() + "\" " + TR.trO("existe déjà"));
+        alert.setContentText(TR.trO("Voulez-vous l'écraser ?"));
 
-        ButtonType yesButton = new ButtonType(TR.tr("Écraser"), ButtonBar.ButtonData.YES);
-        ButtonType yesAlwaysButton = new ButtonType(TR.tr("Toujours écraser"), ButtonBar.ButtonData.YES);
-        ButtonType renameButton = new ButtonType(TR.tr("Renommer"), ButtonBar.ButtonData.OTHER);
-        ButtonType cancelButton = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType cancelAllButton = new ButtonType(TR.tr("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType yesButton = new ButtonType(TR.trO("Écraser"), ButtonBar.ButtonData.YES);
+        ButtonType yesAlwaysButton = new ButtonType(TR.trO("Toujours écraser"), ButtonBar.ButtonData.YES);
+        ButtonType renameButton = new ButtonType(TR.trO("Renommer"), ButtonBar.ButtonData.OTHER);
+        ButtonType cancelButton = new ButtonType(TR.trO("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType cancelAllButton = new ButtonType(TR.trO("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
 
         Optional<ButtonType> option = alert.showAndWait();

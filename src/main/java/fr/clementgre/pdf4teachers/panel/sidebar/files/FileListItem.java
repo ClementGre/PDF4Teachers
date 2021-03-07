@@ -90,8 +90,8 @@ public class FileListItem extends ListCell<File>{
 
                         name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
 
-                        path.setText(path.getText() + " | " + MainWindow.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade);
-                        setTooltip(new Tooltip(MainWindow.format.format(elementsCount[0]) + " " + TR.tr("Éléments") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[1]) + " " + TR.tr("Commentaires") + "\n" + MainWindow.format.format(elementsCount[2]) + "/" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("Notes") + "\n" + MainWindow.format.format(elementsCount[3]) + " " + TR.tr("Figures")));
+                        path.setText(path.getText() + " | " + MainWindow.format.format(elementsCount[0]) + " " + TR.trO("Éléments") + " | " + grade);
+                        setTooltip(new Tooltip(MainWindow.format.format(elementsCount[0]) + " " + TR.trO("Éléments") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[1]) + " " + TR.trO("Commentaires") + "\n" + MainWindow.format.format(elementsCount[2]) + "/" + MainWindow.format.format(elementsCount[6]) + " " + TR.trO("Notes") + "\n" + MainWindow.format.format(elementsCount[3]) + " " + TR.trO("Figures")));
 
                         if(elementsCount[2] == elementsCount[6]){ // Edition completed : Green check
                             if(check.getImage() == null) check.setImage(new Image(getClass().getResource("/img/FilesTab/check.png") + ""));
@@ -102,15 +102,15 @@ public class FileListItem extends ListCell<File>{
                         }
 
                     }else{ // Don't have elements
-                        path.setText(path.getText() + " | " + TR.tr("Non édité") + " | " + grade);
-                        setTooltip(new Tooltip(TR.tr("Non édité") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("Barèmes")));
+                        path.setText(path.getText() + " | " + TR.trO("Non édité") + " | " + grade);
+                        setTooltip(new Tooltip(TR.trO("Non édité") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.trO("Barèmes")));
                     }
                 }else{ // don't have edit file
-                    path.setText(path.getText() + " | " + TR.tr("Non édité"));
-                    setTooltip(new Tooltip(TR.tr("Non édité")));
+                    path.setText(path.getText() + " | " + TR.trO("Non édité"));
+                    setTooltip(new Tooltip(TR.trO("Non édité")));
                 }
             }catch(Exception e){
-                path.setText(path.getText() + " | " + TR.tr("Impossible de récupérer les informations"));
+                path.setText(path.getText() + " | " + TR.trO("Impossible de récupérer les informations"));
                 setTooltip(new Tooltip(e.getMessage()));
             }
             nameBox.getChildren().add(name);
@@ -120,18 +120,18 @@ public class FileListItem extends ListCell<File>{
 
             ContextMenu menu = new ContextMenu();
 
-            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("Ouvrir"), false);
-            item1.setToolTip(TR.tr("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
-            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("Retirer"), false);
-            item2.setToolTip(TR.tr("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
-            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("Supprimer l'édition"), false);
-            item3.setToolTip(TR.tr("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
-            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("Supprimer le fichier"), false);
-            item4.setToolTip(TR.tr("Supprime le fichier PDF sur l'ordinateur."));
-            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("Exporter"), false);
-            item5.setToolTip(TR.tr("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
-            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("Vider la liste"), false);
-            item6.setToolTip(TR.tr("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Ouvrir"), false);
+            item1.setToolTip(TR.trO("Ouvre le fichier avec l'éditeur de PDF4Teachers. Il est aussi possible de l'ouvrir avec un double clic."));
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Retirer"), false);
+            item2.setToolTip(TR.trO("Retire le fichier de la liste. Le fichier ne sera en aucun cas supprimé."));
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.trO("Supprimer l'édition"), false);
+            item3.setToolTip(TR.trO("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
+            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.trO("Supprimer le fichier"), false);
+            item4.setToolTip(TR.trO("Supprime le fichier PDF sur l'ordinateur."));
+            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.trO("Exporter"), false);
+            item5.setToolTip(TR.trO("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
+            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.trO("Vider la liste"), false);
+            item6.setToolTip(TR.trO("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));
 
             menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
             NodeMenuItem.setupMenu(menu);
@@ -144,9 +144,9 @@ public class FileListItem extends ListCell<File>{
 
             item4.setOnAction(e -> {
 
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Confirmation"));
-                alert.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer le document") + " " + file.getName() + " " + TR.tr("et son édition ?"));
-                alert.setContentText(TR.tr("Cette action est irréversible."));
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
+                alert.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer le document") + " " + file.getName() + " " + TR.trO("et son édition ?"));
+                alert.setContentText(TR.trO("Cette action est irréversible."));
 
                 Optional<ButtonType> result = alert.showAndWait();
                 if(result.isEmpty()) return;

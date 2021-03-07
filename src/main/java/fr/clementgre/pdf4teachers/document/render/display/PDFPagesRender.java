@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,7 +15,6 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -118,9 +116,9 @@ public class PDFPagesRender {
 			if(!MainWindow.mainScreen.document.pdfPagesRender.advertisement){ // not already sended
 				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
 
-				Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Erreur de rendu"));
-				alert.setHeaderText(TR.tr("Des erreurs sont apparues lors du rendu du document PDF."));
-				alert.setContentText(TR.tr("Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement."));
+				Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Erreur de rendu"));
+				alert.setHeaderText(TR.trO("Des erreurs sont apparues lors du rendu du document PDF."));
+				alert.setContentText(TR.trO("Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement."));
 				alert.show();
 			}
 		}

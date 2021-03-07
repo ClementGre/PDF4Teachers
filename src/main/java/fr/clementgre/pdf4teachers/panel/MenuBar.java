@@ -37,7 +37,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -66,95 +65,95 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 	////////// FILE //////////
 
-	Menu file = new Menu(TR.tr("Fichier"));
-	public MenuItem file1Open = createMenuItem(TR.tr("Ouvrir un ou plusieurs fichiers"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
+	Menu file = new Menu(TR.trO("Fichier"));
+	public MenuItem file1Open = createMenuItem(TR.trO("Ouvrir un ou plusieurs fichiers"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Ajoute un ou plusieurs fichiers dans le panneau des fichiers."));
 
-	public MenuItem file2OpenDir = createMenuItem(TR.tr("Ouvrir un dossier"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
+	public MenuItem file2OpenDir = createMenuItem(TR.trO("Ouvrir un dossier"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Ajoute tous les fichiers PDF d'un dossier dans le panneau des fichiers"));
 
-	MenuItem file3Clear = createMenuItem(TR.tr("Vider la liste"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Vide la liste des fichiers"), false, true, false);
+	MenuItem file3Clear = createMenuItem(TR.trO("Vider la liste"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Vide la liste des fichiers"), false, true, false);
 
-	MenuItem file4Save = createMenuItem(TR.tr("Sauvegarder l'édition"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
+	MenuItem file4Save = createMenuItem(TR.trO("Sauvegarder l'édition"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Sauvegarde les éléments d'édition du document courant. Le fichier PDF pré-existant ne sera pas modifié"), true, false, false);
 
-	MenuItem file5Delete = createMenuItem(TR.tr("Supprimer l'édition"), SVGPathIcons.TRASH, null,
-			TR.tr("Supprime les éléments d'édition du document courant"), true, false, false);
+	MenuItem file5Delete = createMenuItem(TR.trO("Supprimer l'édition"), SVGPathIcons.TRASH, null,
+			TR.trO("Supprime les éléments d'édition du document courant"), true, false, false);
 
-	MenuItem file6Close = createMenuItem(TR.tr("Fermer le document"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Ferme la vue du document courant"), true, false, false);
+	MenuItem file6Close = createMenuItem(TR.trO("Fermer le document"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Ferme la vue du document courant"), true, false, false);
 
-	MenuItem file7Export = createMenuItem(TR.tr("Exporter (Regénérer le PDF)"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
+	MenuItem file7Export = createMenuItem(TR.trO("Exporter (Regénérer le PDF)"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Crée un nouveau fichier PDF à partir du document ouvert, avec tous les éléments ajoutés"), true, false, false);
 
-	MenuItem file8ExportAll = createMenuItem(TR.tr("Tout exporter"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
+	MenuItem file8ExportAll = createMenuItem(TR.trO("Tout exporter"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Crée des nouveaux fichiers PDF à partir chacun des fichiers de la liste des fichiers, avec pour chaque fichier, tous les éléments de son édition"), false, true, false);
 
 
 	////////// TOOLS //////////
 
-	public Menu tools = new Menu(TR.tr("Outils"));
+	public Menu tools = new Menu(TR.trO("Outils"));
 
-	MenuItem tools1Convert = createMenuItem(TR.tr("Convertir"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
-			TR.tr("Permet de convertir des images en fichiers PDF"), false, false, false);
+	MenuItem tools1Convert = createMenuItem(TR.trO("Convertir"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+			TR.trO("Permet de convertir des images en fichiers PDF"), false, false, false);
 
-	MenuItem tools2QRCode = createMenuItem(TR.tr("Générer un QR Code"), "qrcode", null,
-			TR.tr("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
+	MenuItem tools2QRCode = createMenuItem(TR.trO("Générer un QR Code"), "qrcode", null,
+			TR.trO("Permet d'ajouter un QR Code généré par l'application au document PDF ouvert"), true, false, false);
 
-	Menu tools3AddPages = createSubMenu(TR.tr("Ajouter des pages"), SVGPathIcons.PLUS,
-			TR.tr("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons latéraux des pages"), true);
+	Menu tools3AddPages = createSubMenu(TR.trO("Ajouter des pages"), SVGPathIcons.PLUS,
+			TR.trO("Ajouter des pages à ce document PDF. Cette option est aussi disponible avec les boutons latéraux des pages"), true);
 
-	MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("Supprimer les éditions des fichiers ouverts"), SVGPathIcons.TRASH, null,
-			TR.tr("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
+	MenuItem tools4DeleteAllEdits = createMenuItem(TR.trO("Supprimer les éditions des fichiers ouverts"), SVGPathIcons.TRASH, null,
+			TR.trO("Supprime les éditions de tous les fichiers ouverts dans le panneau des fichiers"));
 
-	Menu tools5SameNameEditions = createSubMenu(TR.tr("Éditions des documents du même nom"), SVGPathIcons.EXCHANGE,
-			TR.tr("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
-		MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("Aucune édition trouvée"));
+	Menu tools5SameNameEditions = createSubMenu(TR.trO("Éditions des documents du même nom"), SVGPathIcons.EXCHANGE,
+			TR.trO("Déplace l'édition de ce document sur un autre document qui porte le même nom. Cette fonction peut être utilisée lorsqu'un fichier PDF a été déplacé. En effet, si un document PDF est déplacé dans un autre dossier, PDF4Teachers n'arrivera plus à récupérer son édition, sauf avec cette fonction"), true);
+		MenuItem tools5SameNameEditionsNull = new MenuItem(TR.trO("Aucune édition trouvée"));
 
-	Menu tools6ExportEdition = createSubMenu(TR.tr("Exporter l'édition/barème"), SVGPathIcons.EXPORT,
-			TR.tr("Générer un fichier indépendant, contenant les informations d'édition de ce document"), true);
+	Menu tools6ExportEdition = createSubMenu(TR.trO("Exporter l'édition/barème"), SVGPathIcons.EXPORT,
+			TR.trO("Générer un fichier indépendant, contenant les informations d'édition de ce document"), true);
 
-		MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("Exporter l'édition"), null, null,
-				TR.tr("Génère un fichier contenant l'édition du document"), true, false, false, false);
-		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("Exporter le barème"), null, null,
-				TR.tr("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
+		MenuItem tools6ExportEdition1All = createMenuItem(TR.trO("Exporter l'édition"), null, null,
+				TR.trO("Génère un fichier contenant l'édition du document"), true, false, false, false);
+		MenuItem tools6ExportEdition2Grades = createMenuItem(TR.trO("Exporter le barème"), null, null,
+				TR.trO("Remplace le barème du document ouvert par celui d'un fichier de barème"), true, false, false, false);
 
-	Menu tools7ImportEdition = createSubMenu(TR.tr("Importer une édition/barème"), SVGPathIcons.IMPORT,
-			TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
+	Menu tools7ImportEdition = createSubMenu(TR.trO("Importer une édition/barème"), SVGPathIcons.IMPORT,
+			TR.trO("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true);
 
-		MenuItem tools7ImportEdition1All = createMenuItem(TR.tr("Importer une édition"), null, null,
-				TR.tr("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true, false, false, false);
-		MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("Importer un barème"), null, null,
-				TR.tr("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
+		MenuItem tools7ImportEdition1All = createMenuItem(TR.trO("Importer une édition"), null, null,
+				TR.trO("Remplace l'édition du document ouvert par celle d'un fichier d'édition"), true, false, false, false);
+		MenuItem tools7ImportEdition2Grades = createMenuItem(TR.trO("Importer un barème"), null, null,
+				TR.trO("Remplace le barème du document ouvert par celle d'un fichier de barème"), true, false, false, false);
 
-	MenuItem tools8FullScreen = createMenuItem(TR.tr("Mode plein écran"), SVGPathIcons.FULL_SCREEN, null,
-			TR.tr("Passe l'application en mode plein écran"));
+	MenuItem tools8FullScreen = createMenuItem(TR.trO("Mode plein écran"), SVGPathIcons.FULL_SCREEN, null,
+			TR.trO("Passe l'application en mode plein écran"));
 
-	Menu tools9Debug = createSubMenu(TR.tr("Débug"), SVGPathIcons.COMMAND_PROMPT,
-			TR.tr("Options plus complexes demandant des compétences informatiques."), false);
+	Menu tools9Debug = createSubMenu(TR.trO("Débug"), SVGPathIcons.COMMAND_PROMPT,
+			TR.trO("Options plus complexes demandant des compétences informatiques."), false);
 
-		MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
-				TR.tr("Ouvre la console de l'application"), false, false, false, false);
-		MenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("Ouvrir le dossier de données"), null, null,
-				TR.tr("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
-		MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("Ouvrir le fichier d'édition"), null, null,
-				TR.tr("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
+		MenuItem tools9Debug1OpenConsole = createMenuItem(TR.trO("Ouvrir la console d'exécution") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+				TR.trO("Ouvre la console de l'application"), false, false, false, false);
+		MenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.trO("Ouvrir le dossier de données"), null, null,
+				TR.trO("Ouvre le dossier où PDF4Teachers enregistre toutes ses données"), false, false, false, false);
+		MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.trO("Ouvrir le fichier d'édition"), null, null,
+				TR.trO("Ouvre le fichier qui contient les données de l'édition actuelle"), true, false, false, false);
 
 	////////// SETTINGS //////////
 
-	public Menu settings = new Menu(TR.tr("Préférences"));
+	public Menu settings = new Menu(TR.trO("Préférences"));
 
 
 	////////// ABOUT / HELP //////////
 
 	public Menu about = new Menu();
 
-	Menu help = new Menu(TR.tr("Aide"));
-	MenuItem help1LoadDoc = new MenuItem(TR.tr("Charger la documentation"));
-	MenuItem help2GitHubIssue = new MenuItem(TR.tr("Demander de l'aide ou signaler un Bug sur GitHub"));
-	MenuItem help3Twitter = new MenuItem(TR.tr("Nous contacter sur Twitter"));
-	MenuItem help4Website = new MenuItem(TR.tr("Site Web de PDF4Teachers"));
+	Menu help = new Menu(TR.trO("Aide"));
+	MenuItem help1LoadDoc = new MenuItem(TR.trO("Charger la documentation"));
+	MenuItem help2GitHubIssue = new MenuItem(TR.trO("Demander de l'aide ou signaler un Bug sur GitHub"));
+	MenuItem help3Twitter = new MenuItem(TR.trO("Nous contacter sur Twitter"));
+	MenuItem help4Website = new MenuItem(TR.trO("Site Web de PDF4Teachers"));
 
 	public MenuBar(){
 		setup();
@@ -278,8 +277,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 
 		tools4DeleteAllEdits.setOnAction((ActionEvent e) -> {
-			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("Supprimer les éditions"));
-			dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
+			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Supprimer les éditions"));
+			dialog.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer toutes les éditions des fichiers de la liste ?"));
 
 
 			float yesButSize = FilesUtils.convertOctetToMo(FilesUtils.getSize(new File(Main.dataFolder + "editions")));
@@ -289,9 +288,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				yesSize += FilesUtils.getSize(editFile);
 			}yesSize = FilesUtils.convertOctetToMo((long) yesSize);
 
-			ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
-			ButtonType yes = new ButtonType(TR.tr("Oui") + " (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
-			ButtonType yesBut = new ButtonType(TR.tr("Supprimer l'ensemble des\néditions enregistrées") + " (" + yesButSize + "Mo)", ButtonBar.ButtonData.OTHER);
+			ButtonType cancel = new ButtonType(TR.trO("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
+			ButtonType yes = new ButtonType(TR.trO("Oui") + " (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
+			ButtonType yesBut = new ButtonType(TR.trO("Supprimer l'ensemble des\néditions enregistrées") + " (" + yesButSize + "Mo)", ButtonBar.ButtonData.OTHER);
 			dialog.getButtonTypes().setAll(yesBut, cancel, yes);
 
 			Optional<ButtonType> option = dialog.showAndWait();
@@ -310,9 +309,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				size = yesButSize;
 			}else return;
 
-			Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("Supression terminée"));
-			alert.setHeaderText(TR.tr("Vos éditions ont bien été supprimés."));
-			alert.setContentText(TR.tr("Vous avez supprimé") + " " + size + "Mo");
+			Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Supression terminée"));
+			alert.setHeaderText(TR.trO("Vos éditions ont bien été supprimés."));
+			alert.setContentText(TR.trO("Vous avez supprimé") + " " + size + "Mo");
 			alert.show();
 		});
 		tools5SameNameEditions.setOnShowing((Event event) -> {
@@ -328,12 +327,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				tools5SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
-					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Charger une autre édition"));
-					dialog.setHeaderText(TR.tr("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
+					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Charger une autre édition"));
+					dialog.setHeaderText(TR.trO("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
 
-					ButtonType cancel = new ButtonType(TR.tr("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
-					ButtonType yes = new ButtonType(TR.tr("Oui"), ButtonBar.ButtonData.OK_DONE);
-					ButtonType yesAll = new ButtonType(TR.tr("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
+					ButtonType cancel = new ButtonType(TR.trO("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
+					ButtonType yes = new ButtonType(TR.trO("Oui"), ButtonBar.ButtonData.OK_DONE);
+					ButtonType yesAll = new ButtonType(TR.trO("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
 					dialog.getButtonTypes().setAll(cancel, yes, yesAll);
 
 					Optional<ButtonType> option = dialog.showAndWait();
@@ -358,10 +357,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 									if(fromEditFile.exists()){
 										Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
 									}else{
-										Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("Fichier introuvable"));
-										alert.setHeaderText(TR.tr("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.tr("dans") + " \"" + files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.tr("n'a pas d'édition."));
-										ButtonType ok = new ButtonType(TR.tr("Sauter"), ButtonBar.ButtonData.OK_DONE);
-										ButtonType cancelAll = new ButtonType(TR.tr("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+										Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Fichier introuvable"));
+										alert.setHeaderText(TR.trO("Le fichier") + " \"" + otherFileDest.getName() + "\" " + TR.trO("dans") + " \"" + files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + "\" " + TR.trO("n'a pas d'édition."));
+										ButtonType ok = new ButtonType(TR.trO("Sauter"), ButtonBar.ButtonData.OK_DONE);
+										ButtonType cancelAll = new ButtonType(TR.trO("Tout Arreter"), ButtonBar.ButtonData.CANCEL_CLOSE);
 										alert.getButtonTypes().setAll(ok, cancelAll);
 
 										Optional<ButtonType> option2 = alert.showAndWait();
@@ -398,7 +397,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			new LanguageWindow(value -> {
 				if(!value.isEmpty()){
 					Main.settings.language.setValue(value);
-					//Main.window.restart();
+					Main.window.restart();
 				}
 			});
 		});
@@ -408,9 +407,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
 			ChoiceDialog<Integer> dialog = DialogBuilder.getChoiceDialog(Main.settings.defaultZoom.getValue(), choices);
 
-			dialog.setTitle(TR.tr("Zoom par défaut"));
-			dialog.setHeaderText(TR.tr("Zoom par défaut lors de l'ouverture d'un document"));
-			dialog.setContentText(TR.tr("Choisir un pourcentage :"));
+			dialog.setTitle(TR.trO("Zoom par défaut"));
+			dialog.setHeaderText(TR.trO("Zoom par défaut lors de l'ouverture d'un document"));
+			dialog.setContentText(TR.trO("Choisir un pourcentage :"));
 
 			Optional<Integer> newZoom = dialog.showAndWait();
 			if(!newZoom.isEmpty()){
@@ -420,13 +419,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		});
 		s.regularSave.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
 
-			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("Sauvegarde régulière"));
+			Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Sauvegarde régulière"));
 
 			HBox pane = new HBox();
 			ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
 			combo.getSelectionModel().select(Main.settings.regularSave.getValue() == -1 ? (Integer) 5 : Main.settings.regularSave.getValue());
 			combo.setStyle("-fx-padding-left: 20px;");
-			CheckBox activated = new CheckBox(TR.tr("Activer"));
+			CheckBox activated = new CheckBox(TR.trO("Activer"));
 			activated.setSelected(Main.settings.regularSave.getValue() != -1);
 			pane.getChildren().add(0, activated);
 			pane.getChildren().add(1, combo);
@@ -434,7 +433,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			HBox.setMargin(combo, new Insets(0, 0, 0, 30));
 
 			combo.disableProperty().bind(activated.selectedProperty().not());
-			dialog.setHeaderText(TR.tr("Définir le nombre de minutes entre deux sauvegardes automatiques."));
+			dialog.setHeaderText(TR.trO("Définir le nombre de minutes entre deux sauvegardes automatiques."));
 			dialog.getDialogPane().setContent(pane);
 
 			//ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -452,14 +451,14 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 		////////// ABOUT / HELP //////////
 
 		if(isSystemMenuBarSupported()){
-			about.setText(TR.tr("À propos"));
-			MenuItem triggerItem = new MenuItem(TR.tr("Fenêtre à Propos"));
+			about.setText(TR.trO("À propos"));
+			MenuItem triggerItem = new MenuItem(TR.trO("Fenêtre à Propos"));
 			about.getItems().add(triggerItem);
 			triggerItem.setOnAction((event) -> {
 				try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }
 			});
 		}else{
-			Label name = new Label(TR.tr("À propos"));
+			Label name = new Label(TR.trO("À propos"));
 			name.setAlignment(Pos.CENTER_LEFT);
 			name.setOnMouseClicked(event -> {
 				try{ FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml")); }catch(IOException e){ e.printStackTrace(); }

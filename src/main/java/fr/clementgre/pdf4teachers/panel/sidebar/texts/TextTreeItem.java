@@ -113,11 +113,11 @@ public class TextTreeItem extends TreeItem{
 				addToDocument(mouseEvent.isShiftDown());
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
-					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
 						MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
 					}
 				}else if(getType() == TextTreeSection.LAST_TYPE){
-					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
 						MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
 					}
 				}
@@ -168,11 +168,11 @@ public class TextTreeItem extends TreeItem{
 
 				// Update the sorting if is sort by utils
 				if(getType() == TextTreeSection.FAVORITE_TYPE){
-					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+					if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
 						MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
 					}
 				}else if(getType() == TextTreeSection.LAST_TYPE){
-					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("Utilisation"))){
+					if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
 						MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
 					}
 				}

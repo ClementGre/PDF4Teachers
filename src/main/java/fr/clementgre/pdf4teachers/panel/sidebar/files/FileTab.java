@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,26 +12,18 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 
 public class FileTab extends SideTab {
 
@@ -109,40 +100,40 @@ public class FileTab extends SideTab {
 		});
 
 		sortManager = new SortManager((sortType, order) -> {
-			if(sortType.equals(TR.tr("Nom"))){
+			if(sortType.equals(TR.trO("Nom"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
-			}else if(sortType.equals(TR.tr("Dossier"))){
+			}else if(sortType.equals(TR.trO("Dossier"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
-			}else if(sortType.equals(TR.tr("Édition"))){
+			}else if(sortType.equals(TR.trO("Édition"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
-			}else if(sortType.equals(TR.tr("Date d'Ajout"))){
+			}else if(sortType.equals(TR.trO("Date d'Ajout"))){
 				backOpenFilesList(!order);
 			}
 
 		}, null);
-		sortManager.setup(options, TR.tr("Date d'Ajout"), TR.tr("Date d'Ajout"), TR.tr("Édition"), "\n", TR.tr("Nom"), TR.tr("Dossier"));
+		sortManager.setup(options, TR.trO("Date d'Ajout"), TR.trO("Date d'Ajout"), TR.trO("Édition"), "\n", TR.trO("Nom"), TR.trO("Dossier"));
 
 		// Info pane
 
-		Label infoLabel = new Label(TR.tr("Aucun fichier ouvert"));
+		Label infoLabel = new Label(TR.trO("Aucun fichier ouvert"));
 		infoLabel.setStyle("-fx-font-size: 16;");
 		VBox.setMargin(infoLabel, new Insets(0, 0, 10, 0));
 
-		Hyperlink openFile = new Hyperlink(TR.tr("Ouvrir un ou plusieurs fichiers"));
+		Hyperlink openFile = new Hyperlink(TR.trO("Ouvrir un ou plusieurs fichiers"));
 		openFile.setOnAction(e -> MainWindow.menuBar.file1Open.fire());
 		VBox.setMargin(openFile, new Insets(-2, 0, -2, 0));
 
-		Hyperlink openDir = new Hyperlink(TR.tr("Ouvrir un dossier"));
+		Hyperlink openDir = new Hyperlink(TR.trO("Ouvrir un dossier"));
 		openDir.setOnAction(e -> MainWindow.menuBar.file2OpenDir.fire());
 		VBox.setMargin(openDir, new Insets(-2, 0, -2, 0));
 
-		Hyperlink convert = new Hyperlink(TR.tr("Convertir"));
+		Hyperlink convert = new Hyperlink(TR.trO("Convertir"));
 		convert.setOnAction(e -> new ConvertDocument());
 		VBox.setMargin(convert, new Insets(-2, 0, -2, 0));
 

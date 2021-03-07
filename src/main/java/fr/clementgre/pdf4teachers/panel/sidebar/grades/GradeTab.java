@@ -67,7 +67,7 @@ public class GradeTab extends SideTab {
                 AutoTipsManager.showByAction("gradescaleinvert");
             }
         });
-        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.tr("Compter les points par retranchement") + "\n" + TR.tr("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.")));
+        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.trO("Compter les points par retranchement") + "\n" + TR.trO("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.")));
 
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
@@ -87,27 +87,27 @@ public class GradeTab extends SideTab {
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.tr("Vérouiller le barème, il ne pourra plus être modifié.")));
+        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.trO("Vérouiller le barème, il ne pourra plus être modifié.")));
 
         PaneUtils.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(PaneUtils.genToolTip(TR.tr("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
+        settings.setTooltip(PaneUtils.genToolTip(TR.trO("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
 
         PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
         link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog().show());
-        link.setTooltip(PaneUtils.genToolTip(TR.tr("Envoyer le barème sur d'autres éditions.")));
+        link.setTooltip(PaneUtils.genToolTip(TR.trO("Envoyer le barème sur d'autres éditions.")));
 
         PaneUtils.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
         export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
-        export.setTooltip(PaneUtils.genToolTip(TR.tr("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
+        export.setTooltip(PaneUtils.genToolTip(TR.trO("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -125,7 +125,7 @@ public class GradeTab extends SideTab {
 
         MainWindow.mainScreen.setSelected(null);
 
-        String name = TR.tr("Nouvelle note");
+        String name = TR.trO("Nouvelle note");
         if(parent.getChildren().size() >= 1){
             String lastName = ((GradeTreeItem) parent.getChildren().get(parent.getChildren().size()-1)).getCore().getName();
             String newName = StringUtils.incrementName(lastName);
