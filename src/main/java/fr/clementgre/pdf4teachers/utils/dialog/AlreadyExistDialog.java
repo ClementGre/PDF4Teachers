@@ -20,9 +20,9 @@ public class AlreadyExistDialog{
     private ButtonType stopAll;
     private ButtonType skip;
     private ButtonType skipAlways;
-    private ButtonType rename = new ButtonType(TR.tr("dialog.recursiveActionError.rename"), ButtonBar.ButtonData.YES);
+    private ButtonType rename = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.YES);
     private ButtonType renameAlways;
-    private ButtonType overwrite = new ButtonType(TR.tr("dialog.recursiveActionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
+    private ButtonType overwrite = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
     private ButtonType overwriteAlways;
 
     private boolean recursive;
@@ -30,14 +30,14 @@ public class AlreadyExistDialog{
 
     public AlreadyExistDialog(boolean recursive){
         this.recursive = recursive;
-        alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("file.alreadyExistDialog.title"));
+        alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("dialog.file.alreadyExist.title"));
 
         if(recursive){
-            stopAll = new ButtonType(TR.tr("dialog.recursiveActionError.cancelAll"), ButtonBar.ButtonData.OK_DONE);
-            skip = new ButtonType(TR.tr("dialog.recursiveActionError.skip"), ButtonBar.ButtonData.YES);
-            skipAlways = new ButtonType(TR.tr("dialog.recursiveActionError.skipAlways"), ButtonBar.ButtonData.YES);
-            renameAlways = new ButtonType(TR.tr("dialog.recursiveActionError.renameAlways"), ButtonBar.ButtonData.YES);
-            overwriteAlways = new ButtonType(TR.tr("dialog.recursiveActionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);
+            stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.OK_DONE);
+            skip = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.YES);
+            skipAlways = new ButtonType(TR.tr("dialog.actionError.skipAlways"), ButtonBar.ButtonData.YES);
+            renameAlways = new ButtonType(TR.tr("dialog.actionError.renameAlways"), ButtonBar.ButtonData.YES);
+            overwriteAlways = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);
 
             alert.getButtonTypes().setAll(overwrite, rename, skip, stopAll);
         }else alert.getButtonTypes().setAll(overwrite, rename, ButtonType.CANCEL);
@@ -59,8 +59,8 @@ public class AlreadyExistDialog{
 
         if(recursions == 2) alert.getButtonTypes().setAll(overwrite, rename, renameAlways, skip, skipAlways, overwriteAlways, stopAll);
 
-        alert.setHeaderText(TR.tr("file.alreadyExistDialog.info", file.getName()));
-        alert.setContentText(TR.tr("file.alreadyExistDialog.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
+        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.info", file.getName()));
+        alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
 
         Optional<ButtonType> option = alert.showAndWait();
         if(option.isPresent()){

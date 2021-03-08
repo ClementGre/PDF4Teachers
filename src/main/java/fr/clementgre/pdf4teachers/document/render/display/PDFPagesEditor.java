@@ -219,8 +219,8 @@ public class PDFPagesEditor{
         Document document = MainWindow.mainScreen.document;
 
         final FileChooser chooser = new FileChooser();
-        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.trO("Fichier PDF"), "*.pdf"));
-        chooser.setTitle(TR.trO("Sélectionner un fichier"));
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.PDF"), "*.pdf"));
+        chooser.setTitle(TR.tr("dialog.file.selectFile.title"));
         chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
 
         File file = chooser.showOpenDialog(Main.window);

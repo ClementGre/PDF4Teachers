@@ -56,8 +56,8 @@ public class ListsManager {
                         alert2.setHeaderText(TR.trO("Une liste du même nom existe déjà."));
                         alert2.setContentText(TR.trO("Choisissez une action."));
 
-                        ButtonType rename = new ButtonType(TR.trO("Renommer"), ButtonBar.ButtonData.NO);
-                        ButtonType erase = new ButtonType(TR.trO("Écraser"), ButtonBar.ButtonData.APPLY);
+                        ButtonType rename = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.NO);
+                        ButtonType erase = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.APPLY);
                         alert2.getButtonTypes().setAll(rename, erase);
 
                         Optional<ButtonType> result2 = alert2.showAndWait();

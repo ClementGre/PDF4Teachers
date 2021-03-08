@@ -21,12 +21,12 @@ public class AutoTipTooltip extends Tooltip{
     private String prerequisiteKey;
     private String objectWhereDisplay;
 
-    private Button okButton = new Button(TR.trO("OK"));
+    private Button okButton = new Button(TR.tr("actions.ok"));
 
-    public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay, String text) {
+    public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay) {
         super(Main.isOSX()
-                ? TR.trO(text).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
-                : TR.trO(text));
+                ? TR.tr("autoTips." + name).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
+                : TR.tr("autoTips." + name));
         this.name = name;
         this.actionKey = actionKey;
         this.prerequisiteKey = prerequisiteKey;

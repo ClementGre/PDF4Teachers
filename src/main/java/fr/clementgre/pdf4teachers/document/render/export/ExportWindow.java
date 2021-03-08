@@ -72,7 +72,7 @@ public class ExportWindow {
 
         HBox name = new HBox();
             TextField fileName = new TextField(files.get(0).getName());
-            fileName.setPromptText(TR.trO("Nom du document"));
+            fileName.setPromptText(TR.tr("file.documentName"));
             fileName.setMinWidth(1);
             HBox.setHgrow(fileName, Priority.ALWAYS);
             fileName.setMinHeight(30);
@@ -87,7 +87,7 @@ public class ExportWindow {
                 HBox.setHgrow(filePath, Priority.ALWAYS);
             HBox.setHgrow(filePathPane, Priority.SOMETIMES);
             filePathPane.getChildren().add(filePath);
-            Button changePath = new Button(TR.trO("Parcourir"));
+            Button changePath = new Button(TR.tr("file.browse"));
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
@@ -131,7 +131,7 @@ public class ExportWindow {
         changePath.setOnAction(event -> {
 
             final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.trO("Sélectionner un dossier"));
+            chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
             chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
 
             File file = chooser.showDialog(Main.window);
@@ -164,7 +164,7 @@ public class ExportWindow {
             prefix.setMinHeight(30);
             prefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
-            TextField fileName = new TextField(TR.trO("Nom du document"));
+            TextField fileName = new TextField(TR.tr("file.documentName"));
             fileName.setDisable(true);
             fileName.setAlignment(Pos.CENTER);
             fileName.setMinHeight(30);
@@ -206,7 +206,7 @@ public class ExportWindow {
         HBox.setHgrow(filePath, Priority.ALWAYS);
         HBox.setHgrow(filePathPane, Priority.SOMETIMES);
         filePathPane.getChildren().add(filePath);
-        Button changePath = new Button(TR.trO("Parcourir"));
+        Button changePath = new Button(TR.tr("file.browse"));
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
@@ -261,7 +261,7 @@ public class ExportWindow {
         changePath.setOnAction(event -> {
 
             final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.trO("Sélectionner un dossier"));
+            chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
             chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
 
             File file = chooser.showDialog(Main.window);

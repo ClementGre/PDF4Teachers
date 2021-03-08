@@ -124,6 +124,13 @@ public class TR {
     public static String tr(String key, String... args){
         return tr(key, bundle, true, args);
     }
+    public static String tr(String key, int... args){
+        return tr(key, bundle, true, Arrays.stream(args).mapToObj(String::valueOf).toArray(String[]::new));
+    }
+
+    public static String trO(String text){
+        return "_" + text + "_OLD";
+    }
 
     // Update value and setup binding for locale changes
     /*public static void trB(StringProperty binding, String key){

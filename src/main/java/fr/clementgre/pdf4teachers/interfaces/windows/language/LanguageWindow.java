@@ -74,7 +74,7 @@ public class LanguageWindow extends Stage{
             version = getLanguageVersion(shortName);
 
             if(!shortName.equals("fr_fr")){
-                int[] stats = TR.getTranslationFileStats(txtFile);
+                int[] stats = TROld.getTranslationFileStats(txtFile);
                 if(stats[0] != 0){
                     perMilleCompleted = (int) (stats[1] / ((double) stats[0]) * 1000d);
                 }
@@ -154,9 +154,8 @@ public class LanguageWindow extends Stage{
             box.setStyle("-fx-padding: -5;");
 
             Label label = new Label(language.getName());
-            if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000){
-                label.setText(label.getText() + " (" + TR.trO("Traduit à") + " " + (language.getPerMilleCompleted()/10d) + "%)");
-            }
+            if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000)
+                label.setText(label.getText() + " (" + TR.trO("Traduit à") + " " + (language.getPerMilleCompleted() / 10d) + "%)");
 
             label.setPrefHeight(50);
             HBox.setMargin(label, new Insets(0, 5, 0, 10));

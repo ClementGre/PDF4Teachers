@@ -98,7 +98,7 @@ public class GradeExportWindow extends Stage {
 
         public void setupFileNameForm(){
 
-            VBox info = generateInfo(TR.trO("Nom du document") + " :", false);
+            VBox info = generateInfo(TR.tr("file.documentName") + " :", false);
 
             if(fileNameCustom){
                 HBox fileNamePrefixSuffixBox = new HBox();
@@ -109,7 +109,7 @@ public class GradeExportWindow extends Stage {
                 PaneUtils.setHBoxPosition(fileNamePrefix, -1, 30, 0, 2.5);
                 fileNamePrefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
-                TextField fileName = new TextField(TR.trO("Nom du document"));
+                TextField fileName = new TextField(TR.tr("file.documentName"));
                 fileName.setDisable(true); fileName.setAlignment(Pos.CENTER);
                 PaneUtils.setHBoxPosition(fileName, 0, 30, 0, 2.5);
 
@@ -142,7 +142,7 @@ public class GradeExportWindow extends Stage {
             }else{
 
                 fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
-                fileNameSimple.setPromptText(TR.trO("Nom du document"));
+                fileNameSimple.setPromptText(TR.tr("file.documentName"));
                 PaneUtils.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
                 if(type != 2) fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileName = newValue);
                 root.getChildren().addAll(info, fileNameSimple);
@@ -188,14 +188,14 @@ public class GradeExportWindow extends Stage {
         }
         public void setupPathForm(){
 
-            VBox info = generateInfo(TR.trO("Dossier destination") + " :", true);
+            VBox info = generateInfo(TR.tr("file.destinationFolder") + " :", true);
 
             HBox filePathBox = new HBox();
 
             filePath = new TextField(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator);
             PaneUtils.setHBoxPosition(filePath, -1, 30, 0, 2.5);
 
-            Button changePath = new Button(TR.trO("Parcourir"));
+            Button changePath = new Button(TR.tr("file.browse"));
             PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
 
             filePathBox.getChildren().addAll(filePath, changePath);
@@ -205,7 +205,7 @@ public class GradeExportWindow extends Stage {
             changePath.setOnAction(event -> {
 
                 final DirectoryChooser chooser = new DirectoryChooser();
-                chooser.setTitle(TR.trO("Sélectionner un dossier"));
+                chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
                 chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator)));
 
                 File file = chooser.showDialog(Main.window);

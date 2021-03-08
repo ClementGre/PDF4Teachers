@@ -23,7 +23,7 @@ public class BooleanSetting extends Setting<Boolean>{
 
     @Override
     public void setupMenuItem() {
-        menuItem = MenuBar.createRadioMenuItem(TR.trO(title), icon, TR.trO(description), true);
+        menuItem = MenuBar.createRadioMenuItem(TR.tr(title), icon, TR.tr(description), true);
         if(menuItem instanceof RadioMenuItem){
             ((RadioMenuItem) menuItem).setSelected(value.get());
             this.value.bindBidirectional(((RadioMenuItem) menuItem).selectedProperty());

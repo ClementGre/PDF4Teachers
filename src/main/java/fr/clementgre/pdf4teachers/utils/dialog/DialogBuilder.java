@@ -65,8 +65,8 @@ public class DialogBuilder {
         alert.setContentText(contentText);
 
         if(continueAsk){
-            ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.NO);
-            ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.YES);
+            ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.YES);
             alert.getButtonTypes().setAll(stopAll, continueRender);
 
             Optional<ButtonType> option = alert.showAndWait();
@@ -91,8 +91,8 @@ public class DialogBuilder {
         alert.getDialogPane().setExpandableContent(expContent);
 
         if(continueAsk){
-            ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.NO);
-            ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.YES);
+            ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.NO);
+            ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.YES);
             alert.getButtonTypes().setAll(stopAll, continueRender);
 
             Optional<ButtonType> option = alert.showAndWait();
@@ -119,8 +119,8 @@ public class DialogBuilder {
     public static File[] showFilesDialog(boolean syncWithLastOpenDir, boolean multiple, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        if(multiple) chooser.setTitle(TR.trO("Sélectionner un ou plusieurs fichier"));
-        else chooser.setTitle(TR.trO("Sélectionner un fichier"));
+        if(multiple) chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
+        else chooser.setTitle(TR.tr(""));
         chooser.setInitialDirectory((syncWithLastOpenDir && new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         List<File> listFiles = null;
@@ -142,7 +142,7 @@ public class DialogBuilder {
 
     public static File showDirectoryDialog(boolean syncWithLastOpenDir){
         final DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle(TR.trO("Sélectionner un dossier"));
+        chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
         chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 
         File file = chooser.showDialog(Main.window);

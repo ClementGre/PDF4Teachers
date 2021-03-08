@@ -15,42 +15,42 @@ public class Settings {
 
     @SettingObject
     public StringSetting language = new StringSetting("", SVGPathIcons.GLOBE, "language",
-            TR.ctO("Langage (Français France)"), TR.ctO("Définit la langue de l'interface"));
+            "settings.language.title", "settings.language.tooltip");
     @SettingObject
     public BooleanSetting restoreLastSession = new BooleanSetting(true, SVGPathIcons.REDO, "restoreLastSession",
-            TR.ctO("Toujours restaurer la session précédente"), TR.ctO("Réouvre les derniers fichiers ouverts lors de l'ouverture de l'application."));
+            "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
     @SettingObject
     public BooleanSetting checkUpdates = new BooleanSetting(true, SVGPathIcons.WIFI, "checkUpdates",
-            TR.ctO("Alerter quand une mise à jour est disponible"), TR.ctO("Fait apparaître une fenêtre à chaque démarrage si une nouvelle version est disponible. Même si cette option est désactivée, l'application vérifiera si une nouvelle version est disponible et affichera le menu À propos en couleur"));
+            "settings.checkUpdates.title", "settings.checkUpdates.tooltip");
     @SettingObject
     public BooleanSetting sendStats = new BooleanSetting(true, SVGPathIcons.STATS, "sendStatistics",
-            TR.ctO("Envoyer des statistiques d'utilisation anonymes"), TR.ctO("Envoie à PDF4Teachers.org le temps total d'exécution de l'application, son nombre de lancements et la langue utilisée (sans aucune information d'identification). Avec cette option désactivée, l'application n'envoie qu'un signal de lancement à PDF4Teachers.org."));
+            "settings.sendStatistics.title", "settings.sendStatistics.tooltip");
     @SettingObject
     public IntSetting defaultZoom = new IntSetting(130, SVGPathIcons.SEARCH, "defaultZoom",
-            TR.ctO("Zoom lors de l'ouverture d'un document"), TR.ctO("Définit le zoom par défaut lors de l'ouverture d'un document. Le zoom est aussi contrôlé avec Ctrl+Molette ou pincement sur trackpad"), true);
+            "settings.defaultZoom.title", "settings.defaultZoom.tooltip", true);
     @SettingObject
     public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), SVGPathIcons.LAYERS, "zoomAnimations",
-            TR.ctO("Animations de zoom ou défilement"), TR.ctO("Permet des transitions fluides lors d'un zoom ou d'un défilement de la page. Il est possible de désactiver cette option si l'ordinateur est lent lors du zoom. Cette option est déconseillée aux utilisateurs de TrackPad"));
+            "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
     @SettingObject
     public BooleanSetting darkTheme = new BooleanSetting(true, SVGPathIcons.SUN, "darkTheme",
-            TR.ctO("Thème sombre"), TR.ctO("Change les couleurs de l'interface vers un thème plus sombre."));
+            "settings.darkTheme.title", "settings.darkTheme.tooltip");
 
     @SettingObject
     public BooleanSetting autoSave = new BooleanSetting(true, SVGPathIcons.SAVE, "autoSave",
-            TR.ctO("Sauvegarder automatiquement"), TR.ctO("Sauvegarde l'édition du document automatiquement lors de la fermeture du document ou de l'application."));
+            "settings.autoSave.title", "settings.autoSave.tooltip");
     @SettingObject
     public IntSetting regularSave = new IntSetting(-1, SVGPathIcons.CLOCK, "regularSave",
-            TR.ctO("Sauvegarder régulièrement"), TR.ctO("Sauvegarde l'édition du document automatiquement toutes les x minutes."));
+            "settings.regularSave.title", "settings.regularSave.tooltip");
 
     @SettingObject
     public BooleanSetting textAutoRemove = new BooleanSetting(true, SVGPathIcons.STAR, "textAutoRemove",
-            TR.ctO("Supprimer l'élément des éléments précédents\nlorsqu'il est ajouté aux favoris"), TR.ctO("Dans la liste des derniers éléments textuels utilisés, retire automatiquement l'élément lorsqu'il est ajouté aux favoris."));
+            "settings.textAutoRemove.title", "settings.textAutoRemove.tooltip");
     @SettingObject
     public BooleanSetting textOnlyStart = new BooleanSetting(true, SVGPathIcons.LIST, "textOnlyStart",
-            TR.ctO("N'afficher que le début des éléments textuels"), TR.ctO("Dans les liste des éléments textuels, n'affiche que les deux premières lignes de l'élément."));
+            "settings.textOnlyStart.title", "settings.textOnlyStart.tooltip");
     @SettingObject
     public BooleanSetting textSmall = new BooleanSetting(false, SVGPathIcons.TEXT_HEIGHT, "textSmall",
-            TR.ctO("Réduire la taille des éléments dans les listes"), TR.ctO("Dans les liste des éléments textuels, affiche les éléments en plus petit."));
+            "settings.textSmall.title", "settings.textSmall.tooltip");
 
     @SettingObject
     public StringSetting mainScreenSize = new StringSetting("1200;675;-1;-1;false", null, "mainScreenSize",
@@ -58,7 +58,7 @@ public class Settings {
 
     @SettingObject
     public BooleanSetting allowAutoTips = new BooleanSetting(true, SVGPathIcons.TOOLTIP, "allowAutoTips",
-            TR.ctO("Conseils automatiques"), TR.ctO("Fait apparaître des messages d'aide/conseil de temps en temps ou selon les actions réalisées. Chaque conseil n'apparaitra qu'une seule fois. Désactiver puis réactiver l'option réinitialise la liste des conseils déjà lus."));
+            "settings.allowAutoTips.title", "settings.allowAutoTips.tooltip");
 
     public Settings(){
         loadSettings();

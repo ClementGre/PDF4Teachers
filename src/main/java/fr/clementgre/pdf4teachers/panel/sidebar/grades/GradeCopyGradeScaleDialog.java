@@ -102,10 +102,10 @@ public class GradeCopyGradeScaleDialog {
                 dialog.setHeaderText(TR.trO("L'édition du fichier") + " " + file.getName() + " " + TR.trO("contient déjà un barème"));
                 dialog.setContentText(TR.trO("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.trO("Vous serez avertis si une note va être écrasée."));
 
-                ButtonType ignore = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.trO("Toujours continuer"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.trO("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.trO("Tout annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.continueAlways"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
                 if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else dialog.getButtonTypes().setAll(ignore, stopAll);
@@ -145,10 +145,10 @@ public class GradeCopyGradeScaleDialog {
                 Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Écraser les notes non correspondantes"));
                 dialog.setHeaderText(TR.trO("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.trO("Dans le document") + " : " + file.getName());
 
-                ButtonType ignore = new ButtonType(TR.trO("Écraser"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.trO("Toujours écraser"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.trO("Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.trO("Tout arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);
+                ButtonType stop = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
 
                 if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else dialog.getButtonTypes().setAll(ignore, stop);

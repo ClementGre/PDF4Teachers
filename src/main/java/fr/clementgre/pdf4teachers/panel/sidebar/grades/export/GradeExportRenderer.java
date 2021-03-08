@@ -110,8 +110,8 @@ public class GradeExportRenderer {
                     expContent.add(textArea, 0, 1);
                     alert.getDialogPane().setExpandableContent(expContent);
 
-                    ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+                    ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.NEXT_FORWARD);
                     alert.getButtonTypes().setAll(stopAll, continueRender);
 
                     Optional<ButtonType> option = alert.showAndWait();
@@ -296,8 +296,8 @@ public class GradeExportRenderer {
                     expContent.add(textArea, 0, 1);
                     alert.getDialogPane().setExpandableContent(expContent);
 
-                    ButtonType stopAll = new ButtonType(TR.trO("Arreter tout"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.trO("Continuer"), ButtonBar.ButtonData.NEXT_FORWARD);
+                    ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.NEXT_FORWARD);
                     alert.getButtonTypes().setAll(stopAll, continueRender);
 
                     Optional<ButtonType> option = alert.showAndWait();
@@ -355,15 +355,15 @@ public class GradeExportRenderer {
 
     public int fileAlreadyExist(File file){
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Fichier déjà existant"));
-        alert.setHeaderText(TR.trO("Le fichier de destination") + " \"" + file.getAbsolutePath() + "\" " + TR.trO("existe déjà"));
-        alert.setContentText(TR.trO("Voulez-vous l'écraser ?"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("dialog.file.alreadyExist.title"));
+        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.info", file.getName()));
+        alert.setContentText(TR.tr("dialog.file.alreadyExist.details", file.getParentFile().getAbsolutePath()));
 
-        ButtonType yesButton = new ButtonType(TR.trO("Écraser"), ButtonBar.ButtonData.YES);
-        ButtonType yesAlwaysButton = new ButtonType(TR.trO("Toujours écraser"), ButtonBar.ButtonData.YES);
-        ButtonType renameButton = new ButtonType(TR.trO("Renommer"), ButtonBar.ButtonData.OTHER);
-        ButtonType cancelButton = new ButtonType(TR.trO("Sauter"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType cancelAllButton = new ButtonType(TR.trO("Tout Arrêter"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType yesButton = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.YES);
+        ButtonType yesAlwaysButton = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.YES);
+        ButtonType renameButton = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.OTHER);
+        ButtonType cancelButton = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType cancelAllButton = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
 
         Optional<ButtonType> option = alert.showAndWait();
