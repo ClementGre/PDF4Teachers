@@ -1,9 +1,9 @@
 [![Java CI with Gradle](https://github.com/clementgre/PDF4Teachers/workflows/build/badge.svg)](https://github.com/clementgre/PDF4Teachers/actions?query=workflow%3Abuild)
 [![TotalDownloads](https://img.shields.io/github/downloads/clementgre/PDF4Teachers/total)](https://github.com/clementgre/PDF4Teachers/releases/latest)
 [![LatestDownloads](https://img.shields.io/github/downloads/clementgre/PDF4Teachers/latest/total)](https://github.com/clementgre/PDF4Teachers/releases/latest)
-![Commit activity](https://img.shields.io/github/commit-activity/m/clementgre/pdf4teachers)
-![Commit since latest](https://img.shields.io/github/commits-since/clementgre/pdf4teachers/latest)
-![Contributors](https://img.shields.io/github/contributors/clementgre/pdf4teachers)
+[![Commit activity](https://img.shields.io/github/commit-activity/m/clementgre/pdf4teachers)](https://github.com/ClementGre/PDF4Teachers/commits/master)
+[![Commit since latest](https://img.shields.io/github/commits-since/clementgre/pdf4teachers/latest)](https://github.com/ClementGre/PDF4Teachers/commits/master)
+[![Contributors](https://img.shields.io/github/contributors/clementgre/pdf4teachers)](https://github.com/ClementGre/PDF4Teachers/graphs/contributors)
 <br/>
 [![Star](https://img.shields.io/github/stars/clementgre/PDF4Teachers?label=Star%20PDF4Teachers&style=social)](https://github.com/clementgre/PDF4Teachers)
 [![GitHubFolowers](https://img.shields.io/github/followers/clementgre?label=Follow%20Clément%20Grennerat&style=social)](https://github.com/clementgre)
