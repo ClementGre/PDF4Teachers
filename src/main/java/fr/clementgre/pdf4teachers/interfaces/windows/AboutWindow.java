@@ -100,7 +100,7 @@ public class AboutWindow extends Stage {
 
         liscenselabel.setText(TR.tr("aboutWindow.info.license", "Apache 2"));
 
-        statsLabel.setText(TR.tr("aboutWindow.statistics", MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime/61d), (String) MainWindow.userData.startsCount));
+        statsLabel.setText(TR.tr("aboutWindow.statistics", MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime/61d), String.valueOf(MainWindow.userData.startsCount)));
         statsLabel.setWrapText(true);
         statsLabel.setTextAlignment(TextAlignment.CENTER);
     }
