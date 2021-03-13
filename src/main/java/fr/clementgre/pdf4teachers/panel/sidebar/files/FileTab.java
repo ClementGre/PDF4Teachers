@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -218,7 +217,7 @@ public class FileTab extends SideTab {
 
 	public File getCurrentDir(){
 		if(MainWindow.mainScreen.hasDocument(false)){
-			if(!MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(LanguageWindow.getDocFile().getAbsolutePath())){
+			if(!MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(TR.getDocFile().getAbsolutePath())){
 				return MainWindow.mainScreen.document.getFile().getParentFile();
 			}
 		}

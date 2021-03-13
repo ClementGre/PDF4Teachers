@@ -466,7 +466,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			about.setGraphic(name);
 		}
 
-		help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(LanguageWindow.getDocFile()));
+		help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(TR.getDocFile()));
 		help2GitHubIssue.setOnAction((ActionEvent actionEvent) -> {
 			try{
 				Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDF4Teachers/issues/new"));

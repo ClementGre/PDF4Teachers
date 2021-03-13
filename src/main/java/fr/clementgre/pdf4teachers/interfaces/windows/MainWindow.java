@@ -17,7 +17,6 @@ import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -183,7 +182,7 @@ public class MainWindow extends Stage{
         filesTab.openFiles(toOpenFiles);
 
         if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
-            mainScreen.openFile(LanguageWindow.getDocFile());
+            mainScreen.openFile(TR.getDocFile());
         }else if(toOpenFiles.size() >= 1){
             if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
                 mainScreen.openFile(toOpenFiles.get(0));

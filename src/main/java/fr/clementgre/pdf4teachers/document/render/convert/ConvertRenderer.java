@@ -182,6 +182,7 @@ public class ConvertRenderer {
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             int i = 0;
+            if(mainDir.listFiles() == null) throw new RuntimeException("The input directory contains no files.");
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
                 if(isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected())){
                     i++;

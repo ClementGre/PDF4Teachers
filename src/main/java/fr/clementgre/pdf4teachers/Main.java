@@ -33,7 +33,7 @@ public class Main extends Application {
 	public static final String VERSION = "sn1-1.3.0";
 	public static final boolean DEBUG = true;
 	public static final boolean COPY_CONSOLE = false;
-	public static final boolean TRANSLATIONS_IN_CODE = true;
+	public static final boolean TRANSLATIONS_IN_CODE = false;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -77,11 +77,10 @@ public class Main extends Application {
 		syncUserData = new SyncUserData();
 
 		// setups
-		LanguageWindow.setup();
+		TR.setup();
 		StyleManager.setup();
 		AutoTipsManager.setup();
 		ImageUtils.setupListeners();
-		TR.setup();
 
 
 		if(languageAsk()){
@@ -94,17 +93,14 @@ public class Main extends Application {
 
 	public boolean languageAsk(){
 		if(settings.language.getValue().isEmpty()){
-			String language = LanguageWindow.getLanguageFromComputerLanguage();
+			String language = TR.getLanguageFromComputerLanguage();
 			if(language != null){
 				Main.settings.language.setValue(language);
-			}else{
-				Main.settings.language.setValue("en-us");
 				TR.updateLocale();
-				//TR.updateTranslation();
+			}else{
 				new LanguageWindow(value -> {
 					if(!value.isEmpty()) Main.settings.language.setValue(value);
 					TR.updateLocale();
-					//TR.updateTranslation();
 					if(licenceAsk()){
 						startMainWindow();
 					}
@@ -112,8 +108,6 @@ public class Main extends Application {
 				return false;
 			}
 		}
-		TR.updateLocale();
-		//TR.updateTranslation();
 		return true;
 	}
 	public boolean licenceAsk(){

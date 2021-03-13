@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
@@ -274,7 +273,7 @@ public class UserData {
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
                 MainWindow.gradeTab.sumByDecrement.setSelected(sumByDecrement);
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
-                LanguageWindow.loadLanguagesConfig(languages);
+                TR.loadLanguagesConfig(languages);
 
                 LanguagesUpdater.backgroundCheck();
 
@@ -288,7 +287,7 @@ public class UserData {
 
         // SINGLES
         customColors = SyncColorPicker.getCustomColorsList();
-        languages = LanguageWindow.getLanguagesConfig();
+        languages = TR.getLanguagesConfig();
 
         // FILES
         lastOpenedFiles = new ArrayList<>();

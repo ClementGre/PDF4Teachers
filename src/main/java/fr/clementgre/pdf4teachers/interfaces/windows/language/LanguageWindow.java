@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -19,15 +18,11 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.*;
-
-import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class LanguageWindow extends Stage{
 
     ArrayList<Language> languagesComponents = new ArrayList<>();
-    private static HashMap<String, Object> languages = getLanguagesDefaultConfig();
 
     CallBackArg<String> callBack;
     public LanguageWindow(CallBackArg<String> callBack){
@@ -69,9 +64,9 @@ public class LanguageWindow extends Stage{
         private ImageView image = null;
 
         public Language(File txtFile) {
-            shortName = txtFile.getName().replace(".properties", "").replace("strings_", "");
-            name = getLanguageName(shortName);
-            version = getLanguageVersion(shortName);
+            shortName = txtFile.getName().replace(".properties", "");
+            name = TR.getLanguageName(shortName);
+            version = TR.getLanguageVersion(shortName);
 
             if(!shortName.equals("fr_fr")){
                 int[] stats = TROld.getTranslationFileStats(txtFile);
@@ -109,21 +104,6 @@ public class LanguageWindow extends Stage{
         public ImageView getImage() {
             return image;
         }
-    }
-
-    public static String getLanguageFromComputerLanguage(){
-        String language = System.getProperty("user.language").toLowerCase();
-        String country = System.getProperty("user.country").toLowerCase();
-
-        if(language.equals("fr")){
-            return "fr_fr";
-        }else if(language.equals("en")){
-            return "en_us";
-        }else if(language.equals("it")){
-            return "it_it";
-        }
-
-        return null;
     }
 
     public void setupLanguages(){
@@ -207,109 +187,6 @@ public class LanguageWindow extends Stage{
         });
         newTrans.setOnAction((ActionEvent event) -> Main.hostServices.showDocument("https://pdf4teachers.org/Contribute/"));
 
-    }
-
-    public static String getLanguageName(String shortName){
-        HashMap<String, Object> languages = getLanguagesConfig();
-        for(Map.Entry<String, Object> language : languages.entrySet()){
-            if(shortName.equals(language.getKey())){
-                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
-                return (String) data.get("name");
-            }
-        }
-        return shortName;
-    }
-    public static int getLanguageVersion(String shortName){
-        HashMap<String, Object> languages = getLanguagesConfig();
-        for(Map.Entry<String, Object> language : languages.entrySet()){
-            if(shortName.equals(language.getKey())){
-                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
-                return (int) data.get("version");
-            }
-        }
-        return 0;
-    }
-    public static void setup(){
-        if(Main.settings.getSettingsVersion().startsWith("1.2") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
-            for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
-        }
-        LanguageWindow.copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
-
-        if(Main.settings.language.getValue().equals("Français France (Defaut)")){
-            Main.settings.language.setValue("fr_fr");
-        }else if(Main.settings.language.getValue().equals("English US")){
-            Main.settings.language.setValue("en_us");
-        }
-
-        //TR.setup();
-    }
-    public static void copyFiles(boolean force){
-        try{
-            File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
-            translationsDir.mkdirs();
-
-            for(String name : LanguageWindow.getLanguagesDefaultConfig().keySet()){
-                copyFile("strings_" + name + ".properties", force);
-                copyFile(name + ".pdf", force);
-                copyFile(name + ".png", force);
-                copyFile(name + ".odt", force);
-            }
-        }catch(IOException e){ e.printStackTrace(); }
-    }
-
-    private static void copyFile(String fileName, boolean force) throws IOException{
-        if(LanguageWindow.class.getResource("/translations/" + fileName) == null) return;
-
-        File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
-        if(!dest.exists() || force){
-            InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
-            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
-        }
-    }
-
-    public static File getDocFile(){
-
-        File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.language.getValue() + ".pdf");
-        if(!doc.exists()){
-            return new File(Main.dataFolder + "translations" + File.separator + "en_us.pdf");
-        }
-        return doc;
-
-    }
-    public static HashMap<String, Object> getLanguagesConfig(){
-        return languages;
-    }
-    public static void loadLanguagesConfig(HashMap<String, Object> data){
-
-        // return if the version has changed -> keep the default values
-        if(!Main.settings.getSettingsVersion().equals(Main.VERSION)){
-            return;
-        }
-
-        // add default languages if they was deleted
-        for(Map.Entry<String, Object> language : LanguageWindow.getLanguagesDefaultConfig().entrySet()){
-            if(!data.containsKey(language.getKey())) data.put(language.getKey(), language.getValue());
-        }
-
-        languages = data;
-    }
-    public static HashMap<String, Object> getLanguagesDefaultConfig(){
-        HashMap<String, Object> data = new HashMap<>();
-
-        Config.set(data, "fr_fr.version", 0);
-        Config.set(data, "fr_fr.name", "Français France");
-
-        Config.set(data, "en_us.version", 0);
-        Config.set(data, "en_us.name", "English US");
-
-        Config.set(data, "it_it.version", 0);
-        Config.set(data, "it_it.name", "Italiano Italia");
-
-        return data;
-    }
-    public static void addLanguageToConfig(String name, String displayName, int version){
-        Config.set(languages, name + ".version", version);
-        Config.set(languages, name + ".name", displayName);
     }
 
 }

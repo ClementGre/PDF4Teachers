@@ -1,15 +1,17 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
-import javafx.beans.property.StringProperty;
+import fr.clementgre.pdf4teachers.datasaving.Config;
 
 import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class TR {
 
@@ -18,22 +20,25 @@ public class TR {
 
     public static Locale ENLocale;
     public static ResourceBundle ENBundle;
-
-    /*private static HashMap<StringProperty, TranslationParams> translationsBindings = new HashMap<>();
-
-    public static class TranslationParams{
-        public TranslationParams(String key, String[] args) {
-            this.key = key;
-            this.args = args;
-        }
-        public TranslationParams(String key){
-            this.key = key;
-        }
-        public String key;
-        public String[] args;
-    }*/
+    private static HashMap<String, Object> languages = getLanguagesDefaultConfig();
 
     public static void setup(){
+
+        // Translate translations from 1.2.0- naming system
+        if(Main.settings.language.getValue().equals("Français France (Defaut)")){
+            Main.settings.language.setValue("fr_fr");
+        }else if(Main.settings.language.getValue().equals("English US")){
+            Main.settings.language.setValue("en_us");
+        }
+
+        // Delete Old files
+        if(Main.settings.getSettingsVersion().startsWith("1.2") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
+            for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
+        }
+        // Copy files if version has changed
+        copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
+
+        // Load locales
 
         ENLocale = new Locale("en", "us");
         ENBundle = getBundleByLocale(ENLocale);
@@ -41,29 +46,59 @@ public class TR {
         locale = new Locale(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
         bundle = getBundleByLocale(locale);
 
-        Main.settings.language.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateLocale();
-        });
-    }
-
-    public static File getLocaleFile(Locale locale){
-        return new File(Main.dataFolder + "translations" + File.separator + "strings_" + getLocaleString(locale) + ".properties");
     }
 
     public static ResourceBundle getBundleByLocale(Locale locale){
-        if(Main.TRANSLATIONS_IN_CODE){
-            return ResourceBundle.getBundle("translations/strings", locale);
+        if(Main.TRANSLATIONS_IN_CODE){ // Load the locale from ressource
+            return getBundleByLocaleInCode(locale);
         }else{
-            try{
-                File file = getLocaleFile(locale);
-                URL[] urls = new URL[]{file.getParentFile().toURI().toURL()};
-                ClassLoader loader = new URLClassLoader(urls);
-                return ResourceBundle.getBundle("strings", locale, loader);
+            try{ // Load the locale from user files
+                if(Main.DEBUG) System.out.println("Loading locale " + locale.toString() + " from user files...");
+                FileInputStream fis = new FileInputStream(getLocaleFile(locale));
+                return new PropertyResourceBundle(fis);
             }catch(Exception e) {
+                System.err.println("Unable to load translation in user files, trying to load from ressource...");
                 e.printStackTrace();
-                return ResourceBundle.getBundle("translations/strings", ENLocale);
+                return getBundleByLocaleInCode(locale);
             }
         }
+    }
+    public static ResourceBundle getBundleByLocaleInCode(Locale locale){
+        try{ // Load the locale from ressource
+            if(Main.DEBUG) System.out.println("Loading locale " + locale.toString() + " from code...");
+            return new PropertyResourceBundle(getCodeLocaleFile(locale));
+        }catch(IOException e2){
+            System.err.println("Unable to load translation in code");
+            e2.printStackTrace();
+
+            if(locale != ENLocale){ // Load the EN locale
+                System.err.println("Trying to load the English locale from user files...");
+                return getBundleByLocale(ENLocale);
+            }else{
+                System.err.println("Return empty ressourceBundle...");
+                return new ResourceBundle() {
+                    @Override
+                    protected Object handleGetObject(String key) {
+                        return null;
+                    }
+                    @Override
+                    public Enumeration<String> getKeys() {
+                        return Collections.emptyEnumeration();
+                    }
+                };
+            }
+        }
+    }
+
+    public static String getLanguageFromComputerLanguage(){
+        String language = System.getProperty("user.language").toLowerCase();
+        //String country = System.getProperty("user.country").toLowerCase();
+        switch (language){
+            case "fr" -> { return "fr_fr"; }
+            case "en" -> { return "en_us"; }
+            case "it" -> { return "it_it"; }
+        }
+        return null;
     }
 
     public static String getSettingsLocaleLanguage(){
@@ -74,28 +109,22 @@ public class TR {
         if(Main.settings.language.getValue().split("[-_]").length < 2) return "us";
         return Main.settings.language.getValue().split("[-_]")[1].toLowerCase();
     }
+    public static File getLocaleFile(Locale locale){
+        return new File(Main.dataFolder + "translations" + File.separator + getLocaleString(locale) + ".properties");
+    }
+    public static InputStream getCodeLocaleFile(Locale locale){
+        return TR.class.getResourceAsStream("/translations/" +  getLocaleString(locale) + ".properties");
+    }
     public static String getLocaleString(Locale locale){
         return locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toLowerCase();
     }
 
     public static void updateLocale(){
-        //ResourceBundle oldBundle = bundle;
         locale = new Locale(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
         bundle = getBundleByLocale(locale);
-
-        /*for(Map.Entry<StringProperty, TranslationParams> translationBinding : translationsBindings.entrySet()){
-            if(translationBinding.getValue().args == null){
-                if(translationBinding.getKey().get().equals(tr(translationBinding.getValue().key, oldBundle, true)))
-                    translationBinding.getKey().set(tr(translationBinding.getValue().key));
-            }else{
-                if(translationBinding.getKey().get().equals(tr(translationBinding.getValue().key, oldBundle, true, translationBinding.getValue().args)))
-                    translationBinding.getKey().set(tr(translationBinding.getValue().key, translationBinding.getValue().args));
-            }
-        }*/
-
     }
 
-    //
+    // translate with arguments
     public static String tr(String key, ResourceBundle bundle, boolean trEn){
         if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
             if(trEn) return tr(key, ENBundle, false);
@@ -129,28 +158,99 @@ public class TR {
     }
 
     public static String trO(String text){
-        return "_" + text + "_OLD";
+        return "[" + text + "]";
     }
 
-    // Update value and setup binding for locale changes
-    /*public static void trB(StringProperty binding, String key){
-        translationsBindings.put(binding, new TranslationParams(key));
-        binding.set(tr(key));
-    }
-    public static void trB(StringProperty binding, String key, String... args){
-        translationsBindings.put(binding, new TranslationParams(key, args));
-        binding.set(tr(key, args));
+
+    //////////////////////////////////////////////////////////
+    ////////////// Language config system ////////////////////
+    //////////////////////////////////////////////////////////
+
+    public static String getLanguageName(String shortName){
+        HashMap<String, Object> languages = getLanguagesConfig();
+        for(Map.Entry<String, Object> language : languages.entrySet()){
+            if(shortName.equals(language.getKey())){
+                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                return (String) data.get("name");
+            }
+        }
+        return shortName;
     }
 
-    // Get value and setup binding for locale changes
-    public static String trG(StringProperty binding, String key, String... args){
-        translationsBindings.put(binding, new TranslationParams(key, args));
-        return tr(key, args);
+    public static int getLanguageVersion(String shortName){
+        HashMap<String, Object> languages = getLanguagesConfig();
+        for(Map.Entry<String, Object> language : languages.entrySet()){
+            if(shortName.equals(language.getKey())){
+                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                return (int) data.get("version");
+            }
+        }
+        return 0;
     }
-    public static String trG(StringProperty binding, String key){
-        translationsBindings.put(binding, new TranslationParams(key));
-        return tr(key);
-    }*/
 
+    public static void copyFiles(boolean force){
+        try{
+            File translationsDir = new File(Main.dataFolder + "translations" + File.separator);
+            translationsDir.mkdirs();
 
+            for(String name : getLanguagesDefaultConfig().keySet()){
+                copyFile(name + ".properties", force);
+                copyFile(name + ".pdf", force);
+                copyFile(name + ".png", force);
+                copyFile(name + ".odt", force);
+            }
+        }catch(IOException e){ e.printStackTrace(); }
+    }
+    private static void copyFile(String fileName, boolean force) throws IOException{
+        if(LanguageWindow.class.getResource("/translations/" + fileName) == null) return;
+
+        File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
+        if(!dest.exists() || force){
+            InputStream res = LanguageWindow.class.getResourceAsStream("/translations/" + fileName);
+            Files.copy(res, dest.getAbsoluteFile().toPath(), REPLACE_EXISTING);
+        }
+    }
+
+    public static File getDocFile(){
+        File doc = new File(Main.dataFolder + "translations" + File.separator + Main.settings.language.getValue() + ".pdf");
+        if(!doc.exists()){
+            return new File(Main.dataFolder + "translations" + File.separator + "en_us.pdf");
+        }
+        return doc;
+    }
+
+    public static HashMap<String, Object> getLanguagesConfig(){
+        return languages;
+    }
+
+    public static void loadLanguagesConfig(HashMap<String, Object> data){
+        // if the version has changed, keep the default values
+        if(!Main.settings.getSettingsVersion().equals(Main.VERSION)) return;
+
+        // Add default languages if they were deleted
+        for(Map.Entry<String, Object> language : getLanguagesDefaultConfig().entrySet()){
+            if(!data.containsKey(language.getKey())) data.put(language.getKey(), language.getValue());
+        }
+        languages = data;
+    }
+
+    public static HashMap<String, Object> getLanguagesDefaultConfig(){
+        HashMap<String, Object> data = new HashMap<>();
+
+        Config.set(data, "fr_fr.version", 0);
+        Config.set(data, "fr_fr.name", "Français France");
+
+        Config.set(data, "en_us.version", 0);
+        Config.set(data, "en_us.name", "English US");
+
+        Config.set(data, "it_it.version", 0);
+        Config.set(data, "it_it.name", "Italiano Italia");
+
+        return data;
+    }
+
+    public static void addLanguageToConfig(String name, String displayName, int version){
+        Config.set(languages, name + ".version", version);
+        Config.set(languages, name + ".name", displayName);
+    }
 }

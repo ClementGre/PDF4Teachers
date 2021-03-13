@@ -270,8 +270,8 @@ public class LanguagesUpdater {
 
         if(!Main.VERSION.equals(language.getRelease())) return true;
 
-        if(LanguageWindow.getLanguagesConfig().containsKey(language.getName())){
-            Object existing = LanguageWindow.getLanguagesConfig().get(language.getName());
+        if(TR.getLanguagesConfig().containsKey(language.getName())){
+            Object existing = TR.getLanguagesConfig().get(language.getName());
             if(existing instanceof HashMap){
                 HashMap<String, Object> existingLanguage = (HashMap<String, Object>) existing;
                 if(((int) existingLanguage.get("version")) >= language.getVersion()){
@@ -309,7 +309,7 @@ public class LanguagesUpdater {
                     }
                 }
                 Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                LanguageWindow.addLanguageToConfig(language.getName(), language.getDisplayName(), language.getVersion());
+                TR.addLanguageToConfig(language.getName(), language.getDisplayName(), language.getVersion());
 
                 if(closed != null) {
                     File finalClosed = closed;
