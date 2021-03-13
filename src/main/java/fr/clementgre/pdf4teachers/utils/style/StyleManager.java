@@ -30,22 +30,33 @@ public class StyleManager {
     }
 
     public static void putStyle(Scene scene, Style style){
-        if(style == Style.DEFAULT){
-            new JMetro(scene, DEFAULT_STYLE);
-        }else if(style == Style.ACCENT){
-            new JMetro(scene, ACCENT_STYLE);
-        }
-        scene.getStylesheets().add(StyleManager.class.getResource("/css/base.css").toExternalForm());
+        jfxtras.styles.jmetro.Style toApplyStyle;
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
+
+        new JMetro(scene, toApplyStyle);
+
+        putCustomStyle(scene, "base.css");
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
+        else putCustomStyle(scene, "base-light.css");
     }
 
     public static void putStyle(Parent parent, Style style){
-        if(style == Style.DEFAULT){
-            new JMetro(parent, DEFAULT_STYLE);
-        }else if(style == Style.ACCENT){
-            new JMetro(parent, ACCENT_STYLE);
-        }
-        parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        parent.getStylesheets().add(StyleManager.class.getResource("/css/base.css").toExternalForm());
+        putStyle(parent, style, true);
+    }
+    public static void putStyle(Parent parent, Style style, boolean jMetro){
+        jfxtras.styles.jmetro.Style toApplyStyle;
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
+
+        if(jMetro) new JMetro(parent, toApplyStyle);
+        if(jMetro) parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+
+        putCustomStyle(parent, "base.css");
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
+        else putCustomStyle(parent, "base-light.css");
     }
 
     public static void putCustomStyle(Scene scene, String name){

@@ -3,71 +3,94 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.TextWrapper;
+import fr.clementgre.pdf4teachers.utils.style.Style;
+import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.stage.Window;
 import javafx.util.Duration;
+import org.controlsfx.control.PopOver;
 
 import java.awt.*;
 
-public class AutoTipTooltip extends Tooltip{
+public class AutoTipTooltip extends PopOver {
 
     private String name;
     private String actionKey;
     private String prerequisiteKey;
     private String objectWhereDisplay;
 
-    private Button okButton = new Button(TR.tr("actions.ok"));
+    private Label text = new Label();
+
+    private boolean closedByAutoHide = false;
 
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay) {
-        super(Main.isOSX()
+        String contentText = Main.isOSX()
                 ? TR.tr("autoTips." + name).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
-                : TR.tr("autoTips." + name));
+                : TR.tr("autoTips." + name);
+        text.setText(contentText);
+
         this.name = name;
         this.actionKey = actionKey;
         this.prerequisiteKey = prerequisiteKey;
         this.objectWhereDisplay = objectWhereDisplay;
 
-        setAutoHide(false);
-        setOpacity(0.95);
-        setHideDelay(new Duration(1000*60));
+        setAutoHide(true);
+        setDetachable(false);
+        setHeaderAlwaysVisible(true);
+        setArrowIndent(0);
+        setCornerRadius(10);
+        setTitle(TR.tr("autoTips.title"));
 
-        setMaxWidth(300);
-        setWrapText(true);
+        text.setMaxWidth(300);
+        text.setWrapText(true);
 
-        Pane graphic = new Pane();
-        graphic.getChildren().add(okButton);
-        graphic.setPadding(new Insets(0, 10, 0, 0));
-        setGraphic(graphic);
-
+        HBox graphic = new HBox();
+        graphic.getChildren().add(text);
+        setContentNode(graphic);
+        graphic.getStyleClass().add("tooltip-autotip-pane");
         getStyleClass().add("tooltip-autotip");
 
-        okButton.setOnMouseClicked((e) -> {
-            hide();
-            AutoTipsManager.removeTip(name);
+        setOnAutoHide((e) -> {
+            closedByAutoHide = true;
+        });
+        setOnHidden((e) -> {
+            if(!closedByAutoHide) AutoTipsManager.removeTip(name);
         });
 
     }
 
 
-    @Override
-    public void show(Window owner){
+    public void showAuto(Window owner){
         if(owner == null) return;
         if(!owner.isFocused()) return;
+        closedByAutoHide = false;
+        StyleManager.putStyle(getRoot(), Style.DEFAULT);
 
         if(objectWhereDisplay.isEmpty()){
 
             int x = (int) MouseInfo.getPointerInfo().getLocation().getX();
             int y = (int) MouseInfo.getPointerInfo().getLocation().getY();
-            super.show(owner, x, y);
+            show(owner.getScene().getFocusOwner(), x, y);
 
-        }else switch(objectWhereDisplay){
-            case "mainscreen" -> showOnPane(MainWindow.mainScreen);
-            case "leftbar" -> showOnPane(MainWindow.leftBar);
+        }else if(objectWhereDisplay.equals("auto")){
+            show(owner.getScene().getFocusOwner());
+        }else{
+            setArrowSize(0);
+            switch(objectWhereDisplay){
+                case "mainscreen" -> showOnPane(MainWindow.mainScreen);
+                case "leftbar" -> showOnPane(MainWindow.leftBar);
+            }
         }
     }
 

@@ -1,0 +1,15 @@
+/*******************************************************************************
+ *                                                                             *
+ * Auto Tip Tooltip                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.tooltip-autotip-pane > Label{
+    -fx-text-fill: #c7c7c7 !important;
+}
+.tooltip-autotip .popover > .content {
+    -fx-background-color: #252525 !important;
+}
+.tooltip-autotip .popover > .border {
+	-fx-fill: #252525 !important;
+}

@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.application.Platform;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -45,34 +44,34 @@ public class AutoTipsManager {
     @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
     private static final String editSystemAndExportation = "autoTips.editSystemAndExportation";
 
-    @ToolTipVar(actionKey = "newtextelement", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "newtextelement", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String newTextElement = "autoTips.newTextElement";
 
-    @ToolTipVar(actionKey = "gradescalelock", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "gradescalelock", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String gradeScaleLock = "autoTips.gradeScaleLock";
 
     @ToolTipVar(actionKey = "gradeselect", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeContextMenu = "autoTips.gradeContextMenu";
 
-    @ToolTipVar(actionKey = "gradecreate", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "gradecreate", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String createGradeSameTiers = "autoTips.createGradeSameTiers";
 
-    @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String gradeBonus = "autoTips.gradeBonus";
 
-    @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "graderename", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String gradeKeyboardShortcuts = "autoTips.gradeKeyboardShortcuts";
 
-    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "hastextsimilarelements", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "hastextsimilarelements", objectWhereDisplay = "auto")
     private static final String textAutoCompletion = "autoTips.textAutoCompletion";
 
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String textAutoWrap = "autoTips.textAutoWrap";
 
-    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String textLatex = "autoTips.textLatex";
 
-    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String textUrl = "autoTips.textUrl";
 
     @ToolTipVar(actionKey = "textselect", prerequisiteKey = "", objectWhereDisplay = "")
@@ -186,13 +185,14 @@ public class AutoTipsManager {
     public static boolean showByObject(AutoTipTooltip uiTip){
 
         if(isPrerequisiteValid(uiTip.getPrerequisiteKey())){
-            uiTip.show(Main.window);
+            uiTip.showAuto(Main.window);
             return true;
         }
         return false;
     }
 
     public static void removeTip(String name){
+        System.out.println("removing tip " + name);
         uiTips.remove(name);
     }
     public static void removeAllTips(){

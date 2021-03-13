@@ -33,7 +33,7 @@ public class Main extends Application {
 	public static final String VERSION = "sn1-1.3.0";
 	public static final boolean DEBUG = true;
 	public static final boolean COPY_CONSOLE = false;
-	public static final boolean TRANSLATIONS_IN_CODE = false;
+	public static final boolean TRANSLATIONS_IN_CODE = true;
 
 	public static boolean firstLaunch;
 	public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();

@@ -13,17 +13,20 @@ open module fr.clementgre.pdf4teachers {
 
     // OTHER DEPENDENCIES
 
+    // pdf
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
 
+    // jfx addons
     requires org.jfxtras.styles.jmetro;
+    requires org.controlsfx.controls;
 
+    // data parsing/encoding
     requires org.yaml.snakeyaml;
-
     requires com.fasterxml.jackson.core;
 
-
+    // latex
     requires jlatexmath;
 
     // JAVAFX
