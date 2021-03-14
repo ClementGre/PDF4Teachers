@@ -13,7 +13,7 @@
 
 
     <ImageView fitWidth="180" preserveRatio="true">
-        <Image url="/logo.png"/>
+        <Image url="@../logo.png"/>
         <VBox.margin><Insets bottom="10.0"/></VBox.margin>
     </ImageView>
     <Label text="PDF4Teachers">
@@ -24,8 +24,7 @@
     </Label>
 
     <Button fx:id="newRelease" textFill="black">
-
-
+        <VBox.margin><Insets bottom="10" top="10"/></VBox.margin>
     </Button>
 
     <HBox>

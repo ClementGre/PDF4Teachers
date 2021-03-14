@@ -51,8 +51,10 @@ public class StyleManager {
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
 
-        if(jMetro) new JMetro(parent, toApplyStyle);
-        if(jMetro) parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        if(jMetro){
+            new JMetro(parent, toApplyStyle);
+            parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        }
 
         putCustomStyle(parent, "base.css");
         if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
