@@ -401,7 +401,7 @@ public class PDFPagesEditor{
                         }
                     }catch(Exception e){
                         e.printStackTrace();
-                        boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), recursive));
+                        boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(null, e.getMessage(), recursive));
                         if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                         if(result) return TwoStepListAction.ProcessResult.STOP;
                         else return TwoStepListAction.ProcessResult.SKIPPED;

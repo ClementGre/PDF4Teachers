@@ -75,7 +75,7 @@ public class TwoStepListAction<T, D> {
                 }
             }catch(Exception e){
                 e.printStackTrace();
-                boolean result = DialogBuilder.showErrorAlert(TR.trO("Une erreur est survenue"), e.getMessage(), data.size() > 1);
+                boolean result = DialogBuilder.showErrorAlert(null, e.getMessage(), data.size() > 1);
                 if(data.size() <= 1) return false;
                 if(result) return false;
             }

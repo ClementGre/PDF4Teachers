@@ -36,7 +36,7 @@ public class TR {
             for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
         }
         // Copy files if version has changed
-        copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION));
+        copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION) || Main.DEBUG);
 
         // Load locales
 

@@ -266,8 +266,8 @@ public class GradeExportWindow extends Stage {
 
             HBox btnBox = new HBox();
 
-            Button cancel = new Button(TR.trO("Annuler"));
-            Button export = new Button(TR.trO("Exporter"));
+            Button cancel = new Button(TR.tr("actions.cancel"));
+            Button export = new Button(TR.tr("actions.export"));
             export.requestFocus();
 
             btnBox.getChildren().addAll(cancel, export);

@@ -128,7 +128,7 @@ public class FileListItem extends ListCell<File>{
             item3.setToolTip(TR.trO("Réinitialise l'édition du document, retire tous les éléments ajoutés auparavant."));
             NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.trO("Supprimer le fichier"), false);
             item4.setToolTip(TR.trO("Supprime le fichier PDF sur l'ordinateur."));
-            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.trO("Exporter"), false);
+            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("actions.export"), false);
             item5.setToolTip(TR.trO("Crée un nouveau fichier PDF à partir de celui-ci, avec tous les éléments ajoutés."));
             NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.trO("Vider la liste"), false);
             item6.setToolTip(TR.trO("Retire tous les fichiers de la liste. Les fichiers ne seront en aucun cas supprimé."));

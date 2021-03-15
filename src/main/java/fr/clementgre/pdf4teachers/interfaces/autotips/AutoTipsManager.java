@@ -3,6 +3,8 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.application.Platform;
+import javafx.util.Duration;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -136,6 +138,13 @@ public class AutoTipsManager {
         if(!autoTipsThread.isAlive()) autoTipsThread.start();
 
     }
+
+    public static void unload(){
+        for(AutoTipTooltip uiTip : uiTips.values()){
+            uiTip.hide(Duration.ZERO);
+        }
+    }
+
     public static List<String> getCompletedAutoTips(){
 
         List<String> completed = new ArrayList<>();

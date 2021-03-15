@@ -75,7 +75,7 @@ public class GradeExportRenderer {
                 expContent.add(textArea, 0, 1);
                 alert.getDialogPane().setExpandableContent(expContent);
 
-                alert.getButtonTypes().setAll(new ButtonType(TR.trO("OK"), ButtonBar.ButtonData.OK_DONE));
+                alert.getButtonTypes().setAll(new ButtonType(TR.tr("actions.ok"), ButtonBar.ButtonData.OK_DONE));
                 alert.showAndWait();
                 return exported;
             }
@@ -262,7 +262,7 @@ public class GradeExportRenderer {
             expContent.add(textArea, 0, 1);
             alert.getDialogPane().setExpandableContent(expContent);
 
-            alert.getButtonTypes().add(new ButtonType(TR.trO("OK"), ButtonBar.ButtonData.CANCEL_CLOSE));
+            alert.getButtonTypes().add(new ButtonType(TR.tr("actions.ok"), ButtonBar.ButtonData.CANCEL_CLOSE));
             alert.showAndWait();
             return false;
         }
@@ -356,7 +356,7 @@ public class GradeExportRenderer {
     public int fileAlreadyExist(File file){
 
         Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("dialog.file.alreadyExist.title"));
-        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.info", file.getName()));
+        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
         alert.setContentText(TR.tr("dialog.file.alreadyExist.details", file.getParentFile().getAbsolutePath()));
 
         ButtonType yesButton = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.YES);

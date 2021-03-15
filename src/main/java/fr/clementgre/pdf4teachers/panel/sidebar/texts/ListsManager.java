@@ -99,7 +99,7 @@ public class ListsManager {
                                          TR.trO("- Charger ajoutera cette liste d'éléments à la liste des éléments favoris/précédents") + "\n" +
                                          TR.trO("- Supprimer supprimera la liste de la base de donnée"));
 
-                    ButtonType cancel = new ButtonType(TR.trO("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType load = new ButtonType(TR.trO("Charger"), ButtonBar.ButtonData.OK_DONE);
                     ButtonType loadReplace = new ButtonType(TR.trO("Vider et charger"), ButtonBar.ButtonData.OK_DONE);
                     ButtonType delete = new ButtonType(TR.trO("Supprimer"), ButtonBar.ButtonData.OTHER);

@@ -51,7 +51,7 @@ public class ExportWindow {
 
         window.setMinWidth(500);
         window.setMaxWidth(800);
-        window.setTitle("PDF4Teachers - " + TR.trO("Exporter") + " (" + files.size() + " " + TR.trO("documents)"));
+        window.setTitle(TR.tr("exportWindow.title", files.size()));
         window.setScene(scene);
         window.setOnCloseRequest(e -> window.close());
         StyleManager.putStyle(root, Style.DEFAULT);
@@ -68,7 +68,7 @@ public class ExportWindow {
 
     public void setupSimplePanel(VBox root){
 
-        Text info = new Text(TR.trO("Vous allez exporter un document pour former un nouveau fichier PDF."));
+        Text info = new Text(TR.tr("exportWindow.oneFile.header"));
 
         HBox name = new HBox();
             TextField fileName = new TextField(files.get(0).getName());
@@ -81,7 +81,7 @@ public class ExportWindow {
         HBox path = new HBox();
             HBox filePathPane = new HBox();
                 TextField filePath = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
-                filePath.setPromptText(TR.trO("Chemin du dossier d'exportation"));
+                filePath.setPromptText(TR.tr("file.destinationFolder"));
                 filePath.setMinWidth(1);
                 filePath.setMinHeight(30);
                 HBox.setHgrow(filePath, Priority.ALWAYS);
@@ -91,23 +91,23 @@ public class ExportWindow {
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-            CheckBox textElements = new CheckBox(TR.trO("Texte"));
+            CheckBox textElements = new CheckBox(TR.tr("elements.name.text"));
             textElements.setSelected(true);
-            CheckBox gradesElements = new CheckBox(TR.trO("Notes"));
+            CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
             gradesElements.setSelected(true);
-            CheckBox drawElements = new CheckBox(TR.trO("Dessins"));
+            CheckBox drawElements = new CheckBox(TR.tr("elements.name.paint"));
             drawElements.setSelected(true);
         types.getChildren().addAll(textElements, gradesElements, drawElements);
 
 
         VBox settings = new VBox();
-            CheckBox delEdit = new CheckBox(TR.trO("Supprimer les éditions après exportation"));
+            CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
         settings.getChildren().addAll(delEdit);
 
         HBox btns = new HBox();
-            Button export = new Button(TR.trO("Exporter"));
+            Button export = new Button(TR.tr("actions.export"));
             export.requestFocus();
-            Button cancel = new Button(TR.trO("Annuler"));
+            Button cancel = new Button(TR.tr("actions.cancel"));
         btns.getChildren().addAll(cancel, export);
         btns.setAlignment(Pos.CENTER_RIGHT);
 
@@ -152,12 +152,12 @@ public class ExportWindow {
     }
     public void setupComplexPanel(VBox root){
 
-        Text info = new Text(TR.trO("Vous allez exporter un document pour former un nouveau fichier PDF."));
+        Text info = new Text(TR.tr("exportWindow.multipleFiles.header"));
 
         HBox name = new HBox();
 
             TextField prefix = new TextField(MainWindow.userData.lastExportFileNamePrefix);
-            prefix.setPromptText(TR.trO("Préfixe"));
+            prefix.setPromptText(TR.tr("string.prefix"));
             prefix.setMinWidth(1);
             //prefix.setAlignment(Pos.CENTER_RIGHT);
             HBox.setHgrow(prefix, Priority.ALWAYS);
@@ -170,7 +170,7 @@ public class ExportWindow {
             fileName.setMinHeight(30);
 
             TextField suffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
-            suffix.setPromptText(TR.trO("Suffixe"));
+            suffix.setPromptText(TR.tr("string.suffix"));
             suffix.setMinWidth(1);
             HBox.setHgrow(suffix, Priority.ALWAYS);
             suffix.setMinHeight(30);
@@ -180,7 +180,7 @@ public class ExportWindow {
 
         HBox replace = new HBox();
 
-            Label replaceText = new Label(TR.trO("Remplacer"));
+            Label replaceText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.replace"));
 
             TextField replaceInput = new TextField(MainWindow.userData.lastExportFileNameReplace);
             replaceInput.setMinWidth(1);
@@ -188,7 +188,7 @@ public class ExportWindow {
             replaceInput.setMinHeight(30);
             replaceInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
-            Label byText = new Label(TR.trO("par"));
+            Label byText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.by"));
 
             TextField byInput = new TextField(MainWindow.userData.lastExportFileNameBy);
             byInput.setMinWidth(1);
@@ -210,25 +210,25 @@ public class ExportWindow {
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-        CheckBox textElements = new CheckBox(TR.trO("Texte"));
+        CheckBox textElements = new CheckBox(TR.tr("elements.name.text"));
         textElements.setSelected(true);
-        CheckBox gradesElements = new CheckBox(TR.trO("Notes"));
+        CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
         gradesElements.setSelected(true);
-        CheckBox drawElements = new CheckBox(TR.trO("Dessins"));
+        CheckBox drawElements = new CheckBox(TR.tr("elements.name.paint"));
         drawElements.setSelected(true);
         types.getChildren().addAll(textElements, gradesElements, drawElements);
 
 
         VBox settings = new VBox();
-        CheckBox onlyEdited = new CheckBox(TR.trO("Exporter uniquement les documents édités"));
+        CheckBox onlyEdited = new CheckBox(TR.tr("exportWindow.options.onlyEdited"));
         onlyEdited.setSelected(true);
-        CheckBox delEdit = new CheckBox(TR.trO("Supprimer les éditions après exportation"));
+        CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
         settings.getChildren().addAll(onlyEdited, delEdit);
 
         HBox btns = new HBox();
-        Button export = new Button(TR.trO("Exporter"));
+        Button export = new Button(TR.tr("actions.export"));
         export.requestFocus();
-        Button cancel = new Button(TR.trO("Annuler"));
+        Button cancel = new Button(TR.tr("actions.cancel"));
         btns.getChildren().addAll(cancel, export);
         btns.setAlignment(Pos.CENTER_RIGHT);
 
@@ -339,7 +339,7 @@ public class ExportWindow {
                     }
                 }catch(Exception e){
                     e.printStackTrace();
-                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.trO("Une erreur d'exportation s'est produite avec le document :") + " " + data.getKey().getName(), e.getMessage(), recursive))){
+                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive))){
                         return TwoStepListAction.ProcessResult.STOP;
                     }
                     if(!recursive){
@@ -356,22 +356,17 @@ public class ExportWindow {
                 window.close();
                 if(deleteEdit) MainWindow.filesTab.refresh();
 
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Exportation terminée"));
-                ButtonType open = new ButtonType(TR.trO("Ouvrir le dossier"), ButtonBar.ButtonData.YES);
-                alert.getButtonTypes().add(open);
+                String header;
+                if(completedSize == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
+                else if(completedSize == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
+                else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", completedSize);
 
-                if(completedSize == 0) alert.setHeaderText(TR.trO("Aucun document n'a été exporté !"));
-                else if(completedSize == 1) alert.setHeaderText(TR.trO("Le document a bien été exporté !"));
-                else alert.setHeaderText(completedSize + " " + TR.trO("documents ont été exportés !"));
+                String details;
+                String noEditText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("exportWindow.dialogs.completed.ignored.noEdit", excludedReasons.get(1)) + ")";
+                String alreadyExistText = !excludedReasons.containsKey(2) ? "" : "\n(" + TR.tr("exportWindow.dialogs.completed.ignored.alreadyExisting", excludedReasons.get(2)) + ")";
+                details = TR.tr("exportWindow.dialogs.completed.exported", completedSize, originSize) + noEditText + alreadyExistText;
 
-                String noEditText = !excludedReasons.containsKey(1) ? "" : "\n(" + excludedReasons.get(1) + " " + TR.trO("documents ignorés car ils n'avaient pas d'édition") + ")";
-                String alreadyExistText = !excludedReasons.containsKey(2) ? "" : "\n(" + excludedReasons.get(2) + " " + TR.trO("documents ignorés car leur fichier YAML existait déjà") + ")";
-                alert.setContentText(completedSize + "/" + originSize + " " + TR.trO("documents exportés") + noEditText + alreadyExistText);
-
-                Optional<ButtonType> optionSelected = alert.showAndWait();
-                if(optionSelected.get() == open){
-                    PlatformUtils.openDirectory(directory.getAbsolutePath());
-                }
+                DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, details, directory.getAbsolutePath());
             }
         });
     }

@@ -3,7 +3,9 @@ package fr.clementgre.pdf4teachers.utils.dialog;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -18,6 +20,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class DialogBuilder {
 
@@ -48,6 +51,18 @@ public class DialogBuilder {
         setupDialog(alert);
         return alert;
     }
+
+    public static void showAlertWithOpenDirButton(String title, String header, String details, String pathToBrowse){
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, title, header, details);
+
+        ButtonType open = new ButtonType(TR.tr("dialog.file.openFolderButton"), ButtonBar.ButtonData.YES);
+        alert.getButtonTypes().add(open);
+
+        Optional<ButtonType> optionSelected = alert.showAndWait();
+        if(optionSelected.get() == open){
+            PlatformUtils.openDirectory(pathToBrowse);
+        }
+    }
     public static <T> ChoiceDialog<T> getChoiceDialog(T selected, List<T> values){
         ChoiceDialog<T> alert = new ChoiceDialog<T>(selected, values);
 
@@ -60,7 +75,7 @@ public class DialogBuilder {
     }
 
     public static boolean showWrongAlert(String headerText, String contentText, boolean continueAsk){
-        Alert alert = getAlert(Alert.AlertType.ERROR, TR.trO("Une erreur est survenue"));
+        Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("dialog.error.title"));
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
 
@@ -76,17 +91,24 @@ public class DialogBuilder {
         }
         return false;
     }
+    public static String unableToCopyFileHeader(String toCopyPath, String destPath, boolean simplify){
+        if(simplify){
+            toCopyPath = FilesUtils.getPathReplacingUserHome(toCopyPath);
+            destPath = FilesUtils.getPathReplacingUserHome(destPath);
+        }
+        return TR.tr("dialog.copyFileError.title", toCopyPath, destPath);
+    }
     public static boolean showErrorAlert(String headerText, String error, boolean continueAsk){
-        Alert alert = getAlert(Alert.AlertType.ERROR, TR.trO("Une erreur est survenue"));
-        alert.setHeaderText(headerText);
-        alert.setContentText(TR.trO("Ctrl+Alt+C pour accéder aux logs"));
+        Alert alert = getAlert(Alert.AlertType.ERROR, TR.tr("dialog.error.title"));
+        alert.setHeaderText(headerText == null ? TR.tr("dialog.error.title") : headerText);
+        alert.setContentText(TR.tr("dialog.error.details"));
 
         TextArea textArea = new TextArea(error);
         textArea.setEditable(false);
         textArea.setWrapText(true);
         GridPane expContent = new GridPane();
         expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
+        expContent.add(new Label(TR.tr("convertWindow.dialog.error.details")), 0, 0);
         expContent.add(textArea, 0, 1);
         alert.getDialogPane().setExpandableContent(expContent);
 
@@ -102,16 +124,16 @@ public class DialogBuilder {
         }
         return false;
     }
-    public static File showFileDialog(boolean syncWithLastOpenDir){
-        File[] files = showFilesDialog(syncWithLastOpenDir, false, TR.trO("Fichier PDF"), "*.pdf");
+    public static File showPDFFileDialog(boolean syncWithLastOpenDir){
+        File[] files = showFilesDialog(syncWithLastOpenDir, false, TR.tr("dialog.file.extensionType.PDF"), "*.pdf");
         return files == null ? null : files[0];
     }
     public static File showFileDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
         File[] files = showFilesDialog(syncWithLastOpenDir, false, extensionsName, extensions);
         return files == null ? null : files[0];
     }
-    public static File[] showFilesDialog(boolean syncWithLastOpenDir){
-        return showFilesDialog(syncWithLastOpenDir, true, TR.trO("Fichier PDF"), "*.pdf");
+    public static File[] showPDFFilesDialog(boolean syncWithLastOpenDir){
+        return showFilesDialog(syncWithLastOpenDir, true, TR.tr("dialog.file.extensionType.PDF"), "*.pdf");
     }
     public static File[] showFilesDialog(boolean syncWithLastOpenDir, String extensionsName, String... extensions){
         return showFilesDialog(syncWithLastOpenDir, true, extensionsName, extensions);
@@ -156,7 +178,7 @@ public class DialogBuilder {
     public static File showSaveDialog(boolean syncWithLastOpenDir, String initialFileName, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        chooser.setTitle(TR.trO("Enregistrer un fichier"));
+        chooser.setTitle(TR.tr("dialog.file.saveFile.title"));
         chooser.setInitialFileName(initialFileName);
         chooser.setInitialDirectory((syncWithLastOpenDir &&  new File(MainWindow.userData.lastOpenDir).exists()) ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
 

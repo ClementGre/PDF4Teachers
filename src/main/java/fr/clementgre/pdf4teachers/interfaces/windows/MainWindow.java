@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
@@ -86,11 +87,12 @@ public class MainWindow extends Stage{
 
         setOnCloseRequest(e -> {
             userData.save();
-            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())) {
+            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
                 e.consume(); return;
             }
 
             Main.params = new ArrayList<>();
+            AutoTipsManager.unload();
 
             LanguagesUpdater.backgroundStats(() -> {
                 System.out.println("Closing PDF4Teachers");

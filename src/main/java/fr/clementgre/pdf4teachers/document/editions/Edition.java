@@ -273,7 +273,7 @@ public class Edition {
             Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
             e.printStackTrace();
-            DialogBuilder.showErrorAlert(TR.trO("Impossible de copier le fichier") + " \"" + fromEdit.toPath() + "\" " + TR.trO("vers") + " \"" + destEdit.toPath() + "\"", e.getMessage(), false);
+            DialogBuilder.showErrorAlert(DialogBuilder.unableToCopyFileHeader(fromEdit.getAbsolutePath(), destEdit.getAbsolutePath(), true), e.getMessage(), false);
         }
         fromEdit.delete();
     }
@@ -294,21 +294,20 @@ public class Edition {
 
     }
 
+    public static boolean clearEditDialog(boolean skip){
+        if(skip) return true;
+
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
+        alert.setHeaderText(TR.tr("dialog.confirmation.clearEdit.header"));
+        alert.setContentText(TR.tr("dialog.confirmation.clearEdit.details"));
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isEmpty()) return false;
+        return result.get() == ButtonType.OK;
+    }
+
     public static void clearEdit(File file, boolean confirm){
-
-        if(confirm){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
-            alert.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
-            alert.setContentText(TR.trO("Cette action est irréversible."));
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.isEmpty()) return;
-            if(result.get() == ButtonType.OK){
-                confirm = false;
-            }
-        }
-
-        if(!confirm){
+        if(clearEditDialog(!confirm)){
             if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
                 if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                     MainWindow.mainScreen.document.edition.clearEdit(false);
@@ -321,24 +320,13 @@ public class Edition {
     }
 
     public void clearEdit(boolean confirm){
-        if(confirm){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Confirmation"));
-            alert.setHeaderText(TR.trO("Êtes vous sûr de vouloir supprimer l'édition de ce document ?"));
-            alert.setContentText(TR.trO("Cette action est irréversible."));
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.get() == ButtonType.OK){
-                confirm = false;
-            }
-        }
-        if(!confirm){
+        if(clearEditDialog(!confirm)){
             MainWindow.mainScreen.setSelected(null);
             for(PageRenderer page : document.pages){
                 page.clearElements();
             }
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
             MainWindow.gradeTab.treeView.clear();
-
             Edition.setUnsave();
         }
     }

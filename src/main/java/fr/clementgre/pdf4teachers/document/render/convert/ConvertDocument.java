@@ -55,9 +55,9 @@ public class ConvertDocument {
 
             Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("convertWindow.dialog.completed.title"));
 
-            if(converted == 0) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.info.noDocument"));
-            else if(converted == 1) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.info.oneDocument"));
-            else alert.setHeaderText(TR.tr("convertWindow.dialog.completed.info.multipleDocuments", converted));
+            if(converted == 0) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.noDocument"));
+            else if(converted == 1) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.oneDocument"));
+            else alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.multipleDocuments", converted));
 
 
             if(converted > 1) alert.setContentText(TR.tr("convertWindow.dialog.completed.details.multipleDocuments"));

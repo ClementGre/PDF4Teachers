@@ -59,7 +59,7 @@ public class AlreadyExistDialog{
 
         if(recursions == 2) alert.getButtonTypes().setAll(overwrite, rename, renameAlways, skip, skipAlways, overwriteAlways, stopAll);
 
-        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.info", file.getName()));
+        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
         alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
 
         Optional<ButtonType> option = alert.showAndWait();

@@ -27,12 +27,12 @@ public class GradeCopyGradeScaleDialog {
     public void show(){
 
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("grades.copyGradeScaleDialog.confirmation.title"));
-        dialog.setHeaderText(TR.tr("grades.copyGradeScaleDialog.confirmation.info"));
+        dialog.setHeaderText(TR.tr("grades.copyGradeScaleDialog.confirmation.header"));
 
         CheckBox copyLocations = new CheckBox(TR.tr("grades.copyGradeScaleDialog.confirmation.copyLocations"));
         dialog.getDialogPane().setContent(copyLocations);
 
-        ButtonType cancel = new ButtonType(TR.trO("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+        ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
         ButtonType yes = new ButtonType(TR.trO("Copier sur les documents\nouverts du même dossier."), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.trO("Copier sur tous les\ndocuments ouverts"), ButtonBar.ButtonData.OTHER);
         dialog.getButtonTypes().setAll(yesAll, yes, cancel);

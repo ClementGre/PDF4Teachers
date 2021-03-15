@@ -299,7 +299,7 @@ public class ConvertWindow extends Stage {
             Separator separator = new Separator();
             PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
 
-            Label info = new Label(TR.tr("convertWindow.options.definition.info"));
+            Label info = new Label(TR.tr("convertWindow.options.definition.header"));
             PaneUtils.setVBoxPosition(info, 0, 0, new Insets(5, 0, 0, 2.5));
 
             HBox columns = new HBox();
@@ -447,13 +447,13 @@ public class ConvertWindow extends Stage {
                         startConversion();
                     }else{
                         Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                        alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.info"));
+                        alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.header"));
                         alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.details"));
                         alert.show();
                     }
                 }else{
                     Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                    alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.info"));
+                    alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.header"));
                     alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.details"));
                     alert.show();
                 }
@@ -495,7 +495,7 @@ public class ConvertWindow extends Stage {
             converted = 0;
 
             loadingAlert.setWidth(600);
-            loadingAlert.setHeaderText(TR.tr("convertWindow.dialog.loading.info"));
+            loadingAlert.setHeaderText(TR.tr("convertWindow.dialog.loading.header"));
 
             VBox pane = new VBox();
             Label currentDocument = new Label();
@@ -526,7 +526,7 @@ public class ConvertWindow extends Stage {
                         loadingAlert.close();
                         // Error dialog
                         Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("convertWindow.dialog.error.title"));
-                        alert.setHeaderText(TR.tr("convertWindow.dialog.error.info"));
+                        alert.setHeaderText(TR.tr("convertWindow.dialog.error.header"));
 
                         TextArea textArea = new TextArea(e.getMessage());
                         textArea.setEditable(false);

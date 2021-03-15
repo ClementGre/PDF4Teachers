@@ -122,12 +122,12 @@ public class Document {
         if(Main.settings.autoSave.getValue()){
             edition.save();
         }else{
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Édition non sauvegardée"));
-            alert.setHeaderText(TR.trO("L'édition du document n'est pas enregistrée."));
-            alert.setContentText(TR.trO("Voulez-vous l'enregistrer ?"));
-            ButtonType yesButton = new ButtonType(TR.trO("Oui"), ButtonBar.ButtonData.YES);
-            ButtonType noButton = new ButtonType(TR.trO("Non"), ButtonBar.ButtonData.NO);
-            ButtonType cancelButton = new ButtonType(TR.trO("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"));
+            alert.setHeaderText(TR.tr("dialog.unsavedEdit.header"));
+            alert.setContentText(TR.tr("dialog.unsavedEdit.details"));
+            ButtonType yesButton = new ButtonType(TR.tr("actions.yes"), ButtonBar.ButtonData.YES);
+            ButtonType noButton = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.NO);
+            ButtonType cancelButton = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
             alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
 
             Optional<ButtonType> option = alert.showAndWait();

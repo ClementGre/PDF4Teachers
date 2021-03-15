@@ -215,7 +215,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 		file1Open.setOnAction((ActionEvent actionEvent) -> {
 
-			File[] files = DialogBuilder.showFilesDialog(true);
+			File[] files = DialogBuilder.showPDFFilesDialog(true);
 			if(files != null){
 				MainWindow.filesTab.openFiles(files);
 				if(files.length == 1){
@@ -288,8 +288,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 				yesSize += FilesUtils.getSize(editFile);
 			}yesSize = FilesUtils.convertOctetToMo((long) yesSize);
 
-			ButtonType cancel = new ButtonType(TR.trO("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
-			ButtonType yes = new ButtonType(TR.trO("Oui") + " (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
+			ButtonType cancel = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.CANCEL_CLOSE);
+			ButtonType yes = new ButtonType(TR.tr("actions.yes") + " (" + yesSize + "Mo)", ButtonBar.ButtonData.OK_DONE);
 			ButtonType yesBut = new ButtonType(TR.trO("Supprimer l'ensemble des\néditions enregistrées") + " (" + yesButSize + "Mo)", ButtonBar.ButtonData.OTHER);
 			dialog.getButtonTypes().setAll(yesBut, cancel, yes);
 
@@ -330,8 +330,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Charger une autre édition"));
 					dialog.setHeaderText(TR.trO("Êtes vous sûr de vouloir remplacer l'édition courante par celle-ci ?"));
 
-					ButtonType cancel = new ButtonType(TR.trO("Non"), ButtonBar.ButtonData.CANCEL_CLOSE);
-					ButtonType yes = new ButtonType(TR.trO("Oui"), ButtonBar.ButtonData.OK_DONE);
+					ButtonType cancel = new ButtonType(TR.trO("actions.no"), ButtonBar.ButtonData.CANCEL_CLOSE);
+					ButtonType yes = new ButtonType(TR.trO("actions.yes"), ButtonBar.ButtonData.OK_DONE);
 					ButtonType yesAll = new ButtonType(TR.trO("Oui, répéter cette action pour tous les fichiers\nde la liste et du même dossier"), ButtonBar.ButtonData.OTHER);
 					dialog.getButtonTypes().setAll(cancel, yes, yesAll);
 
@@ -435,10 +435,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 			combo.disableProperty().bind(activated.selectedProperty().not());
 			dialog.setHeaderText(TR.trO("Définir le nombre de minutes entre deux sauvegardes automatiques."));
 			dialog.getDialogPane().setContent(pane);
-
-			//ButtonType cancel = new ButtonType(TR.tr("Annuler"), ButtonBar.ButtonData.CANCEL_CLOSE);
-			//ButtonType ok = new ButtonType(TR.tr("OK"), ButtonBar.ButtonData.OK_DONE);
-			//dialog.getButtonTypes().setAll(cancel, ok);
 
 			Optional<ButtonType> option = dialog.showAndWait();
 			if(option.get() == ButtonType.OK){
