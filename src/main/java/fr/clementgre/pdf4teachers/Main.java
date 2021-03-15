@@ -54,7 +54,6 @@ public class Main extends Application {
 	public void start(Stage window){
 
 		// define crucial vars
-
 		if(isWindows()) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
 		else if(isOSX()) systemShortcut = "Cmd";
 
@@ -62,7 +61,6 @@ public class Main extends Application {
 		hostServices = getHostServices();
 
 		// read params
-
 		if(DEBUG){
 			System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
 					+ "\n Unnamed: " + getParameters().getUnnamed().toString()
