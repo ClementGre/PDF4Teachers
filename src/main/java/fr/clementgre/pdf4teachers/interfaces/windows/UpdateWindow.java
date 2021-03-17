@@ -196,10 +196,10 @@ public class UpdateWindow extends Stage {
         Text info;
         Text version;
         if(newPre){
-            info = new Text(TR.trO("Une nouvelle avant-première de PDF4Teachers est disponible !") + "\n" + TR.trO("Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie."));
+            info = new Text(TR.tr("aboutWindow.version.update.preRelease") + "\n" + TR.trO("Les avant-premières sont destinées aux utilisateurs qui souhaitent contribuer\nau projet PDF4Teachers en testant les versions avant leur sortie."));
             version = new Text(TR.trO("Vous utilisez la version") + " " + Main.VERSION + " " + TR.trO("et l'avant-première") + " " + UpdateWindow.version + " " + TR.trO("est disponible.") + "\n\n" + TR.trO("Description :"));
         }else{
-            info = new Text(TR.trO("Une nouvelle version de PDF4Teachers est disponible !"));
+            info = new Text(TR.tr("aboutWindow.version.update.available"));
             version = new Text(TR.trO("Vous utilisez la version") + " " + Main.VERSION + " " + TR.trO("et la version") + " " + UpdateWindow.version + " " + TR.trO("est disponible.") + "\n\n" + TR.trO("Description :"));
         }
 

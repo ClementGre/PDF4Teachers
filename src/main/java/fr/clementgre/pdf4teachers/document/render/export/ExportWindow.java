@@ -28,7 +28,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 public class ExportWindow {
 
@@ -91,11 +90,11 @@ public class ExportWindow {
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-            CheckBox textElements = new CheckBox(TR.tr("elements.name.text"));
+            CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
             textElements.setSelected(true);
             CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
             gradesElements.setSelected(true);
-            CheckBox drawElements = new CheckBox(TR.tr("elements.name.paint"));
+            CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
             drawElements.setSelected(true);
         types.getChildren().addAll(textElements, gradesElements, drawElements);
 
@@ -210,11 +209,11 @@ public class ExportWindow {
         path.getChildren().addAll(filePathPane, changePath);
 
         HBox types = new HBox();
-        CheckBox textElements = new CheckBox(TR.tr("elements.name.text"));
+        CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
         textElements.setSelected(true);
         CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
         gradesElements.setSelected(true);
-        CheckBox drawElements = new CheckBox(TR.tr("elements.name.paint"));
+        CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
         drawElements.setSelected(true);
         types.getChildren().addAll(textElements, gradesElements, drawElements);
 

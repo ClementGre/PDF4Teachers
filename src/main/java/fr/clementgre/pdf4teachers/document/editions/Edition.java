@@ -299,7 +299,7 @@ public class Edition {
 
         Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
         alert.setHeaderText(TR.tr("dialog.confirmation.clearEdit.header"));
-        alert.setContentText(TR.tr("dialog.confirmation.clearEdit.details"));
+        alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
 
         Optional<ButtonType> result = alert.showAndWait();
         if(result.isEmpty()) return false;

@@ -118,7 +118,7 @@ public class TextTreeView extends TreeView<String>{
                 Edition.setUnsave();
             });
         }else{
-            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Vider la liste"), false);
+            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("menuBar.file.clearList"), false);
             item1.setToolTip(TR.trO("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
             NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Supprimer les donnés d'utilisation"), false);
             item2.setToolTip(TR.trO("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
