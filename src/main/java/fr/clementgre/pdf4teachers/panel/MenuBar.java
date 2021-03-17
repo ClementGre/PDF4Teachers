@@ -311,7 +311,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 
 				tools5SameNameEditions.getItems().add(item);
 				item.setOnAction((ActionEvent actionEvent) -> {
-					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.loadSameNameEdit.confirmation.title"));
+					Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
 					dialog.setHeaderText(TR.tr("dialog.loadSameNameEdit.confirmation.header"));
 
 					ButtonType cancel = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.CANCEL_CLOSE);
