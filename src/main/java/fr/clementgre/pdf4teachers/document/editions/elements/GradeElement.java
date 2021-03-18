@@ -98,7 +98,7 @@ public class GradeElement extends Element {
 
             // Check if name is null
             if(newValue.isBlank()){
-                setName(TR.trO("Nouvelle note"));
+                setName(TR.tr("gradeTab.gradeDefaultName"));
                 return;
             }
             // Check if exist twice
@@ -157,17 +157,17 @@ public class GradeElement extends Element {
     protected void setupMenu() {
         menu.getItems().clear();
 
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Attribuer tous les points"), false);
-        item1.setToolTip(TR.trO("Place toutes les sous-notes à leur valeur maximale"));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Réinitialiser"), false);
-        item2.setToolTip(TR.trO("Réinitialise la note et toutes ses sous-notes"));
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.trO("Supprimer du barème"), false);
-        item3.setToolTip(TR.trO("Supprime cet élément du barème et de l'édition"));
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.setMax"), false);
+        item1.setToolTip(TR.tr("gradeTab.gradeMenu.setMax.tooltip"));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.unFill"), false);
+        item2.setToolTip(TR.tr("gradeTab.gradeMenu.unFill.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.delete"), false);
+        item3.setToolTip(TR.tr("gradeTab.gradeMenu.delete.tooltip"));
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.trO("Mettre 0 à toutes les sous-notes"), false);
-        item4.setToolTip(TR.trO("Donne la valeur 0 à toutes les sous-notes"));
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.trO("Cacher les sous-notes non saisies"), false);
-        item5.setToolTip(TR.trO("Si le barème a été importé avec une mémorisation de la position des notes, les notes seront visibles dans l'application même sans valeur saisie. Il est possible de réinitialiser leur position et de les cacher avec cette option."));
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.set0"), false);
+        item4.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
+        item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilled.tooltip"));
 
 
         menu.setOnShowing((e) -> {
@@ -347,7 +347,7 @@ public class GradeElement extends Element {
         return treeItemElement;
     }
     public boolean isDefaultGrade(){
-        return (getValue() == -1 && getTotal() == 0 && getName().equals(TR.trO("Total")));
+        return (getValue() == -1 && getTotal() == 0 && getName().equals(TR.tr("gradeTab.gradeDefaultName.total")));
     }
     public boolean isRoot(){
         return getParentPath().isEmpty();
@@ -356,7 +356,7 @@ public class GradeElement extends Element {
         return isBonus(getName());
     }
     public static boolean isBonus(String name){
-        return name.toLowerCase().startsWith( TR.trO("Bonus").toLowerCase() );
+        return name.toLowerCase().startsWith( TR.tr("gradeTab.gradeDefaultName.bonus").toLowerCase() );
     }
 
     public float getBaseLineY(){

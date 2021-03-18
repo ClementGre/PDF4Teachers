@@ -33,8 +33,8 @@ public class GradeCopyGradeScaleDialog {
         dialog.getDialogPane().setContent(copyLocations);
 
         ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType yes = new ButtonType(TR.trO("Copier sur les documents\nouverts du même dossier."), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.trO("Copier sur tous les\ndocuments ouverts"), ButtonBar.ButtonData.OTHER);
+        ButtonType yes = new ButtonType(TR.tr("grades.copyGradeScaleDialog.confirmation.actions.copySameFolder"), ButtonBar.ButtonData.OK_DONE);
+        ButtonType yesAll = new ButtonType(TR.tr("grades.copyGradeScaleDialog.confirmation.actions.copyAll"), ButtonBar.ButtonData.OTHER);
         dialog.getButtonTypes().setAll(yesAll, yes, cancel);
 
         Optional<ButtonType> option = dialog.showAndWait();
@@ -61,9 +61,9 @@ public class GradeCopyGradeScaleDialog {
             }
         }else return;
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Barème copiés"));
-        alert.setHeaderText(TR.trO("Votre barème a bien été copié."));
-        alert.setContentText("(" + copiedEditions + " " + TR.trO("éditions affectées") + ".)");
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("grades.copyGradeScaleDialog.completed.title"));
+        alert.setHeaderText(TR.tr("grades.copyGradeScaleDialog.completed.header"));
+        alert.setContentText("(" + TR.tr("grades.copyGradeScaleDialog.completed.details", copiedEditions) + ")");
         alert.show();
 
         MainWindow.filesTab.refresh();
@@ -98,9 +98,9 @@ public class GradeCopyGradeScaleDialog {
             }
 
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Barème déjà présent"));
-                dialog.setHeaderText(TR.trO("L'édition du fichier") + " " + file.getName() + " " + TR.trO("contient déjà un barème"));
-                dialog.setContentText(TR.trO("PDF4Teachers va essayer de récupérer les notes de l'ancien barème pour les inclure au nouveau barème.") + "\n" + TR.trO("Vous serez avertis si une note va être écrasée."));
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("grades.copyGradeScaleDialog.error.alreadyGradeScale.title"));
+                dialog.setHeaderText(TR.tr("grades.copyGradeScaleDialog.error.alreadyGradeScale.header", file.getName()));
+                dialog.setContentText(TR.tr("grades.copyGradeScaleDialog.error.alreadyGradeScale.details"));
 
                 ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.continueAlways"), ButtonBar.ButtonData.OK_DONE);
@@ -142,8 +142,8 @@ public class GradeCopyGradeScaleDialog {
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.format.format(grade.getTotal()) + ")";
                 }
 
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Écraser les notes non correspondantes"));
-                dialog.setHeaderText(TR.trO("Aucune note du nouveau barème ne correspond à :") + grades + "\n" + TR.trO("Dans le document") + " : " + file.getName());
+                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("grades.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"));
+                dialog.setHeaderText(TR.tr("grades.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
 
                 ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
                 ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);

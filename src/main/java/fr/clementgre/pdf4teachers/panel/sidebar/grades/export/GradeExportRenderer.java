@@ -8,7 +8,6 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -52,7 +51,7 @@ public class GradeExportRenderer {
                 }else{
                     generateNamesLine(true);
                 }
-                if(pane.settingsAttributeMoyLine.isSelected()){
+                if(pane.settingsAttributeAverageLine.isSelected()){
                     generateMoyLine();
                 }
                 for(ExportFile file : files){
@@ -61,22 +60,7 @@ public class GradeExportRenderer {
                 if(!save(null)) return exported;
             }catch(Exception e){
                 e.printStackTrace();
-
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur d'exportation"));
-                alert.setHeaderText(TR.trO("Une erreur s'est produite lors de la génération du document"));
-                alert.setContentText(TR.trO("Impossible d'exporter."));
-
-                TextArea textArea = new TextArea(e.getMessage());
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
-                GridPane expContent = new GridPane();
-                expContent.setMaxWidth(Double.MAX_VALUE);
-                expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
-                expContent.add(textArea, 0, 1);
-                alert.getDialogPane().setExpandableContent(expContent);
-
-                alert.getButtonTypes().setAll(new ButtonType(TR.tr("actions.ok"), ButtonBar.ButtonData.OK_DONE));
-                alert.showAndWait();
+                DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.fatalError.title"), e.getMessage(), false);
                 return exported;
             }
         }else{ // SPLIT
@@ -96,28 +80,8 @@ public class GradeExportRenderer {
 
                 }catch(Exception e){
                     e.printStackTrace();
-
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur d'exportation"));
-                    alert.setHeaderText(TR.trO("Une erreur s'est produite lors de la génération du document") + " " + file.file.getName());
-                    alert.setContentText(TR.trO("Choisissez une action."));
-
-                    TextArea textArea = new TextArea(e.getMessage());
-                    textArea.setEditable(false);
-                    textArea.setWrapText(true);
-                    GridPane expContent = new GridPane();
-                    expContent.setMaxWidth(Double.MAX_VALUE);
-                    expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
-                    expContent.add(textArea, 0, 1);
-                    alert.getDialogPane().setExpandableContent(expContent);
-
-                    ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.NEXT_FORWARD);
-                    alert.getButtonTypes().setAll(stopAll, continueRender);
-
-                    Optional<ButtonType> option = alert.showAndWait();
-                    if(option.get() == stopAll){
-                        return exported;
-                    }
+                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true);
+                    if(result) return exported;
                 }
             }
 
@@ -129,7 +93,7 @@ public class GradeExportRenderer {
 
     public void generateNamesLine(boolean includeGradeScale){
 
-        text += TR.trO("Parties");
+        text += TR.tr("gradeExportWindow.csv.titles.parts");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
@@ -138,7 +102,7 @@ public class GradeExportRenderer {
     }
     public void generateGradeScaleLine(){
 
-        text += TR.trO("Barème");
+        text += TR.tr("gradeExportWindow.csv.titles.gradeScale");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.total;
@@ -152,10 +116,10 @@ public class GradeExportRenderer {
         int startY = pane.settingsAttributeTotalLine.isSelected() ? 4 : 3;
         int endY = startY + files.size()-1;
 
-        text += TR.trO("Moyenne");
+        text += TR.tr("gradeExportWindow.csv.titles.average");
 
         for(GradeRating rating : gradeScale){
-            text += ";=AVERAGE(" + x + startY + ":" + x + endY + ")";
+            text += ";=" + TR.tr("gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
             x++;
         }
         text += "\n";
@@ -179,7 +143,7 @@ public class GradeExportRenderer {
     }
     public void generateCommentsLines(ExportFile file){
 
-        text += TR.trO("Commentaires");
+        text += TR.tr("gradeExportWindow.csv.titles.comments");
 
         if(file.comments.size() >= 1){
             ArrayList<String> lines = new ArrayList<>();
@@ -249,21 +213,8 @@ public class GradeExportRenderer {
 
         }catch(Exception e){
             e.printStackTrace();
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Impossible de lire les notes"));
-            alert.setHeaderText(TR.trO("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + MainWindow.mainScreen.document.getFileName());
-            alert.setContentText(TR.trO("Ce document est le document principal de l'exportation, l'exportation ne peut pas continuer"));
-
-            TextArea textArea = new TextArea(e.getMessage());
-            textArea.setEditable(false);
-            textArea.setWrapText(true);
-            GridPane expContent = new GridPane();
-            expContent.setMaxWidth(Double.MAX_VALUE);
-            expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
-            expContent.add(textArea, 0, 1);
-            alert.getDialogPane().setExpandableContent(expContent);
-
-            alert.getButtonTypes().add(new ButtonType(TR.tr("actions.ok"), ButtonBar.ButtonData.CANCEL_CLOSE));
-            alert.showAndWait();
+            DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
+                    TR.tr("gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
             return false;
         }
 
@@ -283,26 +234,9 @@ public class GradeExportRenderer {
 
                 }catch(Exception e) {
                     e.printStackTrace();
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Impossible de lire les notes"));
-                    alert.setHeaderText(TR.trO("Une erreur d'exportation s'est produite lors de la lecture des notes du document :") + " " + file.getName());
-                    alert.setContentText(TR.trO("Choisissez une action."));
-
-                    TextArea textArea = new TextArea(e.getMessage());
-                    textArea.setEditable(false);
-                    textArea.setWrapText(true);
-                    GridPane expContent = new GridPane();
-                    expContent.setMaxWidth(Double.MAX_VALUE);
-                    expContent.add(new Label(TR.trO("L'erreur survenue est la suivante :")), 0, 0);
-                    expContent.add(textArea, 0, 1);
-                    alert.getDialogPane().setExpandableContent(expContent);
-
-                    ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType continueRender = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.NEXT_FORWARD);
-                    alert.getButtonTypes().setAll(stopAll, continueRender);
-
-                    Optional<ButtonType> option = alert.showAndWait();
-                    if (option.get() == stopAll) return false;
-                    continue;
+                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
+                            TR.tr("gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
+                    if(result) return false;
                 }
             }
         }

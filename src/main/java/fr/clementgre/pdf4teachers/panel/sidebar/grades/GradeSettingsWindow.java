@@ -34,7 +34,7 @@ public class GradeSettingsWindow extends Stage {
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setTitle(TR.trO("PDF4Teachers - Polices et Couleurs des Notes"));
+        setTitle(TR.tr("gradeFormatWindow.title"));
         setResizable(false);
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
@@ -45,7 +45,7 @@ public class GradeSettingsWindow extends Stage {
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.trO("Configuration des polices pour chaque catégorie de note") + "\n" + TR.trO("Ces paramètres sonts indépendants de l'édition du document."));
+        Text info = new Text(TR.tr("gradeFormatWindow.header"));
         VBox.setMargin(info, new Insets(40, 0, 40, 0));
 
         root.setStyle("-fx-padding: 10;");
@@ -66,8 +66,8 @@ public class GradeSettingsWindow extends Stage {
         private ToggleButton itBtn = new ToggleButton();
         private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
         private SyncColorPicker colorPicker = new SyncColorPicker();
-        private CheckBox showName = new CheckBox(TR.trO("Afficher le nom de la note"));
-        private CheckBox hide = new CheckBox(TR.trO("Cacher la note"));
+        private CheckBox showName = new CheckBox(TR.tr("gradeFormatWindow.options.showGradeName"));
+        private CheckBox hide = new CheckBox(TR.tr("gradeFormatWindow.options.hideGrade"));
 
         public TierPane(int tier){
             this.tier = tier;
@@ -75,7 +75,7 @@ public class GradeSettingsWindow extends Stage {
             setStyle("-fx-padding: 2.5;");
             Font font = GradeTab.getTierFont(tier);
 
-            Label name = new Label(TR.trO("Niveau") + " " + (tier+1) + " :");
+            Label name = new Label(TR.tr("gradeFormatWindow.tiers") + " " + (tier+1) + " :");
             name.setStyle("-fx-font-size: 13");
             HBox.setMargin(name, new Insets(7));
 

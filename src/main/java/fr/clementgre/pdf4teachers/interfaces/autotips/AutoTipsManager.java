@@ -201,7 +201,6 @@ public class AutoTipsManager {
     }
 
     public static void removeTip(String name){
-        System.out.println("removing tip " + name);
         uiTips.remove(name);
     }
     public static void removeAllTips(){

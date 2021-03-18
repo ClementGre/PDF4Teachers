@@ -25,9 +25,9 @@ public class GradeExportWindow extends Stage {
 
     TabPane tabPane = new TabPane();
 
-    ExportPane exportAllTab = new ExportPane(this, TR.trO("Tout exporter ensemble"), 0, false, true, true, false);
-    ExportPane exportAllSplitTab = new ExportPane(this, TR.trO("Tout exporter séparément"), 1, true, true, true, true);
-    ExportPane exportThisTab = new ExportPane(this, TR.trO("Exporter uniquement ce fichier"), 2, false, false, false, true);
+    ExportPane exportAllTab = new ExportPane(this, TR.tr("gradeExportWindow.exportMode.together.name"), 0, false, true, true, false);
+    ExportPane exportAllSplitTab = new ExportPane(this, TR.tr("gradeExportWindow.exportMode.separately.name"), 1, true, true, true, true);
+    ExportPane exportThisTab = new ExportPane(this, TR.tr("gradeExportWindow.exportMode.onlyThis.name"), 2, false, false, false, true);
 
     public GradeExportWindow(){
 
@@ -39,11 +39,11 @@ public class GradeExportWindow extends Stage {
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setWidth(650);
         setResizable(false);
-        setTitle(TR.trO("PDF4Teachers - Exporter les notes"));
+        setTitle(TR.tr("gradeExportWindow.title"));
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
 
-        Text info = new Text(TR.trO("Exporter les notes des fichiers ouverts dans un tableau CSV") + "\n" + TR.trO("Lors de l'importation dans un tableur, la langue du fichier sera à régler sur Anglais"));
+        Text info = new Text(TR.tr("gradeExportWindow.header"));
         VBox.setMargin(info, new Insets(40, 0, 40, 10));
 
         tabPane.getTabs().addAll(exportAllTab, exportAllSplitTab, exportThisTab);
@@ -65,12 +65,12 @@ public class GradeExportWindow extends Stage {
         public TextField studentNameSimple, studentNameReplace, studentNameBy;
         public TextField filePath;
 
-        public CheckBox settingsOnlySameGradeScale = new CheckBox(TR.trO("Exporter uniquement les notes des documents avec le même barème"));
-        public CheckBox settingsOnlyCompleted = new CheckBox(TR.trO("Exporter uniquement les notes des documents avec toutes les notes remplies"));
-        public CheckBox settingsOnlySameDir = new CheckBox(TR.trO("Exporter uniquement les notes des documents du même dossier"));
-        public CheckBox settingsAttributeTotalLine = new CheckBox(TR.trO("Ajouter une ligne pour le barème"));
-        public CheckBox settingsAttributeMoyLine = new CheckBox(TR.trO("Ajouter une ligne pour la moyenne des notes"));
-        public CheckBox settingsWithTxtElements = new CheckBox(TR.trO("Ajouter des lignes pour les commentaires (Éléments textuels)."));
+        public CheckBox settingsOnlySameGradeScale = new CheckBox(TR.tr("gradeExportWindow.options.onlySameGradeScale"));
+        public CheckBox settingsOnlyCompleted = new CheckBox(TR.tr("gradeExportWindow.options.onlyCompleted"));
+        public CheckBox settingsOnlySameDir = new CheckBox(TR.tr("gradeExportWindow.options.onlySameDir"));
+        public CheckBox settingsAttributeTotalLine = new CheckBox(TR.tr("gradeExportWindow.options.attributeTotalLine"));
+        public CheckBox settingsAttributeAverageLine = new CheckBox(TR.tr("gradeExportWindow.options.attributeAverageLine"));
+        public CheckBox settingsWithTxtElements = new CheckBox(TR.tr("gradeExportWindow.options.withTxtElements"));
         public Slider settingsTiersExportSlider = new Slider(1, 5, MainWindow.userData.settingsTiersExportSlider);
 
 
@@ -105,7 +105,7 @@ public class GradeExportWindow extends Stage {
                 HBox fileNameReplaceBox = new HBox();
 
                 fileNamePrefix = new TextField(MainWindow.userData.lastExportFileNamePrefix);
-                fileNamePrefix.setPromptText(TR.trO("Préfixe"));
+                fileNamePrefix.setPromptText(TR.tr("string.prefix"));
                 PaneUtils.setHBoxPosition(fileNamePrefix, -1, 30, 0, 2.5);
                 fileNamePrefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
 
@@ -114,21 +114,21 @@ public class GradeExportWindow extends Stage {
                 PaneUtils.setHBoxPosition(fileName, 0, 30, 0, 2.5);
 
                 fileNameSuffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
-                fileNameSuffix.setPromptText(TR.trO("Suffixe"));
+                fileNameSuffix.setPromptText(TR.tr("string.suffix"));
                 PaneUtils.setHBoxPosition(fileNameSuffix, -1, 30, 0, 2.5);
                 fileNameSuffix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameSuffix = newValue);
 
                 fileNamePrefixSuffixBox.getChildren().addAll(fileNamePrefix, fileName, fileNameSuffix);
 
 
-                Label replaceText = new Label(TR.trO("Remplacer"));
+                Label replaceText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.replace"));
                 PaneUtils.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 fileNameReplace = new TextField(MainWindow.userData.lastExportFileNameReplace);
                 PaneUtils.setHBoxPosition(fileNameReplace, -1, 30, 0, 2.5);
                 fileNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
 
-                Label byText = new Label(TR.trO("par"));
+                Label byText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.by"));
                 PaneUtils.setHBoxPosition(byText, 0, 30, 2.5);
 
                 fileNameBy = new TextField(MainWindow.userData.lastExportFileNameBy);
@@ -152,19 +152,20 @@ public class GradeExportWindow extends Stage {
         }
         public void setupStudentNameForm(){
 
-            VBox info = generateInfo(TR.trO("Nom de l'élève (Basé sur le nom du document)") + " :", true);
+
 
             if(studentNameCustom){
+                VBox info = generateInfo(TR.tr("gradeExportWindow.fields.studentNameAutoGenerated"), true);
                 HBox studentNameReplaceBox = new HBox();
 
-                Label replaceText = new Label(TR.trO("Remplacer"));
+                Label replaceText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.replace"));
                 PaneUtils.setHBoxPosition(replaceText, 0, 30, 2.5);
 
                 studentNameReplace = new TextField(MainWindow.userData.lastExportStudentNameReplace);
                 PaneUtils.setHBoxPosition(studentNameReplace, -1, 30, 0, 2.5);
                 studentNameReplace.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportStudentNameReplace = newValue);
 
-                Label byText = new Label(TR.trO("par"));
+                Label byText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.by"));
                 PaneUtils.setHBoxPosition(byText, 0, 30, 2.5);
 
                 studentNameBy = new TextField(MainWindow.userData.lastExportStudentNameBy);
@@ -176,9 +177,10 @@ public class GradeExportWindow extends Stage {
                 root.getChildren().addAll(info, studentNameReplaceBox);
 
             }else{
+                VBox info = generateInfo(TR.tr("gradeExportWindow.fields.studentName"), true);
 
                 studentNameSimple = new TextField(StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
-                studentNameSimple.setPromptText(TR.trO("Nom de l'élève"));
+                studentNameSimple.setPromptText(TR.tr("gradeExportWindow.fields.studentName"));
                 PaneUtils.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
 
                 root.getChildren().addAll(info, studentNameSimple);
@@ -215,10 +217,10 @@ public class GradeExportWindow extends Stage {
         }
         public void setupSettingsForm(){
 
-            VBox info = generateInfo(TR.trO("Paramètres") + " :", true);
+            VBox info = generateInfo(TR.tr("convertWindow.options.title"), true);
 
             HBox tiersExport = new HBox();
-            Label tiersExportLabel = new Label(TR.trO("Niveaux de note exportés :"));
+            Label tiersExportLabel = new Label(TR.tr("gradeExportWindow.options.tiersExportSlider"));
             tiersExport.getChildren().addAll(tiersExportLabel, settingsTiersExportSlider);
             settingsTiersExportSlider.valueProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsTiersExportSlider = newValue.intValue());
 
@@ -230,7 +232,7 @@ public class GradeExportWindow extends Stage {
             PaneUtils.setHBoxPosition(settingsOnlyCompleted, 0, 30, 0, 2.5);
             PaneUtils.setHBoxPosition(settingsOnlySameDir, 0, 30, 0, 2.5);
             PaneUtils.setHBoxPosition(settingsAttributeTotalLine, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsAttributeMoyLine, 0, 30, 0, 2.5);
+            PaneUtils.setHBoxPosition(settingsAttributeAverageLine, 0, 30, 0, 2.5);
             PaneUtils.setHBoxPosition(settingsWithTxtElements, 0, 30, 0, 2.5);
             PaneUtils.setHBoxPosition(settingsTiersExportSlider, 0, 30, 0, 2.5);
             PaneUtils.setHBoxPosition(tiersExportLabel, 0, 30, 2.5, 2.5);
@@ -242,8 +244,8 @@ public class GradeExportWindow extends Stage {
                 settingsOnlySameGradeScale.setSelected(MainWindow.userData.settingsOnlySameGradeScale);
                 settingsOnlyCompleted.setSelected(MainWindow.userData.settingsOnlyCompleted);
                 settingsOnlySameDir.setSelected(MainWindow.userData.settingsOnlySameDir);
-                settingsAttributeMoyLine.setSelected(MainWindow.userData.settingsAttributeMoyLine);
-                root.getChildren().addAll(settingsOnlySameGradeScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeMoyLine);
+                settingsAttributeAverageLine.setSelected(MainWindow.userData.settingsAttributeMoyLine);
+                root.getChildren().addAll(settingsOnlySameGradeScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeAverageLine);
             }
             else root.getChildren().add(settingsAttributeTotalLine);
 
@@ -257,7 +259,7 @@ public class GradeExportWindow extends Stage {
             settingsOnlyCompleted.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlyCompleted = newValue);
             settingsOnlySameDir.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsOnlySameDir = newValue);
             settingsAttributeTotalLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeTotalLine = newValue);
-            settingsAttributeMoyLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeMoyLine = newValue);
+            settingsAttributeAverageLine.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsAttributeMoyLine = newValue);
             settingsWithTxtElements.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsWithTxtElements = newValue);
 
         }
@@ -307,21 +309,14 @@ public class GradeExportWindow extends Stage {
         }
 
         private void end(int exported){
-
             close();
 
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Exportation terminée"));
+            String header;
+            if(exported == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
+            else if(exported == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
+            else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", exported);
 
-            if(exported == 0) alert.setHeaderText(TR.trO("Aucun document n'a été exporté !"));
-            else if(exported == 1) alert.setHeaderText(TR.trO("Le document a bien été exporté !"));
-            else alert.setHeaderText(exported + " " + TR.trO("documents ont été exportés !"));
-
-            if(exported != 0){
-                if(type == 1) alert.setContentText(TR.trO("Vous pouvez retrouver les fichiers CSV dans le dossier choisi."));
-                else alert.setContentText(TR.trO("Vous pouvez retrouver le fichier CSV dans le dossier choisi."));
-            }
-
-            alert.show();
+            DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, null, filePath.getText());
 
         }
 

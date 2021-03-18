@@ -99,40 +99,40 @@ public class FileTab extends SideTab {
 		});
 
 		sortManager = new SortManager((sortType, order) -> {
-			if(sortType.equals(TR.trO("Nom"))){
+			if(sortType.equals(TR.tr("sorting.sortType.name"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
-			}else if(sortType.equals(TR.trO("Dossier"))){
+			}else if(sortType.equals(TR.tr("sorting.sortType.folder"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
-			}else if(sortType.equals(TR.trO("Édition"))){
+			}else if(sortType.equals(TR.tr("sorting.sortType.edit"))){
 				List<File> toSort = files.getItems().stream().collect(Collectors.toList());
 				files.getItems().clear();
 				files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
-			}else if(sortType.equals(TR.trO("Date d'Ajout"))){
+			}else if(sortType.equals(TR.tr("sorting.sortType.addDate"))){
 				backOpenFilesList(!order);
 			}
 
 		}, null);
-		sortManager.setup(options, TR.trO("Date d'Ajout"), TR.trO("Date d'Ajout"), TR.trO("Édition"), "\n", TR.trO("Nom"), TR.trO("Dossier"));
+		sortManager.setup(options, TR.tr("sorting.sortType.addDate"), TR.tr("sorting.sortType.addDate"), TR.tr("sorting.sortType.edit"), "\n", TR.tr("sorting.sortType.name"), TR.tr("sorting.sortType.folder"));
 
 		// Info pane
 
-		Label infoLabel = new Label(TR.trO("Aucun fichier ouvert"));
+		Label infoLabel = new Label(TR.tr("filesTab.noFile.title"));
 		infoLabel.setStyle("-fx-font-size: 16;");
 		VBox.setMargin(infoLabel, new Insets(0, 0, 10, 0));
 
-		Hyperlink openFile = new Hyperlink(TR.trO("Ouvrir un ou plusieurs fichiers"));
+		Hyperlink openFile = new Hyperlink(TR.tr("menuBar.file.openFiles"));
 		openFile.setOnAction(e -> MainWindow.menuBar.file1Open.fire());
 		VBox.setMargin(openFile, new Insets(-2, 0, -2, 0));
 
-		Hyperlink openDir = new Hyperlink(TR.trO("Ouvrir un dossier"));
+		Hyperlink openDir = new Hyperlink(TR.tr("menuBar.file.openDir"));
 		openDir.setOnAction(e -> MainWindow.menuBar.file2OpenDir.fire());
 		VBox.setMargin(openDir, new Insets(-2, 0, -2, 0));
 
-		Hyperlink convert = new Hyperlink(TR.trO("Convertir"));
+		Hyperlink convert = new Hyperlink(TR.tr("menuBar.tools.convertImages"));
 		convert.setOnAction(e -> new ConvertDocument());
 		VBox.setMargin(convert, new Insets(-2, 0, -2, 0));
 

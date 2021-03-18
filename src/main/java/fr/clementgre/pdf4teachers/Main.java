@@ -14,11 +14,14 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.LicenseWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import javafx.application.Application;
+import javafx.application.ConditionalFeature;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DataFormat;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 public class Main extends Application {
 

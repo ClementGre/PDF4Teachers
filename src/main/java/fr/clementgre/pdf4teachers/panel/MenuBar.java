@@ -36,6 +36,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -487,7 +488,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
 					pane.getChildren().add(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
 				}else{
 					if(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
-					else pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/"+ image + ".png")+"", 0, 0, colorAdjust));
+					else pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png")+"", 0, 0, colorAdjust));
 				}
 
 				text.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 8;"); // top - right - bottom - left

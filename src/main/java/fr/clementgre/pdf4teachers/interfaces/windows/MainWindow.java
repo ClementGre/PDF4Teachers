@@ -18,6 +18,7 @@ import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -25,7 +26,9 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.Window;
 
 import java.awt.*;
@@ -71,6 +74,7 @@ public class MainWindow extends Stage{
         StyleManager.putStyle(root, Style.DEFAULT);
 
         Scene scene = new Scene(root);
+        scene.setFill(Color.TRANSPARENT);
         loadDimensions();
         setupDecimalFormat();
 
@@ -137,6 +141,7 @@ public class MainWindow extends Stage{
         }
 
         menuBar = new MenuBar();
+
 
         mainScreen.repaint();
         footerBar.repaint();
