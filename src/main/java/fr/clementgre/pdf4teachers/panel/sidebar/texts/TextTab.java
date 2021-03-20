@@ -36,6 +36,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import jfxtras.styles.jmetro.JMetroStyleClass;
+import org.controlsfx.control.SearchableComboBox;
 
 import java.util.Random;
 import java.util.Set;
@@ -94,7 +95,7 @@ public class TextTab extends SideTab {
 		//fontCombo.setEditable(true);
 
 		PaneUtils.setHBoxPosition(fontCombo, -1, 30, 2.5);
-		fontCombo.setStyle("-fx-font-size: 13");
+		fontCombo.setStyle("-fx-font-size: 13; -fx-border: null;");
 		fontCombo.getSelectionModel().select("Open Sans");
 		fontCombo.setMaxHeight(25);
 		fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
@@ -264,8 +265,8 @@ public class TextTab extends SideTab {
 					}
 				}
 			}else if(e.getCode() == KeyCode.TAB){
-				if(MainWindow.leftBar.getSelectionModel().getSelectedItem() == MainWindow.textTab) MainWindow.leftBar.getSelectionModel().select(MainWindow.gradeTab);
-				else MainWindow.leftBar.getSelectionModel().select(MainWindow.textTab);
+				if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
+				if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
 
 			}else if(e.getCode() == KeyCode.DOWN){
 				e.consume();

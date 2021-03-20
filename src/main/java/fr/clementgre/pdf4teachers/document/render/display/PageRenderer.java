@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
@@ -154,7 +155,7 @@ public class PageRenderer extends Pane{
         setOnMouseClicked(e -> {
             if(e.getClickCount() == 2){ // ADD TextElement when double click
 
-                MainWindow.leftBar.getSelectionModel().select(1);
+                SideBar.selectTab(MainWindow.textTab);
                 MainWindow.textTab.newBtn.fire();
                 Element selected = MainWindow.mainScreen.getSelected();
                 if(selected != null){

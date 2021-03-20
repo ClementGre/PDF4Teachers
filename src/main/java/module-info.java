@@ -17,6 +17,7 @@ open module fr.clementgre.pdf4teachers {
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
+    requires universal.document.converter;
 
     // jfx addons
     requires org.jfxtras.styles.jmetro;
@@ -59,6 +60,12 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.panel.sidebar.paint;
     exports fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
     exports fr.clementgre.pdf4teachers.utils;
+    exports fr.clementgre.pdf4teachers.utils.dialog;
+    exports fr.clementgre.pdf4teachers.utils.image;
+    exports fr.clementgre.pdf4teachers.utils.interfaces;
+    exports fr.clementgre.pdf4teachers.utils.sort;
+    exports fr.clementgre.pdf4teachers.utils.style;
+    exports fr.clementgre.pdf4teachers.interfaces;
     exports fr.clementgre.pdf4teachers.interfaces.windows;
 
 }

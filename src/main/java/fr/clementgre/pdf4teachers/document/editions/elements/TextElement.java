@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
@@ -112,7 +113,7 @@ public class TextElement extends Element {
 	@Override
 	public void select(){
 		super.selectPartial();
-		MainWindow.leftBar.getSelectionModel().select(1);
+		SideBar.selectTab(MainWindow.textTab);
 		MainWindow.textTab.selectItem();
 		AutoTipsManager.showByAction("textselect");
 	}

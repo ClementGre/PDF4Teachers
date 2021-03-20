@@ -9,6 +9,7 @@ import java.util.Collections;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
@@ -117,7 +118,7 @@ public class PDFPagesRender {
 				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
 
 				// send notifications here
-				TR.tr("document.loadErrorNotification");
+				MainWindow.showNotification(AlertIconType.WARNING, TR.tr("document.loadErrorNotification"), 20);
 			}
 		}
 	}

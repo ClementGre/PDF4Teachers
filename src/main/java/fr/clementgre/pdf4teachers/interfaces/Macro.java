@@ -4,6 +4,7 @@ package fr.clementgre.pdf4teachers.interfaces;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
@@ -21,9 +22,8 @@ public class Macro {
 
         main.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
-                if(MainWindow.leftBar.getSelectionModel().getSelectedItem() == MainWindow.textTab) MainWindow.leftBar.getSelectionModel().select(MainWindow.gradeTab);
-                else MainWindow.leftBar.getSelectionModel().select(MainWindow.textTab);
-                return;
+                if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
+                if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
             }
 
             if(e.isShortcutDown()){
@@ -53,7 +53,7 @@ public class Macro {
                     }catch(NumberFormatException ignored){}
 
                     if(e.getCode() == KeyCode.T){
-                        MainWindow.leftBar.getSelectionModel().select(1);
+                        SideBar.selectTab(MainWindow.textTab);
                         MainWindow.textTab.newBtn.fire();
                         Element selected = MainWindow.mainScreen.getSelected();
                         if(selected != null){
@@ -66,11 +66,11 @@ public class Macro {
                         int page = MainWindow.mainScreen.document.getCurrentPage() == -1 ? 0 : MainWindow.mainScreen.document.getCurrentPage();
                         int y = (int) MainWindow.mainScreen.document.pages.get(page).getMouseY();
 
-                        MainWindow.leftBar.getSelectionModel().select(2);
+                        SideBar.selectTab(MainWindow.gradeTab);
                         MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
 
                     }else if(e.getCode() == KeyCode.G){
-                        if(MainWindow.leftBar.getSelectionModel().getSelectedItem() != MainWindow.gradeTab) return;
+                        if(!MainWindow.gradeTab.isSelected()) return;
 
                         GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
                         if(item == null) return;
@@ -96,7 +96,7 @@ public class Macro {
                             int k = 0;
                             for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
-                                    MainWindow.leftBar.getSelectionModel().select(1);
+                                    SideBar.selectTab(MainWindow.textTab);
                                     MainWindow.textTab.treeView.favoritesSection.listsManager.loadList(list, true);
                                     return;
                                 }
@@ -116,7 +116,7 @@ public class Macro {
                             int k = 0;
                             for(ArrayList<TextListItem> list : TextTreeSection.lists.values()){
                                 if(k == i){
-                                    MainWindow.leftBar.getSelectionModel().select(1);
+                                    SideBar.selectTab(MainWindow.textTab);
                                     MainWindow.textTab.treeView.favoritesSection.listsManager.loadList(list, true);
                                     return;
                                 }

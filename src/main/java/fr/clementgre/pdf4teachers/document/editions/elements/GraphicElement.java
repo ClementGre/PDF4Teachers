@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -110,7 +111,7 @@ public abstract class GraphicElement extends Element{
     @Override
     public void select(){
         super.selectPartial();
-        MainWindow.leftBar.getSelectionModel().select(3);
+        SideBar.selectTab(MainWindow.paintTab);
 
     }
     @Override

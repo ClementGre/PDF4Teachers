@@ -1,5 +1,25 @@
 /*******************************************************************************
  *                                                                             *
+ * NOTIFICATION BAR                                                            *
+ *                                                                             *
+ ******************************************************************************/
+
+.notification-bar > .pane .close-button:hover{
+    -fx-background-color: #464646;
+}
+.notification-bar > .pane .close-button{
+    -fx-pref-height: 20px;
+    -fx-pref-width: 20px;
+}
+.notification-bar > .pane .label{
+    -fx-wrap-text: true;
+}
+.notification-bar > .pane{
+    -fx-padding: 5;
+}
+
+/*******************************************************************************
+ *                                                                             *
  * Text & Label                                                                *
  *                                                                             *
  ******************************************************************************/
@@ -41,6 +61,8 @@ Hyperlink{
 CheckBox {
     -fx-font-size: 13;
 }
+
+/* ComboBox */
 
 /*******************************************************************************
  *                                                                             *

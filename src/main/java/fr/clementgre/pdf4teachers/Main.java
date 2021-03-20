@@ -3,6 +3,9 @@ package fr.clementgre.pdf4teachers;
 import java.io.*;
 import java.util.List;
 
+import club.caliope.udc.DocumentConverter;
+import club.caliope.udc.InputFormat;
+import club.caliope.udc.OutputFormat;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -35,7 +38,7 @@ public class Main extends Application {
 	public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
 	public static final String VERSION = "sn1-1.3.0";
 	public static final boolean DEBUG = true;
-	public static final boolean COPY_CONSOLE = false;
+	public static final boolean COPY_CONSOLE = true;
 	public static final boolean TRANSLATIONS_IN_CODE = true;
 
 	public static boolean firstLaunch;
@@ -89,7 +92,6 @@ public class Main extends Application {
 				startMainWindow();
 			}
 		}
-
 	}
 
 	public boolean languageAsk(){

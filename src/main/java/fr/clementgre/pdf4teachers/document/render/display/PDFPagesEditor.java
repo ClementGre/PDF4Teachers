@@ -310,17 +310,20 @@ public class PDFPagesEditor{
     // OTHER
 
     public void capture(int pageIndex, PositionDimensions dimensions){
+        Image pageImage;
         List<Image> images = new ArrayList<>();
         if(pageIndex == -1){
             PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
+            pageImage = capturePage(page, null);
             images.add(capturePage(page, dimensions));
         }else{
             PageRenderer page = MainWindow.mainScreen.document.pages.get(pageIndex);
+            pageImage = capturePage(page, null);
             images.add(capturePage(page, dimensions));
         }
 
         List<String> definitions = ConvertWindow.definitions;
-        definitions.set(0, (images.get(0).getWidth() * images.get(0).getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
+        definitions.set(0, (pageImage.getWidth() * pageImage.getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
 
         ChoiceDialog<String> alert = DialogBuilder.getChoiceDialog(definitions.get(0), definitions);
         alert.setTitle(TR.tr("document.pageActions.capture.dialog.title"));

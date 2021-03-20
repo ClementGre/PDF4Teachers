@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
@@ -16,6 +17,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.ConditionalFeature;
@@ -30,6 +32,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.controlsfx.control.NotificationPane;
 
 import java.awt.*;
 import java.io.File;
@@ -45,6 +48,7 @@ public class MainWindow extends Stage{
 
     public static UserData userData;
 
+    public static AutoHideNotificationPane notificationPane;
     public static BorderPane root;
     public static SplitPane mainPane;
 
@@ -70,10 +74,11 @@ public class MainWindow extends Stage{
     public MainWindow(){
 
         root = new BorderPane();
+        notificationPane = new AutoHideNotificationPane(root);
 
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(notificationPane, Style.DEFAULT);
 
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
         loadDimensions();
         setupDecimalFormat();
@@ -166,8 +171,8 @@ public class MainWindow extends Stage{
         });
         root.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
-                if(leftBar.getSelectionModel().getSelectedItem() == MainWindow.textTab) leftBar.getSelectionModel().select(MainWindow.gradeTab);
-                else leftBar.getSelectionModel().select(MainWindow.textTab);
+                if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
+                if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
                 e.consume();
             }
         });
@@ -292,6 +297,13 @@ public class MainWindow extends Stage{
 
         window.setX(x);
         window.setY(y);
+    }
+
+    public static void showNotification(AlertIconType type, String text, int autoHide){
+        notificationPane.addToPending(text, type, autoHide);
+    }
+    public static void showNotificationNow(AlertIconType type, String text, int autoHide){
+        notificationPane.showNow(text, type, autoHide);
     }
 
     public void setupDesktopEvents(){
