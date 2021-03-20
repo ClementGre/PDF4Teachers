@@ -10,8 +10,14 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils {
 
+    public static void runLaterOnUIThread(int millis, Runnable runnable){
+        new Thread(() -> {
+            try{ Thread.sleep(millis); }catch(InterruptedException e){ e.printStackTrace(); }
+            Platform.runLater(runnable);
+        }, "runLaterOnUIThread").start();
+    }
     
-    // Running code on JavaFX Thread from another Thre
+    // Running code on JavaFX Thread from another Thread
     // and waiting this acting is completed before continuing the other Thread
     public static <T> T runAndWait(ReturnCallBack<T> action) {
         if (action == null)

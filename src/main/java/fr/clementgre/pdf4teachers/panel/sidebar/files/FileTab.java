@@ -1,10 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
@@ -12,6 +9,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
@@ -156,22 +154,66 @@ public class FileTab extends SideTab {
 
 	}
 
-	private void openFile(File file){
-		
-		if(!file.isDirectory()){
-			if(isFilePdf(file) && !files.getItems().contains(file)){
-				files.getItems().add(file);
-				originalFiles.add(file);
-				sortManager.simulateCall();
-			}
-		}else{
-			for(File VFile : Objects.requireNonNull(file.listFiles())){
-				if(isFilePdf(VFile) && !files.getItems().contains(VFile)){
-					files.getItems().add(VFile);
-					originalFiles.add(VFile);
+	public class DirOpener{
+		private int DEEP_LIMIT = 2;
+		boolean alreadyAsked = false;
+		boolean recursive = false;
+
+		public DirOpener(File file){
+			for(File childrenFile : Objects.requireNonNull(file.listFiles())){
+				if(childrenFile.isDirectory()){
+					openFileSubDir(childrenFile, 1);
+				}else{
+					openFileNonDir(childrenFile);
 				}
 			}
-			sortManager.simulateCall();
+		}
+
+		private void openFileSubDir(File file, int deep){
+			if(deep > DEEP_LIMIT || file.listFiles() == null) return;
+
+			for(File childrenFile : Objects.requireNonNull(file.listFiles())){
+				if(childrenFile.isDirectory()) openFileSubDir(childrenFile, deep+1);
+
+				if(isFilePdf(childrenFile) && !files.getItems().contains(childrenFile)){
+					if(isRecursive()) openFile(childrenFile, true);
+					else return;
+				}
+			}
+		}
+		private boolean isRecursive(){
+			if(alreadyAsked) return recursive;
+
+			Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
+			alert.setHeaderText(TR.tr("dialog.confirmation.openRecursively.header"));
+			alert.setContentText(TR.tr("dialog.confirmation.openRecursively.details"));
+
+			Optional<ButtonType> result = alert.showAndWait();
+			if(result.isEmpty()) return false;
+			recursive = result.get() == ButtonType.OK;
+
+			alreadyAsked = true;
+			return recursive;
+		}
+
+	}
+
+	private void openFile(File file){
+		openFile(file, null);
+	}
+	private void openFile(File file, Boolean recursive){
+		if(!file.isDirectory()){
+			openFileNonDir(file);
+		}else{
+			new DirOpener(file);
+		}
+		sortManager.simulateCall();
+	}
+
+	private void openFileNonDir(File file){
+		if(isFilePdf(file) && !files.getItems().contains(file)){
+			files.getItems().add(file);
+			originalFiles.add(file);
 		}
 	}
 	public void openFiles(File[] files){
