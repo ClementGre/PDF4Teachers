@@ -31,7 +31,7 @@ public class LanguagesUpdater {
 
     private final Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("language.downloadingDialog.title"));
     private final ProgressBar loadingBar = new ProgressBar();
-    private final Label currentLanguage = new Label(TR.tr("language.downloadingDialog.header"));
+    private final Label currentLanguage = new Label(TR.tr("language.downloadingDialog.details"));
 
     public LanguagesUpdater(){
         loadingAlert.setWidth(600);

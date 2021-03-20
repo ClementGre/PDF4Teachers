@@ -135,7 +135,7 @@ public class LanguageWindow extends Stage{
 
             Label label = new Label(language.getName());
             if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000)
-                label.setText(label.getText() + " (" + TR.tr("language.chooseLanguageWindow.translationPercentageInfo", String.valueOf(language.getPerMilleCompleted() / 10d)));
+                label.setText(label.getText() + " (" + TR.tr("language.chooseLanguageWindow.translationPercentageInfo", String.valueOf(language.getPerMilleCompleted() / 10d)) + ")");
 
             label.setPrefHeight(50);
             HBox.setMargin(label, new Insets(0, 5, 0, 10));

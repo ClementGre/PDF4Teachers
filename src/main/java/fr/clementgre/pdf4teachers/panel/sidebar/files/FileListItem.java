@@ -106,7 +106,7 @@ public class FileListItem extends ListCell<File>{
                         setTooltip(new Tooltip(TR.tr("document.status.noEdit") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("elements.name.gradeScales")));
                     }
                 }else{ // don't have edit file
-                    path.setText(path.getText() + " | " + TR.tr("document.status.noEdité"));
+                    path.setText(path.getText() + " | " + TR.tr("document.status.noEdit"));
                     setTooltip(new Tooltip(TR.tr("document.status.noEdit")));
                 }
             }catch(Exception e){
