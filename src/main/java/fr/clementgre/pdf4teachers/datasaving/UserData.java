@@ -69,8 +69,6 @@ public class UserData {
     // GradesTab
     @UserDataObject(path = "grades.lockGradeScale")
     public boolean lockGradeScale = false;
-    @UserDataObject(path = "grades.sumByDecrement")
-    public boolean sumByDecrement = false;
     @UserDataObject(path = "grades.tiersFont")
     public LinkedHashMap<Object, Object> gradesTiersFont = new LinkedHashMap<>();
 
@@ -271,7 +269,6 @@ public class UserData {
                 startsCount++;
 
                 MainWindow.gradeTab.lockGradeScale.setSelected(lockGradeScale);
-                MainWindow.gradeTab.sumByDecrement.setSelected(sumByDecrement);
                 SyncColorPicker.loadCustomsColors(customColors.stream().map(Object::toString).collect(Collectors.toList()));
                 TR.loadLanguagesConfig(languages);
 
@@ -304,7 +301,6 @@ public class UserData {
             gradesTiersFont.put(i+"", data); i++;
         }
         lockGradeScale = MainWindow.gradeTab.lockGradeScale.isSelected();
-        sumByDecrement = MainWindow.gradeTab.sumByDecrement.isSelected();
 
         autoTipsValidated = AutoTipsManager.getCompletedAutoTips().stream().map(item -> (Object) item).collect(Collectors.toList());
 

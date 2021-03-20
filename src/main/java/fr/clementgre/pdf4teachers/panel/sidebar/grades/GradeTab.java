@@ -37,7 +37,6 @@ public class GradeTab extends SideTab {
 
     public static HashMap<Integer, TiersFont> fontTiers = new HashMap<>();
 
-    public ToggleButton sumByDecrement = new ToggleButton();
     public ToggleButton lockGradeScale = new ToggleButton();
     private Button settings = new Button();
     private Button link = new Button();
@@ -51,11 +50,11 @@ public class GradeTab extends SideTab {
     }
     public void setup(){
 
-        fontTiers.put(0, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 28), Color.valueOf("#990000"), true, false));
-        fontTiers.put(1, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 24), Color.valueOf("#b31a1a"), false, false));
-        fontTiers.put(2, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#cc3333"), false, false));
-        fontTiers.put(3, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#e64d4d"), false, false));
-        fontTiers.put(4, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#ff6666"), false, false));
+        fontTiers.put(0, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 28), Color.valueOf("#990000"), true, false, false));
+        fontTiers.put(1, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 24), Color.valueOf("#b31a1a"), false, false, false));
+        fontTiers.put(2, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#cc3333"), false, false, false));
+        fontTiers.put(3, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#e64d4d"), false, false, false));
+        fontTiers.put(4, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#ff6666"), false, false, false));
 
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
@@ -99,7 +98,7 @@ public class GradeTab extends SideTab {
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, sumByDecrement, lockGradeScale, settings, link, export);
+        optionPane.getChildren().addAll(spacer, lockGradeScale, settings, link, export);
 
         treeView = new GradeTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);
@@ -175,6 +174,9 @@ public class GradeTab extends SideTab {
     }
     public static boolean getTierHide(int index) {
         return fontTiers.get(index).isHide();
+    }
+    public static boolean getTierHideWhenAllPoints(int index) {
+        return fontTiers.get(index).isHideWhenAllPoints();
     }
 
     public BooleanProperty isLockGradeScaleProperty(){

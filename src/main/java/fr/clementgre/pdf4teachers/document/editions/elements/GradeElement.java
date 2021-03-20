@@ -330,7 +330,10 @@ public class GradeElement extends Element {
         return isShouldVisibleOnExport() || alwaysVisible;
     }
     public boolean isShouldVisibleOnExport(){
-        return (getValue() != -1 && !GradeTab.getTierHide(GradeTreeView.getElementTier(parentPath)));
+        int tier = GradeTreeView.getElementTier(parentPath);
+        return getValue() != -1
+                && !GradeTab.getTierHide(tier)
+                && !(GradeTab.getTierHideWhenAllPoints(tier) && getValue() == getTotal());
     }
 
     public void updateFont(){

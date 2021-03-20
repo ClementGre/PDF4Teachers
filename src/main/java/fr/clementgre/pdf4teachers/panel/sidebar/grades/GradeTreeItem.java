@@ -327,20 +327,8 @@ public class GradeTreeItem extends TreeItem {
 
             if(children.getCore().getValue() >= 0){
                 hasValue = true;
-                if(!MainWindow.gradeTab.sumByDecrement.isSelected()){
-                    value += children.getCore().getValue();
-                }else{
-                    if(children.hasSubGrade()){
-                        value += children.getCore().getTotal() - children.getCore().getValue();
-                    }else{
-                        value += children.getCore().getValue();
-                    }
-                }
-
+                value += children.getCore().getValue();
             }
-        }
-        if(MainWindow.gradeTab.sumByDecrement.isSelected()){
-            value = total - value;
         }
 
         if(hasValue){
