@@ -75,7 +75,7 @@ public class GradeTreeView extends TreeView<String> {
     }
 
     public void generateRoot(boolean update){
-        MainWindow.gradeTab.newGradeElement(TR.trO("Total"), -1, 0, 0, "", update);
+        MainWindow.gradeTab.newGradeElement(TR.tr("gradeTab.gradeDefaultName.total"), -1, 0, 0, "", update);
     }
 
     public void addElement(GradeElement element){

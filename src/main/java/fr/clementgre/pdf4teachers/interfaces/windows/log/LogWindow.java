@@ -30,7 +30,7 @@ public class LogWindow extends Stage {
 
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
         setResizable(true);
-        setTitle(TR.trO("PDF4Teachers - Console"));
+        setTitle(TR.tr("printStreamWindow.title"));
         setScene(scene);
         setOnCloseRequest(e -> {
             updater.stop();

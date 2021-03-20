@@ -17,11 +17,11 @@ public abstract class GraphicElement extends Element{
 
     public enum RepeatMode{
         AUTO("classics.automatic.abbreviated"),
-        STRETCH("paint.repeatMode.stretch"),
-        KEEP_RATIO("paint.repeatMode.keepRatio"),
-        CROP("paint.repeatMode.crop"),
-        MULTIPLY_X("paint.repeatMode.multiplyX"),
-        MULTIPLY_Y("paint.repeatMode.multiplyY");
+        STRETCH("paintTab.repeatMode.stretch"),
+        KEEP_RATIO("paintTab.repeatMode.keepRatio"),
+        CROP("paintTab.repeatMode.crop"),
+        MULTIPLY_X("paintTab.repeatMode.multiplyX"),
+        MULTIPLY_Y("paintTab.repeatMode.multiplyY");
 
         private String key;
         RepeatMode(String key){
@@ -32,9 +32,9 @@ public abstract class GraphicElement extends Element{
         }
     }
     public enum ResizeMode{
-        CORNERS("paint.resizeMode.corners"),
-        OPPOSITE_CORNERS("paint.resizeMode.oppositeCorners"),
-        SIDE_EDGES("paint.resizeMode.sideEdges");
+        CORNERS("paintTab.resizeMode.corners"),
+        OPPOSITE_CORNERS("paintTab.resizeMode.oppositeCorners"),
+        SIDE_EDGES("paintTab.resizeMode.sideEdges");
 
         private String key;
         ResizeMode(String key){
@@ -45,7 +45,7 @@ public abstract class GraphicElement extends Element{
         }
     }
     public enum RotateMode{
-        NEAR_CORNERS("paint.resizeMode.nearCorners"),
+        NEAR_CORNERS("paintTab.resizeMode.nearCorners"),
         NONE("classics.none.feminine");
 
         private String key;
@@ -93,11 +93,11 @@ public abstract class GraphicElement extends Element{
     @Override
     protected void setupMenu(){
 
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Supprimer"), false);
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("actions.delete"), false);
         item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
-        item1.setToolTip(TR.trO("Supprime cet élément. Il sera donc retiré de l'édition."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Dupliquer"), false);
-        item2.setToolTip(TR.trO("Crée un second élément identique à celui-ci."));
+        item1.setToolTip(TR.tr("elements.delete.tooltip"));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("actions.duplicate"), false);
+        item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
         menu.getItems().addAll(item1, item2);
         NodeMenuItem.setupMenu(menu);
 

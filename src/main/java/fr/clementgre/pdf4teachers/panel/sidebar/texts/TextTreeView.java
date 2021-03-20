@@ -106,8 +106,8 @@ public class TextTreeView extends TreeView<String>{
 
 
         if(section.sectionType == TextTreeSection.ONFILE_TYPE){
-            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.trO("Supprimer tous les éléments textuels"), false);
-            item3.setToolTip(TR.trO("Supprime tous les éléments textuels ajoutés au document, cela va donc supprimer une partie de l'édition."));
+            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("textTab.onDocumentList.menu.clear"), false);
+            item3.setToolTip(TR.tr("textTab.onDocumentList.menu.clear.tooltip"));
             menu.getItems().addAll(item3);
 
             item3.setOnAction(e -> {
@@ -119,9 +119,9 @@ public class TextTreeView extends TreeView<String>{
             });
         }else{
             NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("menuBar.file.clearList"), false);
-            item1.setToolTip(TR.trO("Supprime tous les éléments de la liste. Ne supprime en aucun cas les éléments sur le document."));
-            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Supprimer les donnés d'utilisation"), false);
-            item2.setToolTip(TR.trO("Réinitialise les donnés des éléments de la liste indiquant le nombre d'utilisation de l'élément. Cela va réinitialiser l'ordre du tri par Utilisation."));
+            item1.setToolTip(TR.tr("textTab.listMenu.clear.tooltip"));
+            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.clear.resetUseData"), false);
+            item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
             menu.getItems().addAll(item1, item2);
 
             item1.setOnAction(e -> {
@@ -133,7 +133,7 @@ public class TextTreeView extends TreeView<String>{
                         ((TextTreeItem) element).setUses(0);
                     }
                 }
-                if(section.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
+                if(section.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
                     section.sortManager.simulateCall();
                 }
             });
@@ -232,16 +232,16 @@ public class TextTreeView extends TreeView<String>{
     public static ContextMenu getNewMenu(TextTreeItem element){
 
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.trO("Ajouter et lier"), false);
-        item1.setToolTip(TR.trO("Ajoute cet élément à l'édition et lie l'élément de l'édition avec celui de la liste. Toute modification apportée à l'élément de l'édition entrainera la modification de l'élément dans la liste."));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.trO("Retirer"), false);
-        item2.setToolTip(TR.trO("Retire cet élément de la liste. Dans la liste Éléments sur ce document, ceci supprime aussi l'élément sur le document édité"));
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.trO("Ajouter aux favoris"), false);
-        item3.setToolTip(TR.trO("Ajoute cet élément à la liste des éléments précédents."));
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.trO("Ajouter aux éléments précédents"), false);
-        item4.setToolTip(TR.trO("Ajoute cet élément à la liste des éléments favoris."));
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.trO("Dé-lier l'élément"), false);
-        item5.setToolTip(TR.trO("L'élément de la liste ne sera plus synchronisé avec l'élément du document"));
+        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.addNLink"), false);
+        item1.setToolTip(TR.tr("textTab.listMenu.addNLink.tooltip"));
+        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("actions.delete"), false);
+        item2.setToolTip(TR.tr("textTab.listMenu.delete.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("textTab.elementMenu.addToFavouritesList"), false);
+        item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
+        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("textTab.elementMenu.addToPreviousList"), false);
+        item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
+        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.unlink"), false);
+        item5.setToolTip(TR.tr("textTab.listMenu.unlink.tooltip"));
 
 
         // Ajouter les items en fonction du type
@@ -257,11 +257,11 @@ public class TextTreeView extends TreeView<String>{
         item1.setOnAction((e) -> {
             element.addToDocument(true);
             if(element.getType() == TextTreeSection.FAVORITE_TYPE){
-                if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
+                if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
                     MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
                 }
             }else if(element.getType() == TextTreeSection.LAST_TYPE){
-                if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.trO("Utilisation"))){
+                if(MainWindow.textTab.treeView.lastsSection.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
                     MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
                 }
             }
@@ -314,19 +314,19 @@ public class TextTreeView extends TreeView<String>{
 
     public static List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
 
-        if(sortType.equals(TR.trO("Ajout"))){
+        if(sortType.equals(TR.tr("sorting.sortType.addDate.short"))){
             return Sorter.sortElementsByDate(toSort, order);
-        }else if(sortType.equals(TR.trO("Nom"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.name"))){
             return Sorter.sortElementsByName(toSort, order);
-        }else if(sortType.equals(TR.trO("Utilisation"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.use"))){
             return Sorter.sortElementsByUtils(toSort, order);
-        }else if(sortType.equals(TR.trO("Police"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.fontFamily"))){
             return Sorter.sortElementsByPolice(toSort, order);
-        }else if(sortType.equals(TR.trO("Taille"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.fontSize"))){
             return Sorter.sortElementsBySize(toSort, order);
-        }else if(sortType.equals(TR.trO("Couleur"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.color"))){
             return Sorter.sortElementsByColor(toSort, order);
-        }else if(sortType.equals(TR.trO("Position"))){
+        }else if(sortType.equals(TR.tr("sorting.sortType.location"))){
             return Sorter.sortElementsByCorePosition(toSort, order);
         }
         return toSort;
@@ -345,7 +345,7 @@ public class TextTreeView extends TreeView<String>{
                 toSort.add((TextTreeItem) MainWindow.textTab.treeView.lastsSection.getChildren().get(i));
             }
         }
-        return autoSortList(toSort, TR.trO("Utilisation"), true);
+        return autoSortList(toSort, TR.tr("sorting.sortType.use"), true);
 
     }
 }

@@ -206,10 +206,10 @@ public class MainWindow extends Stage{
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
                         if(MenuBar.isSystemMenuBarSupported()){
-                            menuBar.about.setText(TR.trO("À Propos") + " " + TR.trO("(Nouvelle Version Disponible)"));
+                            menuBar.about.setText(TR.tr("menuBar.about") + " (" + TR.tr("aboutWindow.version.update.available.short") + ")");
                         }else{
                             menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
-                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.trO("Une nouvelle version est disponible !")));
+                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("aboutWindow.version.update.available")));
                         }
 
                         if(Main.settings.checkUpdates.getValue()){
@@ -341,7 +341,7 @@ public class MainWindow extends Stage{
 
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        char separator = TR.trO("Decimal separator").charAt(0);
+        char separator = TR.tr("chars.decimalSeparator").charAt(0);
         if(separator == 'D') separator = ',';
         else if(separator != ',' && separator != '.') separator = '.';
         symbols.setDecimalSeparator(separator);

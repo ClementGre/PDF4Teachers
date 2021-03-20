@@ -118,7 +118,7 @@ public class PaintTab extends SideTab {
     }
 
     public void translate(){
-        advancedOptionsPane.setText(TR.tr("paint.title.advancedOptions"));
+        advancedOptionsPane.setText(TR.tr("paintTab.title.advancedOptions"));
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
     }

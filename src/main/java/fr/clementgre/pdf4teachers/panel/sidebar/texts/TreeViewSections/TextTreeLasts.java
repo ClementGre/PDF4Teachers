@@ -13,7 +13,7 @@ public class TextTreeLasts extends TextTreeSection {
     public ListsManager listsManager;
 
     public TextTreeLasts(){
-        super(TR.trO("Éléments Précédents"), LAST_TYPE);
+        super(TR.tr("textTab.previousList.name"), LAST_TYPE);
 
         listsManager = new ListsManager(this);
         setupGraphics();
@@ -21,10 +21,10 @@ public class TextTreeLasts extends TextTreeSection {
 
     @Override
     public void setupSortManager(){
-        sortManager.setup(sortCell.pane, TR.trO("Ajout"),
-                TR.trO("Ajout"), TR.trO("Nom"), TR.trO("Utilisation"),
+        sortManager.setup(sortCell.pane, TR.tr("sorting.sortType.addDate.short"),
+                TR.tr("sorting.sortType.addDate.short"), TR.tr("sorting.sortType.name"), TR.tr("sorting.sortType.use"),
                 "\n",
-                TR.trO("Police"), TR.trO("Taille"), TR.trO("Couleur"));
+                TR.tr("sorting.sortType.fontFamily"), TR.tr("sorting.sortType.fontSize"), TR.tr("sorting.sortType.color"));
     }
 
     @Override

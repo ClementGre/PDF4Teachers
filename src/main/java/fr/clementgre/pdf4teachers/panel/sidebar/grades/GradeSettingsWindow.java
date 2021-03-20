@@ -34,7 +34,7 @@ public class GradeSettingsWindow extends Stage {
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-        setTitle(TR.tr("gradeFormatWindow.title"));
+        setTitle(TR.tr("gradeTab.gradeFormatWindow.title"));
         setResizable(false);
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
@@ -45,7 +45,7 @@ public class GradeSettingsWindow extends Stage {
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.tr("gradeFormatWindow.header"));
+        Text info = new Text(TR.tr("gradeTab.gradeFormatWindow.header"));
         VBox.setMargin(info, new Insets(40, 0, 40, 0));
 
         root.setStyle("-fx-padding: 10;");
@@ -66,8 +66,8 @@ public class GradeSettingsWindow extends Stage {
         private ToggleButton itBtn = new ToggleButton();
         private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
         private SyncColorPicker colorPicker = new SyncColorPicker();
-        private CheckBox showName = new CheckBox(TR.tr("gradeFormatWindow.options.showGradeName"));
-        private CheckBox hide = new CheckBox(TR.tr("gradeFormatWindow.options.hideGrade"));
+        private CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
+        private CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));
 
         public TierPane(int tier){
             this.tier = tier;
@@ -75,7 +75,7 @@ public class GradeSettingsWindow extends Stage {
             setStyle("-fx-padding: 2.5;");
             Font font = GradeTab.getTierFont(tier);
 
-            Label name = new Label(TR.tr("gradeFormatWindow.tiers") + " " + (tier+1) + " :");
+            Label name = new Label(TR.tr("gradeTab.gradeFormatWindow.tiers") + " " + (tier+1) + " :");
             name.setStyle("-fx-font-size: 13");
             HBox.setMargin(name, new Insets(7));
 

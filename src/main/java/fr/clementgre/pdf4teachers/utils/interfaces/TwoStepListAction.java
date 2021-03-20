@@ -94,9 +94,9 @@ public class TwoStepListAction<T, D> {
     }
 
     public void processDataAsync(TwoStepListInterface<T, D> caller, CallBack callBack){
-        Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Exportation..."));
+        Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("dialogs.asyncAction.header.title"));
         loadingAlert.setWidth(600);
-        loadingAlert.setHeaderText(TR.trO("PDF4Teachers génère vos documents..."));
+        loadingAlert.setHeaderText(TR.tr("dialogs.asyncAction.header"));
         VBox pane = new VBox();
         Label currentDocument = new Label();
         ProgressBar loadingBar = new ProgressBar();

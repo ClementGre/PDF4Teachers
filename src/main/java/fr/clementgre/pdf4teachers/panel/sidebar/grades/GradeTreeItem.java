@@ -94,7 +94,7 @@ public class GradeTreeItem extends TreeItem {
                     }else{
                         pane.getChildren().addAll(nameField, spacer, gradeField, slash, totalField, newGrade);
                         Platform.runLater(() -> {
-                            if(name.getText().contains(TR.trO("Nouvelle note"))) nameField.requestFocus();
+                            if(name.getText().contains(TR.tr("gradeTab.gradeDefaultName"))) nameField.requestFocus();
                             else if(total.getText().equals("0")) totalField.requestFocus();
                             else gradeField.requestFocus();
                         });
@@ -113,7 +113,7 @@ public class GradeTreeItem extends TreeItem {
         mouseEnteredEvent = event -> {
             if(!cell.isFocused()) newGrade.setVisible(true);
             if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-                if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.trO("Clic sur le cadenas pour éditer le barème")));
+                if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
             }else if(cell.getTooltip() != null){
                 cell.setTooltip(null);
             }
@@ -169,8 +169,8 @@ public class GradeTreeItem extends TreeItem {
         PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
         newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);
-        newGrade.setTooltip(PaneUtils.genToolTip(TR.trO("Créer une nouvelle sous-note de") + " " + name.getText()));
-        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genToolTip(TR.trO("Créer une nouvelle sous-note de") + " " + name.getText())));
+        newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText())));
+        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText()))));
 
         pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
 
@@ -247,7 +247,7 @@ public class GradeTreeItem extends TreeItem {
         cell.selectedProperty().addListener(selectedListener);
 
         if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-            if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.trO("Clic sur le cadenas pour éditer le barème")));
+            if(cell.getTooltip() == null) cell.setTooltip(new Tooltip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
         }else if(cell.getTooltip() != null){
             cell.setTooltip(null);
         }

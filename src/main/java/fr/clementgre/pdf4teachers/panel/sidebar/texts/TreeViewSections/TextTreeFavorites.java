@@ -8,7 +8,7 @@ public class TextTreeFavorites extends TextTreeSection {
     public ListsManager listsManager;
 
     public TextTreeFavorites(){
-        super(TR.trO("Éléments Favoris"), FAVORITE_TYPE);
+        super(TR.tr("textTab.favoriteList.name"), FAVORITE_TYPE);
 
         listsManager = new ListsManager(this);
         setupGraphics();
@@ -16,10 +16,10 @@ public class TextTreeFavorites extends TextTreeSection {
 
     @Override
     public void setupSortManager(){
-        sortManager.setup(sortCell.pane, TR.trO("Ajout"),
-                TR.trO("Ajout"), TR.trO("Nom"), TR.trO("Utilisation"),
+        sortManager.setup(sortCell.pane, TR.tr("sorting.sortType.addDate.short"),
+                TR.tr("sorting.sortType.addDate.short"), TR.tr("sorting.sortType.name"), TR.tr("sorting.sortType.use"),
                 "\n",
-                TR.trO("Police"), TR.trO("Taille"), TR.trO("Couleur"));
+                TR.tr("sorting.sortType.fontFamily"), TR.tr("sorting.sortType.fontSize"), TR.tr("sorting.sortType.color"));
     }
 
     @Override

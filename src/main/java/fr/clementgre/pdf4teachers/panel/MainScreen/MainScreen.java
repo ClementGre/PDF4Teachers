@@ -94,20 +94,17 @@ public class MainScreen extends Pane {
 
 			if(status.get() == Status.CLOSED){
 				infoLink.setVisible(true);
-				info.setText(TR.trO("Aucun document ouvert"));
-				infoLink.setText(TR.trO("Convertir des images en documents PDF"));
+				info.setText(TR.tr("footerBar.documentStatus.noDocument"));
+				infoLink.setText(TR.tr("menuBar.tools.convertImages"));
 				infoLink.setOnAction(e -> new ConvertDocument());
 
 			}else if(status.get() == Status.ERROR){
-				info.setText(TR.trO("Impossible de charger ce document") + "\n\n" +
-						TR.trO("Vérifiez que le fichier n'est pas corrompu") + "\n" +
-						TR.trO("et que l'utilisateur a les droits de lecture sur ce fichier."));
+				info.setText(TR.tr("document.status.unableToLoadDocument"));
 				infoLink.setVisible(false);
 
 			}else if(status.get() == Status.ERROR_EDITION){
 				infoLink.setVisible(true);
-				info.setText(TR.trO("Impossible de charger l'édition du document") + "\n\n" +
-						TR.trO("Supprimez l'édition ou réparez la en modifiant le fichier d'éditions (YAML) dans :"));
+				info.setText(TR.tr("document.status.unableToLoadEdit"));
 				infoLink.setText(Main.dataFolder + "editions" + File.separator);
 				infoLink.setOnAction(e -> PlatformUtils.openDirectory(failedEditFile));
 			}
@@ -295,7 +292,7 @@ public class MainScreen extends Pane {
 		}
 
 		// FINISH OPEN
-		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> TR.trO("zoom") + " : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
+		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> "[zoom] : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
 
 		status.set(Status.OPEN);
 		MainWindow.filesTab.files.getSelectionModel().select(file);
@@ -361,9 +358,8 @@ public class MainScreen extends Pane {
 
 		if(status.get() != Status.OPEN){
 			if(confirm){
-				Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Erreur"));
-				alert.setHeaderText(TR.trO("Aucun document n'est ouvert !"));
-				alert.setContentText(TR.trO("Cette action est censée s'éxécuter sur un document ouvert"));
+				Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("dialog.unableToPerform.title"), TR.tr("dialog.unableToPerform.title"));
+				alert.setHeaderText(TR.tr("footerBar.documentStatus.noDocument"));
 
 				alert.showAndWait();
 			}

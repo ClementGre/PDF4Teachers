@@ -60,7 +60,7 @@ public class GradeExportRenderer {
                 if(!save(null)) return exported;
             }catch(Exception e){
                 e.printStackTrace();
-                DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.fatalError.title"), e.getMessage(), false);
+                DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.fatalError.title"), e.getMessage(), false);
                 return exported;
             }
         }else{ // SPLIT
@@ -80,7 +80,7 @@ public class GradeExportRenderer {
 
                 }catch(Exception e){
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true);
+                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true);
                     if(result) return exported;
                 }
             }
@@ -93,7 +93,7 @@ public class GradeExportRenderer {
 
     public void generateNamesLine(boolean includeGradeScale){
 
-        text += TR.tr("gradeExportWindow.csv.titles.parts");
+        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.parts");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
@@ -102,7 +102,7 @@ public class GradeExportRenderer {
     }
     public void generateGradeScaleLine(){
 
-        text += TR.tr("gradeExportWindow.csv.titles.gradeScale");
+        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.gradeScale");
 
         for(GradeRating rating : gradeScale){
             text += ";" + rating.total;
@@ -116,10 +116,10 @@ public class GradeExportRenderer {
         int startY = pane.settingsAttributeTotalLine.isSelected() ? 4 : 3;
         int endY = startY + files.size()-1;
 
-        text += TR.tr("gradeExportWindow.csv.titles.average");
+        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.average");
 
         for(GradeRating rating : gradeScale){
-            text += ";=" + TR.tr("gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
+            text += ";=" + TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
             x++;
         }
         text += "\n";
@@ -143,7 +143,7 @@ public class GradeExportRenderer {
     }
     public void generateCommentsLines(ExportFile file){
 
-        text += TR.tr("gradeExportWindow.csv.titles.comments");
+        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.comments");
 
         if(file.comments.size() >= 1){
             ArrayList<String> lines = new ArrayList<>();
@@ -213,8 +213,8 @@ public class GradeExportRenderer {
 
         }catch(Exception e){
             e.printStackTrace();
-            DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
-                    TR.tr("gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
+            DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
+                    TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
             return false;
         }
 
@@ -234,8 +234,8 @@ public class GradeExportRenderer {
 
                 }catch(Exception e) {
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
-                            TR.tr("gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
+                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
+                            TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
                     if(result) return false;
                 }
             }

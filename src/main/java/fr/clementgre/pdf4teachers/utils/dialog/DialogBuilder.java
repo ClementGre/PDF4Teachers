@@ -51,7 +51,9 @@ public class DialogBuilder {
         setupDialog(alert);
         return alert;
     }
-
+    public static void showAlertWithOpenDirButton(String title, String header, String details, File dirToBrowse){
+        showAlertWithOpenDirButton(title, header, details, dirToBrowse.getAbsolutePath());
+    }
     public static void showAlertWithOpenDirButton(String title, String header, String details, String pathToBrowse){
         Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, title, header, details);
 

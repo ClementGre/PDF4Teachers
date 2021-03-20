@@ -37,14 +37,14 @@ public class LanguageWindow extends Stage{
             getIcons().add(new Image(getClass().getResource("/logo.png")+""));
             setWidth(545);
             setHeight(720);
-            setTitle(TR.trO("PDF4Teachers - Langage"));
+            setTitle(TR.tr("language.chooseLanguageWindow.title"));
             setScene(scene);
             setOnCloseRequest(event -> {
                 callBack.call("");
             });
             StyleManager.putStyle(root, Style.DEFAULT);
 
-            if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en-us");
+            if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
 
             setupLanguages();
             setupPanel(root);
@@ -124,7 +124,7 @@ public class LanguageWindow extends Stage{
 
     public void setupPanel(VBox root){
 
-        Text info = new Text(TR.trO("Choisissez votre langage"));
+        Text info = new Text(TR.tr("language.chooseLanguageWindow.header"));
 
         ListView<HBox> languages = new ListView<>();
         languages.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
@@ -135,7 +135,7 @@ public class LanguageWindow extends Stage{
 
             Label label = new Label(language.getName());
             if(language.getPerMilleCompleted() != -1 && language.getPerMilleCompleted() != 1000)
-                label.setText(label.getText() + " (" + TR.trO("Traduit à") + " " + (language.getPerMilleCompleted() / 10d) + "%)");
+                label.setText(label.getText() + " (" + TR.tr("language.chooseLanguageWindow.translationPercentageInfo", String.valueOf(language.getPerMilleCompleted() / 10d)));
 
             label.setPrefHeight(50);
             HBox.setMargin(label, new Insets(0, 5, 0, 10));
@@ -165,8 +165,8 @@ public class LanguageWindow extends Stage{
 
         HBox btns = new HBox();
 
-        Button newTrans = new Button(TR.trO("Créer une nouvelle traduction"));
-        Button accept = new Button(TR.trO("Valider"));
+        Button newTrans = new Button(TR.tr("language.chooseLanguageWindow.contributeButton"));
+        Button accept = new Button(TR.tr("actions.apply"));
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 

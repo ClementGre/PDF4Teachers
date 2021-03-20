@@ -28,7 +28,7 @@ public class EditionExporter {
         if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.header"));
         else dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.onlyGrades.header"));
 
-        CheckBox copyLocations = new CheckBox(TR.tr("grades.copyGradeScaleDialog.confirmation.copyLocations"));
+        CheckBox copyLocations = new CheckBox(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.copyLocations"));
         if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
 
         ButtonType yes = new ButtonType(TR.tr("dialog.importEdit.confirm.YesOneFile"), ButtonBar.ButtonData.OK_DONE);

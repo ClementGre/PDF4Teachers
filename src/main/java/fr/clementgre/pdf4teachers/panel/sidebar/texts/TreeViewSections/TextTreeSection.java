@@ -85,7 +85,7 @@ public abstract class TextTreeSection extends TreeItem {
 
         PaneUtils.setPosition(sortToggleBtn, 0, 0, 30, 30, true);
         sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.trO("Trier")));
+        sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("sorting.name")));
 
         if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
         else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");

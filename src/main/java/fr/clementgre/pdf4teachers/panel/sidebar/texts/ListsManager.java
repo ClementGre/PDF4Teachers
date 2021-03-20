@@ -26,9 +26,9 @@ public class ListsManager {
         this.section = section;
 
         loadListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LIST, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        loadListBtn.setTooltip(PaneUtils.genToolTip(TR.trO("Afficher les listes d'éléments enregistrés")));
+        loadListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("textTab.lists.show.tooltip")));
         saveListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SAVE, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        saveListBtn.setTooltip(PaneUtils.genToolTip(TR.trO("Sauvegarder les éléments favoris en tant qu'une nouvelle liste")));
+        saveListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("textTab.lists.save.tooltip")));
 
         PaneUtils.setPosition(loadListBtn, 0, 0, 30, 30, true);
         PaneUtils.setPosition(saveListBtn, 0, 0, 30, 30, true);
@@ -41,20 +41,19 @@ public class ListsManager {
         });
 
         saveListBtn.setOnAction(event -> {
-            TextInputDialog alert = new TextInputDialog(TR.trO("Nouvelle liste"));
+            TextInputDialog alert = new TextInputDialog(TR.tr("textTab.lists.defaultName"));
             DialogBuilder.setupDialog(alert);
 
-            alert.setTitle(TR.trO("Enregistrer les éléments de cette catégorie"));
-            alert.setHeaderText(TR.trO("Vous allez enregistrer les éléments de cette catégorie dans une nouvelle liste."));
-            alert.setContentText(TR.trO("Donner un nom à votre liste"));
+            alert.setTitle(TR.tr("textTab.lists.save.dialog.title"));
+            alert.setHeaderText(TR.tr("textTab.lists.save.dialog.header"));
+            alert.setContentText(TR.tr("textTab.lists.save.dialog.details"));
 
             Optional<String> result = alert.showAndWait();
             if(result.isPresent()){
                 if(!result.get().isEmpty()){
                     if(TextTreeSection.lists.containsKey(result.get())){
-                        Alert alert2 = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Liste déjà existante"));
-                        alert2.setHeaderText(TR.trO("Une liste du même nom existe déjà."));
-                        alert2.setContentText(TR.trO("Choisissez une action."));
+                        Alert alert2 = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("textTab.lists.save.alreadyExistDialog.title"));
+                        alert2.setHeaderText(TR.tr("textTab.lists.save.alreadyExistDialog.header"));
 
                         ButtonType rename = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.NO);
                         ButtonType erase = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.APPLY);
@@ -93,16 +92,14 @@ public class ListsManager {
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
 
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.trO("Actions de listes"));
-                    alert.setHeaderText(TR.trO("Choisissez une action a effectuer avec la liste d'éléments.") + "\n" + TR.trO("Ces actions sont irréversibles."));
-                    alert.setContentText(TR.trO("- Vider et charger remplacera la liste des éléments favoris/précédents par celle ci") + "\n" +
-                                         TR.trO("- Charger ajoutera cette liste d'éléments à la liste des éléments favoris/précédents") + "\n" +
-                                         TR.trO("- Supprimer supprimera la liste de la base de donnée"));
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("textTab.lists.actionDialog.title"));
+                    alert.setHeaderText(TR.tr("textTab.lists.actionDialog.header"));
+                    alert.setContentText(TR.tr("textTab.lists.actionDialog.details"));
 
                     ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType load = new ButtonType(TR.trO("Charger"), ButtonBar.ButtonData.OK_DONE);
-                    ButtonType loadReplace = new ButtonType(TR.trO("Vider et charger"), ButtonBar.ButtonData.OK_DONE);
-                    ButtonType delete = new ButtonType(TR.trO("Supprimer"), ButtonBar.ButtonData.OTHER);
+                    ButtonType load = new ButtonType(TR.tr("actions.load"), ButtonBar.ButtonData.OK_DONE);
+                    ButtonType loadReplace = new ButtonType(TR.tr("Vider et charger"), ButtonBar.ButtonData.OK_DONE);
+                    ButtonType delete = new ButtonType(TR.tr("actions.delete"), ButtonBar.ButtonData.OTHER);
                     alert.getButtonTypes().setAll(cancel, loadReplace, load, delete);
 
                     Optional<ButtonType> result = alert.showAndWait();
@@ -113,7 +110,7 @@ public class ListsManager {
                 });
             }
         }else{
-            menu.getItems().add(new MenuItem(TR.trO("Aucune liste sauvegardée")));
+            menu.getItems().add(new MenuItem(TR.tr("textTab.lists.show.none")));
         }
     }
 
@@ -132,17 +129,17 @@ public class ListsManager {
             }
         }
         if(list.size() == 0){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.trO("Liste non sauvegardée"));
-            alert.setHeaderText(TR.trO("Impossible de sauvegarder la liste"));
-            alert.setContentText(TR.trO("Il n'y a aucun élément à enregistrer"));
+            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("textTab.lists.save.voidListDialog.title"));
+            alert.setHeaderText(TR.tr("textTab.lists.save.voidListDialog.header"));
+            alert.setContentText(TR.tr("textTab.lists.save.voidListDialog.details"));
             alert.show();
             return;
         }
         TextTreeSection.lists.put(listName, list);
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Liste sauvegardée"));
-        alert.setHeaderText(TR.trO("La liste a bien été sauvegardée !"));
-        alert.setContentText(TR.trO("La liste pourra être chargée via le bouton de liste"));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("textTab.lists.save.completedDialog.title"));
+        alert.setHeaderText(TR.tr("textTab.lists.save.completedDialog.header"));
+        alert.setContentText(TR.tr("textTab.lists.save.completedDialog.details"));
         alert.show();
         ListsManager.setupMenus();
     }
@@ -150,8 +147,8 @@ public class ListsManager {
     public void deleteList(String listName){
         TextTreeSection.lists.remove(listName);
 
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.trO("Liste supprimée"));
-        alert.setHeaderText(TR.trO("La liste") + " \"" + listName + "\" " + TR.trO("a bien été supprimé."));
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("textTab.lists.deleteCompletedDialog.title"));
+        alert.setHeaderText(TR.tr("textTab.lists.deleteCompletedDialog.header", listName));
         alert.show();
         ListsManager.setupMenus();
     }

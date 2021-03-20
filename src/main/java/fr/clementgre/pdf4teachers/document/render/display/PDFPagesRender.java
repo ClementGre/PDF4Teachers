@@ -116,10 +116,8 @@ public class PDFPagesRender {
 			if(!MainWindow.mainScreen.document.pdfPagesRender.advertisement){ // not already sended
 				MainWindow.mainScreen.document.pdfPagesRender.advertisement = true;
 
-				Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.trO("Erreur de rendu"));
-				alert.setHeaderText(TR.trO("Des erreurs sont apparues lors du rendu du document PDF."));
-				alert.setContentText(TR.trO("Certains caractères spéciaux (espaces insécables, signes spéciaux ou tabulations) risquent de ne pas s'afficher correctement."));
-				alert.show();
+				// send notifications here
+				TR.tr("document.loadErrorNotification");
 			}
 		}
 	}

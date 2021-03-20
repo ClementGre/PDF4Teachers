@@ -9,16 +9,16 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 public class TextTreeOnFile extends TextTreeSection {
 
     public TextTreeOnFile(){
-        super(TR.trO("Éléments sur ce document"), ONFILE_TYPE);
+        super(TR.tr("textTab.onDocumentList.name"), ONFILE_TYPE);
         setupGraphics();
     }
 
     @Override
     public void setupSortManager(){
-        sortManager.setup(sortCell.pane, TR.trO("Position"),
-                TR.trO("Position"), TR.trO("Nom"),
+        sortManager.setup(sortCell.pane, TR.tr("sorting.sortType.location"),
+                TR.tr("sorting.sortType.location"), TR.tr("sorting.sortType.name"),
                 "\n",
-                TR.trO("Police"), TR.trO("Taille"), TR.trO("Couleur"));
+                TR.tr("sorting.sortType.fontFamily"), TR.tr("sorting.sortType.fontSize"), TR.tr("sorting.sortType.color"));
     }
 
     public void updateElementsList(){

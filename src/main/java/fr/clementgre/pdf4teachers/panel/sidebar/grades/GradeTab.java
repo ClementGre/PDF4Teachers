@@ -57,18 +57,6 @@ public class GradeTab extends SideTab {
         fontTiers.put(3, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#e64d4d"), false, false));
         fontTiers.put(4, new TiersFont(Font.loadFont(FontUtils.getFontFile("Open Sans", false, false), 18), Color.valueOf("#ff6666"), false, false));
 
-        PaneUtils.setHBoxPosition(sumByDecrement, 45, 35, 0);
-        sumByDecrement.setCursor(Cursor.HAND);
-        sumByDecrement.setSelected(false);
-        sumByDecrement.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LEVEL_DOWN, "black", 0, 26, 26, 0, new int[]{1, 1}, ImageUtils.defaultDarkColorAdjust));
-        sumByDecrement.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            treeView.updateAllSum();
-            if(newValue){
-                AutoTipsManager.showByAction("gradescaleinvert");
-            }
-        });
-        sumByDecrement.setTooltip(PaneUtils.genToolTip(TR.trO("Compter les points par retranchement") + "\n" + TR.trO("Les notes sont initialisées par défaut à leur valeur max. La non saisie des notes mène à la note max au lieu de 0.")));
-
         PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
         lockGradeScale.setCursor(Cursor.HAND);
         lockGradeScale.setSelected(false);
@@ -87,27 +75,27 @@ public class GradeTab extends SideTab {
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.trO("Vérouiller le barème, il ne pourra plus être modifié.")));
+        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.tooltip")));
 
         PaneUtils.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(PaneUtils.genToolTip(TR.trO("Modifier les polices, couleurs et préfixe de chaque niveau de notes.")));
+        settings.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip")));
 
         PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
         link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog().show());
-        link.setTooltip(PaneUtils.genToolTip(TR.trO("Envoyer le barème sur d'autres éditions.")));
+        link.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip")));
 
         PaneUtils.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
         export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png")+"", 0, 0, ImageUtils.defaultDarkColorAdjust));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
-        export.setTooltip(PaneUtils.genToolTip(TR.trO("Exporter les notes d'une ou plusieurs copies, dans un ou plusieurs fichier CSV. Ceci permet ensuite d'importer les notes dans un logiciel tableur")));
+        export.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.gradeExportWindow.accessButton")));
 
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -125,7 +113,7 @@ public class GradeTab extends SideTab {
 
         MainWindow.mainScreen.setSelected(null);
 
-        String name = TR.trO("Nouvelle note");
+        String name = TR.tr("gradeTab.gradeDefaultName");
         if(parent.getChildren().size() >= 1){
             String lastName = ((GradeTreeItem) parent.getChildren().get(parent.getChildren().size()-1)).getCore().getName();
             String newName = StringUtils.incrementName(lastName);

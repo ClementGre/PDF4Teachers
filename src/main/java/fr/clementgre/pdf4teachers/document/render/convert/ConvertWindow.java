@@ -495,7 +495,7 @@ public class ConvertWindow extends Stage {
             converted = 0;
 
             loadingAlert.setWidth(600);
-            loadingAlert.setHeaderText(TR.tr("convertWindow.dialog.loading.header"));
+            loadingAlert.setHeaderText(TR.tr("dialogs.asyncAction.header"));
 
             VBox pane = new VBox();
             Label currentDocument = new Label();
