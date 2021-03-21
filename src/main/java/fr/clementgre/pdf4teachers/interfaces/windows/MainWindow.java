@@ -149,7 +149,6 @@ public class MainWindow extends Stage{
 
 
         mainScreen.repaint();
-        footerBar.repaint();
 
 //		PANELS
 

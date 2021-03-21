@@ -150,6 +150,6 @@ public class Document {
     }
     public void setCurrentPage(int currentPage) {
         this.currentPage = currentPage;
-        MainWindow.footerBar.repaint();
+        MainWindow.footerBar.updateCurrentPage();
     }
 }

@@ -17,6 +17,7 @@ import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
@@ -281,7 +282,6 @@ public class MainScreen extends Pane {
 		}
 
 		repaint();
-		MainWindow.footerBar.repaint();
 
 		try{
 			document = new Document(file);
@@ -290,10 +290,6 @@ public class MainScreen extends Pane {
 			failOpen();
 			return;
 		}
-
-		// FINISH OPEN
-		MainWindow.footerBar.leftInfo.textProperty().bind(Bindings.createStringBinding(() -> "[zoom] : " + (int) (pane.getScaleX()*100) + "%", pane.scaleXProperty()));
-
 		status.set(Status.OPEN);
 		MainWindow.filesTab.files.getSelectionModel().select(file);
 
@@ -309,7 +305,6 @@ public class MainScreen extends Pane {
 		}
 
 		repaint();
-		MainWindow.footerBar.repaint();
 		Platform.runLater(() -> zoomOperator.updatePaneHeight(0, 0.5));
 		AutoTipsManager.showByAction("opendocument");
 	}
@@ -318,8 +313,6 @@ public class MainScreen extends Pane {
 		document = null;
 		status.set(Status.ERROR);
 		repaint();
-		MainWindow.footerBar.repaint();
-
 	}
 	public boolean closeFile(boolean confirm){
 
@@ -349,7 +342,6 @@ public class MainScreen extends Pane {
 		selected.set(null);
 
 		repaint();
-		MainWindow.footerBar.repaint();
 
 		System.runFinalization();
 		return true;
@@ -390,6 +382,9 @@ public class MainScreen extends Pane {
 	}
 	public double getZoomPercent(){
 		return getZoomFactor()*100;
+	}
+	public DoubleBinding zoomPercentProperty(){
+		return pane.scaleXProperty().multiply(100);
 	}
 
 	public int getPageWidth() {

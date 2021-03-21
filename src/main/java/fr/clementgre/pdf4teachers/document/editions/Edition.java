@@ -18,6 +18,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.paint.Color;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -121,6 +122,7 @@ public class Edition {
         }
 
         isSave.set(true);
+        MainWindow.footerBar.showAlert(Color.web("#007400"), Color.WHITE, "Saved !");
         MainWindow.filesTab.files.refresh();
 
     }

@@ -69,7 +69,7 @@ public class StyleManager {
     }
 
     private static void putStylesAuto(){
-        new JMetro(MainWindow.root, DEFAULT_STYLE);
+        new JMetro(MainWindow.notificationPane, DEFAULT_STYLE);
 
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();

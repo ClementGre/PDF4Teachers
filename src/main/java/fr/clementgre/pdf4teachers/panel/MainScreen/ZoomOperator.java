@@ -289,6 +289,66 @@ public class ZoomOperator {
         }
 
     }
+    public void zoom(double scale) {
+
+        if(!isPlaying){
+            aimTranslateY = pane.getTranslateY();
+            aimTranslateX = pane.getTranslateX();
+            aimScale = pane.getScaleX();
+        }
+
+
+        // determine scale
+        double oldScale = pane.getScaleX();
+        double f = (scale / oldScale) - 1;
+
+        double newTranslateX;
+        double newTranslateY;
+
+        // Donnés pour le traitement de juste après
+        final double paneShiftX = (pane.getWidth()*scale - pane.getWidth()) / 2;
+        final double paneShiftY = (pane.getHeight()*scale - pane.getHeight()) / 2;
+        final double scrollableWidth = pane.getWidth()*scale - getMainScreenWidth();
+        final double scrollableHeight = pane.getHeight()*scale - getMainScreenHeight();
+
+
+        // Vérifie si pane peut rentrer entièrement dans MainScreen ? centre pane : vérifie les translations
+        // X
+        if(scrollableWidth <= 0){
+            // Centre pane dans MainScreen sur l'axe X
+            hScrollBar.setVisible(false);
+            newTranslateX = centerTranslationX();
+        }else{
+            // Vérifie les limites des translations
+            hScrollBar.setVisible(true);
+            newTranslateX = pane.getTranslateX() - f;
+            if(newTranslateX - paneShiftX > 0) newTranslateX = paneShiftX;
+            else if(newTranslateX - paneShiftX < -scrollableWidth) newTranslateX = -scrollableWidth + paneShiftX;
+        }
+        // Y
+        if(scrollableHeight <= 0){
+            // Centre pane dans MainScreen sur l'axe Y
+            vScrollBar.setVisible(false);
+            newTranslateY = centerTranslationY();
+        }else{
+            // Vérifie les limites des translations
+            vScrollBar.setVisible(true);
+            newTranslateY = pane.getTranslateY() - f;
+            if(newTranslateY - paneShiftY > 0) newTranslateY = paneShiftY;
+            else if(newTranslateY - paneShiftY < -scrollableHeight) newTranslateY = -scrollableHeight + paneShiftY;
+
+        }
+
+        aimTranslateY = newTranslateY;
+        aimTranslateX = newTranslateX;
+        aimScale = scale;
+
+        pane.setTranslateY(newTranslateY);
+        pane.setTranslateX(newTranslateX);
+        pane.setScaleY(scale);
+        pane.setScaleX(scale);
+
+    }
 
     public void scrollDown(int factor, boolean removeTransition){
         if(!isPlaying){
