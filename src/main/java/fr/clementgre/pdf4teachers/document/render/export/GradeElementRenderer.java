@@ -17,37 +17,38 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GradeElementRenderer {
-
+public class GradeElementRenderer{
+    
     HashMap<Map.Entry<String, String>, PDFont> fonts = new HashMap<>();
-
+    
     PDDocument doc;
+    
     public GradeElementRenderer(PDDocument doc){
         this.doc = doc;
     }
-
-    public void renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException {
-
+    
+    public void renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException{
+        
         if(!element.isShouldVisibleOnExport()) return;
-
+        
         // COLOR
         Color color = element.getColor();
         contentStream.setNonStrokingColor(new java.awt.Color((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getOpacity()));
-
+        
         // FONT
         boolean bold = false;
-        if (FontUtils.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
+        if(FontUtils.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
         boolean italic = false;
-        if (FontUtils.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
+        if(FontUtils.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
         InputStream fontFile = FontUtils.getFontFile(element.getFont().getFamily(), italic, bold);
         element.setFont(FontUtils.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
-
+        
         contentStream.beginText();
-
+        
         // CUSTOM STREAM
-
+        
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
-
+        
         if(!fonts.containsKey(entry)){
             PDType0Font font = PDType0Font.load(doc, fontFile);
             contentStream.setFont(font, (float) element.getFont().getSize());
@@ -55,8 +56,8 @@ public class GradeElementRenderer {
         }else{
             contentStream.setFont(fonts.get(entry), (float) element.getFont().getSize());
         }
-
-        float bottomMargin = pageRealHeight-pageHeight-startY;
+        
+        float bottomMargin = pageRealHeight - pageHeight - startY;
         contentStream.newLineAtOffset(startX + element.getRealX() / Element.GRID_WIDTH * pageWidth, bottomMargin + pageRealHeight - element.getBaseLineY() - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
         try{
             contentStream.showText(element.getText());
@@ -66,7 +67,7 @@ public class GradeElementRenderer {
             System.err.println("Message d'erreur : " + e.getMessage());
         }
         contentStream.endText();
-
+        
     }
-
+    
 }

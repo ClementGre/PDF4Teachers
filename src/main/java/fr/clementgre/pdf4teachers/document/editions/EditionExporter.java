@@ -21,22 +21,22 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class EditionExporter {
-
+public class EditionExporter{
+    
     public static void showImportDialog(boolean onlyGrades){
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.header"));
         else dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.onlyGrades.header"));
-
+        
         CheckBox copyLocations = new CheckBox(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.copyLocations"));
         if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
-
+        
         ButtonType yes = new ButtonType(TR.tr("dialog.importEdit.confirm.YesOneFile"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("dialog.importEdit.confirm.YesMultipleFiles"), ButtonBar.ButtonData.OTHER);
-
+        
         if(!onlyGrades) dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll);
         else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
-
+        
         Optional<ButtonType> option = dialog.showAndWait();
         File file = null;
         boolean recursive = false;
@@ -50,9 +50,9 @@ public class EditionExporter {
                 }
             }
         }
-
+        
         if(file == null) return;
-
+        
         GradeCopyGradeScaleDialog gradeCopyGradeScale;
         if(onlyGrades){
             gradeCopyGradeScale = new GradeCopyGradeScaleDialog();
@@ -78,51 +78,51 @@ public class EditionExporter {
             try{
                 Config loadedConfig = new Config(file);
                 loadedConfig.load();
-
-                new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>() {
+                
+                new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>(){
                     @Override
-                    public List<String> prepare(boolean recursive) {
+                    public List<String> prepare(boolean recursive){
                         if(!recursive){
                             return Collections.singletonList(MainWindow.mainScreen.document.getFile().getName());
                         }else{
                             return loadedConfig.base.keySet().stream().collect(Collectors.toList());
                         }
                     }
-
+                    
                     @Override
                     @SuppressWarnings("unchecked")
                     public Map.Entry<Config, Integer> sortData(String fileName, boolean recursive) throws Exception{
-
+                        
                         if(!recursive){
                             File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
-
+                            
                             if(loadedConfig.base.containsKey(fileName)){
                                 loadedConfig.base = (HashMap<String, Object>) loadedConfig.base.get(fileName);
                             }
-
+                            
                             if(onlyGrades){
                                 Config config = new Config(editFile);
                                 config.load();
                                 config.set("grades", loadedConfig.getList("grades"));
                                 loadedConfig.base = config.base;
                             }
-
+                            
                             loadedConfig.setFile(editFile);
                             loadedConfig.setName(fileName);
-
+                            
                             return Map.entry(loadedConfig, TwoStepListAction.CODE_OK);
                         }else{
                             File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
-
+                            
                             if(pdfFile.exists()){
                                 if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
                                     MainWindow.mainScreen.document.edition.clearEdit(false);
                                 }
-
+                                
                                 File editFile = Edition.getEditFile(pdfFile);
                                 Config config = new Config(editFile);
                                 config.setName(fileName);
-
+                                
                                 HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
                                 if(onlyGrades){
                                     config.load();
@@ -130,21 +130,22 @@ public class EditionExporter {
                                 }else{
                                     config.base = data;
                                 }
-
+                                
                                 return Map.entry(config, TwoStepListAction.CODE_OK);
                             }else{
                                 boolean result = DialogBuilder.showWrongAlert(TR.tr("dialog.importEdit.errorNoMatch.header", fileName), TR.tr("dialog.importEdit.errorNoMatch.details"), true);
-                                if(result) return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
+                                if(result)
+                                    return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
                                 else return Map.entry(new Config(), 2); // No match
                             }
                         }
                     }
-
+                    
                     @Override
-                    public String getSortedDataName(Config config, boolean recursive) {
+                    public String getSortedDataName(Config config, boolean recursive){
                         return config.getName();
                     }
-
+                    
                     @Override
                     public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
                         try{
@@ -161,33 +162,34 @@ public class EditionExporter {
                         }
                         return TwoStepListAction.ProcessResult.OK;
                     }
-
+                    
                     @Override
-                    public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+                    public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
                         Alert endAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("actions.import.completedMessage"));
                         endAlert.setHeaderText(TR.tr("dialog.importEdit.completed.header"));
                         String noMatchesText = !excludedReasons.containsKey(2) ? "" : "\n(" + TR.tr("dialog.importEdit.completed.recap.ignored", excludedReasons.get(2)) + ")";
                         endAlert.setContentText(TR.tr("dialog.importEdit.completed.recap.imported", completedSize, originSize) + noMatchesText);
-
+                        
                         endAlert.show();
                     }
                 });
-
+                
                 MainWindow.filesTab.refresh();
-
+                
             }catch(Exception e){
                 e.printStackTrace();
                 DialogBuilder.showErrorAlert(null, e.getMessage(), false);
             }
         }
-
-
+        
+        
     }
+    
     public static void showExportDialog(final boolean onlyGrades){
         Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.exportEdit.confirm.title"));
         if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.header"));
         else dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.onlyGrades.header"));
-
+        
         ButtonType yes = new ButtonType(TR.tr("dialog.exportEdit.confirm.YesThisFile"), ButtonBar.ButtonData.OK_DONE);
         ButtonType yesAll = new ButtonType(TR.tr("dialog.exportEdit.confirm.YesMultipleFile"), ButtonBar.ButtonData.OTHER);
         ButtonType yesAllOneFile = new ButtonType(TR.tr("dialog.exportEdit.confirm.YesMultipleFileInOne"), ButtonBar.ButtonData.OTHER);
@@ -195,15 +197,14 @@ public class EditionExporter {
             dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes, yesAll, yesAllOneFile);
             dialog.getDialogPane().lookupButton(yesAll).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
             dialog.getDialogPane().lookupButton(yesAllOneFile).setDisable(MainWindow.filesTab.getOpenedFiles().size() <= 1);
-        }
-        else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
-
+        }else dialog.getButtonTypes().setAll(ButtonType.CANCEL, yes);
+        
         Optional<ButtonType> option = dialog.showAndWait();
         File directory = null;
         boolean recursive = option.get() != yes;
         boolean oneFile = option.get() == yesAllOneFile;
         final Config oneFileConfig = new Config();
-
+        
         if(MainWindow.mainScreen.hasDocument(true)){
             if(MainWindow.mainScreen.document.save()){
                 if(option.get() == yes){
@@ -220,28 +221,30 @@ public class EditionExporter {
             }
         }
         if(directory == null) return; // check isPresent btw
-
+        
         final File finalDirectory = directory;
         AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(recursive);
-        new TwoStepListAction<>(false, recursive, new TwoStepListInterface<File, Config>() {
+        new TwoStepListAction<>(false, recursive, new TwoStepListInterface<File, Config>(){
             @Override
-            public List<File> prepare(boolean recursive) {
+            public List<File> prepare(boolean recursive){
                 if(recursive){
                     return MainWindow.filesTab.getOpenedFiles();
                 }else{
                     return Collections.singletonList(MainWindow.mainScreen.document.getFile());
                 }
             }
-
+            
             @Override
-            public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception {
-                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile())) return Map.entry(new Config(), 1); // Check same dir
-
+            public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{
+                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile()))
+                    return Map.entry(new Config(), 1); // Check same dir
+                
                 File editFile = Edition.getEditFile(pdfFile);
                 if(!editFile.exists()) return Map.entry(new Config(), 2); // Check HasEdit
-
+                
                 Config config = new Config(editFile);
-                config.load(); config.setName(pdfFile.getName());
+                config.load();
+                config.setName(pdfFile.getName());
                 if(onlyGrades){
                     HashMap<String, Object> newBase = new HashMap<>();
                     List<Object> grades = config.getList("grades");
@@ -254,32 +257,34 @@ public class EditionExporter {
                     newBase.put("grades", grades);
                     config.base = newBase;
                 }
-
+                
                 if(oneFile){
                     oneFileConfig.base.put(pdfFile.getName(), config.base);
                     return Map.entry(config, TwoStepListAction.CODE_OK);
                 }
-
+                
                 config.setDestFile(new File(finalDirectory.getAbsolutePath() + File.separator + pdfFile.getName() + ".yml"));
                 if(config.getDestFile().exists()){ // Check Already Exist
                     AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(config.getDestFile());
                     if(result == AlreadyExistDialog.ResultType.SKIP) return Map.entry(new Config(), 3);
-                    else if(result == AlreadyExistDialog.ResultType.STOP) return Map.entry(new Config(), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialog.ResultType.RENAME) config.setDestFile(AlreadyExistDialog.rename(config.getDestFile()));
+                    else if(result == AlreadyExistDialog.ResultType.STOP)
+                        return Map.entry(new Config(), TwoStepListAction.CODE_STOP);
+                    else if(result == AlreadyExistDialog.ResultType.RENAME)
+                        config.setDestFile(AlreadyExistDialog.rename(config.getDestFile()));
                 }
-
+                
                 return Map.entry(config, TwoStepListAction.CODE_OK);
             }
-
+            
             @Override
-            public String getSortedDataName(Config config, boolean recursive) {
+            public String getSortedDataName(Config config, boolean recursive){
                 return config.getName();
             }
-
+            
             @Override
             public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
                 if(oneFile) return TwoStepListAction.ProcessResult.OK;
-
+                
                 try{
                     config.saveToDestFile();
                 }catch(IOException e){
@@ -291,9 +296,9 @@ public class EditionExporter {
                 }
                 return TwoStepListAction.ProcessResult.OK;
             }
-
+            
             @Override
-            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
+            public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
                 if(oneFile){
                     try{
                         oneFileConfig.save();
@@ -303,18 +308,18 @@ public class EditionExporter {
                         return;
                     }
                 }
-
+                
                 String header = onlyGrades ? TR.tr("dialog.exportEdit.completed.header.onlyGrades") : TR.tr("dialog.exportEdit.completed.header");
-
+                
                 String badFolderText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("dialog.exportEdit.completed.recap.ignored.notSameFolder", excludedReasons.get(1)) + ")";
                 String noEditText = !excludedReasons.containsKey(2) ? "" : "\n(" + TR.tr("exportWindow.dialogs.completed.ignored.noEdit", excludedReasons.get(2)) + ")";
                 String alreadyExistText = !excludedReasons.containsKey(3) ? "" : "\n(" + TR.tr("dialog.exportEdit.completed.recap.ignored.fileAlreadyExisting", excludedReasons.get(3)) + ")";
                 String details = TR.tr("dialog.exportEdit.completed.recap.exported", completedSize, originSize) + badFolderText + noEditText + alreadyExistText;
-
+                
                 DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, details, finalDirectory.getAbsolutePath());
-
+                
             }
         });
     }
-
+    
 }

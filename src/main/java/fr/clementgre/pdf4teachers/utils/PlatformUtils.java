@@ -8,73 +8,78 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PlatformUtils {
-
+public class PlatformUtils{
+    
     public static void runLaterOnUIThread(int millis, Runnable runnable){
         new Thread(() -> {
-            try{ Thread.sleep(millis); }catch(InterruptedException e){ e.printStackTrace(); }
+            try{
+                Thread.sleep(millis);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
             Platform.runLater(runnable);
         }, "runLaterOnUIThread").start();
     }
     
     // Running code on JavaFX Thread from another Thread
     // and waiting this acting is completed before continuing the other Thread
-    public static <T> T runAndWait(ReturnCallBack<T> action) {
-        if (action == null)
+    public static <T> T runAndWait(ReturnCallBack<T> action){
+        if(action == null)
             throw new NullPointerException("action");
-
+        
         // run synchronously on JavaFX thread
-        if (Platform.isFxApplicationThread()) {
+        if(Platform.isFxApplicationThread()){
             return action.call();
         }
-
+        
         // queue on JavaFX thread and wait for completion
         final CountDownLatch doneLatch = new CountDownLatch(1);
-
+        
         AtomicReference<T> toReturn = new AtomicReference<>();
         Platform.runLater(() -> {
-            try {
+            try{
                 toReturn.set(action.call());
-            } finally {
+            }finally{
                 doneLatch.countDown();
             }
         });
-
+        
         try{
             doneLatch.await();
-        }catch(InterruptedException ignored){}
-
+        }catch(InterruptedException ignored){
+        }
+        
         return toReturn.get();
-
+        
     }
-
+    
     public static void openDirectory(String uri){
-
-        if (Main.isOSX()){
-            try {
+        
+        if(Main.isOSX()){
+            try{
                 Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
-            } catch (InterruptedException | IOException e) {
+            }catch(InterruptedException | IOException e){
                 System.out.println("unable to open URI directory");
                 e.printStackTrace();
             }
         }else{
             Main.hostServices.showDocument(uri); // Doesn't work for OSX
         }
-
+        
     }
-
+    
     public static void openFile(String uri){
-
-        if (Main.isOSX()){
-            try {
+        
+        if(Main.isOSX()){
+            try{
                 Runtime.getRuntime().exec("/usr/bin/open -a TextEdit " + uri).waitFor();
-            } catch (InterruptedException | IOException e) {
+            }catch(InterruptedException | IOException e){
                 System.out.println("unable to open URI file");
                 e.printStackTrace();
             }
         }else{
             Main.hostServices.showDocument(uri);// Doesn't work for OSX
         }
-
+        
     }
 }

@@ -15,7 +15,7 @@ import javafx.scene.layout.Priority;
 
 import java.util.HashMap;
 
-public class SortManager {
+public class SortManager{
 
     private HashMap<Button, BooleanProperty> buttons = new HashMap<>();
     private ObjectPropertyBase<Button> selectedButton = new SimpleObjectProperty<>();
@@ -35,11 +35,12 @@ public class SortManager {
         for(String buttonName : buttonsName){
 
             if(buttonName.equals("\n")){
-                row++; continue;
+                row++;
+                continue;
             }
 
             Button button = new Button(buttonName);
-            button.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/Sort/up.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
+            button.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/Sort/up.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
             GridPane.setHgrow(button, Priority.ALWAYS);
@@ -53,8 +54,9 @@ public class SortManager {
             }else button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
 
             // Image de l'ordre
-            order.addListener(new ChangeListener<>() {
-                @Override public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder) {
+            order.addListener(new ChangeListener<>(){
+                @Override
+                public void changed(ObservableValue<? extends Boolean> observableValue, Boolean lastOrder, Boolean newOrder){
                     button.setGraphic(ImageUtils.buildImage(getClass().getResource(newOrder ? "/img/Sort/up.png" : "/img/Sort/down.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
                 }
             });
@@ -79,16 +81,18 @@ public class SortManager {
             updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
         });
     }
+
     public void updateGraphics(){
         for(Button button : buttons.keySet())
-            if(button != selectedButton.get()) button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            if(button != selectedButton.get())
+                button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
     }
 
     public void simulateCall(){
         updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
     }
 
-    public Button getSelectedButton() {
+    public Button getSelectedButton(){
         return selectedButton.get();
     }
 }

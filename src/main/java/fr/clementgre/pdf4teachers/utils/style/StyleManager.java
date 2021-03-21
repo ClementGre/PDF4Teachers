@@ -9,13 +9,13 @@ import javafx.scene.paint.Color;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
-public class StyleManager {
-
+public class StyleManager{
+    
     public static jfxtras.styles.jmetro.Style DEFAULT_STYLE = jfxtras.styles.jmetro.Style.LIGHT;
     public static jfxtras.styles.jmetro.Style ACCENT_STYLE = jfxtras.styles.jmetro.Style.DARK;
-
+    
     public static void setup(){
-
+        
         if(Main.settings.darkTheme.getValue()){
             DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;
         }
@@ -28,49 +28,51 @@ public class StyleManager {
             putStylesAuto();
         });
     }
-
+    
     public static void putStyle(Scene scene, Style style){
         jfxtras.styles.jmetro.Style toApplyStyle;
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
-
+        
         new JMetro(scene, toApplyStyle);
-
+        
         putCustomStyle(scene, "base.css");
         if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
         else putCustomStyle(scene, "base-light.css");
     }
-
+    
     public static void putStyle(Parent parent, Style style){
         putStyle(parent, style, true);
     }
+    
     public static void putStyle(Parent parent, Style style, boolean jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
-
+        
         if(jMetro){
             new JMetro(parent, toApplyStyle);
             parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         }
-
+        
         putCustomStyle(parent, "base.css");
         if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
         else putCustomStyle(parent, "base-light.css");
     }
-
+    
     public static void putCustomStyle(Scene scene, String name){
         scene.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
     }
+    
     public static void putCustomStyle(Parent parent, String name){
         parent.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
     }
-
+    
     private static void putStylesAuto(){
         new JMetro(MainWindow.notificationPane, DEFAULT_STYLE);
-
+        
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();
         MainWindow.textTab.treeView.onFileSection.updateGraphics();
@@ -79,7 +81,7 @@ public class StyleManager {
             MainWindow.mainScreen.document.updateBackgrounds();
         }
     }
-
+    
     public static String getHexAccentColor(){
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             return "#484848";
@@ -87,6 +89,7 @@ public class StyleManager {
             return "#cccccc";
         }
     }
+    
     public static Color invertColorWithTheme(Color color){
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             if(color.getBrightness() <= 0.4){
@@ -94,13 +97,15 @@ public class StyleManager {
             }else return color;
         }else{
             double targetBrightness = 0.8;
-
+            
             if(color.getBrightness() >= 0.9){
                 return Color.BLACK;
             }else return color;
         }
     }
+    
     static int i = 0;
+    
     public static Color shiftColorWithTheme(Color color){
 /*
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
@@ -116,56 +121,54 @@ public class StyleManager {
                     StringUtils.clamp(color.getBlue()*0.4, 0, 1)
             );
         }*/
-
+        
         int r = Math.max((int) (color.getRed() * 255), 1);
         int g = Math.max((int) (color.getGreen() * 255), 1);
         int b = Math.max((int) (color.getBlue() * 255), 1);
         double brt = (r + g + b) / 3d;
-
+        
         double nr;
         double ng;
         double nb;
-
+        
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
-
-            double minBrt = (int) (255*0.8);
+            
+            double minBrt = (int) (255 * 0.8);
             double keepRatioPerOne = .7;
-
+            
             if(brt < minBrt){
-                double difBrt = minBrt-brt;
-                double rDifBrt = (difBrt*keepRatioPerOne) * r / ((r+g+b) / 3d);
-                double gDifBrt = (difBrt*keepRatioPerOne) * g / ((r+g+b) / 3d);
-                double bDifBrt = (difBrt*keepRatioPerOne) * b / ((r+g+b) / 3d);
-
-                nr = r + rDifBrt + (difBrt*(1-keepRatioPerOne));
-                ng = g + gDifBrt + (difBrt*(1-keepRatioPerOne));
-                nb = b + bDifBrt + (difBrt*(1-keepRatioPerOne));
+                double difBrt = minBrt - brt;
+                double rDifBrt = (difBrt * keepRatioPerOne) * r / ((r + g + b) / 3d);
+                double gDifBrt = (difBrt * keepRatioPerOne) * g / ((r + g + b) / 3d);
+                double bDifBrt = (difBrt * keepRatioPerOne) * b / ((r + g + b) / 3d);
+                
+                nr = r + rDifBrt + (difBrt * (1 - keepRatioPerOne));
+                ng = g + gDifBrt + (difBrt * (1 - keepRatioPerOne));
+                nb = b + bDifBrt + (difBrt * (1 - keepRatioPerOne));
             }else return color;
         }else{
-
-            double maxBrt = (int) (255*0.2);
+            
+            double maxBrt = (int) (255 * 0.2);
             double keepRatioPerOne = .1;
-
+            
             if(brt > maxBrt){
-                double difBrt = -maxBrt+brt;
-                double rDifBrt = (difBrt*keepRatioPerOne) * r / ((r+g+b) / 3d);
-                double gDifBrt = (difBrt*keepRatioPerOne) * g / ((r+g+b) / 3d);
-                double bDifBrt = (difBrt*keepRatioPerOne) * b / ((r+g+b) / 3d);
-
-                nr = r - rDifBrt - (difBrt*(1-keepRatioPerOne));
-                ng = g - gDifBrt - (difBrt*(1-keepRatioPerOne));
-                nb = b - bDifBrt - (difBrt*(1-keepRatioPerOne));
+                double difBrt = -maxBrt + brt;
+                double rDifBrt = (difBrt * keepRatioPerOne) * r / ((r + g + b) / 3d);
+                double gDifBrt = (difBrt * keepRatioPerOne) * g / ((r + g + b) / 3d);
+                double bDifBrt = (difBrt * keepRatioPerOne) * b / ((r + g + b) / 3d);
+                
+                nr = r - rDifBrt - (difBrt * (1 - keepRatioPerOne));
+                ng = g - gDifBrt - (difBrt * (1 - keepRatioPerOne));
+                nb = b - bDifBrt - (difBrt * (1 - keepRatioPerOne));
             }else return color;
         }
-
+        
         return Color.color(
-                StringUtils.clamp(nr/255d, 0, 1),
-                StringUtils.clamp(ng/255d, 0, 1),
-                StringUtils.clamp(nb/255d, 0, 1)
+                StringUtils.clamp(nr / 255d, 0, 1),
+                StringUtils.clamp(ng / 255d, 0, 1),
+                StringUtils.clamp(nb / 255d, 0, 1)
         );
     }
-
-
-
-
+    
+    
 }

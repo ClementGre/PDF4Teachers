@@ -3,19 +3,19 @@ package fr.clementgre.pdf4teachers.interfaces;
 import fr.clementgre.pdf4teachers.Main;
 import javafx.stage.Window;
 
-public class OSXTouchBarManager {
-
-    static {
+public class OSXTouchBarManager{
+    
+    static{
         String libPath = System.getProperty("java.library.path");
         if(Main.DEBUG) System.out.println("java.library.path=" + libPath);
     }
-
+    
     public OSXTouchBarManager(Window window){
-
+        
         if(Main.isOSX()) setup(window);
-
+        
     }
-
+    
     public void setup(Window window){
 
         /*JTouchBar jTouchBar = new JTouchBar();
@@ -77,7 +77,7 @@ public class OSXTouchBarManager {
         JTouchBarJavaFX.show(jTouchBar, window);
 
         //jTouchBar.show(MainWindow.frame);*/
-
+        
     }
-
+    
 }

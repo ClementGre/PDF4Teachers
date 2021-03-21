@@ -6,12 +6,13 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.transform.Transform;
 
-public class SVGPathIcons {
+public class SVGPathIcons{
 
     public static final String PENCIL = "M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z";
     public static final String PAINT_BRUSH = "M167.02 309.34c-40.12 2.58-76.53 17.86-97.19 72.3-2.35 6.21-8 9.98-14.59 9.98-11.11 0-45.46-27.67-55.25-34.35C0 439.62 37.93 512 128 512c75.86 0 128-43.77 128-120.19 0-3.11-.65-6.08-.97-9.13l-88.01-73.34zM457.89 0c-15.16 0-29.37 6.71-40.21 16.45C213.27 199.05 192 203.34 192 257.09c0 13.7 3.25 26.76 8.73 38.7l63.82 53.18c7.21 1.8 14.64 3.03 22.39 3.03 62.11 0 98.11-45.47 211.16-256.46 7.38-14.35 13.9-29.85 13.9-45.99C512 20.64 486 0 457.89 0z";
@@ -68,18 +69,23 @@ public class SVGPathIcons {
     public static Region generateImage(String path, String bgColor, int width, int height){
         return generateImage(path, bgColor, 0, width, height, 0, null, null);
     }
+
     public static Region generateImage(String path, String bgColor, int padding, int width, int height){
         return generateImage(path, bgColor, padding, width, height, 0, null, null);
     }
+
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, ColorAdjust effect){
         return generateImage(path, bgColor, padding, width, height, 0, null, effect);
     }
+
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate){
         return generateImage(path, bgColor, padding, width, height, rotate, null, null);
     }
+
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio){
         return generateImage(path, bgColor, padding, width, height, rotate, ratio, null);
     }
+
     public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio, ColorAdjust effect){
 
         SVGPath image = new SVGPath();
@@ -98,22 +104,22 @@ public class SVGPathIcons {
             imageRegion.setEffect(effect);
         }
 
-        int w = width - padding*2;
+        int w = width - padding * 2;
         StackPane imagePane = new StackPane();
 
         if(ratio == null){
             double rw = image.getLayoutBounds().getWidth();
             double rh = image.getLayoutBounds().getHeight();
             if(rw < rh){
-                imageRegion.setMinWidth((int) (w/rh*rw));
+                imageRegion.setMinWidth((int) (w / rh * rw));
                 imageRegion.setMinHeight(w);
-                double dif = (w - (int) (w/rh*rw)) / 2d;
+                double dif = (w - (int) (w / rh * rw)) / 2d;
                 imagePane.setPadding(new Insets(0, (int) dif, 0, Math.ceil(dif)));
             }else if(rw > rh){
                 imageRegion.setMinWidth(w);
-                imageRegion.setMinHeight(w/rw*rh);
-                double dif = (w - (int) (w/rw*rh)) / 2d;
-                imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif),0));
+                imageRegion.setMinHeight(w / rw * rh);
+                double dif = (w - (int) (w / rw * rh)) / 2d;
+                imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif), 0));
             }else{
                 imageRegion.setMinWidth(w);
                 imageRegion.setMinHeight(w);
@@ -121,14 +127,14 @@ public class SVGPathIcons {
             }
 
         }else{
-            int h = height - padding*2;
+            int h = height - padding * 2;
 
             if(height == 0){
                 h = (int) (w / ((double) ratio[0]) * ratio[1]);
-                imagePane.setPadding(new Insets((w-h)/2d, 0, (w-h)/2d, 0));
+                imagePane.setPadding(new Insets((w - h) / 2d, 0, (w - h) / 2d, 0));
             }else{
                 w = (int) (h / ((double) ratio[1]) * ratio[0]);
-                imagePane.setPadding(new Insets(0, (h-w)/2d, 0, (h-w)/2d));
+                imagePane.setPadding(new Insets(0, (h - w) / 2d, 0, (h - w) / 2d));
             }
 
             imageRegion.setMinWidth(w);
@@ -140,7 +146,7 @@ public class SVGPathIcons {
 
     }
 
-    public static Image generateNonSvgImage(String path, Color color, Effect effect, double scaleFactor) {
+    public static Image generateNonSvgImage(String path, Color color, Effect effect, double scaleFactor){
 
         SVGPath svg = new SVGPath();
         svg.setContent(path);
@@ -150,7 +156,7 @@ public class SVGPathIcons {
         SnapshotParameters sn = new SnapshotParameters();
         sn.setFill(Color.TRANSPARENT);
 
-        if(scaleFactor == 1)  return svg.snapshot(sn, null);
+        if(scaleFactor == 1) return svg.snapshot(sn, null);
 
         // With a scaleFactor
         WritableImage resized = new WritableImage((int) (svg.getLayoutBounds().getWidth() * scaleFactor), (int) (svg.getLayoutBounds().getHeight() * scaleFactor));

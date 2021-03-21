@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
+import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
@@ -15,24 +16,21 @@ import fr.clementgre.pdf4teachers.panel.sidebar.files.FileTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
-import fr.clementgre.pdf4teachers.interfaces.Macro;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.application.ConditionalFeature;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.stage.Window;
-import org.controlsfx.control.NotificationPane;
 
 import java.awt.*;
 import java.io.File;
@@ -45,71 +43,72 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
-
+    
     public static UserData userData;
-
+    
     public static AutoHideNotificationPane notificationPane;
     public static BorderPane root;
     public static SplitPane mainPane;
-
+    
     public static MainScreen mainScreen;
     public static FooterBar footerBar;
     public static MenuBar menuBar;
-
-
+    
+    
     public static SideBar leftBar;
     public static SideBar rightBar;
-
+    
     public static FileTab filesTab;
     public static TextTab textTab;
     public static GradeTab gradeTab;
     public static PaintTab paintTab;
-
-
+    
+    
     public static DecimalFormat format;
     public static DecimalFormat twoDigFormat;
-
+    
     public OSXTouchBarManager osxTouchBarManager;
-
+    
     public MainWindow(){
-
+        
         root = new BorderPane();
         notificationPane = new AutoHideNotificationPane(root);
-
+        
         StyleManager.putStyle(notificationPane, Style.DEFAULT);
-
+        
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
         loadDimensions();
         setupDecimalFormat();
-
+        
         setTitle(TR.tr("mainWindow.title.noDocument"));
-
-        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
-
+        
+        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
+        
         setMinWidth(700);
         setMinHeight(393);
         setResizable(true);
         setScene(scene);
-
+        
         new Macro(scene);
-
+        
         setOnCloseRequest(e -> {
             userData.save();
             if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
-                e.consume(); return;
+                e.consume();
+                return;
             }
-
+            
             Main.params = new ArrayList<>();
             AutoTipsManager.unload();
-
+            
             LanguagesUpdater.backgroundStats(() -> {
                 System.out.println("Closing PDF4Teachers");
                 System.exit(0);
             });
-
+            
         });
-
+        
         widthProperty().addListener((observable, oldValue, newValue) -> {
             saveDimensions();
         });
@@ -122,20 +121,21 @@ public class MainWindow extends Stage{
         yProperty().addListener((observable, oldValue, newValue) -> {
             saveDimensions();
         });
-
+        
     }
+    
     public void setup(){
-
+        
         //		SETUPS
-
+        
         mainPane = new SplitPane();
-
+        
         leftBar = new SideBar(true);
         rightBar = new SideBar(false);
-
+        
         mainScreen = new MainScreen();
         footerBar = new FooterBar();
-
+        
         filesTab = new FileTab();
         textTab = new TextTab();
         gradeTab = new GradeTab();
@@ -144,26 +144,26 @@ public class MainWindow extends Stage{
         }catch(IOException e){
             e.printStackTrace();
         }
-
+        
         menuBar = new MenuBar();
-
-
+        
+        
         mainScreen.repaint();
 
 //		PANELS
-
+        
         show();
         requestFocus();
-
+        
         mainPane.getItems().addAll(leftBar, mainScreen, rightBar);
         SideBar.setupDividers(mainPane);
         SideBar.loadBarsOrganization();
-
+        
         root.setCenter(mainPane);
         root.setTop(menuBar);
         root.setBottom(footerBar);
-
-
+        
+        
         Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) root.setBottom(null);
             else root.setBottom(footerBar);
@@ -177,13 +177,13 @@ public class MainWindow extends Stage{
         });
 
 //		SHOWING
-
+        
         setupDesktopEvents();
         mainScreen.repaint();
         //osxTouchBarManager = new OSXTouchBarManager(this);
 
 //      OPEN DOC WITH PARAMS OR Auto Documentation
-
+        
         List<File> toOpenFiles = new ArrayList<>();
         for(String param : Main.params){
             if(new File(param).exists()){
@@ -191,7 +191,7 @@ public class MainWindow extends Stage{
             }
         }
         filesTab.openFiles(toOpenFiles);
-
+        
         if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
             mainScreen.openFile(TR.getDocFile());
         }else if(toOpenFiles.size() >= 1){
@@ -203,9 +203,9 @@ public class MainWindow extends Stage{
 
 //      CHECK UPDATES
         new Thread(() -> {
-
+            
             userData = new UserData();
-
+            
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
@@ -215,7 +215,7 @@ public class MainWindow extends Stage{
                             menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
                             Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("aboutWindow.version.update.available")));
                         }
-
+                        
                         if(Main.settings.checkUpdates.getValue()){
                             new UpdateWindow();
                         }
@@ -223,22 +223,22 @@ public class MainWindow extends Stage{
                 });
             }
         }).start();
-
+        
     }
-
+    
     public void restart(){
         TR.updateLocale();
         //TR.updateTranslation();
-
+        
         userData.save();
         if(MainWindow.mainScreen.closeFile(true)){
             close();
             Platform.runLater(Main::startMainWindow);
         }
     }
-
+    
     public void loadDimensions(){
-
+        
         String[] size = Main.settings.mainScreenSize.getValue().split(Pattern.quote(";"));
         if(size.length == 5){
             try{
@@ -247,7 +247,7 @@ public class MainWindow extends Stage{
                 double h = Double.parseDouble(size[1]);
                 double x = Double.parseDouble(size[2]);
                 double y = Double.parseDouble(size[3]);
-
+                
                 double sw = Main.SCREEN_BOUNDS.getWidth();
                 double sh = Main.SCREEN_BOUNDS.getHeight();
                 if(w > sw) w = sw - 200;
@@ -258,62 +258,67 @@ public class MainWindow extends Stage{
                 if(y != -1){
                     if(y + h <= sh) setY(y);
                 }
-
+                
                 setWidth(w);
                 setHeight(h);
-
+                
             }catch(NumberFormatException e){
                 e.printStackTrace();
             }
         }
     }
+    
     public void saveDimensions(){
         String lastDimensions = getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized();
-
+        
         new Thread(() -> {
             try{
                 Thread.sleep(1000);
-            }catch(InterruptedException e){ e.printStackTrace(); }
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
             if(lastDimensions.equals(getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized())){
                 Main.settings.mainScreenSize.setValue(lastDimensions);
             }
         }, "MainScreenDimensionsPreSaver").start();
-
+        
     }
+    
     public void centerWindowIntoMe(Window window){
         double w = window.getWidth();
         double h = window.getHeight();
         double sw = Main.SCREEN_BOUNDS.getWidth();
         double sh = Main.SCREEN_BOUNDS.getHeight();
-
-        double x = getX() + getWidth()/2 - w/2;
-        double y = getY() + getHeight()/2 - h/2;
-
-        if(x > sw-w) x = sw-w;
-        if(y > sh-h) y = sh-h;
+        
+        double x = getX() + getWidth() / 2 - w / 2;
+        double y = getY() + getHeight() / 2 - h / 2;
+        
+        if(x > sw - w) x = sw - w;
+        if(y > sh - h) y = sh - h;
         if(x < 0) x = 0;
         if(y < 0) y = 0;
-
+        
         window.setX(x);
         window.setY(y);
     }
-
+    
     public static void showNotification(AlertIconType type, String text, int autoHide){
         notificationPane.addToPending(text, type, autoHide);
     }
+    
     public static void showNotificationNow(AlertIconType type, String text, int autoHide){
         notificationPane.showNow(text, type, autoHide);
     }
-
+    
     public void setupDesktopEvents(){
-
+        
         if(Desktop.isDesktopSupported()){
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
                 Desktop.getDesktop().setAboutHandler(e -> {
                     Platform.runLater(AboutWindow::new);
                 });
             }
-
+            
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_URI)){
                 Desktop.getDesktop().setOpenURIHandler(e -> {
                     System.out.println(e.getURI());
@@ -326,7 +331,7 @@ public class MainWindow extends Stage{
                     });
                 });
             }
-
+            
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
                 Desktop.getDesktop().setOpenFileHandler(e -> {
                     Platform.runLater(() -> {
@@ -334,10 +339,10 @@ public class MainWindow extends Stage{
                         MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
                         if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
                     });
-
+                    
                 });
             }
-
+            
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_PREFERENCES)){
                 Desktop.getDesktop().setPreferencesHandler(e -> {
                     Platform.runLater(() -> {
@@ -345,11 +350,11 @@ public class MainWindow extends Stage{
                     });
                 });
             }
-
+            
         }
-
+        
     }
-
+    
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
         char separator = TR.tr("chars.decimalSeparator").charAt(0);
@@ -359,5 +364,5 @@ public class MainWindow extends Stage{
         format = new DecimalFormat("0.####", symbols);
         twoDigFormat = new DecimalFormat("0.##", symbols);
     }
-
+    
 }

@@ -9,20 +9,20 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.RadioMenuItem;
 
 public class BooleanSetting extends Setting<Boolean>{
-
+    
     private BooleanProperty value;
-
+    
     public BooleanSetting(Boolean value, String icon, String path, String title, String description){
         super(icon, path, title, description);
         this.value = new SimpleBooleanProperty(value);
-
+        
         this.value.addListener((observable, oldValue, newValue) -> {
             if(Main.settings != null) Main.settings.saveSettings();
         });
     }
-
+    
     @Override
-    public void setupMenuItem() {
+    public void setupMenuItem(){
         menuItem = MenuBar.createRadioMenuItem(TR.tr(title), icon, TR.tr(description), true);
         if(menuItem instanceof RadioMenuItem){
             ((RadioMenuItem) menuItem).setSelected(value.get());
@@ -32,16 +32,18 @@ public class BooleanSetting extends Setting<Boolean>{
             this.value.bindBidirectional(((NodeRadioMenuItem) menuItem).selectedProperty());
         }
     }
-
-    public BooleanProperty valueProperty() {
+    
+    public BooleanProperty valueProperty(){
         return value;
     }
+    
     @Override
-    public Boolean getValue() {
+    public Boolean getValue(){
         return value.get();
     }
+    
     @Override
-    public void setValue(Boolean value) {
+    public void setValue(Boolean value){
         this.value.setValue(value);
     }
 }

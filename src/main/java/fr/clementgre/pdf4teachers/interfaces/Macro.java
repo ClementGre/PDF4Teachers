@@ -16,42 +16,44 @@ import javafx.scene.input.KeyCode;
 
 import java.util.ArrayList;
 
-public class Macro {
-
+public class Macro{
+    
     public Macro(Scene main){
-
+        
         main.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.TAB){
                 if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
                 if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
             }
-
+            
             if(e.isShortcutDown()){
                 String keyName = e.getText();
                 if(!e.isAltDown()){
                     try{
                         int i = Integer.parseInt(e.getCode().getChar());
                         if(i == 0) return;
-
+                        
                         if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
                         if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size()){
-                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
+                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false);
                             return;
                         }
-
-                    }catch(NumberFormatException ignored){}
+                        
+                    }catch(NumberFormatException ignored){
+                    }
                     try{
                         int i = Integer.parseInt(keyName);
                         if(i == 0) return;
-
+                        
                         if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
                         if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size()){
-                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i-1)).addToDocument(false);
+                            ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false);
                             return;
                         }
-
-                    }catch(NumberFormatException ignored){}
-
+                        
+                    }catch(NumberFormatException ignored){
+                    }
+                    
                     if(e.getCode() == KeyCode.T){
                         SideBar.selectTab(MainWindow.textTab);
                         MainWindow.textTab.newBtn.fire();
@@ -62,16 +64,16 @@ public class Macro {
                             }
                         }
                     }else if(e.getCode() == KeyCode.N){
-
+                        
                         int page = MainWindow.mainScreen.document.getCurrentPage() == -1 ? 0 : MainWindow.mainScreen.document.getCurrentPage();
                         int y = (int) MainWindow.mainScreen.document.pages.get(page).getMouseY();
-
+                        
                         SideBar.selectTab(MainWindow.gradeTab);
                         MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
-
+                        
                     }else if(e.getCode() == KeyCode.G){
                         if(!MainWindow.gradeTab.isSelected()) return;
-
+                        
                         GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
                         if(item == null) return;
                         if(item.isRoot()){
@@ -85,9 +87,9 @@ public class Macro {
                         item.makeSum(false);
                     }
                 }else{ // SHORTCUT + ALT
-
+                    
                     try{
-                        int i = Integer.parseInt(e.getCode().getChar())-1;
+                        int i = Integer.parseInt(e.getCode().getChar()) - 1;
                         if(i == -1){
                             MainWindow.textTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
@@ -104,10 +106,11 @@ public class Macro {
                             }
                             return;
                         }
-
-                    }catch(NumberFormatException ignored){}
+                        
+                    }catch(NumberFormatException ignored){
+                    }
                     try{
-                        int i = Integer.parseInt(keyName)-1;
+                        int i = Integer.parseInt(keyName) - 1;
                         if(i == -1){
                             MainWindow.textTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
                             return;
@@ -124,17 +127,17 @@ public class Macro {
                             }
                             return;
                         }
-
-                    }catch(NumberFormatException ignored){}
-
+                        
+                    }catch(NumberFormatException ignored){
+                    }
+                    
                 }
-
-
-
+                
+                
             }
-
+            
         });
-
+        
     }
-
+    
 }

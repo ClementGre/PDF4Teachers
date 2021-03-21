@@ -10,10 +10,7 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 public class ExportFile{
@@ -23,7 +20,7 @@ public class ExportFile{
     public List<GradeElement> grades = new ArrayList<>();
     public List<TextElement> comments;
 
-    public ExportFile(File file, int exportTier, boolean comments) throws Exception {
+    public ExportFile(File file, int exportTier, boolean comments) throws Exception{
         this.file = file;
 
         if(comments) this.comments = new ArrayList<>();
@@ -81,7 +78,7 @@ public class ExportFile{
         return gradesRating;
     }
 
-    public boolean isCompleted() {
+    public boolean isCompleted(){
 
         for(GradeElement grade : grades){
             if(grade.getValue() == -1) return false;

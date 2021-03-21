@@ -27,22 +27,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LanguagesUpdater {
-
+public class LanguagesUpdater{
+    
     private final Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("language.downloadingDialog.title"));
     private final ProgressBar loadingBar = new ProgressBar();
     private final Label currentLanguage = new Label(TR.tr("language.downloadingDialog.details"));
-
+    
     public LanguagesUpdater(){
         loadingAlert.setWidth(600);
         loadingAlert.setHeaderText(TR.tr("language.downloadingDialog.title") + "...");
         VBox pane = new VBox();
         loadingBar.setMinHeight(10);
-        VBox.setMargin(loadingBar, new Insets(10, 0, 0,0));
+        VBox.setMargin(loadingBar, new Insets(10, 0, 0, 0));
         pane.getChildren().addAll(currentLanguage, loadingBar);
         loadingAlert.getDialogPane().setContent(pane);
     }
-
+    
     public static void backgroundCheck(){
         Platform.runLater(() -> {
             new LanguagesUpdater().update((downloaded) -> {
@@ -54,59 +54,72 @@ public class LanguagesUpdater {
                         break;
                     }
                 }
-
+                
             }, true, true);
         });
     }
+    
     public static void backgroundStats(){
         Platform.runLater(() -> {
             new LanguagesUpdater().updateStats(null);
         });
     }
+    
     public static void backgroundStats(CallBack callBack){
         Platform.runLater(() -> {
             new LanguagesUpdater().updateStats(callBack);
         });
     }
-
+    
     public class Language{
         private HashMap<String, String> urls = new HashMap<>();
         private String release;
         private int version;
         private String name;
         private String displayName;
-        public HashMap<String, String> getUrls() {
+        
+        public HashMap<String, String> getUrls(){
             return urls;
         }
-        public void pushUrl(Map.Entry<String, String> urls) {
+        
+        public void pushUrl(Map.Entry<String, String> urls){
             this.urls.put(urls.getKey(), urls.getValue());
         }
-        public String getRelease() {
+        
+        public String getRelease(){
             return release;
         }
-        public void setRelease(String release) {
+        
+        public void setRelease(String release){
             this.release = release;
         }
-        public int getVersion() {
+        
+        public int getVersion(){
             return version;
         }
-        public void setVersion(int version) {
+        
+        public void setVersion(int version){
             this.version = version;
         }
-        public String getName() {
+        
+        public String getName(){
             return name;
         }
-        public void setName(String name) {
+        
+        public void setName(String name){
             this.name = name;
         }
-        public String getDisplayName() {
+        
+        public String getDisplayName(){
             return displayName;
         }
-        public void setDisplayName(String displayName) {
+        
+        public void setDisplayName(String displayName){
             this.displayName = displayName;
         }
+        
         @Override
-        public String toString() {
+        public String toString(){
             return "Language{" +
                     "urls=" + urls.toString() +
                     ", release=" + release +
@@ -115,6 +128,7 @@ public class LanguagesUpdater {
                     ", displayName='" + displayName + '\'' +
                     '}';
         }
+        
         public boolean containsTxtFile(){
             for(String fileName : urls.keySet()){
                 if(fileName.endsWith(".txt")) return true;
@@ -122,10 +136,11 @@ public class LanguagesUpdater {
             return false;
         }
     }
+    
     public void updateStats(CallBack callBack){
         new Thread(() -> {
             String uuid = Main.DEBUG ? "DEBUG" : MainWindow.userData.uuid;
-            try {
+            try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                         "&starts=" + MainWindow.userData.startsCount +
                         "&lang=" + Main.settings.language.getValue() +
@@ -145,13 +160,13 @@ public class LanguagesUpdater {
             }
             if(callBack != null) callBack.call();
         }).start();
-
+        
     }
-
+    
     public void update(CallBackArg<List<Language>> callBack, boolean hideFirstDialogState, boolean provideData){
-
+        
         if(!hideFirstDialogState) loadingAlert.show();
-
+        
         new Thread(() -> {
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/");
@@ -175,24 +190,24 @@ public class LanguagesUpdater {
                     System.out.println("updating language with response code " + responseCode);
                     if(responseCode != 200) System.out.println(con.getResponseMessage());
                 }
-
-
+                
+                
                 JsonFactory jfactory = new JsonFactory();
                 JsonParser jParser = jfactory.createParser(con.getInputStream());
-
+                
                 List<Language> languages = new ArrayList<>();
                 Language currentLanguage = null;
-
+                
                 int indentLevel = 0;
                 JsonToken token; // Current Token (START_OBJECT, END_OBJECT, VALUE_STRING, FIELD_NAME)
                 while((token = jParser.nextToken()) != null){
                     String jsonField = jParser.getCurrentName(); // Current json Object or Field
                     //jParser.getText(); jParser.getIntValue()  // Current value of Field or Object ({, }, [, ])
-
+                    
                     if(indentLevel == 1 && token == JsonToken.FIELD_NAME){
                         currentLanguage = new Language();
                         currentLanguage.setName(jsonField);
-
+                        
                     }else if(indentLevel == 2 && (token == JsonToken.VALUE_STRING || token == JsonToken.VALUE_NUMBER_INT)){
                         assert currentLanguage != null;
                         switch(jsonField){
@@ -214,14 +229,13 @@ public class LanguagesUpdater {
                         languages.add(currentLanguage);
                         currentLanguage = null;
                     }
-
+                    
                     if(token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) indentLevel++;
                     if(token == JsonToken.END_OBJECT || token == JsonToken.END_ARRAY) indentLevel--;
                 }
                 jParser.close();
-
-
-
+                
+                
                 List<Language> toDownloadLanguages = new ArrayList<>();
                 if(Main.DEBUG) System.out.println("Listing languages :");
                 for(Language language : languages){
@@ -233,12 +247,12 @@ public class LanguagesUpdater {
                         toDownloadLanguages.add(language);
                     }
                 }
-
-
+                
+                
                 if(toDownloadLanguages.size() != 0){
                     Platform.runLater(loadingAlert::show);
                 }
-
+                
                 int i = 0;
                 for(Language language : toDownloadLanguages){
                     if(!downloadLanguage(language, i, toDownloadLanguages.size())){
@@ -247,29 +261,30 @@ public class LanguagesUpdater {
                     }
                     i++;
                 }
-
+                
                 complete(callBack, toDownloadLanguages);
-
+                
             }catch(IOException e){
                 e.printStackTrace();
                 complete(callBack, new ArrayList<>());
             }
-
+            
         }, "Languages Updater").start();
-
-
+        
+        
     }
+    
     private void complete(CallBackArg<List<Language>> callBack, List<Language> downloaded){
         Platform.runLater(() -> {
             loadingAlert.close();
             callBack.call(downloaded);
         });
     }
-
+    
     private boolean isLanguageAlreadyExisting(Language language){
-
+        
         if(!Main.VERSION.equals(language.getRelease())) return true;
-
+        
         if(TR.getLanguagesConfig().containsKey(language.getName())){
             Object existing = TR.getLanguagesConfig().get(language.getName());
             if(existing instanceof HashMap){
@@ -281,23 +296,23 @@ public class LanguagesUpdater {
         }
         return false;
     }
-
+    
     private boolean downloadLanguage(Language language, int index, int size){
-
+        
         int subIndex = 0;
         int subSize = language.getUrls().size();
         for(Map.Entry<String, String> urls : language.getUrls().entrySet()){
             subIndex++;
-
+            
             int finalSubIndex = subIndex;
             Platform.runLater(() -> {
-                this.currentLanguage.setText(language.getDisplayName() + " v" + language.getVersion() + " - " + urls.getKey() + " (" + (finalSubIndex +1) + "/" + subSize + ")");
-                loadingBar.setProgress(finalSubIndex /((float)subSize-1));
+                this.currentLanguage.setText(language.getDisplayName() + " v" + language.getVersion() + " - " + urls.getKey() + " (" + (finalSubIndex + 1) + "/" + subSize + ")");
+                loadingBar.setProgress(finalSubIndex / ((float) subSize - 1));
             });
             try{
                 BufferedInputStream in = new BufferedInputStream(new URL(urls.getValue()).openStream());
                 File target = new File(Main.dataFolder + "translations" + File.separator + urls.getKey());
-
+                
                 File closed = null;
                 if(MainWindow.mainScreen != null){
                     if(MainWindow.mainScreen.hasDocument(false)){
@@ -310,19 +325,19 @@ public class LanguagesUpdater {
                 }
                 Files.copy(in, target.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 TR.addLanguageToConfig(language.getName(), language.getDisplayName(), language.getVersion());
-
-                if(closed != null) {
+                
+                if(closed != null){
                     File finalClosed = closed;
                     Platform.runLater(() -> MainWindow.mainScreen.openFile(finalClosed));
                 }
-
+                
             }catch(IOException | InterruptedException e){
                 e.printStackTrace();
                 return false;
             }
         }
         return true;
-
+        
     }
-
+    
 }

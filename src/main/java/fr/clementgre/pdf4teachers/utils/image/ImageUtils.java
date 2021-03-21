@@ -8,17 +8,18 @@ import javafx.scene.image.ImageView;
 
 import java.io.FileInputStream;
 
-public class ImageUtils {
-
+public class ImageUtils{
+    
     public static ColorAdjust defaultFullDarkColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultDarkColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultGrayColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultWhiteColorAdjust = new ColorAdjust();
-
+    
     public static void setupListeners(){
         Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> updateColorsAdjust());
         updateColorsAdjust();
     }
+    
     private static void updateColorsAdjust(){
         if(Main.settings.darkTheme.getValue()){
             defaultFullDarkColorAdjust.setBrightness(1);
@@ -32,12 +33,12 @@ public class ImageUtils {
             defaultWhiteColorAdjust.setBrightness(-1);
         }
     }
-
-    public static ImageView buildImage(Image image, int width, int height) {
+    
+    public static ImageView buildImage(Image image, int width, int height){
         ImageView imageView = new ImageView(image);
-
+        
         if(width == 0 && height == 0) return imageView;
-
+        
         if(width == 0){
             imageView.setFitHeight(height);
             imageView.setPreserveRatio(true);
@@ -50,28 +51,28 @@ public class ImageUtils {
         }
         return imageView;
     }
-
-    public static ImageView buildImage(String imgPath, int width, int height) {
+    
+    public static ImageView buildImage(String imgPath, int width, int height){
         return buildImage(imgPath, width, height, null);
     }
-
-    public static ImageView buildImage(String imgPath, int width, int height, Effect effect) {
+    
+    public static ImageView buildImage(String imgPath, int width, int height, Effect effect){
         Image image;
         ImageView imageView;
-        try {
+        try{
             image = new Image(imgPath);
             imageView = new ImageView(image);
-        }catch (IllegalArgumentException e){
+        }catch(IllegalArgumentException e){
             e.printStackTrace();
             System.err.println("Image " + imgPath + " does not exist");
             System.err.println(e.getMessage());
             imageView = new ImageView();
         }
-
+        
         if(effect != null) imageView.setEffect(effect);
-
+        
         if(width == 0 && height == 0) return imageView;
-
+        
         if(width == 0){
             imageView.setFitHeight(height);
             imageView.setPreserveRatio(true);
@@ -84,12 +85,12 @@ public class ImageUtils {
         }
         return imageView;
     }
-
-    public static ImageView buildImage(FileInputStream file, int width, int height) {
+    
+    public static ImageView buildImage(FileInputStream file, int width, int height){
         ImageView imageView = new ImageView(new Image(file));
-
+        
         if(width == 0 && height == 0) return imageView;
-
+        
         if(width == 0){
             imageView.setFitHeight(height);
             imageView.setPreserveRatio(true);

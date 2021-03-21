@@ -7,32 +7,34 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
 public class StringSetting extends Setting<String>{
-
+    
     private StringProperty value;
-
+    
     public StringSetting(String value, String icon, String path, String title, String description){
         super(icon, path, title, description);
         this.value = new SimpleStringProperty(value);
-
+        
         this.value.addListener((observable, oldValue, newValue) -> {
             if(Main.settings != null) Main.settings.saveSettings();
         });
     }
-
+    
     @Override
-    public void setupMenuItem() {
+    public void setupMenuItem(){
         menuItem = MenuBar.createMenuItem(TR.tr(title), icon, null, TR.tr(description), true);
     }
-
-    public StringProperty valueProperty() {
+    
+    public StringProperty valueProperty(){
         return value;
     }
+    
     @Override
-    public String getValue() {
+    public String getValue(){
         return value.get();
     }
+    
     @Override
-    public void setValue(String value) {
+    public void setValue(String value){
         this.value.set(value);
     }
 }

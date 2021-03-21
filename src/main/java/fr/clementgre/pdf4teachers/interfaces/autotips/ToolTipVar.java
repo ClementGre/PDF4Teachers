@@ -7,8 +7,10 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD})
-public @interface ToolTipVar {
+public @interface ToolTipVar{
     String actionKey();
+    
     String prerequisiteKey();
+    
     String objectWhereDisplay();
 }

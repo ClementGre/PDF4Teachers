@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
-import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.utils.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class TextListItem {
+public class TextListItem{
 
     private Font font;
     private String text;
@@ -21,7 +21,7 @@ public class TextListItem {
     private long uses;
     private long creationDate;
 
-    public TextListItem(Font font, String text, Color color, long uses, long creationDate) {
+    public TextListItem(Font font, String text, Color color, long uses, long creationDate){
         this.font = font;
         this.text = text;
         this.color = color;
@@ -47,7 +47,7 @@ public class TextListItem {
         return data;
     }
 
-    public static TextListItem readDataAndGive(DataInputStream reader) throws IOException {
+    public static TextListItem readDataAndGive(DataInputStream reader) throws IOException{
 
         double fontSize = reader.readFloat();
         boolean isBold = reader.readBoolean();
@@ -64,6 +64,7 @@ public class TextListItem {
 
         return new TextListItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), uses, creationDate);
     }
+
     public static TextListItem readYAMLDataAndGive(HashMap<String, Object> data){
 
         double fontSize = Config.getDouble(data, "size");
@@ -80,43 +81,43 @@ public class TextListItem {
         return new TextListItem(font, text, color, uses, creationDate);
     }
 
-        public Font getFont() {
+    public Font getFont(){
         return font;
     }
 
-    public void setFont(Font font) {
+    public void setFont(Font font){
         this.font = font;
     }
 
-    public String getText() {
+    public String getText(){
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(String text){
         this.text = text;
     }
 
-    public Color getColor() {
+    public Color getColor(){
         return color;
     }
 
-    public void setColor(Color color) {
+    public void setColor(Color color){
         this.color = color;
     }
 
-    public long getUses() {
+    public long getUses(){
         return uses;
     }
 
-    public void setUses(long uses) {
+    public void setUses(long uses){
         this.uses = uses;
     }
 
-    public long getCreationDate() {
+    public long getCreationDate(){
         return creationDate;
     }
 
-    public void setCreationDate(long creationDate) {
+    public void setCreationDate(long creationDate){
         this.creationDate = creationDate;
     }
 

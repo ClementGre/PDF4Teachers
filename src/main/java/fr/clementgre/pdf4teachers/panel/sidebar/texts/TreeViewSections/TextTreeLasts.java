@@ -1,14 +1,14 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.ListsManager;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextTreeLasts extends TextTreeSection {
+public class TextTreeLasts extends TextTreeSection{
 
     public ListsManager listsManager;
 
@@ -28,15 +28,15 @@ public class TextTreeLasts extends TextTreeSection {
     }
 
     @Override
-    public void setupGraphics() {
+    public void setupGraphics(){
         super.setupGraphics();
-        pane.getChildren().add(pane.getChildren().size()-1, listsManager.saveListBtn);
-        pane.getChildren().add(pane.getChildren().size()-1, listsManager.loadListBtn);
+        pane.getChildren().add(pane.getChildren().size() - 1, listsManager.saveListBtn);
+        pane.getChildren().add(pane.getChildren().size() - 1, listsManager.loadListBtn);
 
     }
 
     @Override
-    public void updateGraphics() {
+    public void updateGraphics(){
         super.updateGraphics();
         listsManager.updateGraphics();
     }

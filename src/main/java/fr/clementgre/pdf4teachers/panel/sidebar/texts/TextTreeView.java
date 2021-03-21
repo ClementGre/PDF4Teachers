@@ -1,16 +1,16 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
+import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeFavorites;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeLasts;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeOnFile;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -23,42 +23,47 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TextTreeView extends TreeView<String>{
-
+    
     public TreeItem<String> treeViewRoot = new TreeItem<>();
-
+    
     public TextTreeFavorites favoritesSection = new TextTreeFavorites();
     public TextTreeLasts lastsSection = new TextTreeLasts();
     public TextTreeOnFile onFileSection = new TextTreeOnFile();
-
+    
     public TextTreeView(Pane pane){
-
+        
         setMaxWidth(400);
         setShowRoot(false);
         setEditable(true);
         setRoot(treeViewRoot);
         getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         treeViewRoot.getChildren().addAll(favoritesSection, lastsSection, onFileSection);
-
+        
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
-
+        
         prefHeightProperty().bind(pane.heightProperty().subtract(layoutYProperty()));
         prefWidthProperty().bind(pane.widthProperty());
         widthProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             // Update element's graphic only if it is the last width value
             new Thread(() -> {
-                try{ Thread.sleep(200); }catch(InterruptedException e){ e.printStackTrace(); }
+                try{
+                    Thread.sleep(200);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
                 Platform.runLater(() -> {
                     if(getWidth() == newValue.longValue()) updateListsGraphic();
                 });
             }).start();
         });
-
-        setCellFactory((TreeView<String> param) -> new TreeCell<>() {
-            @Override protected void updateItem(String item, boolean empty) {
-
+        
+        setCellFactory((TreeView<String> param) -> new TreeCell<>(){
+            @Override
+            protected void updateItem(String item, boolean empty){
+                
                 super.updateItem(item, empty);
-
+                
                 // Null
                 if(empty){
                     setGraphic(null);
@@ -67,7 +72,7 @@ public class TextTreeView extends TreeView<String>{
                     setOnMouseClicked(null);
                     return;
                 }
-
+                
                 // TextElement
                 if(getTreeItem() instanceof TextTreeItem){
                     ((TextTreeItem) getTreeItem()).updateCell(this);
@@ -83,7 +88,7 @@ public class TextTreeView extends TreeView<String>{
                     ((SortPanelTreeItem) getTreeItem()).updateCell(this);
                     return;
                 }
-
+                
                 // Other
                 setStyle(null);
                 setGraphic(null);
@@ -91,7 +96,7 @@ public class TextTreeView extends TreeView<String>{
                 setOnMouseClicked(null);
             }
         });
-
+        
         Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> {
             refresh();
         });
@@ -99,17 +104,17 @@ public class TextTreeView extends TreeView<String>{
             refresh();
         });
     }
-
+    
     public static ContextMenu getCategoryMenu(TextTreeSection section){
-
+        
         ContextMenu menu = new ContextMenu();
-
-
+        
+        
         if(section.sectionType == TextTreeSection.ONFILE_TYPE){
             NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("textTab.onDocumentList.menu.clear"), false);
             item3.setToolTip(TR.tr("textTab.onDocumentList.menu.clear.tooltip"));
             menu.getItems().addAll(item3);
-
+            
             item3.setOnAction(e -> {
                 for(PageRenderer page : MainWindow.mainScreen.document.pages){
                     page.clearTextElements();
@@ -123,7 +128,7 @@ public class TextTreeView extends TreeView<String>{
             NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.clear.resetUseData"), false);
             item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
             menu.getItems().addAll(item1, item2);
-
+            
             item1.setOnAction(e -> {
                 section.clearElements();
             });
@@ -141,15 +146,15 @@ public class TextTreeView extends TreeView<String>{
         NodeMenuItem.setupMenu(menu);
         return menu;
     }
-
+    
     public void updateAutoComplete(){
-
+        
         getSelectionModel().clearSelection();
         String matchText = MainWindow.textTab.txtArea.getText();
-
+        
         if(!MainWindow.textTab.txtArea.isDisabled() && !matchText.isBlank()){
-
-
+            
+            
             int totalIndex = 1;
             int i;
             for(i = 0; i < favoritesSection.getChildren().size(); i++){
@@ -161,7 +166,7 @@ public class TextTreeView extends TreeView<String>{
                 }
             }
             totalIndex += i + 1;
-
+            
             for(i = 0; i < lastsSection.getChildren().size(); i++){
                 if(lastsSection.getChildren().get(i) instanceof TextTreeItem){
                     TextTreeItem item = (TextTreeItem) lastsSection.getChildren().get(i);
@@ -171,7 +176,7 @@ public class TextTreeView extends TreeView<String>{
                 }
             }
             totalIndex += i + 1;
-
+            
             for(i = 0; i < onFileSection.getChildren().size(); i++){
                 if(onFileSection.getChildren().get(i) instanceof TextTreeItem){
                     TextTreeItem item = (TextTreeItem) onFileSection.getChildren().get(i);
@@ -180,57 +185,61 @@ public class TextTreeView extends TreeView<String>{
                     }
                 }
             }
-
+            
         }
         getSelectionModel().select(null);
-
+        
     }
+    
     public void selectNextInSelection(){
         if(getSelectionModel().getSelectedIndices().size() != 0){
-
+            
             if(getSelectionModel().getSelectedItem() == null){
                 selectFromSelectedIndex(0);
             }else{
                 int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) + 1;
-
+                
                 if(toSelectIndex > lastIndex) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
-
+            
         }
     }
+    
     public void selectPreviousInSelection(){
         if(getSelectionModel().getSelectedIndices().size() != 0){
             int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
-
+            
             if(getSelectionModel().getSelectedItem() == null){
                 selectFromSelectedIndex(lastIndex);
             }else{
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) - 1;
-
+                
                 if(toSelectIndex < 0) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
-
+            
         }
     }
+    
     private void selectTextField(){
         MainWindow.textTab.treeView.scrollTo(0);
         getSelectionModel().select(null);
         MainWindow.textTab.txtArea.requestFocus();
     }
+    
     private void selectFromSelectedIndex(int index){
-        MainWindow.textTab.treeView.scrollTo(getSelectionModel().getSelectedIndices().get(index)-3);
+        MainWindow.textTab.treeView.scrollTo(getSelectionModel().getSelectedIndices().get(index) - 3);
         Platform.runLater(() -> {
             int realIndex = getSelectionModel().getSelectedIndices().get(index);
             getSelectionModel().select(realIndex);
         });
     }
-
-
+    
+    
     public static ContextMenu getNewMenu(TextTreeItem element){
-
+        
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.addNLink"), false);
         item1.setToolTip(TR.tr("textTab.listMenu.addNLink.tooltip"));
@@ -242,17 +251,18 @@ public class TextTreeView extends TreeView<String>{
         item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
         NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("textTab.listMenu.unlink"), false);
         item5.setToolTip(TR.tr("textTab.listMenu.unlink.tooltip"));
-
-
+        
+        
         // Ajouter les items en fonction du type
         if(element.getType() != TextTreeSection.ONFILE_TYPE) menu.getItems().add(item1);
         menu.getItems().add(item2);
         if(element.getType() != TextTreeSection.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
         if(element.getType() == TextTreeSection.ONFILE_TYPE) menu.getItems().add(item4); // onFile
-        if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null) menu.getItems().add(item5); // élément précédent qui est lié
-
+        if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null)
+            menu.getItems().add(item5); // élément précédent qui est lié
+        
         NodeMenuItem.setupMenu(menu);
-
+        
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
             element.addToDocument(true);
@@ -274,7 +284,7 @@ public class TextTreeView extends TreeView<String>{
             }
         });
         item3.setOnAction((e) -> {
-            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis()/1000));
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis() / 1000));
             if(element.getType() == TextTreeSection.LAST_TYPE){
                 if(Main.settings.textAutoRemove.getValue()){
                     removeSavedElement(element);
@@ -282,21 +292,21 @@ public class TextTreeView extends TreeView<String>{
             }
         });
         item4.setOnAction((e) -> {
-            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis()/1000));
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
         });
         item5.setOnAction((e) -> {
             element.unLink();
         });
         return menu;
-
+        
     }
-
+    
     public static void updateListsGraphic(){
         MainWindow.textTab.treeView.favoritesSection.updateChildrenGraphics();
         MainWindow.textTab.treeView.lastsSection.updateChildrenGraphics();
         MainWindow.textTab.treeView.onFileSection.updateChildrenGraphics();
     }
-
+    
     public static void addSavedElement(TextTreeItem element){
         if(element.getType() == TextTreeSection.FAVORITE_TYPE){
             MainWindow.textTab.treeView.favoritesSection.addElement(element);
@@ -304,6 +314,7 @@ public class TextTreeView extends TreeView<String>{
             MainWindow.textTab.treeView.lastsSection.addElement(element);
         }
     }
+    
     public static void removeSavedElement(TextTreeItem element){
         if(element.getType() == TextTreeSection.FAVORITE_TYPE){
             MainWindow.textTab.treeView.favoritesSection.removeElement(element);
@@ -311,9 +322,9 @@ public class TextTreeView extends TreeView<String>{
             MainWindow.textTab.treeView.lastsSection.removeElement(element);
         }
     }
-
+    
     public static List<TextTreeItem> autoSortList(List<TextTreeItem> toSort, String sortType, boolean order){
-
+        
         if(sortType.equals(TR.tr("sorting.sortType.addDate.short"))){
             return Sorter.sortElementsByDate(toSort, order);
         }else if(sortType.equals(TR.tr("sorting.sortType.name"))){
@@ -331,9 +342,9 @@ public class TextTreeView extends TreeView<String>{
         }
         return toSort;
     }
-
+    
     public static List<TextTreeItem> getMostUseElements(){
-
+        
         List<TextTreeItem> toSort = new ArrayList<>();
         for(int i = 0; i < MainWindow.textTab.treeView.favoritesSection.getChildren().size(); i++){
             if(MainWindow.textTab.treeView.favoritesSection.getChildren().get(i) instanceof TextTreeItem){
@@ -346,7 +357,7 @@ public class TextTreeView extends TreeView<String>{
             }
         }
         return autoSortList(toSort, TR.tr("sorting.sortType.use"), true);
-
+        
     }
 }
 

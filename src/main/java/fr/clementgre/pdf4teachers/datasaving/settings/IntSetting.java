@@ -9,23 +9,24 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.RadioMenuItem;
 
 public class IntSetting extends Setting<Integer>{
-
+    
     private IntegerProperty value;
     private boolean hideCheck = false;
-
+    
     public IntSetting(Integer value, String icon, String path, String title, String description){
         super(icon, path, title, description);
         this.value = new SimpleIntegerProperty(value);
-
+        
         this.value.addListener((observable, oldValue, newValue) -> {
             if(Main.settings != null) Main.settings.saveSettings();
         });
     }
+    
     public IntSetting(Integer value, String icon, String path, String title, String description, boolean hideCheck){
         super(icon, path, title, description);
         this.value = new SimpleIntegerProperty(value);
         this.hideCheck = hideCheck;
-
+        
         this.value.addListener((observable, oldValue, newValue) -> {
             if(Main.settings != null){
                 Main.settings.saveSettings();
@@ -37,7 +38,7 @@ public class IntSetting extends Setting<Integer>{
             }
         });
     }
-
+    
     @Override
     public void setupMenuItem(){
         if(hideCheck){
@@ -50,21 +51,23 @@ public class IntSetting extends Setting<Integer>{
                 ((NodeRadioMenuItem) menuItem).setSelected(this.value.get() != -1);
             }
         }
-
+        
     }
-
-    public IntegerProperty valueProperty() {
+    
+    public IntegerProperty valueProperty(){
         return value;
     }
+    
     @Override
-    public Integer getValue() {
+    public Integer getValue(){
         return value.get();
     }
+    
     @Override
-    public void setValue(Integer value) {
+    public void setValue(Integer value){
         this.value.setValue(value);
     }
-
+    
     public void setRadioSelected(boolean selected){
         if(menuItem instanceof RadioMenuItem){
             ((RadioMenuItem) menuItem).setSelected(selected);

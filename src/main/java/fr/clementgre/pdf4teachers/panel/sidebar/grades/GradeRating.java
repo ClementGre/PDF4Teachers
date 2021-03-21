@@ -4,7 +4,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 
 import java.util.ArrayList;
 
-public class GradeRating {
+public class GradeRating{
 
     public double total;
     public String name;
@@ -15,7 +15,7 @@ public class GradeRating {
     public int y;
     public int page;
 
-    public GradeRating(double total, String name, int index, String parentPath, boolean alwaysVisible, int x, int y, int page) {
+    public GradeRating(double total, String name, int index, String parentPath, boolean alwaysVisible, int x, int y, int page){
         this.total = total;
         this.name = name;
         this.index = index;
@@ -29,6 +29,7 @@ public class GradeRating {
     public GradeElement toGradeElement(double value, int x, int y, int page){
         return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
     }
+
     public GradeElement toGradeElement(double value){
         return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
     }

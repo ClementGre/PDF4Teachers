@@ -1,11 +1,11 @@
 package fr.clementgre.pdf4teachers.document.render.display;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertWindow;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertedFile;
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -17,7 +17,10 @@ import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -35,94 +38,119 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class PDFPagesEditor{
-
+    
     private PDDocument document;
     private File file;
+    
     public PDFPagesEditor(PDDocument document, File file){
         this.document = document;
         this.file = file;
     }
-
+    
     public void ascendPage(PageRenderer page){
         PDPage docPage = document.getPage(page.getPage());
-
+        
         document.removePage(docPage);
-        addDocumentPage(page.getPage()-1, docPage);
-        try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+        addDocumentPage(page.getPage() - 1, docPage);
+        try{
+            document.save(file);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
         Document document = MainWindow.mainScreen.document;
-
+        
         // remove page
         document.pages.remove(page);
-        document.pages.add(page.getPage()-1, page);
-
+        document.pages.add(page.getPage() - 1, page);
+        
         // Update pages of all pages
-        for(int i = 0 ; i < document.totalPages ; i++) document.pages.get(i).setPage(i);
-
+        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+        
         // update coordinates of the pages
         document.pages.get(0).updatePosition(30);
         document.updateShowsStatus();
-
+        
         // update current page
-        document.setCurrentPage(page.getPage()-1);
+        document.setCurrentPage(page.getPage() - 1);
     }
+    
     public void descendPage(PageRenderer page){
         PDPage docPage = document.getPage(page.getPage());
-
+        
         document.removePage(docPage);
-        addDocumentPage(page.getPage()+1, docPage);
-        try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+        addDocumentPage(page.getPage() + 1, docPage);
+        try{
+            document.save(file);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
         Document document = MainWindow.mainScreen.document;
-
+        
         // remove page
         document.pages.remove(page);
-        document.pages.add(page.getPage()+1, page);
-
+        document.pages.add(page.getPage() + 1, page);
+        
         // Update pages of all pages
-        for(int i = 0 ; i < document.totalPages ; i++) document.pages.get(i).setPage(i);
-
+        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+        
         // update coordinates of the pages
         document.pages.get(0).updatePosition(30);
         document.updateShowsStatus();
-
+        
         // update current page
-        document.setCurrentPage(page.getPage()+1);
+        document.setCurrentPage(page.getPage() + 1);
     }
+    
     public void rotateLeftPage(PageRenderer page){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() - 90);
-        try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+        try{
+            document.save(file);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
         page.updatePosition((int) page.getTranslateY());
         page.updateRender();
     }
+    
     public void rotateRightPage(PageRenderer page){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + 90);
-        try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+        try{
+            document.save(file);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
         page.updatePosition((int) page.getTranslateY());
         page.updateRender();
     }
+    
     public void deletePage(PageRenderer page){
-
+        
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
             Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
-            alert.setHeaderText(TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage()+1)));
+            alert.setHeaderText(TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
             alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
-
+            
             Optional<ButtonType> result = alert.showAndWait();
             if(result.get() == ButtonType.OK){
                 document.removePage(page.getPage());
-                try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+                try{
+                    document.save(file);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                
                 int pageNumber = page.getPage();
-
+                
                 // remove page elements
                 while(page.getElements().size() != 0){
                     if(page.getElements().get(0) instanceof GradeElement){
                         GradeElement grade = (GradeElement) page.getElements().get(0);
                         grade.setValue(-1);
-                        grade.switchPage(pageNumber == 0 ? 1 : pageNumber-1);
+                        grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
                     }else{
                         page.getElements().get(0).delete();
                     }
@@ -133,150 +161,179 @@ public class PDFPagesEditor{
                 document.totalPages--;
                 document.pages.remove(pageNumber);
                 MainWindow.mainScreen.pane.getChildren().remove(page);
-
+                
                 // Update pages of all pages
-                for(int i = 0 ; i < document.totalPages ; i++) document.pages.get(i).setPage(i);
-
+                for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+                
                 // update coordinates of the pages
                 document.pages.get(0).updatePosition(30);
                 document.updateShowsStatus();
-
+                
                 // update current page
-                document.setCurrentPage(document.totalPages == pageNumber ? pageNumber-1 : pageNumber);
-
+                document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
+                
                 Edition.setUnsave();
                 document.edition.save();
             }
         }
     }
+    
     public void newBlankPage(int originalPage, int index){
         PageRenderer page = new PageRenderer(index);
         PDPage docPage = new PDPage(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage));
-
+        
         addDocumentPage(index, docPage);
-        try{ document.save(file); }catch(IOException e){ e.printStackTrace(); }
-
+        try{
+            document.save(file);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
         Document document = MainWindow.mainScreen.document;
-
+        
         // add page
         document.pages.add(index, page);
         MainWindow.mainScreen.addPage(page);
         document.totalPages++;
-
+        
         // Update pages of all pages
-        for(int i = 0 ; i < document.totalPages ; i++) document.pages.get(i).setPage(i);
-
+        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+        
         // update coordinates of the pages
         document.pages.get(0).updatePosition(30);
         document.updateShowsStatus();
-
+        
         // update current page
         document.setCurrentPage(index);
     }
-    public void newConvertPage(int originalPage, int index) {
-
+    
+    public void newConvertPage(int originalPage, int index){
+        
         Document document = MainWindow.mainScreen.document;
-
+        
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage), (convertedFiles) -> {
             if(convertedFiles.size() == 0) return;
             ConvertedFile file = convertedFiles.get(0);
-
+            
             PDFMergerUtility merger = new PDFMergerUtility();
-
+            
             int addedPages = file.document.getNumberOfPages();
             try{
                 merger.appendDocument(this.document, file.document);
                 merger.mergeDocuments();
-            }catch(IOException e){ e.printStackTrace(); }
-
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            
             for(int j = 0; j < addedPages; j++){
                 PageRenderer page = new PageRenderer(index);
-
-                moveDocumentPage(this.document.getNumberOfPages()-1, index);
-
-                try{ this.document.save(this.file); }catch(IOException e){ e.printStackTrace(); }
-
+                
+                moveDocumentPage(this.document.getNumberOfPages() - 1, index);
+                
+                try{
+                    this.document.save(this.file);
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                
                 // add page
                 document.pages.add(index, page);
                 MainWindow.mainScreen.addPage(page);
                 document.totalPages++;
-
+                
                 // Update pages of all pages
-                for(int k = 0 ; k < document.totalPages ; k++) document.pages.get(k).setPage(k);
+                for(int k = 0; k < document.totalPages; k++) document.pages.get(k).setPage(k);
             }
-
-            try{ file.document.close(); }catch(IOException e){ e.printStackTrace(); }
-
+            
+            try{
+                file.document.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            
             // update coordinates of the pages
             document.pages.get(0).updatePosition(30);
             document.updateShowsStatus();
-
+            
             // update current page
             document.setCurrentPage(index);
         });
     }
+    
     public void newPdfPage(int index){
-
+        
         Document document = MainWindow.mainScreen.document;
-
+        
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.PDF"), "*.pdf"));
         chooser.setTitle(TR.tr("dialog.file.selectFile.title"));
-        chooser.setInitialDirectory(( new File(MainWindow.userData.lastOpenDir).exists() ?  new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
-
+        chooser.setInitialDirectory((new File(MainWindow.userData.lastOpenDir).exists() ? new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home"))));
+        
         File file = chooser.showOpenDialog(Main.window);
         if(file != null){
             if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
             try{
                 PDDocument fileDoc = PDDocument.load(file);
-
+                
                 PDFMergerUtility merger = new PDFMergerUtility();
-
+                
                 int addedPages = fileDoc.getNumberOfPages();
                 try{
                     merger.appendDocument(this.document, fileDoc);
                     merger.mergeDocuments();
-                }catch(IOException e){ e.printStackTrace(); }
-
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                
                 for(int j = 0; j < addedPages; j++){
                     PageRenderer page = new PageRenderer(index);
-
-                    moveDocumentPage(this.document.getNumberOfPages()-1, index);
-
-                    try{ this.document.save(this.file); }catch(IOException e){ e.printStackTrace(); }
-
+                    
+                    moveDocumentPage(this.document.getNumberOfPages() - 1, index);
+                    
+                    try{
+                        this.document.save(this.file);
+                    }catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    
                     // add page
                     document.pages.add(index, page);
                     MainWindow.mainScreen.addPage(page);
                     document.totalPages++;
-
+                    
                     // Update pages of all pages
-                    for(int k = 0 ; k < document.totalPages ; k++) document.pages.get(k).setPage(k);
+                    for(int k = 0; k < document.totalPages; k++) document.pages.get(k).setPage(k);
                 }
-
-                try{ fileDoc.close(); }catch(IOException e){ e.printStackTrace(); }
-
+                
+                try{
+                    fileDoc.close();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+                
                 // update coordinates of the pages
                 document.pages.get(0).updatePosition(30);
                 document.updateShowsStatus();
-
+                
                 // update current page
                 document.setCurrentPage(index);
-
-            }catch(IOException e){ e.printStackTrace(); }
+                
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
-
+        
     }
-
+    
     // "UTILS"
-
-    private void addDocumentPage(final int index, final PDPage page) {
-
+    
+    private void addDocumentPage(final int index, final PDPage page){
+        
         if(index >= document.getNumberOfPages())
             document.addPage(page);
         else{
             ArrayList<PDPage> pages = new ArrayList<>();
-
+            
             // save pages
             for(int i = 0; i < document.getPages().getCount(); i++){
                 if(index == i) pages.add(page);
@@ -284,31 +341,32 @@ public class PDFPagesEditor{
             }
             // remove pages
             while(document.getPages().getCount() != 0) document.removePage(0);
-
+            
             // add pages
             for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         }
     }
-    private void moveDocumentPage(final int from, final int to) {
-
+    
+    private void moveDocumentPage(final int from, final int to){
+        
         ArrayList<PDPage> pages = new ArrayList<>();
-
+        
         // save non-from pages
         for(int i = 0; i < document.getPages().getCount(); i++){
             if(i != from) pages.add(document.getPage(i));
         }
         // save from page
         pages.add(to, document.getPages().get(from));
-
+        
         // remove pages
         while(document.getPages().getCount() != 0) document.removePage(0);
-
+        
         // add pages
         for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
     }
-
+    
     // OTHER
-
+    
     public void capture(int pageIndex, PositionDimensions dimensions){
         Image pageImage;
         List<Image> images = new ArrayList<>();
@@ -321,20 +379,20 @@ public class PDFPagesEditor{
             pageImage = capturePage(page, null);
             images.add(capturePage(page, dimensions));
         }
-
+        
         List<String> definitions = ConvertWindow.definitions;
         definitions.set(0, (pageImage.getWidth() * pageImage.getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
-
+        
         ChoiceDialog<String> alert = DialogBuilder.getChoiceDialog(definitions.get(0), definitions);
         alert.setTitle(TR.tr("document.pageActions.capture.dialog.title"));
         alert.setHeaderText(TR.tr("document.pageActions.capture.dialog.title"));
         Label contentText = new Label(TR.tr("document.pageActions.capture.dialog.details"));
-
+        
         ImageView graphic = new ImageView(images.get(0));
         graphic.setFitHeight(400);
         graphic.setFitWidth(600);
         graphic.setPreserveRatio(true);
-
+        
         VBox.setMargin(contentText, new Insets(10, 0, 10, 10));
         VBox.setMargin(graphic, new Insets(10, 0, 10, 10));
         VBox pane = new VBox();
@@ -343,54 +401,59 @@ public class PDFPagesEditor{
                 alert.getDialogPane().getContent(),
                 graphic);
         alert.getDialogPane().setContent(pane);
-
+        
         Optional<String> choosed = alert.showAndWait();
         if(choosed.isPresent()){
             int definition = (int) (Double.parseDouble(choosed.get().split("Mp")[0]) * 1000000);
-
+            
             AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(pageIndex == -1);
-            new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
+            new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>(){
                 File exportDir = null;
+                
                 @Override
-                public List<Integer> prepare(boolean recursive) {
+                public List<Integer> prepare(boolean recursive){
                     if(recursive){
                         return MainWindow.mainScreen.document.pages.stream().map(PageRenderer::getPage).collect(Collectors.toList());
                     }else{
                         return Collections.singletonList(pageIndex);
                     }
                 }
-
+                
                 @Override
-                public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive) throws IOException, Exception {
+                public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive) throws IOException, Exception{
                     File file;
                     if(!recursive){
-                        file = DialogBuilder.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex+1) + "-" + MainWindow.mainScreen.document.pages.size()  + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
-                        if(file == null) return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
+                        file = DialogBuilder.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                        if(file == null)
+                            return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         exportDir = file.getParentFile();
-
+                        
                     }else{
                         if(exportDir == null){
                             exportDir = DialogBuilder.showDirectoryDialog(false);
-                            if(exportDir == null) return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
+                            if(exportDir == null)
+                                return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }
-                        file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex+1) + "-" + MainWindow.mainScreen.document.pages.size()  + ").png");
+                        file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png");
                     }
                     if(file.exists() && recursive){
                         AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(file);
-                        if(result == AlreadyExistDialog.ResultType.SKIP) return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_SKIP_1);
-                        if(result == AlreadyExistDialog.ResultType.STOP) return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_STOP);
+                        if(result == AlreadyExistDialog.ResultType.SKIP)
+                            return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_SKIP_1);
+                        if(result == AlreadyExistDialog.ResultType.STOP)
+                            return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_STOP);
                         if(result == AlreadyExistDialog.ResultType.RENAME) file = AlreadyExistDialog.rename(file);
                     }
                     return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_OK);
                 }
-
+                
                 @Override
-                public String getSortedDataName(Map.Entry<File, Integer> data, boolean recursive) {
+                public String getSortedDataName(Map.Entry<File, Integer> data, boolean recursive){
                     return data.getKey().getName();
                 }
-
+                
                 @Override
-                public TwoStepListAction.ProcessResult completeData(Map.Entry<File, Integer> data, boolean recursive) {
+                public TwoStepListAction.ProcessResult completeData(Map.Entry<File, Integer> data, boolean recursive){
                     PageRenderer page = MainWindow.mainScreen.document.pages.get(data.getValue());
                     try{
                         BufferedImage image = capturePage(page, dimensions, definition);
@@ -412,45 +475,48 @@ public class PDFPagesEditor{
                     }
                     return TwoStepListAction.ProcessResult.OK;
                 }
-
+                
                 @Override
-                public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive) {
-
-
+                public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
+                    
+                    
                     String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("document.pageActions.capture.completedDialog.ignored.alreadyExisting", excludedReasons.get(1)) + ")";
                     String details = TR.tr("document.pageActions.capture.completedDialog.exported", completedSize, originSize) + alreadyExistText;
-
+                    
                     DialogBuilder.showAlertWithOpenDirButton(TR.tr("document.pageActions.capture.completedDialog.title"), TR.tr("document.pageActions.capture.completedDialog.header"), details, exportDir);
-
+                    
                 }
             });
-
+            
         }
     }
+    
     private Image capturePage(PageRenderer page, PositionDimensions dimensions){
-        if(page.getBackground().getImages().size() == 0) return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
+        if(page.getBackground().getImages().size() == 0)
+            return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
         if(dimensions == null){
             return page.getBackground().getImages().get(0).getImage();
         }else{
             Image image = page.getBackground().getImages().get(0).getImage();
             double factor = image.getHeight() / page.getHeight();
-
+            
             int subX = (int) (dimensions.getX() * factor);
             int subY = (int) (dimensions.getY() * factor);
             int subWidth = (int) (dimensions.getWidth() * factor);
             int subHeight = (int) (dimensions.getHeight() * factor);
-
+            
             return new WritableImage(image.getPixelReader(),
-                    subX, subY, (int) (subWidth+subX > image.getWidth() ? image.getWidth()-subX : subWidth), (int) (subHeight+subY > image.getHeight() ? image.getHeight()-subY : subHeight));
+                    subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
         }
     }
+    
     private BufferedImage capturePage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
-
+        
         int width = (int) (Math.sqrt(pixels) / (841d / 594d));
         int height = (int) (width * (page.getHeight() / page.getWidth()));
-
+        
         BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), width, height);
-
+        
         if(dimensions == null){
             return image;
         }else{
@@ -459,8 +525,8 @@ public class PDFPagesEditor{
             int subY = (int) (dimensions.getY() * factor);
             int subWidth = (int) (dimensions.getWidth() * factor);
             int subHeight = (int) (dimensions.getHeight() * factor);
-            return image.getSubimage(subX, subY, subWidth+subX > image.getWidth() ? image.getWidth()-subX-1 : subWidth, subHeight+subY > image.getHeight() ? image.getHeight()-subY-1 : subHeight);
+            return image.getSubimage(subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX - 1 : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY - 1 : subHeight);
         }
     }
-
+    
 }

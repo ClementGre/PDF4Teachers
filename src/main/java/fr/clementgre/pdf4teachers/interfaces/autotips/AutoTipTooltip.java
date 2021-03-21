@@ -23,66 +23,66 @@ import org.controlsfx.control.PopOver;
 
 import java.awt.*;
 
-public class AutoTipTooltip extends PopOver {
-
+public class AutoTipTooltip extends PopOver{
+    
     private String name;
     private String actionKey;
     private String prerequisiteKey;
     private String objectWhereDisplay;
-
+    
     private Label text = new Label();
-
+    
     private boolean closedByAutoHide = false;
-
-    public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay) {
+    
+    public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
         String contentText = Main.isOSX()
                 ? TR.tr("autoTips." + name).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
                 : TR.tr("autoTips." + name);
         text.setText(contentText);
-
+        
         this.name = name;
         this.actionKey = actionKey;
         this.prerequisiteKey = prerequisiteKey;
         this.objectWhereDisplay = objectWhereDisplay;
-
+        
         setAutoHide(true);
         setDetachable(false);
         setHeaderAlwaysVisible(true);
         setArrowIndent(0);
         setCornerRadius(10);
         setTitle(TR.tr("autoTips.title"));
-
+        
         text.setMaxWidth(300);
         text.setWrapText(true);
-
+        
         HBox graphic = new HBox();
         graphic.getChildren().add(text);
         setContentNode(graphic);
         graphic.getStyleClass().add("tooltip-autotip-pane");
         getStyleClass().add("tooltip-autotip");
-
+        
         setOnAutoHide((e) -> {
             closedByAutoHide = true;
         });
         setOnHidden((e) -> {
             if(!closedByAutoHide) AutoTipsManager.removeTip(name);
         });
-
+        
     }
-
-
+    
+    
     public void showAuto(Window owner){
         if(owner == null) return;
         if(!owner.isFocused()) return;
         closedByAutoHide = false;
         StyleManager.putStyle(getRoot(), Style.DEFAULT);
-
+        
         if(objectWhereDisplay.isEmpty()){
-
+            
             int x = (int) MouseInfo.getPointerInfo().getLocation().getX();
             int y = (int) MouseInfo.getPointerInfo().getLocation().getY();
             show(owner.getScene().getFocusOwner(), x, y);
-
+            
         }else if(objectWhereDisplay.equals("auto")){
             show(owner.getScene().getFocusOwner());
         }else{
@@ -93,37 +93,44 @@ public class AutoTipTooltip extends PopOver {
             }
         }
     }
-
+    
     private void showOnPane(Region region){
         if(region == null) return;
         final Scene scene = region.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
-
-        super.show(region, Main.window.getX() + region.getWidth()/2, Main.window.getY() + region.getHeight()/2);
+        
+        super.show(region, Main.window.getX() + region.getWidth() / 2, Main.window.getY() + region.getHeight() / 2);
     }
-
-    public String getName() {
+    
+    public String getName(){
         return name;
     }
-    public void setName(String name) {
+    
+    public void setName(String name){
         this.name = name;
     }
-    public String getActionKey() {
+    
+    public String getActionKey(){
         return actionKey;
     }
-    public void setActionKey(String actionKey) {
+    
+    public void setActionKey(String actionKey){
         this.actionKey = actionKey;
     }
-    public String getPrerequisiteKey() {
+    
+    public String getPrerequisiteKey(){
         return prerequisiteKey;
     }
-    public void setPrerequisiteKey(String prerequisiteKey) {
+    
+    public void setPrerequisiteKey(String prerequisiteKey){
         this.prerequisiteKey = prerequisiteKey;
     }
-    public String getObjectWhereDisplay() {
+    
+    public String getObjectWhereDisplay(){
         return objectWhereDisplay;
     }
-    public void setObjectWhereDisplay(String objectWhereDisplay) {
+    
+    public void setObjectWhereDisplay(String objectWhereDisplay){
         this.objectWhereDisplay = objectWhereDisplay;
     }
 }

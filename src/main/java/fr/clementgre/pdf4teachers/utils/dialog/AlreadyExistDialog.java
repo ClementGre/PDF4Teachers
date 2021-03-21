@@ -57,7 +57,8 @@ public class AlreadyExistDialog{
         if(alwaysOverwrite) return ResultType.ERASE;
         if(alwaysRename) return ResultType.RENAME;
 
-        if(recursions == 2) alert.getButtonTypes().setAll(overwrite, rename, renameAlways, skip, skipAlways, overwriteAlways, stopAll);
+        if(recursions == 2)
+            alert.getButtonTypes().setAll(overwrite, rename, renameAlways, skip, skipAlways, overwriteAlways, stopAll);
 
         alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
         alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));

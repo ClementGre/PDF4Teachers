@@ -5,7 +5,7 @@ import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.layout.GridPane;
 
-public class SortPanelTreeItem extends TreeItem {
+public class SortPanelTreeItem extends TreeItem{
 
     public GridPane pane = new GridPane();
 
@@ -13,7 +13,7 @@ public class SortPanelTreeItem extends TreeItem {
 
     }
 
-    public void updateCell(TreeCell cell) {
+    public void updateCell(TreeCell cell){
         cell.setPrefHeight(pane.getPrefHeight());
         cell.setContextMenu(null);
         cell.setOnMouseClicked(null);

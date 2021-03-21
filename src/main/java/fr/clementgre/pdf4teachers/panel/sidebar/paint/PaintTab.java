@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PaintTab extends SideTab {
+public class PaintTab extends SideTab{
 
     public VBox root;
 
@@ -65,9 +65,6 @@ public class PaintTab extends SideTab {
     public ComboBox<String> rotateMode;
 
 
-
-
-
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
         MainWindow.paintTab = this;
@@ -101,7 +98,7 @@ public class PaintTab extends SideTab {
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).maxProperty().bind();
 
         repeatMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RepeatMode.values())
-                        .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
+                .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         repeatMode.getSelectionModel().select(0);
 
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())

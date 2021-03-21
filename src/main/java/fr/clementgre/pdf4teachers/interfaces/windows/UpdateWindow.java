@@ -3,8 +3,8 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
@@ -19,21 +19,22 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public class UpdateWindow extends Stage {
-
+public class UpdateWindow extends Stage{
+    
     public static String version = "";
     public static String description = "";
     public static boolean newVersion = false;
     public static boolean newPre = false;
     public static boolean error = false;
-
+    
     public static boolean checkVersion(){
-
+        
         ////////// GET LAST RELEASE INCLUDING PRE //////////
         String parsedVersion = null;
         try{
@@ -41,14 +42,14 @@ public class UpdateWindow extends Stage {
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
-
+            
             JsonFactory jfactory = new JsonFactory();
             JsonParser jParser = jfactory.createParser(con.getInputStream());
-
+            
             JsonToken token;
             while((token = jParser.nextToken()) != null){
                 String key = jParser.getCurrentName();
-
+                
                 if("name".equals(key)){
                     jParser.nextToken();
                     parsedVersion = jParser.getText();
@@ -56,36 +57,36 @@ public class UpdateWindow extends Stage {
                 }
             }
             jParser.close();
-
+            
             if(parsedVersion.equals(Main.VERSION)){
                 // Up to date with the last release
                 return false;
             }
-
+            
         }catch(IOException e){
             e.printStackTrace();
             error = true;
             return false;
         }
-
+        
         ////////// GET LAST RELEASE DETAILS ////////// (isn't up to date -> search details about the last version)
         String parsedDescription = null;
         try{
             URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/releases/tags/" + parsedVersion);
-
+            
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
-
+            
             JsonFactory jfactory = new JsonFactory();
             JsonParser jParser = jfactory.createParser(con.getInputStream());
-
+            
             boolean parsedPre = false;
-
+            
             JsonToken token;
             while((token = jParser.nextToken()) != null){
                 String fieldname = jParser.getCurrentName();
-
+                
                 if("prerelease".equals(fieldname)){
                     jParser.nextToken();
                     parsedPre = jParser.getBooleanValue();
@@ -96,12 +97,12 @@ public class UpdateWindow extends Stage {
                 }
             }
             jParser.close();
-
+            
             if(parsedDescription == null){
                 error = true;
                 return false;
             }
-
+            
             if(!parsedPre){
                 UpdateWindow.version = parsedVersion;
                 UpdateWindow.description = parsedDescription;
@@ -110,48 +111,49 @@ public class UpdateWindow extends Stage {
             }
             // Is pre, verify if the user has already the last non-pre release before propose it.
             // Else, we will propose the last non-pre release
-
+            
         }catch(IOException e){
             e.printStackTrace();
             error = true;
             return false;
         }
-
+        
         ////////// GET LAST RELEASE WITHOUT PRE ////////// (isn't up to date && last is pre -> find the latest non-pre version)
         try{
             URL url = new URL("https://api.github.com/repos/clementgre/PDF4Teachers/releases/latest");
-
+            
             HttpURLConnection con = (HttpURLConnection) url.openConnection();
             con.setDoOutput(true);
             con.setRequestProperty("Content-Type", "application/json; utf-8");
-
+            
             JsonFactory jfactory = new JsonFactory();
             JsonParser jParser = jfactory.createParser(con.getInputStream());
-
+            
             String parsedLatestVersion = null;
             String parsedLatestDescription = null;
-
+            
             JsonToken token;
             while((token = jParser.nextToken()) != null){
                 String fieldname = jParser.getCurrentName();
-
+                
                 if("tag_name".equals(fieldname)){
                     jParser.nextToken();
                     parsedLatestVersion = jParser.getText();
-
-                }if("body".equals(fieldname)){
+                    
+                }
+                if("body".equals(fieldname)){
                     jParser.nextToken();
                     parsedLatestDescription = jParser.getText();
                     break;
                 }
             }
             jParser.close();
-
+            
             if(parsedLatestVersion == null){
                 error = true;
                 return false;
             }
-
+            
             if(parsedLatestVersion.equals(Main.VERSION)){
                 // Up to date with the latest release -> let's propose the pre release
                 UpdateWindow.version = parsedVersion;
@@ -171,28 +173,28 @@ public class UpdateWindow extends Stage {
             return false;
         }
     }
-
+    
     public UpdateWindow(){
-
+        
         VBox root = new VBox();
         Scene scene = new Scene(root);
-
+        
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
+        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setWidth(600);
         setResizable(false);
         setTitle(TR.tr("updateWindow.title"));
         setScene(scene);
         StyleManager.putStyle(root, Style.DEFAULT);
-
+        
         setupPanel(root);
         show();
         Main.window.centerWindowIntoMe(this);
     }
-
+    
     public void setupPanel(VBox root){
-
+        
         Text info;
         Text version;
         if(newPre){
@@ -202,49 +204,52 @@ public class UpdateWindow extends Stage {
             info = new Text(TR.tr("aboutWindow.version.update.available"));
             version = new Text(TR.tr("updateWindow.details", Main.VERSION, UpdateWindow.version) + "\n\n" + TR.tr("updateWindow.description.title"));
         }
-
+        
         HBox buttons = new HBox();
-
+        
         VBox description = new VBox();
         description.setStyle("-fx-padding: 10;");
         generateDescription(description);
         ScrollPane descriptionPane = new ScrollPane(description);
         descriptionPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        descriptionPane.setMaxHeight(500); descriptionPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
+        descriptionPane.setMaxHeight(500);
+        descriptionPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        
         Button see = new Button(TR.tr("updateWindow.buttons.openDownloadPage"));
         see.setOnAction(t -> Main.hostServices.showDocument("https://pdf4teachers.org/Download/?v=" + UpdateWindow.version));
         //see.setStyle("-fx-background-color: #ba6800;");
         see.setAlignment(Pos.BASELINE_CENTER);
-
+        
         String platform = "Linux";
         String extension = "deb";
         if(Main.isWindows()){
-            platform = "Windows"; extension = "msi";
+            platform = "Windows";
+            extension = "msi";
         }else if(Main.isOSX()){
-            platform = "MacOSX"; extension = "dmg";
+            platform = "MacOSX";
+            extension = "dmg";
         }
         String url = "https://github.com/ClementGre/PDF4Teachers/releases/download/" + UpdateWindow.version + "/PDF4Teachers-" + platform + "-" + UpdateWindow.version + "." + extension;
-
+        
         Button maj = new Button(TR.tr("updateWindow.buttons.directDownload"));
         maj.setOnAction(t -> Main.hostServices.showDocument(url));
         //maj.setStyle("-fx-background-color: #ba6800;");
         maj.setAlignment(Pos.BASELINE_CENTER);
-
+        
         buttons.getChildren().addAll(see, maj);
-
+        
         root.getChildren().addAll(info, version, descriptionPane, buttons);
         root.setStyle("-fx-padding: 10;");
-
+        
         VBox.setMargin(info, new Insets(40, 10, 40, 10));
-
+        
         HBox.setMargin(see, new Insets(0, 10, 0, 0));
         VBox.setMargin(buttons, new Insets(20, 0, 0, 0));
-
+        
         maj.requestFocus();
-
+        
     }
-
+    
     public void generateDescription(VBox root){
         String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
         String englishText = "";
@@ -253,7 +258,7 @@ public class UpdateWindow extends Stage {
         for(String languageText : languagesTexts){
             if(languageText.startsWith("# ")) languageText = languageText.replaceFirst(Pattern.quote("# "), "");
             String langAcronym = languageText.substring(0, languageText.indexOf(' '));
-
+            
             final String futureLanguageText = languageText.substring(languageText.indexOf("\r\n") + 2);
             if(langAcronym.equals(currentLanguageAcronym)){
                 langText = futureLanguageText;
@@ -261,9 +266,9 @@ public class UpdateWindow extends Stage {
                 englishText = futureLanguageText;
             }
         }
-
+        
         if(langText.isEmpty()) langText = englishText;
-
+        
         boolean first = true;
         for(String line : langText.split(Pattern.quote("## \uD83C\uDF10"))[0].split(Pattern.quote("\r\n"))){
             if(first && line.isBlank()) continue;
@@ -274,7 +279,7 @@ public class UpdateWindow extends Stage {
                 label.setStyle("-fx-padding: 0 0 0 30; -fx-font-size: 13;");
                 root.getChildren().add(label);
             }else{
-
+                
                 if(line.startsWith("##")){
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
@@ -297,5 +302,5 @@ public class UpdateWindow extends Stage {
             first = false;
         }
     }
-
+    
 }

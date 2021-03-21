@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class LicenseWindow extends Stage{
-
+    
     private static final String LICENSE = "                                 Apache License\n" +
             "                           Version 2.0, January 2004\n" +
             "                        http://www.apache.org/licenses/\n" +
@@ -212,18 +212,19 @@ public class LicenseWindow extends Stage{
             "   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n" +
             "   See the License for the specific language governing permissions and\n" +
             "   limitations under the License.";
-
+    
     CallBackArg<String> callBack;
+    
     public LicenseWindow(CallBackArg<String> callBack){
         this.callBack = callBack;
-
+        
         ScrollPane root = new ScrollPane();
         VBox container = new VBox();
-        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight()-100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight()-100);
-
+        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight() - 100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight() - 100);
+        
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
+        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setWidth(545);
         setHeight(720);
         setTitle(TR.tr("licenseWindow.title"));
@@ -234,41 +235,45 @@ public class LicenseWindow extends Stage{
             System.exit(0);
         });
         StyleManager.putStyle(root, Style.DEFAULT);
-
+        
         root.setContent(container);
         setupPanel(container);
-
+        
         show();
-
+        
         new Thread(() -> {
-            try{ Thread.sleep(1500); }catch(InterruptedException e){ e.printStackTrace(); }
+            try{
+                Thread.sleep(1500);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
             Platform.runLater(() -> root.setVvalue(0));
         }).start();
-
+        
     }
-
+    
     public void setupPanel(VBox root){
-
+        
         Text info = new Text(TR.tr("licenseWindow.header"));
-
+        
         Label license = new Label(LICENSE);
         license.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
         license.setStyle("-fx-font-size: 12; -fx-padding: 10;");
-
+        
         HBox btns = new HBox();
         Button cancel = new Button(TR.tr("actions.deny"));
         Button accept = new Button(TR.tr("actions.accept"));
-
+        
         btns.getChildren().addAll(cancel, accept);
         btns.setAlignment(Pos.CENTER_RIGHT);
-
+        
         root.getChildren().addAll(info, license, btns);
         root.setStyle("-fx-padding: 10;");
-
+        
         VBox.setMargin(info, new Insets(40, 10, 40, 0));
         HBox.setMargin(cancel, new Insets(20, 5, 0, 0));
         HBox.setMargin(accept, new Insets(20, 0, 0, 5));
-
+        
         accept.setOnAction((ActionEvent event) -> {
             close();
             callBack.call("");
@@ -278,6 +283,6 @@ public class LicenseWindow extends Stage{
             close();
             System.exit(0);
         });
-
+        
     }
 }

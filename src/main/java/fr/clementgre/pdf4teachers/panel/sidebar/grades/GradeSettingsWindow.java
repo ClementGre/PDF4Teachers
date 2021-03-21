@@ -1,23 +1,24 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
+import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
+import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -25,7 +26,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class GradeSettingsWindow extends Stage {
+public class GradeSettingsWindow extends Stage{
 
     public GradeSettingsWindow(){
 
@@ -34,7 +35,7 @@ public class GradeSettingsWindow extends Stage {
 
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png")+""));
+        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setTitle(TR.tr("gradeTab.gradeFormatWindow.title"));
         setResizable(false);
         setScene(scene);
@@ -53,7 +54,7 @@ public class GradeSettingsWindow extends Stage {
         HBox panes = new HBox();
         root.getChildren().addAll(info, panes);
 
-        for(int i = 0; i < 5 ; i++) panes.getChildren().add(new TierPane(i));
+        for(int i = 0; i < 5; i++) panes.getChildren().add(new TierPane(i));
 
     }
 
@@ -76,7 +77,7 @@ public class GradeSettingsWindow extends Stage {
             setStyle("-fx-padding: 2.5;");
             Font font = GradeTab.getTierFont(tier);
 
-            Label name = new Label(TR.tr("gradeTab.gradeFormatWindow.tiers") + " " + (tier+1) + " :");
+            Label name = new Label(TR.tr("gradeTab.gradeFormatWindow.tiers") + " " + (tier + 1) + " :");
             name.setStyle("-fx-font-size: 13");
             VBox.setMargin(name, new Insets(7, 0, 7, 2.5));
 
@@ -93,13 +94,13 @@ public class GradeSettingsWindow extends Stage {
             PaneUtils.setHBoxPosition(boldBtn, 40, 29, 0);
             boldBtn.setCursor(Cursor.HAND);
             boldBtn.setSelected(FontUtils.getFontWeight(font) == FontWeight.BOLD);
-            boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
+            boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             PaneUtils.setHBoxPosition(itBtn, 40, 29, 0);
             itBtn.setCursor(Cursor.HAND);
             itBtn.setSelected(FontUtils.getFontPosture(font) == FontPosture.ITALIC);
-            itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png")+"", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
+            itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
             PaneUtils.setVBoxPosition(sizeCombo, 85, 30, 0);

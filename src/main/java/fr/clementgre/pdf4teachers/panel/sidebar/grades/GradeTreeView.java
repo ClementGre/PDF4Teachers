@@ -3,9 +3,9 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.TreeCell;
@@ -20,23 +20,24 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-public class GradeTreeView extends TreeView<String> {
-
-
+public class GradeTreeView extends TreeView<String>{
+    
+    
     public GradeTreeView(GradeTab gradeTab){
-
+        
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
         prefHeightProperty().bind(gradeTab.pane.heightProperty().subtract(layoutYProperty()));
         prefWidthProperty().bind(gradeTab.pane.widthProperty());
-
-        setCellFactory(new Callback<>() {
+        
+        setCellFactory(new Callback<>(){
             @Override
-            public TreeCell<String> call(TreeView<String> param) {
-                return new TreeCell<>() {
-                    @Override protected void updateItem(String item, boolean empty){
+            public TreeCell<String> call(TreeView<String> param){
+                return new TreeCell<>(){
+                    @Override
+                    protected void updateItem(String item, boolean empty){
                         super.updateItem(item, empty);
-
+                        
                         // Enpty cell or String Data
                         if(empty || item != null){
                             setGraphic(null);
@@ -62,24 +63,25 @@ public class GradeTreeView extends TreeView<String> {
             }
         });
     }
-
+    
     // Clear without removing elements from pages
     public void hardClear(){
         setRoot(null);
         generateRoot(false);
     }
+    
     // Clear and removing element from pages
     public void clear(){
         if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
         generateRoot(false);
     }
-
+    
     public void generateRoot(boolean update){
         MainWindow.gradeTab.newGradeElement(TR.tr("gradeTab.gradeDefaultName.total"), -1, 0, 0, "", update);
     }
-
+    
     public void addElement(GradeElement element){
-
+        
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
@@ -94,8 +96,9 @@ public class GradeTreeView extends TreeView<String> {
             treeElement.setExpanded(true);
         }
     }
+    
     public void removeElement(GradeElement element){
-
+        
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
             ((GradeTreeItem) getRoot()).deleteChildren();
@@ -110,23 +113,23 @@ public class GradeTreeView extends TreeView<String> {
             parent.makeSum(false);
         }
     }
-
+    
     public GradeTreeItem getGradeTreeItemParent(GradeElement element){
-
+        
         // ELEMENT IS SUB-ROOT
         String[] path = StringUtils.cleanArray(element.getParentPath().split(Pattern.quote("\\")));
-        if(path[0].equals(((GradeTreeItem)getRoot()).getCore().getName()) && path.length == 1){
+        if(path[0].equals(((GradeTreeItem) getRoot()).getCore().getName()) && path.length == 1){
             return (GradeTreeItem) getRoot();
         }
-
+        
         // OTHER
         path = StringUtils.cleanArray(element.getParentPath()
-                .replaceFirst(Pattern.quote(((GradeTreeItem)getRoot()).getCore().getName()), "")
+                .replaceFirst(Pattern.quote(((GradeTreeItem) getRoot()).getCore().getName()), "")
                 .split(Pattern.quote("\\")));
-
+        
         GradeTreeItem parent = (GradeTreeItem) getRoot();
         for(String parentName : path){
-
+            
             // Cherche l'enfant qui correspond au nom du chemin
             for(int i = 0; i < parent.getChildren().size(); i++){
                 GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
@@ -142,8 +145,9 @@ public class GradeTreeView extends TreeView<String> {
         }
         return parent;
     }
+    
     public GradeTreeItem getGradeTreeItem(GradeTreeItem parent, GradeElement element){
-
+        
         for(int i = 0; i < parent.getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
             if(children.getCore().equals(element)){
@@ -155,14 +159,14 @@ public class GradeTreeView extends TreeView<String> {
             }
         }
         return null;
-
+        
     }
-
+    
     private void addToList(GradeTreeItem parent, GradeTreeItem element){
-
+        
         int index = element.getCore().getIndex();
         int before = 0;
-
+        
         for(int i = 0; i < parent.getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
             if(children.getCore().getIndex() < index){
@@ -171,21 +175,23 @@ public class GradeTreeView extends TreeView<String> {
         }
         parent.getChildren().add(before, element);
     }
-
+    
     public static GradeElement getNextGrade(int page, int y){
-
+        
         ArrayList<GradeElement> items = getGradesArrayByCoordinates();
         GradeElement before = null;
         GradeElement after = items.size() >= 2 ? items.get(1) : null;
-
+        
         int i = 0;
         for(GradeElement grade : items){
-            int minPage = 0; int minY = 0;
+            int minPage = 0;
+            int minY = 0;
             if(before != null){
                 minPage = before.getPageNumber();
                 minY = (int) before.getLayoutY();
             }
-            int maxPage = 999999; int maxY = 999999;
+            int maxPage = 999999;
+            int maxY = 999999;
             if(after != null){
                 maxPage = after.getPageNumber();
                 maxY = (int) after.getLayoutY();
@@ -195,10 +201,11 @@ public class GradeTreeView extends TreeView<String> {
             }
             i++;
             before = grade;
-            after = items.size() >= i+2 ? items.get(i+1) : null;
+            after = items.size() >= i + 2 ? items.get(i + 1) : null;
         }
         return null;
     }
+    
     public static GradeTreeItem getNextLogicGrade(){
         ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         for(GradeTreeItem grade : items){
@@ -206,6 +213,7 @@ public class GradeTreeView extends TreeView<String> {
         }
         return null;
     }
+    
     public static GradeTreeItem getNextLogicGradeNonNull(){
         ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         for(GradeTreeItem grade : items){
@@ -216,42 +224,43 @@ public class GradeTreeView extends TreeView<String> {
         }
         return items.get(0);
     }
-
+    
     public static void defineNaNLocations(){
         ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         ArrayList<GradeTreeItem> itemsToSend = new ArrayList<>();
-
+        
         boolean afterItemHaveToDropDown = false;
         int i = 0;
         for(GradeTreeItem item : items){
-
+            
             if(!item.getCore().isFilled() && item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
                 if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
                 item.getCore().setRealY(0);
             }
-
+            
             // Drop down grades if item is visible
             if(item.getCore().isFilled()){
                 // Ramène tous les éléments au niveau de celui-ci
                 for(GradeTreeItem itemToSend : itemsToSend){
-                    if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()) itemToSend.getCore().switchPage(item.getCore().getPageNumber());
+                    if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber())
+                        itemToSend.getCore().switchPage(item.getCore().getPageNumber());
                     itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
                 }
                 itemsToSend = new ArrayList<>();
             }
-
-            if(items.size() > i+1){
-                GradeTreeItem afterItem = items.get(i+1);
-
+            
+            if(items.size() > i + 1){
+                GradeTreeItem afterItem = items.get(i + 1);
+                
                 if(!afterItem.getCore().isFilled()){ // si l'élément d'après n'a pas de valeur
                     if((item.getCore().isFilled() || item.hasSubGrade()) && !afterItemHaveToDropDown){
                         // Cas 1 : Ramène l'élément d'après à celui-ci
-
+                        
                         if(afterItem.getCore().getPageNumber() != item.getCore().getPageNumber()){
                             afterItem.getCore().switchPage(item.getCore().getPageNumber());
                         }
                         afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
-
+                        
                         afterItemHaveToDropDown = false;
                     }else{
                         // Cas 2 : Demande a envoyer plus bas l'élément d'après
@@ -266,21 +275,21 @@ public class GradeTreeView extends TreeView<String> {
         }
         // Drop down all others items in the dropDown array
         for(GradeTreeItem itemToSend : itemsToSend){
-            if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.pages.size()-1){
-                itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size()-1);
+            if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.pages.size() - 1){
+                itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size() - 1);
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
         }
     }
-
+    
     public static GradeTreeItem getTotal(){
         return (GradeTreeItem) MainWindow.gradeTab.treeView.getRoot();
     }
-
+    
     public static ArrayList<GradeTreeItem> getGradesArray(GradeTreeItem root){
         ArrayList<GradeTreeItem> items = new ArrayList<>();
         items.add(root);
-
+        
         for(int i = 0; i < root.getChildren().size(); i++){
             if(((GradeTreeItem) root.getChildren().get(i)).hasSubGrade()){
                 items.addAll(getGradesArray((GradeTreeItem) root.getChildren().get(i)));
@@ -290,33 +299,35 @@ public class GradeTreeView extends TreeView<String> {
         }
         return items;
     }
+    
     public static ArrayList<GradeElement> getGradesArrayByCoordinates(){
-
+        
         ArrayList<GradeElement> grades = new ArrayList<>();
-
+        
         for(PageRenderer page : MainWindow.mainScreen.document.pages){
             ArrayList<GradeElement> pageGrades = new ArrayList<>();
             for(Element element : page.getElements()){
                 if(element instanceof GradeElement) pageGrades.add((GradeElement) element);
             }
-
+            
             pageGrades.sort(Comparator.comparingInt(Element::getRealY));
             grades.addAll(pageGrades);
         }
         return grades;
     }
-
-
+    
+    
     public static String getElementPath(GradeTreeItem parent){
         return parent.getCore().getParentPath() + "\\" + parent.getCore().getName();
     }
+    
     public static int getElementTier(String parentPath){
         return StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length;
     }
-
-    public void updateAllSum() {
+    
+    public void updateAllSum(){
         ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
-
+        
         for(GradeTreeItem item : items){
             if(item.hasSubGrade()){
                 item.makeSum(false);
