@@ -4,8 +4,12 @@ import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
@@ -59,12 +63,22 @@ public class PaintTab extends SideTab{
     public Spinner<Integer> spinnerY;
     public Spinner<Integer> spinnerWidth;
     public Spinner<Integer> spinnerHeight;
-
+    
+    public Label repeatModeLabel;
     public ComboBox<String> repeatMode;
+    public Label resizeModeLabel;
     public ComboBox<String> resizeMode;
+    public Label rotateModeLabel;
     public ComboBox<String> rotateMode;
-
-
+    
+    // Lists
+    
+    public VectorListPane favouriteVectors;
+    public ImageListPane favouriteImages;
+    public VectorListPane lastVectors;
+    public ImageListPane gallery;
+    
+    
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
         MainWindow.paintTab = this;
@@ -97,30 +111,40 @@ public class PaintTab extends SideTab{
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).maxProperty().bind();
         //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).maxProperty().bind();
 
+        
         repeatMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RepeatMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         repeatMode.getSelectionModel().select(0);
-
+    
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
-
+    
         rotateMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RotateMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         rotateMode.getSelectionModel().select(0);
-
+        
+        
         translate();
-
         setup();
     }
 
     public void translate(){
-        advancedOptionsPane.setText(TR.tr("paintTab.title.advancedOptions"));
+        // Advanced options
+        advancedOptionsPane.setText(TR.tr("paintTab.advancedOptions"));
+        repeatModeLabel.setText(TR.tr("paintTab.advancedOptions.repeatMode"));
+        resizeModeLabel.setText(TR.tr("paintTab.advancedOptions.resizeMode"));
+        rotateModeLabel.setText(TR.tr("paintTab.advancedOptions.rotateMode"));
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
+        
     }
 
     public void setup(){
+        
+        newImage.setOnAction((e) -> {
+            new GalleryWindow();
+        });
 
 
     }

@@ -16,6 +16,9 @@
 <?import fr.clementgre.pdf4teachers.components.SyncColorPicker?>
 <?import javafx.scene.control.ToggleGroup?>
 
+<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane?>
+<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
+<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -104,64 +107,36 @@
                          GridPane.columnIndex="3" GridPane.rowIndex="1"/>
             </GridPane>
 
-            <Label text="Mode de redimensionnement" style="-fx-font-size: 12px;">
+            <Label fx:id="repeatModeLabel" style="-fx-font-size: 12px;">
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
             <ComboBox fx:id="repeatMode">
             </ComboBox>
 
-            <Label text="Prises de redimensionnement" style="-fx-font-size: 12px;">
+            <Label fx:id="resizeModeLabel" style="-fx-font-size: 12px;">
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
             <ComboBox fx:id="resizeMode">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Classique (Coins)" />
-                        <String fx:value="Coins opposés" />
-                        <String fx:value="Classique (Coins)" />
-                    </FXCollections>
-                </items>
-                <value><String fx:value="Auto" /></value>
             </ComboBox>
 
-            <Label text="Prises de rotation" style="-fx-font-size: 12px;">
+            <Label fx:id="rotateModeLabel" style="-fx-font-size: 12px;">
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
             <ComboBox fx:id="rotateMode">
-                <items>
-                    <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Proche des coins" />
-                        <String fx:value="Aucune" />
-                    </FXCollections>
-                </items>
-                <value><String fx:value="Proche des coins" /></value>
             </ComboBox>
         </VBox>
     </TitledPane>
 
-    <TitledPane text="Images vectorielles favorites">
-        <ListView>
+    <VectorListPane fx:id="favouriteVectors" type="0">
+    </VectorListPane>
 
-        </ListView>
-    </TitledPane>
+    <ImageListPane fx:id="favouriteImages" type="1">
+    </ImageListPane>
 
-    <TitledPane text="Images favorites">
-        <ListView>
+    <VectorListPane fx:id="lastVectors" type="2">
+    </VectorListPane>
 
-        </ListView>
-    </TitledPane>
-
-    <TitledPane text="Images vectorielles précédentes">
-        <ListView>
-
-        </ListView>
-    </TitledPane>
-
-    <TitledPane text="Gallerie">
-        <ListView>
-
-        </ListView>
-    </TitledPane>
-
+    <ImageListPane fx:id="gallery" type="3">
+    </ImageListPane>
 
 </VBox>

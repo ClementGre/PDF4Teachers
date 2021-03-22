@@ -58,7 +58,7 @@ public class AutoTipTooltip extends PopOver{
         HBox graphic = new HBox();
         graphic.getChildren().add(text);
         setContentNode(graphic);
-        graphic.getStyleClass().add("tooltip-autotip-pane");
+        graphic.getStyleClass().addAll("tooltip-autotip-pane", "content-pane");
         getStyleClass().add("tooltip-autotip");
         
         setOnAutoHide((e) -> {

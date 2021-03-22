@@ -22,6 +22,24 @@
     -fx-font-size: 15;
 }
 
+/* Paint Tab */
+
+.titled-pane{
+    title_background_hover_color: title_background_color;
+}
+.paint-tab-titled-pane .content{
+    -fx-padding: 0;
+}
+.paint-tab-titled-pane .content VBox{
+    -fx-padding: 0;
+}
+.paint-tab-titled-pane .title{
+    -fx-padding: 1 8;
+}
+.paint-tab-titled-pane .title Label{
+    -fx-font-size: 13;
+}
+
 /*******************************************************************************
  *                                                                             *
  * Text & Label                                                                *
@@ -81,19 +99,19 @@ CheckBox {
  *                                                                             *
  ******************************************************************************/
 
-.tooltip-autotip .tooltip-autotip-pane{
+.popover .content-pane{
     -fx-padding: 10px;
 }
-.tooltip-autotip .popover > .border {
+.popover > .border {
 	-fx-stroke: linear-gradient(to bottom, rgba(0,0,0, .3), rgba(0, 0, 0, .7)) !important;
 	-fx-stroke-width: 1 !important;
 	-fx-fill: #252525 !important;
 	-fx-effect: dropshadow(gaussian, rgba(0,0,0,.2), 10.0, 0.5, 2.0, 2.0) !important;
 }
-.tooltip-autotip .popover > .content {
+.popover > .content {
     -fx-cursor: default !important;
 }
-.tooltip-autotip .popover .icon .graphics{
+.popover .icon .graphics{
     -fx-cursor: hand !important;
 }
 

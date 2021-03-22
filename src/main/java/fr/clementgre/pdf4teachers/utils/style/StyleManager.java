@@ -76,6 +76,12 @@ public class StyleManager{
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();
         MainWindow.textTab.treeView.onFileSection.updateGraphics();
+        
+        MainWindow.paintTab.favouriteVectors.updateGraphics();
+        MainWindow.paintTab.favouriteImages.updateGraphics();
+        MainWindow.paintTab.lastVectors.updateGraphics();
+        MainWindow.paintTab.gallery.updateGraphics();
+        
         MainWindow.filesTab.sortManager.updateGraphics();
         if(MainWindow.mainScreen.hasDocument(false)){
             MainWindow.mainScreen.document.updateBackgrounds();

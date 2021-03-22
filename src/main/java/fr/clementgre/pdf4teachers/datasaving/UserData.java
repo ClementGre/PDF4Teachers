@@ -73,6 +73,19 @@ public class UserData{
     @UserDataObject(path = "grades.tiersFont")
     public LinkedHashMap<Object, Object> gradesTiersFont = new LinkedHashMap<>();
     
+    // PaintTab
+    @UserDataObject(path = "paintTab.gallery.paths")
+    public List<String> galleryPaths = new ArrayList<>();
+    
+    @UserDataObject(path = "paintTab.gallery.favouriteImages")
+    public List<Object> favouriteImages = new ArrayList<>();
+    
+    @UserDataObject(path = "paintTab.vectors.favouriteVectors")
+    public List<Object> favouriteVectors = new ArrayList<>();
+    
+    @UserDataObject(path = "paintTab.vectors.lastVectors")
+    public List<Object> lastVectors = new ArrayList<>();
+    
     // GradesExport Params & PdfExport Params
     @UserDataObject(path = "export.fields.fileName")
     public String lastExportFileName = "";
