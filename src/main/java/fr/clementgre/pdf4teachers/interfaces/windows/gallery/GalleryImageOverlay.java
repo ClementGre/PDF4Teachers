@@ -42,7 +42,6 @@ public class GalleryImageOverlay extends StackPane{
         overlay.setClip(overlayClip);
         
         name.setStyle("-fx-text-fill: white;");
-    
         
         heightProperty().addListener((observable, oldValue, newValue) -> {
             updateOverlayDimensions();
