@@ -2,18 +2,19 @@ package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -21,31 +22,27 @@ import javafx.scene.CacheHint;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.Duration;
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
-import org.controlsfx.control.cell.ImageGridCell;
+import org.controlsfx.control.InfoOverlay;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 public class GalleryWindow extends Stage{
@@ -62,9 +59,6 @@ public class GalleryWindow extends Stage{
     
     private SortManager sortManager;
     
-    
-    private static final int CELL_SIZE = 200;
-    private final ExecutorService executor = Executors.newFixedThreadPool(10);
     
     public GalleryWindow(){
         
@@ -90,39 +84,67 @@ public class GalleryWindow extends Stage{
     
         list.setCache(true);
         list.setCacheHint(CacheHint.SPEED);
-        list.setCellWidth(CELL_SIZE);
-        list.setCellHeight(CELL_SIZE);
-        list.setHorizontalCellSpacing(10);
-        list.setVerticalCellSpacing(10);
+        list.setCellWidth(cellSize);
+        list.setCellHeight(cellSize);
+        list.setHorizontalCellSpacing(0);
+        list.setVerticalCellSpacing(0);
         
         list.setCellFactory(param -> new ImageGridCell());
+        
+        list.widthProperty().addListener((observable, oldValue, newValue) -> {
+            int columns = ((int) list.getWidth() - 20) / cellSize;
+            columns = Math.max(1, columns);
+            double newCellSize = (list.getWidth() - 20) / columns;
+            list.setCellWidth(newCellSize);
+            list.setCellHeight(newCellSize);
+        });
         
         root.getChildren().addAll(settings, list);
         loadImages();
     }
     
-    static class ImageGridCell extends GridCell<ImageListElement>{
+    
+    public int cellSize = 200;
+    private static final int IMAGE_W = 500;
+    private final ExecutorService executor = Executors.newFixedThreadPool(10);
+    
+    class ImageGridCell extends GridCell<ImageListElement>{
         
         private final ImageView imageView;
+        private final GalleryImageOverlay overlay;
+    
+        public static final int PADDING = 2;
+        
+        
         public ImageGridCell(){
             this.imageView = new ImageView();
+            this.overlay = new GalleryImageOverlay(imageView);
+    
+            imageView.setPreserveRatio(true);
+            imageView.setSmooth(true);
+    
+            imageView.fitWidthProperty().bind(widthProperty().subtract(2*PADDING));
+            imageView.fitHeightProperty().bind(heightProperty().subtract(2*PADDING));
+    
+            
         }
     
-        @Override protected void updateItem(ImageListElement item, boolean empty) {
+        @Override
+        protected void updateItem(ImageListElement item, boolean empty) {
             super.updateItem(item, empty);
         
-            if (empty) {
+            if(empty){
                 setGraphic(null);
-            } else {
-                imageView.setPreserveRatio(true);
-                imageView.setSmooth(false);
-                imageView.setFitWidth(CELL_SIZE);
-                imageView.setFitHeight(CELL_SIZE);
-                setMaxWidth(CELL_SIZE);
-                setMaxHeight(CELL_SIZE);
-                
+                setOnMouseClicked(null);
+            }else{
+               
                 imageView.setImage(item.getImage());
-                setGraphic(imageView);
+                overlay.setText(FilesUtils.getPathReplacingUserHome(item.getImageId()));
+    
+                setGraphic(overlay);
+                setOnMouseClicked((e) -> {
+                    System.out.println("clicked");
+                });
             }
         }
     }
@@ -155,69 +177,58 @@ public class GalleryWindow extends Stage{
     }
     
     
-    private static final ImageListElement POISON_PILL = createFakeImage(1, 1);
+    List<ImageListElement> toAdd = new ArrayList<>();
     
-    private void addImagesToGrid() {
+    private void addImagesToGrid(){
         List<ImageListElement> images = getImages();
-        final Queue<ImageListElement> imageQueue = new ConcurrentLinkedQueue<>();
         
-        executor.submit(() -> deliverImagesToGrid(imageQueue));
-        for(ImageListElement image : images) {
-            // (In the real application, get a list of image filenames, read each image's thumbnail, generating it if needed.
-            // (In this minimal reproducible code, we'll just create a new dummy image for each ImageView)
-            imageQueue.add(image);
-        }
-        // Add poison image to signal the end of the queue.
-        imageQueue.add(POISON_PILL);
-    }
-    
-    private void deliverImagesToGrid(Queue<ImageListElement> imageQueue) {
-        try {
-            Semaphore semaphore = new Semaphore(1);
-            semaphore.acquire(); // Get the one and only permit
-            boolean done = false;
-            while(!done){
-                
-                List<ImageListElement> imagesToAdd = new ArrayList<>();
-                for (int i = 0; i < 1000; i++) {
-                    final ImageListElement image = imageQueue.poll();
-                    if(image == null) break; // Queue is now empty, so quit adding any to the list
-                    else if (image.getImage() == POISON_PILL.getImage()) done = true;
-                    else{
-                        try{
-                            image.setImage(new Image(new FileInputStream(image.getImageId())));
-                        }catch(FileNotFoundException e){ e.printStackTrace(); }
-                        imagesToAdd.add(image);
-                    }
-                }
-                
-                if(imagesToAdd.size() > 0){
-                    Platform.runLater(() -> {
-                        try{
-                            list.getItems().addAll(imagesToAdd);
-                        }finally{
-                            semaphore.release();
-                        }
-                    });
-                    // Block until the items queued up via Platform.runLater() have been processed by the UI thread and release() has been called.
-                    semaphore.acquire();
-                }
-            }
-        }
-        catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+        for(ImageListElement image : images){
+            executor.submit(() -> deliverImagesToGrid(image));
         }
     }
     
-    // Create an image with a bunch of rectangles in it just to have something to display.
-    private static ImageListElement createFakeImage(int imageIndex, int size) {
-        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
-        Graphics g = image.getGraphics();
-        for (int i = 1; i < size; i ++) {
-            g.setColor(new Color(i * imageIndex % 256, i * 2 * (imageIndex + 40) % 256, i * 3 * (imageIndex + 60) % 256));
-            g.drawRect(i, i, size - i * 2, size - i * 2);
+    private void checkTerminated(){
+        if(executor.isTerminated() || toAdd.size() > 20 || getImages().size() < 10){
+            list.getItems().addAll(toAdd);
+            toAdd.clear();
         }
-        return new ImageListElement("", SwingFXUtils.toFXImage(image, null));
+    }
+    
+    private void deliverImagesToGrid(ImageListElement image) {
+        
+        if(image == null) return;
+        try{
+            image.setImage(getImageCropped(image.getImageId()));
+        }catch(IOException e){ e.printStackTrace(); }
+    
+        Platform.runLater(() -> {
+            toAdd.add(image);
+            checkTerminated();
+        });
+    }
+    
+    private Image getImageCropped(String imageId) throws IOException{
+        
+        BufferedImage cropped = new BufferedImage(IMAGE_W, IMAGE_W, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics2D = cropped.createGraphics();
+        graphics2D.drawImage(
+                getImageSquare(ImageIO.read(new FileInputStream(imageId))),
+                0, 0, IMAGE_W, IMAGE_W, null);
+        
+        graphics2D.dispose();
+        
+        return SwingFXUtils.toFXImage(cropped, null);
+    }
+    private BufferedImage getImageSquare(BufferedImage image){
+        int w = image.getWidth();
+        int h = image.getHeight();
+        if(w > h){
+            int sideMargin = (w - h) / 2;
+            return image.getSubimage(sideMargin, 0, h, h);
+        }else{
+            int sideMargin = (h - w) / 2;
+            return image.getSubimage(0, sideMargin, w, w);
+        }
     }
     
 }

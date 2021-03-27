@@ -42,6 +42,7 @@ dependencies{
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.28'
     // LaTeX
     implementation group: 'org.scilab.forge', name: 'jlatexmath', version: '1.0.7'
+    implementation 'org.jetbrains:annotations:20.1.0'
 
 }
 javafx {
