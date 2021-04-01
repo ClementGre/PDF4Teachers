@@ -3,18 +3,15 @@ package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -32,14 +29,12 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.controlsfx.control.GridCell;
 import org.controlsfx.control.GridView;
-import org.controlsfx.control.InfoOverlay;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -55,7 +50,7 @@ public class GalleryWindow extends Stage{
     private final Button editSources = new Button();
     private final EditSourcesPopOver editSourcesPopOver = new EditSourcesPopOver(this);
     
-    private final GridView<ImageListElement> list = new GridView<>();
+    private final GridView<ImageGridElement> list = new GridView<>();
     
     private SortManager sortManager;
     
@@ -81,23 +76,6 @@ public class GalleryWindow extends Stage{
     
     private void setup(){
         setupSettings();
-    
-        list.setCache(true);
-        list.setCacheHint(CacheHint.SPEED);
-        list.setCellWidth(cellSize);
-        list.setCellHeight(cellSize);
-        list.setHorizontalCellSpacing(0);
-        list.setVerticalCellSpacing(0);
-        
-        list.setCellFactory(param -> new ImageGridCell());
-        
-        list.widthProperty().addListener((observable, oldValue, newValue) -> {
-            int columns = ((int) list.getWidth() - 20) / cellSize;
-            columns = Math.max(1, columns);
-            double newCellSize = (list.getWidth() - 20) / columns;
-            list.setCellWidth(newCellSize);
-            list.setCellHeight(newCellSize);
-        });
         
         root.getChildren().addAll(settings, list);
         loadImages();
@@ -108,17 +86,15 @@ public class GalleryWindow extends Stage{
     private static final int IMAGE_W = 500;
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     
-    class ImageGridCell extends GridCell<ImageListElement>{
+    class ImageGridCell extends GridCell<ImageGridElement>{
         
         private final ImageView imageView;
-        private final GalleryImageOverlay overlay;
     
+        private final DropShadow shadow = new DropShadow();
         public static final int PADDING = 2;
-        
         
         public ImageGridCell(){
             this.imageView = new ImageView();
-            this.overlay = new GalleryImageOverlay(imageView);
     
             imageView.setPreserveRatio(true);
             imageView.setSmooth(true);
@@ -126,11 +102,24 @@ public class GalleryWindow extends Stage{
             imageView.fitWidthProperty().bind(widthProperty().subtract(2*PADDING));
             imageView.fitHeightProperty().bind(heightProperty().subtract(2*PADDING));
     
+            shadow.setColor(Color.web("#0078d7"));
+            shadow.setSpread(.90);
+            shadow.setOffsetY(0);
+            shadow.setOffsetX(0);
+            shadow.setRadius(0);
+            setEffect(shadow);
+    
+            setOnMouseEntered((e) -> {
+                shadow.setRadius(2);
+            });
+            setOnMouseExited((e) -> {
+                shadow.setRadius(0);
+            });
             
         }
     
         @Override
-        protected void updateItem(ImageListElement item, boolean empty) {
+        protected void updateItem(ImageGridElement item, boolean empty) {
             super.updateItem(item, empty);
         
             if(empty){
@@ -138,10 +127,15 @@ public class GalleryWindow extends Stage{
                 setOnMouseClicked(null);
             }else{
                
-                imageView.setImage(item.getImage());
-                overlay.setText(FilesUtils.getPathReplacingUserHome(item.getImageId()));
+                if(item.getImage() == null){
+                    if(!item.isRendering()){
+                        item.setRendering(true);
+                        executor.submit(() -> loadImage(item, () -> item.setRendering(false)));
+                    }
+                }
+                imageView.imageProperty().bind(item.imageProperty());
     
-                setGraphic(overlay);
+                setGraphic(imageView);
                 setOnMouseClicked((e) -> {
                     System.out.println("clicked");
                 });
@@ -150,7 +144,17 @@ public class GalleryWindow extends Stage{
     }
     
     public void loadImages(){
-        executor.submit(this::addImagesToGrid);
+        List<ImageGridElement> images = getImages();
+        
+        for(ImageGridElement image : images){
+            boolean match = false;
+            for(ImageGridElement image2 : list.getItems()){
+                if(image2.getImageId().equals(image.getImageId())){
+                    match = true;  break;
+                }
+            }
+            if(!match) list.getItems().add(image);
+        }
     }
     
     private void setupSettings(){
@@ -172,39 +176,18 @@ public class GalleryWindow extends Stage{
         settings.getChildren().addAll(sortPanel, new HBoxSpacer(), filter, editSources);
     }
     
-    private List<ImageListElement> getImages(){
-        return GalleryManager.getImages().stream().map((img) -> new ImageListElement(img.getImageId())).collect(Collectors.toList());
+    private List<ImageGridElement> getImages(){
+        return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId())).collect(Collectors.toList());
     }
     
-    
-    List<ImageListElement> toAdd = new ArrayList<>();
-    
-    private void addImagesToGrid(){
-        List<ImageListElement> images = getImages();
-        
-        for(ImageListElement image : images){
-            executor.submit(() -> deliverImagesToGrid(image));
-        }
-    }
-    
-    private void checkTerminated(){
-        if(executor.isTerminated() || toAdd.size() > 20 || getImages().size() < 10){
-            list.getItems().addAll(toAdd);
-            toAdd.clear();
-        }
-    }
-    
-    private void deliverImagesToGrid(ImageListElement image) {
-        
+    private void loadImage(ImageGridElement image, CallBack callBack){
         if(image == null) return;
+
         try{
             image.setImage(getImageCropped(image.getImageId()));
         }catch(IOException e){ e.printStackTrace(); }
-    
-        Platform.runLater(() -> {
-            toAdd.add(image);
-            checkTerminated();
-        });
+
+        Platform.runLater(callBack::call);
     }
     
     private Image getImageCropped(String imageId) throws IOException{

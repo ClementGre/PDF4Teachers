@@ -165,12 +165,13 @@ public class FooterBar extends StackPane{
                 
                 updateStats();
             }
-            
+            zoomController.setDisable(false);
             if(MainWindow.mainScreen.document.getCurrentPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
             }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getCurrentPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
             
         }else{
+            zoomController.setDisable(true);
             if(hard){
                 root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
             }
