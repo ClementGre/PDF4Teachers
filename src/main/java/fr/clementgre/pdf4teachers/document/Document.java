@@ -186,6 +186,9 @@ public class Document{
     public int getCurrentPage(){
         return currentPage;
     }
+    public PageRenderer getCurrentPageObject(){
+        return (getCurrentPage() != -1) ? pages.get(getCurrentPage()) : pages.get(0);
+    }
     
     public void setCurrentPage(int currentPage){
         this.currentPage = currentPage;

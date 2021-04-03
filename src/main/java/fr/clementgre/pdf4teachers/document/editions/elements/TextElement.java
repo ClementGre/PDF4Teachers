@@ -61,7 +61,7 @@ public class TextElement extends Element{
         this.text.setTextOrigin(VPos.TOP);
         
         if(hasPage && getPage() != null){
-            setupGeneral(isLatex() ? this.image : this.text);
+            setupGeneral(true, isLatex() ? this.image : this.text);
             updateLaTeX();
             this.text.setUnderline(isURL());
         }

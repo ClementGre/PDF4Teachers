@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -295,9 +296,7 @@ public class TextTab extends SideTab{
         });
         newBtn.setOnAction(e -> {
             
-            PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-            if(MainWindow.mainScreen.document.getCurrentPage() != -1)
-                page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
+            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
             
             MainWindow.mainScreen.setSelected(null);
             
@@ -343,20 +342,12 @@ public class TextTab extends SideTab{
     }
     
     public void selectItem(){
-        new Thread(() -> {
-            try{
-                Thread.sleep(50);
-                Platform.runLater(() -> {
-                    String text = txtArea.getText();
-                    txtArea.setText(text);
-                    txtArea.positionCaret(txtArea.getText().length());
-                    txtArea.requestFocus();
-                });
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
-        }, "selector").start();
-        
+        PlatformUtils.runLaterOnUIThread(50, () ->{
+            String text = txtArea.getText();
+            txtArea.setText(text);
+            txtArea.positionCaret(txtArea.getText().length());
+            txtArea.requestFocus();
+        });
     }
     
     private Font getFont(){

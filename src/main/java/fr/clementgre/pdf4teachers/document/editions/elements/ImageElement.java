@@ -1,8 +1,12 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import javafx.geometry.VPos;
+import javafx.scene.control.Label;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -12,8 +16,12 @@ public class ImageElement extends GraphicElement{
     
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode, String imageId){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
-        
-        
+    
+        if(hasPage && getPage() != null){
+            ScratchText test = new ScratchText("test");
+            test.setTextOrigin(VPos.TOP);
+            setupGeneral(test);
+        }
     }
     
     // SETUP / EVENT CALL BACK
@@ -37,7 +45,8 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public void select(){
-    
+        super.selectPartial();
+        
     }
     
     @Override

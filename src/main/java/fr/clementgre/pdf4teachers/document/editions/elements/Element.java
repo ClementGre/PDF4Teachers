@@ -40,7 +40,7 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
-    protected void setupGeneral(Node... components){
+    protected void setupGeneral(boolean defineMoveEvents, Node... components){
         getChildren().addAll(components);
         
         // SELECT EVENT
@@ -90,24 +90,27 @@ public abstract class Element extends Region{
             checkLocation(false);
             onMouseRelease();
         });
+    
+        if(defineMoveEvents){
+            setOnMousePressed(e -> {
+                e.consume();
         
-        setOnMousePressed(e -> {
-            e.consume();
-            
-            shiftX = (int) e.getX();
-            shiftY = (int) e.getY();
-            menu.hide();
-            select();
-            
-            if(e.getButton() == MouseButton.SECONDARY){
-                menu.show(getPage(), e.getScreenX(), e.getScreenY());
-            }
-        });
-        setOnMouseDragged(e -> {
-            double itemX = getLayoutX() + e.getX() - shiftX;
-            double itemY = getLayoutY() + e.getY() - shiftY;
-            checkLocation(itemX, itemY, true);
-        });
+                shiftX = (int) e.getX();
+                shiftY = (int) e.getY();
+                menu.hide();
+                select();
+        
+                if(e.getButton() == MouseButton.SECONDARY){
+                    menu.show(getPage(), e.getScreenX(), e.getScreenY());
+                }
+            });
+            setOnMouseDragged(e -> {
+                double itemX = getLayoutX() + e.getX() - shiftX;
+                double itemY = getLayoutY() + e.getY() - shiftY;
+                checkLocation(itemX, itemY, true);
+            });
+        }
+        
         setOnMouseClicked(e -> {
             e.consume();
             if(e.getClickCount() == 2){

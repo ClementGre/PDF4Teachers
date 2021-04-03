@@ -1,14 +1,12 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
-import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -20,11 +18,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public abstract class ListPane<T> extends TitledPane{
-    
-    public static final int TYPE_FAVOURITES_VECTORS = 0;
-    public static final int TYPE_FAVOURITES_IMAGES = 1;
-    public static final int TYPE_LAST_VECTORS = 2;
-    public static final int TYPE_GALLERY = 3;
     
     private final IntegerProperty type = new SimpleIntegerProperty();
     private boolean isLoaded = false;

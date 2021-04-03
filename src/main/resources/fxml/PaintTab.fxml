@@ -16,7 +16,6 @@
 <?import fr.clementgre.pdf4teachers.components.SyncColorPicker?>
 <?import javafx.scene.control.ToggleGroup?>
 
-<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
 <VBox xmlns="http://javafx.com/javafx"
@@ -28,7 +27,7 @@
     <VBox spacing="5"> <!-- Common options -->
         <VBox.margin><Insets top="2" bottom="5" left="2" right="2"/></VBox.margin>
 
-        <HBox spacing="2">
+        <HBox spacing="2" fx:id="commonActionButtons">
             <Button fx:id="newImage">
                 <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
             </Button>
@@ -40,18 +39,18 @@
             </Button>
             <Region HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
-            <Button fx:id="vectorCreateCurve">
-                <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
-            </Button>
-            <ToggleButton fx:id="vectorStraightLineMode">
-                <padding><Insets topRightBottomLeft="4"/></padding>
-            </ToggleButton>
+            <HBox fx:id="vectorsActonButtons">
+                <Button fx:id="vectorCreateCurve">
+                    <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
+                </Button>
+                <ToggleButton fx:id="vectorStraightLineMode">
+                    <padding><Insets topRightBottomLeft="4"/></padding>
+                </ToggleButton>
 
-            <fx:define>
-                <ToggleGroup fx:id="vectorDrawMode" />
-            </fx:define>
+                <fx:define>
+                    <ToggleGroup fx:id="vectorDrawMode" />
+                </fx:define>
 
-            <HBox>
                 <ToggleButton fx:id="vectorModeDraw" toggleGroup="$vectorDrawMode">
                     <padding><Insets topRightBottomLeft="4"/></padding>
                 </ToggleButton>

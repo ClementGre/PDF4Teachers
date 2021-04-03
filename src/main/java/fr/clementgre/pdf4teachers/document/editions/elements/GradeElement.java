@@ -70,7 +70,7 @@ public class GradeElement extends Element{
                     this.pageNumber = MainWindow.mainScreen.document.pages.size() - 1;
                 else return;
             }
-            setupGeneral(this.text);
+            setupGeneral(true, this.text);
         }
         
         setOnKeyPressed(e -> {

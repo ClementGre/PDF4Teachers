@@ -1,24 +1,24 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
-import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.WindowEvent;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -28,11 +28,13 @@ public class PaintTab extends SideTab{
     public VBox root;
 
     // actions buttons
-
+    public HBox commonActionButtons;
+    
     public Button newImage;
     public Button newVector;
     public Button delete;
-
+    
+    public HBox vectorsActonButtons;
     public Button vectorCreateCurve;
     public ToggleButton vectorStraightLineMode;
     public ToggleGroup vectorDrawMode;
@@ -83,6 +85,8 @@ public class PaintTab extends SideTab{
     // WINDOWS
     
     public GalleryWindow galleryWindow = null;
+    
+    
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -151,7 +155,71 @@ public class PaintTab extends SideTab{
             openGallery();
         });
         
+        newImage.setOnAction((e) -> {
+            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                    50, 50, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, "");
+            page.addElement(element, true);
+            element.centerOnCoordinatesY();
+            MainWindow.mainScreen.setSelected(element);
+            Platform.runLater(() -> {
+                System.out.println(element.getWidth() + "*" + element.getHeight());
+            });
+        });
         
+        MainWindow.mainScreen.selected.addListener(this::updateSelected);
+    }
+    
+    public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
+        // Disable/Enable nodes
+        if(!(newValue instanceof GraphicElement)){
+            setGlobalDisable(true);
+            setVectorsDisable(true);
+        }else{
+            setGlobalDisable(false);
+            if(newValue instanceof VectorElement){ // Vector
+                setVectorsDisable(false);
+            }else{ // Image
+                setVectorsDisable(true);
+            }
+        }
+        
+        // Load/Bind data
+        if(newValue instanceof GraphicElement){
+            if(newValue instanceof VectorElement){ // Vector
+            
+            }else{ // Image
+            
+            }
+        }
+    }
+    
+    public void setVectorsDisable(boolean disable){
+        vectorUndoPath.setDisable(disable);
+        setVectorActionButtonsVisible(!disable);
+        setVectorOptionPaneVisible(!disable);
+    }
+    public void setVectorActionButtonsVisible(boolean visible){
+        if(!visible){ // REMOVE
+            commonActionButtons.getChildren().remove(vectorsActonButtons);
+            
+        }else if(!commonActionButtons.getChildren().contains(vectorsActonButtons)){ // ADD
+            commonActionButtons.getChildren().add(vectorsActonButtons);
+        }
+    }
+    public void setVectorOptionPaneVisible(boolean visible){
+        if(!visible){ // REMOVE
+            root.getChildren().remove(vectorsOptionPane);
+            
+        }else if(!root.getChildren().contains(vectorsOptionPane)){ // ADD
+            root.getChildren().add(1, vectorsOptionPane);
+        }
+    }
+    public void setGlobalDisable(boolean disable){
+        advancedOptionsPane.setDisable(disable);
+        delete.setDisable(disable);
+        path.setDisable(disable);
+        browsePath.setDisable(disable);
     }
     
     public void openGallery(){

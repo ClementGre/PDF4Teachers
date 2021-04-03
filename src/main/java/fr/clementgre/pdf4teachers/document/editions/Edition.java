@@ -3,9 +3,7 @@ package fr.clementgre.pdf4teachers.document.editions;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.Document;
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
-import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -14,12 +12,14 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
 
+import java.awt.Image;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -43,14 +43,6 @@ public class Edition{
     }
     
     public void load(){
-        File lastEditFile = new File(StringUtils.removeAfterLastRegex(editFile.getAbsolutePath(), ".yml") + ".edit");
-        if(lastEditFile.exists()){
-            loadHEX(lastEditFile);
-            lastEditFile.delete();
-            Edition.setUnsave();
-            save();
-            return;
-        }
         new File(Main.dataFolder + "editions").mkdirs();
         MainWindow.gradeTab.treeView.hardClear();
         
@@ -59,14 +51,15 @@ public class Edition{
             Config config = new Config(editFile);
             config.load();
             
-            for(Map.Entry<String, Object> pageData : config.getSection("texts").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
-                
-                for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    if(data instanceof Map) TextElement.readYAMLDataAndCreate((HashMap<String, Object>) data, page);
-                }
-            }
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+            });
+            loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
+                ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+            });
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+            });
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data);
@@ -75,7 +68,6 @@ public class Edition{
         }catch(IOException e){
             e.printStackTrace();
         }
-        
         
         MainWindow.gradeTab.treeView.updateAllSum();
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
@@ -89,22 +81,28 @@ public class Edition{
             Config config = new Config(editFile);
             
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> images = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> vectors = new LinkedHashMap<>();
             ArrayList<Object> grades = new ArrayList<>();
             
             // NON GRADES ELEMENTS
             int counter = 0;
-            int i = 0;
             for(PageRenderer page : document.pages){
-                ArrayList<Object> pageData = new ArrayList<>();
-                
-                for(Element element : page.getElements()){
-                    if(!(element instanceof GradeElement)){
-                        pageData.add(element.getYAMLData());
-                        counter++;
-                    }
+                ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
+                if(pageTextsData != null){
+                    texts.put("page" + page.getPage(), pageTextsData);
+                    counter += pageTextsData.size();
                 }
-                if(pageData.size() >= 1) texts.put("page" + i, pageData);
-                i++;
+                ArrayList<Object> pageImagesData = getPageDataFromElements(page.getElements(), ImageElement.class);
+                if(pageImagesData != null){
+                    images.put("page" + page.getPage(), pageImagesData);
+                    counter += pageImagesData.size();
+                }
+                ArrayList<Object> pageVectorsData = getPageDataFromElements(page.getElements(), VectorElement.class);
+                if(pageVectorsData != null){
+                    vectors.put("page" + page.getPage(), pageVectorsData);
+                    counter += pageVectorsData.size();
+                }
             }
             
             // GRADES ELEMENTS
@@ -118,6 +116,8 @@ public class Edition{
             else{
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
+                config.base.put("images", images);
+                config.base.put("vectors", vectors);
                 config.save();
             }
             
@@ -131,30 +131,15 @@ public class Edition{
         
     }
     
-    public void loadHEX(File file){
-        MainWindow.gradeTab.treeView.clear();
-        try{
-            if(file.exists()){ //file does not exist
-                
-                DataInputStream reader = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
-                while(reader.available() != 0){
-                    byte elementType = reader.readByte();
-                    
-                    switch(elementType){
-                        case 1:
-                            TextElement.readDataAndCreate(reader);
-                            break;
-                        case 2:
-                            GradeElement.readDataAndCreate(reader);
-                            break;
-                    }
-                }
-                reader.close();
+    private ArrayList<Object> getPageDataFromElements(ArrayList<Element> elements, Class<? extends Element> acceptedElements){
+        ArrayList<Object> pageData = new ArrayList<>();
+        for(Element element : elements){
+            if(acceptedElements.isInstance(element)){
+                pageData.add(element.getYAMLData());
             }
-        }catch(IOException e){
-            e.printStackTrace();
         }
-        MainWindow.textTab.treeView.onFileSection.updateElementsList();
+        if(pageData.size() >= 1) return pageData;
+        else return null;
     }
     
     // STATIC
@@ -168,16 +153,16 @@ public class Edition{
             config.load();
             
             ArrayList<Element> elements = new ArrayList<>();
-            
-            for(Map.Entry<String, Object> pageData : config.getSection("texts").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
-                
-                for(Object data : ((ArrayList<Object>) pageData.getValue())){
-                    if(data instanceof Map)
-                        elements.add(TextElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, page));
-                }
-            }
+    
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            });
+            loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
+                elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            });
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            });
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map)
@@ -188,6 +173,17 @@ public class Edition{
         }
     }
     
+    private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){ // Key : Page | Value : Element Data
+        for(Map.Entry<String, Object> pageData : data){
+            Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            if(page == null || !(pageData.getValue() instanceof List)) break;
+        
+            for(Object elementData : ((List<Object>) pageData.getValue())){
+                if(elementData instanceof HashMap) addCallBack.call(Map.entry(page, (HashMap<String, Object>) elementData));
+            }
+        }
+    }
+    
     public static void simpleSave(File editFile, Element[] elements){
         
         try{
@@ -195,19 +191,34 @@ public class Edition{
             Config config = new Config(editFile);
             
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> images = new LinkedHashMap<>();
+            LinkedHashMap<String, ArrayList<Object>> vectors = new LinkedHashMap<>();
             ArrayList<Object> grades = new ArrayList<>();
             
             int counter = 0;
             for(Element element : elements){
                 
                 if(!(element instanceof GradeElement)){
-                    if(texts.containsKey("page" + element.getPageNumber())){
-                        texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
-                    }else{
-                        texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                    if(element instanceof TextElement){
+                        if(texts.containsKey("page" + element.getPageNumber())){
+                            texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                        }else{
+                            texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                        }
+                    }else if(element instanceof ImageElement){
+                        if(images.containsKey("page" + element.getPageNumber())){
+                            images.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                        }else{
+                            images.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                        }
+                    }else if(element instanceof VectorElement){
+                        if(vectors.containsKey("page" + element.getPageNumber())){
+                            vectors.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                        }else{
+                            vectors.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                        }
                     }
                     counter++;
-                    
                 }else{
                     grades.add(element.getYAMLData());
                     if(!((GradeElement) element).isDefaultGrade()) counter++;
@@ -218,6 +229,8 @@ public class Edition{
             else{
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
+                config.base.put("images", images);
+                config.base.put("vectors", vectors);
                 config.save();
             }
             
@@ -236,29 +249,37 @@ public class Edition{
             int text = 0;
             int allGrades = 0; // All grade element count
             int grades = 0; // All entered grade
-            int draw = 0;
+            int images = 0;
+            int vectors = 0;
             
             Config config = new Config(editFile);
             config.load();
             
-            for(Map.Entry<String, Object> pageData : config.getSection("texts").entrySet()){
-                Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-                if(page == null || !(pageData.getValue() instanceof List)) break;
-                text += ((List<Object>) pageData.getValue()).size();
-            }
+            text = countSection(config.getSection("texts"));
+            images = countSection(config.getSection("images"));
+            vectors = countSection(config.getSection("vectors"));
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map){
                     double[] stats = GradeElement.getYAMLDataStats((HashMap<String, Object>) data);
-                    
                     if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
                     if(stats[0] != -1) grades++;
                     allGrades++;
                 }
             }
             
-            return new double[]{text + grades + draw, text, grades, draw, totalGrade[0], totalGrade[1], allGrades};
+            return new double[]{text + grades + images + vectors, text, grades, images+vectors, totalGrade[0], totalGrade[1], allGrades};
         }
+    }
+    
+    private static int countSection(HashMap<String, Object> sectionData){
+        int count = 0;
+        for(Map.Entry<String, Object> pageData : sectionData.entrySet()){
+            Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            if(page == null || !(pageData.getValue() instanceof List)) break;
+            count += ((List<Object>) pageData.getValue()).size();
+        }
+        return count;
     }
     
     // get YAML file from PDF file

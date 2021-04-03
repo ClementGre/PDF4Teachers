@@ -12,8 +12,10 @@ public class VectorElement extends GraphicElement{
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode,
                          boolean doFill, Color fill, Color stroke, int strokeWidth, String path){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
-        
-        
+    
+        if(hasPage && getPage() != null){
+            setupGeneral();
+        }
     }
     
     // SETUP / EVENT CALL BACK
@@ -37,7 +39,8 @@ public class VectorElement extends GraphicElement{
     
     @Override
     public void select(){
-    
+        super.selectPartial();
+        
     }
     
     @Override

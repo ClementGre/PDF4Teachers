@@ -8,10 +8,14 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public abstract class GraphicElement extends Element{
@@ -34,7 +38,6 @@ public abstract class GraphicElement extends Element{
             return key;
         }
     }
-    
     public enum ResizeMode{
         CORNERS("paintTab.resizeMode.corners"),
         OPPOSITE_CORNERS("paintTab.resizeMode.oppositeCorners"),
@@ -50,7 +53,6 @@ public abstract class GraphicElement extends Element{
             return key;
         }
     }
-    
     public enum RotateMode{
         NEAR_CORNERS("paintTab.resizeMode.nearCorners"),
         NONE("classics.none.feminine");
@@ -85,6 +87,71 @@ public abstract class GraphicElement extends Element{
         
         setRealWidth(width);
         setRealHeight(height);
+    }
+    
+    private Cursor dragType = Cursor.MOVE;
+    protected void setupGeneral(Node... components){
+        super.setupGeneral(false, components);
+    
+        setOnMouseMoved(e -> {
+            setCursor(getDragCursorType(e.getX(), e.getY()));
+        });
+    
+        setOnMousePressed(e -> {
+            e.consume();
+            shiftX = (int) e.getX();
+            shiftY = (int) e.getY();
+            menu.hide(); select();
+            if(e.getButton() == MouseButton.SECONDARY){
+                menu.show(getPage(), e.getScreenX(), e.getScreenY());
+            }
+            dragType = getDragCursorType(e.getX(), e.getY());
+            setCursor(dragType);
+        });
+        
+        setOnMouseDragged(e -> {
+            if(dragType == Cursor.MOVE){
+                double itemX = getLayoutX() + e.getX() - shiftX;
+                double itemY = getLayoutY() + e.getY() - shiftY;
+                checkLocation(itemX, itemY, true);
+            }else if(dragType == Cursor.SE_RESIZE){
+                double width = getWidth() + e.getX() - shiftX;
+                double height = getHeight() + e.getX() - shiftY;
+                realWidth.set((int) (width / getPage().getWidth() * Element.GRID_WIDTH));
+                realHeight.set((int) (height / getPage().getHeight() * Element.GRID_HEIGHT));
+            }
+            
+        });
+        
+    }
+    
+    public Cursor getDragCursorType(double x, double y){
+        if(x < 10){ // Left Side
+            if(y < 10){ // Top Left
+                return Cursor.NW_RESIZE;
+            }else if(y > getHeight()-10){ // Bottom Left
+                return Cursor.SW_RESIZE;
+            }else{ // Left only
+                return Cursor.W_RESIZE;
+            }
+        }
+        if(x > getWidth()-10){ // Right Side
+            if(y < 10){ // Top Right
+                return Cursor.NE_RESIZE;
+            }else if(y > getHeight()-10){ // Bottom Right
+                return Cursor.SE_RESIZE;
+            }else{ // Right only
+                return Cursor.E_RESIZE;
+            }
+        }
+    
+        if(y < 10){ // Top only
+            return Cursor.N_RESIZE;
+        }
+        if(y > getHeight()-10){ // Bottom only
+            return Cursor.S_RESIZE;
+        }
+        return Cursor.MOVE;
     }
     
     // SETUP / EVENT CALL BACK
@@ -122,7 +189,6 @@ public abstract class GraphicElement extends Element{
     public void select(){
         super.selectPartial();
         SideBar.selectTab(MainWindow.paintTab);
-        
     }
     
     @Override
