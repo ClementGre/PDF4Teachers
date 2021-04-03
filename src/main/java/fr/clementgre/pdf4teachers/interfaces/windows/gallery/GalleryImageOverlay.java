@@ -34,8 +34,8 @@ public class GalleryImageOverlay extends StackPane{
         shadow.setRadius(0);
         setEffect(shadow);
         
-        overlayClip.widthProperty().bind(widthProperty().subtract(2 * GalleryWindow.ImageGridCell.PADDING));
-        overlay.setTranslateX(GalleryWindow.ImageGridCell.PADDING);
+        overlayClip.widthProperty().bind(widthProperty().subtract(2 * 2));
+        overlay.setTranslateX(2);
         overlay.setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, .7), CornerRadii.EMPTY, Insets.EMPTY)));
         overlay.getChildren().add(name);
         overlay.setPadding(new Insets(5));

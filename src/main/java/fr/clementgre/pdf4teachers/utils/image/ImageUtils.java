@@ -7,8 +7,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.List;
 
 public class ImageUtils{
+    
+    public static final List<String> ACCEPTED_EXTENSIONS = Arrays.asList("png", "jpeg", "jpg", "tiff", "gif", "bmp");
+    
     
     public static ColorAdjust defaultFullDarkColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultDarkColorAdjust = new ColorAdjust();
@@ -36,20 +41,8 @@ public class ImageUtils{
     
     public static ImageView buildImage(Image image, int width, int height){
         ImageView imageView = new ImageView(image);
-        
-        if(width == 0 && height == 0) return imageView;
-        
-        if(width == 0){
-            imageView.setFitHeight(height);
-            imageView.setPreserveRatio(true);
-        }else if(height == 0){
-            imageView.setFitWidth(width);
-            imageView.setPreserveRatio(true);
-        }else{
-            imageView.setFitWidth(width);
-            imageView.setFitHeight(height);
-        }
-        return imageView;
+    
+        return getImageView(width, height, imageView);
     }
     
     public static ImageView buildImage(String imgPath, int width, int height){
@@ -70,7 +63,16 @@ public class ImageUtils{
         }
         
         if(effect != null) imageView.setEffect(effect);
+    
+        return getImageView(width, height, imageView);
+    }
+    public static ImageView buildImage(FileInputStream file, int width, int height){
+        ImageView imageView = new ImageView(new Image(file));
         
+        return getImageView(width, height, imageView);
+    }
+    
+    private static ImageView getImageView(int width, int height, ImageView imageView){
         if(width == 0 && height == 0) return imageView;
         
         if(width == 0){
@@ -86,21 +88,5 @@ public class ImageUtils{
         return imageView;
     }
     
-    public static ImageView buildImage(FileInputStream file, int width, int height){
-        ImageView imageView = new ImageView(new Image(file));
-        
-        if(width == 0 && height == 0) return imageView;
-        
-        if(width == 0){
-            imageView.setFitHeight(height);
-            imageView.setPreserveRatio(true);
-        }else if(height == 0){
-            imageView.setFitWidth(width);
-            imageView.setPreserveRatio(true);
-        }else{
-            imageView.setFitWidth(width);
-            imageView.setFitHeight(height);
-        }
-        return imageView;
-    }
+    
 }

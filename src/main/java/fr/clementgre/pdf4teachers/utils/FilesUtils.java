@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 
 public class FilesUtils{
     
+    public static File HOME_DIR = new File(System.getProperty("user.home"));
+    
     public static long getSize(File f){
         if(f.isFile()){
             return (f.length());

@@ -75,7 +75,7 @@ The application was developed with Java SE 8 (Swing), then, it moved to JavaFX w
 - **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (LaTeX text elements feature in 1.2.0)
 - **[SnakeYAML 1.28](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
 - **[Jackson Streaming API 2.12.2](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to send requests to GitHub to check if a new release is available.
-
+- **[Metadata-Extractor](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so PDF4Teachers can take in account the rotation of images
 
 - **[Gradle 6.3](https://gradle.org/)** is used to manage the dependencies, therefore, you can execute ``./gradlew run`` (bash) or ``gradlew.bat run`` (batch) in a command prompt to run the application using only the downloaded code, and the Java JDK 15 (should be in the environment variable ``JAVA_HOME`` and ``PATH``).
 - **[i18nDotPropertiesGUI](https://github.com/ClementGre/i18nDotPropertiesGUI)** : is used to manage the translations files, and to fill them.

@@ -57,7 +57,7 @@ public class EditSourcesPopOver extends PopOver{
         delete.setOnMouseClicked((e) -> {
             GalleryManager.removeSavePath(path);
             pathLists.getChildren().remove(root);
-            window.loadImages();
+            window.reloadImageList();
         });
     
         PaneUtils.setHBoxPosition(text, 0, 26, 5);
@@ -75,7 +75,7 @@ public class EditSourcesPopOver extends PopOver{
             if(dir != null){
                 GalleryManager.addSavePath(dir.getAbsolutePath());
                 pathLists.getChildren().add(getPathGraphic(dir.getAbsolutePath()));
-                window.loadImages();
+                window.reloadImageList();
             }
         });
         

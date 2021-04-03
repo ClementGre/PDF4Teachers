@@ -3,9 +3,11 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -33,6 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ConvertWindow extends Stage{
     
@@ -227,11 +230,11 @@ public class ConvertWindow extends Stage{
                     
                     final FileChooser chooser = new FileChooser();
                     chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
-                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.image"), "*.png", "*.jpeg", "*.jpg", "*.tiff", "*.gif", "*.bmp"));
-                    if(!srcFiles.getText().isBlank()){
-                        chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists() ? new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile() : new File(MainWindow.userData.lastConvertSrcDir));
+                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).collect(Collectors.toList())));
+                    if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists()){
+                        chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile());
                     }else{
-                        chooser.setInitialDirectory(new File(MainWindow.userData.lastConvertSrcDir));
+                        chooser.setInitialDirectory(new File(MainWindow.userData.lastConvertSrcDir).exists() ? new File(MainWindow.userData.lastConvertSrcDir) : FilesUtils.HOME_DIR);
                     }
                     
                     List<File> files = chooser.showOpenMultipleDialog(Main.window);

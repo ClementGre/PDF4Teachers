@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -21,9 +22,6 @@ import javafx.scene.layout.VBox;
 import org.controlsfx.control.GridView;
 
 public abstract class ListPane<T> extends TitledPane{
-    
-    public static final String SORT_USE = TR.tr("sorting.sortType.use");
-    public static final String SORT_TIME = TR.tr("sorting.sortType.addDate.short");
     
     private final IntegerProperty type = new SimpleIntegerProperty();
     
@@ -45,7 +43,7 @@ public abstract class ListPane<T> extends TitledPane{
         sortManager = new SortManager((sortType, order) -> {
         
         }, null);
-        sortManager.setup(sortPanel, SORT_USE, SORT_USE, SORT_TIME);
+        sortManager.setup(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_FILE_EDIT_TIME);
         
         root.getChildren().add(list);
         setContent(root);

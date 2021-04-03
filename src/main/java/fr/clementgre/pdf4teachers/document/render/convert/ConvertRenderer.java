@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -149,12 +150,7 @@ public class ConvertRenderer{
     public static boolean isGoodFormat(File file){
         String ext = StringUtils.removeBeforeLastRegex(file.getName(), ".");
         if(!file.exists()) ext = "";
-        return ext.equalsIgnoreCase("png") ||
-                ext.equalsIgnoreCase("jpg") ||
-                ext.equalsIgnoreCase("jpeg") ||
-                ext.equalsIgnoreCase("tiff") ||
-                ext.equalsIgnoreCase("gif") ||
-                ext.equalsIgnoreCase("bmp");
+        return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext);
     }
     
     private boolean isValidFile(File file){

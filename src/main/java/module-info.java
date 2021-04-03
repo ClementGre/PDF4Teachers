@@ -17,7 +17,6 @@ open module fr.clementgre.pdf4teachers {
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
-    requires universal.document.converter;
 
     // jfx addons
     requires org.jfxtras.styles.jmetro;
@@ -26,6 +25,7 @@ open module fr.clementgre.pdf4teachers {
     // data parsing/encoding
     requires org.yaml.snakeyaml;
     requires com.fasterxml.jackson.core;
+    requires metadata.extractor; // EXIF READER
 
     // latex
     requires jlatexmath;
@@ -36,7 +36,7 @@ open module fr.clementgre.pdf4teachers {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.swing;
-
+    
     //requires jtouchbar;
     //requires jtouchbar.javafx;
 
