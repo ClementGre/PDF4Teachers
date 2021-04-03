@@ -100,7 +100,8 @@ public class MainWindow extends Stage{
             }
             
             Main.params = new ArrayList<>();
-            AutoTipsManager.unload();
+            AutoTipsManager.hideAll();
+            if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
             
             LanguagesUpdater.backgroundStats(() -> {
                 System.out.println("Closing PDF4Teachers");

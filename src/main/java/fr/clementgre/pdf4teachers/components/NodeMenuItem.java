@@ -71,7 +71,7 @@ public class NodeMenuItem extends CustomMenuItem{
             data.setTranslateY(7);
         }else{
             pane.setStyle("-fx-font-size: 13; -fx-padding: 3 0 3 10;"); // top - right - bottom - left
-            data.setTranslateY(3);
+            data.setTranslateY(6);
         }
         data.setTranslateX(10);
         

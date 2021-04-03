@@ -17,6 +17,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 import javafx.util.Duration;
 import org.controlsfx.control.PopOver;
@@ -71,7 +72,7 @@ public class AutoTipTooltip extends PopOver{
     }
     
     
-    public void showAuto(Window owner){
+    public void showAuto(Stage owner){
         if(owner == null) return;
         if(!owner.isFocused()) return;
         closedByAutoHide = false;
@@ -88,18 +89,22 @@ public class AutoTipTooltip extends PopOver{
         }else{
             setArrowSize(0);
             switch(objectWhereDisplay){
-                case "mainscreen" -> showOnPane(MainWindow.mainScreen);
-                case "leftbar" -> showOnPane(MainWindow.leftBar);
+                case "mainscreen" -> showOnPane(MainWindow.mainScreen, owner);
+                case "leftbar" -> showOnPane(MainWindow.leftBar, owner);
+                case "gallerycombobox" -> {
+                    setArrowSize(12); setArrowLocation(ArrowLocation.TOP_CENTER);
+                    show(MainWindow.paintTab.galleryWindow.filter);
+                }
             }
         }
     }
     
-    private void showOnPane(Region region){
+    private void showOnPane(Region region, Stage owner){
         if(region == null) return;
         final Scene scene = region.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
         
-        super.show(region, Main.window.getX() + region.getWidth() / 2, Main.window.getY() + region.getHeight() / 2);
+        super.show(region, owner.getX() + region.getWidth() / 2, owner.getY() + region.getHeight() / 2);
     }
     
     public String getName(){

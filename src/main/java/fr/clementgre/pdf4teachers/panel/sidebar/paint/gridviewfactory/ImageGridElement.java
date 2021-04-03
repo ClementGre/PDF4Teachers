@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import javafx.beans.property.ObjectProperty;
@@ -14,18 +15,46 @@ public class ImageGridElement extends ImageLambdaData{
     private boolean rendering = false;
     private ExifUtils.BasicExifData exifData;
     
+    private ImageData linkedImageData;
+    
     public ImageGridElement(String imageId){
         super(imageId);
         loadExifData();
+        setup();
+    }
+    public ImageGridElement(String imageId, ImageData linkedImageData){
+        super(imageId);
+        this.linkedImageData = linkedImageData;
+        loadExifData();
+        setup();
+    }
+    public ImageGridElement(String imageId, ImageData linkedImageData, Image image){
+        super(imageId);
+        this.linkedImageData = linkedImageData;
+        setImage(image);
+        loadExifData();
+        setup();
     }
     public ImageGridElement(String imageId, Image image){
         super(imageId);
         setImage(image);
         loadExifData();
+        setup();
     }
     
     public void loadExifData(){
         exifData = new ExifUtils.BasicExifData(new File(imageId));
+    }
+    
+    private void setup(){
+    
+    }
+    
+    public void toggleFavorite(){
+        // TODO : ADD/REMOVE item to favourites and update linkedData
+    }
+    public void addToDocument(){
+        // TODO : ADD item to document
     }
     
     // SORTER
@@ -37,8 +66,24 @@ public class ImageGridElement extends ImageLambdaData{
         return value;
     }
     public int compareUseWith(ImageGridElement element){
-        int value = 0; // TODO
+        int value = 0;
+        if(hasLinkedImageData()){
+            if(element.hasLinkedImageData()){
+                value = getLinkedImageData().getUseCount() - element.getLinkedImageData().getUseCount();
+            }
+        }
     
+        if(value == 0) return compareDirectoryWith(element);
+        return value;
+    }
+    public int compareLastUseTimeWith(ImageGridElement element){
+        int value = 0;
+        if(hasLinkedImageData()){
+            if(element.hasLinkedImageData()){
+                value = (int) (getLinkedImageData().getLastUse() - element.getLinkedImageData().getLastUse());
+            }
+        }
+        
         if(value == 0) return compareDirectoryWith(element);
         return value;
     }
@@ -85,5 +130,14 @@ public class ImageGridElement extends ImageLambdaData{
     }
     public void setExifData(ExifUtils.BasicExifData exifData){
         this.exifData = exifData;
+    }
+    public ImageData getLinkedImageData(){
+        return linkedImageData;
+    }
+    public boolean hasLinkedImageData(){
+        return linkedImageData != null;
+    }
+    public void setLinkedImageData(ImageData linkedImageData){
+        this.linkedImageData = linkedImageData;
     }
 }

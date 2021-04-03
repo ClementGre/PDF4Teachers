@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.application.Platform;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.lang.reflect.Field;
@@ -85,6 +86,12 @@ public class AutoTipsManager{
     @ToolTipVar(actionKey = "gradereset", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeSet0WithDoubleClick = "autoTips.gradeSet0WithDoubleClick";
     
+    // GALLERY
+    
+    @ToolTipVar(actionKey = "opengallery", prerequisiteKey = "", objectWhereDisplay = "gallerycombobox")
+    private static final String galleryEditSourceDirs = "autoTips.galleryEditSourceDirs";
+    
+    
     private static HashMap<String, AutoTipTooltip> uiTips = new HashMap<>();
     
     public static void setup(){
@@ -141,7 +148,7 @@ public class AutoTipsManager{
         
     }
     
-    public static void unload(){
+    public static void hideAll(){
         for(AutoTipTooltip uiTip : uiTips.values()){
             uiTip.hide(Duration.ZERO);
         }
@@ -168,37 +175,41 @@ public class AutoTipsManager{
     }
     
     public static boolean showRandom(){
-        
+        return showRandom(Main.window);
+    }
+    public static boolean showRandom(Stage stage){
         for(AutoTipTooltip uiTip : uiTips.values()){
             if(uiTip.getActionKey().isEmpty()){
-                if(showByObject(uiTip)) return true;
+                if(showByObject(uiTip, stage)) return true;
             }
         }
         return false;
     }
     
     public static boolean showByAction(String actionKey){
-        
+        return showByAction(actionKey, Main.window);
+    }
+    public static boolean showByAction(String actionKey, Stage stage){
         for(AutoTipTooltip uiTip : uiTips.values()){
             if(uiTip.getActionKey().equalsIgnoreCase(actionKey)){
-                if(showByObject(uiTip)) return true;
+                if(showByObject(uiTip, stage)) return true;
             }
         }
         return false;
     }
     
     public static boolean showByName(String name){
-        
+        return showByName(name, Main.window);
+    }
+    public static boolean showByName(String name, Stage stage){
         if(uiTips.containsKey(name)){
-            return showByObject(uiTips.get(name));
-        }
-        return false;
+            return showByObject(uiTips.get(name), stage);
+        }return false;
     }
     
-    public static boolean showByObject(AutoTipTooltip uiTip){
-        
+    private static boolean showByObject(AutoTipTooltip uiTip, Stage window){
         if(isPrerequisiteValid(uiTip.getPrerequisiteKey())){
-            uiTip.showAuto(Main.window);
+            uiTip.showAuto(window);
             return true;
         }
         return false;

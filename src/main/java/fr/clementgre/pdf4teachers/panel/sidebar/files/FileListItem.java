@@ -20,7 +20,6 @@ import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Optional;
 
 public class FileListItem extends ListCell<File>{
     
@@ -147,14 +146,7 @@ public class FileListItem extends ListCell<File>{
             item3.setOnAction(e -> Edition.clearEdit(file, true));
             
             item4.setOnAction(e -> {
-                
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
-                alert.setHeaderText(TR.tr("dialog.confirmation.deleteFile.header", file.getName()));
-                alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
-                
-                Optional<ButtonType> result = alert.showAndWait();
-                if(result.isEmpty()) return;
-                if(result.get() == ButtonType.OK){
+                if(DialogBuilder.showConfirmationDialog(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName()))){
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                             MainWindow.mainScreen.closeFile(false);

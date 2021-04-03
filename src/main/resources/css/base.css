@@ -85,10 +85,10 @@ CheckBox {
 }
 
 /* Footer slider */
-.app-footer-bar .slider {
+.slider-without-popup  {
     -show-value-on-interaction: false;
 }
-.app-footer-bar .slider .thumb {
+.slider-without-popup .thumb {
     -fx-padding: 9 3;
 }
 

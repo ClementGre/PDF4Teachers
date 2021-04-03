@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel;
 
+import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -33,7 +34,7 @@ public class FooterBar extends StackPane{
     
     private final HBox zoom = new HBox();
     private final Label zoomInfo = new Label();
-    private final Slider zoomController = new Slider(0.05, 5, 1);
+    private final SliderWithoutPopup zoomController = new SliderWithoutPopup(0.05, 5, 1);
     private final Label zoomPercent = new Label();
     
     private final Label statsElements = new Label();

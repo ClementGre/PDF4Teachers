@@ -40,9 +40,14 @@ public class DialogBuilder{
         Alert alert = new Alert(type);
         alert.setTitle(title);
         
+        
         if(Main.window != null){
             if(Main.window.getScene() != null) alert.initOwner(Main.window);
+            if(MainWindow.paintTab.galleryWindow != null){
+                if(MainWindow.paintTab.galleryWindow.isFocused()) alert.initOwner(MainWindow.paintTab.galleryWindow);
+            }
         }
+        
         if(header != null){
             alert.setHeaderText(header);
         }
@@ -52,6 +57,15 @@ public class DialogBuilder{
         
         setupDialog(alert);
         return alert;
+    }
+    
+    public static boolean showConfirmationDialog(boolean irreversible, String header){
+        Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"), header);
+        if(irreversible) alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
+    
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.isEmpty()) return false;
+        return result.get() == ButtonType.OK;
     }
     
     public static void showAlertWithOpenDirButton(String title, String header, String details, File dirToBrowse){

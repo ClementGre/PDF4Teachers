@@ -17,9 +17,12 @@ public class NodeRadioMenuItem extends NodeMenuItem{
     
     public NodeRadioMenuItem(HBox node, String text, boolean fat, boolean autoUpdate){
         super(node, text, fat, false);
-        
         this.autoUpdate = autoUpdate;
-        
+        setup();
+    }
+    public NodeRadioMenuItem(HBox node, String text, boolean fat, boolean autoUpdate, boolean hideOnClick){
+        super(node, text, fat, hideOnClick);
+        this.autoUpdate = autoUpdate;
         setup();
     }
     

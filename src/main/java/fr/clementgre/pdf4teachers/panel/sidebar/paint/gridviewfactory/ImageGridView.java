@@ -1,7 +1,10 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ImageGridView extends ShapesGridView<ImageGridElement>{
     
@@ -26,6 +29,8 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
             getItems().sort((o1, o2) -> o1.compareTimeWith(o2) * multiple);
         }else if(SORT_USE.equals(sortType)){
             getItems().sort((o1, o2) -> o1.compareUseWith(o2) * multiple);
+        }else if(SORT_LAST_USE.equals(sortType)){
+            getItems().sort((o1, o2) -> o1.compareUseWith(o2) * multiple);
         }else if(SORT_NAME.equals(sortType)){
             getItems().sort((o1, o2) -> o1.compareNameWith(o2) * multiple);
         }else if(SORT_SIZE.equals(sortType)){
@@ -35,8 +40,17 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         }
     }
     
+    @Override
+    protected List<ImageGridElement> filter(List<ImageGridElement> items){
+        if(TR.tr("galleryWindow.filterAndEditCombo.everywhere").equals(filterType)){
+            return items.stream().filter((e) -> e.getLinkedImageData() != null).collect(Collectors.toList()); // TODO : Favorite filtering
+        }else{
+            return items.stream().filter((e) -> e.getImageIdDirectory().equals(filterType)).collect(Collectors.toList());
+        }
+    }
+    
     public void editImages(List<ImageGridElement> newImagesList){
-        List<ImageGridElement> actualImages = getItems();
+        List<ImageGridElement> actualImages = getAllItems();
     
         // Remove images that are not anymore into the list
         List<ImageGridElement> toRemove = new ArrayList<>();
@@ -44,8 +58,7 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         for(ImageGridElement image : actualImages){
             if(!newImagesList.contains(image)) toRemove.add(image);
         }
-        getItems().removeAll(toRemove);
-        
+        removeItems(toRemove);
         
         // Add images that was added to the list
         List<ImageGridElement> toAdd = new ArrayList<>();
@@ -53,9 +66,7 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         for(ImageGridElement image : newImagesList){
             if(!actualImages.contains(image)) toAdd.add(image);
         }
-        getItems().addAll(toAdd);
-        
-        sort();
+        addItems(toAdd);
     }
     
     public int getImageRenderSize(){

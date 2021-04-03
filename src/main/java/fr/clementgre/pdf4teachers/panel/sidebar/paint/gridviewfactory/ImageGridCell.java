@@ -2,14 +2,29 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.MetadataException;
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.controlsfx.control.GridCell;
 
 import javax.imageio.ImageIO;
@@ -18,11 +33,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
 
 public class ImageGridCell extends GridCell<ImageGridElement>{
     
     private final ImageView imageView;
     private final DropShadow shadow = new DropShadow();
+    
+    private final ContextMenu menu = new ContextMenu();
+    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.isFavorite"), false, true);
+    private final NodeMenuItem addItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
+    private final NodeMenuItem openItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
+    private final NodeMenuItem deleteItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.deleteFile"), false);
     
     public static final int PADDING = 2;
     
@@ -50,6 +72,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         setOnMouseExited((e) -> {
             shadow.setRadius(0);
         });
+    
+        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
         
     }
     
@@ -69,10 +93,44 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
+            setContextMenu(menu);
+            menu.setOnShowing((e) -> {
+                isFavoriteItem.setSelected(item.hasLinkedImageData());
+                addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
+                
+                isFavoriteItem.setOnAction((event) -> {
+                    item.toggleFavorite();
+                });
+                addItem.setOnAction((event) -> {
+                    item.addToDocument();
+                });
+                openItem.setOnAction((event) -> {
+                    PlatformUtils.openDirectory(item.getImageIdDirectory());
+                });
+                deleteItem.setOnAction((event) -> {
+                    if(DialogBuilder.showConfirmationDialog(true, TR.tr("dialog.confirmation.deleteFile.header", item.getImageIdFileName()))){
+                        if(new File(item.getImageId()).delete()){
+                            gridView.removeItems(Collections.singletonList(item));
+                        }else{
+                            System.err.println("Unable to delete file " + item.getImageId());
+                        }
+                    }
+                });
+            });
+            Tooltip tooltip = PaneUtils.genToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
+            tooltip.setShowDelay(Duration.ZERO);
+            if(item.hasLinkedImageData()){
+                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, "yellow", 0, 16, 16);
+                graphic.setPadding(new Insets(0, 5, 0, 0));
+                tooltip.setGraphic(graphic);
+            }
+            setTooltip(tooltip);
             
             setGraphic(imageView);
             setOnMouseClicked((e) -> {
-                System.out.println("clicked on " + item.getImageIdDirectory() + " -> " + item.getImageIdFileName());
+                if(e.getClickCount() >= 2){
+                    item.addToDocument();
+                }
             });
         }
     }

@@ -148,8 +148,13 @@ public class PaintTab extends SideTab{
     public void setup(){
         
         newImage.setOnAction((e) -> {
-            galleryWindow = new GalleryWindow();
-            galleryWindow.setOnCloseRequest(event -> galleryWindow = null);
+            if(galleryWindow != null){
+                galleryWindow.setIconified(false);
+                galleryWindow.requestFocus();
+            }else{
+                galleryWindow = new GalleryWindow();
+            }
+            
         });
 
 

@@ -31,7 +31,7 @@ public class DirFilterListCell extends ListCell<String>{
             setGraphic(null);
             setText(null);
             setStyle(null);
-        }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere"))){
+        }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere")) || item.equals(TR.tr("galleryWindow.filterAndEditCombo.favourites"))){
             Label text = new Label(item);
             text.setStyle("-fx-font-size: 12;");
             PaneUtils.setHBoxPosition(text, 0, 18, 0);
