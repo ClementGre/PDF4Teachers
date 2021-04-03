@@ -58,6 +58,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         
         imageView.fitWidthProperty().bind(widthProperty().subtract(2*PADDING));
         imageView.fitHeightProperty().bind(heightProperty().subtract(2*PADDING));
+        imageView.setTranslateX(PADDING);
+        imageView.setTranslateY(PADDING);
         
         shadow.setColor(Color.web("#0078d7"));
         shadow.setSpread(.90);

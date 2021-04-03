@@ -36,10 +36,10 @@ public class GalleryWindow extends Stage{
     private final HBox settings = new HBox();
     private final GridPane sortPanel = new GridPane();
     public final ComboBox<String> filter = new ComboBox<>();
-    protected final SliderWithoutPopup zoomSlider = new SliderWithoutPopup(50, 500, 1);
+    protected final SliderWithoutPopup zoomSlider = new SliderWithoutPopup(50, 500, 150);
     private final Button reload = new Button();
     
-    private final ImageGridView list = new ImageGridView(false, 150, 500);
+    private final ImageGridView list = new ImageGridView(false,500, zoomSlider);
     
     public GalleryWindow(){
         
@@ -79,27 +79,9 @@ public class GalleryWindow extends Stage{
             }
             
         });
-    
-        // ZOOM FEATURE
-        list.addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
-            e.consume();
-            zoomSlider.setValue(zoomSlider.getValue() * e.getZoomFactor());
-        });
-        list.addEventFilter(ScrollEvent.SCROLL, e -> {
-            if(e.isControlDown()){
-                e.consume();
-                if(e.getDeltaY() < 0){
-                    zoomSlider.setValue(zoomSlider.getValue() + e.getDeltaY());
-                }else if(e.getDeltaY() > 0){
-                    zoomSlider.setValue(zoomSlider.getValue() + e.getDeltaY());
-                }
-            }
-        
-        });
         
         list.prefHeightProperty().bind(heightProperty());
         list.prefWidthProperty().bind(widthProperty());
-        zoomSlider.valueProperty().bindBidirectional(list.cellSizeProperty());
         
         setup();
         show();
@@ -155,8 +137,16 @@ public class GalleryWindow extends Stage{
     }
     public void reloadImageList(){
         list.editImages(getImages());
+        if(MainWindow.paintTab.gallery.isLoaded()){
+            MainWindow.paintTab.gallery.reloadImageList();
+        }
     }
-    private List<ImageGridElement> getImages(){
+    
+    public List<ImageGridElement> getListItems(){
+        return list.getAllItems();
+    }
+    
+    public static List<ImageGridElement> getImages(){
         return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId())).collect(Collectors.toList());
     }
 }

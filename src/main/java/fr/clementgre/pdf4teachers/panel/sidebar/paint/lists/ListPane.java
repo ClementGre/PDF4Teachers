@@ -1,7 +1,9 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -12,49 +14,45 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import org.controlsfx.control.GridView;
 
 public abstract class ListPane<T> extends TitledPane{
     
+    public static final int TYPE_FAVOURITES_VECTORS = 0;
+    public static final int TYPE_FAVOURITES_IMAGES = 1;
+    public static final int TYPE_LAST_VECTORS = 2;
+    public static final int TYPE_GALLERY = 3;
+    
     private final IntegerProperty type = new SimpleIntegerProperty();
+    private boolean isLoaded = false;
     
     // TITLE
-    protected Label title = new Label();
-    protected HBox graphics = new HBox();
-    protected SortManager sortManager;
-    protected ToggleButton sortToggleBtn = new ToggleButton("");
+    protected final Label title = new Label();
+    protected final HBox graphics = new HBox();
+    protected final Slider zoomSlider = new Slider(1, 5, 3);
+    protected final ToggleButton sortToggleBtn = new ToggleButton("");
     
     // CONTENT
     protected final VBox root = new VBox();
-    protected final GridView<T> list = new GridView<>();
-    protected GridPane sortPanel = new GridPane();
+    protected final GridPane sortPanel = new GridPane();
     
-    
-    public ListPane(){
+    protected PaintTab paintTab;
+    public ListPane(PaintTab paintTab){
+        this.paintTab = paintTab;
+        setExpanded(false);
         getStyleClass().add("paint-tab-titled-pane");
         
-        sortManager = new SortManager((sortType, order) -> {
-        
-        }, null);
-        sortManager.setup(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_FILE_EDIT_TIME);
-        
-        root.getChildren().add(list);
         setContent(root);
-    
         Platform.runLater(this::setupGraphics);
     }
     
-    private void setupGraphics(){
-        title.setText(getTitle());
+    protected void setupGraphics(){
         
-        PaneUtils.setPosition(sortToggleBtn, 0, 0, 26, 26, true);
+        title.setText(getTitle());
+        PaneUtils.setHBoxPosition(sortToggleBtn,26, 26, new Insets(0, 0, 0, 5));
         sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
         sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("sorting.name")));
     
@@ -71,23 +69,22 @@ public abstract class ListPane<T> extends TitledPane{
             }
         });
         
+        zoomSlider.setBlockIncrement(1);
+        zoomSlider.setPrefWidth(75);
+        
         graphics.minWidthProperty().bind(widthProperty());
-        graphics.setPadding(new Insets(0, 30, 0, 0));
+        graphics.setPadding(new Insets(0, 24, 0, 0));
         graphics.setAlignment(Pos.CENTER);
         
-        graphics.getChildren().addAll(title, new HBoxSpacer(), sortToggleBtn);
+        graphics.getChildren().addAll(title, new HBoxSpacer(), zoomSlider, sortToggleBtn);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         setGraphic(graphics);
         
     }
     
-    public void updateGraphics(){
-        sortManager.updateGraphics();
-    }
+    public abstract void updateGraphics();
     
-    public GridView<T> getList(){
-        return list;
-    }
+    public abstract ShapesGridView<T> getList();
     
     private String getTitle(){
         if(isFavouriteVectors()){
@@ -122,5 +119,10 @@ public abstract class ListPane<T> extends TitledPane{
     public boolean isGallery(){
         return getType() == 3;
     }
-    
+    public boolean isLoaded(){
+        return isLoaded;
+    }
+    protected void setLoaded(Boolean loaded){
+        this.isLoaded = loaded;
+    }
 }

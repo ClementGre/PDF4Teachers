@@ -59,6 +59,7 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.panel.sidebar.grades;
     exports fr.clementgre.pdf4teachers.panel.sidebar.paint;
     exports fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
     exports fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
     exports fr.clementgre.pdf4teachers.utils;
     exports fr.clementgre.pdf4teachers.utils.dialog;

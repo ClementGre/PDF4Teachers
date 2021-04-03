@@ -22,7 +22,7 @@ public class SortManager{
 
     public String selectedColor = "#0078d7";
 
-    private SortEvent updateSort;
+    private final SortEvent updateSort;
 
     public SortManager(SortEvent updateSort, String selectedColor){
         if(selectedColor != null) this.selectedColor = selectedColor;

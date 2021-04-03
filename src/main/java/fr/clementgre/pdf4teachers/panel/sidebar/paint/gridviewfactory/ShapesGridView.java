@@ -2,10 +2,17 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Orientation;
 import javafx.scene.CacheHint;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.Slider;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.GridView;
 
@@ -29,16 +36,43 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     public final boolean defineCellSizeAsRowNumber;
     protected String filterType = null;
     
+    private final Slider zoomSlider;
     private final SortManager sortManager;
     
     private final List<T> nonFilteredItems = new ArrayList<>();
     
-    public ShapesGridView(boolean defineCellSizeAsRowNumber, int cellSize){
+    public ShapesGridView(boolean defineCellSizeAsRowNumber, Slider zoomSlider){
         super();
         this.defineCellSizeAsRowNumber = defineCellSizeAsRowNumber;
+        this.zoomSlider = zoomSlider;
         sortManager = new SortManager(this::sort, null);
         
-        setCellSize(cellSize);
+        setCellSize(getZoomSliderValue());
+        zoomSlider.valueProperty().bindBidirectional(cellSizeProperty());
+        zoomSlider.setMajorTickUnit(1);
+        zoomSlider.setMinorTickCount(0);
+        zoomSlider.setSnapToTicks(true);
+        
+    
+        addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
+            e.consume();
+            if(defineCellSizeAsRowNumber){
+                setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.clamp(e.getZoomFactor(), -1, 1)) );
+            }else{
+                setZoomSliderValue((int) (getZoomSliderValue() * e.getZoomFactor()));
+            }
+        });
+        addEventFilter(ScrollEvent.SCROLL, e -> {
+            if(e.isControlDown()){
+                e.consume();
+                if(defineCellSizeAsRowNumber){
+                    setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.clamp(e.getDeltaY(), -1, 1)) );
+                }else{
+                    setZoomSliderValue((int) (getZoomSliderValue() + e.getDeltaY()));
+                }
+            }
+        });
+        
         setup();
     }
     
@@ -65,6 +99,13 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         updateCellSize();
     }
     
+    private int getZoomSliderValue(){
+       return (int) zoomSlider.getValue();
+    }
+    private void setZoomSliderValue(int value){
+        zoomSlider.setValue(value);
+    }
+    
     public void setItems(List<T> items){
         nonFilteredItems.clear();
         nonFilteredItems.addAll(items);
@@ -85,11 +126,15 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     private void updateCellSize(){
         int columns;
         if(defineCellSizeAsRowNumber) columns = getCellSize();
-        else columns = Math.max(1, ((int) getWidth() - 20) / cellSize.get());
-        
-        double newCellSize = (getWidth() - 20) / columns;
+        else columns = Math.max(1, ((int) getWidth() - getScrollBarWidth() - 6) / cellSize.get());
+    
+        double newCellSize = (getWidth() - getScrollBarWidth() - 6) / columns;
         setCellWidth(newCellSize);
         setCellHeight(newCellSize);
+    }
+    
+    private int getScrollBarWidth(){
+        return 14;
     }
     
     public void setupSortManager(GridPane parent, String selectedButtonName, String... buttonsName){

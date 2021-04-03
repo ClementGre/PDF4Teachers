@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import javafx.scene.control.Slider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +11,8 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     
     private final int imageRenderSize;
     
-    public ImageGridView(boolean defineCellSizeAsRowNumber, int cellSize, int imageRenderSize){
-        super(defineCellSizeAsRowNumber, cellSize);
+    public ImageGridView(boolean defineCellSizeAsRowNumber, int imageRenderSize, Slider zoomSlider){
+        super(defineCellSizeAsRowNumber, zoomSlider);
         this.imageRenderSize = imageRenderSize;
         
     }

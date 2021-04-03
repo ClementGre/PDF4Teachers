@@ -88,7 +88,7 @@ CheckBox {
 .slider-without-popup  {
     -show-value-on-interaction: false;
 }
-.slider-without-popup .thumb {
+.slider .thumb {
     -fx-padding: 9 3;
 }
 
