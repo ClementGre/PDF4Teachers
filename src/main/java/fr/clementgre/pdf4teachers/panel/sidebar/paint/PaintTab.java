@@ -14,9 +14,11 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.WindowEvent;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -78,6 +80,9 @@ public class PaintTab extends SideTab{
     public VectorListPane lastVectors;
     public ImageListPane gallery;
     
+    // WINDOWS
+    
+    public GalleryWindow galleryWindow = null;
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -143,7 +148,8 @@ public class PaintTab extends SideTab{
     public void setup(){
         
         newImage.setOnAction((e) -> {
-            new GalleryWindow();
+            galleryWindow = new GalleryWindow();
+            galleryWindow.setOnCloseRequest(event -> galleryWindow = null);
         });
 
 

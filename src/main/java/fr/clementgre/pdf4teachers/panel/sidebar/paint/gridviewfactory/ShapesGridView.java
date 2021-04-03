@@ -80,4 +80,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     public ExecutorService getExecutor(){
         return executor;
     }
+    public SortManager getSortManager(){
+        return sortManager;
+    }
 }

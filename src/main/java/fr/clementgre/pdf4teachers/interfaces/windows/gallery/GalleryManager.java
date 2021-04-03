@@ -26,7 +26,7 @@ public class GalleryManager{
             }catch(SecurityException e){
                 e.printStackTrace(); return false;
             }
-        }).collect(Collectors.toList());
+        }).distinct().collect(Collectors.toList());
     }
     public static void setSavePathsFiles(List<File> newPaths){
         setSavePaths(newPaths.stream().map(File::getAbsolutePath).collect(Collectors.toList()));
@@ -41,8 +41,10 @@ public class GalleryManager{
     }
     public static void addSavePath(String path){
         List<String> paths = getSavePaths();
-        paths.add(path);
-        setSavePaths(paths);
+        if(!paths.contains(path)){
+            paths.add(path);
+            setSavePaths(paths);
+        }
     }
     
     // IMAGES

@@ -65,8 +65,10 @@ public class ExifUtils{
     
         ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         if(exifIFD0Directory != null){
-            int rotation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
-            return convertOrientationToTransform(rotation);
+            if(exifIFD0Directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)){
+                int rotation = exifIFD0Directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+                return convertOrientationToTransform(rotation);
+            }
         }
         return ImageTransform.NONE;
     }
@@ -75,11 +77,18 @@ public class ExifUtils{
     
         ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         if(directory != null){
-            return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+            if(directory.containsTag(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)){
+                return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
+            }
         }
     
         BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-        return new Date(attr.lastModifiedTime().toMillis());
+        if(attr != null && attr.lastModifiedTime() != null){
+            return new Date(attr.lastModifiedTime().toMillis());
+        }else{
+            return new Date(0);
+        }
+        
     }
     public long getImageSize(){
         return FilesUtils.getSize(file);

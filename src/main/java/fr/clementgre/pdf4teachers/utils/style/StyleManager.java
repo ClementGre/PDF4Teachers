@@ -72,6 +72,7 @@ public class StyleManager{
     
     private static void putStylesAuto(){
         new JMetro(MainWindow.notificationPane, DEFAULT_STYLE);
+        if(MainWindow.paintTab.galleryWindow != null) MainWindow.paintTab.galleryWindow.updateStyle();
         
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();
