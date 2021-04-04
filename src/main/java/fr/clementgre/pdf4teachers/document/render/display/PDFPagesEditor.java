@@ -26,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -220,7 +221,7 @@ public class PDFPagesEditor{
             int addedPages = file.document.getNumberOfPages();
             try{
                 merger.appendDocument(this.document, file.document);
-                merger.mergeDocuments();
+                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
             }catch(IOException e){
                 e.printStackTrace();
             }
@@ -280,7 +281,7 @@ public class PDFPagesEditor{
                 int addedPages = fileDoc.getNumberOfPages();
                 try{
                     merger.appendDocument(this.document, fileDoc);
-                    merger.mergeDocuments();
+                    merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
                 }catch(IOException e){
                     e.printStackTrace();
                 }

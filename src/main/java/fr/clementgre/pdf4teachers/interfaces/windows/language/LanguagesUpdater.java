@@ -288,10 +288,8 @@ public class LanguagesUpdater{
         if(TR.getLanguagesConfig().containsKey(language.getName())){
             Object existing = TR.getLanguagesConfig().get(language.getName());
             if(existing instanceof HashMap){
-                HashMap<String, Object> existingLanguage = (HashMap<String, Object>) existing;
-                if(((int) existingLanguage.get("version")) >= language.getVersion()){
-                    return true;
-                }
+                HashMap<?, ?> existingLanguage = (HashMap<?, ?>) existing;
+                return ((int) existingLanguage.get("version")) >= language.getVersion();
             }
         }
         return false;

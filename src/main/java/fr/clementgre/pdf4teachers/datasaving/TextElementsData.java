@@ -47,7 +47,7 @@ public class TextElementsData{
                     for(Map.Entry<String, Object> list : config.getSection("lists").entrySet()){
                         if(list.getValue() instanceof List){
                             ArrayList<TextListItem> listTexts = new ArrayList<>();
-                            for(Object data : ((List<Object>) list.getValue())){
+                            for(Object data : ((List<?>) list.getValue())){
                                 listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
                             }
                             TextTreeSection.lists.put(list.getKey(), listTexts);

@@ -40,17 +40,18 @@ public class DirFilterListCell extends ListCell<String>{
             setStyle(null);
         }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"))){
             Button add = new Button(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
-            PaneUtils.setHBoxPosition(add, 0, 30, 0);
+            PaneUtils.setHBoxPosition(add, 0, 30, 10, 0);
     
             add.setOnMousePressed((e) -> {
                 Platform.runLater(() -> {
                     File dir = DialogBuilder.showDirectoryDialog(false);
                     if(dir != null){
-                        GalleryManager.addSavePath(dir.getAbsolutePath());
-                        gallery.updateComboBoxItems();
-                        gallery.reloadImageList();
+                        PlatformUtils.runLaterOnUIThread(100, () -> {
+                            GalleryManager.addSavePath(dir.getAbsolutePath());
+                            gallery.updateComboBoxItems();
+                            gallery.reloadImageList();
+                        });
                     }
-                    Platform.runLater(gallery.filter::show);
                 });
             });
     

@@ -258,7 +258,8 @@ public class FileTab extends SideTab{
         originalFiles.clear();
         originalFiles.addAll(MainWindow.filesTab.files.getItems());
     }
-    
+
+    @SuppressWarnings("unchecked")
     public void backOpenFilesList(boolean reverse){
         files.getItems().clear();
         ArrayList<File> openedFilesList = (ArrayList<File>) originalFiles.clone();

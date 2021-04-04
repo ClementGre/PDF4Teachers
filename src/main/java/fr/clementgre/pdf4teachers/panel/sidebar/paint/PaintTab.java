@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import javax.swing.plaf.PanelUI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -110,6 +112,11 @@ public class PaintTab extends SideTab{
 
         vectorStrokeWidth.getValueFactory().setConverter(new StringToIntConverter(0));
 
+        PaneUtils.setPosition(spinnerX, 0, 0, -1, 26, true);
+        PaneUtils.setPosition(spinnerY, 0, 0, -1, 26, true);
+        PaneUtils.setPosition(spinnerWidth, 0, 0, -1, 26, true);
+        PaneUtils.setPosition(spinnerHeight, 0, 0, -1, 26, true);
+
         spinnerX.getValueFactory().setConverter(new StringToIntConverter(0));
         spinnerY.getValueFactory().setConverter(new StringToIntConverter(0));
         spinnerWidth.getValueFactory().setConverter(new StringToIntConverter(0));
@@ -117,9 +124,12 @@ public class PaintTab extends SideTab{
 
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerX.getValueFactory()).setMax((int) Element.GRID_WIDTH);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMax((int) Element.GRID_HEIGHT);
-        //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).maxProperty().bind();
-        //((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).maxProperty().bind();
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).setMax((int) Element.GRID_WIDTH);
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).setMax((int) Element.GRID_HEIGHT);
 
+        PaneUtils.setHBoxPosition(path, 0, 30, 0);
+        PaneUtils.setHBoxPosition(vectorUndoPath, 30, 30, 0);
+        PaneUtils.setHBoxPosition(browsePath, 0, 30, 0);
         
         repeatMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RepeatMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
@@ -132,7 +142,6 @@ public class PaintTab extends SideTab{
         rotateMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RotateMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         rotateMode.getSelectionModel().select(0);
-        
         
         translate();
         setup();

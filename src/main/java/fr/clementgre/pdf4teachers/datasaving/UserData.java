@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
-
+@SuppressWarnings("unchecked")
 public class UserData{
     
     @UserDataObject(path = "lastOpenDir")
@@ -265,7 +265,7 @@ public class UserData{
                     for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){
                         if(list.getValue() instanceof List){
                             ArrayList<TextListItem> listTexts = new ArrayList<>();
-                            for(Object data : ((List<Object>) list.getValue())){
+                            for(Object data : ((List<?>) list.getValue())){
                                 listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
                             }
                             TextTreeSection.lists.put(list.getKey().toString(), listTexts);

@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unchecked")
 public class Config{
     
     public HashMap<String, Object> base = new HashMap<>();
@@ -94,7 +95,7 @@ public class Config{
         if(list instanceof List) return (ArrayList<Object>) list;
         return new ArrayList<>();
     }
-    
+
     public static HashMap<String, Object> castSection(Object list){
         if(list instanceof Map) return (HashMap<String, Object>) list;
         return new HashMap<>();

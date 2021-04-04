@@ -233,7 +233,8 @@ public class EditionExporter{
                     return Collections.singletonList(MainWindow.mainScreen.document.getFile());
                 }
             }
-            
+
+            @SuppressWarnings("unchecked")
             @Override
             public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{
                 if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile()))
@@ -250,8 +251,8 @@ public class EditionExporter{
                     List<Object> grades = config.getList("grades");
                     for(Object grade : grades){
                         if(grade instanceof HashMap){
-                            ((HashMap) grade).put("value", -1);
-                            ((HashMap) grade).remove("alwaysVisible");
+                            ((HashMap<String, Object>) grade).put("value", -1);
+                            ((HashMap<?, ?>) grade).remove("alwaysVisible");
                         }
                     }
                     newBase.put("grades", grades);

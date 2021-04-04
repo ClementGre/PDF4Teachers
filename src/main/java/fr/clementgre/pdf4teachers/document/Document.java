@@ -32,28 +32,23 @@ public class Document{
     public int totalPages;
     
     public PDFPagesRender pdfPagesRender;
-    
-    public Thread documentSaver = new Thread(new Runnable(){
-        @Override
-        public void run(){
-            
-            while(true){
-                if(Main.settings.regularSave.getValue() != -1){
-                    try{
-                        Thread.sleep(Main.settings.regularSave.getValue() * 60000);
-                    }catch(InterruptedException e){
-                        e.printStackTrace();
-                    }
-                    
-                    if(!Edition.isSave()) Platform.runLater(() -> edition.save());
-                    
-                }else{
-                    try{
-                        Thread.sleep(60000);
-                    }catch(InterruptedException e){
-                        e.printStackTrace();
-                    }
-                }
+
+    private boolean documentSaverNeedToStop = false;
+    public void stopDocumentSaver(){
+        documentSaverNeedToStop = true;
+    }
+    public Thread documentSaver = new Thread(() -> {
+        documentSaverNeedToStop = false;
+        while(!documentSaverNeedToStop){
+            if(Main.settings.regularSave.getValue() != -1){
+                try{
+                    Thread.sleep(Main.settings.regularSave.getValue() * 60000);
+                }catch(InterruptedException e){ e.printStackTrace(); }
+                if(!documentSaverNeedToStop) if(!Edition.isSave()) Platform.runLater(() -> edition.save());
+            }else{
+                try{
+                    Thread.sleep(60000);
+                }catch(InterruptedException e){ e.printStackTrace(); }
             }
         }
     }, "Document AutoSaver");

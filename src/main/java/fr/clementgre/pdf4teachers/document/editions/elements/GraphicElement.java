@@ -1,9 +1,12 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -13,9 +16,9 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 
 public abstract class GraphicElement extends Element{
@@ -90,6 +93,13 @@ public abstract class GraphicElement extends Element{
     }
     
     private Cursor dragType = Cursor.MOVE;
+    protected double shiftXFromEnd = 0;
+    protected double shiftYFromEnd = 0;
+    protected double originWidth = 0;
+    protected double originHeight = 0;
+    protected double originX = 0;
+    protected double originY = 0;
+
     protected void setupGeneral(Node... components){
         super.setupGeneral(false, components);
     
@@ -99,14 +109,10 @@ public abstract class GraphicElement extends Element{
     
         setOnMousePressed(e -> {
             e.consume();
-            shiftX = (int) e.getX();
-            shiftY = (int) e.getY();
-            menu.hide(); select();
+            setupMousePressVars(e, null);
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
-            dragType = getDragCursorType(e.getX(), e.getY());
-            setCursor(dragType);
         });
         
         setOnMouseDragged(e -> {
@@ -114,15 +120,128 @@ public abstract class GraphicElement extends Element{
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
-            }else if(dragType == Cursor.SE_RESIZE){
-                double width = getWidth() + e.getX() - shiftX;
-                double height = getHeight() + e.getX() - shiftY;
-                realWidth.set((int) (width / getPage().getWidth() * Element.GRID_WIDTH));
-                realHeight.set((int) (height / getPage().getHeight() * Element.GRID_HEIGHT));
+
+            }
+            //
+            //              |
+            //            - +
+            else if(dragType == Cursor.SE_RESIZE){
+                double width = e.getX() + shiftXFromEnd;
+                double height = e.getY() + shiftYFromEnd;
+
+                if(width < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
+                if(height < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
+                else checkLocation(getLayoutX(), getLayoutY(), width, height, false, false);
+
+            }else if(dragType == Cursor.S_RESIZE){
+                double height = e.getY() + shiftYFromEnd;
+                if(height < 0) setupMousePressVars(e, Cursor.N_RESIZE);
+                else checkLocation(getLayoutX(), getLayoutY(), getWidth(), height, false, false);
+
+            }else if(dragType == Cursor.E_RESIZE){
+                double width = e.getX() + shiftXFromEnd;
+                if(width < 0) setupMousePressVars(e, Cursor.W_RESIZE);
+                else checkLocation(getLayoutX(), getLayoutY(), width, getHeight(), false, false);
+            }
+            //               +
+            //
+            //          +
+            else if(dragType == Cursor.NE_RESIZE){
+                double width = e.getX() + shiftXFromEnd;
+                double newY = getLayoutY() + e.getY() - shiftY;
+                double height = originHeight + (originY - newY);
+
+                if(width < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
+                if(height < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
+                else checkLocation(getLayoutX(), newY, width, height, false, false);
+
+            }else if(dragType == Cursor.SW_RESIZE){
+                double height = e.getY() + shiftYFromEnd;
+                double newX = getLayoutX() + e.getX() - shiftX;
+                double width = originWidth + (originX - newX);
+
+                if(width < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
+                if(height < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
+                else checkLocation(newX, getLayoutY(), width, height, false, false);
+
+            }
+            //          + -
+            //          |
+            //
+            else if(dragType == Cursor.NW_RESIZE){
+                double newX = getLayoutX() + e.getX() - shiftX;
+                double width = originWidth + (originX - newX);
+                double newY = getLayoutY() + e.getY() - shiftY;
+                double height = originHeight + (originY - newY);
+
+                if(width < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
+                if(height < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
+                else checkLocation(newX, newY, width, height, false, false);
+
+            }else if(dragType == Cursor.N_RESIZE){
+                double newY = getLayoutY() + e.getY() - shiftY;
+                double height = originHeight + (originY - newY);
+
+                if(height < 0) setupMousePressVars(e, Cursor.S_RESIZE);
+                else checkLocation(getLayoutX(), newY, getWidth(), height, false, false);
+
+            }else if(dragType == Cursor.W_RESIZE){
+                double newX = getLayoutX() + e.getX() - shiftX;
+                double width = originWidth + (originX - newX);
+
+                if(width < 0) setupMousePressVars(e, Cursor.E_RESIZE);
+                else checkLocation(newX, getLayoutY(), width, getHeight(), false, false);
+
             }
             
         });
+
+        setOnMouseReleased(e -> {
+            Edition.setUnsave();
+            if(dragType == Cursor.MOVE){
+                double itemX = getLayoutX() + e.getX() - shiftX;
+                double itemY = getLayoutY() + e.getY() - shiftY;
+
+                checkLocation(itemX, itemY, true);
+                PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
+                if(newPage != null){
+                    if(newPage.getPage() != getPageNumber()){
+                        MainWindow.mainScreen.setSelected(null);
+
+                        switchPage(newPage.getPage());
+                        itemY = newPage.getPreciseMouseY() - shiftY;
+                        checkLocation(itemX, itemY, true);
+
+                        MainWindow.mainScreen.setSelected(this);
+                    }
+                }
+                checkLocation(false);
+                onMouseRelease();
+            }else{
+                checkLocation(false);
+                if(getWidth() < 20 || getHeight() < 20){
+                    checkLocation(getLayoutX(), getLayoutY(),
+                            StringUtils.clamp(getWidth(), 20, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 20, (int) GRID_HEIGHT), false, false);
+                }
+            }
+        });
         
+    }
+
+    private void setupMousePressVars(MouseEvent e, Cursor forceDragType){
+        shiftX = (int) e.getX();
+        shiftY = (int) e.getY();
+        shiftXFromEnd = (getWidth() - e.getX());
+        shiftYFromEnd = (getHeight() - e.getY());
+        originWidth = getWidth();
+        originHeight = getHeight();
+        originX = getLayoutX();
+        originY = getLayoutY();
+        menu.hide(); select();
+
+        if(forceDragType != null) dragType = forceDragType;
+        else dragType = getDragCursorType(e.getX(), e.getY());
+        setCursor(dragType);
     }
     
     public Cursor getDragCursorType(double x, double y){

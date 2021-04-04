@@ -60,26 +60,6 @@ public class GalleryWindow extends Stage{
             MainWindow.paintTab.galleryWindow = null;
         });
         
-        filter.setCellFactory(param -> new DirFilterListCell(this));
-        filter.setVisibleRowCount(10);
-        updateComboBoxItems();
-        filter.getSelectionModel().select(0);
-        
-        filter.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == null) return;
-            if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton")) && !newValue.equals(oldValue)){
-                filter.getSelectionModel().select(oldValue);
-                return;
-            }
-            
-            if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere"))){
-                list.setFilterType(null);
-            }else{
-                list.setFilterType(newValue);
-            }
-            
-        });
-        
         list.prefHeightProperty().bind(heightProperty());
         list.prefWidthProperty().bind(widthProperty());
         
@@ -93,7 +73,28 @@ public class GalleryWindow extends Stage{
     private void setupSettings(){
         
         list.setupSortManager(sortPanel, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_NAME, ShapesGridView.SORT_FILE_EDIT_TIME, ShapesGridView.SORT_SIZE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
-        
+
+        filter.setCellFactory(param -> new DirFilterListCell(this));
+        filter.setVisibleRowCount(10);
+        updateComboBoxItems();
+        filter.getSelectionModel().select(0);
+
+        filter.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null) return;
+            if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton")) && !newValue.equals(oldValue)){
+                filter.getSelectionModel().select(oldValue);
+                return;
+            }
+
+            if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere"))){
+                list.setFilterType(null);
+            }else{
+                list.setFilterType(newValue);
+            }
+
+        });
+        filter.setStyle("-fx-padding: 0 5;");
+
         PaneUtils.setHBoxPosition(sortPanel, 0, 26, 0);
         PaneUtils.setHBoxPosition(zoomSlider, 0, 26, 0);
         PaneUtils.setHBoxPosition(filter, 0, 26, 0);

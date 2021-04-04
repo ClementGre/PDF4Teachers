@@ -10,7 +10,7 @@ import javafx.scene.layout.Region;
 public class HBoxSpacer extends Region{
     public HBoxSpacer(){
         HBox.setHgrow(this, Priority.ALWAYS);
-        HBox.setMargin(this, new Insets(0, -10, 0, -10));
+        HBox.setMargin(this, new Insets(0, -7, 0, -7));
         setMaxWidth(Double.MAX_VALUE);
     }
 }

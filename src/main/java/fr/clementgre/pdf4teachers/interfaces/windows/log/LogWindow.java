@@ -36,7 +36,7 @@ public class LogWindow extends Stage{
         setTitle(TR.tr("printStreamWindow.title"));
         setScene(scene);
         setOnCloseRequest(e -> {
-            updater.stop();
+            stopUpdater();
             close();
         });
         new JMetro(scene, Style.DARK);
@@ -58,14 +58,20 @@ public class LogWindow extends Stage{
     }
     
     private Label text = new Label(logs.toString());
+    private boolean needToStopUpdater = false;
+    public void stopUpdater(){
+        needToStopUpdater = true;
+    }
     private Thread updater = new Thread(() -> {
-        while(true){
+        needToStopUpdater = false;
+        try{
+            Thread.sleep(200);
+        }catch(InterruptedException e){ e.printStackTrace(); }
+        while(!needToStopUpdater){
+            Platform.runLater(() -> text.setText(logs.toString()));
             try{
                 Thread.sleep(200);
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
-            Platform.runLater(() -> text.setText(logs.toString()));
+            }catch(InterruptedException e){ e.printStackTrace(); }
         }
     });
     
@@ -78,8 +84,7 @@ public class LogWindow extends Stage{
         
         root.getChildren().add(text);
         root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-        
-        
+
         updater.start();
     }
     

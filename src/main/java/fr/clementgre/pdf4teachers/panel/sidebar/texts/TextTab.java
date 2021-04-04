@@ -94,7 +94,7 @@ public class TextTab extends SideTab{
         //fontCombo.setEditable(true);
         
         PaneUtils.setHBoxPosition(fontCombo, -1, 30, 2.5);
-        fontCombo.setStyle("-fx-font-size: 13; -fx-border: null;");
+        fontCombo.setStyle("-fx-font-size: 13; -fx-border: null; -fx-padding: 0 4;");
         fontCombo.getSelectionModel().select("Open Sans");
         fontCombo.setMaxHeight(25);
         fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));

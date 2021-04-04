@@ -220,7 +220,7 @@ public class DialogBuilder{
         return null;
     }
     
-    public static void setupDialog(Dialog dialog){
+    public static void setupDialog(Dialog<?> dialog){
         
         ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(PaneUtils.class.getResource("/logo.png") + ""));
         StyleManager.putStyle(dialog.getDialogPane(), Style.DEFAULT);

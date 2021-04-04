@@ -28,7 +28,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     public static final String SORT_FILE_EDIT_TIME = TR.tr("sorting.sortType.fileEditTime");
     public static final String SORT_NAME = TR.tr("sorting.sortType.name");
     public static final String SORT_FOLDER = TR.tr("sorting.sortType.folder");
-    public static final String SORT_SIZE= TR.tr("sorting.sortType.fileSize");
+    public static final String SORT_SIZE = TR.tr("sorting.sortType.fileSize");
     
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     
@@ -57,7 +57,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             e.consume();
             if(defineCellSizeAsRowNumber){
-                setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.clamp(e.getZoomFactor(), -1, 1)) );
+                setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.averageNegativeOrPositive(e.getZoomFactor()-1, -1, 1)) );
             }else{
                 setZoomSliderValue((int) (getZoomSliderValue() * e.getZoomFactor()));
             }

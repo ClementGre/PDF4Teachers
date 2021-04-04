@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.Cursor;
@@ -67,31 +68,30 @@ public abstract class Element extends Region{
         setCursor(Cursor.MOVE);
         
         //////////////////////////// EVENTS ///////////////////////////////////
-        
-        setOnMouseReleased(e -> {
-            Edition.setUnsave();
-            double itemX = getLayoutX() + e.getX() - shiftX;
-            double itemY = getLayoutY() + e.getY() - shiftY;
-            
-            checkLocation(itemX, itemY, true);
-            
-            PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
-            if(newPage != null){
-                if(newPage.getPage() != getPageNumber()){
-                    MainWindow.mainScreen.setSelected(null);
-                    
-                    switchPage(newPage.getPage());
-                    itemY = newPage.getPreciseMouseY() - shiftY;
-                    checkLocation(itemX, itemY, true);
-                    
-                    MainWindow.mainScreen.setSelected(this);
-                }
-            }
-            checkLocation(false);
-            onMouseRelease();
-        });
-    
+
         if(defineMoveEvents){
+            setOnMouseReleased(e -> {
+                Edition.setUnsave();
+                double itemX = getLayoutX() + e.getX() - shiftX;
+                double itemY = getLayoutY() + e.getY() - shiftY;
+
+                checkLocation(itemX, itemY, true);
+
+                PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
+                if(newPage != null){
+                    if(newPage.getPage() != getPageNumber()){
+                        MainWindow.mainScreen.setSelected(null);
+
+                        switchPage(newPage.getPage());
+                        itemY = newPage.getPreciseMouseY() - shiftY;
+                        checkLocation(itemX, itemY, true);
+
+                        MainWindow.mainScreen.setSelected(this);
+                    }
+                }
+                checkLocation(false);
+                onMouseRelease();
+            });
             setOnMousePressed(e -> {
                 e.consume();
         
@@ -135,20 +135,31 @@ public abstract class Element extends Region{
     public void checkLocation(boolean allowSwitchPage){
         checkLocation(getLayoutX(), getLayoutY(), allowSwitchPage);
     }
-    
     public void checkLocation(double itemX, double itemY, boolean allowSwitchPage){
-        double height = getHeight();
-        double width = getWidth();
-        
+        checkLocation(itemX, itemY, getWidth(), getHeight(), false, allowSwitchPage);
+    }
+    public void checkLocation(double itemX, double itemY, double width, double height, boolean keepRatio, boolean allowSwitchPage){
+
         if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
         if(getPageNumber() == MainWindow.mainScreen.document.totalPages - 1 || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
-        
+
         if(itemX < 0) itemX = 0;
         if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
-        
+
         realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
+        if(this instanceof GraphicElement){
+            if(getHeight() != height){
+                int value = (int) (height / getPage().getHeight() * Element.GRID_HEIGHT);
+                ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
+            }
+
+            if(getWidth() != width){
+                int value = (int) (width / getPage().getWidth() * Element.GRID_WIDTH);
+                ((GraphicElement) this).setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
+            }
+        }
     }
     
     // ACTIONS

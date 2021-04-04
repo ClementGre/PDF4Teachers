@@ -343,7 +343,7 @@ public class MainScreen extends Pane{
                     }
                 }else document.edition.save();
             }
-            document.documentSaver.stop();
+            document.stopDocumentSaver();
             document.close();
             document = null;
         }

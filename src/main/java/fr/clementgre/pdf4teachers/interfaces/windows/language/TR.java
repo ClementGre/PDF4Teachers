@@ -185,7 +185,7 @@ public class TR{
         HashMap<String, Object> languages = getLanguagesConfig();
         for(Map.Entry<String, Object> language : languages.entrySet()){
             if(shortName.equals(language.getKey())){
-                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                HashMap<?, ?> data = (HashMap<?, ?>) language.getValue();
                 return (String) data.get("name");
             }
         }
@@ -196,7 +196,7 @@ public class TR{
         HashMap<String, Object> languages = getLanguagesConfig();
         for(Map.Entry<String, Object> language : languages.entrySet()){
             if(shortName.equals(language.getKey())){
-                HashMap<String, Object> data = (HashMap<String, Object>) language.getValue();
+                HashMap<?, ?> data = (HashMap<?, ?>) language.getValue();
                 return (int) data.get("version");
             }
         }

@@ -26,6 +26,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unchecked")
 public class Edition{
     
     private File file;
@@ -177,7 +178,7 @@ public class Edition{
         for(Map.Entry<String, Object> pageData : data){
             Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
-        
+
             for(Object elementData : ((List<Object>) pageData.getValue())){
                 if(elementData instanceof HashMap) addCallBack.call(Map.entry(page, (HashMap<String, Object>) elementData));
             }
@@ -260,8 +261,8 @@ public class Edition{
             vectors = countSection(config.getSection("vectors"));
             
             for(Object data : config.getList("grades")){
-                if(data instanceof Map){
-                    double[] stats = GradeElement.getYAMLDataStats((HashMap<String, Object>) data);
+                if(data instanceof HashMap){
+                    double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
                     if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
                     if(stats[0] != -1) grades++;
                     allGrades++;
@@ -269,6 +270,14 @@ public class Edition{
             }
             
             return new double[]{text + grades + images + vectors, text, grades, images+vectors, totalGrade[0], totalGrade[1], allGrades};
+        }
+    }
+
+    public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
+        try {
+            return clazz.cast(o);
+        } catch(ClassCastException e) {
+            return null;
         }
     }
     
@@ -281,6 +290,7 @@ public class Edition{
         }
         return count;
     }
+
     
     // get YAML file from PDF file
     public static File getEditFile(File pdfFile){

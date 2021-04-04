@@ -112,6 +112,9 @@ public class StringUtils{
     public static double clamp(double val, double min, double max){
         return Math.max(min, Math.min(max, val));
     }
+    public static double averageNegativeOrPositive(double val, double negative, double positive){
+        return val < 0 ? negative : positive;
+    }
     
     public static float clamp(float val, float min, float max){
         return Math.max(min, Math.min(max, val));

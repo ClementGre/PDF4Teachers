@@ -29,7 +29,8 @@ public class TextTreeView extends TreeView<String>{
     public TextTreeFavorites favoritesSection = new TextTreeFavorites();
     public TextTreeLasts lastsSection = new TextTreeLasts();
     public TextTreeOnFile onFileSection = new TextTreeOnFile();
-    
+
+    @SuppressWarnings("unchecked")
     public TextTreeView(Pane pane){
         
         setMaxWidth(400);

@@ -21,6 +21,7 @@ public class SortManager{
     private ObjectPropertyBase<Button> selectedButton = new SimpleObjectProperty<>();
 
     public String selectedColor = "#0078d7";
+    private final String BUTTON_STYLE = "-fx-padding: 0 5";
 
     private final SortEvent updateSort;
 
@@ -43,6 +44,7 @@ public class SortManager{
             button.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/Sort/up.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
+            button.setPrefHeight(26);
             GridPane.setHgrow(button, Priority.ALWAYS);
             BooleanProperty order = new SimpleBooleanProperty(true);
             buttons.put(button, order);
@@ -50,8 +52,8 @@ public class SortManager{
 
             if(selectedButtonName.equals(buttonName)){
                 selectedButton.set(button);
-                button.setStyle("-fx-background-color: " + selectedColor + ";");
-            }else button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+                button.setStyle(BUTTON_STYLE + "; -fx-background-color: " + selectedColor + ";");
+            }else button.setStyle(BUTTON_STYLE + "; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
 
             // Image de l'ordre
             order.addListener(new ChangeListener<>(){
@@ -71,13 +73,13 @@ public class SortManager{
         }
         if(selectedButton.get() == null){
             selectedButton.set(buttons.keySet().iterator().next());
-            buttons.keySet().iterator().next().setStyle("-fx-background-color: " + selectedColor);
+            buttons.keySet().iterator().next().setStyle(BUTTON_STYLE + "; -fx-background-color: " + selectedColor);
         }
 
         // Couleurs des boutons
         selectedButton.addListener((observableValue, lastSelected, newSelected) -> {
-            lastSelected.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
-            newSelected.setStyle("-fx-background-color: " + selectedColor + ";");
+            lastSelected.setStyle(BUTTON_STYLE + "; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            newSelected.setStyle(BUTTON_STYLE + "; -fx-background-color: " + selectedColor + ";");
             updateSort.call(newSelected.getText(), buttons.get(newSelected).get());
         });
     }

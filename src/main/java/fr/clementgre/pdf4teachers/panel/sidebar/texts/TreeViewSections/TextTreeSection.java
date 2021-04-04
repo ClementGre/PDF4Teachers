@@ -25,8 +25,8 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-public abstract class TextTreeSection extends TreeItem{
+@SuppressWarnings("unchecked")
+public abstract class TextTreeSection extends TreeItem<String>{
     
     public static final int FAVORITE_TYPE = 1;
     public static final int LAST_TYPE = 2;
@@ -52,7 +52,8 @@ public abstract class TextTreeSection extends TreeItem{
         
         setup();
     }
-    
+
+
     public void setup(){
         
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {

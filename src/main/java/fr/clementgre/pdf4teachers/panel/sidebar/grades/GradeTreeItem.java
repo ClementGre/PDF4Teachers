@@ -26,7 +26,7 @@ import javafx.scene.text.Text;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-public class GradeTreeItem extends TreeItem{
+public class GradeTreeItem extends TreeItem<String>{
     
     private GradeElement core;
     
