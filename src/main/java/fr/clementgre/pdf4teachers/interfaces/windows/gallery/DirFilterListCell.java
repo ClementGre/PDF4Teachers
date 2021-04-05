@@ -43,8 +43,8 @@ public class DirFilterListCell extends ListCell<String>{
             PaneUtils.setHBoxPosition(add, 0, 30, 10, 0);
     
             add.setOnMousePressed((e) -> {
-                Platform.runLater(() -> {
-                    File dir = DialogBuilder.showDirectoryDialog(false);
+                PlatformUtils.runLaterOnUIThread(100, () -> {
+                    File dir = DialogBuilder.showDirectoryDialog(false, gallery);
                     if(dir != null){
                         PlatformUtils.runLaterOnUIThread(100, () -> {
                             GalleryManager.addSavePath(dir.getAbsolutePath());

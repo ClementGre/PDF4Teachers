@@ -44,11 +44,10 @@ public class Main extends Application{
     
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
-        System.out.println("Starting PDF4Teachers...");
+        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
         
         ///// START APP /////
         launch(args);
-        
     }
     
     @Override

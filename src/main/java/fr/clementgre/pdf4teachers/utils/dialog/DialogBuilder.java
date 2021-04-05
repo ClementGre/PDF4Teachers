@@ -192,11 +192,14 @@ public class DialogBuilder{
     }
     
     public static File showDirectoryDialog(boolean syncWithLastOpenDir){
+        return showDirectoryDialog(syncWithLastOpenDir, Main.window);
+    }
+    public static File showDirectoryDialog(boolean syncWithLastOpenDir, Stage window){
         final DirectoryChooser chooser = new DirectoryChooser();
         chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
         chooser.setInitialDirectory((syncWithLastOpenDir && new File(MainWindow.userData.lastOpenDir).exists()) ? new File(MainWindow.userData.lastOpenDir) : new File(System.getProperty("user.home")));
         
-        File file = chooser.showDialog(Main.window);
+        File file = chooser.showDialog(window);
         if(file != null){
             if(!file.exists()) return null;
             if(syncWithLastOpenDir) MainWindow.userData.lastOpenDir = file.getAbsolutePath();

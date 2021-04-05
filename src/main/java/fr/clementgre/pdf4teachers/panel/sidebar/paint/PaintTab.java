@@ -177,6 +177,7 @@ public class PaintTab extends SideTab{
         });
         
         MainWindow.mainScreen.selected.addListener(this::updateSelected);
+        updateSelected(null, null, null);
     }
     
     public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
@@ -195,6 +196,7 @@ public class PaintTab extends SideTab{
         
         // Load/Bind data
         if(newValue instanceof GraphicElement){
+            
             if(newValue instanceof VectorElement){ // Vector
             
             }else{ // Image

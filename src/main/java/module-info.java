@@ -21,7 +21,7 @@ open module fr.clementgre.pdf4teachers {
     // jfx addons
     requires org.jfxtras.styles.jmetro;
     requires org.controlsfx.controls;
-
+    
     // data parsing/encoding
     requires org.yaml.snakeyaml;
     requires com.fasterxml.jackson.core;
@@ -31,6 +31,7 @@ open module fr.clementgre.pdf4teachers {
     requires jlatexmath;
 
     // JAVAFX
+    
 
     requires javafx.base;
     requires javafx.controls;

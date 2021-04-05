@@ -25,8 +25,8 @@ public class SideBar extends TabPane{
     
     public static Tab draggingTab = null;
     
-    public static int DEFAULT_WIDTH = 270;
-    public static int MAX_WIDTH = 400;
+    public static final int DEFAULT_WIDTH = 270;
+    public static final int MAX_WIDTH = 400;
     
     private static final String STYLE = "-fx-tab-max-width: 22px;";
     
@@ -64,22 +64,22 @@ public class SideBar extends TabPane{
         AtomicReference<Tab> previewTab = new AtomicReference<>(null);
         
         setOnDragOver(e -> {
-            final Dragboard dragboard = e.getDragboard();
-            if(TAB_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){
+                                final Dragboard dragboard = e.getDragboard();
+                                if(TAB_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){
+        
+                                    if(draggingTab != null){
+            
+                                        e.acceptTransferModes(TransferMode.MOVE);
+                                        e.consume();
+            
+                                        if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tab
+                                            int actualIndex = getTabs().indexOf(draggingTab);
+                                            int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
                 
-                if(draggingTab != null){
-                    
-                    e.acceptTransferModes(TransferMode.MOVE);
-                    e.consume();
-                    
-                    if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tab
-                        int actualIndex = getTabs().indexOf(draggingTab);
-                        int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
-                        
-                        if(actualIndex != targetIndex){
-                            getTabs().remove(draggingTab);
-                            getTabs().add(targetIndex, draggingTab);
-                            getSelectionModel().select(draggingTab);
+                                            if(actualIndex != targetIndex){
+                                                getTabs().remove(draggingTab);
+                                                getTabs().add(targetIndex, draggingTab);
+                                                getSelectionModel().select(draggingTab);
                         }
                         
                         return;

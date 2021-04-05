@@ -365,6 +365,10 @@ public class MainScreen extends Pane{
         return true;
     }
     
+    public double getCurrentPaneScale(){
+        return pane.getScaleX();
+    }
+    
     public boolean hasDocument(boolean confirm){
         
         if(status.get() != Status.OPEN){

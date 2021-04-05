@@ -1,15 +1,46 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.9'
+    //id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.jlink' version '2.23.3'
     id 'idea'
+    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id "de.jjohannes.extra-java-module-info" version "0.6"
 }
+
 repositories{
     mavenCentral()
     jcenter()
 }
+
+def currentOS = DefaultNativePlatform.currentOperatingSystem;
+def platform
+if (currentOS.isWindows()) {
+    platform = 'win'
+} else if (currentOS.isLinux()) {
+    platform = 'linux'
+} else if (currentOS.isMacOsX()) {
+    platform = 'mac'
+}
+
+extraJavaModuleInfo {
+    automaticModule("jlatexmath-1.0.7.jar", "jlatexmath")
+
+    automaticModule("jlatexmath-font-greek-1.0.7.jar", "jlatexmath.font.greek")
+    automaticModule("jlatexmath-font-cyrillic-1.0.7.jar", "jlatexmath.font.cyrillic")
+
+    automaticModule("xmpcore-6.0.6.jar", "xmpcore")
+
+    automaticModule("metadata-extractor-2.15.0.jar", "metadata.extractor")
+
+    automaticModule("commons-logging-1.2.jar", "commons.logging")
+
+    automaticModule("jai-imageio-core-1.4.0.jar", "imageio.core")
+    automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
+}
+
 dependencies{
 
     // JAVA FX //
@@ -38,52 +69,59 @@ dependencies{
     // YAML
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.28'
     // LaTeX
-    implementation group: 'org.scilab.forge', name: 'jlatexmath', version: '1.0.7'
+    implementation 'org.scilab.forge:jlatexmath:1.0.7'
+
     implementation 'org.jetbrains:annotations:20.1.0'
 
+    // JFX
+    implementation "org.openjfx:javafx-base:16:${platform}"
+    implementation "org.openjfx:javafx-controls:16:${platform}"
+    implementation "org.openjfx:javafx-graphics:16:${platform}"
+    implementation "org.openjfx:javafx-swing:16:${platform}"
+    implementation "org.openjfx:javafx-fxml:16:${platform}"
 }
+
 javafx {
-    version = '15'
+    version = '16'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
+
+version = "1.3.0"
+description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers functionalities like grading scale, PDF conversion."
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+mainClassName = "fr.clementgre.pdf4teachers/fr.clementgre.pdf4teachers.Main"
+
+application {
+    mainModule.set('fr.clementgre.pdf4teachers')
+    mainClass.set('fr.clementgre.pdf4teachers.Main')
+}
+
+
 /*gradle.projectsEvaluated {
     tasks.withType(JavaCompile){
         options.compilerArgs << "-Xlint:unchecked"
     }
 }*/
 
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
-mainClassName = "fr.clementgre.pdf4teachers/fr.clementgre.pdf4teachers.Main"
-
-version = "1.2.1"
-description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers functionalities like grading scale, PDF conversion."
-
-task packageMsi(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["gradlew.bat", "jpackage", "-PinstallerType=msi"]
-}
-task packageDmg(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=dmg"]
-}
-task packageDeb(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
-}
-task packageRpm(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=rpm"]
-}
-
-sourceCompatibility = 14
-targetCompatibility = 14
-
-run{
+run {
     jvmArgs = [
+            '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+            '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+            '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
     ]
+
 }
 
 jlink {
@@ -102,7 +140,7 @@ jlink {
     }
 
     if(Os.isFamily(Os.FAMILY_WINDOWS)){
-        targetPlatform('win', 'C:\\Program Files\\Java\\jdk-16')
+        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
     }else if(Os.isFamily(Os.FAMILY_MAC)){
         targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
     }else if(Os.isFamily(Os.FAMILY_UNIX)){
@@ -156,4 +194,20 @@ jlink {
     }
 }
 
+task packageMsi(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["gradlew.bat", "jpackage", "-PinstallerType=msi"]
+}
+task packageDmg(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=dmg"]
+}
+task packageDeb(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
+}
+task packageRpm(type: Exec){
+    workingDir project.projectDir
+    commandLine = ["./gradlew", "jpackage", "-PinstallerType=rpm"]
+}
 

@@ -221,7 +221,7 @@ public abstract class GraphicElement extends Element{
                 checkLocation(false);
                 if(getWidth() < 20 || getHeight() < 20){
                     checkLocation(getLayoutX(), getLayoutY(),
-                            StringUtils.clamp(getWidth(), 20, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 20, (int) GRID_HEIGHT), false, false);
+                            StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false, false);
                 }
             }
         });
@@ -238,36 +238,42 @@ public abstract class GraphicElement extends Element{
         originX = getLayoutX();
         originY = getLayoutY();
         menu.hide(); select();
-
-        if(forceDragType != null) dragType = forceDragType;
+        
+        if(forceDragType != null){
+            dragType = forceDragType;
+            shiftX = 0;
+            shiftY = 0;
+        }
         else dragType = getDragCursorType(e.getX(), e.getY());
         setCursor(dragType);
     }
     
     public Cursor getDragCursorType(double x, double y){
-        if(x < 10){ // Left Side
-            if(y < 10){ // Top Left
+        int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
+        
+        if(x < grabSize){ // Left Side
+            if(y < grabSize){ // Top Left
                 return Cursor.NW_RESIZE;
-            }else if(y > getHeight()-10){ // Bottom Left
+            }else if(y > getHeight()-grabSize){ // Bottom Left
                 return Cursor.SW_RESIZE;
             }else{ // Left only
                 return Cursor.W_RESIZE;
             }
         }
-        if(x > getWidth()-10){ // Right Side
-            if(y < 10){ // Top Right
+        if(x > getWidth()-grabSize){ // Right Side
+            if(y < grabSize){ // Top Right
                 return Cursor.NE_RESIZE;
-            }else if(y > getHeight()-10){ // Bottom Right
+            }else if(y > getHeight()-grabSize){ // Bottom Right
                 return Cursor.SE_RESIZE;
             }else{ // Right only
                 return Cursor.E_RESIZE;
             }
         }
     
-        if(y < 10){ // Top only
+        if(y < grabSize){ // Top only
             return Cursor.N_RESIZE;
         }
-        if(y > getHeight()-10){ // Bottom only
+        if(y > getHeight()-grabSize){ // Bottom only
             return Cursor.S_RESIZE;
         }
         return Cursor.MOVE;

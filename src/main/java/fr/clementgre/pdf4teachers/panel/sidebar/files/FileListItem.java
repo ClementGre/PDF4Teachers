@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
@@ -73,7 +74,7 @@ public class FileListItem extends ListCell<File>{
                 return;
             }
             
-            path.setText(getItem().getAbsolutePath().replace(System.getProperty("user.home"), "~").replace(getItem().getName(), ""));
+            path.setText(FilesUtils.getPathReplacingUserHome(getItem().getParent()));
             
             name.setText(StringUtils.removeAfterLastRegex(file.getName(), ".pdf"));
             if(file.getName().equals(".pdf")) name.setText(".pdf");

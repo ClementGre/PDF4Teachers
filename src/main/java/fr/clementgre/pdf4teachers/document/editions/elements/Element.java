@@ -47,16 +47,9 @@ public abstract class Element extends Region{
         // SELECT EVENT
         MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(oldValue == this && newValue != this){
-                //setEffect(null);
                 setBorder(null);
                 menu.hide();
             }else if(oldValue != this && newValue == this){
-				/*DropShadow ds = new DropShadow();
-				ds.setOffsetY(3.0f);
-				ds.setColor(Color.color(0f, 0f, 0f));
-				setEffect(ds);
-				setCache(true);
-				requestFocus();*/
                 setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(0.8))));
             }
         });
@@ -150,6 +143,9 @@ public abstract class Element extends Region{
         realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
         if(this instanceof GraphicElement){
+            
+            
+            
             if(getHeight() != height){
                 int value = (int) (height / getPage().getHeight() * Element.GRID_HEIGHT);
                 ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
