@@ -1,0 +1,199 @@
+/*******************************************************************************
+ *                                                                             *
+ * PANES                                                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.notification-bar > .pane .close-button:hover{
+    -fx-background-color: #464646;
+}
+.notification-bar > .pane .close-button{
+    -fx-pref-height: 20px;
+    -fx-pref-width: 20px;
+}
+.notification-bar > .pane .label{
+    -fx-wrap-text: true;
+}
+.notification-bar > .pane{
+    -fx-padding: 5;
+}
+
+.app-footer-bar * {
+    -fx-font-size: 15;
+}
+
+/* Paint Tab */
+
+.titled-pane{
+    title_background_hover_color: title_background_color;
+}
+.paint-tab-titled-pane .content{
+    -fx-padding: 0;
+}
+.paint-tab-titled-pane .content VBox{
+    -fx-padding: 0;
+}
+.paint-tab-titled-pane .title{
+    -fx-padding: 1 8;
+}
+.paint-tab-titled-pane .title Label{
+    -fx-font-size: 13;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Text & Label                                                                *
+ *                                                                             *
+ ******************************************************************************/
+.label{
+    -fx-font-size: 14;
+}
+Text{
+    -fx-font-size: 14;
+}
+Hyperlink{
+    -fx-font-size: 14;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Common properties                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.menu, .menu .label{
+    -fx-font-size: 12px;
+}
+.menu-item .label, .menu-item{
+    -fx-font-size: 13px;
+}
+
+ /*******************************************************************************
+  *                                                                             *
+  * Inputs                                                                      *
+  *                                                                             *
+  ******************************************************************************/
+
+/* Text field */
+#no-vertical-scroll-bar .scroll-pane {
+    -fx-vbar-policy : never;
+}
+
+/* Check Box */
+CheckBox {
+    -fx-font-size: 13;
+}
+
+/* Footer slider */
+.slider-without-popup  {
+    -show-value-on-interaction: false;
+}
+.slider .thumb {
+    -fx-padding: 9 3;
+}
+
+
+/*******************************************************************************
+ *                                                                             *
+ * Auto Tip Tooltip                                                           *
+ *                                                                             *
+ ******************************************************************************/
+
+.popover .content-pane{
+    -fx-padding: 10px;
+}
+.popover > .border {
+	-fx-stroke: linear-gradient(to bottom, rgba(0,0,0, .3), rgba(0, 0, 0, .7)) !important;
+	-fx-stroke-width: 1 !important;
+	-fx-fill: #252525 !important;
+	-fx-effect: dropshadow(gaussian, rgba(0,0,0,.2), 10.0, 0.5, 2.0, 2.0) !important;
+}
+.popover > .content {
+    -fx-cursor: default !important;
+}
+.popover .icon .graphics{
+    -fx-cursor: hand !important;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Dialog                                                                      *
+ * Restore the default Modena style font global Dialogs pane                   *
+ ******************************************************************************/
+
+.dialog-pane {
+    -fx-padding: 0;
+}
+
+.dialog-pane > .expandable-content {
+    -fx-padding: 0.666em; /* 8px */
+}
+
+.dialog-pane > .button-bar > .container {
+    -fx-padding: 0.833em; /* 10px */
+}
+
+.dialog-pane > .content.label {
+    -fx-alignment: top-left;
+    -fx-padding: 1.333em 0.833em 0 0.833em; /* 16px 10px 0px 10px */
+}
+
+.dialog-pane > .content {
+    -fx-padding: 0.833em; /* 10 */
+}
+
+.dialog-pane:no-header .graphic-container {
+    -fx-padding: 0.833em 0 0 0.833em; /* 10px 0px 0px 10px */
+}
+
+.dialog-pane:header .header-panel {
+    /*-fx-padding: 0.833em 1.166em 0.833em 1.166em; *//* 10px 14px 10px 14px */
+    -fx-padding: 0.833em; /* 10px */
+    -fx-background-insets: 0, 0 0 1 0;
+}
+
+.dialog-pane:header .header-panel .label {
+    -fx-font-size: 1.167em; /* 14px */
+    -fx-wrap-text: true;
+}
+
+.dialog-pane:header .header-panel .graphic-container {
+    /* This prevents the text in the header running directly into the graphic */
+    -fx-padding: 0 0 0 0.833em; /* 0px 0px 0px 10px */
+}
+
+.dialog-pane > .button-bar > .container > .details-button {
+  -fx-alignment: baseline-left;
+  -fx-focus-traversable: false;
+  -fx-padding: 0.416em; /* 5px */
+}
+
+.dialog-pane > .button-bar > .container > .details-button.more {
+    -fx-graphic: url("../img/dialogs/more.png");
+}
+
+.dialog-pane > .button-bar > .container > .details-button.less {
+    -fx-graphic: url("../img/dialogs/less.png");
+}
+
+.dialog-pane > .button-bar > .container > .details-button:hover {
+    -fx-underline: true;
+}
+
+.alert.confirmation.dialog-pane,
+.text-input-dialog.dialog-pane,
+.choice-dialog.dialog-pane {
+    -fx-graphic: url("../img/dialogs/confirm.png");
+}
+
+.alert.information.dialog-pane {
+    -fx-graphic: url("../img/dialogs/information.png");
+}
+
+.alert.error.dialog-pane {
+    -fx-graphic: url("../img/dialogs/error.png");
+}
+
+.alert.warning.dialog-pane {
+    -fx-graphic: url("../img/dialogs/warning.png");
+}

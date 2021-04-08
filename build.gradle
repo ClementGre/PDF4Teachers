@@ -3,7 +3,6 @@ import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
 plugins {
     id 'application'
-    //id 'org.openjfx.javafxplugin' version '0.0.9'
     id 'org.beryx.jlink' version '2.23.3'
     id 'idea'
     id 'com.dua3.javafxgradle7plugin' version '0.0.9'
