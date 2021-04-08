@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("unchecked")
 public class TextTreeItem extends TreeItem<String>{
     
     private ObjectProperty<Font> font = new SimpleObjectProperty<>();

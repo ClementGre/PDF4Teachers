@@ -78,6 +78,10 @@ dependencies{
     implementation "org.openjfx:javafx-graphics:16:${platform}"
     implementation "org.openjfx:javafx-swing:16:${platform}"
     implementation "org.openjfx:javafx-fxml:16:${platform}"
+
+    // OSX
+    implementation 'de.jangassen:nsmenufx:3.1.0'
+
 }
 
 javafx {

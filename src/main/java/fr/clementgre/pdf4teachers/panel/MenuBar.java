@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel;
 
+import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
@@ -480,6 +481,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             for(Menu menu : getMenus()){
                 menu.setStyle("-fx-padding: 5 7 5 7;");
             }
+        }
+        if(Main.isOSX()){
+            //Menu defaultApplicationMenu = MenuToolkit.toolkit().createDefaultApplicationMenu("blabla");
+            //MenuToolkit.toolkit().setApplicationMenu(defaultApplicationMenu);
         }
         
     }

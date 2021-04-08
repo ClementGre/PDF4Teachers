@@ -30,6 +30,9 @@ open module fr.clementgre.pdf4teachers {
     // latex
     requires jlatexmath;
 
+    // OSX
+    requires nsmenufx;
+
     // JAVAFX
     
 
