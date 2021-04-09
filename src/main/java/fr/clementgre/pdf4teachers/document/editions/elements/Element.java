@@ -129,9 +129,9 @@ public abstract class Element extends Region{
         checkLocation(getLayoutX(), getLayoutY(), allowSwitchPage);
     }
     public void checkLocation(double itemX, double itemY, boolean allowSwitchPage){
-        checkLocation(itemX, itemY, getWidth(), getHeight(), false, allowSwitchPage);
+        checkLocation(itemX, itemY, getWidth(), getHeight(), allowSwitchPage);
     }
-    public void checkLocation(double itemX, double itemY, double width, double height, boolean keepRatio, boolean allowSwitchPage){
+    public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
 
         if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
         if(getPageNumber() == MainWindow.mainScreen.document.totalPages - 1 || !allowSwitchPage)
@@ -142,10 +142,9 @@ public abstract class Element extends Region{
 
         realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
-        if(this instanceof GraphicElement){
-            
-            
-            
+
+        if(this instanceof GraphicElement element){
+
             if(getHeight() != height){
                 int value = (int) (height / getPage().getHeight() * Element.GRID_HEIGHT);
                 ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));

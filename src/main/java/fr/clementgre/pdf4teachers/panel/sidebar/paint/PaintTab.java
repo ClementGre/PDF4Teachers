@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 
 import javax.swing.plaf.PanelUI;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class PaintTab extends SideTab{
@@ -167,7 +168,7 @@ public class PaintTab extends SideTab{
         newImage.setOnAction((e) -> {
             PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
             ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    50, 50, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, "");
+                    50, new Random().nextBoolean() ? 150 : 20, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, "");
             page.addElement(element, true);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
