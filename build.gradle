@@ -1,8 +1,6 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
     id 'application'
-    id 'org.beryx.jlink' version '2.23.3'
+    id 'org.beryx.jlink' version '2.23.6'
     id 'idea'
     id 'com.dua3.javafxgradle7plugin' version '0.0.9'
     id "de.jjohannes.extra-java-module-info" version "0.6"
@@ -93,19 +91,8 @@ application {
 run {
     jvmArgs = [
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-            '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-            '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
     ]
-
 }
 
 jlink {
@@ -119,43 +106,31 @@ jlink {
         name = 'PDF4Teachers'
         jvmArgs = [
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-                '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-                '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
-                '--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED'
+                '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
         ]
     }
 
-    if(Os.isFamily(Os.FAMILY_WINDOWS)){
-        targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
-    }else if(Os.isFamily(Os.FAMILY_MAC)){
-        targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
-    }else if(Os.isFamily(Os.FAMILY_UNIX)){
-        targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
-    }
+    def os = org.gradle.internal.os.OperatingSystem.current()
+    if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
+    else if(os.macOsX) targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
+    else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
 
     jpackage {
 
-        installerType = project.findProperty('installerType') // we will pass this from the command line (example: -PinstallerType=msi)
+        if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
+        else if(os.macOsX) targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
+        else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
 
+        installerType = os.windows ? 'msi' : os.macOsX ? 'dmg' : 'deb'
         installerOptions = [
                 '--description', project.description,
-                //'--copyright', 'Copyrigth 2019 Clément Grennerat',
+                '--copyright', 'Copyrigth 2019 Clément Grennerat',
                 '--app-version', project.version,
                 '--vendor', "Clément Grennerat",
                 '--type', installerType
         ] as List<String>
 
-
-
-        if(installerType == 'msi'){ // WINDOWS
+        if(os.windows){ // WINDOWS
             imageOptions += ['--icon', 'src/main/resources/logo.ico']
             installerOptions += [
                     '--win-dir-chooser',
@@ -164,14 +139,14 @@ jlink {
                     '--win-menu-group',
                     '--file-associations association-win.properties'
             ]
-        }else if(installerType == 'dmg'){ // MAC
+        }else if(os.macOsX){ // MAC
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
                     "--mac-package-name", "PDF4Teachers",
                     '--file-associations', 'association-osx.properties',
                     '--icon', 'src/main/resources/logo.icns'
             ]
-        }else if(installerType in ['deb', 'rpm']){ // LINUX
+        }else if(os.linux){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
                     '--linux-menu-group', 'Education;Office',
@@ -179,29 +154,9 @@ jlink {
                     '--file-associations', 'association-lin.properties',
                     '--icon', 'src/main/resources/logo.png'
             ]
-            if(installerType == 'deb'){
-                installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
-            }else if(installerType == 'rpm'){
-                installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
-            }
+            if(installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
+            else if(installerType == 'rpm') installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
         }
     }
-}
-
-task packageMsi(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["gradlew.bat", "jpackage", "-PinstallerType=msi"]
-}
-task packageDmg(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=dmg"]
-}
-task packageDeb(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=deb"]
-}
-task packageRpm(type: Exec){
-    workingDir project.projectDir
-    commandLine = ["./gradlew", "jpackage", "-PinstallerType=rpm"]
 }
 

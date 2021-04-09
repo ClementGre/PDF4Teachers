@@ -188,6 +188,7 @@ public class FooterBar extends StackPane{
     public void updateStats(){
         if(MainWindow.mainScreen.hasDocument(false)){
             Platform.runLater(() -> {
+                if(MainWindow.mainScreen.document == null) return;
                 int[] count = MainWindow.mainScreen.document.countElements();
                 statsElements.setText(count[0] + " " + TR.tr("elements.name"));
                 statsTexts.setText(count[1] + " " + TR.tr("elements.name.texts"));
