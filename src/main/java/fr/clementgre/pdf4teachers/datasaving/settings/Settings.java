@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
+import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -34,7 +35,7 @@ public class Settings{
     public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), SVGPathIcons.LAYERS, "zoomAnimations",
             "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(true, SVGPathIcons.SUN, "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "settings.darkTheme.tooltip");
     
     @SettingObject

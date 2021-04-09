@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel;
 
 import de.jangassen.MenuToolkit;
+import de.jangassen.model.AppearanceMode;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
@@ -387,12 +388,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         ////////// SETTINGS //////////
         
         s.language.getMenuItem().setOnAction(e -> {
-            new LanguageWindow(value -> {
-                if(!value.isEmpty()){
-                    Main.settings.language.setValue(value);
-                    Main.window.restart();
-                }
-            });
+            Main.showLanguageWindow(false);
         });
         s.defaultZoom.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
             
@@ -439,23 +435,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             about.setText(TR.tr("menuBar.about"));
             MenuItem triggerItem = new MenuItem(TR.tr("menuBar.about.openAboutWindow"));
             about.getItems().add(triggerItem);
-            triggerItem.setOnAction((event) -> {
-                try{
-                    FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml"));
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            });
+            triggerItem.setOnAction(e -> Main.showAboutWindow());
         }else{
             Label name = new Label(TR.tr("menuBar.about"));
             name.setAlignment(Pos.CENTER_LEFT);
-            name.setOnMouseClicked(event -> {
-                try{
-                    FXMLLoader.load(getClass().getResource("/fxml/AboutWindow.fxml"));
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            });
+            name.setOnMouseClicked(e -> Main.showAboutWindow());
             about.setGraphic(name);
         }
         
@@ -482,9 +466,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 menu.setStyle("-fx-padding: 5 7 5 7;");
             }
         }
+
         if(Main.isOSX()){
-            //Menu defaultApplicationMenu = MenuToolkit.toolkit().createDefaultApplicationMenu("blabla");
-            //MenuToolkit.toolkit().setApplicationMenu(defaultApplicationMenu);
+            MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
+            Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
+                    tk.createAboutMenuItem(Main.APP_NAME, e -> Main.showAboutWindow()), new SeparatorMenuItem(),
+                    tk.createHideMenuItem(Main.APP_NAME),
+                    tk.createHideOthersMenuItem(),
+                    tk.createUnhideAllMenuItem(), new SeparatorMenuItem(),
+                    tk.createQuitMenuItem(Main.APP_NAME));
+            tk.setApplicationMenu(defaultApplicationMenu);
+
+//            Menu docMenu = new Menu("test");
+//            docMenu.getItems().addAll(new MenuItem("item"));
+//            tk.setDockIconMenu(docMenu);
         }
         
     }

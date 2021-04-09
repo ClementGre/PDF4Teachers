@@ -158,12 +158,16 @@ public class MainScreen extends Pane{
         // Update show status when scroll level change
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             if(document != null){
-                Platform.runLater(() -> document.updateShowsStatus());
+                Platform.runLater(() -> {
+                    if(document != null) document.updateShowsStatus();
+                });
             }
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
-                Platform.runLater(() -> document.updateZoom());
+                Platform.runLater(() -> {
+                    if(document != null) document.updateShowsStatus();
+                });
             }
         });
         
@@ -210,7 +214,9 @@ public class MainScreen extends Pane{
         });
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
-                Platform.runLater(() -> document.updateShowsStatus());
+                Platform.runLater(() -> {
+                    if(document != null) document.updateShowsStatus();
+                });
             }
         });
         

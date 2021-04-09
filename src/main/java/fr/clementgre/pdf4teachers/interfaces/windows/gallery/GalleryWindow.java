@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.MenuBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
@@ -68,6 +69,8 @@ public class GalleryWindow extends Stage{
         PlatformUtils.runLaterOnUIThread(1000, () -> {
             AutoTipsManager.showByAction("opengallery", this);
         });
+
+
     }
     
     private void setupSettings(){
@@ -115,7 +118,11 @@ public class GalleryWindow extends Stage{
     }
     private void setup(){
         setupSettings();
-        
+
+        if(Main.isOSX()){
+            MenuBar menuBar = MainWindow.menuBar;
+        }
+
         root.getChildren().addAll(settings, list);
         list.addItems(getImages());
     }

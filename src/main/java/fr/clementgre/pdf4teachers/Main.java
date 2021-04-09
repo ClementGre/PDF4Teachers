@@ -9,16 +9,20 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DataFormat;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 
 public class Main extends Application{
     
@@ -30,6 +34,7 @@ public class Main extends Application{
     public static HostServices hostServices;
     
     public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
+    public static final String APP_NAME = "PDF4Teachers";
     public static final String VERSION = "sn1-1.3.0";
     public static final boolean DEBUG = true;
     public static final boolean COPY_CONSOLE = false;
@@ -95,20 +100,36 @@ public class Main extends Application{
                 Main.settings.language.setValue(language);
                 TR.updateLocale();
             }else{
-                new LanguageWindow(value -> {
-                    if(!value.isEmpty()) Main.settings.language.setValue(value);
-                    TR.updateLocale();
-                    if(licenceAsk()){
-                        startMainWindow();
-                    }
-                });
+                showLanguageWindow(true);
                 return false;
             }
         }
         return true;
     }
+
+    public static void showLanguageWindow(boolean firstStartBehaviour){
+        new LanguageWindow(value -> {
+            if(!value.isEmpty()){
+                Main.settings.language.setValue(value);
+                if(!firstStartBehaviour){
+                    Main.window.restart();
+                }else{
+                    TR.updateLocale();
+                    if(licenceAsk()){
+                        startMainWindow();
+                    }
+                }
+            }
+        });
+    }
+
+    public static void showAboutWindow(){
+        try{
+            FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/fxml/AboutWindow.fxml")));
+        }catch(IOException e){ e.printStackTrace(); }
+    }
     
-    public boolean licenceAsk(){
+    public static boolean licenceAsk(){
         
         // Disabling the license
         if(true) return true;

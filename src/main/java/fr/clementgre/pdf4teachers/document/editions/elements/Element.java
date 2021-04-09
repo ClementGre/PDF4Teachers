@@ -143,7 +143,7 @@ public abstract class Element extends Region{
         realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 
-        if(this instanceof GraphicElement element){
+        if(this instanceof GraphicElement){
 
             if(getHeight() != height){
                 int value = (int) (height / getPage().getHeight() * Element.GRID_HEIGHT);
