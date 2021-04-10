@@ -1,6 +1,10 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 
 public class ImageData extends ImageLambdaData{
     
@@ -21,6 +25,17 @@ public class ImageData extends ImageLambdaData{
         this.rotateMode = rotateMode;
         this.lastUse = lastUse;
         this.useCount = useCount;
+    }
+    
+    public ImageElement addToDocument(){
+        PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+        ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                width, height, repeatMode, resizeMode, rotateMode, imageId);
+    
+        page.addElement(element, true);
+        element.centerOnCoordinatesY();
+        MainWindow.mainScreen.setSelected(element);
+        return element;
     }
     
     public int getWidth(){

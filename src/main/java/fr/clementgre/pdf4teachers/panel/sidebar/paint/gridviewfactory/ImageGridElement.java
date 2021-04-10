@@ -54,7 +54,7 @@ public class ImageGridElement extends ImageLambdaData{
         // TODO : ADD/REMOVE item to favourites and update linkedData
     }
     public void addToDocument(){
-        // TODO : ADD item to document
+        toImageData().addToDocument();
     }
     
     // SORTER

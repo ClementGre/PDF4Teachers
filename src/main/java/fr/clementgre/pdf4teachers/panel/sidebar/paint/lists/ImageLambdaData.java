@@ -1,11 +1,12 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 
 import java.io.File;
 import java.util.Objects;
 
-public class ImageLambdaData{
+public class ImageLambdaData{ // 2 child : ImageGridElement & ImageData
 
     protected String imageId;
     
@@ -19,6 +20,14 @@ public class ImageLambdaData{
         if(o == null || getClass() != o.getClass()) return false;
         ImageLambdaData that = (ImageLambdaData) o;
         return Objects.equals(imageId, that.imageId);
+    }
+    
+    public ImageData toImageData(){
+        if(this instanceof ImageData imageData){
+            return imageData;
+        }else{
+            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, 0, 0);
+        }
     }
     
     @Override

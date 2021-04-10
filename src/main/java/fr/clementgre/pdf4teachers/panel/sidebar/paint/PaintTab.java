@@ -6,18 +6,25 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
@@ -161,38 +168,108 @@ public class PaintTab extends SideTab{
 
     public void setup(){
         
+        delete.setOnAction(e -> deleteSelected());
+    
+        spinnerX.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                if(element.getRealX() != newValue) element.setRealX(newValue);
+            }
+        });
+        spinnerY.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                if(element.getRealY() != newValue) element.setRealY(newValue);
+            }
+        });
+        spinnerWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                if(element.getRealWidth() != newValue) element.setRealWidth(newValue);
+            }
+        });
+        spinnerHeight.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                if(element.getRealHeight() != newValue) element.setRealHeight(newValue);
+            }
+        });
+        
+        path.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
+            if(e.getCode() == KeyCode.DELETE){
+                if(path.getCaretPosition() == path.getText().length()){
+                    deleteSelected();
+                    e.consume();
+                }
+            }
+        });
+        
         newImage.setOnAction((e) -> {
             openGallery();
         });
         
         newImage.setOnAction((e) -> {
             PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+            
             ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                     50, new Random().nextBoolean() ? 150 : 20, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, "");
+            
             page.addElement(element, true);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
-            Platform.runLater(() -> {
-                System.out.println(element.getWidth() + "*" + element.getHeight());
-            });
         });
         
         MainWindow.mainScreen.selected.addListener(this::updateSelected);
+        MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
         updateSelected(null, null, null);
     }
     
-    public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
-        // Disable/Enable nodes
-        if(!(newValue instanceof GraphicElement)){
-            setGlobalDisable(true);
+    private void deleteSelected(){
+        Element element = MainWindow.mainScreen.getSelected();
+        if(element != null){
+            MainWindow.mainScreen.setSelected(null);
+            element.delete();
+        }
+    }
+    
+    private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
+        if(newValue.intValue() == MainScreen.Status.OPEN){
+            setGlobalDisable(false);
             setVectorsDisable(true);
         }else{
-            setGlobalDisable(false);
-            if(newValue instanceof VectorElement){ // Vector
-                setVectorsDisable(false);
-            }else{ // Image
-                setVectorsDisable(true);
+            setGlobalDisable(true);
+            setVectorsDisable(true);
+        }
+    }
+    public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
+        // Old element
+        if(oldValue instanceof GraphicElement gElement){
+            if(oldValue instanceof VectorElement element){ // Vector
+            
+            }else if(oldValue instanceof ImageElement element){ // Image
+                element.imageIdProperty().unbind();
             }
+            
+        }
+        
+        // Disable/Enable nodes
+        if(newValue instanceof GraphicElement gElement){
+            setGlobalDisable(false);
+    
+            if(newValue instanceof VectorElement element){ // Vector
+                setVectorsDisable(false);
+            }else if(newValue instanceof ImageElement element){ // Image
+                setVectorsDisable(true);
+                path.setText(element.getImageId());
+                element.imageIdProperty().bind(path.textProperty());
+            }
+            
+            path.requestFocus();
+            path.positionCaret(path.getText().length());
+            gElement.realXProperty().addListener(this::editSpinXEvent);
+            gElement.realYProperty().addListener(this::editSpinYEvent);
+            gElement.realWidthProperty().addListener(this::editSpinWidthEvent);
+            gElement.realHeightProperty().addListener(this::editSpinHeightEvent);
+            
+        }else{
+            setGlobalDisable(true);
+            setVectorsDisable(true);
         }
         
         // Load/Bind data
@@ -204,6 +281,19 @@ public class PaintTab extends SideTab{
             
             }
         }
+    }
+    
+    public void editSpinXEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
+        if(!spinnerX.getValue().equals(newValue)) spinnerX.getValueFactory().setValue(newValue.intValue());
+    }
+    public void editSpinYEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
+        if(!spinnerY.getValue().equals(newValue)) spinnerY.getValueFactory().setValue(newValue.intValue());
+    }
+    public void editSpinWidthEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
+        if(!spinnerWidth.getValue().equals(newValue)) spinnerWidth.getValueFactory().setValue(newValue.intValue());
+    }
+    public void editSpinHeightEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
+        if(!spinnerHeight.getValue().equals(newValue)) spinnerHeight.getValueFactory().setValue(newValue.intValue());
     }
     
     public void setVectorsDisable(boolean disable){

@@ -17,7 +17,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 
 import java.util.LinkedHashMap;
 
@@ -103,6 +104,15 @@ public abstract class GraphicElement extends Element{
     protected void setupGeneral(Node... components){
         super.setupGeneral(false, components);
     
+        MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(oldValue == this && newValue != this){
+                setBorder(null);
+                menu.hide();
+            }else if(oldValue != this && newValue == this){
+                setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(1.5))));
+            }
+        });
+        
         setOnMouseMoved(e -> {
             setCursor(getDragCursorType(e.getX(), e.getY()));
         });
@@ -374,6 +384,11 @@ public abstract class GraphicElement extends Element{
             else return e.isShiftDown();
         }
     }
+    
+    @Override
+    public float getAlwaysHeight(){
+        return getRealHeight();
+    } // TODO
     
     public int getRealWidth(){
         return realWidth.get();

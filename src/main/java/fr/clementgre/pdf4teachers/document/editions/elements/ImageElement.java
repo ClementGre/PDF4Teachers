@@ -1,26 +1,43 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import javafx.geometry.VPos;
-import javafx.scene.control.Label;
+import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
+import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
+import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.util.Callback;
 
-import java.util.Arrays;
+import java.io.File;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 
 public class ImageElement extends GraphicElement{
     
     // imageId
     
+    private Image image;
+    private ImageView imageView;
+    private StringProperty imageId = new SimpleStringProperty();
+    
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode, String imageId){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
+        this.imageId.set(imageId);
+        
+        updateImage(true);
     
         if(hasPage && getPage() != null){
-            ScratchText test = new ScratchText("test");
-            test.setTextOrigin(VPos.TOP);
-            setupGeneral(test);
+            imageView = new ImageView(image);
+            imageView.fitWidthProperty().bind(widthProperty());
+            imageView.fitHeightProperty().bind(heightProperty());
+            
+            setupGeneral(imageView);
         }
     }
     
@@ -28,7 +45,12 @@ public class ImageElement extends GraphicElement{
     
     @Override
     protected void setupBindings(){
-    
+        imageId.addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue);
+            updateImage(false);
+        });
+        
+        
     }
     
     @Override
@@ -64,7 +86,7 @@ public class ImageElement extends GraphicElement{
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
-        data.put("imageId", "Var does not exist yet");
+        data.put("imageId", getImageId());
         
         return data;
     }
@@ -92,14 +114,54 @@ public class ImageElement extends GraphicElement{
     
     // SPECIFIC METHODS
     
-    @Override
-    public float getAlwaysHeight(){
-        return 0;
+    public void updateImage(boolean checkAutoSize){
+        generateImageAsync(() -> {
+            imageView.setImage(image);
+            
+            if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
+                checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                        image.getWidth() * getPage().getWidth() / GRID_WIDTH, image.getHeight() * getPage().getHeight() / GRID_HEIGHT, false);
+            }
+        });
+    }
+    
+    private void generateImageAsync(CallBack callBack){
+        new Thread(() -> {
+    
+            File file = new File(getImageId());
+            if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
+                try{
+                    image = new Image("file:///" + getImageId());
+                }catch(Exception e){
+                    e.printStackTrace();
+                    image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
+                }
+                if(image.getWidth() == 0)
+                    image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
+            }else{
+                image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
+            }
+    
+            Platform.runLater(callBack::call);
+        }, "ImageElement Renderer").start();
     }
     
     @Override
     public Element clone(){
         return null;
+    }
+    
+    // GETTER/SETTER
+    
+    
+    public String getImageId(){
+        return imageId.get();
+    }
+    public StringProperty imageIdProperty(){
+        return imageId;
+    }
+    public void setImageId(String imageId){
+        this.imageId.set(imageId);
     }
     
 }

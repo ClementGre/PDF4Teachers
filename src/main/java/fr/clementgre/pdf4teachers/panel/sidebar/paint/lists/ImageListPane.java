@@ -58,6 +58,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }
     }
     
+    
     @Override
     public void updateGraphics(){
         list.getSortManager().updateGraphics();

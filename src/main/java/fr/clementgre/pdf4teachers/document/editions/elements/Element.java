@@ -41,18 +41,8 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
-    protected void setupGeneral(boolean defineMoveEvents, Node... components){
+    protected void setupGeneral(boolean setupEvents, Node... components){
         getChildren().addAll(components);
-        
-        // SELECT EVENT
-        MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(oldValue == this && newValue != this){
-                setBorder(null);
-                menu.hide();
-            }else if(oldValue != this && newValue == this){
-                setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(0.8))));
-            }
-        });
         
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
@@ -62,7 +52,16 @@ public abstract class Element extends Region{
         
         //////////////////////////// EVENTS ///////////////////////////////////
 
-        if(defineMoveEvents){
+        if(setupEvents){
+            MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                if(oldValue == this && newValue != this){
+                    setBorder(null);
+                    menu.hide();
+                }else if(oldValue != this && newValue == this){
+                    setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(0.8))));
+                }
+            });
+            
             setOnMouseReleased(e -> {
                 Edition.setUnsave();
                 double itemX = getLayoutX() + e.getX() - shiftX;
@@ -213,7 +212,7 @@ public abstract class Element extends Region{
         return realX.get();
     }
     
-    public IntegerProperty RealXProperty(){
+    public IntegerProperty realXProperty(){
         return realX;
     }
     
@@ -225,7 +224,7 @@ public abstract class Element extends Region{
         return realY.get();
     }
     
-    public IntegerProperty RealYProperty(){
+    public IntegerProperty realYProperty(){
         return realY;
     }
     
