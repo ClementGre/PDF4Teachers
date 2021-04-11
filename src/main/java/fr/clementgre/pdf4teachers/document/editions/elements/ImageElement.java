@@ -164,7 +164,7 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public Element clone(){
-        return null;
+        return new ImageElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(), getImageId());
     }
     
     // GETTER/SETTER

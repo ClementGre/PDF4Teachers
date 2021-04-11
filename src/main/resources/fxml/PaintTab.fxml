@@ -133,13 +133,15 @@
     <VectorListPane fx:id="favouriteVectors" type="0">
     </VectorListPane>
 
+    <ImageListPane fx:id="gallery" type="3">
+    </ImageListPane>
+
     <ImageListPane fx:id="favouriteImages" type="1">
     </ImageListPane>
 
     <VectorListPane fx:id="lastVectors" type="2">
     </VectorListPane>
 
-    <ImageListPane fx:id="gallery" type="3">
-    </ImageListPane>
+
 
 </VBox>

@@ -66,7 +66,6 @@ public class TextElementsData{
     }
     
     public void saveData(){
-        HashMap<String, Object> data = new HashMap<>();
         
         ArrayList<Object> favorites = new ArrayList<>();
         for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){

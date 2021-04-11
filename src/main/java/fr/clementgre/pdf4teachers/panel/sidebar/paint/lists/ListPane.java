@@ -116,7 +116,7 @@ public abstract class ListPane<T> extends TitledPane{
     public boolean isLoaded(){
         return isLoaded;
     }
-    protected void setLoaded(Boolean loaded){
+    protected void setLoaded(boolean loaded){
         this.isLoaded = loaded;
     }
 }

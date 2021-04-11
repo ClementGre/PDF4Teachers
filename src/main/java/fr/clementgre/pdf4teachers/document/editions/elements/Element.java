@@ -177,6 +177,7 @@ public abstract class Element extends Region{
     
     public void delete(){
         if(getPage() != null){
+            if(MainWindow.mainScreen.getSelected().equals(this)) MainWindow.mainScreen.setSelected(null);
             getPage().removeElement(this, true);
         }
     }

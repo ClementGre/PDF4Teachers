@@ -95,6 +95,12 @@ public abstract class GraphicElement extends Element{
             }
         });
         
+        setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.DELETE){
+                delete();
+            }
+        });
+        
         setOnMouseMoved(e -> {
             setCursor(getDragCursorType(e.getX(), e.getY()));
         });

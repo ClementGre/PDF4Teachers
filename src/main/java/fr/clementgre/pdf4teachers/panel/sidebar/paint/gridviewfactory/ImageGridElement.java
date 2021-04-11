@@ -1,5 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
@@ -8,6 +10,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class ImageGridElement extends ImageLambdaData{
     
@@ -22,8 +27,8 @@ public class ImageGridElement extends ImageLambdaData{
         loadExifData();
         setup();
     }
-    public ImageGridElement(String imageId, ImageData linkedImageData){
-        super(imageId);
+    public ImageGridElement(ImageData linkedImageData){
+        super(linkedImageData.getImageId());
         this.linkedImageData = linkedImageData;
         loadExifData();
         setup();
@@ -51,8 +56,15 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void toggleFavorite(){
-        // TODO : ADD/REMOVE item to favourites and update linkedData
+        if(hasLinkedImageData()){
+            MainWindow.paintTab.favouriteImages.getList().removeItems(Collections.singletonList(this));
+            linkedImageData = null;
+        }else{
+            linkedImageData = new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, 0, 0);
+            MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(this));
+        }
     }
+    
     public void addToDocument(){
         toImageData().addToDocument();
     }
