@@ -46,13 +46,13 @@ public class MainScreen extends Pane{
     public double mouseX = 0;
     public double mouseY = 0;
     
-    private IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
-    public ObjectProperty<Element> selected = new SimpleObjectProperty<>();
+    private final IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
+    private final ObjectProperty<Element> selected = new SimpleObjectProperty<>();
     public Document document;
     public String failedEditFile = "";
     
-    private Label info = new Label();
-    private Hyperlink infoLink = new Hyperlink();
+    private final Label info = new Label();
+    private final Hyperlink infoLink = new Hyperlink();
     
     public static class Status{
         public static final int CLOSED = 0;

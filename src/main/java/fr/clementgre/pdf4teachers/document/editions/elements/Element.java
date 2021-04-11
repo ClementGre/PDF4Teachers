@@ -18,6 +18,9 @@ import java.util.LinkedHashMap;
 
 public abstract class Element extends Region{
     
+    protected static BorderStroke STROKE_DEFAULT = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
+            BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, new BorderWidths(1.5));
+    
     // Size for A4 - 200dpi (Static)
     public static float GRID_WIDTH = 1654;
     public static float GRID_HEIGHT = 2339;
@@ -58,7 +61,7 @@ public abstract class Element extends Region{
                     setBorder(null);
                     menu.hide();
                 }else if(oldValue != this && newValue == this){
-                    setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(0.8))));
+                    setBorder(new Border(STROKE_DEFAULT));
                 }
             });
             
@@ -131,14 +134,14 @@ public abstract class Element extends Region{
         checkLocation(itemX, itemY, getWidth(), getHeight(), allowSwitchPage);
     }
     public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
-
+    
         if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
         if(getPageNumber() == MainWindow.mainScreen.document.totalPages - 1 || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
 
         if(itemX < 0) itemX = 0;
         if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
-
+    
         realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
         realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
 

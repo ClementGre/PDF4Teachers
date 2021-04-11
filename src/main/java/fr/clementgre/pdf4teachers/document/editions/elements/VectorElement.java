@@ -9,9 +9,9 @@ import java.util.LinkedHashMap;
 
 public class VectorElement extends GraphicElement{
     
-    public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode,
+    public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
                          boolean doFill, Color fill, Color stroke, int strokeWidth, String path){
-        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
+        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
     
         if(hasPage && getPage() != null){
             setupGeneral();
@@ -22,17 +22,17 @@ public class VectorElement extends GraphicElement{
     
     @Override
     protected void setupBindings(){
-    
+        super.setupBindings();
     }
     
     @Override
     protected void onMouseRelease(){
-    
+        super.onMouseRelease();
     }
     
     @Override
     protected void setupMenu(){
-    
+        super.setupMenu();
     }
     
     // ACTIONS
@@ -84,12 +84,11 @@ public class VectorElement extends GraphicElement{
         Color stroke = Color.valueOf(Config.getString(data, "stroke"));
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");
-        
+    
         RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
         ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
-        RotateMode rotateMode = RotateMode.valueOf(Config.getString(data, "rotateMode"));
         
-        return new VectorElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, rotateMode, doFill, fill, stroke, strokeWidth, path);
+        return new VectorElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path);
     }
     
     // SPECIFIC METHODS

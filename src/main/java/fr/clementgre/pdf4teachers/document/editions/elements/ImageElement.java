@@ -9,35 +9,34 @@ import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.geometry.Side;
+import javafx.scene.Node;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.util.Callback;
 
 import java.io.File;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Objects;
+import java.util.*;
 
 public class ImageElement extends GraphicElement{
     
     // imageId
     
+    private boolean notFound = false;
     private Image image;
-    private ImageView imageView;
-    private StringProperty imageId = new SimpleStringProperty();
+    private final StringProperty imageId = new SimpleStringProperty();
     
-    public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode, String imageId){
-        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, rotateMode);
+    public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId){
+        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
         updateImage(true);
     
         if(hasPage && getPage() != null){
-            imageView = new ImageView(image);
-            imageView.fitWidthProperty().bind(widthProperty());
-            imageView.fitHeightProperty().bind(heightProperty());
-            
-            setupGeneral(imageView);
+            setupGeneral();
         }
     }
     
@@ -45,22 +44,24 @@ public class ImageElement extends GraphicElement{
     
     @Override
     protected void setupBindings(){
+        super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
             updateImage(false);
         });
-        
+        repeatMode.addListener((observable, oldValue, newValue) -> {
+            updateBackground();
+        });
         
     }
     
     @Override
     protected void onMouseRelease(){
-    
+        super.onMouseRelease();
     }
     
     @Override
     protected void setupMenu(){
-    
+        super.setupMenu();
     }
     
     // ACTIONS
@@ -104,25 +105,38 @@ public class ImageElement extends GraphicElement{
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
         String imageId = Config.getString(data, "imageId");
-        
+    
         RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
         ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
-        RotateMode rotateMode = RotateMode.valueOf(Config.getString(data, "rotateMode"));
         
-        return new ImageElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, rotateMode, imageId);
+        return new ImageElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, imageId);
     }
     
     // SPECIFIC METHODS
     
     public void updateImage(boolean checkAutoSize){
         generateImageAsync(() -> {
-            imageView.setImage(image);
+            updateBackground();
             
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
                 checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
                         image.getWidth() * getPage().getWidth() / GRID_WIDTH, image.getHeight() * getPage().getHeight() / GRID_HEIGHT, false);
             }
         });
+    }
+    
+    public void updateBackground(){
+        BackgroundRepeat repeat = getRepeatMode() == RepeatMode.MULTIPLY ? BackgroundRepeat.REPEAT : BackgroundRepeat.NO_REPEAT;
+        BackgroundSize size = new BackgroundSize(1, 1, true, true,
+                getRepeatMode() == RepeatMode.MULTIPLY, getRepeatMode() == RepeatMode.CROP);
+        BackgroundPosition position = BackgroundPosition.DEFAULT;
+        
+        if(notFound){
+            repeat = BackgroundRepeat.NO_REPEAT;
+            size = new BackgroundSize(1, 1, true, true, false, false);
+        }
+        
+        setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
     }
     
     private void generateImageAsync(CallBack callBack){
@@ -133,17 +147,19 @@ public class ImageElement extends GraphicElement{
                 try{
                     image = new Image("file:///" + getImageId());
                 }catch(Exception e){
-                    e.printStackTrace();
-                    image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
+                    e.printStackTrace(); image = getNotFoundImage();
                 }
-                if(image.getWidth() == 0)
-                    image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
-            }else{
-                image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
-            }
-    
+                if(image.getWidth() == 0) image = getNotFoundImage();
+                else notFound = false;
+            }else image = getNotFoundImage();
+            
             Platform.runLater(callBack::call);
         }, "ImageElement Renderer").start();
+    }
+    
+    private Image getNotFoundImage(){
+        notFound = true;
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
     }
     
     @Override

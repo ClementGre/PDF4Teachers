@@ -28,7 +28,7 @@ public class ExifUtils{
         metadata = ImageMetadataReader.readMetadata(file);
     }
     
-    public static void logImageExif(File file){
+    /*public static void logImageExif(File file){
         Platform.runLater(() -> {
             Metadata metadata = null;
             try{
@@ -59,7 +59,7 @@ public class ExifUtils{
             System.out.println();
             
         });
-    }
+    }*/
     
     public ImageTransform getImageExifRotation() throws MetadataException{
     

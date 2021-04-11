@@ -33,9 +33,8 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             PaneUtils.setHBoxPosition(openGallery, 0, 26, new Insets(0, 7, 0, 0));
             openGallery.setPadding(new Insets(0, 7, 0, 7));
             graphics.getChildren().add(2, openGallery);
-            openGallery.setOnAction((e) -> {
-                paintTab.openGallery();
-            });
+            
+            openGallery.setOnAction((e) -> paintTab.openGallery());
         }
     
         expandedProperty().addListener((observable, oldValue, newValue) -> {

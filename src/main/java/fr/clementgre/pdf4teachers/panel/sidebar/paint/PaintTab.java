@@ -82,8 +82,6 @@ public class PaintTab extends SideTab{
     public ComboBox<String> repeatMode;
     public Label resizeModeLabel;
     public ComboBox<String> resizeMode;
-    public Label rotateModeLabel;
-    public ComboBox<String> rotateMode;
     
     // Lists
     
@@ -95,8 +93,6 @@ public class PaintTab extends SideTab{
     // WINDOWS
     
     public GalleryWindow galleryWindow = null;
-    
-    
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -131,7 +127,8 @@ public class PaintTab extends SideTab{
         spinnerHeight.getValueFactory().setConverter(new StringToIntConverter(0));
 
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerX.getValueFactory()).setMax((int) Element.GRID_WIDTH);
-        ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMax((int) Element.GRID_HEIGHT);
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMax(Integer.MAX_VALUE);
+        ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMin(Integer.MIN_VALUE);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).setMax((int) Element.GRID_WIDTH);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).setMax((int) Element.GRID_HEIGHT);
 
@@ -146,10 +143,6 @@ public class PaintTab extends SideTab{
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
-    
-        rotateMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RotateMode.values())
-                .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
-        rotateMode.getSelectionModel().select(0);
         
         translate();
         setup();
@@ -160,7 +153,6 @@ public class PaintTab extends SideTab{
         advancedOptionsPane.setText(TR.tr("paintTab.advancedOptions"));
         repeatModeLabel.setText(TR.tr("paintTab.advancedOptions.repeatMode"));
         resizeModeLabel.setText(TR.tr("paintTab.advancedOptions.resizeMode"));
-        rotateModeLabel.setText(TR.tr("paintTab.advancedOptions.rotateMode"));
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
         
@@ -168,8 +160,7 @@ public class PaintTab extends SideTab{
 
     public void setup(){
         
-        delete.setOnAction(e -> deleteSelected());
-    
+        // Advances options listeners / updaters
         spinnerX.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
                 if(element.getRealX() != newValue) element.setRealX(newValue);
@@ -190,6 +181,43 @@ public class PaintTab extends SideTab{
                 if(element.getRealHeight() != newValue) element.setRealHeight(newValue);
             }
         });
+        repeatMode.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                for(GraphicElement.RepeatMode mode : GraphicElement.RepeatMode.values()){
+                    if(TR.tr(mode.getKey()).equals(newValue)){
+                        element.setRepeatMode(mode);
+                        break;
+                    }
+                }
+            }
+        });
+        resizeMode.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+                for(GraphicElement.ResizeMode mode : GraphicElement.ResizeMode.values()){
+                    if(TR.tr(mode.getKey()).equals(newValue)){
+                        element.setResizeMode(mode);
+                        break;
+                    }
+                }
+            }
+        });
+    
+        delete.setOnAction(e -> deleteSelected());
+    
+        newImage.setOnAction((e) -> {
+            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+        
+            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                    50, 50, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, "");
+        
+            page.addElement(element, true);
+            element.centerOnCoordinatesY();
+            MainWindow.mainScreen.setSelected(element);
+        });
+        
+        newVector.setOnAction(e -> {
+        
+        });
         
         path.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
             if(e.getCode() == KeyCode.DELETE){
@@ -200,22 +228,7 @@ public class PaintTab extends SideTab{
             }
         });
         
-        newImage.setOnAction((e) -> {
-            openGallery();
-        });
-        
-        newImage.setOnAction((e) -> {
-            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
-            
-            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    50, new Random().nextBoolean() ? 150 : 20, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, "");
-            
-            page.addElement(element, true);
-            element.centerOnCoordinatesY();
-            MainWindow.mainScreen.setSelected(element);
-        });
-        
-        MainWindow.mainScreen.selected.addListener(this::updateSelected);
+        MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
         MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
         updateSelected(null, null, null);
     }
@@ -230,11 +243,9 @@ public class PaintTab extends SideTab{
     
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
         if(newValue.intValue() == MainScreen.Status.OPEN){
-            setGlobalDisable(false);
-            setVectorsDisable(true);
+            setAllDisable(false);
         }else{
-            setGlobalDisable(true);
-            setVectorsDisable(true);
+            setAllDisable(true);
         }
     }
     public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
@@ -245,7 +256,10 @@ public class PaintTab extends SideTab{
             }else if(oldValue instanceof ImageElement element){ // Image
                 element.imageIdProperty().unbind();
             }
-            
+            gElement.realXProperty().removeListener(this::editSpinXEvent);
+            gElement.realYProperty().removeListener(this::editSpinYEvent);
+            gElement.realWidthProperty().removeListener(this::editSpinWidthEvent);
+            gElement.realHeightProperty().removeListener(this::editSpinHeightEvent);
         }
         
         // Disable/Enable nodes
@@ -266,6 +280,12 @@ public class PaintTab extends SideTab{
             gElement.realYProperty().addListener(this::editSpinYEvent);
             gElement.realWidthProperty().addListener(this::editSpinWidthEvent);
             gElement.realHeightProperty().addListener(this::editSpinHeightEvent);
+            spinnerX.getValueFactory().setValue(gElement.getRealX());
+            spinnerY.getValueFactory().setValue(gElement.getRealY());
+            spinnerWidth.getValueFactory().setValue(gElement.getRealWidth());
+            spinnerHeight.getValueFactory().setValue(gElement.getRealHeight());
+            repeatMode.getSelectionModel().select(TR.tr(gElement.getRepeatMode().getKey()));
+            resizeMode.getSelectionModel().select(TR.tr(gElement.getResizeMode().getKey()));
             
         }else{
             setGlobalDisable(true);
@@ -283,6 +303,7 @@ public class PaintTab extends SideTab{
         }
     }
     
+    // Advanced options spinners listeners
     public void editSpinXEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
         if(!spinnerX.getValue().equals(newValue)) spinnerX.getValueFactory().setValue(newValue.intValue());
     }
@@ -312,16 +333,27 @@ public class PaintTab extends SideTab{
     public void setVectorOptionPaneVisible(boolean visible){
         if(!visible){ // REMOVE
             root.getChildren().remove(vectorsOptionPane);
-            
         }else if(!root.getChildren().contains(vectorsOptionPane)){ // ADD
             root.getChildren().add(1, vectorsOptionPane);
         }
     }
+    private boolean advancedOptionsPaneWasOpen = false;
     public void setGlobalDisable(boolean disable){
+        if(disable){
+            advancedOptionsPaneWasOpen = advancedOptionsPane.isExpanded();
+            advancedOptionsPane.setExpanded(false);
+        }else{
+            advancedOptionsPane.setExpanded(advancedOptionsPaneWasOpen);
+        }
         advancedOptionsPane.setDisable(disable);
         delete.setDisable(disable);
         path.setDisable(disable);
         browsePath.setDisable(disable);
+    }
+    public void setAllDisable(boolean disable){
+        setGlobalDisable(disable);
+        newImage.setDisable(disable);
+        newVector.setDisable(disable);
     }
     
     public void openGallery(){

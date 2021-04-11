@@ -12,17 +12,15 @@ public class ImageData extends ImageLambdaData{
     private int height;
     private GraphicElement.RepeatMode repeatMode;
     private GraphicElement.ResizeMode resizeMode;
-    private GraphicElement.RotateMode rotateMode;
     private long lastUse;
     private int useCount;
     
-    public ImageData(String imageId, int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode, GraphicElement.RotateMode rotateMode, long lastUse, int useCount){
+    public ImageData(String imageId, int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode, long lastUse, int useCount){
         super(imageId);
         this.width = width;
         this.height = height;
         this.repeatMode = repeatMode;
         this.resizeMode = resizeMode;
-        this.rotateMode = rotateMode;
         this.lastUse = lastUse;
         this.useCount = useCount;
     }
@@ -30,7 +28,7 @@ public class ImageData extends ImageLambdaData{
     public ImageElement addToDocument(){
         PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
         ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                width, height, repeatMode, resizeMode, rotateMode, imageId);
+                width, height, repeatMode, resizeMode, imageId);
     
         page.addElement(element, true);
         element.centerOnCoordinatesY();
@@ -62,12 +60,6 @@ public class ImageData extends ImageLambdaData{
     }
     public void setResizeMode(GraphicElement.ResizeMode resizeMode){
         this.resizeMode = resizeMode;
-    }
-    public GraphicElement.RotateMode getRotateMode(){
-        return rotateMode;
-    }
-    public void setRotateMode(GraphicElement.RotateMode rotateMode){
-        this.rotateMode = rotateMode;
     }
     public String getImageId(){
         return imageId;

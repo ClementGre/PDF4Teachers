@@ -14,7 +14,6 @@ public class ImageUtils{
     
     public static final List<String> ACCEPTED_EXTENSIONS = Arrays.asList("png", "jpeg", "jpg", "tiff", "gif", "bmp");
     
-    
     public static ColorAdjust defaultFullDarkColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultDarkColorAdjust = new ColorAdjust();
     public static ColorAdjust defaultGrayColorAdjust = new ColorAdjust();

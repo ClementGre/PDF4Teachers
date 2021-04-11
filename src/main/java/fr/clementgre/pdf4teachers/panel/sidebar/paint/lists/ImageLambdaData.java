@@ -26,7 +26,7 @@ public class ImageLambdaData{ // 2 child : ImageGridElement & ImageData
         if(this instanceof ImageData imageData){
             return imageData;
         }else{
-            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, GraphicElement.RotateMode.NEAR_CORNERS, 0, 0);
+            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, 0, 0);
         }
     }
     

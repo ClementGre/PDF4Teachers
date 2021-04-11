@@ -94,7 +94,7 @@
 
                 <Label text="y" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <Spinner fx:id="spinnerY" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerY" initialValue="10" amountToStepBy="10" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="0">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
@@ -125,13 +125,6 @@
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
             <ComboBox fx:id="resizeMode">
-                <style>-fx-padding: 0 4;</style>
-            </ComboBox>
-
-            <Label fx:id="rotateModeLabel" style="-fx-font-size: 12px;">
-                <VBox.margin><Insets top="5" /></VBox.margin>
-            </Label>
-            <ComboBox fx:id="rotateMode">
                 <style>-fx-padding: 0 4;</style>
             </ComboBox>
         </VBox>

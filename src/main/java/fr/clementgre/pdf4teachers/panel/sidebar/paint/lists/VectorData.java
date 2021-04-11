@@ -7,19 +7,17 @@ public class VectorData{
     
     private GraphicElement.RepeatMode repeatMode;
     private GraphicElement.ResizeMode resizeMode;
-    private GraphicElement.RotateMode rotateMode;
     private boolean doFill;
     private Color fill;
     private Color stroke;
     private int strokeWidth;
     private String path;
     
-    public VectorData(GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode, GraphicElement.RotateMode rotateMode,
+    public VectorData(GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode,
                       boolean doFill, Color fill, Color stroke, int strokeWidth, String path){
 
         this.repeatMode = repeatMode;
         this.resizeMode = resizeMode;
-        this.rotateMode = rotateMode;
         this.doFill = doFill;
         this.fill = fill;
         this.stroke = stroke;
@@ -43,15 +41,6 @@ public class VectorData{
     public void setResizeMode(GraphicElement.ResizeMode resizeMode){
         this.resizeMode = resizeMode;
     }
-    
-    public GraphicElement.RotateMode getRotateMode(){
-        return rotateMode;
-    }
-    
-    public void setRotateMode(GraphicElement.RotateMode rotateMode){
-        this.rotateMode = rotateMode;
-    }
-    
     public boolean isDoFill(){
         return doFill;
     }

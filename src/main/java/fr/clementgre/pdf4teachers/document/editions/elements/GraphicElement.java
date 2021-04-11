@@ -11,6 +11,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -19,19 +20,17 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-
 import java.util.LinkedHashMap;
 
 public abstract class GraphicElement extends Element{
     
     public enum RepeatMode{
-        STRETCH("paintTab.repeatMode.stretch"),
         KEEP_RATIO("paintTab.repeatMode.keepRatio"),
+        STRETCH("paintTab.repeatMode.stretch"),
         CROP("paintTab.repeatMode.crop"),
-        MULTIPLY_X("paintTab.repeatMode.multiplyX"),
-        MULTIPLY_Y("paintTab.repeatMode.multiplyY");
+        MULTIPLY("paintTab.repeatMode.multiply");
         
-        private String key;
+        private final String key;
         
         RepeatMode(String key){
             this.key = key;
@@ -46,23 +45,9 @@ public abstract class GraphicElement extends Element{
         OPPOSITE_CORNERS("paintTab.resizeMode.oppositeCorners"),
         SIDE_EDGES("paintTab.resizeMode.sideEdges");
         
-        private String key;
+        private final String key;
         
         ResizeMode(String key){
-            this.key = key;
-        }
-        
-        public String getKey(){
-            return key;
-        }
-    }
-    public enum RotateMode{
-        NEAR_CORNERS("paintTab.resizeMode.nearCorners"),
-        NONE("classics.none.feminine");
-        
-        private String key;
-        
-        RotateMode(String key){
             this.key = key;
         }
         
@@ -76,20 +61,14 @@ public abstract class GraphicElement extends Element{
     
     protected ObjectProperty<RepeatMode> repeatMode = new SimpleObjectProperty<>();
     protected ObjectProperty<ResizeMode> resizeMode = new SimpleObjectProperty<>();
-    protected ObjectProperty<RotateMode> rotateMode = new SimpleObjectProperty<>();
     
-    public GraphicElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, RotateMode rotateMode){
+    public GraphicElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode){
         super(x, y, pageNumber);
-
+        
         this.repeatMode.set(repeatMode);
         this.resizeMode.set(resizeMode);
-        this.rotateMode.set(rotateMode);
-        
-        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
-        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
-        
-        setRealWidth(width);
-        setRealHeight(height);
+        this.realWidth.set(width);
+        this.realHeight.set(height);
     }
     
     private Cursor dragType = Cursor.MOVE;
@@ -104,12 +83,15 @@ public abstract class GraphicElement extends Element{
     protected void setupGeneral(Node... components){
         super.setupGeneral(false, components);
     
+        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
+        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+        
         MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(oldValue == this && newValue != this){
-                setBorder(null);
+                updateGrabIndicators(false);
                 menu.hide();
             }else if(oldValue != this && newValue == this){
-                setBorder(new Border(new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), BorderStrokeStyle.DOTTED, new CornerRadii(0), new BorderWidths(1.5))));
+                updateGrabIndicators(true);
             }
         });
         
@@ -130,7 +112,6 @@ public abstract class GraphicElement extends Element{
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
-
             }else{
                 //
                 //              |
@@ -139,35 +120,38 @@ public abstract class GraphicElement extends Element{
                     double width = e.getX() + shiftXFromEnd;
                     double height = e.getY() + shiftYFromEnd;
 
-                    if(doKeepRatio(e)){
-                        double requestedRatio = width / height;
-                        if(requestedRatio >= ratio) height = width / ratio;
-                        else width = height * ratio;
-                    }
-
                     if(width < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
-                    if(height < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
-                    else checkLocation(getLayoutX(), getLayoutY(), width, height, false);
+                    else if(height < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
+                    else{
+                        if(doKeepRatio(e)){
+                            double requestedRatio = width / height;
+                            if(requestedRatio >= ratio) height = width / ratio;
+                            else width = height * ratio;
+                        }
+                        checkLocation(getLayoutX(), getLayoutY(), width, height, false);
+                    }
 
                 }else if(dragType == Cursor.S_RESIZE){
                     double height = e.getY() + shiftYFromEnd;
 
                     if(doKeepRatio(e)){
+                        originX = originX + (originWidth - height*ratio)/2;
                         originWidth = height * ratio;
                     }
 
                     if(height < 0) setupMousePressVars(e, Cursor.N_RESIZE);
-                    else checkLocation(getLayoutX(), getLayoutY(), originWidth, height, false);
+                    else checkLocation(originX, getLayoutY(), originWidth, height, false);
 
                 }else if(dragType == Cursor.E_RESIZE){
                     double width = e.getX() + shiftXFromEnd;
 
                     if(doKeepRatio(e)){
+                        originY = originY + (originHeight - width/ratio)/2;
                         originHeight = width / ratio;
                     }
 
                     if(width < 0) setupMousePressVars(e, Cursor.W_RESIZE);
-                    else checkLocation(getLayoutX(), getLayoutY(), width, originHeight, false);
+                    else checkLocation(getLayoutX(), originY, width, originHeight, false);
                 }
                 //               +
                 //
@@ -177,28 +161,39 @@ public abstract class GraphicElement extends Element{
                     double newY = getLayoutY() + e.getY() - shiftY;
                     double height = originHeight + (originY - newY);
 
-                    if(doKeepRatio(e)){
-                        double requestedRatio = width / height;
-                        if(requestedRatio >= ratio){
-                            height = width / ratio;
-                            newY = originHeight + originY - height;
-                        }
-                        else width = height * ratio;
-                    }
-
-
                     if(width < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
-                    if(height < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
-                    else checkLocation(getLayoutX(), newY, width, height, false);
+                    else if(height < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
+                    else{
+                        if(doKeepRatio(e)){
+                            double requestedRatio = width / height;
+                            if(requestedRatio >= ratio){
+                                height = width / ratio;
+                                newY = originHeight + originY - height;
+                            }
+                            else width = height * ratio;
+                        }
+                        checkLocation(getLayoutX(), newY, width, height, false);
+                    }
 
                 }else if(dragType == Cursor.SW_RESIZE){
                     double height = e.getY() + shiftYFromEnd;
                     double newX = getLayoutX() + e.getX() - shiftX;
                     double width = originWidth + (originX - newX);
-
+    
                     if(width < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
-                    if(height < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
-                    else checkLocation(newX, getLayoutY(), width, height, false);
+                    else if(height < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
+                    else{
+                        if(doKeepRatio(e)){
+                            double requestedRatio = width / height;
+                            if(requestedRatio >= ratio){
+                                height = width / ratio;
+                            }else{
+                                width = height * ratio;
+                                newX = originWidth + originX - width;
+                            }
+                        }
+                        checkLocation(newX, getLayoutY(), width, height, false);
+                    }
 
                 }
                 //          + -
@@ -209,24 +204,45 @@ public abstract class GraphicElement extends Element{
                     double width = originWidth + (originX - newX);
                     double newY = getLayoutY() + e.getY() - shiftY;
                     double height = originHeight + (originY - newY);
-
+    
                     if(width < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
-                    if(height < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
-                    else checkLocation(newX, newY, width, height, false);
-
+                    else if(height < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
+                    else{
+                        if(doKeepRatio(e)){
+                            double requestedRatio = width / height;
+                            if(requestedRatio >= ratio){
+                                height = width / ratio;
+                                newY = originHeight + originY - height;
+                            }else{
+                                width = height * ratio;
+                                newX = originWidth + originX - width;
+                            }
+                        }
+                        checkLocation(newX, newY, width, height, false);
+                    }
                 }else if(dragType == Cursor.N_RESIZE){
                     double newY = getLayoutY() + e.getY() - shiftY;
                     double height = originHeight + (originY - newY);
-
+    
+                    if(doKeepRatio(e)){
+                        originX = originX + (originWidth - height*ratio)/2;
+                        originWidth = height * ratio;
+                    }
+                    
                     if(height < 0) setupMousePressVars(e, Cursor.S_RESIZE);
-                    else checkLocation(getLayoutX(), newY, getWidth(), height, false);
+                    else checkLocation(originX, newY, originWidth, height, false);
 
                 }else if(dragType == Cursor.W_RESIZE){
                     double newX = getLayoutX() + e.getX() - shiftX;
                     double width = originWidth + (originX - newX);
-
+    
+                    if(doKeepRatio(e)){
+                        originY = originY + (originHeight - width/ratio)/2;
+                        originHeight = width/ratio;
+                    }
+                    
                     if(width < 0) setupMousePressVars(e, Cursor.E_RESIZE);
-                    else checkLocation(newX, getLayoutY(), width, getHeight(), false);
+                    else checkLocation(newX, originY, width, originHeight, false);
 
                 }
             }
@@ -262,9 +278,8 @@ public abstract class GraphicElement extends Element{
                 }
             }
         });
-        
     }
-
+    
     private void setupMousePressVars(MouseEvent e, Cursor forceDragType){
         shiftX = (int) e.getX();
         shiftY = (int) e.getY();
@@ -285,11 +300,13 @@ public abstract class GraphicElement extends Element{
             ratio = originWidth / originHeight;
         }
         setCursor(dragType);
+        
     }
     
     public Cursor getDragCursorType(double x, double y){
         int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
         
+        // RESIZE
         if(x < grabSize){ // Left Side
             if(y < grabSize){ // Top Left
                 return Cursor.NW_RESIZE;
@@ -318,13 +335,58 @@ public abstract class GraphicElement extends Element{
         return Cursor.MOVE;
     }
     
+    protected static BorderStroke STROKE_SIDE_EDGES = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
+            BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0, 2, 0, 2));
+    public void updateGrabIndicators(boolean selected){
+        if(!selected){
+            setBorder(null);
+            getChildren().clear();
+        }
+        switch(getResizeMode()){
+            case CORNERS -> {
+                if(selected){
+                    setBorder(new Border(STROKE_DEFAULT));
+                    getChildren().setAll(getPoint(true, true), getPoint(true, false), getPoint(false, true), getPoint(false, false));
+                }
+            }
+            case SIDE_EDGES -> {
+                if(selected){
+                    setBorder(new Border(STROKE_DEFAULT, STROKE_SIDE_EDGES));
+                    getChildren().clear();
+                }
+            }
+            case OPPOSITE_CORNERS -> {
+                if(selected){
+                    setBorder(null);
+                    getChildren().setAll(getPoint(false, true), getPoint(true, false));
+                }
+            }
+        }
+    }
+    
+    private static final int POINT_WIDTH = 6;
+    private static final int POINT_OUTER = 2;
+    private Region getPoint(boolean top, boolean left){
+        Region region = new Region();
+        region.setPrefWidth(POINT_WIDTH);
+        region.setPrefHeight(POINT_WIDTH);
+        region.setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), new CornerRadii(1), Insets.EMPTY)));
+
+        if(top) region.setLayoutY(0d - POINT_OUTER);
+        else region.layoutYProperty().bind(heightProperty().subtract(POINT_WIDTH - POINT_OUTER));
+        if(left) region.setLayoutX(0d - POINT_OUTER);
+        else region.layoutXProperty().bind(widthProperty().subtract(POINT_WIDTH - POINT_OUTER));
+        
+        return region;
+    }
+    
     // SETUP / EVENT CALL BACK
     
     @Override
     protected void setupBindings(){
-        /*this.text.fontProperty().addListener((observable, oldValue, newValue) -> {
-            updateLaTeX();
-        });*/
+        resizeMode.addListener((observable, oldValue, newValue) -> {
+            updateGrabIndicators(true);
+        });
     }
     
     @Override
@@ -368,8 +430,6 @@ public abstract class GraphicElement extends Element{
         data.put("height", getRealHeight());
         data.put("repeatMode", getRepeatMode().name());
         data.put("resizeMode", getResizeMode().name());
-        data.put("rotateMode", getRotateMode().name());
-        
         
         return data;
     }
@@ -387,67 +447,44 @@ public abstract class GraphicElement extends Element{
     
     @Override
     public float getAlwaysHeight(){
-        return getRealHeight();
-    } // TODO
-    
+        throw new RuntimeException("Unable to getAlwaysHeight on GraphicElement, use getRealHeight instead.");
+    }
     public int getRealWidth(){
         return realWidth.get();
     }
-    
     public IntegerProperty realWidthProperty(){
         return realWidth;
     }
-    
     public void setRealWidth(int realWidth){
         this.realWidth.set(realWidth);
     }
-    
     @Override
     public int getRealHeight(){
         return realHeight.get();
     }
-    
     public IntegerProperty realHeightProperty(){
         return realHeight;
     }
-    
     public void setRealHeight(int realHeight){
         this.realHeight.set(realHeight);
     }
-    
     public RepeatMode getRepeatMode(){
         return repeatMode.get();
     }
-    
     public ObjectProperty<RepeatMode> repeatModeProperty(){
         return repeatMode;
     }
-    
     public void setRepeatMode(RepeatMode repeatMode){
         this.repeatMode.set(repeatMode);
     }
-    
     public ResizeMode getResizeMode(){
         return resizeMode.get();
     }
-    
     public ObjectProperty<ResizeMode> resizeModeProperty(){
         return resizeMode;
     }
-    
     public void setResizeMode(ResizeMode resizeMode){
         this.resizeMode.set(resizeMode);
     }
     
-    public RotateMode getRotateMode(){
-        return rotateMode.get();
-    }
-    
-    public ObjectProperty<RotateMode> rotateModeProperty(){
-        return rotateMode;
-    }
-    
-    public void setRotateMode(RotateMode rotateMode){
-        this.rotateMode.set(rotateMode);
-    }
 }
