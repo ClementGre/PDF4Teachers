@@ -50,7 +50,7 @@ public abstract class Element extends Region{
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
         
-        checkLocation(getLayoutX(), getLayoutY(), false);
+        checkLocation(false);
         setCursor(Cursor.MOVE);
         
         //////////////////////////// EVENTS ///////////////////////////////////
@@ -177,7 +177,7 @@ public abstract class Element extends Region{
     
     public void delete(){
         if(getPage() != null){
-            if(MainWindow.mainScreen.getSelected().equals(this)) MainWindow.mainScreen.setSelected(null);
+            if(equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
             getPage().removeElement(this, true);
         }
     }

@@ -10,12 +10,17 @@ import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.util.List;
 
 public abstract class ListPane<T> extends TitledPane{
     
@@ -25,7 +30,7 @@ public abstract class ListPane<T> extends TitledPane{
     // TITLE
     protected final Label title = new Label();
     protected final HBox graphics = new HBox();
-    protected final Slider zoomSlider = new Slider(1, 5, 3);
+    protected final Slider zoomSlider = new Slider(1, 6, 4);
     protected final ToggleButton sortToggleBtn = new ToggleButton("");
     
     // CONTENT
@@ -38,7 +43,9 @@ public abstract class ListPane<T> extends TitledPane{
         setExpanded(false);
         getStyleClass().add("paint-tab-titled-pane");
         
+        setMaxHeight(Double.MAX_VALUE);
         setContent(root);
+        setAnimated(false);
         Platform.runLater(this::setupGraphics);
     }
     
@@ -48,7 +55,7 @@ public abstract class ListPane<T> extends TitledPane{
         PaneUtils.setHBoxPosition(sortToggleBtn,26, 26, new Insets(0, 0, 0, 5));
         sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
         sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("sorting.name")));
-        PaneUtils.setVBoxPosition(sortPanel,0, 26, 0);
+        PaneUtils.setVBoxPosition(sortPanel, 0, 26, 0);
     
         if(!sortToggleBtn.isSelected()) sortToggleBtn.setStyle("-fx-background-color: null;");
         else sortToggleBtn.setStyle("");
@@ -72,6 +79,7 @@ public abstract class ListPane<T> extends TitledPane{
         
         graphics.getChildren().addAll(title, new HBoxSpacer(), zoomSlider, sortToggleBtn);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
+        graphics.setCursor(Cursor.DEFAULT);
         setGraphic(graphics);
         
     }
@@ -100,6 +108,13 @@ public abstract class ListPane<T> extends TitledPane{
     }
     public int getType(){
         return this.type.get();
+    }
+    public ListPane<?> getFromType(int type){
+        if(type == 0) return paintTab.favouriteVectors;
+        if(type == 1) return paintTab.favouriteImages;
+        if(type == 2) return paintTab.lastVectors;
+        if(type == 3) return paintTab.gallery;
+        throw new RuntimeException("type " + type + " is not between 0 and 3");
     }
     public boolean isFavouriteVectors(){
         return getType() == 0;

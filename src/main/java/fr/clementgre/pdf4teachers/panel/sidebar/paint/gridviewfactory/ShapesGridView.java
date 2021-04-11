@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;

@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -85,6 +86,7 @@ public abstract class GraphicElement extends Element{
     
         prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
         prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+        Platform.runLater(() -> checkLocation(false));
         
         MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(oldValue == this && newValue != this){
@@ -98,6 +100,7 @@ public abstract class GraphicElement extends Element{
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE){
                 delete();
+                e.consume();
             }
         });
         
@@ -107,6 +110,7 @@ public abstract class GraphicElement extends Element{
     
         setOnMousePressed(e -> {
             e.consume();
+            requestFocus();
             setupMousePressVars(e, null);
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());

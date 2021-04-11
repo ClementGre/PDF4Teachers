@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
@@ -29,12 +30,28 @@ public class ImageElement extends GraphicElement{
     private Image image;
     private final StringProperty imageId = new SimpleStringProperty();
     
+    public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId, ImageData linkedImageData){
+        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
+        this.imageId.set(imageId);
+        
+        updateImage(true);
+        if(hasPage && getPage() != null){
+            setupGeneral();
+            
+            if(linkedImageData != null){
+                realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
+                realHeight.addListener((observable, oldValue, newValue) -> linkedImageData.setHeight(newValue.intValue()));
+                this.repeatMode.addListener((observable, oldValue, newValue) -> linkedImageData.setRepeatMode(newValue));
+                this.resizeMode.addListener((observable, oldValue, newValue) -> linkedImageData.setResizeMode(newValue));
+                this.imageId.addListener((observable, oldValue, newValue) -> linkedImageData.setImageId(newValue));
+            }
+        }
+    }
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
         updateImage(true);
-    
         if(hasPage && getPage() != null){
             setupGeneral();
         }

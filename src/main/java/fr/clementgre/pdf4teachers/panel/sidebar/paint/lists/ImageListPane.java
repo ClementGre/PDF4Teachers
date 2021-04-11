@@ -23,6 +23,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
     protected void setupGraphics(){
         super.setupGraphics();
         root.getChildren().add(list);
+        
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());
        
         if(isFavouriteImages()){

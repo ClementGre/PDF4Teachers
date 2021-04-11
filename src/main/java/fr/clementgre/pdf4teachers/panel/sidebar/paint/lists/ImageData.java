@@ -28,15 +28,17 @@ public class ImageData extends ImageLambdaData{
         this.useCount = useCount;
     }
     
-    public ImageElement addToDocument(){
+    public void addToDocument(){
         PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
         ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                width, height, repeatMode, resizeMode, imageId);
+                width, height, repeatMode, resizeMode, imageId, this);
     
         page.addElement(element, true);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
-        return element;
+        
+        lastUse = System.currentTimeMillis();
+        useCount++;
     }
     
     public LinkedHashMap<Object, Object> getYAMLData(){

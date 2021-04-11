@@ -9,28 +9,24 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
-import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import javax.swing.plaf.PanelUI;
 import java.util.Arrays;
-import java.util.Random;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class PaintTab extends SideTab{
@@ -144,10 +140,12 @@ public class PaintTab extends SideTab{
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
         
+        
+        
         translate();
         setup();
     }
-
+    
     public void translate(){
         // Advanced options
         advancedOptionsPane.setText(TR.tr("paintTab.advancedOptions"));
@@ -219,15 +217,6 @@ public class PaintTab extends SideTab{
         
         });
         
-        path.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            if(e.getCode() == KeyCode.DELETE){
-                if(path.getCaretPosition() == path.getText().length()){
-                    deleteSelected();
-                    e.consume();
-                }
-            }
-        });
-        
         MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
         MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
         updateSelected(null, null, null);
@@ -273,7 +262,6 @@ public class PaintTab extends SideTab{
                 element.imageIdProperty().bind(path.textProperty());
             }
             
-            path.requestFocus();
             path.positionCaret(path.getText().length());
             gElement.realXProperty().addListener(this::editSpinXEvent);
             gElement.realYProperty().addListener(this::editSpinYEvent);

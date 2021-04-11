@@ -56,7 +56,7 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void toggleFavorite(){
-        if(hasLinkedImageData()){
+        if(isFavorite()){
             MainWindow.paintTab.favouriteImages.getList().removeItems(Collections.singletonList(this));
             linkedImageData = null;
         }else{
@@ -66,7 +66,17 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void addToDocument(){
-        toImageData().addToDocument();
+        getImageData().addToDocument();
+    }
+    
+    public ImageData getImageData(){
+        if(hasLinkedImageData()){
+            return linkedImageData;
+        }else if(isFavorite()){
+            return MainWindow.paintTab.favouriteImages.getList().getAllItems().get(MainWindow.paintTab.favouriteImages.getList().getAllItems().indexOf(this)).linkedImageData;
+        }else{
+            return toImageData();
+        }
     }
     
     // SORTER
@@ -81,9 +91,9 @@ public class ImageGridElement extends ImageLambdaData{
         int value = 0;
         if(hasLinkedImageData()){
             if(element.hasLinkedImageData()){
-                value = getLinkedImageData().getUseCount() - element.getLinkedImageData().getUseCount();
-            }
-        }
+                value = element.getLinkedImageData().getUseCount() - getLinkedImageData().getUseCount();
+            }else value = 1;
+        }else if(element.hasLinkedImageData()) value = -1;
     
         if(value == 0) return compareDirectoryWith(element);
         return value;
@@ -92,9 +102,10 @@ public class ImageGridElement extends ImageLambdaData{
         int value = 0;
         if(hasLinkedImageData()){
             if(element.hasLinkedImageData()){
-                value = (int) (getLinkedImageData().getLastUse() - element.getLinkedImageData().getLastUse());
-            }
-        }
+                long val = (element.getLinkedImageData().getLastUse() - getLinkedImageData().getLastUse());
+                value = val > 0 ? 1 : (val < 0 ? -1 : 0);
+            }else value = 1;
+        }else if(element.hasLinkedImageData()) value = -1;
         
         if(value == 0) return compareDirectoryWith(element);
         return value;
@@ -148,6 +159,9 @@ public class ImageGridElement extends ImageLambdaData{
     }
     public boolean hasLinkedImageData(){
         return linkedImageData != null;
+    }
+    public boolean isFavorite(){
+        return MainWindow.paintTab.favouriteImages.getList().getAllItems().contains(this);
     }
     public void setLinkedImageData(ImageData linkedImageData){
         this.linkedImageData = linkedImageData;

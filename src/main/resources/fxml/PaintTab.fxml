@@ -18,6 +18,9 @@
 
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.SplitPane?>
+<?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -130,18 +133,18 @@
         </VBox>
     </TitledPane>
 
-    <VectorListPane fx:id="favouriteVectors" type="0">
-    </VectorListPane>
+    <SameSizeTitledPaneContainer>
+        <VectorListPane fx:id="favouriteVectors" type="0">
+        </VectorListPane>
 
-    <ImageListPane fx:id="gallery" type="3">
-    </ImageListPane>
+        <ImageListPane fx:id="favouriteImages" type="1">
+        </ImageListPane>
 
-    <ImageListPane fx:id="favouriteImages" type="1">
-    </ImageListPane>
+        <VectorListPane fx:id="lastVectors" type="2">
+        </VectorListPane>
 
-    <VectorListPane fx:id="lastVectors" type="2">
-    </VectorListPane>
-
-
+        <ImageListPane fx:id="gallery" type="3">
+        </ImageListPane>
+    </SameSizeTitledPaneContainer>
 
 </VBox>

@@ -41,7 +41,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     private final DropShadow shadow = new DropShadow();
     
     private final ContextMenu menu = new ContextMenu();
-    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.isFavorite"), false, true);
+    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.isFavorite"), false, true, true);
     private final NodeMenuItem addItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
     private final NodeMenuItem openItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
     private final NodeMenuItem deleteItem = new NodeMenuItem(new HBox(), TR.tr("gallery.imageContextMenu.deleteFile"), false);
@@ -59,7 +59,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         imageView.fitWidthProperty().bind(widthProperty().subtract(2*PADDING));
         imageView.fitHeightProperty().bind(heightProperty().subtract(2*PADDING));
         imageView.setTranslateX(PADDING);
-        imageView.setTranslateY(PADDING);
+        //imageView.setTranslateY(PADDING);
         
         shadow.setColor(Color.web("#0078d7"));
         shadow.setSpread(.90);
@@ -97,7 +97,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             imageView.imageProperty().bind(item.imageProperty());
             setContextMenu(menu);
             menu.setOnShowing((e) -> {
-                isFavoriteItem.setSelected(item.hasLinkedImageData());
+                isFavoriteItem.setSelected(item.isFavorite());
                 addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
                 
                 isFavoriteItem.setOnAction((event) -> {
@@ -105,6 +105,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 });
                 addItem.setOnAction((event) -> {
                     item.addToDocument();
+                    gridView.getSortManager().simulateCall();
                 });
                 openItem.setOnAction((event) -> {
                     PlatformUtils.openDirectory(item.getImageIdDirectory());
@@ -119,22 +120,33 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                     }
                 });
             });
-            Tooltip tooltip = PaneUtils.genToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
-            tooltip.setShowDelay(Duration.ZERO);
-            if(item.hasLinkedImageData()){
-                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, "yellow", 0, 16, 16);
-                graphic.setPadding(new Insets(0, 5, 0, 0));
-                tooltip.setGraphic(graphic);
-            }
-            setTooltip(tooltip);
+            updateTooltip(item);
             
             setGraphic(imageView);
             setOnMouseClicked((e) -> {
                 if(e.getClickCount() >= 2){
                     item.addToDocument();
+                    gridView.getSortManager().simulateCall();
                 }
             });
         }
+    }
+    
+    public void updateTooltip(ImageGridElement item){
+        Tooltip tooltip = PaneUtils.genToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
+        tooltip.setShowDelay(Duration.ZERO);
+        
+        tooltip.setOnShowing(e -> {
+            if(item.isFavorite()){
+                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, "yellow", 0, 16, 16);
+                graphic.setPadding(new Insets(0, 5, 0, 0));
+                tooltip.setGraphic(graphic);
+            }else{
+                tooltip.setGraphic(null);
+            }
+        });
+        
+        setTooltip(tooltip);
     }
     
     // IMAGE RENDER

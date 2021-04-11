@@ -31,7 +31,7 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         }else if(SORT_USE.equals(sortType)){
             getItems().sort((o1, o2) -> o1.compareUseWith(o2) * multiple);
         }else if(SORT_LAST_USE.equals(sortType)){
-            getItems().sort((o1, o2) -> o1.compareUseWith(o2) * multiple);
+            getItems().sort((o1, o2) -> o1.compareLastUseTimeWith(o2) * multiple);
         }else if(SORT_NAME.equals(sortType)){
             getItems().sort((o1, o2) -> o1.compareNameWith(o2) * multiple);
         }else if(SORT_SIZE.equals(sortType)){
