@@ -121,7 +121,7 @@ jlink {
         else if(os.macOsX) targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
         else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
 
-        installerType = os.windows ? 'msi' : os.macOsX ? 'dmg' : 'deb'
+        installerType = os.windows ? 'msi' : (os.macOsX ? 'dmg' : 'deb')
         installerOptions = [
                 '--description', project.description,
                 '--copyright', 'Copyrigth 2019 Clément Grennerat',
@@ -143,8 +143,7 @@ jlink {
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
                     "--mac-package-name", "PDF4Teachers",
-                    '--file-associations', 'association-osx.properties',
-                    '--icon', 'src/main/resources/logo.icns'
+                    '--file-associations', 'association-osx.properties'
             ]
         }else if(os.linux){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']

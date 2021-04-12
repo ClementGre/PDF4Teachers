@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
@@ -11,6 +12,7 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Date;
 
 public class ImageGridElement extends ImageLambdaData{
     
@@ -61,6 +63,11 @@ public class ImageGridElement extends ImageLambdaData{
             linkedImageData = new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, 0, 0);
             MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(this));
         }
+        if(MainWindow.paintTab.galleryWindow != null && MainWindow.paintTab.galleryWindow.isShowing()){
+            if(TR.tr("galleryWindow.filterAndEditCombo.favourites").equals(MainWindow.paintTab.galleryWindow.getList().getFilterType())){
+                MainWindow.paintTab.galleryWindow.getList().updateItemsFiltered();
+            }
+        }
     }
     
     public void addToDocument(){
@@ -90,23 +97,23 @@ public class ImageGridElement extends ImageLambdaData{
     }
     public int compareUseWith(ImageGridElement element){
         int value = 0;
-        if(hasLinkedImageData()){
-            if(element.hasLinkedImageData()){
-                value = element.getLinkedImageData().getUseCount() - getLinkedImageData().getUseCount();
-            }else value = 1;
-        }else if(element.hasLinkedImageData()) value = -1;
-    
+        if(isFavorite()){
+            if(element.isFavorite()){
+                value = element.getImageData().getUseCount() - getImageData().getUseCount();
+            }else value = -1;
+        }else if(element.isFavorite()) value = 1;
+
         if(value == 0) return compareDirectoryWith(element);
         return value;
     }
     public int compareLastUseTimeWith(ImageGridElement element){
         int value = 0;
-        if(hasLinkedImageData()){
-            if(element.hasLinkedImageData()){
-                long val = (element.getLinkedImageData().getLastUse() - getLinkedImageData().getLastUse());
+        if(isFavorite()){
+            if(element.isFavorite()){
+                long val = (element.getImageData().getLastUse() - getImageData().getLastUse());
                 value = val > 0 ? 1 : (val < 0 ? -1 : 0);
-            }else value = 1;
-        }else if(element.hasLinkedImageData()) value = -1;
+            }else value = -1;
+        }else if(element.isFavorite()) value = 1;
         
         if(value == 0) return compareDirectoryWith(element);
         return value;

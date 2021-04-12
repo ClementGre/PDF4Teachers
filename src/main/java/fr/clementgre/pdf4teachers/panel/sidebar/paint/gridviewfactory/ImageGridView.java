@@ -14,7 +14,6 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     public ImageGridView(boolean defineCellSizeAsRowNumber, int imageRenderSize, Slider zoomSlider){
         super(defineCellSizeAsRowNumber, zoomSlider);
         this.imageRenderSize = imageRenderSize;
-        
     }
     
     @Override
@@ -44,7 +43,9 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     @Override
     protected List<ImageGridElement> filter(List<ImageGridElement> items){
         if(TR.tr("galleryWindow.filterAndEditCombo.everywhere").equals(filterType)){
-            return items.stream().filter((e) -> e.getLinkedImageData() != null).collect(Collectors.toList()); // TODO : Favorite filtering
+            return items;
+        }else if(TR.tr("galleryWindow.filterAndEditCombo.favourites").equals(filterType)){
+            return items.stream().filter(ImageGridElement::isFavorite).collect(Collectors.toList());
         }else{
             return items.stream().filter((e) -> e.getImageIdDirectory().equals(filterType)).collect(Collectors.toList());
         }

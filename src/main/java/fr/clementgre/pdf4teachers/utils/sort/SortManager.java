@@ -93,7 +93,9 @@ public class SortManager{
     public void simulateCall(){
         updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
     }
-
+    public String getSortKey(){
+        return selectedButton.get().getText();
+    }
     public Button getSelectedButton(){
         return selectedButton.get();
     }

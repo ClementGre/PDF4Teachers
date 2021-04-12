@@ -149,9 +149,12 @@ public class GalleryWindow extends Stage{
             MainWindow.paintTab.gallery.reloadImageList();
         }
     }
-    
+
     public List<ImageGridElement> getListItems(){
         return list.getAllItems();
+    }
+    public ShapesGridView<ImageGridElement> getList(){
+        return list;
     }
     
     public static List<ImageGridElement> getImages(){

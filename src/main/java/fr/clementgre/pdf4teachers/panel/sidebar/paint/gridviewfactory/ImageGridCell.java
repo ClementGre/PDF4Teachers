@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -102,7 +103,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 });
                 addItem.setOnAction((event) -> {
                     item.addToDocument();
-                    gridView.getSortManager().simulateCall();
+                    updateGalleryAndFavoritesSort();
                 });
                 openItem.setOnAction((event) -> {
                     PlatformUtils.openDirectory(item.getImageIdDirectory());
@@ -123,11 +124,21 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             setOnMouseClicked((e) -> {
                 if(e.getClickCount() >= 2){
                     item.addToDocument();
-                    gridView.getSortManager().simulateCall();
+                    updateGalleryAndFavoritesSort();
                 }else if(e.getClickCount() == 1){
                     item.setAsToPlaceElement();
                 }
             });
+        }
+    }
+
+    public static void updateGalleryAndFavoritesSort(){
+        if(MainWindow.paintTab.galleryWindow != null && MainWindow.paintTab.galleryWindow.isShowing()){
+            SortManager gallerySM = MainWindow.paintTab.galleryWindow.getList().getSortManager();
+            if(ShapesGridView.SORT_USE.equals(gallerySM.getSortKey()) || ShapesGridView.SORT_LAST_USE.equals(gallerySM.getSortKey())){
+                MainWindow.paintTab.galleryWindow.getList().getSortManager().simulateCall();
+            }
+            MainWindow.paintTab.favouriteImages.getList().getSortManager().simulateCall();
         }
     }
     

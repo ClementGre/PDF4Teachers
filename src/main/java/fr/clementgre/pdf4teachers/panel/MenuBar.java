@@ -477,9 +477,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                     tk.createQuitMenuItem(Main.APP_NAME));
             tk.setApplicationMenu(defaultApplicationMenu);
 
-//            Menu docMenu = new Menu("test");
-//            docMenu.getItems().addAll(new MenuItem("item"));
-//            tk.setDockIconMenu(docMenu);
+            // TODO : check this works
+            Menu docMenu = new Menu("test");
+            docMenu.getItems().addAll(new MenuItem("item"));
+            tk.setDockIconMenu(docMenu);
         }
         
     }
