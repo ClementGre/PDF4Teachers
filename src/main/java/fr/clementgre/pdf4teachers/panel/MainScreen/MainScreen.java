@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
@@ -18,6 +19,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -48,6 +50,8 @@ public class MainScreen extends Pane{
     
     private final IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
     private final ObjectProperty<Element> selected = new SimpleObjectProperty<>();
+    private final ObjectProperty<GraphicElement> toPlace = new SimpleObjectProperty<>();
+    
     public Document document;
     public String failedEditFile = "";
     
@@ -169,6 +173,10 @@ public class MainScreen extends Pane{
                     if(document != null) document.updateShowsStatus();
                 });
             }
+        });
+        
+        selectedProperty().addListener((observable, oldValue, newValue) -> {
+            setToPlace(null);
         });
         
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
@@ -393,19 +401,29 @@ public class MainScreen extends Pane{
     public Element getSelected(){
         return selected.get();
     }
-    
     public ObjectProperty<Element> selectedProperty(){
         return selected;
     }
-    
     public void setSelected(Element selected){
         this.selected.set(selected);
+    }
+    
+    public GraphicElement getToPlace(){
+        return toPlace.get();
+    }
+    public boolean hasToPlace(){
+        return toPlace.get() != null;
+    }
+    public ObjectProperty<GraphicElement> toPlaceProperty(){
+        return toPlace;
+    }
+    public void setToPlace(GraphicElement toPlace){
+        this.toPlace.set(toPlace);
     }
     
     public IntegerProperty statusProperty(){
         return status;
     }
-    
     public int getStatus(){
         return this.status.get();
     }
@@ -413,11 +431,9 @@ public class MainScreen extends Pane{
     public double getZoomFactor(){
         return pane.getScaleX();
     }
-    
     public double getZoomPercent(){
         return getZoomFactor() * 100;
     }
-    
     public DoubleBinding zoomPercentProperty(){
         return pane.scaleXProperty().multiply(100);
     }
@@ -425,11 +441,9 @@ public class MainScreen extends Pane{
     public int getPageWidth(){
         return pageWidth;
     }
-    
     public void addPage(PageRenderer page){
         pane.getChildren().add(page);
     }
-    
     public void updateSize(int totalHeight){
         
         pane.setPrefWidth(pageWidth + (PageRenderer.PAGE_HORIZONTAL_MARGIN * 2));

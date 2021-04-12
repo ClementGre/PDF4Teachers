@@ -1,17 +1,14 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
-import com.drew.metadata.MetadataException;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
-import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
@@ -127,6 +124,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 if(e.getClickCount() >= 2){
                     item.addToDocument();
                     gridView.getSortManager().simulateCall();
+                }else if(e.getClickCount() == 1){
+                    item.setAsToPlaceElement();
                 }
             });
         }

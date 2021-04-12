@@ -80,7 +80,9 @@ public abstract class GraphicElement extends Element{
     protected double originX = 0;
     protected double originY = 0;
     protected double ratio = 0;
-
+    
+    public abstract void initializePage(int page, double x, double y);
+    
     protected void setupGeneral(Node... components){
         super.setupGeneral(false, components);
     

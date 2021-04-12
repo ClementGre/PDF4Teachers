@@ -249,11 +249,9 @@ public abstract class Element extends Region{
     public int getPageNumber(){
         return pageNumber;
     }
-    
     public void setPage(PageRenderer page){
         this.pageNumber = page.getPage();
     }
-    
     public void setPage(int pageNumber){
         this.pageNumber = pageNumber;
     }

@@ -127,7 +127,7 @@ public class Edition{
         }
         
         isSave.set(true);
-        MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, "Saved !");
+        MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
         MainWindow.filesTab.files.refresh();
         
     }

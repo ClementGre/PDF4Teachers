@@ -10,8 +10,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.image.Image;
 
 import java.io.File;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class ImageGridElement extends ImageLambdaData{
@@ -66,7 +64,10 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void addToDocument(){
-        getImageData().addToDocument();
+        getImageData().addToDocument(hasLinkedImageData());
+    }
+    public void setAsToPlaceElement(){
+        getImageData().setAsToPlaceElement(hasLinkedImageData());
     }
     
     public ImageData getImageData(){

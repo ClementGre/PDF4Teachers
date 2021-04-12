@@ -18,6 +18,12 @@ public class VectorElement extends GraphicElement{
         }
     }
     
+    public void initializePage(int pageNumber, double x, double y){
+        this.pageNumber = pageNumber;
+        setupGeneral();
+        checkLocation(x, y, false);
+    }
+    
     // SETUP / EVENT CALL BACK
     
     @Override

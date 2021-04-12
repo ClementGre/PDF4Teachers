@@ -28,15 +28,29 @@ public class ImageData extends ImageLambdaData{
         this.useCount = useCount;
     }
     
-    public void addToDocument(){
+    public void addToDocument(boolean link){
+        ImageData linkedImage = link ? this : null;
         PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+        
         ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                width, height, repeatMode, resizeMode, imageId, this);
+                width, height, repeatMode, resizeMode, imageId, linkedImage);
     
         page.addElement(element, true);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         
+        lastUse = System.currentTimeMillis();
+        useCount++;
+    }
+    public void setAsToPlaceElement(boolean link){
+        ImageData linkedImage = link ? this : null;
+        PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+        
+        ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), false,
+                width, height, repeatMode, resizeMode, imageId, linkedImage);
+    
+        MainWindow.mainScreen.setToPlace(element);
+    
         lastUse = System.currentTimeMillis();
         useCount++;
     }
@@ -111,5 +125,4 @@ public class ImageData extends ImageLambdaData{
     public void setUseCount(int useCount){
         this.useCount = useCount;
     }
-    
 }

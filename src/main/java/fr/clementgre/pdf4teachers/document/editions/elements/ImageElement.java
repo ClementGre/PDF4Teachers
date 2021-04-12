@@ -5,19 +5,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
-import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.geometry.Side;
-import javafx.scene.Node;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.util.*;
@@ -34,27 +26,35 @@ public class ImageElement extends GraphicElement{
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
-        updateImage(true);
+        updateImage(true, hasPage);
+    
+        if(linkedImageData != null){
+            realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
+            realHeight.addListener((observable, oldValue, newValue) -> linkedImageData.setHeight(newValue.intValue()));
+            this.repeatMode.addListener((observable, oldValue, newValue) -> linkedImageData.setRepeatMode(newValue));
+            this.resizeMode.addListener((observable, oldValue, newValue) -> linkedImageData.setResizeMode(newValue));
+            this.imageId.addListener((observable, oldValue, newValue) -> linkedImageData.setImageId(newValue));
+        }
+        
         if(hasPage && getPage() != null){
             setupGeneral();
-            
-            if(linkedImageData != null){
-                realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
-                realHeight.addListener((observable, oldValue, newValue) -> linkedImageData.setHeight(newValue.intValue()));
-                this.repeatMode.addListener((observable, oldValue, newValue) -> linkedImageData.setRepeatMode(newValue));
-                this.resizeMode.addListener((observable, oldValue, newValue) -> linkedImageData.setResizeMode(newValue));
-                this.imageId.addListener((observable, oldValue, newValue) -> linkedImageData.setImageId(newValue));
-            }
         }
     }
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
-        updateImage(true);
+        updateImage(true, hasPage);
         if(hasPage && getPage() != null){
             setupGeneral();
         }
+    }
+    
+    public void initializePage(int pageNumber, double x, double y){
+        this.pageNumber = pageNumber;
+        setupGeneral();
+        checkLocation(x, y, false);
+        updateImage(true, true);
     }
     
     // SETUP / EVENT CALL BACK
@@ -63,7 +63,7 @@ public class ImageElement extends GraphicElement{
     protected void setupBindings(){
         super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
-            updateImage(false);
+            updateImage(false, true);
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
@@ -131,13 +131,18 @@ public class ImageElement extends GraphicElement{
     
     // SPECIFIC METHODS
     
-    public void updateImage(boolean checkAutoSize){
+    public void updateImage(boolean checkAutoSize, boolean updateBackground){
         generateImageAsync(() -> {
-            updateBackground();
+            if(updateBackground) updateBackground();
             
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
+                double imgWidth = image.getWidth();
+                double imgHeight = image.getHeight();
+                double width = Math.min(GRID_WIDTH/2, imgWidth);
+                double height = imgHeight * width/imgWidth;
+                
                 checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
-                        image.getWidth() * getPage().getWidth() / GRID_WIDTH, image.getHeight() * getPage().getHeight() / GRID_HEIGHT, false);
+                        width * getPage().getWidth() / GRID_WIDTH, height * getPage().getHeight() / GRID_HEIGHT, false);
             }
         });
     }

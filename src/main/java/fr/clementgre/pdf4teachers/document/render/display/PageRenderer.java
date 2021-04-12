@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
@@ -71,6 +72,8 @@ public class PageRenderer extends Pane{
         setEffect(ds);
         
         // UPDATE MOUSE COORDINATES
+        // Detect all mouse events, even ones of Elements because they dont consume the event.
+        // (This is used to autoscroll when approaching the top/bottom of MainScreen)
         setOnMouseMoved(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
@@ -78,12 +81,19 @@ public class PageRenderer extends Pane{
         setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
+            
+            if(getCursor() == Cursor.CROSSHAIR){
+                e.consume();
+            }
         });
         
         setOnMouseEntered(e -> {
             MainWindow.mainScreen.document.setCurrentPage(page);
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             else pageEditPane.setVisible(true);
+            
+            if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+            else setCursor(Cursor.DEFAULT);
         });
         setOnMouseExited(e -> {
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
@@ -91,74 +101,27 @@ public class PageRenderer extends Pane{
         });
         
         setOnMousePressed(e -> {
-            
             MainWindow.mainScreen.setSelected(null);
-            menu.hide();
-            menu.getItems().clear();
-            if(e.getButton() == MouseButton.SECONDARY){
-                
-                if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
-                    GradeTreeView.defineNaNLocations();
-                    GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
-                    if(logicalNextGrade != null){
-                        CustomMenuItem menuItem = new CustomMenuItem(logicalNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
-                        menu.getItems().add(menuItem);
-                        menuItem.setOnAction((actionEvent) -> logicalNextGrade.getCore().setValue(logicalNextGrade.getCore().getTotal()));
-                    }
-                    
-                    GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) e.getY());
-                    GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
-                    if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
-                        CustomMenuItem menuItem = new CustomMenuItem(documentNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
-                        menu.getItems().add(0, menuItem);
-                        menuItem.setOnAction((actionEvent) -> documentNextGradeElement.setValue(documentNextGradeElement.getTotal()));
-                    }
-                    
-                }
-                
-                List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
-                
-                for(int i = 0; i <= 7; i++){
-                    if(mostUsed.size() > i){
-                        TextTreeItem item = mostUsed.get(i);
-                        
-                        Pane pane = new Pane();
-                        
-                        Pane sub = new Pane();
-                        
-                        ScratchText name = new ScratchText(item.name.getText());
-                        name.setTextOrigin(VPos.TOP);
-                        name.setLayoutY(3);
-                        name.setFont(item.name.getFont());
-                        name.setFill(item.name.getFill());
-                        
-                        sub.setOnMouseClicked(event -> item.addToDocument(false));
-                        
-                        sub.setLayoutY(-6);
-                        sub.setPrefHeight(name.getLayoutBounds().getHeight() + 7);
-                        sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.textTab.treeView.getWidth() - 50));
-                        
-                        pane.setPrefHeight(name.getLayoutBounds().getHeight() + 7 - 14);
-                        
-                        sub.getChildren().add(name);
-                        pane.getChildren().add(sub);
-                        
-                        CustomMenuItem menuItem = new CustomMenuItem(pane);
-                        menu.getItems().add(menuItem);
-                    }
-                }
-                
-                menu.show(this, e.getScreenX(), e.getScreenY());
+            menu.hide(); menu.getItems().clear();
+            
+            if(MainWindow.mainScreen.hasToPlace()){
+                GraphicElement element = MainWindow.mainScreen.getToPlace();
+                element.initializePage(getPage(), e.getX(), e.getY());
+                addElement(element, true);
+                MainWindow.mainScreen.setSelected(element);
+    
+                setCursor(Cursor.CROSSHAIR);
             }else{
-                setCursor(Cursor.CLOSED_HAND);
+                if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getX(), e.getScreenX(), e.getScreenY());
+                else setCursor(Cursor.CLOSED_HAND);
             }
         });
         setOnMouseReleased(e -> {
             setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {
-            if(e.getClickCount() == 2){ // ADD TextElement when double click
-                
+            // ADD TextElement when double click
+            if(e.getClickCount() == 2){
                 SideBar.selectTab(MainWindow.textTab);
                 MainWindow.textTab.newBtn.fire();
                 Element selected = MainWindow.mainScreen.getSelected();
@@ -169,6 +132,61 @@ public class PageRenderer extends Pane{
                 }
             }
         });
+    }
+    
+    public void showContextMenu(double pageX, double screenX, double screenY){
+        if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
+            GradeTreeView.defineNaNLocations();
+            GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
+            if(logicalNextGrade != null){
+                CustomMenuItem menuItem = new CustomMenuItem(logicalNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
+                menu.getItems().add(menuItem);
+                menuItem.setOnAction((actionEvent) -> logicalNextGrade.getCore().setValue(logicalNextGrade.getCore().getTotal()));
+            }
+        
+            GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) pageX);
+            GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
+            if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
+                CustomMenuItem menuItem = new CustomMenuItem(documentNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
+                menu.getItems().add(0, menuItem);
+                menuItem.setOnAction((actionEvent) -> documentNextGradeElement.setValue(documentNextGradeElement.getTotal()));
+            }
+        
+        }
+    
+        List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
+    
+        for(int i = 0; i <= 7; i++){
+            if(mostUsed.size() > i){
+                TextTreeItem item = mostUsed.get(i);
+            
+                Pane pane = new Pane();
+            
+                Pane sub = new Pane();
+            
+                ScratchText name = new ScratchText(item.name.getText());
+                name.setTextOrigin(VPos.TOP);
+                name.setLayoutY(3);
+                name.setFont(item.name.getFont());
+                name.setFill(item.name.getFill());
+            
+                sub.setOnMouseClicked(event -> item.addToDocument(false));
+            
+                sub.setLayoutY(-6);
+                sub.setPrefHeight(name.getLayoutBounds().getHeight() + 7);
+                sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.textTab.treeView.getWidth() - 50));
+            
+                pane.setPrefHeight(name.getLayoutBounds().getHeight() + 7 - 14);
+            
+                sub.getChildren().add(name);
+                pane.getChildren().add(sub);
+            
+                CustomMenuItem menuItem = new CustomMenuItem(pane);
+                menu.getItems().add(menuItem);
+            }
+        }
+    
+        menu.show(this, screenX, screenY);
     }
     
     public void updatePosition(int totalHeight){
