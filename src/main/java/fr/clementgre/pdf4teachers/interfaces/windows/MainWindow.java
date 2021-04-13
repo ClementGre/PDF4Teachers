@@ -33,6 +33,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import jfxtras.styles.jmetro.JMetro;
 
 import java.awt.*;
 import java.io.File;
@@ -70,6 +71,7 @@ public class MainWindow extends Stage{
     public static DecimalFormat twoDigFormat;
     
     public OSXTouchBarManager osxTouchBarManager;
+    public JMetro jMetro;
     
     public MainWindow(){
         
@@ -226,7 +228,7 @@ public class MainWindow extends Stage{
     }
 
     public void updateStyle(){
-        StyleManager.putStyle(getScene(), Style.DEFAULT);
+        StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
     }
     
     public void restart(){

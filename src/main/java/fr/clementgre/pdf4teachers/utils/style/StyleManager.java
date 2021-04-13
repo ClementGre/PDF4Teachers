@@ -31,12 +31,25 @@ public class StyleManager{
         });
     }
     
-    public static void putStyle(Scene scene, Style style){
+    public static void putStyle(Scene scene, Style style, JMetro jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
 
+        if(jMetro == null) jMetro = new JMetro(scene, toApplyStyle);
+        else jMetro.setStyle(toApplyStyle);
+        
+        putCustomStyle(scene, "base.css");
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
+        else putCustomStyle(scene, "base-light.css");
+    }
+    public static void putStyle(Scene scene, Style style){
+        jfxtras.styles.jmetro.Style toApplyStyle;
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
+        
         new JMetro(scene, toApplyStyle);
         
         putCustomStyle(scene, "base.css");
