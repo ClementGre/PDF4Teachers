@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.File;
 
@@ -44,7 +45,8 @@ public class GradeExportWindow extends Stage{
         setResizable(false);
         setTitle(TR.tr("gradeTab.gradeExportWindow.title"));
         setScene(scene);
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(scene, Style.DEFAULT);
+        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         
         Text info = new Text(TR.tr("gradeTab.gradeExportWindow.header"));
         VBox.setMargin(info, new Insets(40, 0, 40, 10));

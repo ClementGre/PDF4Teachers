@@ -15,9 +15,14 @@ import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.input.DataFormat;
+import javafx.scene.layout.Pane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.Style;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,8 +61,8 @@ public class Main extends Application{
     }
     
     @Override
-    public void start(Stage window){
-        
+    public void start(Stage stage){
+
         // define crucial vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + File.separator + "PDF4Teachers" + File.separator;
         else if(isOSX()) systemShortcut = "Cmd";
@@ -66,7 +71,7 @@ public class Main extends Application{
         hostServices = getHostServices();
         
         // read params
-        if(DEBUG){
+        if(DEBUG && (!getParameters().getRaw().isEmpty() || !getParameters().getNamed().isEmpty())){
             System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
                     + "\n Unnamed: " + getParameters().getUnnamed().toString()
                     + "\n Named: " + getParameters().getNamed().toString());

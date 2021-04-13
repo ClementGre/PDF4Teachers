@@ -25,9 +25,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class PageRenderer extends Pane{

@@ -9,6 +9,8 @@ import javafx.scene.paint.Color;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
+import java.util.Objects;
+
 public class StyleManager{
     
     public static jfxtras.styles.jmetro.Style DEFAULT_STYLE = jfxtras.styles.jmetro.Style.LIGHT;
@@ -34,7 +36,7 @@ public class StyleManager{
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
-        
+
         new JMetro(scene, toApplyStyle);
         
         putCustomStyle(scene, "base.css");
@@ -63,17 +65,18 @@ public class StyleManager{
     }
     
     public static void putCustomStyle(Scene scene, String name){
-        scene.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm());
     }
     
     public static void putCustomStyle(Parent parent, String name){
-        parent.getStylesheets().add(StyleManager.class.getResource("/css/" + name).toExternalForm());
+        parent.getStylesheets().add(Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm());
     }
     
     private static void putStylesAuto(){
         new JMetro(MainWindow.notificationPane, DEFAULT_STYLE);
         if(MainWindow.paintTab.galleryWindow != null) MainWindow.paintTab.galleryWindow.updateStyle();
-        
+        Main.window.updateStyle();
+
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();
         MainWindow.textTab.treeView.onFileSection.updateGraphics();

@@ -24,6 +24,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,7 +55,8 @@ public class GalleryWindow extends Stage{
         Main.window.centerWindowIntoMe(this);
         setTitle(TR.tr("galleryWindow.title"));
         setScene(scene);
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(scene, Style.DEFAULT);
+        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         
         setOnCloseRequest((e) -> {
             AutoTipsManager.hideAll();
@@ -129,7 +131,7 @@ public class GalleryWindow extends Stage{
     
     
     public void updateStyle(){
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(getScene(), Style.DEFAULT);
         list.getSortManager().updateGraphics();
     }
     void updateComboBoxItems(){

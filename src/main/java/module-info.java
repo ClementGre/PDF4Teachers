@@ -49,6 +49,7 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers;
     exports fr.clementgre.pdf4teachers.components;
     exports fr.clementgre.pdf4teachers.datasaving;
+    exports fr.clementgre.pdf4teachers.datasaving.settings;
     exports fr.clementgre.pdf4teachers.document;
     exports fr.clementgre.pdf4teachers.document.render.display;
     exports fr.clementgre.pdf4teachers.document.render.export;

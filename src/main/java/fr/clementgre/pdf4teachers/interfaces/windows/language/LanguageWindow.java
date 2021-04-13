@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +49,8 @@ public class LanguageWindow extends Stage{
             setOnCloseRequest(event -> {
                 callBack.call("");
             });
-            StyleManager.putStyle(root, Style.DEFAULT);
+            StyleManager.putStyle(scene, Style.DEFAULT);
+            root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
             
             if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
             

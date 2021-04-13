@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
+import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -23,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
+import jfxtras.styles.jmetro.Style;
 import org.controlsfx.control.GridCell;
 
 import javax.imageio.ImageIO;
@@ -148,7 +150,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         
         tooltip.setOnShowing(e -> {
             if(item.isFavorite()){
-                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, "yellow", 0, 16, 16);
+                String color = StyleManager.DEFAULT_STYLE == Style.DARK ? "yellow" : "#dbce00";
+                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, color, 0, 16, 16);
                 graphic.setPadding(new Insets(0, 5, 0, 0));
                 tooltip.setGraphic(graphic);
             }else{

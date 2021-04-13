@@ -23,11 +23,13 @@ import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -72,17 +74,15 @@ public class MainWindow extends Stage{
     public MainWindow(){
         
         root = new BorderPane();
+
         notificationPane = new AutoHideNotificationPane(root);
-        
-        StyleManager.putStyle(notificationPane, Style.DEFAULT);
-        
+
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
         loadDimensions();
         setupDecimalFormat();
         
         setTitle(TR.tr("mainWindow.title.noDocument"));
-        
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
         setMinWidth(700);
@@ -147,8 +147,6 @@ public class MainWindow extends Stage{
         }
         
         menuBar = new MenuBar();
-        
-        
         mainScreen.repaint();
 
 //		PANELS
@@ -163,7 +161,6 @@ public class MainWindow extends Stage{
         root.setCenter(mainPane);
         root.setTop(menuBar);
         root.setBottom(footerBar);
-        
         
         Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) root.setBottom(null);
@@ -180,6 +177,7 @@ public class MainWindow extends Stage{
 //		SHOWING
         
         setupDesktopEvents();
+        updateStyle();
         mainScreen.repaint();
         //osxTouchBarManager = new OSXTouchBarManager(this);
 
@@ -226,10 +224,13 @@ public class MainWindow extends Stage{
         }).start();
         
     }
+
+    public void updateStyle(){
+        StyleManager.putStyle(getScene(), Style.DEFAULT);
+    }
     
     public void restart(){
         TR.updateLocale();
-        //TR.updateTranslation();
         
         userData.save();
         if(MainWindow.mainScreen.closeFile(true)){
@@ -316,7 +317,7 @@ public class MainWindow extends Stage{
         if(Desktop.isDesktopSupported()){
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
                 Desktop.getDesktop().setAboutHandler(e -> {
-                    Platform.runLater(AboutWindow::new);
+                    Platform.runLater(Main::showAboutWindow);
                 });
             }
             

@@ -19,6 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -186,7 +187,9 @@ public class UpdateWindow extends Stage{
         setResizable(false);
         setTitle(TR.tr("updateWindow.title"));
         setScene(scene);
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(getScene(), Style.DEFAULT);
+        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+
         
         setupPanel(root);
         show();

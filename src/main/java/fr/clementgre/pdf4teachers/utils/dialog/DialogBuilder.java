@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.File;
 import java.util.Collections;
@@ -226,7 +227,8 @@ public class DialogBuilder{
     public static void setupDialog(Dialog<?> dialog){
         
         ((Stage) dialog.getDialogPane().getScene().getWindow()).getIcons().add(new Image(PaneUtils.class.getResource("/logo.png") + ""));
-        StyleManager.putStyle(dialog.getDialogPane(), Style.DEFAULT);
+        StyleManager.putStyle(dialog.getDialogPane().getScene(), Style.DEFAULT);
+        dialog.getDialogPane().getStyleClass().add(JMetroStyleClass.BACKGROUND);
         
         dialog.setOnShowing(e -> new Thread(() -> {
             

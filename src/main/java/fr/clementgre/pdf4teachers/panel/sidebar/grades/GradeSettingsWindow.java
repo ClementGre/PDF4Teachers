@@ -25,12 +25,14 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 public class GradeSettingsWindow extends Stage{
 
     public GradeSettingsWindow(){
 
         VBox root = new VBox();
+        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         Scene scene = new Scene(root);
 
         initOwner(Main.window);
@@ -39,7 +41,7 @@ public class GradeSettingsWindow extends Stage{
         setTitle(TR.tr("gradeTab.gradeFormatWindow.title"));
         setResizable(false);
         setScene(scene);
-        StyleManager.putStyle(root, Style.DEFAULT);
+        StyleManager.putStyle(scene, Style.DEFAULT);
 
         setupPanel(root);
         show();

@@ -321,6 +321,7 @@ public class ConvertWindow extends Stage{
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
+
             
             // Format COLUMN
             
@@ -329,12 +330,13 @@ public class ConvertWindow extends Stage{
             format.setEditable(true);
             PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
-            
+
             // LISTENERS
             
             definition.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 updateDefaultValues();
-                
+                definition.applyCss(); // Prevent the black text on black bg bug
+
                 String data = StringUtils.removeAfterLastRegex(newValue, "Mpix");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
@@ -344,7 +346,8 @@ public class ConvertWindow extends Stage{
             });
             format.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 updateDefaultValues();
-                
+                format.applyCss(); // Prevent the black text on black bg bug
+
                 String data = StringUtils.removeAfterLastRegex(newValue, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
