@@ -11,11 +11,11 @@ import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -236,42 +236,29 @@ public class DialogBuilder{
         
         if(dialog.getDialogPane().getScene().getRoot() instanceof DialogPane pane){
             PaneUtils.setupScaling(pane);
-            pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(dialog));
-            pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(dialog));
+            pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
+            pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             
-        }else System.err.println("Dialog Parent is not an instance of Region, can't apply scaling... (class: " + dialog.getDialogPane().getScene().getRoot() + ")");
+            pane.setMaxWidth(700*MainWindow.TEMP_SCALE);
+            pane.setMaxHeight(Double.MAX_VALUE);
+            
+        }else throw new RuntimeException("Dialog Parent is not an instance of DialogPane, can't apply scaling... (class: " + dialog.getDialogPane().getScene().getRoot() + ")");
         
-        // prevent being too small on some linux distributions
+        // prevent being too small on some linux distributions AND when scaling dialog
+        if(Main.DEBUG) dialog.setResizable(true);
         dialog.setOnShowing(e -> new Thread(() -> {
-
-            try{
-                Thread.sleep(400);
-            }catch(InterruptedException ex){
-                ex.printStackTrace();
+            while(!dialog.isShowing()){
+                try{ Thread.sleep(10); }catch(InterruptedException ex){ ex.printStackTrace(); }
             }
-
             Platform.runLater(() -> {
-                if(dialog.isShowing()){
-                    if(dialog.getDialogPane().getScene().getWindow().getWidth() < 100 * MainWindow.TEMP_SCALE){
-                        dialog.getDialogPane().getScene().getWindow().setWidth(500 * MainWindow.TEMP_SCALE);
-                        dialog.getDialogPane().getScene().getWindow().setHeight(200 * MainWindow.TEMP_SCALE);
-                    }
-                }
+                dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30*MainWindow.TEMP_SCALE);
+                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 30*MainWindow.TEMP_SCALE);
             });
 
         }, "AlertResizer").start());
     }
     
-    public static void updateScalePadding(Dialog<?> dialog){
-        Pane pane = (Pane) dialog.getDialogPane().getScene().getRoot();
-        // -1 to avoid small white borders on sides sometimes
-        // Calcul: (ScaledWidth - ShouldBeVisibleWidth) - 1
-        double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
-        double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
-        
-        pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
-    
-//        dialog.getDialogPane().getScene().getWindow().setWidth(pane.getWidth()/MainWindow.TEMP_SCALE);
-//        dialog.getDialogPane().getScene().getWindow().setHeight(pane.getHeight()/MainWindow.TEMP_SCALE);
+    public static void updateScalePadding(Region pane, Scene scene){
+        scene.setFill(pane.getBackground().getFills().get(0).getFill());
     }
 }

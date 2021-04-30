@@ -101,14 +101,17 @@ public class PaneUtils{
     }
     
     public static void setupScaling(Region pane){
+        if(MainWindow.TEMP_SCALE == 1) return;
         pane.setScaleX(MainWindow.TEMP_SCALE);
         pane.setScaleY(MainWindow.TEMP_SCALE);
+        updateScalePadding(pane);
         pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
         pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
+        pane.scaleYProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
     }
     public static void updateScalePadding(Region pane){
         // -1 to avoid small white borders on sides sometimes
-        // Calcul: (ScaledWidth - ShouldBeVisibleWidth) - 1
+        // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
         double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
         double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
     

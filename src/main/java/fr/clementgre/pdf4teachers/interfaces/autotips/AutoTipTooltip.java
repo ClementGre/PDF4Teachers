@@ -3,15 +3,20 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 
+import javax.swing.plaf.PanelUI;
 import java.awt.*;
 
 public class AutoTipTooltip extends PopOver{
@@ -41,8 +46,8 @@ public class AutoTipTooltip extends PopOver{
         setHeaderAlwaysVisible(true);
         setArrowIndent(0);
         setCornerRadius(10);
-        setTitle(TR.tr("autoTips.title"));
         
+        setTitle(TR.tr("autoTips.title"));
         text.setMaxWidth(300);
         text.setWrapText(true);
         
@@ -51,6 +56,9 @@ public class AutoTipTooltip extends PopOver{
         setContentNode(graphic);
         graphic.getStyleClass().addAll("tooltip-autotip-pane", "content-pane");
         getStyleClass().add("tooltip-autotip");
+    
+        getRoot().setScaleX(MainWindow.TEMP_SCALE);
+        getRoot().setScaleY(MainWindow.TEMP_SCALE);
         
         setOnAutoHide((e) -> {
             closedByAutoHide = true;
@@ -94,7 +102,7 @@ public class AutoTipTooltip extends PopOver{
         final Scene scene = region.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
         
-        super.show(region, owner.getX() + region.getWidth() / 2, owner.getY() + region.getHeight() / 2);
+        super.show(region, owner.getX()*MainWindow.TEMP_SCALE + region.getWidth() / 2, owner.getY()*MainWindow.TEMP_SCALE + region.getHeight() / 2);
     }
     
     public String getName(){

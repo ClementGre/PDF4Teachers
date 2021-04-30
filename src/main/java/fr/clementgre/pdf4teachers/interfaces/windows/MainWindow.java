@@ -80,7 +80,7 @@ public class MainWindow extends Stage{
     public OSXTouchBarManager osxTouchBarManager;
     public JMetro jMetro;
     
-    public static double TEMP_SCALE = 1;
+    public static double TEMP_SCALE = 1.5;
     
     public MainWindow(){
         
