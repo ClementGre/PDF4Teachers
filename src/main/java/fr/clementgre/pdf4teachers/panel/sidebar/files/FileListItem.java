@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import javafx.application.Platform;
@@ -93,7 +94,7 @@ public class FileListItem extends ListCell<File>{
                         name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                         
                         path.setText(path.getText() + " | " + MainWindow.format.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade);
-                        setTooltip(new Tooltip(MainWindow.format.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[1]) + " " + TR.tr("elements.name.texts") + "\n" + MainWindow.format.format(elementsCount[2]) + "/" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("elements.name.grades") + "\n" + MainWindow.format.format(elementsCount[3]) + " " + TR.tr("elements.name.paints")));
+                        setTooltip(PaneUtils.genToolTip(MainWindow.format.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[1]) + " " + TR.tr("elements.name.texts") + "\n" + MainWindow.format.format(elementsCount[2]) + "/" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("elements.name.grades") + "\n" + MainWindow.format.format(elementsCount[3]) + " " + TR.tr("elements.name.paints")));
                         
                         if(elementsCount[2] == elementsCount[6]){ // Edition completed : Green check
                             if(check.getImage() == null)
@@ -107,15 +108,15 @@ public class FileListItem extends ListCell<File>{
                         
                     }else{ // Don't have elements
                         path.setText(path.getText() + " | " + TR.tr("document.status.noEdit") + " | " + grade);
-                        setTooltip(new Tooltip(TR.tr("document.status.noEdit") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("elements.name.gradeScales")));
+                        setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit") + " | " + grade + "\n" + MainWindow.format.format(elementsCount[6]) + " " + TR.tr("elements.name.gradeScales")));
                     }
                 }else{ // don't have edit file
                     path.setText(path.getText() + " | " + TR.tr("document.status.noEdit"));
-                    setTooltip(new Tooltip(TR.tr("document.status.noEdit")));
+                    setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit")));
                 }
             }catch(Exception e){
                 path.setText(path.getText() + " | " + TR.tr("document.status.unableToCheckStatus"));
-                setTooltip(new Tooltip(e.getMessage()));
+                setTooltip(PaneUtils.genWrappedToolTip(e.getMessage()));
             }
             nameBox.getChildren().add(name);
             setGraphic(pane);

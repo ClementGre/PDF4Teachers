@@ -181,7 +181,7 @@ public class MainScreen extends Pane{
         
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             if(getStatus() == Status.OPEN){
-                zoomOperator.zoom(e.getZoomFactor(), e.getX(), e.getY());
+                zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY());
             }
         });
         

@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.panel;
 
 import de.jangassen.MenuToolkit;
-import de.jangassen.model.AppearanceMode;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
@@ -14,7 +13,6 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageEditPane;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -31,7 +29,6 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -522,7 +519,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
             }
             
-            Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
+            Tooltip toolTipUI = PaneUtils.genWrappedToolTip(toolTip);
             toolTipUI.setShowDuration(Duration.INDEFINITE);
             Tooltip.install(pane, toolTipUI);
             

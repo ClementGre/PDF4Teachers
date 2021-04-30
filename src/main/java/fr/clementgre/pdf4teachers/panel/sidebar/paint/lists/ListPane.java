@@ -10,8 +10,6 @@ import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -19,8 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.util.List;
 
 public abstract class ListPane<T> extends TitledPane{
     
@@ -54,7 +50,7 @@ public abstract class ListPane<T> extends TitledPane{
         title.setText(getTitle());
         PaneUtils.setHBoxPosition(sortToggleBtn,26, 26, new Insets(0, 0, 0, 5));
         sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        sortToggleBtn.setTooltip(PaneUtils.genToolTip(TR.tr("sorting.name")));
+        sortToggleBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("sorting.name")));
         PaneUtils.setVBoxPosition(sortPanel, 0, 26, 0);
     
         if(!sortToggleBtn.isSelected()) sortToggleBtn.setStyle("-fx-background-color: null;");

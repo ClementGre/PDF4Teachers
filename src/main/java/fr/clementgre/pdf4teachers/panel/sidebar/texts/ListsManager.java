@@ -26,9 +26,9 @@ public class ListsManager{
         this.section = section;
         
         loadListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LIST, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        loadListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("textTab.lists.show.tooltip")));
+        loadListBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("textTab.lists.show.tooltip")));
         saveListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SAVE, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
-        saveListBtn.setTooltip(PaneUtils.genToolTip(TR.tr("textTab.lists.save.tooltip")));
+        saveListBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("textTab.lists.save.tooltip")));
         
         PaneUtils.setPosition(loadListBtn, 0, 0, 30, 30, true);
         PaneUtils.setPosition(saveListBtn, 0, 0, 30, 30, true);

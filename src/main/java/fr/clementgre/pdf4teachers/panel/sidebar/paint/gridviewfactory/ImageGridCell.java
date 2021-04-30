@@ -145,7 +145,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     }
     
     public void updateTooltip(ImageGridElement item){
-        Tooltip tooltip = PaneUtils.genToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
+        Tooltip tooltip = PaneUtils.genWrappedToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
         tooltip.setShowDelay(Duration.ZERO);
         
         tooltip.setOnShowing(e -> {

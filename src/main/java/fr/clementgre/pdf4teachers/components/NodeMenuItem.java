@@ -119,7 +119,7 @@ public class NodeMenuItem extends CustomMenuItem{
     }
     
     public void setToolTip(String toolTip){
-        Tooltip toolTipUI = PaneUtils.genToolTip(toolTip);
+        Tooltip toolTipUI = PaneUtils.genWrappedToolTip(toolTip);
         toolTipUI.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(node, toolTipUI);
     }

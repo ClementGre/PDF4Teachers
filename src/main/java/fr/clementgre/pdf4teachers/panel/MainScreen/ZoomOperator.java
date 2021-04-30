@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -211,6 +212,7 @@ public class ZoomOperator{
         hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth() * pane.getScaleX()));
     }
     
+    // x and y should be relative to Scene because MainScreen is bigger than the visible part (e.getX()/Y couldn't work)
     public void zoom(double factor, double x, double y){
         
         if(!isPlaying){
@@ -226,9 +228,10 @@ public class ZoomOperator{
         double f = (scale / oldScale) - 1;
         
         // determine offset that we will have to move the node
+        // Since we are relatie to Scene, we have to apply the current Scale transformation
         Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
-        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX()));
-        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY()));
+        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / MainWindow.TEMP_SCALE;
+        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / MainWindow.TEMP_SCALE;
         
         double newTranslateX;
         double newTranslateY;
@@ -249,9 +252,8 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             hScrollBar.setVisible(true);
-            newTranslateX = pane.getTranslateX() - f * dx;
-            if(newTranslateX - paneShiftX > 0) newTranslateX = paneShiftX;
-            else if(newTranslateX - paneShiftX < -scrollableWidth) newTranslateX = -scrollableWidth + paneShiftX;
+            newTranslateX = StringUtils.clamp(pane.getTranslateX() - f * dx,
+                    paneShiftX-scrollableWidth, paneShiftX);
         }
         // Y
         if(scrollableHeight <= 0){
@@ -261,9 +263,8 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             vScrollBar.setVisible(true);
-            newTranslateY = pane.getTranslateY() - f * dy;
-            if(newTranslateY - paneShiftY > 0) newTranslateY = paneShiftY;
-            else if(newTranslateY - paneShiftY < -scrollableHeight) newTranslateY = -scrollableHeight + paneShiftY;
+            newTranslateY = StringUtils.clamp(pane.getTranslateY() - f * dy,
+                    paneShiftY - scrollableHeight, paneShiftY);
             
         }
         
@@ -324,9 +325,8 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             hScrollBar.setVisible(true);
-            newTranslateX = pane.getTranslateX() - f;
-            if(newTranslateX - paneShiftX > 0) newTranslateX = paneShiftX;
-            else if(newTranslateX - paneShiftX < -scrollableWidth) newTranslateX = -scrollableWidth + paneShiftX;
+            newTranslateX = StringUtils.clamp(pane.getTranslateX() - f,
+                    paneShiftX-scrollableWidth, paneShiftX);
         }
         // Y
         if(scrollableHeight <= 0){
@@ -336,9 +336,8 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             vScrollBar.setVisible(true);
-            newTranslateY = pane.getTranslateY() - f;
-            if(newTranslateY - paneShiftY > 0) newTranslateY = paneShiftY;
-            else if(newTranslateY - paneShiftY < -scrollableHeight) newTranslateY = -scrollableHeight + paneShiftY;
+            newTranslateY = StringUtils.clamp(pane.getTranslateY() - f,
+                    paneShiftY - scrollableHeight, paneShiftY);
             
         }
         

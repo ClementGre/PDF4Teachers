@@ -1,14 +1,13 @@
 package fr.clementgre.pdf4teachers.utils;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 
 public class PaneUtils{
     
@@ -92,9 +91,28 @@ public class PaneUtils{
         }
     }
     
+    public static Tooltip genWrappedToolTip(String text){
+        return genToolTip(new TextWrapper(text, new Font(14*MainWindow.TEMP_SCALE), (int) (350*MainWindow.TEMP_SCALE)).wrap());
+    }
     public static Tooltip genToolTip(String text){
-        return new Tooltip(new TextWrapper(text, null, 350).wrap());
-        
+        Tooltip tooltip = new Tooltip(text);
+        tooltip.setStyle("-fx-font-size: " + (14*MainWindow.TEMP_SCALE) + ";");
+        return tooltip;
+    }
+    
+    public static void setupScaling(Region pane){
+        pane.setScaleX(MainWindow.TEMP_SCALE);
+        pane.setScaleY(MainWindow.TEMP_SCALE);
+        pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
+        pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
+    }
+    public static void updateScalePadding(Region pane){
+        // -1 to avoid small white borders on sides sometimes
+        // Calcul: (ScaledWidth - ShouldBeVisibleWidth) - 1
+        double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
+        double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
+    
+        pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
     }
     
     

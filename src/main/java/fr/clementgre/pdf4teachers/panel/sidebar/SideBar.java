@@ -64,22 +64,22 @@ public class SideBar extends TabPane{
         AtomicReference<Tab> previewTab = new AtomicReference<>(null);
         
         setOnDragOver(e -> {
-                                final Dragboard dragboard = e.getDragboard();
-                                if(TAB_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){
-        
-                                    if(draggingTab != null){
-            
-                                        e.acceptTransferModes(TransferMode.MOVE);
-                                        e.consume();
-            
-                                        if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tab
-                                            int actualIndex = getTabs().indexOf(draggingTab);
-                                            int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
-                
-                                            if(actualIndex != targetIndex){
-                                                getTabs().remove(draggingTab);
-                                                getTabs().add(targetIndex, draggingTab);
-                                                getSelectionModel().select(draggingTab);
+            final Dragboard dragboard = e.getDragboard();
+            if(TAB_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){
+
+                if(draggingTab != null){
+
+                    e.acceptTransferModes(TransferMode.MOVE);
+                    e.consume();
+
+                    if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tab
+                        int actualIndex = getTabs().indexOf(draggingTab);
+                        int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
+
+                        if(actualIndex != targetIndex){
+                            getTabs().remove(draggingTab);
+                            getTabs().add(targetIndex, draggingTab);
+                            getSelectionModel().select(draggingTab);
                         }
                         
                         return;

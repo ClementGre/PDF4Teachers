@@ -17,11 +17,16 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.SplitPane;
@@ -31,9 +36,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.awt.*;
 import java.io.File;
@@ -73,17 +80,20 @@ public class MainWindow extends Stage{
     public OSXTouchBarManager osxTouchBarManager;
     public JMetro jMetro;
     
+    public static double TEMP_SCALE = 1;
+    
     public MainWindow(){
         
         root = new BorderPane();
-
         notificationPane = new AutoHideNotificationPane(root);
-
+        
+        notificationPane.setScaleX(TEMP_SCALE);
+        notificationPane.setScaleY(TEMP_SCALE);
+        
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
         loadDimensions();
         setupDecimalFormat();
-        
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
@@ -214,7 +224,7 @@ public class MainWindow extends Stage{
                             menuBar.about.setText(TR.tr("menuBar.about") + " (" + TR.tr("aboutWindow.version.update.available.short") + ")");
                         }else{
                             menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
-                            Tooltip.install(menuBar.about.getGraphic(), new Tooltip(TR.tr("aboutWindow.version.update.available")));
+                            Tooltip.install(menuBar.about.getGraphic(), PaneUtils.genToolTip(TR.tr("aboutWindow.version.update.available")));
                         }
                         
                         if(Main.settings.checkUpdates.getValue()){

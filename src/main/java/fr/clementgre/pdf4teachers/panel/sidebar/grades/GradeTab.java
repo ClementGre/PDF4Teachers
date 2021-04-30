@@ -76,27 +76,27 @@ public class GradeTab extends SideTab{
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockGradeScale.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.tooltip")));
+        lockGradeScale.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.lockGradeScale.tooltip")));
         
         PaneUtils.setHBoxPosition(settings, 45, 35, 0);
         settings.setCursor(Cursor.HAND);
         settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip")));
+        settings.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip")));
         
         PaneUtils.setHBoxPosition(link, 45, 35, 0);
         link.setCursor(Cursor.HAND);
         link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         link.setOnAction((e) -> new GradeCopyGradeScaleDialog().show());
-        link.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip")));
+        link.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip")));
         
         PaneUtils.setHBoxPosition(export, 45, 35, 0);
         export.setCursor(Cursor.HAND);
         export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         export.setOnAction((e) -> new GradeExportWindow());
-        export.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.gradeExportWindow.accessButton")));
+        export.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.gradeExportWindow.accessButton")));
         
         optionPane.setStyle("-fx-padding: 5 0 5 0;");
         Region spacer = new Region();

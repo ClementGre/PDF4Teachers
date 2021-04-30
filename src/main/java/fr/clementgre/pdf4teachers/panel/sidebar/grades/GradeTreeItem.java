@@ -115,7 +115,7 @@ public class GradeTreeItem extends TreeItem<String>{
             if(!cell.isFocused()) newGrade.setVisible(true);
             if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
                 if(cell.getTooltip() == null)
-                    cell.setTooltip(new Tooltip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
+                    cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
             }else if(cell.getTooltip() != null){
                 cell.setTooltip(null);
             }
@@ -171,8 +171,8 @@ public class GradeTreeItem extends TreeItem<String>{
         PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
         newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);
-        newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText())));
-        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText()))));
+        newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText())));
+        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText()))));
         
         pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
         
@@ -251,14 +251,14 @@ public class GradeTreeItem extends TreeItem<String>{
         
         if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
             if(cell.getTooltip() == null)
-                cell.setTooltip(new Tooltip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
+                cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
         }else if(cell.getTooltip() != null){
             cell.setTooltip(null);
         }
         
         // DEBUG
         if(Main.DEBUG)
-            cell.setTooltip(new Tooltip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
+            cell.setTooltip(PaneUtils.genToolTip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
         
     }
     

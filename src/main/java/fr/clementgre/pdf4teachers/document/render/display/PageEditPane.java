@@ -145,7 +145,7 @@ public class PageEditPane extends VBox{
         PaneUtils.setHBoxPosition(button, 30, 30, 0);
         button.setCursor(Cursor.HAND);
         button.setGraphic(SVGPathIcons.generateImage(path, "#dc3e3e", 3, 30, 30, rotate));
-        button.setTooltip(PaneUtils.genToolTip(text));
+        button.setTooltip(PaneUtils.genWrappedToolTip(text));
         return button;
     }
     

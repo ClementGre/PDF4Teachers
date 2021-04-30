@@ -1,8 +1,12 @@
 package fr.clementgre.pdf4teachers.interfaces;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -54,6 +58,8 @@ public class AutoHideNotificationPane extends NotificationPane{
         final EventHandler<Event> onHideEvent = e -> checkPending();
         addEventHandler(NotificationPane.ON_HIDDEN, onHideEvent);
         setShowFromTop(false);
+    
+        PaneUtils.setupScaling(this);
     }
     
     public void addToPending(String text, AlertIconType iconType, int autoHideTime){

@@ -20,13 +20,10 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -105,7 +102,7 @@ public class GalleryWindow extends Stage{
         PaneUtils.setHBoxPosition(filter, 0, 26, 0);
         PaneUtils.setHBoxPosition(reload, 26, 26, 0);
         reload.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.REDO, "black", 0, 16, 16,  ImageUtils.defaultDarkColorAdjust));
-        reload.setTooltip(PaneUtils.genToolTip(TR.tr("galleryWindow.reloadButton.tooltip")));
+        reload.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("galleryWindow.reloadButton.tooltip")));
         
         reload.setOnAction((e) -> {
             list.setItems(Collections.emptyList());
