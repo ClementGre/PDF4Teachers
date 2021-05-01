@@ -82,6 +82,9 @@ public abstract class GraphicElement extends Element{
     protected double ratio = 0;
     
     public abstract void initializePage(int page, double x, double y);
+    public abstract void defineSizeAuto();
+    public abstract void incrementUsesAndLastUse();
+    public abstract double getRatio();
     
     protected void setupGeneral(Node... components){
         super.setupGeneral(false, components);
@@ -113,7 +116,7 @@ public abstract class GraphicElement extends Element{
         setOnMousePressed(e -> {
             e.consume();
             requestFocus();
-            setupMousePressVars(e, null);
+            setupMousePressVars(e.getX(), e.getY(), null, false);
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
@@ -125,140 +128,8 @@ public abstract class GraphicElement extends Element{
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
             }else{
-                //
-                //              |
-                //            - +
-                if(dragType == Cursor.SE_RESIZE){
-                    double width = e.getX() + shiftXFromEnd;
-                    double height = e.getY() + shiftYFromEnd;
-
-                    if(width < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
-                    else if(height < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
-                    else{
-                        if(doKeepRatio(e)){
-                            double requestedRatio = width / height;
-                            if(requestedRatio >= ratio) height = width / ratio;
-                            else width = height * ratio;
-                        }
-                        checkLocation(getLayoutX(), getLayoutY(), width, height, false);
-                    }
-
-                }else if(dragType == Cursor.S_RESIZE){
-                    double height = e.getY() + shiftYFromEnd;
-
-                    if(doKeepRatio(e)){
-                        originX = originX + (originWidth - height*ratio)/2;
-                        originWidth = height * ratio;
-                    }
-
-                    if(height < 0) setupMousePressVars(e, Cursor.N_RESIZE);
-                    else checkLocation(originX, getLayoutY(), originWidth, height, false);
-
-                }else if(dragType == Cursor.E_RESIZE){
-                    double width = e.getX() + shiftXFromEnd;
-
-                    if(doKeepRatio(e)){
-                        originY = originY + (originHeight - width/ratio)/2;
-                        originHeight = width / ratio;
-                    }
-
-                    if(width < 0) setupMousePressVars(e, Cursor.W_RESIZE);
-                    else checkLocation(getLayoutX(), originY, width, originHeight, false);
-                }
-                //               +
-                //
-                //          +
-                else if(dragType == Cursor.NE_RESIZE){
-                    double width = e.getX() + shiftXFromEnd;
-                    double newY = getLayoutY() + e.getY() - shiftY;
-                    double height = originHeight + (originY - newY);
-
-                    if(width < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
-                    else if(height < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
-                    else{
-                        if(doKeepRatio(e)){
-                            double requestedRatio = width / height;
-                            if(requestedRatio >= ratio){
-                                height = width / ratio;
-                                newY = originHeight + originY - height;
-                            }
-                            else width = height * ratio;
-                        }
-                        checkLocation(getLayoutX(), newY, width, height, false);
-                    }
-
-                }else if(dragType == Cursor.SW_RESIZE){
-                    double height = e.getY() + shiftYFromEnd;
-                    double newX = getLayoutX() + e.getX() - shiftX;
-                    double width = originWidth + (originX - newX);
-    
-                    if(width < 0) setupMousePressVars(e, Cursor.SE_RESIZE);
-                    else if(height < 0) setupMousePressVars(e, Cursor.NW_RESIZE);
-                    else{
-                        if(doKeepRatio(e)){
-                            double requestedRatio = width / height;
-                            if(requestedRatio >= ratio){
-                                height = width / ratio;
-                            }else{
-                                width = height * ratio;
-                                newX = originWidth + originX - width;
-                            }
-                        }
-                        checkLocation(newX, getLayoutY(), width, height, false);
-                    }
-
-                }
-                //          + -
-                //          |
-                //
-                else if(dragType == Cursor.NW_RESIZE){
-                    double newX = getLayoutX() + e.getX() - shiftX;
-                    double width = originWidth + (originX - newX);
-                    double newY = getLayoutY() + e.getY() - shiftY;
-                    double height = originHeight + (originY - newY);
-    
-                    if(width < 0) setupMousePressVars(e, Cursor.NE_RESIZE);
-                    else if(height < 0) setupMousePressVars(e, Cursor.SW_RESIZE);
-                    else{
-                        if(doKeepRatio(e)){
-                            double requestedRatio = width / height;
-                            if(requestedRatio >= ratio){
-                                height = width / ratio;
-                                newY = originHeight + originY - height;
-                            }else{
-                                width = height * ratio;
-                                newX = originWidth + originX - width;
-                            }
-                        }
-                        checkLocation(newX, newY, width, height, false);
-                    }
-                }else if(dragType == Cursor.N_RESIZE){
-                    double newY = getLayoutY() + e.getY() - shiftY;
-                    double height = originHeight + (originY - newY);
-    
-                    if(doKeepRatio(e)){
-                        originX = originX + (originWidth - height*ratio)/2;
-                        originWidth = height * ratio;
-                    }
-                    
-                    if(height < 0) setupMousePressVars(e, Cursor.S_RESIZE);
-                    else checkLocation(originX, newY, originWidth, height, false);
-
-                }else if(dragType == Cursor.W_RESIZE){
-                    double newX = getLayoutX() + e.getX() - shiftX;
-                    double width = originWidth + (originX - newX);
-    
-                    if(doKeepRatio(e)){
-                        originY = originY + (originHeight - width/ratio)/2;
-                        originHeight = width/ratio;
-                    }
-                    
-                    if(width < 0) setupMousePressVars(e, Cursor.E_RESIZE);
-                    else checkLocation(newX, originY, width, originHeight, false);
-
-                }
+                simulateDragToResize(e.getX(), e.getY(), e.isShiftDown());
             }
-            
         });
 
         setOnMouseReleased(e -> {
@@ -283,20 +154,159 @@ public abstract class GraphicElement extends Element{
                 checkLocation(false);
                 onMouseRelease();
             }else{
-                checkLocation(false);
-                if(getWidth() < 20 || getHeight() < 20){
-                    checkLocation(getLayoutX(), getLayoutY(),
-                            StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
-                }
+                simulateReleaseFromResize();
             }
         });
     }
     
-    private void setupMousePressVars(MouseEvent e, Cursor forceDragType){
-        shiftX = (int) e.getX();
-        shiftY = (int) e.getY();
-        shiftXFromEnd = (getWidth() - e.getX());
-        shiftYFromEnd = (getHeight() - e.getY());
+    public void simulateReleaseFromResize(){
+        checkLocation(false);
+        if(getWidth() < 20 || getHeight() < 20){
+            checkLocation(getLayoutX(), getLayoutY(),
+                    StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
+        }
+    }
+    
+    public void simulateDragToResize(double x, double y, boolean shift){
+        //
+        //              |
+        //            - +
+        if(dragType == Cursor.SE_RESIZE){
+            double width = x + shiftXFromEnd;
+            double height = y + shiftYFromEnd;
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
+            else if(height < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
+            else{
+                if(doKeepRatio(shift)){
+                    double requestedRatio = width / height;
+                    if(requestedRatio >= ratio) height = width / ratio;
+                    else width = height * ratio;
+                }
+                checkLocation(getLayoutX(), getLayoutY(), width, height, false);
+            }
+        
+        }else if(dragType == Cursor.S_RESIZE){
+            double height = y + shiftYFromEnd;
+        
+            if(doKeepRatio(shift)){
+                originX = originX + (originWidth - height*ratio)/2;
+                originWidth = height * ratio;
+            }
+        
+            if(height < 0) setupMousePressVars(x, y, Cursor.N_RESIZE, false);
+            else checkLocation(originX, getLayoutY(), originWidth, height, false);
+        
+        }else if(dragType == Cursor.E_RESIZE){
+            double width = x + shiftXFromEnd;
+        
+            if(doKeepRatio(shift)){
+                originY = originY + (originHeight - width/ratio)/2;
+                originHeight = width / ratio;
+            }
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.W_RESIZE, false);
+            else checkLocation(getLayoutX(), originY, width, originHeight, false);
+        }
+        //               +
+        //
+        //          +
+        else if(dragType == Cursor.NE_RESIZE){
+            double width = x + shiftXFromEnd;
+            double newY = getLayoutY() + y - shiftY;
+            double height = originHeight + (originY - newY);
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
+            else if(height < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
+            else{
+                if(doKeepRatio(shift)){
+                    double requestedRatio = width / height;
+                    if(requestedRatio >= ratio){
+                        height = width / ratio;
+                        newY = originHeight + originY - height;
+                    }
+                    else width = height * ratio;
+                }
+                checkLocation(getLayoutX(), newY, width, height, false);
+            }
+        
+        }else if(dragType == Cursor.SW_RESIZE){
+            double height = y + shiftYFromEnd;
+            double newX = getLayoutX() + x - shiftX;
+            double width = originWidth + (originX - newX);
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
+            else if(height < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
+            else{
+                if(doKeepRatio(shift)){
+                    double requestedRatio = width / height;
+                    if(requestedRatio >= ratio){
+                        height = width / ratio;
+                    }else{
+                        width = height * ratio;
+                        newX = originWidth + originX - width;
+                    }
+                }
+                checkLocation(newX, getLayoutY(), width, height, false);
+            }
+        
+        }
+        //          + -
+        //          |
+        //
+        else if(dragType == Cursor.NW_RESIZE){
+            double newX = getLayoutX() + x - shiftX;
+            double width = originWidth + (originX - newX);
+            double newY = getLayoutY() + y - shiftY;
+            double height = originHeight + (originY - newY);
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
+            else if(height < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
+            else{
+                if(doKeepRatio(shift)){
+                    double requestedRatio = width / height;
+                    if(requestedRatio >= ratio){
+                        height = width / ratio;
+                        newY = originHeight + originY - height;
+                    }else{
+                        width = height * ratio;
+                        newX = originWidth + originX - width;
+                    }
+                }
+                checkLocation(newX, newY, width, height, false);
+            }
+        }else if(dragType == Cursor.N_RESIZE){
+            double newY = getLayoutY() + y - shiftY;
+            double height = originHeight + (originY - newY);
+        
+            if(doKeepRatio(shift)){
+                originX = originX + (originWidth - height*ratio)/2;
+                originWidth = height * ratio;
+            }
+        
+            if(height < 0) setupMousePressVars(x, y, Cursor.S_RESIZE, false);
+            else checkLocation(originX, newY, originWidth, height, false);
+        
+        }else if(dragType == Cursor.W_RESIZE){
+            double newX = getLayoutX() + x - shiftX;
+            double width = originWidth + (originX - newX);
+        
+            if(doKeepRatio(shift)){
+                originY = originY + (originHeight - width/ratio)/2;
+                originHeight = width/ratio;
+            }
+        
+            if(width < 0) setupMousePressVars(x, y, Cursor.E_RESIZE, false);
+            else checkLocation(newX, originY, width, originHeight, false);
+        
+        }
+    }
+    
+    public void setupMousePressVars(double x, double y, Cursor forceDragType, boolean originalRatio){
+        shiftX = (int) x;
+        shiftY = (int) y;
+        shiftXFromEnd = (getWidth() - x);
+        shiftYFromEnd = (getHeight() - y);
         originWidth = getWidth();
         originHeight = getHeight();
         originX = getLayoutX();
@@ -308,11 +318,11 @@ public abstract class GraphicElement extends Element{
             shiftX = 0;
             shiftY = 0;
         }else{
-            dragType = getDragCursorType(e.getX(), e.getY());
-            ratio = originWidth / originHeight;
+            dragType = getDragCursorType(x, y);
+            if(originalRatio) ratio = getRatio();
+            else ratio = originWidth / originHeight;
         }
         setCursor(dragType);
-        
     }
     
     public Cursor getDragCursorType(double x, double y){
@@ -448,13 +458,9 @@ public abstract class GraphicElement extends Element{
     
     // GETTER AND SETTER
 
-    public boolean doKeepRatio(MouseEvent e){
-        if(e == null){
-            return getRepeatMode() == RepeatMode.KEEP_RATIO;
-        }else{
-            if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !e.isShiftDown();
-            else return e.isShiftDown();
-        }
+    public boolean doKeepRatio(boolean shift){
+        if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !shift;
+        else return shift;
     }
     
     @Override

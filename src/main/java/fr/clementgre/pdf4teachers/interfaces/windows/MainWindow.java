@@ -238,7 +238,7 @@ public class MainWindow extends Stage{
     }
 
     public void updateStyle(){
-        StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
+        jMetro = StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
     }
     
     public void restart(){

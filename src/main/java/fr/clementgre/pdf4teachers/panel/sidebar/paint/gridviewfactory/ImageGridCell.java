@@ -105,7 +105,6 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 });
                 addItem.setOnAction((event) -> {
                     item.addToDocument();
-                    updateGalleryAndFavoritesSort();
                 });
                 openItem.setOnAction((event) -> {
                     PlatformUtils.openDirectory(item.getImageIdDirectory());
@@ -140,13 +139,13 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             if(ShapesGridView.SORT_USE.equals(gallerySM.getSortKey()) || ShapesGridView.SORT_LAST_USE.equals(gallerySM.getSortKey())){
                 MainWindow.paintTab.galleryWindow.getList().getSortManager().simulateCall();
             }
-            MainWindow.paintTab.favouriteImages.getList().getSortManager().simulateCall();
         }
+        MainWindow.paintTab.favouriteImages.getList().getSortManager().simulateCall();
     }
     
     public void updateTooltip(ImageGridElement item){
         Tooltip tooltip = PaneUtils.genWrappedToolTip(FilesUtils.getPathReplacingUserHome(item.getImageIdDirectory()) + File.separator + item.getImageIdFileName());
-        tooltip.setShowDelay(Duration.ZERO);
+        tooltip.setShowDelay(new Duration(1000));
         
         tooltip.setOnShowing(e -> {
             if(item.isFavorite()){

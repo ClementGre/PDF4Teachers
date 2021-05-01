@@ -6,6 +6,8 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridCell;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -39,20 +41,19 @@ public class ImageData extends ImageLambdaData{
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         
-        lastUse = System.currentTimeMillis();
-        useCount++;
+        incrementUsesAndLastUse();
     }
     public void setAsToPlaceElement(boolean link){
         ImageData linkedImage = link ? this : null;
-        PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
-        
-        ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), false,
-                width, height, repeatMode, resizeMode, imageId, linkedImage);
+        ImageElement element = new ImageElement(0, 0, 0, false, 1, 1, repeatMode, resizeMode, imageId, linkedImage);
     
         MainWindow.mainScreen.setToPlace(element);
+    }
     
+    public void incrementUsesAndLastUse(){
         lastUse = System.currentTimeMillis();
         useCount++;
+        ImageGridCell.updateGalleryAndFavoritesSort();
     }
     
     public LinkedHashMap<Object, Object> getYAMLData(){
@@ -125,4 +126,5 @@ public class ImageData extends ImageLambdaData{
     public void setUseCount(int useCount){
         this.useCount = useCount;
     }
+    
 }

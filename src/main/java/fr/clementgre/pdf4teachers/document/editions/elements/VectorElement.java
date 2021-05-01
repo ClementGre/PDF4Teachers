@@ -99,6 +99,22 @@ public class VectorElement extends GraphicElement{
     
     // SPECIFIC METHODS
     
+    
+    @Override
+    public void incrementUsesAndLastUse(){
+    
+    }
+    
+    @Override
+    public double getRatio(){
+        return 1;
+    }
+    
+    @Override
+    public void defineSizeAuto(){
+    
+    }
+    
     @Override
     public float getAlwaysHeight(){
         return 0;

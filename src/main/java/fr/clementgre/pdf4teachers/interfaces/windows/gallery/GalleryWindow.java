@@ -145,7 +145,7 @@ public class GalleryWindow extends Stage{
     public void reloadImageList(){
         list.editImages(getImages());
         if(MainWindow.paintTab.gallery.isLoaded()){
-            MainWindow.paintTab.gallery.reloadImageList();
+            MainWindow.paintTab.gallery.reloadGalleryImageList();
         }
     }
 

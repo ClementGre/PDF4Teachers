@@ -21,6 +21,7 @@ public class ImageElement extends GraphicElement{
     private boolean notFound = false;
     private Image image;
     private final StringProperty imageId = new SimpleStringProperty();
+    private ImageData linkedImageData;
     
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId, ImageData linkedImageData){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
@@ -29,6 +30,7 @@ public class ImageElement extends GraphicElement{
         updateImage(true, hasPage);
     
         if(linkedImageData != null){
+            this.linkedImageData = linkedImageData;
             realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
             realHeight.addListener((observable, oldValue, newValue) -> linkedImageData.setHeight(newValue.intValue()));
             this.repeatMode.addListener((observable, oldValue, newValue) -> linkedImageData.setRepeatMode(newValue));
@@ -54,7 +56,7 @@ public class ImageElement extends GraphicElement{
         this.pageNumber = pageNumber;
         setupGeneral();
         checkLocation(x, y, false);
-        updateImage(true, true);
+        updateImage(false, true);
     }
     
     // SETUP / EVENT CALL BACK
@@ -131,20 +133,38 @@ public class ImageElement extends GraphicElement{
     
     // SPECIFIC METHODS
     
+    
+    @Override
+    public void incrementUsesAndLastUse(){
+        if(getLinkedImageData() != null){
+            getLinkedImageData().incrementUsesAndLastUse();
+        }
+    }
+    
+    @Override
+    public double getRatio(){
+        return image.getWidth() / image.getHeight();
+    }
+    
     public void updateImage(boolean checkAutoSize, boolean updateBackground){
         generateImageAsync(() -> {
             if(updateBackground) updateBackground();
             
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
-                double imgWidth = image.getWidth();
-                double imgHeight = image.getHeight();
-                double width = Math.min(GRID_WIDTH/2, imgWidth);
-                double height = imgHeight * width/imgWidth;
-                
-                checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
-                        width * getPage().getWidth() / GRID_WIDTH, height * getPage().getHeight() / GRID_HEIGHT, false);
+                defineSizeAuto();
             }
         });
+    }
+    
+    @Override
+    public void defineSizeAuto(){
+        double imgWidth = image.getWidth();
+        double imgHeight = image.getHeight();
+        double width = Math.min(GRID_WIDTH/2, imgWidth);
+        double height = imgHeight * width/imgWidth;
+    
+        checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                width * getPage().getWidth() / GRID_WIDTH, height * getPage().getHeight() / GRID_HEIGHT, false);
     }
     
     public void updateBackground(){
@@ -191,7 +211,6 @@ public class ImageElement extends GraphicElement{
     
     // GETTER/SETTER
     
-    
     public String getImageId(){
         return imageId.get();
     }
@@ -201,5 +220,10 @@ public class ImageElement extends GraphicElement{
     public void setImageId(String imageId){
         this.imageId.set(imageId);
     }
-    
+    public ImageData getLinkedImageData(){
+        return linkedImageData;
+    }
+    public void setLinkedImageData(ImageData linkedImageData){
+        this.linkedImageData = linkedImageData;
+    }
 }

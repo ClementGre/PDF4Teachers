@@ -9,10 +9,10 @@ import javafx.application.Platform;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class FavouriteImageData{
+    
     
     public FavouriteImageData(){
         loadDataFromYAML();
@@ -29,18 +29,16 @@ public class FavouriteImageData{
                 
                 Config config = new Config(file);
                 config.load();
-                
+    
                 ArrayList<ImageData> favouriteImageData = new ArrayList<>();
-                
-                Platform.runLater(() -> {
-                    // TEXTS
-                    for(Object data : config.getList("favorites")){
-                        if(data instanceof HashMap map){
-                            favouriteImageData.add(ImageData.readYAMLDataAndGive(map));
-                        }
+                // TEXTS
+                for(Object data : config.getList("favorites")){
+                    if(data instanceof HashMap map){
+                        favouriteImageData.add(ImageData.readYAMLDataAndGive(map));
                     }
-                    
-                    MainWindow.paintTab.favouriteImages.getList().editImages(favouriteImageData.stream().map(ImageGridElement::new).toList());
+                }
+                Platform.runLater(() -> {
+                    MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData);
                 });
                 
             }catch(IOException e){
@@ -59,9 +57,7 @@ public class FavouriteImageData{
         try{
             new File(Main.dataFolder).mkdirs();
             Config config = new Config(new File(Main.dataFolder + "imageelements.yml"));
-            
             config.set("favorites", favorites);
-            
             config.save();
         }catch(IOException e){
             e.printStackTrace();

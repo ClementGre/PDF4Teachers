@@ -3,10 +3,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
-import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
@@ -53,6 +50,10 @@ public class PageRenderer extends Pane{
     private PageEditPane pageEditPane;
     private PageZoneSelector pageCursorRecord;
     
+    private GraphicElement placingElement = null;
+    private int shiftX;
+    private int shiftY;
+    
     public PageRenderer(int page){
         this.page = page;
         setup();
@@ -85,8 +86,9 @@ public class PageRenderer extends Pane{
             mouseX = e.getX();
             mouseY = e.getY();
             
-            if(getCursor() == Cursor.CROSSHAIR){
+            if(placingElement != null){
                 e.consume();
+                placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
             }
         });
         
@@ -108,11 +110,18 @@ public class PageRenderer extends Pane{
             menu.hide(); menu.getItems().clear();
             
             if(MainWindow.mainScreen.hasToPlace()){
-                GraphicElement element = MainWindow.mainScreen.getToPlace();
-                element.initializePage(getPage(), e.getX(), e.getY());
-                addElement(element, true);
-                MainWindow.mainScreen.setSelected(element);
-    
+                placingElement = MainWindow.mainScreen.getToPlace();
+                placingElement.initializePage(getPage(), e.getX(), e.getY());
+                addElement(placingElement, true);
+                MainWindow.mainScreen.setSelected(placingElement);
+                placingElement.requestFocus();
+                placingElement.incrementUsesAndLastUse();
+                
+                shiftX = (int) placingElement.getLayoutX();
+                shiftY = (int) placingElement.getLayoutY();
+                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true);
+                placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
+                
                 setCursor(Cursor.CROSSHAIR);
             }else{
                 if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
@@ -120,6 +129,16 @@ public class PageRenderer extends Pane{
             }
         });
         setOnMouseReleased(e -> {
+            if(placingElement != null){
+                e.consume();
+                if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10){
+                    placingElement.simulateReleaseFromResize();
+                    placingElement.defineSizeAuto();
+                }else{
+                    placingElement.simulateReleaseFromResize();
+                }
+                placingElement = null;
+            }
             setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {

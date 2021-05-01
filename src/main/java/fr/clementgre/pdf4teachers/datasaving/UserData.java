@@ -124,7 +124,7 @@ public class UserData{
     // Sub classes :
     private TextElementsData textElementsData;
     private VectorElementsData vectorElementsData;
-    private FavouriteImageData favouriteImageData;
+    public FavouriteImageData favouriteImageData;
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")

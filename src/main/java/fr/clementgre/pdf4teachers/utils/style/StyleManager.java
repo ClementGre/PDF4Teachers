@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.utils.style;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -31,7 +32,7 @@ public class StyleManager{
         });
     }
     
-    public static void putStyle(Scene scene, Style style, JMetro jMetro){
+    public static JMetro putStyle(Scene scene, Style style, JMetro jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
@@ -43,6 +44,7 @@ public class StyleManager{
         putCustomStyle(scene, "base.css");
         if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
         else putCustomStyle(scene, "base-light.css");
+        return jMetro;
     }
     public static void putStyle(Scene scene, Style style){
         jfxtras.styles.jmetro.Style toApplyStyle;
@@ -78,15 +80,18 @@ public class StyleManager{
     }
     
     public static void putCustomStyle(Scene scene, String name){
-        scene.getStylesheets().add(Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm());
+        String link = Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm();
+        scene.getStylesheets().remove(link);
+        scene.getStylesheets().add(link);
     }
     
     public static void putCustomStyle(Parent parent, String name){
-        parent.getStylesheets().add(Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm());
+        String link = Objects.requireNonNull(StyleManager.class.getResource("/css/" + name)).toExternalForm();
+        parent.getStylesheets().remove(link);
+        parent.getStylesheets().add(link);
     }
     
     private static void putStylesAuto(){
-        new JMetro(MainWindow.notificationPane, DEFAULT_STYLE);
         if(MainWindow.paintTab.galleryWindow != null) MainWindow.paintTab.galleryWindow.updateStyle();
         Main.window.updateStyle();
 

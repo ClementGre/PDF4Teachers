@@ -56,7 +56,7 @@ public class NodeMenuItem extends CustomMenuItem{
     
     public void setLeftData(Node data){
         Pane pane = new Pane();
-        pane.setStyle("-fx-font-size: 13; -fx-padding: 0 5 0 0;"); // top - right - bottom - left
+        pane.setStyle("-fx-font-size: 13; -fx-padding: 0 8 0 0;"); // top - right - bottom - left
         
         pane.getChildren().add(data);
         getNode().getChildren().set(0, pane);
@@ -87,7 +87,7 @@ public class NodeMenuItem extends CustomMenuItem{
     public void setKeyCombinaison(KeyCombination keyCombinaison){
         
         Label acceleratorLabel = new Label(keyCombinaison.getDisplayText());
-        acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 20; -fx-text-fill: #d0d0d0;");  // top - right - bottom - left
+        acceleratorLabel.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 25; -fx-text-fill: #d0d0d0;");  // top - right - bottom - left
         getNode().getChildren().set(4, acceleratorLabel);
         
         setAccelerator(keyCombinaison);

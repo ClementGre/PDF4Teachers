@@ -14,9 +14,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 public abstract class ListPane<T> extends TitledPane{
     
@@ -73,7 +71,9 @@ public abstract class ListPane<T> extends TitledPane{
         graphics.setPadding(new Insets(0, 24, 0, 0));
         graphics.setAlignment(Pos.CENTER);
         
-        graphics.getChildren().addAll(title, new HBoxSpacer(), zoomSlider, sortToggleBtn);
+        Region spacer = new HBoxSpacer();
+        HBox.setMargin(spacer, new Insets(0, -20, 0, 0));
+        graphics.getChildren().addAll(title, spacer, zoomSlider, sortToggleBtn);
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         graphics.setCursor(Cursor.DEFAULT);
         setGraphic(graphics);
