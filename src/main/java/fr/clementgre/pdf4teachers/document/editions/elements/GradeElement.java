@@ -18,7 +18,6 @@ import javafx.geometry.VPos;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
@@ -162,34 +161,32 @@ public class GradeElement extends Element{
     protected void setupMenu(){
         menu.getItems().clear();
         
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.setMax"), false);
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.setMax"));
         item1.setToolTip(TR.tr("gradeTab.gradeMenu.setMax.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.unFill"), false);
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.unFill"));
         item2.setToolTip(TR.tr("gradeTab.gradeMenu.unFill.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.delete"), false);
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.delete"));
         item3.setToolTip(TR.tr("gradeTab.gradeMenu.delete.tooltip"));
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
-        NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.set0"), false);
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"));
         item4.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
-        NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
+        NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"));
         item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilled.tooltip"));
         
         
         menu.setOnShowing((e) -> {
             Platform.runLater(() -> {
-                GradeTreeItem treeItem = getGradeTreeItem();
-                MenuItem menuItem = new CustomMenuItem(treeItem.getEditGraphics((int) menu.getWidth() - 50, menu));
-                menuItem.setOnAction((actionEvent) -> setValue(getTotal()));
+                NodeMenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
                 
                 if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
                 else menu.getItems().set(0, menuItem);
+                NodeMenuItem.setupMenuNow(menu);
             });
             
         });
         
         menu.getItems().addAll(item1, item4, item2, item3);
         if(alwaysVisible && getValue() == -1) menu.getItems().add(item5);
-        NodeMenuItem.setupMenu(menu);
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();

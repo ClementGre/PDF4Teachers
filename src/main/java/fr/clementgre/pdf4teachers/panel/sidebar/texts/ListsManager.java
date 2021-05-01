@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
@@ -88,7 +89,7 @@ public class ListsManager{
         
         if(TextTreeSection.lists.size() >= 1){
             for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
-                MenuItem menuItem = new MenuItem(list.getKey());
+                NodeMenuItem menuItem = new NodeMenuItem(list.getKey());
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     
@@ -110,7 +111,7 @@ public class ListsManager{
                 });
             }
         }else{
-            menu.getItems().add(new MenuItem(TR.tr("textTab.lists.show.none")));
+            menu.getItems().add(new NodeMenuItem(TR.tr("textTab.lists.show.none")));
         }
     }
     

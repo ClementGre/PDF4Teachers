@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.render.display;
 
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -12,6 +13,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -25,11 +28,9 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class PageRenderer extends Pane{
@@ -114,7 +115,7 @@ public class PageRenderer extends Pane{
     
                 setCursor(Cursor.CROSSHAIR);
             }else{
-                if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getX(), e.getScreenX(), e.getScreenY());
+                if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
                 else setCursor(Cursor.CLOSED_HAND);
             }
         });
@@ -136,22 +137,20 @@ public class PageRenderer extends Pane{
         });
     }
     
-    public void showContextMenu(double pageX, double screenX, double screenY){
+    public void showContextMenu(double pageY, double screenX, double screenY){
         if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
             GradeTreeView.defineNaNLocations();
             GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
             if(logicalNextGrade != null){
-                CustomMenuItem menuItem = new CustomMenuItem(logicalNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
+                CustomMenuItem menuItem = logicalNextGrade.getEditMenuItem(menu);
                 menu.getItems().add(menuItem);
-                menuItem.setOnAction((actionEvent) -> logicalNextGrade.getCore().setValue(logicalNextGrade.getCore().getTotal()));
             }
         
-            GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) pageX);
+            GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) pageY);
             GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
             if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
-                CustomMenuItem menuItem = new CustomMenuItem(documentNextGrade.getEditGraphics((int) MainWindow.textTab.treeView.getWidth() - 50, menu));
+                NodeMenuItem menuItem = documentNextGrade.getEditMenuItem(menu);
                 menu.getItems().add(0, menuItem);
-                menuItem.setOnAction((actionEvent) -> documentNextGradeElement.setValue(documentNextGradeElement.getTotal()));
             }
         
         }
@@ -161,33 +160,23 @@ public class PageRenderer extends Pane{
         for(int i = 0; i <= 7; i++){
             if(mostUsed.size() > i){
                 TextTreeItem item = mostUsed.get(i);
-            
-                Pane pane = new Pane();
-            
-                Pane sub = new Pane();
-            
-                ScratchText name = new ScratchText(item.name.getText());
+                
+                NodeMenuItem menuItem = new NodeMenuItem();
+                
+                ScratchText name = new ScratchText(new TextWrapper(item.name.getText().replace("\n", ""), null, 175).wrapFirstLine());
                 name.setTextOrigin(VPos.TOP);
-                name.setLayoutY(3);
                 name.setFont(item.name.getFont());
                 name.setFill(item.name.getFill());
-            
-                sub.setOnMouseClicked(event -> item.addToDocument(false));
-            
-                sub.setLayoutY(-6);
-                sub.setPrefHeight(name.getLayoutBounds().getHeight() + 7);
-                sub.setPrefWidth(Math.max(name.getLayoutBounds().getWidth(), MainWindow.textTab.treeView.getWidth() - 50));
-            
-                pane.setPrefHeight(name.getLayoutBounds().getHeight() + 7 - 14);
-            
-                sub.getChildren().add(name);
-                pane.getChildren().add(sub);
-            
-                CustomMenuItem menuItem = new CustomMenuItem(pane);
+                
+                menuItem.setLeftData(name);
+                menuItem.setOnAction((e) -> {
+                    item.addToDocument(false);
+                });
                 menu.getItems().add(menuItem);
             }
         }
     
+        NodeMenuItem.setupMenu(menu);
         menu.show(this, screenX, screenY);
     }
     

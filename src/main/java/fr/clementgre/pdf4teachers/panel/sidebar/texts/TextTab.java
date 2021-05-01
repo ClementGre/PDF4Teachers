@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -194,7 +195,7 @@ public class TextTab extends SideTab{
         });
         
         ContextMenu menu = new ContextMenu();
-        MenuItem deleteReturn = new MenuItem(TR.tr("textTab.fieldActions.deleteUselessLineBreak"));
+        MenuItem deleteReturn = new NodeMenuItem(TR.tr("textTab.fieldActions.deleteUselessLineBreak"));
         deleteReturn.setOnAction(event -> {
             String wrapped = new TextWrapper(txtArea.getText().replaceAll(Pattern.quote("\n"), " "), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
             if(txtArea.getText().endsWith(" ")) wrapped += " ";

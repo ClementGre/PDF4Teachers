@@ -132,7 +132,7 @@ public class PageEditPane extends VBox{
     
     private static MenuItem getMenuItem(String title, boolean vanillaItem){
         if(vanillaItem) return new MenuItem(title);
-        else return new NodeMenuItem(new HBox(), title, false);
+        else return new NodeMenuItem(title);
     }
     
     private Button getCustomButton(String path, String text){

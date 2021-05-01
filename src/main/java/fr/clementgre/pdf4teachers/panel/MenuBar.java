@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel;
 
 import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.NodeMenu;
 import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.settings.Setting;
@@ -31,6 +32,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -107,20 +109,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     Menu tools5SameNameEditions = createSubMenu(TR.tr("menuBar.tools.sameNameEdits"), SVGPathIcons.EXCHANGE,
             TR.tr("menuBar.tools.sameNameEdits.tooltip"), true);
-    MenuItem tools5SameNameEditionsNull = new MenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"));
+    MenuItem tools5SameNameEditionsNull = new NodeMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"));
     
     Menu tools6ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
             TR.tr("menuBar.tools.exportOrImportEditOrGradeScale.tooltip"), true);
     
     MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("menuBar.tools.exportEdit"), null, null,
-            TR.tr("menuBar.tools.exportEdit.tooltip"), true, false, false, false);
+            TR.tr("menuBar.tools.exportEdit.tooltip"), true, false, false);
     MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.exportGradeScale"), null, null,
-            TR.tr("menuBar.tools.exportGradeScale.tooltip"), true, false, false, false);
+            TR.tr("menuBar.tools.exportGradeScale.tooltip"), true, false, false);
     
     MenuItem tools6ImportEdition1All = createMenuItem(TR.tr("menuBar.tools.importEdit"), null, null,
-            TR.tr("menuBar.tools.importEdit.tooltip"), true, false, false, false);
+            TR.tr("menuBar.tools.importEdit.tooltip"), true, false, false);
     MenuItem tools6ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
-            TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false, false);
+            TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
     
     MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
             TR.tr("menuBar.tools.fullScreenMode.tooltip"));
@@ -129,11 +131,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             TR.tr("menuBar.tools.debug.tooltip"), false);
     
     MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("menuBar.tools.debug.openPrintStream") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
-            TR.tr("menuBar.tools.debug.openPrintStream.tooltip"), false, false, false, false);
+            TR.tr("menuBar.tools.debug.openPrintStream.tooltip"), false, false, false);
     MenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("menuBar.tools.debug.openDataFolder"), null, null,
-            TR.tr("menuBar.tools.debug.openDataFolder.tooltip"), false, false, false, false);
+            TR.tr("menuBar.tools.debug.openDataFolder.tooltip"), false, false, false);
     MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
-            TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false, false);
+            TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false);
     
     ////////// SETTINGS //////////
     
@@ -145,10 +147,11 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     public Menu about = new Menu();
     
     Menu help = new Menu(TR.tr("menuBar.help"));
-    MenuItem help1LoadDoc = new MenuItem(TR.tr("menuBar.help.loadDocumentation"));
-    MenuItem help2GitHubIssue = new MenuItem(TR.tr("menuBar.help.gitHubIssue"));
-    MenuItem help3Twitter = new MenuItem(TR.tr("menuBar.help.twitter"));
-    MenuItem help4Website = new MenuItem(TR.tr("menuBar.help.website"));
+    
+    MenuItem help1LoadDoc = createMenuItem(TR.tr("menuBar.help.loadDocumentation"), SVGPathIcons.INFO);
+    MenuItem help2GitHubIssue = createMenuItem(TR.tr("menuBar.help.gitHubIssue"), SVGPathIcons.GITHUB);
+    MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);
+    MenuItem help4Website = createMenuItem(TR.tr("menuBar.help.website"), SVGPathIcons.GLOBE);
     
     public MenuBar(){
         setup();
@@ -167,7 +170,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         ////////// TOOLS //////////
         
-        tools3AddPages.getItems().add(new MenuItem());
+        tools3AddPages.getItems().add(new NodeMenuItem(""));
         tools6ExportImportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades, tools6ImportEdition1All, tools6ImportEdition2Grades);
         tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
         tools9Debug.getItems().addAll(tools9Debug1OpenConsole, tools9Debug2OpenAppFolder, tools9Debug3OpenEditionFile);
@@ -195,19 +198,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         ////////// HELP //////////
         
-        if(!isSystemMenuBarSupported()){
-            help1LoadDoc.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.INFO, "white", 0, 15, 15, colorAdjust));
-            help2GitHubIssue.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GITHUB, "white", 0, 15, 15, colorAdjust));
-            help3Twitter.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TWITTER, "white", 0, 15, 15, colorAdjust));
-            help4Website.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.GLOBE, "white", 0, 15, 15, colorAdjust));
-        }
         help.getItems().addAll(help1LoadDoc, help2GitHubIssue, help3Twitter, help4Website);
         
         ////////// SETUP ITEMS WIDTH ///////////
         
         NodeMenuItem.setupMenu(file);
         NodeMenuItem.setupMenu(tools);
+        NodeMenuItem.setupMenu(tools6ExportImportEdition);
+        NodeMenuItem.setupMenu(tools9Debug);
         NodeMenuItem.setupMenu(settings);
+        NodeMenuItem.setupMenu(help);
         
         ////////// FILE //////////
         
@@ -267,7 +267,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         tools3AddPages.setOnShowing(e -> {
             tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages, isSystemMenuBarSupported()));
-            PaneUtils.setMenuSize(tools3AddPages);
+            NodeMenuItem.setupMenu(tools3AddPages);
         });
         
         tools4DeleteAllEdits.setOnAction((ActionEvent e) -> {
@@ -310,7 +310,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             int i = 0;
             for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
                 
-                MenuItem item = new MenuItem(files.getValue().getAbsolutePath());
+                NodeMenuItem item = new NodeMenuItem(files.getValue().getAbsolutePath());
                 if(files.getValue().getParentFile() != null){
                     item.setText(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
                 }
@@ -365,7 +365,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 i++;
             }
             if(i == 0) tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
-            PaneUtils.setMenuSize(tools5SameNameEditions);
+            else NodeMenuItem.setupMenu(tools5SameNameEditions);
         });
         
         tools6ExportEdition1All.setOnAction((e) -> EditionExporter.showExportDialog(false));
@@ -473,59 +473,33 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                     tk.createUnhideAllMenuItem(), new SeparatorMenuItem(),
                     tk.createQuitMenuItem(Main.APP_NAME));
             tk.setApplicationMenu(defaultApplicationMenu);
-
-            // TODO : check this works
-            Menu docMenu = new Menu("test");
-            docMenu.getItems().addAll(new MenuItem("item"));
-            tk.setDockIconMenu(docMenu);
         }
         
     }
     
     public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc){
-        
+    
+        Menu menu;
         if(isSystemMenuBarSupported()){
-            Menu menu = new Menu(name);
-            //if(imgName != null)menu.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/" + imgName + ".png")+"", 0, 0));
-            
-            if(disableIfNoDoc){
-                menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-            }
-            
-            return menu;
+            menu = new Menu(name);
         }else{
-            Menu menu = new Menu();
-            HBox pane = new HBox();
-            
-            Label text = new Label(name);
+            menu = new NodeMenu(name);
             
             if(image != null){
                 if(image.length() >= 30){
-                    pane.getChildren().add(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
+                    ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        System.err.println("MenuBar image " + image + " does not exist");
-                    else
-                        pane.getChildren().add(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
+                    else ((NodeMenu) menu).setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
-                
-                text.setStyle("-fx-font-size: 13; -fx-padding: 0 0 0 8;"); // top - right - bottom - left
-            }else{
-                text.setStyle("-fx-font-size: 13; -fx-padding: 2 0 2 0;");
             }
-            pane.getChildren().add(text);
-            
-            if(disableIfNoDoc){
-                menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-            }
-            
-            Tooltip toolTipUI = PaneUtils.genWrappedToolTip(toolTip);
-            toolTipUI.setShowDuration(Duration.INDEFINITE);
-            Tooltip.install(pane, toolTipUI);
-            
-            menu.setGraphic(pane);
-            return menu;
+            if(toolTip != null && !toolTip.isBlank()) ((NodeMenu) menu).setToolTip(toolTip);
         }
+    
+        if(disableIfNoDoc){
+            menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+        }
+        return menu;
     }
     
     public static MenuItem createRadioMenuItem(String text, String image, String toolTip, boolean autoUpdate){
@@ -548,8 +522,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             return menuItem;
             
         }else{
-            NodeRadioMenuItem menuItem = new NodeRadioMenuItem(new HBox(), text + "      ", true, autoUpdate);
-            
+            NodeRadioMenuItem menuItem = new NodeRadioMenuItem(text + "      ", autoUpdate);
             
             if(image != null){
                 if(image.length() >= 30){
@@ -570,11 +543,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
     }
     
-    public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
-        return createMenuItem(text, imgName, keyCombinaison, toolTip, disableIfNoDoc, disableIfNoList, leftMargin, true);
-    }
-    
-    public static MenuItem createMenuItem(String text, String image, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin, boolean fat){
+    public static MenuItem createMenuItem(String text, String image, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
         if(isSystemMenuBarSupported()){
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
@@ -587,21 +556,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             }
             return menuItem;
         }else{
-            NodeMenuItem menuItem = new NodeMenuItem(new HBox(), text + "         ", fat);
+            NodeMenuItem menuItem = new NodeMenuItem(text);
             
             if(image != null){
                 if(image.length() >= 30){
                     menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        System.err.println("MenuBar image " + image + " does not exist");
-                    else
-                        menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
+                    else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
                 
             }
+            
             if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
-            if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+            if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);
             if(leftMargin) menuItem.setFalseLeftData();
             
             if(disableIfNoDoc){
@@ -621,5 +589,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     public static MenuItem createMenuItem(String text, String imgName, KeyCombination keyCombinaison, String toolTip, boolean leftMargin){
         return createMenuItem(text, imgName, keyCombinaison, toolTip, false, false, leftMargin);
+    }
+    public static MenuItem createMenuItem(String text, String imgName){
+        return createMenuItem(text, imgName, null, "", false, false, false);
     }
 }

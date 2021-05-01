@@ -409,10 +409,10 @@ public abstract class GraphicElement extends Element{
     @Override
     protected void setupMenu(){
         
-        NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("actions.delete"), false);
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.delete"));
         item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("actions.duplicate"), false);
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"));
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
         menu.getItems().addAll(item1, item2);
         NodeMenuItem.setupMenu(menu);

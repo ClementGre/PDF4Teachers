@@ -179,6 +179,7 @@ public class GradeTreeView extends TreeView<String>{
     public static GradeElement getNextGrade(int page, int y){
         
         ArrayList<GradeElement> items = getGradesArrayByCoordinates();
+
         GradeElement before = null;
         GradeElement after = items.size() >= 2 ? items.get(1) : null;
         

@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 
@@ -57,9 +58,6 @@ public class AutoTipTooltip extends PopOver{
         graphic.getStyleClass().addAll("tooltip-autotip-pane", "content-pane");
         getStyleClass().add("tooltip-autotip");
     
-        getRoot().setScaleX(MainWindow.TEMP_SCALE);
-        getRoot().setScaleY(MainWindow.TEMP_SCALE);
-        
         setOnAutoHide((e) -> {
             closedByAutoHide = true;
         });
@@ -75,6 +73,7 @@ public class AutoTipTooltip extends PopOver{
         if(!owner.isFocused()) return;
         closedByAutoHide = false;
         StyleManager.putStyle(getRoot(), Style.DEFAULT);
+        getRoot().getTransforms().add(new Scale(MainWindow.TEMP_SCALE, MainWindow.TEMP_SCALE, 0, 0));
         
         if(objectWhereDisplay.isEmpty()){
             

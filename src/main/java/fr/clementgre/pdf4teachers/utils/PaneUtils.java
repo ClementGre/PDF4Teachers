@@ -81,16 +81,6 @@ public class PaneUtils{
         setVBoxPosition(element, width, height, new Insets(marginTopBottom, marginLeftRight, marginTopBottom, marginLeftRight));
     }
     
-    public static void setMenuSize(Menu menu){
-        
-        for(MenuItem subMenu : menu.getItems()){
-            subMenu.setStyle("-fx-font-size: 13;");
-            if(subMenu instanceof Menu){
-                setMenuSize((Menu) subMenu);
-            }
-        }
-    }
-    
     public static Tooltip genWrappedToolTip(String text){
         return genToolTip(new TextWrapper(text, new Font(14*MainWindow.TEMP_SCALE), (int) (350*MainWindow.TEMP_SCALE)).wrap());
     }
@@ -99,23 +89,45 @@ public class PaneUtils{
         tooltip.setStyle("-fx-font-size: " + (14*MainWindow.TEMP_SCALE) + ";");
         return tooltip;
     }
-    
-    public static void setupScaling(Region pane){
-        if(MainWindow.TEMP_SCALE == 1) return;
+    public static void setupScaling(Region pane, boolean listeners, boolean bind){
+        setupScaling(pane, listeners, bind, true, true);
+    }
+    public static void setupScalingWithoutPadding(Region pane, boolean bind){
+        setupScaling(pane, false, bind, false, true);
+    }
+    public static void setupScaling(Region pane, boolean listeners, boolean bind, boolean updatePadding, boolean paddingAround){
+        if(MainWindow.TEMP_SCALE == 1 && !bind) return;
         pane.setScaleX(MainWindow.TEMP_SCALE);
         pane.setScaleY(MainWindow.TEMP_SCALE);
-        updateScalePadding(pane);
-        pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
-        pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
-        pane.scaleYProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane));
+        if(updatePadding){
+            updateScalePadding(pane, paddingAround);
+            if(listeners){
+                pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
+                pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
+                pane.scaleYProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
+            }
+        }
+        if(bind){
+            // TODO: bind the scale to the scaleVar
+        }
     }
-    public static void updateScalePadding(Region pane){
+    public static void updateScalePadding(Region pane, boolean paddingAround){
+        if(MainWindow.TEMP_SCALE == 0){
+            pane.setPadding(Insets.EMPTY);
+            return;
+        }
+        
         // -1 to avoid small white borders on sides sometimes
         // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
         double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
         double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
     
-        pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
+        if(paddingAround){
+            pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
+        }else{
+            pane.setPadding(new Insets(vertical*2, 0, 0, horizontal*2));
+        }
+        
     }
     
     

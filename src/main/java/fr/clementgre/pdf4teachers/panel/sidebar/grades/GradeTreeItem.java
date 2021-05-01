@@ -1,6 +1,8 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -178,19 +180,19 @@ public class GradeTreeItem extends TreeItem<String>{
         
     }
     
-    public HBox getEditGraphics(int width, ContextMenu menu){
+    public NodeMenuItem getEditMenuItem(ContextMenu menu){
         
-        Region spacer = new Region();
+        HBox pane = new HBox();
+        NodeMenuItem menuItem = new NodeMenuItem(pane);
+        
         Text name = new Text();
         
         Text value = new Text();
         Text slash = new Text("/");
         Text total = new Text();
         
-        HBox pane = new HBox();
         pane.setAlignment(Pos.CENTER);
         pane.setPrefHeight(18);
-        pane.setStyle("-fx-padding: -6 -6 -6 0;"); // top - right - bottom - left
         
         name.textProperty().bind(core.nameProperty());
         
@@ -202,37 +204,34 @@ public class GradeTreeItem extends TreeItem<String>{
         
         // SETUP
         
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
         TextArea gradeField = getField(FieldType.GRADE, false);
+        HBox.setMargin(gradeField, new Insets(-7, 0, -7, 0));
         gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
         if(!isRoot() && getParent() != null){
             if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
         
         if(hasSubGrade()){
-            pane.getChildren().addAll(name, spacer, value, slash, total);
+            pane.getChildren().setAll(name, new HBoxSpacer(), value, slash, total);
         }else{
-            pane.getChildren().addAll(name, spacer, gradeField, slash, total);
+            pane.getChildren().setAll(name, new HBoxSpacer(), gradeField, slash, total);
             Platform.runLater(gradeField::requestFocus);
         }
         
         pageContextMenu = menu;
         
+        pane.setMaxWidth(Double.MAX_VALUE);
         pane.setOnMouseEntered(e -> {
             gradeField.requestFocus();
             MainWindow.gradeTab.treeView.getSelectionModel().select(this);
         });
-        
-        pane.setMinWidth(width);
-        
-        pane.widthProperty().addListener((e) -> {
-            if(pane.getWidth() < width){
-                pane.setPrefWidth(width);
-            }
+    
+        menuItem.setOnAction((actionEvent) -> {
+            this.gradeField.setText(MainWindow.format.format(core.getTotal()));
+            setChildrenValuesToMax();
         });
         
-        return pane;
+        return menuItem;
     }
     
     public void updateCell(TreeCell<String> cell){

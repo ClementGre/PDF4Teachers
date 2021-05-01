@@ -12,7 +12,6 @@ import javafx.scene.image.Image;
 
 import java.io.File;
 import java.util.Collections;
-import java.util.Date;
 
 public class ImageGridElement extends ImageLambdaData{
     

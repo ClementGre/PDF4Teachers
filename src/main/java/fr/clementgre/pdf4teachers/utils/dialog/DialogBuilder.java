@@ -235,7 +235,7 @@ public class DialogBuilder{
         dialog.getDialogPane().getStyleClass().add(JMetroStyleClass.BACKGROUND);
         
         if(dialog.getDialogPane().getScene().getRoot() instanceof DialogPane pane){
-            PaneUtils.setupScaling(pane);
+            PaneUtils.setupScaling(pane, true, false);
             pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             
@@ -252,7 +252,7 @@ public class DialogBuilder{
             }
             Platform.runLater(() -> {
                 dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30*MainWindow.TEMP_SCALE);
-                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 30*MainWindow.TEMP_SCALE);
+                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 40*MainWindow.TEMP_SCALE);
             });
 
         }, "AlertResizer").start());

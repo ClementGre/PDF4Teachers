@@ -125,17 +125,17 @@ public class FileListItem extends ListCell<File>{
             
             ContextMenu menu = new ContextMenu();
             
-            NodeMenuItem item1 = new NodeMenuItem(new HBox(), TR.tr("actions.open"), false);
+            NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.open"));
             item1.setToolTip(TR.tr("filesTab.fileMenu.open.tooltip"));
-            NodeMenuItem item2 = new NodeMenuItem(new HBox(), TR.tr("actions.remove"), false);
+            NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"));
             item2.setToolTip(TR.tr("filesTab.fileMenu.remove.tooltip"));
-            NodeMenuItem item3 = new NodeMenuItem(new HBox(), TR.tr("menuBar.file.deleteEdit"), false);
+            NodeMenuItem item3 = new NodeMenuItem(TR.tr("menuBar.file.deleteEdit"));
             item3.setToolTip(TR.tr("menuBar.file.deleteEdit.tooltip"));
-            NodeMenuItem item4 = new NodeMenuItem(new HBox(), TR.tr("actions.deleteFile"), false);
+            NodeMenuItem item4 = new NodeMenuItem(TR.tr("actions.deleteFile"));
             item4.setToolTip(TR.tr("filesTab.fileMenu.deleteFile.tooltip"));
-            NodeMenuItem item5 = new NodeMenuItem(new HBox(), TR.tr("menuBar.file.export"), false);
+            NodeMenuItem item5 = new NodeMenuItem(TR.tr("menuBar.file.export"));
             item5.setToolTip(TR.tr("menuBar.file.export.tooltip"));
-            NodeMenuItem item6 = new NodeMenuItem(new HBox(), TR.tr("menuBar.file.clearList"), false);
+            NodeMenuItem item6 = new NodeMenuItem(TR.tr("menuBar.file.clearList"));
             item6.setToolTip(TR.tr("menuBar.file.clearList.tooltip"));
             
             menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);

@@ -68,7 +68,7 @@ public class AutoTipsManager{
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "hastextsimilarelements", objectWhereDisplay = "auto")
     private static final String textAutoCompletion = "autoTips.textAutoCompletion";
     
-    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "")
+    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String textAutoWrap = "autoTips.textAutoWrap";
     
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")

@@ -9,19 +9,20 @@ import javafx.scene.layout.HBox;
 
 public class NodeRadioMenuItem extends NodeMenuItem{
     
-    private BooleanProperty selected = new SimpleBooleanProperty(false);
-    private ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png") + "", 16, 16);
-    private ImageView NONSELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png") + "", 16, 16);
+    private final BooleanProperty selected = new SimpleBooleanProperty(false);
+    private final ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png") + "", 16, 16);
+    private final ImageView NONSELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/no.png") + "", 16, 16);
     
-    private boolean autoUpdate;
+    private final boolean autoUpdate;
     
-    public NodeRadioMenuItem(HBox node, String text, boolean fat, boolean autoUpdate){
-        super(node, text, fat, false);
-        this.autoUpdate = autoUpdate;
-        setup();
+    public NodeRadioMenuItem(String text, boolean autoUpdate){
+        this(new HBox(), text, autoUpdate, false);
     }
-    public NodeRadioMenuItem(HBox node, String text, boolean fat, boolean autoUpdate, boolean hideOnClick){
-        super(node, text, fat, hideOnClick);
+    public NodeRadioMenuItem(String text, boolean autoUpdate, boolean hideOnClick){
+        this(new HBox(), text, autoUpdate, hideOnClick);
+    }
+    public NodeRadioMenuItem(HBox node, String text, boolean autoUpdate, boolean hideOnClick){
+        super(node, text, hideOnClick);
         this.autoUpdate = autoUpdate;
         setup();
     }

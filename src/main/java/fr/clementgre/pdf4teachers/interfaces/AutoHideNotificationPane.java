@@ -59,7 +59,7 @@ public class AutoHideNotificationPane extends NotificationPane{
         addEventHandler(NotificationPane.ON_HIDDEN, onHideEvent);
         setShowFromTop(false);
     
-        PaneUtils.setupScaling(this);
+        PaneUtils.setupScaling(this, true, true);
     }
     
     public void addToPending(String text, AlertIconType iconType, int autoHideTime){
