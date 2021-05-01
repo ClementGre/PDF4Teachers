@@ -128,10 +128,12 @@ public class NodeMenuItem extends CustomMenuItem{
             }else if(item instanceof Menu){
                 extra = 28; // Menus has a little Arrow, this add 25px
                 
-                Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
-                if(arrow instanceof Region region){
-                    region.setScaleX(MainWindow.TEMP_SCALE);
-                    region.setScaleY(MainWindow.TEMP_SCALE);
+                if(item.getStyleableNode() != null){
+                    Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
+                    if(arrow instanceof Region region){
+                        region.setScaleX(MainWindow.TEMP_SCALE);
+                        region.setScaleY(MainWindow.TEMP_SCALE);
+                    }
                 }
             }
         }

@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -89,6 +90,7 @@ public class Main extends Application{
         StyleManager.setup();
         AutoTipsManager.setup();
         ImageUtils.setupListeners();
+        FontUtils.setup();
         
         
         if(languageAsk()){

@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;

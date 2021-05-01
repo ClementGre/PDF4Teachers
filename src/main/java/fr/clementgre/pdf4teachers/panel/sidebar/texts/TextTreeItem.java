@@ -9,7 +9,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;

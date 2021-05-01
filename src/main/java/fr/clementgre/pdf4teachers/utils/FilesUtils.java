@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import java.io.File;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class FilesUtils{
@@ -48,5 +49,25 @@ public class FilesUtils{
         if(path.startsWith(System.getProperty("user.home"))){
             return path.replaceFirst(Pattern.quote(System.getProperty("user.home")), "~");
         }else return path;
+    }
+    
+    public static List<File> listFiles(File dir, String[] extensions, boolean recursive){
+        File[] allFiles = dir.listFiles();
+        if(allFiles == null) return Collections.emptyList();
+        
+        ArrayList<File> files = new ArrayList<>();
+        for(File file : allFiles){
+            if(file.isDirectory()){
+                if(recursive){
+                    files.addAll(listFiles(file, extensions, true));
+                }
+            }else{
+                if(StringUtils.contains(extensions, getExtension(file.getName()))){
+                    files.add(file);
+                }
+            }
+            
+        }
+        return files;
     }
 }

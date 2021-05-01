@@ -9,7 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.export.GradeExportWindow;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;

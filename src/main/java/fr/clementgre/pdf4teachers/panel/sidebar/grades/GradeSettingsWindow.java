@@ -5,7 +5,7 @@ import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
@@ -64,7 +64,7 @@ public class GradeSettingsWindow extends Stage{
 
         private final int tier;
 
-        private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
+        private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.getAllFonts());
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
         private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);

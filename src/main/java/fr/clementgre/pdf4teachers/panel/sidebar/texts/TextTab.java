@@ -13,7 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
@@ -24,9 +24,12 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -38,6 +41,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -52,7 +56,7 @@ public class TextTab extends SideTab{
     // Séparés par ligne
     
     private HBox combosBox = new HBox();
-    private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.fonts);
+    private ComboBox<String> fontCombo = new ComboBox<>();
     private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
     
     private HBox colorAndParamsBox = new HBox();
@@ -327,6 +331,10 @@ public class TextTab extends SideTab{
         });
     }
     
+    public void updateFonts(ObservableList<String> fonts){
+        fontCombo.setItems(fonts);
+    }
+    
     public void updateHeightAndYLocations(boolean sbIsVisible){
         
         int lineNumber = txtArea.getParagraphs().size();
@@ -366,7 +374,7 @@ public class TextTab extends SideTab{
                 setGraphic(null);
             }else{
                 setText(item);
-                FontUtils.getFont(item, false, false, 14);
+                //FontUtils.getFont(item, false, false, 14);
                 setStyle("-fx-font: 14 \"" + item + "\"");
             }
         }

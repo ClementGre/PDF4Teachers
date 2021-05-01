@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -315,11 +316,12 @@ public class MainWindow extends Stage{
         window.setX(x);
         window.setY(y);
     }
-    
+    /*
+    * @Param autoHide in seconds
+    */
     public static void showNotification(AlertIconType type, String text, int autoHide){
         notificationPane.addToPending(text, type, autoHide);
     }
-    
     public static void showNotificationNow(AlertIconType type, String text, int autoHide){
         notificationPane.showNow(text, type, autoHide);
     }

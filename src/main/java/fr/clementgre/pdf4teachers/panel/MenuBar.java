@@ -109,7 +109,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     Menu tools5SameNameEditions = createSubMenu(TR.tr("menuBar.tools.sameNameEdits"), SVGPathIcons.EXCHANGE,
             TR.tr("menuBar.tools.sameNameEdits.tooltip"), true);
-    MenuItem tools5SameNameEditionsNull = new NodeMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"));
+    MenuItem tools5SameNameEditionsNull = createMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"), null);
     
     Menu tools6ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
             TR.tr("menuBar.tools.exportOrImportEditOrGradeScale.tooltip"), true);
@@ -170,7 +170,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         ////////// TOOLS //////////
         
-        tools3AddPages.getItems().add(new NodeMenuItem(""));
+        tools3AddPages.getItems().add(new MenuItem(""));
         tools6ExportImportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades, tools6ImportEdition1All, tools6ImportEdition2Grades);
         tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
         tools9Debug.getItems().addAll(tools9Debug1OpenConsole, tools9Debug2OpenAppFolder, tools9Debug3OpenEditionFile);
@@ -310,7 +310,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             int i = 0;
             for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
                 
-                NodeMenuItem item = new NodeMenuItem(files.getValue().getAbsolutePath());
+                MenuItem item = createMenuItem(files.getValue().getAbsolutePath(), null);
                 if(files.getValue().getParentFile() != null){
                     item.setText(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
                 }

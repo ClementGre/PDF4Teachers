@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
-import fr.clementgre.pdf4teachers.utils.FontUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -75,7 +75,7 @@ public class TextElementRenderer{
         contentStream.beginText();
         
         // CUSTOM STREAM
-        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getFontFileName(italic, bold));
+        Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getDefaultFontFileName(italic, bold));
         
         if(!fonts.containsKey(entry)){
             PDType0Font font = PDType0Font.load(doc, fontFile);
