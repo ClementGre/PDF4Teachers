@@ -3,12 +3,15 @@ package fr.clementgre.pdf4teachers.utils.fonts;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
+import javafx.application.Platform;
 import org.w3c.dom.Text;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.GraphicsEnvironment;
+import java.awt.font.OpenType;
 import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileInputStream;
@@ -88,20 +91,32 @@ public class SystemFontsMapper{
     }
     
     public void updateFontsMap(){
+        String[] systemFonts = getSystemFontNames();
         new Thread(() -> {
             long time = System.currentTimeMillis();
             for(File file : getSystemFontFiles()){
                 try{
                     Font[] fonts = Font.createFonts(new FileInputStream(file.getAbsolutePath()));
                     for(Font font : fonts){
-                        addFontToMap(font, file.getAbsolutePath());
+                        if(StringUtils.contains(systemFonts, font.getFamily())){
+                            addFontToMap(font, file.getAbsolutePath());
+                        }
                     }
                 }catch(FontFormatException | IOException e){ e.printStackTrace(); }
             }
             double ping = (System.currentTimeMillis() - time) / 1000d;
-            System.out.println("Loaded " + systemFontMap.size() + " fonts in " + ping + "s");
-            FontUtils.fontsUpdated();
+            System.out.println("Loaded " + systemFontMap.size() + "/" + systemFonts.length + " fonts in " + ping + "s");
+            Platform.runLater(FontUtils::fontsUpdated);
         }, "System fonts loader").start();
+    }
+    
+    public void hasHeaderTable(OpenType openType){
+//        for (int i = 0; i < TTFTable.TT_TAGS.length; i++) {
+//            byte[] data = openType.getFontTable(TTFTable.TT_TAGS[i]);
+//            if(data != null){
+//                return false;
+//            }
+//        }
     }
     
     private void addFontToMap(Font font, String path){
@@ -153,7 +168,7 @@ public class SystemFontsMapper{
                 }
             }
         }
-        System.out.println("Indexing font " + family + " ("
+        System.out.println("Indexing font " + family + " (weight: " + weight + ")  ("
                 + (fontPack.isHasItalic() ? " +Italic" : "") + (fontPack.isHasBold() ? " +Bold" : "") + (fontPack.isHasBoldItalic() ? " +BoldItalic" : "") + ")");
         systemFontMap.put(family, fontPack);
     }

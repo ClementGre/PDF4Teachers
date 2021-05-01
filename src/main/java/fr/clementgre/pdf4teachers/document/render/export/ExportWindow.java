@@ -350,7 +350,7 @@ public class ExportWindow{
                         return TwoStepListAction.ProcessResult.STOP;
                     }
                     if(!recursive){
-                        window.close();
+                        Platform.runLater(window::close);
                         return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     }
                     return TwoStepListAction.ProcessResult.SKIPPED;
