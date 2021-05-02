@@ -19,6 +19,9 @@ import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -91,7 +94,6 @@ public class TextElementRenderer{
         
         // DRAW LINES
         for(String text : element.getText().split("\\n")){
-            
             try{
                 contentStream.showText(text);
             }catch(IllegalArgumentException ignored){
@@ -101,7 +103,7 @@ public class TextElementRenderer{
                 char[] replacements = new char[]{'�'};
                 if(!canRender(font, '�')){
                     replacements = IntStream.range(0, 1 << 16)
-                            .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] == '?')
+                            .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] != '?')
                             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                             .toString().toCharArray();
                     if(replacements.length == 0) replacements = new char[]{'?'};

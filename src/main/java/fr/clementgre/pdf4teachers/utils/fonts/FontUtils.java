@@ -106,6 +106,7 @@ public class FontUtils{
         return DEFAULT_FONTS.containsKey(family);
     }
     public static boolean isSystemFont(String family){
+        if(!loaded) return true;
         return systemFontsMapper.hasFont(family);
     }
     

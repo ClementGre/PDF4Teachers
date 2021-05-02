@@ -8,11 +8,8 @@ import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
 import javafx.application.Platform;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-
-import java.awt.FontFormatException;
+import org.apache.fontbox.ttf.*;
 import java.awt.GraphicsEnvironment;
-import java.awt.font.TextAttribute;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,7 +74,7 @@ public class SystemFontsMapper{
     }
     public List<File> getAllSystemFontFiles() {
         // only retrieving ttf files
-        String[] extensions = new String[]{"ttf", "otf", "ttc", "dfont"};
+        String[] extensions = new String[]{"ttf", "otf", "ttc"};
         String[] paths = getSystemFontsDirs();
         ArrayList<File> files = new ArrayList<>();
     
@@ -90,24 +87,29 @@ public class SystemFontsMapper{
     
     public void loadFontsFromSystemFiles(){
         String[] systemFonts = getSystemFontNames();
+        System.out.println("Indexing system fonts... (" + systemFonts.length + " fonts)");
         
         new Thread(() -> {
             long time = System.currentTimeMillis();
+            int pdfBoxErrors = 0;
             
             systemFontMap.clear();
             for(File file : getAllSystemFontFiles()){
                 try{
                     Font[] fonts = Font.loadFonts(new FileInputStream(file.getAbsolutePath()), -1);
+                    if(fonts == null) continue;
                     for(Font font : fonts){
                         if(StringUtils.contains(systemFonts, font.getFamily())){
-                            addFontToMap(font, file.getAbsolutePath());
+                            if(!addFontToMap(font, file.getAbsolutePath())){
+                                pdfBoxErrors++; break;
+                            }
                         }
                     }
                 }catch(IOException e){ e.printStackTrace(); }
             }
             
             double ping = (System.currentTimeMillis() - time) / 1000d;
-            System.out.println("Loaded " + systemFontMap.size() + "/" + systemFonts.length + " fonts in " + ping + "s");
+            System.out.println("Loaded " + systemFontMap.size() + "/" + systemFonts.length + " fonts in " + ping + "s (" + pdfBoxErrors + " unable to load due to PDFBox restrictions, usually missing tables)");
             
             Platform.runLater(FontUtils::fontsUpdated);
         }, "System fonts loader").start();
@@ -119,7 +121,14 @@ public class SystemFontsMapper{
         Platform.runLater(FontUtils::fontsUpdated);
     }
     
-    private void addFontToMap(Font font, String path){
+    private boolean addFontToMap(Font font, String path){
+        
+        // Check if PDFBox is able to load the font, otherwise, cancel the add.
+        try{
+            new TTFParser().parse(new FileInputStream(path));
+        }catch(IOException e){
+            return false;
+        }
     
         FontPaths paths;
         if(systemFontMap.containsKey(font.getFamily())){
@@ -129,6 +138,7 @@ public class SystemFontsMapper{
         }
         paths.addPathAuto(path, FontUtils.getFontWeight(font, false), FontUtils.getFontPosture(font).equals(FontPosture.ITALIC));
         systemFontMap.put(font.getFamily(), paths);
+        return true;
     }
     
     public FontPaths getFontPathsFromName(String fontFamily) {
