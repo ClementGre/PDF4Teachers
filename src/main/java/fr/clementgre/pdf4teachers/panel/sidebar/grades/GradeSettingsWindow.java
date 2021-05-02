@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
+import fr.clementgre.pdf4teachers.utils.fonts.FontComboBox;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -64,7 +65,7 @@ public class GradeSettingsWindow extends Stage{
 
         private final int tier;
 
-        private ComboBox<String> fontCombo = new ComboBox<>(FontUtils.getAllFonts());
+        private FontComboBox fontCombo = new FontComboBox();
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
         private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
@@ -87,7 +88,6 @@ public class GradeSettingsWindow extends Stage{
             fontCombo.setStyle("-fx-font-size: 13");
             fontCombo.getSelectionModel().select(font.getFamily());
             fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
-            fontCombo.setCellFactory((ListView<String> stringListView) -> new TextTab.ShapeCell());
 
             HBox fontSpecs = new HBox();
             fontSpecs.setSpacing(2.5);
@@ -151,7 +151,7 @@ public class GradeSettingsWindow extends Stage{
         private void updateFont(){
 
             GradeTab.fontTiers.put(tier, new TiersFont(
-                    Font.loadFont(FontUtils.getFontFile(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected()), sizeCombo.getSelectionModel().getSelectedItem()),
+                    FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem()),
                     colorPicker.getValue(), showName.isSelected(), hide.isSelected(), hideWhenAllPoints.isSelected())); // Color + ShowName
             MainWindow.gradeTab.updateElementsFont();
 

@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.utils.fonts;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.MoreCollectors;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.text.Font;
@@ -11,66 +13,124 @@ import javafx.scene.text.FontWeight;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FontUtils{
     
-    private static final ObservableList<String> DEFAULT_FONTS = FXCollections.observableArrayList(
+    private static LinkedHashMap<String, Boolean> DEFAULT_FONTS = (LinkedHashMap<String, Boolean>) Stream.of(
             "Open Sans", "Jost", "Lato Black", "Lato", "Lato Light", "Roboto Medium", "Roboto", "Roboto Light", "Hind Guntur", "Shanti",
             "Karma", "Noto Serif", "Crimson Text", "Bitter",
-            "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno", "Averia Libre", "Indie Flower", "Sriracha", "Arrows");
+            "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno", "Averia Libre", "Indie Flower", "Sriracha", "Arrows")
+            .collect(MoreCollectors.toLinkedMap((s) -> s, (s) -> false));
+    
     public static final ObservableList<Double> sizes = FXCollections.observableArrayList(6d, 8d, 9d, 10d, 11d, 12d, 13d, 14d, 15d, 16d, 17d, 18d, 20d, 22d, 24d, 26d, 28d, 30d, 34d, 38d, 42d, 46d, 50d);
     
     private static SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
+    private static boolean loaded = false;
     
     public static void setup(){
-        systemFontsMapper.updateFontsMap();
+        //systemFontsMapper.loadFontsFromSystemFiles();
     }
     
     public static void fontsUpdated(){
-        MainWindow.textTab.updateFonts(getAllFonts());
+        loaded = true;
+        MainWindow.textTab.fontCombo.updateFonts();
     }
     
     public static ObservableList<String> getAllFonts(){
-        ArrayList<String> defaultFonts = new ArrayList<>(DEFAULT_FONTS);
-        defaultFonts.addAll(systemFontsMapper.getFontsPackMap().keySet());
+        ArrayList<String> defaultFonts = new ArrayList<>(DEFAULT_FONTS.keySet());
+        defaultFonts.addAll(systemFontsMapper.getFonts().keySet().stream().sorted(String::compareToIgnoreCase).toList());
         return FXCollections.observableList(defaultFonts);
     }
-    
-    public static Font getFont(String family, boolean italic, boolean bold, double size){
-        return Font.loadFont(getFontFile(family, italic, bold), size);
+    public static List<FontPaths> getSystemFonts(){
+        return systemFontsMapper.getFonts().values().stream().toList();
     }
     
+    public static SystemFontsMapper getSystemFontsMapper(){
+        return systemFontsMapper;
+    }
+    
+    /*
+    * getFont is used to get a font securely: if the font isn't loaded, it will load it, and if it does not exist, it will use the default font.
+    */
+    public static Font getFont(String family, boolean italic, boolean bold, double size){
+        if(isDefaultFont(family)){
+            if(!isFontAlreadyLoaded(family)) loadFont(family);
+            return initFont(family, italic, bold, size);
+        }else if(isSystemFont(family)){
+            return initFont(family, italic, bold, size);
+        }else{
+            return getDefaultFont(italic, bold, size);
+        }
+    }
+    public static Font getDefaultFont(boolean italic, boolean bold, double size){
+        return getFont("Open Sans", italic, bold, size);
+    }
+    
+    /*
+    * initFont should be called only in this class.
+    * It is a dangerous method since the font could be not loaded yet. This method just initialise a font object with the given parameters.
+    */
+    private static Font initFont(String family, boolean italic, boolean bold, double size){
+        return Font.font(family, bold ? FontWeight.BOLD : FontWeight.NORMAL, italic ? FontPosture.ITALIC : FontPosture.REGULAR, size);
+    }
+    private static Font initDefaultFont(boolean italic, boolean bold, double size){
+        return initFont("Open Sans", italic, bold, size);
+    }
+    
+    /*
+    * Load and check if a font is loaded (only for default fonts)
+    */
+    private static void loadFont(String family){
+        if(isDefaultFont(family)){
+            InputStream font = getDefaultFontFile(family, false, false);
+            if(font != null) Font.loadFont(font, -1);
+            font = getDefaultFontFile(family, true, false);
+            if(font != null) Font.loadFont(font, -1);
+            font = getDefaultFontFile(family, false, true);
+            if(font != null) Font.loadFont(font, -1);
+            font = getDefaultFontFile(family, true, true);
+            if(font != null) Font.loadFont(font, -1);
+            DEFAULT_FONTS.put(family, true); // mark the font as loaded.
+        }
+    }
+    private static boolean isFontAlreadyLoaded(String family){
+        if(isDefaultFont(family)){
+            return DEFAULT_FONTS.get(family);
+        }
+        throw new RuntimeException("Font family " + family + " is not a default font");
+    }
+    public static boolean isDefaultFont(String family){
+        return DEFAULT_FONTS.containsKey(family);
+    }
+    public static boolean isSystemFont(String family){
+        return systemFontsMapper.hasFont(family);
+    }
+    
+    /*
+    * get a system/default font file.
+    * This function shouldn't be called outside of this class, but the exporters classes need it to add the font file to the PDF.
+    */
     public static InputStream getFontFile(String family, boolean italic, boolean bold){
         
-        if(DEFAULT_FONTS.contains(family)){
-            InputStream font = getDefaultFontFile(family, bold, italic);
-            if(font != null) return font;
+        if(isDefaultFont(family)){
+            InputStream font = getDefaultFontFile(family, italic, bold);
+            if(font != null){
+                return font;
+            }
             System.err.println("Error: Unable to load default font " + family + " italic: " + italic + " bold: " + bold + ". Returning system font or default font...");
         }
-        if(systemFontsMapper.hasFontPackFromName(family)){
-            InputStream font = null;
+        if(isSystemFont(family)){
             try{
-                FontPack pack = systemFontsMapper.getFontPackFromName(family);
-                if(italic && bold && pack.isHasBoldItalic()){
-                    font = new FileInputStream(pack.getBoldItalicPath());
-                }else if(italic && pack.isHasItalic()){
-                    font = new FileInputStream(pack.getItalicPath());
-                }else if(bold && pack.isHasBold()){
-                    font = new FileInputStream(pack.getBoldPath());
-                }else{
-                    font = new FileInputStream(pack.getPath());
-                }
+                return getSystemFontFiles(family, italic, bold);
             }catch(FileNotFoundException e){ e.printStackTrace(); }
-            
-            if(font != null) return font;
-            System.out.println("Error: Unable to load system font " + family + " italic: " + italic + " bold: " + bold + ". Returning default font...");
         }
         
-        return getDefaultFont();
+        return getDefaultFontFile("Open Sans", italic, bold);
     }
-    
-    public static InputStream getDefaultFontFile(String family, boolean italic, boolean bold){
+    private static InputStream getDefaultFontFile(String family, boolean italic, boolean bold){
         
         String fileFontName = getDefaultFontFileName(italic, bold);
         InputStream fontFile = TextElement.class.getResourceAsStream("/fonts/" + family + "/" + fileFontName + ".ttf");
@@ -94,9 +154,27 @@ public class FontUtils{
         
         return fontFile;
     }
+    private static InputStream getSystemFontFiles(String family, boolean italic, boolean bold) throws FileNotFoundException{
+        FontPaths paths = systemFontsMapper.getFontPathsFromName(family);
+        
+        if(italic && bold && paths.getBoldItalic() != null){
+            return new FileInputStream(paths.getBoldItalic().getPath());
+        }
+        if(bold && paths.getBold() != null){
+            return new FileInputStream(paths.getBold().getPath());
+        }
+        if(italic && paths.getItalic() != null){
+            return new FileInputStream(paths.getItalic().getPath());
+        }
+        if(paths.getRegular() != null){
+            return new FileInputStream(paths.getRegular().getPath());
+        }
+        return null;
+    }
     
-    public static InputStream getDefaultFont(){
-        return TextElement.class.getResourceAsStream("/fonts/Open Sans/regular.ttf");
+    
+    public static boolean isFontsLoaded(){
+        return loaded;
     }
     
     public static String getDefaultFontFileName(boolean italic, boolean bold){
@@ -110,28 +188,36 @@ public class FontUtils{
     }
     
     public static FontWeight getFontWeight(Font font){
-        
+        return getFontWeight(font, true);
+    }
+    public static FontWeight getFontWeight(Font font, boolean onlyOneBold){
         String[] style = font.getStyle().split(" ");
+        
         if(style.length >= 1){
-            if(style[0].equals("Bold")){
-                return FontWeight.BOLD;
+            String name = style[0].toLowerCase();
+            name = name.replace("extralight", "Extra Light");
+            name = name.replace("ultralight", "Ultra Light");
+            name = name.replace("semibold", "Semi Bold");
+            name = name.replace("demibold", "Demi Bold");
+            name = name.replace("extrabold", "Extra Bold");
+            name = name.replace("ultrabold", "Ultra Bold");
+            name = name.replace("boldoblique", "Bold");
+    
+            FontWeight fontWeight = FontWeight.findByName(name);
+            if(fontWeight != null && fontWeight != FontWeight.NORMAL){
+                if(onlyOneBold) return FontWeight.BOLD;
+                else return fontWeight;
             }
         }
-        
         return FontWeight.NORMAL;
     }
     
     public static FontPosture getFontPosture(Font font){
-        
         String[] style = font.getStyle().split(" ");
-        if(style.length == 1){
-            if(style[0].equals("Italic")){
-                return FontPosture.ITALIC;
-            }
-        }else if(style.length == 2){
-            if(style[1].equals("Italic")){
-                return FontPosture.ITALIC;
-            }
+        
+        if(StringUtils.contains(style, "Italic", false) || StringUtils.contains(style, "Oblique", false)
+                || StringUtils.contains(style, "Slanted", false)|| StringUtils.endsIn(style, "Oblique", false)){
+            return FontPosture.ITALIC;
         }
         return FontPosture.REGULAR;
     }

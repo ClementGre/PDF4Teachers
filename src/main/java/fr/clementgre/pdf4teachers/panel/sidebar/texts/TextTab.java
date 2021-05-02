@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.utils.fonts.FontComboBox;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -56,7 +57,7 @@ public class TextTab extends SideTab{
     // Séparés par ligne
     
     private HBox combosBox = new HBox();
-    private ComboBox<String> fontCombo = new ComboBox<>();
+    public FontComboBox fontCombo = new FontComboBox();
     private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
     
     private HBox colorAndParamsBox = new HBox();
@@ -91,16 +92,11 @@ public class TextTab extends SideTab{
     }
     
     public void setup(){
-        
         treeView = new TextTreeView(pane);
-        
         optionPane.setMinWidth(200);
-        fontCombo.setCellFactory((ListView<String> stringListView) -> new ShapeCell());
-        //fontCombo.setEditable(true);
         
         PaneUtils.setHBoxPosition(fontCombo, -1, 30, 2.5);
         fontCombo.setStyle("-fx-font-size: 13; -fx-border: null; -fx-padding: 0 4;");
-        fontCombo.getSelectionModel().select("Open Sans");
         fontCombo.setMaxHeight(25);
         fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -331,10 +327,6 @@ public class TextTab extends SideTab{
         });
     }
     
-    public void updateFonts(ObservableList<String> fonts){
-        fontCombo.setItems(fonts);
-    }
-    
     public void updateHeightAndYLocations(boolean sbIsVisible){
         
         int lineNumber = txtArea.getParagraphs().size();
@@ -360,26 +352,8 @@ public class TextTab extends SideTab{
     }
     
     private Font getFont(){
-        
         return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
     }
-    
-    public static class ShapeCell extends ListCell<String>{
-        @Override
-        public void updateItem(String item, boolean empty){
-            super.updateItem(item, empty);
-            
-            if(empty){
-                setText(null);
-                setGraphic(null);
-            }else{
-                setText(item);
-                //FontUtils.getFont(item, false, false, 14);
-                setStyle("-fx-font: 14 \"" + item + "\"");
-            }
-        }
-    }
-    
     
     private ScrollBar getHorizontalSB(final TextArea scrollPane){
         Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");

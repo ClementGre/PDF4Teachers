@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -204,6 +205,41 @@ public class StringUtils{
                     return true;
         }
         
+        return false;
+    }
+    public static boolean endsIn(final String[] array, String v, boolean kase) {
+        if(!kase) v = v.toLowerCase();
+        for(final String e : array){
+            if(kase){
+                if(e != null && e.endsWith(v)) return true;
+            }else{
+                if(e != null && e.toLowerCase().endsWith(v)) return true;
+            }
+            
+        }
+        return false;
+    }
+    public static  boolean contains(final String[] array, final String v, boolean kase){
+        for(final String e : array){
+            if(kase){
+                if(e != null && e.endsWith(v)) return true;
+            }else{
+                if(e != null && e.equalsIgnoreCase(v)) return true;
+            }
+        }
+        return false;
+    }
+    
+    public static boolean startsIn(String[] array, String v, boolean kase){
+        if(!kase) v = v.toLowerCase();
+        for(final String e : array){
+            if(kase){
+                if(e != null && e.startsWith(v)) return true;
+            }else{
+                if(e != null && e.toLowerCase().startsWith(v)) return true;
+            }
+        
+        }
         return false;
     }
 }

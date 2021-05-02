@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.datasaving.simpleconfigs.SimpleConfig;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
@@ -20,6 +21,7 @@ import javafx.scene.control.ButtonType;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
@@ -121,11 +123,6 @@ public class UserData{
     @UserDataObject(path = "convert.settings.convertVoidFile")
     public boolean settingsConvertVoidFiles = true;
     
-    // Sub classes :
-    private TextElementsData textElementsData;
-    private VectorElementsData vectorElementsData;
-    public FavouriteImageData favouriteImageData;
-    
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")
     public List<Object> autoTipsValidated = new ArrayList<>();
@@ -164,23 +161,29 @@ public class UserData{
         }
     }, "userData AutoSaver");
     
+    private static ArrayList<SimpleConfig> simpleConfigs = new ArrayList<>();
+    public static void registerSimpleConfig(SimpleConfig simpleConfig){
+        simpleConfigs.add(simpleConfig);
+    }
+    
     public UserData(){
+        SimpleConfig.registerClasses();
         if(!userDataSaver.isAlive()) userDataSaver.start();
         
         Platform.runLater(() -> {
             loadDataFromYAML();
-            textElementsData = new TextElementsData();
-            vectorElementsData = new VectorElementsData();
-            favouriteImageData = new FavouriteImageData();
+            for(SimpleConfig simpleConfig : simpleConfigs){
+                simpleConfig.loadData();
+            }
         });
         
     }
     
     public void save(){
         saveData();
-        textElementsData.saveData();
-        vectorElementsData.saveData();
-        favouriteImageData.saveData();
+        for(SimpleConfig simpleConfig : simpleConfigs){
+            simpleConfig.saveData();
+        }
         Main.syncUserData.save();
     }
     

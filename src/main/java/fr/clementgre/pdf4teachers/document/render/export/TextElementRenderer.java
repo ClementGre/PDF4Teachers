@@ -64,7 +64,6 @@ public class TextElementRenderer{
         if(FontUtils.getFontWeight(element.getFont()) == FontWeight.BOLD) bold = true;
         boolean italic = false;
         if(FontUtils.getFontPosture(element.getFont()) == FontPosture.ITALIC) italic = true;
-        InputStream fontFile = FontUtils.getFontFile(element.getFont().getFamily(), italic, bold);
         element.setFont(FontUtils.getFont(element.getFont().getFamily(), italic, bold, element.getFont().getSize() / 596.0 * pageWidth));
         
         // LINE HEIGHT VARIABLES
@@ -78,7 +77,8 @@ public class TextElementRenderer{
         Map.Entry<String, String> entry = Map.entry(element.getFont().getFamily(), FontUtils.getDefaultFontFileName(italic, bold));
         
         if(!fonts.containsKey(entry)){
-            PDType0Font font = PDType0Font.load(doc, fontFile);
+            InputStream is = FontUtils.getFontFile(element.getFont().getFamily(), italic, bold);
+            PDType0Font font = PDType0Font.load(doc, is);
             contentStream.setFont(font, (float) element.getFont().getSize());
             fonts.put(entry, font);
         }else{

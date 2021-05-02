@@ -28,9 +28,8 @@ public class TiersFont{
     }
 
     public static TiersFont getInstance(HashMap<String, Object> data){
-        InputStream fontFile = FontUtils.getFontFile(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold"));
         return new TiersFont(
-                Font.loadFont(fontFile, Config.getDouble(data, "size")),
+                FontUtils.getFont(Config.getString(data, "font"), Config.getBoolean(data, "italic"), Config.getBoolean(data, "bold"), Config.getDouble(data, "size")),
                 Color.valueOf(Config.getString(data, "color")),
                 Config.getBoolean(data, "showName"),
                 Config.getBoolean(data, "hide"),
