@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -9,22 +10,15 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
-import fr.clementgre.pdf4teachers.utils.style.Style;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.File;
@@ -37,7 +31,7 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class ConvertWindow extends Stage{
+public class ConvertWindow extends AlternativeWindow<TabPane>{
     
     public static ObservableList<String> definitions = FXCollections.observableArrayList(
             TR.tr("convertWindow.options.format.fitToImage"),
@@ -63,7 +57,6 @@ public class ConvertWindow extends Stage{
     
     DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     
-    public TabPane tabPane = new TabPane();
     public ConvertPane convertDirs;
     public ConvertPane convertFiles;
     
@@ -71,28 +64,17 @@ public class ConvertWindow extends Stage{
     CallBackArg<ArrayList<ConvertedFile>> callBack;
     
     public ConvertWindow(PDRectangle defaultSize, CallBackArg<ArrayList<ConvertedFile>> callBack){
+        super(new TabPane(), TR.tr("convertWindow.title"));
+        
         this.defaultSize = defaultSize;
         this.callBack = callBack;
-        
         df.setMaximumFractionDigits(340);
-        
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
-        
-        initOwner(Main.window);
-        initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setResizable(false);
-        setTitle(TR.tr("convertWindow.title"));
-        setScene(scene);
-        StyleManager.putStyle(root, Style.DEFAULT);
         
         // HEADER
         
-        Text info;
-        if(defaultSize == null) info = new Text(TR.tr("convertWindow.convertMode.toPDF"));
+        if(defaultSize == null) setSubHeaderText(TR.tr("convertWindow.convertMode.toPDF"));
         else{
-            info = new Text(TR.tr("convertWindow.convertMode.toPDFPages"));
+            setSubHeaderText(TR.tr("convertWindow.convertMode.toPDFPages"));
             int gcd = GCD((int) defaultSize.getWidth(), (int) defaultSize.getHeight());
             int heightFactor = (int) (gcd == 0 ? defaultSize.getHeight() : defaultSize.getHeight() / gcd);
             int widthFactor = (int) (gcd == 0 ? defaultSize.getWidth() : defaultSize.getWidth() / gcd);
@@ -100,16 +82,13 @@ public class ConvertWindow extends Stage{
             formats.add(1, widthFactor + ":" + heightFactor + " (" + TR.tr("convertWindow.options.format.currentPDFFormat") + ")");
         }
         
-        VBox.setMargin(info, new Insets(40, 0, 40, 10));
-        
         // PANES
         
         convertDirs = new ConvertPane(this, TR.tr("convertWindow.convertMode.toPDF.convertDirs.tabName"), true);
         convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("convertWindow.convertMode.toPDF.convertFiles.tabName") : TR.tr("convertWindow.convertMode.toPDFPages.tabName"), false);
         
-        if(defaultSize == null) tabPane.getTabs().add(convertDirs);
-        tabPane.getTabs().add(convertFiles);
-        root.getChildren().addAll(info, tabPane);
+        if(defaultSize == null) root.getTabs().add(convertDirs);
+        root.getTabs().add(convertFiles);
         
         // SHOW
         
@@ -156,6 +135,7 @@ public class ConvertWindow extends Stage{
         public void setupDesc(){
             
             Label desc = new Label();
+            desc.setWrapText(true);
             
             if(convertDirs){
                 desc.setText(TR.tr("convertWindow.convertMode.toPDF.convertDirs.title") + "\n" +
@@ -310,6 +290,7 @@ public class ConvertWindow extends Stage{
             PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
             
             Label info = new Label(TR.tr("convertWindow.options.definition.header"));
+            info.setWrapText(true);
             PaneUtils.setVBoxPosition(info, 0, 0, new Insets(5, 0, 0, 2.5));
             
             HBox columns = new HBox();
@@ -495,6 +476,7 @@ public class ConvertWindow extends Stage{
             }
             
             Label info = new Label(text);
+            info.setWrapText(true);
             PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
             box.getChildren().add(info);
             

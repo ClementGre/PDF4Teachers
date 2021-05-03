@@ -92,7 +92,7 @@ public class FileTab extends SideTab{
                     for(File file : toConvertFiles){
                         converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
                     }
-                    converter.convertWindow.tabPane.getSelectionModel().select(1);
+                    converter.convertWindow.root.getSelectionModel().select(1);
                     
                     e.setDropCompleted(true);
                     e.consume();
