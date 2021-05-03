@@ -103,7 +103,7 @@ public class TextElementRenderer{
                 char[] replacements = new char[]{'�'};
                 if(!canRender(font, '�')){
                     replacements = IntStream.range(0, 1 << 16)
-                            .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] != '?')
+                            .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] == '?')
                             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                             .toString().toCharArray();
                     if(replacements.length == 0) replacements = new char[]{'?'};

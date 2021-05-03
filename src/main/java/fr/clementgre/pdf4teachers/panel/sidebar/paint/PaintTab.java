@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
+import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
@@ -75,9 +76,9 @@ public class PaintTab extends SideTab{
     public Spinner<Integer> spinnerHeight;
     
     public Label repeatModeLabel;
-    public ComboBox<String> repeatMode;
+    public ScaledComboBox repeatMode;
     public Label resizeModeLabel;
-    public ComboBox<String> resizeMode;
+    public ScaledComboBox resizeMode;
     
     // Lists
     

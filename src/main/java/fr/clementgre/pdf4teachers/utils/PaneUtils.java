@@ -121,7 +121,6 @@ public class PaneUtils{
         // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
         double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
         double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
-    
         if(paddingAround){
             pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
         }else{

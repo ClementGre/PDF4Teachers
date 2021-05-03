@@ -2,8 +2,11 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -13,6 +16,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -53,11 +57,16 @@ public class AboutWindow extends Stage{
         setOnCloseRequest(e -> close());
         StyleManager.putStyle(root, Style.DEFAULT);
         StyleManager.putCustomStyle(root, "otherWindows.css");
+        PaneUtils.setupScaling(root, true, false);
+        scene.setFill(Color.web("#252525"));
+        
+        setOnShown((e) -> {
+            StagesUtils.resizeStageAccordingToAppScale(this, scene);
+        });
         
         setupUi();
         show();
         Main.window.centerWindowIntoMe(this);
-        
     }
     
     private void setupUi(){

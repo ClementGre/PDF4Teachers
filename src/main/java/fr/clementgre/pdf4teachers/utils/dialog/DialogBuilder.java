@@ -45,7 +45,6 @@ public class DialogBuilder{
         Alert alert = new Alert(type);
         alert.setTitle(title);
         
-        
         if(Main.window != null){
             if(Main.window.getScene() != null) alert.initOwner(Main.window);
             if(MainWindow.paintTab.galleryWindow != null){

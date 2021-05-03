@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ComboBox?>
-<?import javafx.collections.*?>
-<?import java.lang.String?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Spinner?>
@@ -18,9 +14,8 @@
 
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
-<?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.SplitPane?>
 <?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
+<?import fr.clementgre.pdf4teachers.components.ScaledComboBox?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -120,16 +115,16 @@
             <Label fx:id="repeatModeLabel" style="-fx-font-size: 12px;">
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
-            <ComboBox fx:id="repeatMode">
+            <ScaledComboBox fx:id="repeatMode">
                 <style>-fx-padding: 0 4;</style>
-            </ComboBox>
+            </ScaledComboBox>
 
             <Label fx:id="resizeModeLabel" style="-fx-font-size: 12px;">
                 <VBox.margin><Insets top="5" /></VBox.margin>
             </Label>
-            <ComboBox fx:id="resizeMode">
+            <ScaledComboBox fx:id="resizeMode">
                 <style>-fx-padding: 0 4;</style>
-            </ComboBox>
+            </ScaledComboBox>
         </VBox>
     </TitledPane>
 

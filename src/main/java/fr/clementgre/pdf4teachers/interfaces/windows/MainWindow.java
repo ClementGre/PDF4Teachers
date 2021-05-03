@@ -81,15 +81,12 @@ public class MainWindow extends Stage{
     public OSXTouchBarManager osxTouchBarManager;
     public JMetro jMetro;
     
-    public static double TEMP_SCALE = 1;
+    public static double TEMP_SCALE = 2;
     
     public MainWindow(){
         
         root = new BorderPane();
         notificationPane = new AutoHideNotificationPane(root);
-        
-        notificationPane.setScaleX(TEMP_SCALE);
-        notificationPane.setScaleY(TEMP_SCALE);
         
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);

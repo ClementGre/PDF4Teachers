@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -340,20 +341,8 @@ public class Edition{
         
     }
     
-    public static boolean clearEditDialog(boolean skip){
-        if(skip) return true;
-        
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
-        alert.setHeaderText(TR.tr("dialog.confirmation.clearEdit.header"));
-        alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
-        
-        Optional<ButtonType> result = alert.showAndWait();
-        if(result.isEmpty()) return false;
-        return result.get() == ButtonType.OK;
-    }
-    
     public static void clearEdit(File file, boolean confirm){
-        if(clearEditDialog(!confirm)){
+        if(!confirm || new ConfirmAlert(true, TR.tr("dialog.confirmation.clearEdit.header")).execute()){
             if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
                 if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                     MainWindow.mainScreen.document.edition.clearEdit(false);
@@ -366,7 +355,7 @@ public class Edition{
     }
     
     public void clearEdit(boolean confirm){
-        if(clearEditDialog(!confirm)){
+        if(!confirm || new ConfirmAlert(true, TR.tr("dialog.confirmation.clearEdit.header")).execute()){
             MainWindow.mainScreen.setSelected(null);
             for(PageRenderer page : document.pages){
                 page.clearElements();

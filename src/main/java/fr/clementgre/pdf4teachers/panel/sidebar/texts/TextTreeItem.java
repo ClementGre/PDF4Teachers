@@ -23,6 +23,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -58,7 +59,7 @@ public class TextTreeItem extends TreeItem<String>{
     private HBox spacer = new HBox();
     public HBox pane = new HBox();
     public Pane namePane = new Pane();
-    public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png") + "", 0, 0);
+    public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust);
     public ScratchText name = new ScratchText();
     public ContextMenu menu;
     public EventHandler<MouseEvent> onMouseCLick;
@@ -239,8 +240,8 @@ public class TextTreeItem extends TreeItem<String>{
         int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
         int lineHeight = (int) name.getLayoutBounds().getHeight() / name.getText().split(Pattern.quote("\n")).length - negativePadding;
         
-        linkImage.setFitWidth(lineHeight - 3);
-        linkImage.setFitHeight(lineHeight - 3);
+        linkImage.setFitWidth(12);
+        linkImage.setFitHeight(12);
         spacer.setPrefWidth(linkImage.getFitWidth() + 3 + rect.getWidth() + 3);
         
         HBox.setMargin(rect, new Insets(((lineHeight - rect.getHeight()) / 2.0), 3, 0, 3));

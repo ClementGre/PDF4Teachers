@@ -21,6 +21,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
@@ -54,6 +55,8 @@ public class GalleryWindow extends Stage{
         setScene(scene);
         StyleManager.putStyle(scene, Style.DEFAULT);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        PaneUtils.setupScaling(root, true, false);
+        scene.setFill(Color.web("#252525"));
         
         setOnCloseRequest((e) -> {
             AutoTipsManager.hideAll();
