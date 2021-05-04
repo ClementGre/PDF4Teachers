@@ -29,6 +29,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
@@ -259,21 +260,12 @@ public class MainWindow extends Stage{
                 double h = Double.parseDouble(size[1]);
                 double x = Double.parseDouble(size[2]);
                 double y = Double.parseDouble(size[3]);
-                
-                double sw = Main.SCREEN_BOUNDS.getWidth();
-                double sh = Main.SCREEN_BOUNDS.getHeight();
-                if(w > sw) w = sw - 200;
-                if(h > sh) h = sh - 200;
-                if(x != -1){
-                    if(x + sh <= sw) setX(x);
-                }
-                if(y != -1){
-                    if(y + h <= sh) setY(y);
-                }
-                
+    
+                if(x != -1) setX(x);
+                if(y != -1) setY(y);
                 setWidth(w);
                 setHeight(h);
-                
+                preventWindowOverflowScreen(this);
             }catch(NumberFormatException e){
                 e.printStackTrace();
             }
@@ -297,8 +289,9 @@ public class MainWindow extends Stage{
     }
     
     public void centerWindowIntoMe(Window window){
-        double w = window.getWidth();
-        double h = window.getHeight();
+        centerWindowIntoMe(window, window.getWidth(), window.getHeight());
+    }
+    public void centerWindowIntoMe(Window window, double w, double h){
         double sw = Main.SCREEN_BOUNDS.getWidth();
         double sh = Main.SCREEN_BOUNDS.getHeight();
         
@@ -313,6 +306,28 @@ public class MainWindow extends Stage{
         window.setX(x);
         window.setY(y);
     }
+    public static void preventWindowOverflowScreen(Stage window){
+        double w = window.getWidth();
+        double h = window.getHeight();
+        double x = window.getX();
+        double y = window.getY();
+    
+        double sw = Main.SCREEN_VISUAL_BOUNDS.getWidth();
+        double sh = Main.SCREEN_VISUAL_BOUNDS.getHeight();
+        if(w > sw) w = sw;
+        if(h > sh) h = sh;
+        if(x != -1){
+            if(x + w > sw) window.setX(0);
+        }
+        if(y != -1){
+            if(y + h > sh) window.setY(0);
+        }
+        if(window.getMinWidth() > w) window.setMinWidth(w);
+        if(window.getMinHeight() > h) window.setMinHeight(h);
+        window.setWidth(w);
+        window.setHeight(h);
+    }
+    
     /*
     * @Param autoHide in seconds
     */

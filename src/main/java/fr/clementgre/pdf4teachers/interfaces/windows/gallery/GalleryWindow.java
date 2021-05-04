@@ -43,7 +43,7 @@ public class GalleryWindow extends Stage{
     
     public GalleryWindow(){
         
-        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight() - 100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight() - 100);
+        Scene scene = new Scene(root);
     
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setWidth(1200);
@@ -67,6 +67,8 @@ public class GalleryWindow extends Stage{
         list.prefWidthProperty().bind(widthProperty());
         
         setup();
+        Main.window.centerWindowIntoMe(this);
+        MainWindow.preventWindowOverflowScreen(this);
         show();
         PlatformUtils.runLaterOnUIThread(1000, () -> {
             AutoTipsManager.showByAction("opengallery", this);

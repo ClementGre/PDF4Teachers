@@ -42,6 +42,7 @@ public class Main extends Application{
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
+    public static final Rectangle2D SCREEN_VISUAL_BOUNDS = Screen.getPrimary().getVisualBounds();
     public static String systemShortcut = "Ctrl";
     public static List<String> params;
     

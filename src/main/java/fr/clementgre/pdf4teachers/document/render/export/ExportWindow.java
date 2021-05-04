@@ -2,8 +2,10 @@ package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
@@ -13,6 +15,8 @@ import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -34,115 +38,98 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExportWindow{
+public class ExportWindow extends AlternativeWindow<VBox>{
     
     private final Stage window = new Stage();
     private final List<File> files;
     
-    public static boolean erase = false;
-    
     public ExportWindow(List<File> files){
-        
+        super(new VBox(), StageWidth.LARGE, TR.tr("exportWindow.title.oneFile"));
         this.files = files;
-        
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
-        
-        window.initOwner(Main.window);
-        window.initModality(Modality.WINDOW_MODAL);
-        window.getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        window.setWidth(650);
-        
-        window.setMinWidth(500);
-        window.setMaxWidth(800);
-        window.setTitle(TR.tr("exportWindow.title", files.size()));
-        window.setScene(scene);
-        window.setOnCloseRequest(e -> window.close());
-        StyleManager.putStyle(root, Style.DEFAULT);
-        
-        if(files.size() == 1){
-            setupSimplePanel(root);
-        }else{
-            setupComplexPanel(root);
-        }
-        
-        window.show();
-        Main.window.centerWindowIntoMe(window);
     }
     
-    public void setupSimplePanel(VBox root){
+    HBox path = new HBox();
+    TextField filePath = new TextField();
+    HBox types = new HBox();
+    CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
+    CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
+    CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
+    Button export;
+    
+    @Override
+    public void setupSubClass(){
+    
+        // DIRECTORY INPUTS
+        HBox filePathPane = new HBox();
+        filePath.setText(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
+        filePath.setPromptText(TR.tr("file.destinationFolder"));
+        filePath.setMinWidth(1);
+        filePath.setMinHeight(30);
+        HBox.setHgrow(filePath, Priority.ALWAYS);
+        HBox.setHgrow(filePathPane, Priority.SOMETIMES);
+        PaneUtils.setHBoxPosition(filePathPane, 0, 30, new Insets(5, 5, 0, 0));
+        filePathPane.getChildren().add(filePath);
+        Button changePath = new Button(TR.tr("file.browse"));
+        PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(5, 0, 0, 0));
+        changePath.setPadding(new Insets(0, 5, 0, 5));
+        path.getChildren().addAll(filePathPane, changePath);
+    
+        changePath.setOnAction(event -> {
         
-        Text info = new Text(TR.tr("exportWindow.oneFile.header"));
+            final DirectoryChooser chooser = new DirectoryChooser();
+            chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
+        
+            File file = chooser.showDialog(Main.window);
+            if(file != null){
+                filePath.setText(file.getAbsolutePath() + File.separator);
+            }
+        });
+        
+        // TYPES OPTIONS
+        textElements.setSelected(true);
+        gradesElements.setSelected(true);
+        drawElements.setSelected(true);
+        types.getChildren().addAll(textElements, gradesElements, drawElements);
+        
+        HBox.setMargin(textElements, new Insets(20, 10, 0, 0));
+        HBox.setMargin(gradesElements, new Insets(20, 10, 0, 0));
+        HBox.setMargin(drawElements, new Insets(20, 0, 0, 0));
+        
+        // BUTTONS
+        export = new Button(TR.tr("actions.export"));
+        Button cancel = new Button(TR.tr("actions.cancel"));
+        cancel.setOnAction(event -> close());
+    
+        setButtons(cancel, export);
+        
+        if(files.size() == 1) setupSimplePanel();
+        else setupComplexPanel();
+    }
+    
+    @Override
+    public void afterShown(){
+    }
+    
+    public void setupSimplePanel(){
+        setSubHeaderText(TR.tr("exportWindow.oneFile.header"));
         
         HBox name = new HBox();
         TextField fileName = new TextField(files.get(0).getName());
         fileName.setPromptText(TR.tr("file.documentName"));
         fileName.setMinWidth(1);
         HBox.setHgrow(fileName, Priority.ALWAYS);
-        fileName.setMinHeight(30);
+        PaneUtils.setHBoxPosition(fileName, 0, 30, 0);
         name.getChildren().addAll(fileName);
-        
-        HBox path = new HBox();
-        HBox filePathPane = new HBox();
-        TextField filePath = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
-        filePath.setPromptText(TR.tr("file.destinationFolder"));
-        filePath.setMinWidth(1);
-        filePath.setMinHeight(30);
-        HBox.setHgrow(filePath, Priority.ALWAYS);
-        HBox.setHgrow(filePathPane, Priority.SOMETIMES);
-        filePathPane.getChildren().add(filePath);
-        Button changePath = new Button(TR.tr("file.browse"));
-        path.getChildren().addAll(filePathPane, changePath);
-        
-        HBox types = new HBox();
-        CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
-        textElements.setSelected(true);
-        CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
-        gradesElements.setSelected(true);
-        CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
-        drawElements.setSelected(true);
-        types.getChildren().addAll(textElements, gradesElements, drawElements);
-        
         
         VBox settings = new VBox();
         CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
+        delEdit.setWrapText(true);
         settings.getChildren().addAll(delEdit);
         
-        HBox btns = new HBox();
-        Button export = new Button(TR.tr("actions.export"));
-        export.requestFocus();
-        Button cancel = new Button(TR.tr("actions.cancel"));
-        btns.getChildren().addAll(cancel, export);
-        btns.setAlignment(Pos.CENTER_RIGHT);
+        root.getChildren().addAll(name, path, types, settings);
         
-        root.getChildren().addAll(info, name, path, types, settings, btns);
-        
-        VBox.setMargin(info, new Insets(40, 10, 40, 10));
-        
-        HBox.setMargin(fileName, new Insets(0, 10, 0, 10));
-        HBox.setMargin(filePathPane, new Insets(5, 5, 0, 10));
-        HBox.setMargin(changePath, new Insets(5, 10, 0, 5));
-        
-        HBox.setMargin(textElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
-        
-        VBox.setMargin(delEdit, new Insets(20, 10, 0, 10));
-        
-        HBox.setMargin(cancel, new Insets(20, 5, 10, 10));
-        HBox.setMargin(export, new Insets(20, 10, 10, 5));
-        
-        changePath.setOnAction(event -> {
-            
-            final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
-            
-            File file = chooser.showDialog(Main.window);
-            if(file != null){
-                filePath.setText(file.getAbsolutePath() + File.separator);
-            }
-        });
+        VBox.setMargin(delEdit, new Insets(20, 0, 0, 0));
         
         export.setOnAction(event -> {
             
@@ -151,13 +138,11 @@ public class ExportWindow{
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
                     false, delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
         });
-        cancel.setOnAction(event -> window.close());
-        
     }
     
-    public void setupComplexPanel(VBox root){
-        
-        Text info = new Text(TR.tr("exportWindow.multipleFiles.header"));
+    CheckBox onlyEdited;
+    public void setupComplexPanel(){
+        setSubHeaderText(TR.tr("exportWindow.multipleFiles.header"));
         
         HBox name = new HBox();
         
@@ -166,19 +151,20 @@ public class ExportWindow{
         prefix.setMinWidth(1);
         //prefix.setAlignment(Pos.CENTER_RIGHT);
         HBox.setHgrow(prefix, Priority.ALWAYS);
-        prefix.setMinHeight(30);
+        PaneUtils.setHBoxPosition(prefix, 0, 30, 0);
         prefix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNamePrefix = newValue);
         
         TextField fileName = new TextField(TR.tr("file.documentName"));
         fileName.setDisable(true);
         fileName.setAlignment(Pos.CENTER);
         fileName.setMinHeight(30);
+        PaneUtils.setHBoxPosition(fileName, 0, 30, 0);
         
         TextField suffix = new TextField(MainWindow.userData.lastExportFileNameSuffix);
         suffix.setPromptText(TR.tr("string.suffix"));
         suffix.setMinWidth(1);
         HBox.setHgrow(suffix, Priority.ALWAYS);
-        suffix.setMinHeight(30);
+        PaneUtils.setHBoxPosition(suffix, 0, 30, 0);
         suffix.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameSuffix = newValue);
         
         name.getChildren().addAll(prefix, fileName, suffix);
@@ -190,7 +176,7 @@ public class ExportWindow{
         TextField replaceInput = new TextField(MainWindow.userData.lastExportFileNameReplace);
         replaceInput.setMinWidth(1);
         HBox.setHgrow(replaceInput, Priority.ALWAYS);
-        replaceInput.setMinHeight(30);
+        PaneUtils.setHBoxPosition(replaceInput, 0, 30, 0);
         replaceInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameReplace = newValue);
         
         Label byText = new Label(TR.tr("exportWindow.multipleFiles.replaceFields.by"));
@@ -198,87 +184,44 @@ public class ExportWindow{
         TextField byInput = new TextField(MainWindow.userData.lastExportFileNameBy);
         byInput.setMinWidth(1);
         HBox.setHgrow(byInput, Priority.ALWAYS);
-        byInput.setMinHeight(30);
+        PaneUtils.setHBoxPosition(byInput, 0, 30, 0);
         byInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
         
         replace.getChildren().addAll(replaceText, replaceInput, byText, byInput);
         
-        HBox path = new HBox();
-        HBox filePathPane = new HBox();
-        TextField filePath = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
-        filePath.setMinWidth(1);
-        filePath.setMinHeight(30);
-        HBox.setHgrow(filePath, Priority.ALWAYS);
-        HBox.setHgrow(filePathPane, Priority.SOMETIMES);
-        filePathPane.getChildren().add(filePath);
-        Button changePath = new Button(TR.tr("file.browse"));
-        path.getChildren().addAll(filePathPane, changePath);
-        
-        HBox types = new HBox();
-        CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
-        textElements.setSelected(true);
-        CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
-        gradesElements.setSelected(true);
-        CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
-        drawElements.setSelected(true);
-        types.getChildren().addAll(textElements, gradesElements, drawElements);
-        
-        
         VBox settings = new VBox();
-        CheckBox onlyEdited = new CheckBox(TR.tr("exportWindow.options.onlyEdited"));
+        onlyEdited = new CheckBox(TR.tr("exportWindow.options.onlyEdited"));
         onlyEdited.setSelected(true);
+        onlyEdited.setWrapText(true);
         CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
+        delEdit.setWrapText(true);
         settings.getChildren().addAll(onlyEdited, delEdit);
         
-        HBox btns = new HBox();
-        Button export = new Button(TR.tr("actions.export"));
-        export.requestFocus();
-        Button cancel = new Button(TR.tr("actions.cancel"));
-        btns.getChildren().addAll(cancel, export);
-        btns.setAlignment(Pos.CENTER_RIGHT);
-        
-        root.getChildren().addAll(info, name, replace, path, types, settings, btns);
-        
-        VBox.setMargin(info, new Insets(40, 10, 40, 10));
+        root.getChildren().addAll(name, replace, path, types, settings);
         
         HBox.setMargin(fileName, new Insets(0, 0, 0, 0));
-        HBox.setMargin(prefix, new Insets(0, 0, 0, 10));
-        HBox.setMargin(suffix, new Insets(0, 10, 0, 0));
+        HBox.setMargin(prefix, new Insets(0, 0, 0, 0));
+        HBox.setMargin(suffix, new Insets(0, 0, 0, 0));
         
-        HBox.setMargin(replaceText, new Insets(10, 5, 0, 10));
+        HBox.setMargin(replaceText, new Insets(10, 5, 0, 0));
         HBox.setMargin(replaceInput, new Insets(5, 0, 0, 0));
         HBox.setMargin(byText, new Insets(10, 5, 0, 5));
-        HBox.setMargin(byInput, new Insets(5, 10, 0, 0));
+        HBox.setMargin(byInput, new Insets(5, 0, 0, 0));
         
-        HBox.setMargin(filePathPane, new Insets(5, 5, 0, 10));
-        HBox.setMargin(changePath, new Insets(5, 10, 0, 5));
-        
-        HBox.setMargin(textElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(gradesElements, new Insets(20, 10, 0, 10));
-        HBox.setMargin(drawElements, new Insets(20, 10, 0, 10));
-        
-        VBox.setMargin(onlyEdited, new Insets(20, 10, 5, 10));
-        VBox.setMargin(delEdit, new Insets(0, 10, 0, 10));
-        
-        HBox.setMargin(cancel, new Insets(50, 5, 10, 10));
-        HBox.setMargin(export, new Insets(50, 10, 10, 5));
-        
-        changePath.setOnAction(event -> {
-            
-            final DirectoryChooser chooser = new DirectoryChooser();
-            chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
-            
-            File file = chooser.showDialog(Main.window);
-            if(file != null){
-                filePath.setText(file.getAbsolutePath() + File.separator);
-            }
-        });
+        VBox.setMargin(onlyEdited, new Insets(20, 0, 5, 0));
         
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
                 onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
-        cancel.setOnAction(event -> window.close());
         
+        onlyEdited.selectedProperty().addListener((observable, oldValue, newValue) -> updateMultipleFilesTitle());
+        updateMultipleFilesTitle();
+    }
+    private void updateMultipleFilesTitle(){
+        String title;
+        if(onlyEdited.isSelected()) title = TR.tr("exportWindow.title.multipleFiles", files.stream().filter((f) -> Edition.getEditFile(f).exists()).toArray().length);
+        else title = TR.tr("exportWindow.title.multipleFiles", files.size());
+        setHeaderText(title);
+        setTitle(title);
     }
     
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,

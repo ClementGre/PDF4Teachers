@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.log;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -29,7 +30,7 @@ public class LogWindow extends Stage{
     public LogWindow(){
         
         Pane root = new Pane();
-        Scene scene = new Scene(root, Main.SCREEN_BOUNDS.getWidth() - 200 >= 1200 ? 1200 : Main.SCREEN_BOUNDS.getWidth() - 200, Main.SCREEN_BOUNDS.getHeight() - 200 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight() - 200);
+        Scene scene = new Scene(root, 1200, 675);
         
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setResizable(true);
@@ -52,9 +53,11 @@ public class LogWindow extends Stage{
         pane.minHeightProperty().bind(text.heightProperty());
         root.getChildren().add(scrollPane);
         setupUi(pane);
-        
+    
+        Main.window.centerWindowIntoMe(this);
         show();
         Main.window.centerWindowIntoMe(this);
+        MainWindow.preventWindowOverflowScreen(this);
     }
     
     private Label text = new Label(logs.toString());

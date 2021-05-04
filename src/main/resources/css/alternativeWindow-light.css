@@ -1,0 +1,12 @@
+/* HEADER */
+.header, .buttonBoxContainer{
+    -fx-background-color: #f8f8f8;
+}
+.header .headerText, .header .subHeaderText{
+    -fx-text-fill: #494949;
+}
+
+/* CONTENT */
+
+
+/* BUTTONS */

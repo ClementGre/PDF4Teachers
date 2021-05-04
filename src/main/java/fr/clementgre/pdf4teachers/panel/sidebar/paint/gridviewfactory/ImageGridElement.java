@@ -71,10 +71,10 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void addToDocument(){
-        getImageData().addToDocument(hasLinkedImageData());
+        if(MainWindow.mainScreen.hasDocument(false)) getImageData().addToDocument(hasLinkedImageData());
     }
     public void setAsToPlaceElement(){
-        getImageData().setAsToPlaceElement(hasLinkedImageData());
+        if(MainWindow.mainScreen.hasDocument(false)) getImageData().setAsToPlaceElement(hasLinkedImageData());
     }
     
     public ImageData getImageData(){

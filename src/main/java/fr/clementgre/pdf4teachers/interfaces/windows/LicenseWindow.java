@@ -220,7 +220,7 @@ public class LicenseWindow extends Stage{
         
         ScrollPane root = new ScrollPane();
         VBox container = new VBox();
-        Scene scene = new Scene(root, 545, Main.SCREEN_BOUNDS.getHeight() - 100 >= 675 ? 675 : Main.SCREEN_BOUNDS.getHeight() - 100);
+        Scene scene = new Scene(root, 545, 675);
         
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
@@ -240,7 +240,8 @@ public class LicenseWindow extends Stage{
         setupPanel(container);
         
         show();
-        
+        Main.window.centerWindowIntoMe(this);
+        MainWindow.preventWindowOverflowScreen(this);
         new Thread(() -> {
             try{
                 Thread.sleep(1500);

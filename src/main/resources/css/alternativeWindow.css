@@ -1,0 +1,42 @@
+/* HEADER */
+.header{
+
+}
+.header .headerText{
+    -fx-font: 35 Marianne;
+    -fx-font-weight: 700;
+    -fx-wrap-text: true;
+}
+.header .subHeaderText{
+    -fx-font: 16 Marianne;
+    -fx-font-weight: 400;
+    -fx-wrap-text: true;
+}
+
+/* CONTENT */
+.rootPane{
+    -fx-padding: 15;
+}
+.rootPane .label, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button{
+    -fx-font: 14 Marianne;
+    -fx-wrap-text: true;
+}
+.rootPane .check-box > .box{
+    -fx-pref-width: 20px;
+    -fx-pref-height: 20px;
+}
+
+/* BUTTONS */
+.buttonBoxContainer{
+    -fx-border-width: 1 0 0 0;
+    -fx-border-color: grey;
+    -fx-padding: 10;
+    -fx-alignment: CENTER_RIGHT;
+}
+.buttonBox{
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_RIGHT;
+}
+.buttonBox .button{
+    -fx-font: 14 Marianne;
+}

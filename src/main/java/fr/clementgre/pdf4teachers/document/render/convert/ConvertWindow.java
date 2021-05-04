@@ -11,6 +11,8 @@ import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -64,14 +66,18 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
     CallBackArg<ArrayList<ConvertedFile>> callBack;
     
     public ConvertWindow(PDRectangle defaultSize, CallBackArg<ArrayList<ConvertedFile>> callBack){
-        super(new TabPane(), TR.tr("convertWindow.title"));
-        
+        super(new TabPane(), StageWidth.LARGE, TR.tr("convertWindow.title"));
         this.defaultSize = defaultSize;
         this.callBack = callBack;
+    }
+    
+    @Override
+    public void setupSubClass(){
+        root.setStyle("-fx-padding: 0;");
         df.setMaximumFractionDigits(340);
-        
+    
         // HEADER
-        
+    
         if(defaultSize == null) setSubHeaderText(TR.tr("convertWindow.convertMode.toPDF"));
         else{
             setSubHeaderText(TR.tr("convertWindow.convertMode.toPDFPages"));
@@ -81,19 +87,34 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             //definitions.add(0, df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (" + TR.tr("Ce document") + ")");
             formats.add(1, widthFactor + ":" + heightFactor + " (" + TR.tr("convertWindow.options.format.currentPDFFormat") + ")");
         }
-        
+    
         // PANES
-        
+    
         convertDirs = new ConvertPane(this, TR.tr("convertWindow.convertMode.toPDF.convertDirs.tabName"), true);
         convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("convertWindow.convertMode.toPDF.convertFiles.tabName") : TR.tr("convertWindow.convertMode.toPDFPages.tabName"), false);
-        
+    
         if(defaultSize == null) root.getTabs().add(convertDirs);
         root.getTabs().add(convertFiles);
+        setupBtns();
+    }
+    
+    @Override
+    public void afterShown(){
+    }
+    
+    public void setupBtns(){
+        Button cancel = new Button(TR.tr("actions.cancel"));
+        Button export = new Button(TR.tr("actions.convert"));
         
-        // SHOW
+        export.setOnAction(event -> {
+            if(convertDirs.isSelected()) convertDirs.export();
+            else if(convertFiles.isSelected()) convertFiles.export();
+        });
+        cancel.setOnAction(event -> {
+            close();
+        });
         
-        show();
-        Main.window.centerWindowIntoMe(this);
+        setButtons(cancel, export);
     }
     
     public class ConvertPane extends Tab{
@@ -120,7 +141,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             
             setClosable(false);
             setContent(root);
-            root.setStyle("-fx-padding: 10;");
+            root.setStyle("-fx-padding: 15;");
             
             setupDesc();
             setupSrcFilesForm();
@@ -128,7 +149,6 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             setupOutDirForm();
             setupSizeForm();
             setupSettingsForm();
-            setupBtns();
             
         }
         
@@ -172,6 +192,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 Button changePath = new Button(TR.tr("file.browse"));
                 PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                changePath.setPadding(new Insets(0, 5, 0, 5));
                 
                 filePathBox.getChildren().addAll(srcDir, changePath);
                 
@@ -201,6 +222,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 Button changePath = new Button(TR.tr("file.browse"));
                 PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
+                changePath.setPadding(new Insets(0, 5, 0, 5));
                 
                 filePathBox.getChildren().addAll(srcFiles, changePath);
                 
@@ -257,7 +279,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 Button changePath = new Button(TR.tr("file.browse"));
                 PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(2.5, 0, 2.5, 2.5));
-                
+                changePath.setPadding(new Insets(0, 5, 0, 5));
                 filePathBox.getChildren().addAll(outDir, changePath);
                 
                 root.getChildren().addAll(info, filePathBox);
@@ -412,58 +434,22 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 PaneUtils.setHBoxPosition(convertAloneFiles, 0, 30, 0, 2.5);
                 convertAloneFiles.setSelected(MainWindow.userData.settingsConvertAloneImages);
+                convertAloneFiles.setWrapText(true);
                 
                 root.getChildren().add(convertAloneFiles);
                 convertAloneFiles.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsConvertAloneImages = newValue);
+                convertAloneFiles.setWrapText(true);
             }
             
             PaneUtils.setHBoxPosition(convertVoidFiles, 0, 30, 0, 2.5);
             convertVoidFiles.setSelected(MainWindow.userData.settingsConvertVoidFiles);
+            convertVoidFiles.setWrapText(true);
             
             root.getChildren().add(convertVoidFiles);
             convertVoidFiles.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsConvertVoidFiles = newValue);
         }
         
-        public void setupBtns(){
-            
-            HBox btnBox = new HBox();
-            
-            Button cancel = new Button(TR.tr("actions.cancel"));
-            Button export = new Button(TR.tr("actions.convert"));
-            export.requestFocus();
-            
-            btnBox.getChildren().addAll(cancel, export);
-            btnBox.setAlignment(Pos.CENTER_RIGHT);
-            
-            HBox.setMargin(cancel, new Insets(20, 5, 0, 10));
-            HBox.setMargin(export, new Insets(20, 10, 0, 5));
-            
-            Region spacer = new Region();
-            VBox.setVgrow(spacer, Priority.ALWAYS);
-            
-            export.setOnAction(event -> {
-                if(mp > 0 && widthFactor > 0 && heightFactor > 0){
-                    if(convertDirs || (!docName.getText().isEmpty() && !docName.getText().equalsIgnoreCase(".PDF"))){
-                        startConversion();
-                    }else{
-                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                        alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.header"));
-                        alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.details"));
-                        alert.show();
-                    }
-                }else{
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                    alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.header"));
-                    alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.details"));
-                    alert.show();
-                }
-            });
-            cancel.setOnAction(event -> {
-                window.close();
-            });
-            
-            root.getChildren().addAll(spacer, btnBox);
-        }
+        
         
         public VBox generateInfo(String text, boolean topBar){
             
@@ -483,6 +469,23 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             return box;
         }
         
+        public void export(){
+            if(mp > 0 && widthFactor > 0 && heightFactor > 0){
+                if(convertDirs || (!docName.getText().isEmpty() && !docName.getText().equalsIgnoreCase(".PDF"))){
+                    startConversion();
+                }else{
+                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
+                    alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.header"));
+                    alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.details"));
+                    alert.show();
+                }
+            }else{
+                Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
+                alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.header"));
+                alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.details"));
+                alert.show();
+            }
+        }
         
         Alert loadingAlert;
         private int converted;
