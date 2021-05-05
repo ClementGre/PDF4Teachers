@@ -6,16 +6,13 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
 import java.io.File;
@@ -57,7 +54,7 @@ public class DirFilterListCell extends ListCell<String>{
     
             add.setOnMousePressed((e) -> {
                 PlatformUtils.runLaterOnUIThread(100, () -> {
-                    File dir = DialogBuilder.showDirectoryDialog(false, gallery);
+                    File dir = FIlesChooserManager.showDirectoryDialog(false, gallery);
                     if(dir != null){
                         PlatformUtils.runLaterOnUIThread(100, () -> {
                             GalleryManager.addSavePath(dir.getAbsolutePath());

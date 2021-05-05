@@ -8,29 +8,22 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
-import fr.clementgre.pdf4teachers.utils.style.Style;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -40,7 +33,6 @@ import java.util.Map;
 
 public class ExportWindow extends AlternativeWindow<VBox>{
     
-    private final Stage window = new Stage();
     private final List<File> files;
     
     public ExportWindow(List<File> files){
@@ -229,7 +221,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         
         directory.mkdirs();
         
-        AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(customName.isEmpty());
+        AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(customName.isEmpty());
         new TwoStepListAction<>(true, customName.isEmpty(), new TwoStepListInterface<File, Map.Entry<File, File>>(){
             @Override
             public List<File> prepare(boolean recursive){
@@ -258,12 +250,12 @@ public class ExportWindow extends AlternativeWindow<VBox>{
                 File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);
                 
                 if(toFile.exists()){ // Check Already Exist
-                    AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(toFile);
-                    if(result == AlreadyExistDialog.ResultType.SKIP)
+                    AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(toFile);
+                    if(result == AlreadyExistDialogManager.ResultType.SKIP)
                         return Map.entry(Map.entry(new File(""), new File("")), 2);
-                    else if(result == AlreadyExistDialog.ResultType.STOP)
+                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialog.ResultType.RENAME) toFile = AlreadyExistDialog.rename(toFile);
+                    else if(result == AlreadyExistDialogManager.ResultType.RENAME) toFile = AlreadyExistDialogManager.rename(toFile);
                 }
                 
                 return Map.entry(Map.entry(pdfFile, toFile), TwoStepListAction.CODE_OK);
@@ -289,11 +281,10 @@ public class ExportWindow extends AlternativeWindow<VBox>{
                     }
                 }catch(Exception e){
                     e.printStackTrace();
-                    if(PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive))){
+                    if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){
                         return TwoStepListAction.ProcessResult.STOP;
                     }
                     if(!recursive){
-                        Platform.runLater(window::close);
                         return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     }
                     return TwoStepListAction.ProcessResult.SKIPPED;
@@ -303,7 +294,8 @@ public class ExportWindow extends AlternativeWindow<VBox>{
             
             @Override
             public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
-                window.close();
+                close();
+                close();
                 if(deleteEdit) MainWindow.filesTab.refresh();
                 
                 String header;

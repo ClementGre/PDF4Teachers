@@ -6,8 +6,9 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeRating;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import javafx.scene.control.Alert;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
@@ -32,6 +33,7 @@ public class GradeExportRenderer{
     boolean erase = false;
     
     GradeExportWindow.ExportPane pane;
+    AlreadyExistDialogManager alreadyExistDialogManager;
     
     public GradeExportRenderer(GradeExportWindow.ExportPane pane){
         this.pane = pane;
@@ -47,8 +49,9 @@ public class GradeExportRenderer{
         }
         
         if(pane.type != 1){
+            alreadyExistDialogManager = new AlreadyExistDialogManager(false);
+            
             try{
-                
                 if(pane.settingsAttributeTotalLine.isSelected()){
                     generateNamesLine(false);
                     generateGradeScaleLine();
@@ -64,10 +67,11 @@ public class GradeExportRenderer{
                 if(!save(null)) return exported;
             }catch(Exception e){
                 e.printStackTrace();
-                DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.fatalError.title"), e.getMessage(), false);
+                new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.fatalError.title"), e.getMessage(), false).showAndWait();
                 return exported;
             }
         }else{ // SPLIT
+            alreadyExistDialogManager = new AlreadyExistDialogManager(true);
             
             for(ExportFile file : files){
                 try{
@@ -84,7 +88,7 @@ public class GradeExportRenderer{
                     
                 }catch(Exception e){
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true);
+                    boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true).execute();
                     if(result) return exported;
                 }
             }
@@ -221,8 +225,8 @@ public class GradeExportRenderer{
             
         }catch(Exception e){
             e.printStackTrace();
-            DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
-                    TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
+            new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
+                    TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false).showAndWait();
             return false;
         }
         
@@ -244,8 +248,8 @@ public class GradeExportRenderer{
                     
                 }catch(Exception e){
                     e.printStackTrace();
-                    boolean result = DialogBuilder.showErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
-                            TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false);
+                    boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
+                            TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), true).execute();
                     if(result) return false;
                 }
             }
@@ -268,24 +272,14 @@ public class GradeExportRenderer{
         File file = new File(filePath + File.separator + fileName + ".csv");
         file.getParentFile().mkdirs();
         
-        if(!file.createNewFile()){
-            switch(fileAlreadyExist(file)){ // 0: Continue | 1: Cancel | 2: Cancel All | 3: ContinueAll | 4: Rename
-                case 1:
-                    return true;
-                case 2:
-                    return false;
-                case 4:
-                    String tmpName = fileName;
-                    int i = 1;
-                    while(new File(filePath + File.separator + tmpName + ".csv").exists()){
-                        tmpName = fileName + " (" + i + ")";
-                        i++;
-                    }
-                    file = new File(filePath + File.separator + tmpName + ".csv");
-                    file.createNewFile();
-            }
+        if(file.exists()){
+            AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
+            if(result == AlreadyExistDialogManager.ResultType.SKIP) return true;
+            else if(result == AlreadyExistDialogManager.ResultType.STOP) return false;
+            else if(result == AlreadyExistDialogManager.ResultType.RENAME) file = AlreadyExistDialogManager.rename(file);
         }
         
+        file.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
         
         writer.write(text);
@@ -296,36 +290,6 @@ public class GradeExportRenderer{
         exported++;
         text = "";
         return true;
-    }
-    
-    public int fileAlreadyExist(File file){
-        
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("dialog.file.alreadyExist.title"));
-        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
-        alert.setContentText(TR.tr("dialog.file.alreadyExist.details", file.getParentFile().getAbsolutePath()));
-        
-        ButtonType yesButton = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.YES);
-        ButtonType yesAlwaysButton = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.YES);
-        ButtonType renameButton = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.OTHER);
-        ButtonType cancelButton = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType cancelAllButton = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(yesButton, yesAlwaysButton, renameButton, cancelButton, cancelAllButton);
-        
-        Optional<ButtonType> option = alert.showAndWait();
-        if(option.get() == cancelAllButton){
-            return 2;
-        }else if(option.get() == cancelButton){
-            return 1;
-        }else if(option.get() == yesButton){
-            return 0;
-        }else if(option.get() == yesAlwaysButton){
-            erase = true;
-            return 3;
-        }else if(option.get() == renameButton){
-            return 4;
-        }
-        return 1;
-        
     }
     
 }

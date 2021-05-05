@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.IntegerProperty;
@@ -387,10 +388,8 @@ public class MainScreen extends Pane{
         
         if(status.get() != Status.OPEN){
             if(confirm){
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("dialog.unableToPerform.title"), TR.tr("dialog.unableToPerform.title"));
-                alert.setHeaderText(TR.tr("footerBar.documentStatus.noDocument"));
-                
-                alert.showAndWait();
+                new OKAlert(Alert.AlertType.ERROR, TR.tr("dialog.unableToPerform.title"),
+                        TR.tr("dialog.unableToPerform.title"), TR.tr("footerBar.documentStatus.noDocument")).showAndWait();
             }
             return false;
         }

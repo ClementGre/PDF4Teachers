@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -148,7 +149,7 @@ public class FileListItem extends ListCell<File>{
             item3.setOnAction(e -> Edition.clearEdit(file, true));
             
             item4.setOnAction(e -> {
-                if(DialogBuilder.showConfirmationDialog(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName()))){
+                if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName())).execute()){
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
                             MainWindow.mainScreen.closeFile(false);

@@ -10,15 +10,19 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ComboBoxDialog;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
+import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -131,12 +135,9 @@ public class PDFPagesEditor{
     public void deletePage(PageRenderer page){
         
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
-            alert.setHeaderText(TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
-            alert.setContentText(TR.tr("dialog.confirmation.irreversible"));
+            ConfirmAlert alert = new ConfirmAlert(true, TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
             
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.get() == ButtonType.OK){
+            if(alert.execute()){
                 document.removePage(page.getPage());
                 try{
                     document.save(file);
@@ -384,30 +385,15 @@ public class PDFPagesEditor{
         List<String> definitions = ConvertWindow.definitions;
         definitions.set(0, (pageImage.getWidth() * pageImage.getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
         
-        ChoiceDialog<String> alert = DialogBuilder.getChoiceDialog(definitions.get(0), definitions);
-        alert.setTitle(TR.tr("document.pageActions.capture.dialog.title"));
-        alert.setHeaderText(TR.tr("document.pageActions.capture.dialog.title"));
-        Label contentText = new Label(TR.tr("document.pageActions.capture.dialog.details"));
+        ComboBoxDialog<String> alert = new ComboBoxDialog<>(TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.details"));
+        alert.setItems(FXCollections.observableList(definitions));
+        alert.setSelected(definitions.get(0));
         
-        ImageView graphic = new ImageView(images.get(0));
-        graphic.setFitHeight(400);
-        graphic.setFitWidth(600);
-        graphic.setPreserveRatio(true);
-        
-        VBox.setMargin(contentText, new Insets(10, 0, 10, 10));
-        VBox.setMargin(graphic, new Insets(10, 0, 10, 10));
-        VBox pane = new VBox();
-        pane.getChildren().addAll(
-                contentText,
-                alert.getDialogPane().getContent(),
-                graphic);
-        alert.getDialogPane().setContent(pane);
-        
-        Optional<String> choosed = alert.showAndWait();
-        if(choosed.isPresent()){
-            int definition = (int) (Double.parseDouble(choosed.get().split("Mp")[0]) * 1000000);
+        String choosed = alert.execute();
+        if(choosed != null){
+            int definition = (int) (Double.parseDouble(choosed.split("Mp")[0]) * 1000000);
             
-            AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(pageIndex == -1);
+            AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(pageIndex == -1);
             new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>(){
                 File exportDir = null;
                 
@@ -424,26 +410,26 @@ public class PDFPagesEditor{
                 public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive) throws IOException, Exception{
                     File file;
                     if(!recursive){
-                        file = DialogBuilder.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                        file = FIlesChooserManager.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
                         if(file == null)
                             return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         exportDir = file.getParentFile();
                         
                     }else{
                         if(exportDir == null){
-                            exportDir = DialogBuilder.showDirectoryDialog(false);
+                            exportDir = FIlesChooserManager.showDirectoryDialog(false);
                             if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }
                         file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png");
                     }
                     if(file.exists() && recursive){
-                        AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(file);
-                        if(result == AlreadyExistDialog.ResultType.SKIP)
+                        AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
+                        if(result == AlreadyExistDialogManager.ResultType.SKIP)
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_SKIP_1);
-                        if(result == AlreadyExistDialog.ResultType.STOP)
+                        if(result == AlreadyExistDialogManager.ResultType.STOP)
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_STOP);
-                        if(result == AlreadyExistDialog.ResultType.RENAME) file = AlreadyExistDialog.rename(file);
+                        if(result == AlreadyExistDialogManager.ResultType.RENAME) file = AlreadyExistDialogManager.rename(file);
                     }
                     return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_OK);
                 }
@@ -462,14 +448,14 @@ public class PDFPagesEditor{
                             ImageIO.write(image, "png", data.getKey());
                         }catch(IOException e){
                             e.printStackTrace();
-                            boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive));
+                            boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
                             else return TwoStepListAction.ProcessResult.SKIPPED;
                         }
                     }catch(Exception e){
                         e.printStackTrace();
-                        boolean result = PlatformUtils.runAndWait(() -> DialogBuilder.showErrorAlert(null, e.getMessage(), recursive));
+                        boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(null, e.getMessage(), recursive).execute());
                         if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                         if(result) return TwoStepListAction.ProcessResult.STOP;
                         else return TwoStepListAction.ProcessResult.SKIPPED;

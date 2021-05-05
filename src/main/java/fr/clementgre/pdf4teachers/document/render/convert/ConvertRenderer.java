@@ -36,6 +36,8 @@ public class ConvertRenderer{
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
+                if(shouldStop) return convertedFiles;
+                
                 if(isValidDir(dir)){
                     documentCallBack.call(dir.getName() + ".pdf");
                     convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
@@ -76,6 +78,7 @@ public class ConvertRenderer{
             defaultPageSize = PDRectangle.A4;
         
         for(File file : files){
+            if(shouldStop) return;
             if(isGoodFormat(file)){
                 // load page and image
                 
@@ -193,5 +196,10 @@ public class ConvertRenderer{
         }else{
             return 1;
         }
+    }
+    
+    private boolean shouldStop = false;
+    public void stop(){
+        shouldStop = true;
     }
 }

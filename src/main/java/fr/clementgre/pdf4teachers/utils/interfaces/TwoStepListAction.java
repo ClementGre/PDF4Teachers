@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.utils.interfaces;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.LoadingAlert;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
@@ -76,7 +78,7 @@ public class TwoStepListAction<T, D>{
                 }
             }catch(Exception e){
                 e.printStackTrace();
-                boolean result = DialogBuilder.showErrorAlert(null, e.getMessage(), data.size() > 1);
+                boolean result = new ErrorAlert(null, e.getMessage(), data.size() > 1).execute();
                 if(data.size() <= 1) return false;
                 if(result) return false;
             }
@@ -94,22 +96,23 @@ public class TwoStepListAction<T, D>{
         return true;
     }
     
+    private boolean shouldStop = false;
     public void processDataAsync(TwoStepListInterface<T, D> caller, CallBack callBack){
-        Alert loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("dialogs.asyncAction.header.title"));
-        loadingAlert.setWidth(600);
-        loadingAlert.setHeaderText(TR.tr("dialogs.asyncAction.header"));
-        VBox pane = new VBox();
-        Label currentDocument = new Label();
-        ProgressBar loadingBar = new ProgressBar();
-        loadingBar.setMinHeight(10);
-        VBox.setMargin(loadingBar, new Insets(10, 0, 0, 0));
-        pane.getChildren().addAll(currentDocument, loadingBar);
-        loadingAlert.getDialogPane().setContent(pane);
-        loadingAlert.show();
+        LoadingAlert loadingAlert = new LoadingAlert(true, TR.tr("dialogs.asyncAction.header.title"), TR.tr("dialogs.asyncAction.header"));
+        loadingAlert.setTotal(sortedData.size());
+        
+        loadingAlert.showAsync(() -> { // Cancel button click event
+            shouldStop = true;
+        });
         
         new Thread(() -> {
             boolean isCanceled = false;
             for(D value : sortedData){
+                if(shouldStop){
+                    isCanceled = true;
+                    break;
+                }
+                
                 ProcessResult result = caller.completeData(value, isRecursive());
                 if(result == ProcessResult.OK) completedSize++;
                 else if(result == ProcessResult.STOP) break;
@@ -119,15 +122,17 @@ public class TwoStepListAction<T, D>{
                 }
                 
                 Platform.runLater(() -> {
-                    currentDocument.setText(caller.getSortedDataName(value, isRecursive()) + "(" + completedSize + "/" + sortedData.size() + ")");
-                    loadingBar.setProgress(completedSize / ((float) sortedData.size()));
+                    loadingAlert.setCurrentTaskText(caller.getSortedDataName(value, isRecursive()));
+                    loadingAlert.setProgress(completedSize);
                 });
                 
             }
             boolean finalIsCanceled = isCanceled;
             Platform.runLater(() -> {
                 loadingAlert.close();
-                if(!finalIsCanceled) callBack.call();
+                if(!finalIsCanceled){
+                    callBack.call();
+                }
             });
         }, "TwoStepListAction Async data processing").start();
         

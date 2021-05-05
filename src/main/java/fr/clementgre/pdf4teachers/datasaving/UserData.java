@@ -13,6 +13,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
@@ -138,17 +140,18 @@ public class UserData{
                 MainWindow.userData.foregroundTime++;
                 if(MainWindow.userData.foregroundTime % (60 * 50) == 0){
                     Platform.runLater(() -> {
-                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("dialog.donateRequest.title"),
+                        CustomAlert alert = new CustomAlert(Alert.AlertType.INFORMATION, TR.tr("dialog.donateRequest.title"),
                                 TR.tr("dialog.donateRequest.header", (int) (MainWindow.userData.foregroundTime / 60)),
                                 TR.tr("dialog.donateRequest.details"));
-                        ButtonType paypal = new ButtonType("Paypal", ButtonBar.ButtonData.OTHER);
-                        ButtonType github = new ButtonType("GitHub Sponsors", ButtonBar.ButtonData.OTHER);
-                        ButtonType ignore = new ButtonType(TR.tr("actions.ignore"), ButtonBar.ButtonData.YES);
-                        alert.getButtonTypes().setAll(paypal, github, ignore);
-                        Optional<ButtonType> option = alert.showAndWait();
-                        if(option.get() == paypal){
+                        
+                        alert.addButton("Paypal", ButtonPosition.DEFAULT);
+                        alert.addButton("GitHub Sponsors", ButtonPosition.OTHER_RIGHT);
+                        alert.addButton(TR.tr("actions.ignore"), ButtonPosition.CLOSE);
+                        
+                        ButtonPosition option = alert.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
+                        if(option == ButtonPosition.DEFAULT){
                             Main.hostServices.showDocument("https://paypal.me/themsou");
-                        }else if(option.get() == github){
+                        }else if(option == ButtonPosition.OTHER_RIGHT){
                             Main.hostServices.showDocument("https://github.com/sponsors/ClementGre");
                         }
                     });

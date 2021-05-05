@@ -11,16 +11,15 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageStatus;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class Document{
     
@@ -151,20 +150,19 @@ public class Document{
         if(Main.settings.autoSave.getValue()){
             edition.save();
         }else{
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"));
-            alert.setHeaderText(TR.tr("dialog.unsavedEdit.header"));
-            alert.setContentText(TR.tr("dialog.unsavedEdit.details"));
-            ButtonType yesButton = new ButtonType(TR.tr("actions.yes"), ButtonBar.ButtonData.YES);
-            ButtonType noButton = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.NO);
-            ButtonType cancelButton = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(yesButton, noButton, cancelButton);
+            CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"), TR.tr("dialog.unsavedEdit.header"), TR.tr("dialog.unsavedEdit.details"));
+
+            alert.addCancelButton(ButtonPosition.CLOSE);
+            alert.addButton(TR.tr("actions.save"), ButtonPosition.DEFAULT);
+            alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
             
-            Optional<ButtonType> option = alert.showAndWait();
-            if(option.get() == yesButton){
+            ButtonType option = alert.getShowAndWait();
+            if(option == null) return false; // Window close button (null)
+            if(option.getButtonData().isDefaultButton()){ // Save button (Default)
                 edition.save();
                 return true;
             }else{
-                return option.get() == noButton;
+                return !option.getButtonData().isCancelButton(); // Close button OR Ignore button
             }
         }
         return true;
