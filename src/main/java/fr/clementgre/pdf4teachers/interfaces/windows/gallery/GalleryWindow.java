@@ -17,6 +17,7 @@ import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -122,10 +123,6 @@ public class GalleryWindow extends Stage{
     }
     private void setup(){
         setupSettings();
-
-        if(Main.isOSX()){
-            MenuBar menuBar = MainWindow.menuBar;
-        }
 
         root.getChildren().addAll(settings, list);
         list.addItems(getImages());
