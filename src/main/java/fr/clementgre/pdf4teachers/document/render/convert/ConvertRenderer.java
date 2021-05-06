@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
@@ -28,7 +30,11 @@ public class ConvertRenderer{
         this.convertPane = convertPane;
     }
     
-    public ArrayList<ConvertedFile> start(CallBackArg<String> documentCallBack) throws Exception{
+    // entry : String current document name | Double document internal advancement (range 0 ; 1)
+    CallBackArg<Map.Entry<String, Double>> documentCallBack;
+    public ArrayList<ConvertedFile> start(CallBackArg<Map.Entry<String, Double>> documentCallBack) throws Exception{
+        this.documentCallBack = documentCallBack;
+        
         String out = convertPane.outDir.getText();
         new File(out).mkdirs();
         if(!out.endsWith(File.separator)) out += File.separator;
@@ -36,18 +42,19 @@ public class ConvertRenderer{
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
-                if(shouldStop) return convertedFiles;
+                if(shouldStop) break;
                 
                 if(isValidDir(dir)){
-                    documentCallBack.call(dir.getName() + ".pdf");
+                    documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
                     convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
-                    documentCallBack.call(dir.getName() + ".pdf");
-                    convertFile(new File[]{dir}, new File(out + StringUtils.removeAfterLastRegex(dir.getName(), ".") + ".pdf"));
+                    String imgName = StringUtils.removeBeforeLastRegex(dir.getName(), ".");
+                    documentCallBack.call(Map.entry(imgName + ".pdf", -1d));
+                    convertFile(new File[]{dir}, new File(out + imgName + ".pdf"));
                 }
             }
         }else{
-            documentCallBack.call(StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf");
+            documentCallBack.call(Map.entry(StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf", 0d));
             File[] files = new File[convertPane.srcFiles.getText().split(Pattern.quote("\n")).length];
             int i = 0;
             for(String filePath : convertPane.srcFiles.getText().split(Pattern.quote("\n"))){
@@ -56,12 +63,25 @@ public class ConvertRenderer{
             }
             convertFile(files, new File(out + StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
-        documentCallBack.call("");
-        
+        documentCallBack.call(Map.entry("", 0d));
+    
+        if(shouldStop){
+            closeAll();
+            return new ArrayList<>();
+        }
         return convertedFiles;
     }
     
+    private void closeAll(){
+        for(ConvertedFile file : convertedFiles){
+            try{
+                file.document.close();
+            }catch(IOException e){ e.printStackTrace(); }
+        }
+    }
+    
     private void convertFile(File[] files, File out) throws IOException{
+        
         
         ConvertedFile convertedFile = new ConvertedFile(out);
         /*if(convertPane.convertToExistingDoc){
@@ -77,8 +97,13 @@ public class ConvertRenderer{
         if(convertPane.format.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage")))
             defaultPageSize = PDRectangle.A4;
         
+        int index = 0;
         for(File file : files){
             if(shouldStop) return;
+            
+            documentCallBack.call(Map.entry(out.getName(), ((double) index) / files.length));
+            index++;
+            
             if(isGoodFormat(file)){
                 // load page and image
                 

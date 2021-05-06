@@ -96,8 +96,8 @@ public class MainWindow extends Stage{
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
-        setMinWidth(700);
-        setMinHeight(393);
+        setMinWidth(700*MainWindow.TEMP_SCALE);
+        setMinHeight(393*MainWindow.TEMP_SCALE);
         setResizable(true);
         setScene(scene);
         

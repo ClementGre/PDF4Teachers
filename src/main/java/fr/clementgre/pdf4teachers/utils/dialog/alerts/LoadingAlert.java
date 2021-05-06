@@ -13,8 +13,9 @@ public class LoadingAlert extends CustomAlert{
     private ProgressBar loadingBar = new ProgressBar();
     
     private String currentTaskText = "";
-    private int progress = -1;
-    private int total = 100;
+    private double progress = -1;
+    private double total = 100;
+    private boolean intPrintProgress = true;
     
     public LoadingAlert(boolean cancelButton, String title){
         this(cancelButton, title, "");
@@ -35,8 +36,7 @@ public class LoadingAlert extends CustomAlert{
         updateLabel();
         updateProgressBar();
     
-        getDialogPane().setMinWidth(600);
-        setWidth(1000);
+        getDialogPane().setMinWidth(400);
     }
     
     public void showAsync(CallBack cancel){
@@ -54,8 +54,15 @@ public class LoadingAlert extends CustomAlert{
     }
     private void updateLabel(){
         if(progress == -1) label.setText(currentTaskText);
-        else if(currentTaskText.isBlank()) label.setText(progress + "/" + total);
-        else label.setText(currentTaskText + " (" + progress + "/" + total + ")");
+        else{
+            if(intPrintProgress){
+                if(currentTaskText.isBlank()) label.setText(((int) progress) + "/" + ((int) total));
+                else label.setText(currentTaskText + " (" + ((int) progress) + "/" + ((int) total) + ")");
+            }else{
+                if(currentTaskText.isBlank()) label.setText(progress + "/" + total);
+                else label.setText(currentTaskText + " (" + progress + "/" + total + ")");
+            }
+        }
     }
     
     public void setCurrentTaskText(String text){
@@ -63,17 +70,22 @@ public class LoadingAlert extends CustomAlert{
         updateLabel();
         updateProgressBar();
     }
-    public void setTotal(int total){
+    public void setTotal(double total){
         this.total = total;
         updateLabel();
         updateProgressBar();
     }
-    public void setProgress(int progress){
+    public void setProgress(double progress){
         this.progress = progress;
         updateLabel();
         updateProgressBar();
     }
     
-    
-    
+    public boolean isIntPrintProgress(){
+        return intPrintProgress;
+    }
+    public void setIntPrintProgress(boolean intPrintProgress){
+        this.intPrintProgress = intPrintProgress;
+        updateLabel();
+    }
 }

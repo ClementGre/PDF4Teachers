@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -26,10 +27,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -320,7 +318,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             
             // Definition COLUMN
             VBox definitionColumn = generateInfo(TR.tr("convertWindow.options.definition.title"), false);
-            definition = new ComboBox<>(definitions);
+            definition = new ScaledComboBox<>(definitions);
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
@@ -329,7 +327,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             // Format COLUMN
             
             VBox formatColumn = generateInfo(TR.tr("convertWindow.options.format.title"), false);
-            format = new ComboBox<>(formats);
+            format = new ScaledComboBox<>(formats);
             format.setEditable(true);
             PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
@@ -503,11 +501,17 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 try{
                     loadingAlert.setTotal(renderer.getFilesLength());
                     
-                    ArrayList<ConvertedFile> convertedFiles = renderer.start(value -> {
+                    // entry : String current document name | Double document internal advancement (range 0 ; 1)
+                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement-> {
                         Platform.runLater(() -> {
-                            loadingAlert.setProgress(converted);
-                            loadingAlert.setCurrentTaskText(value);
-                            converted++;
+                            if(documentAndAdvancement.getKey().isBlank()){
+                                loadingAlert.setProgress(-1);
+                                loadingAlert.setCurrentTaskText("");
+                            }else{
+                                loadingAlert.setProgress(converted + Math.max(0, documentAndAdvancement.getValue()));
+                                loadingAlert.setCurrentTaskText(documentAndAdvancement.getKey());
+                            }
+                            if(documentAndAdvancement.getValue() == -1) converted++;
                         });
                     });
                     Platform.runLater(() -> {

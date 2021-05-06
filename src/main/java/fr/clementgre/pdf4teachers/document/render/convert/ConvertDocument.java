@@ -15,7 +15,6 @@ public class ConvertDocument{
     public ConvertDocument(){
         convertWindow = new ConvertWindow(null, (convertedFiles) -> {
             
-            boolean eraseAll = false;
             int converted = 0;
             AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(true);
             for(ConvertedFile file : convertedFiles){
