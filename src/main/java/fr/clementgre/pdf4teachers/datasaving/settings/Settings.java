@@ -17,50 +17,46 @@ public class Settings{
     private String settingsVersion = "";
     
     @SettingObject
-    public StringSetting language = new StringSetting("", SVGPathIcons.GLOBE, "language",
+    public StringSetting language = new StringSetting("", false, SVGPathIcons.GLOBE, "language",
             "settings.language.title", "settings.language.tooltip");
     @SettingObject
-    public BooleanSetting restoreLastSession = new BooleanSetting(true, SVGPathIcons.REDO, "restoreLastSession",
+    public BooleanSetting restoreLastSession = new BooleanSetting(true, true, SVGPathIcons.REDO, "restoreLastSession",
             "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
     @SettingObject
-    public BooleanSetting checkUpdates = new BooleanSetting(true, SVGPathIcons.WIFI, "checkUpdates",
+    public BooleanSetting checkUpdates = new BooleanSetting(true, true, SVGPathIcons.WIFI, "checkUpdates",
             "settings.checkUpdates.title", "settings.checkUpdates.tooltip");
     @SettingObject
-    public BooleanSetting sendStats = new BooleanSetting(true, SVGPathIcons.STATS, "sendStatistics",
+    public BooleanSetting sendStats = new BooleanSetting(true, true, SVGPathIcons.STATS, "sendStatistics",
             "settings.sendStatistics.title", "settings.sendStatistics.tooltip");
     @SettingObject
-    public IntSetting defaultZoom = new IntSetting(130, SVGPathIcons.SEARCH, "defaultZoom",
-            "settings.defaultZoom.title", "settings.defaultZoom.tooltip", true);
+    public IntSetting defaultZoom = new IntSetting(130, true, SVGPathIcons.SEARCH, "defaultZoom",
+            "settings.defaultZoom.title", "settings.defaultZoom.tooltip");
     @SettingObject
-    public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), SVGPathIcons.LAYERS, "zoomAnimations",
+    public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), true, SVGPathIcons.LAYERS, "zoomAnimations",
             "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), SVGPathIcons.SUN, "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "settings.darkTheme.tooltip");
     
     @SettingObject
-    public BooleanSetting autoSave = new BooleanSetting(true, SVGPathIcons.SAVE, "autoSave",
+    public BooleanSetting autoSave = new BooleanSetting(true, true, SVGPathIcons.SAVE, "autoSave",
             "settings.autoSave.title", "settings.autoSave.tooltip");
     @SettingObject
-    public IntSetting regularSave = new IntSetting(-1, SVGPathIcons.CLOCK, "regularSave",
+    public IntSetting regularSave = new IntSetting(-1, true, SVGPathIcons.CLOCK, "regularSave",
             "settings.regularSave.title", "settings.regularSave.tooltip");
     
     @SettingObject
-    public BooleanSetting textAutoRemove = new BooleanSetting(true, SVGPathIcons.STAR, "textAutoRemove",
+    public BooleanSetting textAutoRemove = new BooleanSetting(true, true, SVGPathIcons.STAR, "textAutoRemove",
             "settings.textAutoRemove.title", "settings.textAutoRemove.tooltip");
     @SettingObject
-    public BooleanSetting textOnlyStart = new BooleanSetting(true, SVGPathIcons.LIST, "textOnlyStart",
+    public BooleanSetting textOnlyStart = new BooleanSetting(true, true, SVGPathIcons.LIST, "textOnlyStart",
             "settings.textOnlyStart.title", "settings.textOnlyStart.tooltip");
     @SettingObject
-    public BooleanSetting textSmall = new BooleanSetting(false, SVGPathIcons.TEXT_HEIGHT, "textSmall",
+    public BooleanSetting textSmall = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
             "settings.textSmall.title", "settings.textSmall.tooltip");
     
     @SettingObject
-    public StringSetting mainScreenSize = new StringSetting("1200;675;-1;-1;false", null, "mainScreenSize",
-            "", "");
-    
-    @SettingObject
-    public BooleanSetting allowAutoTips = new BooleanSetting(true, SVGPathIcons.TOOLTIP, "allowAutoTips",
+    public BooleanSetting allowAutoTips = new BooleanSetting(true, true, SVGPathIcons.TOOLTIP, "allowAutoTips",
             "settings.allowAutoTips.title", "settings.allowAutoTips.tooltip");
     
     public Settings(){
@@ -135,7 +131,7 @@ public class Settings{
                 for(Field field : getClass().getDeclaredFields()){
                     if(field.isAnnotationPresent(SettingObject.class)){
                         try{
-                            Setting setting = (Setting) field.get(this);
+                            Setting<?> setting = (Setting<?>) field.get(this);
                             config.set(setting.getPath(), setting.getValue());
                         }catch(Exception e){
                             e.printStackTrace();

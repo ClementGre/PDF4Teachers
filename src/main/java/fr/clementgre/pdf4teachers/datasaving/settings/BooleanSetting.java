@@ -1,36 +1,22 @@
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
-import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.MenuBar;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.control.RadioMenuItem;
+import javafx.scene.layout.HBox;
+import org.controlsfx.control.ToggleSwitch;
 
 public class BooleanSetting extends Setting<Boolean>{
     
     private BooleanProperty value;
     
-    public BooleanSetting(Boolean value, String icon, String path, String title, String description){
-        super(icon, path, title, description);
+    public BooleanSetting(Boolean value, boolean hasEditPane, String icon, String path, String title, String description){
+        super(hasEditPane, icon, path, title, description);
         this.value = new SimpleBooleanProperty(value);
-        
-        this.value.addListener((observable, oldValue, newValue) -> {
-            if(Main.settings != null) Main.settings.saveSettings();
-        });
     }
     
     @Override
-    public void setupMenuItem(){
-        menuItem = MenuBar.createRadioMenuItem(TR.tr(title), icon, TR.tr(description), true);
-        if(menuItem instanceof RadioMenuItem){
-            ((RadioMenuItem) menuItem).setSelected(value.get());
-            this.value.bindBidirectional(((RadioMenuItem) menuItem).selectedProperty());
-        }else if(menuItem instanceof NodeRadioMenuItem){
-            ((NodeRadioMenuItem) menuItem).setSelected(value.get());
-            this.value.bindBidirectional(((NodeRadioMenuItem) menuItem).selectedProperty());
-        }
+    public HBox getDefaultEditPane(){
+        return new HBox(new ToggleSwitch());
     }
     
     public BooleanProperty valueProperty(){

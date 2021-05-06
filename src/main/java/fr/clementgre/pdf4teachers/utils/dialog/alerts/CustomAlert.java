@@ -43,8 +43,6 @@ public class CustomAlert extends Alert{
     
         // SCALING
         if(MainWindow.TEMP_SCALE != 1){
-            // TODO: maybe remove resize feature
-            setResizable(true);
             getDialogPane().getScene().setFill(Color.web("#252525"));
             setOnShown((e) -> {
                 Platform.runLater(() -> {

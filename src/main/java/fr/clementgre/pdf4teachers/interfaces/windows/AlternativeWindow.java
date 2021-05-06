@@ -45,8 +45,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         }
     }
     
-    public AlternativeWindow(R root, StageWidth width, String title){
-        this(root, width, title, title, null);
+    public AlternativeWindow(R root, StageWidth width, String titleHeader){
+        this(root, width, titleHeader, titleHeader, null);
     }
     public AlternativeWindow(R root, StageWidth width, String title, String header){
         this(root, width, title, header, null);

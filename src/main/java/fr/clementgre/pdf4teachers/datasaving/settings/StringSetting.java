@@ -5,23 +5,22 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 public class StringSetting extends Setting<String>{
     
     private StringProperty value;
     
-    public StringSetting(String value, String icon, String path, String title, String description){
-        super(icon, path, title, description);
+    public StringSetting(String value, boolean hasEditPane, String icon, String path, String title, String description){
+        super(hasEditPane, icon, path, title, description);
         this.value = new SimpleStringProperty(value);
         
-        this.value.addListener((observable, oldValue, newValue) -> {
-            if(Main.settings != null) Main.settings.saveSettings();
-        });
     }
     
     @Override
-    public void setupMenuItem(){
-        menuItem = MenuBar.createMenuItem(TR.tr(title), icon, null, TR.tr(description), true);
+    public HBox getDefaultEditPane(){
+        return new HBox(new TextField());
     }
     
     public StringProperty valueProperty(){

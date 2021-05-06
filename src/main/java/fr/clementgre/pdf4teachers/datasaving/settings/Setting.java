@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
-import javafx.scene.control.MenuItem;
+import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
+import javafx.scene.layout.HBox;
 
 public abstract class Setting<T>{
     
@@ -8,24 +9,24 @@ public abstract class Setting<T>{
     String icon;
     String title;
     String description;
-    MenuItem menuItem;
     
-    public Setting(String icon, String path, String title, String description){
+    private boolean hasEditPane;
+    private ReturnCallBack<HBox> getEditPaneCallback;
+    
+    public Setting(boolean hasEditPane, String icon, String path, String title, String description){
         this.icon = icon;
         this.path = path;
         this.title = title;
         this.description = description;
+        this.hasEditPane = hasEditPane;
     }
     
-    public MenuItem getMenuItem(){
-        return menuItem;
+    protected abstract HBox getDefaultEditPane();
+    public HBox getCustomEditPane(){
+        if(hasEditPane) return getDefaultEditPane();
+        else if(getEditPaneCallback != null) return getEditPaneCallback.call();
+        else return new HBox();
     }
-    
-    public void setMenuItem(MenuItem menuItem){
-        this.menuItem = menuItem;
-    }
-    
-    public abstract void setupMenuItem();
     
     public abstract T getValue();
     
@@ -63,4 +64,19 @@ public abstract class Setting<T>{
         this.description = description;
     }
     
+    public boolean isHasEditPane(){
+        return hasEditPane;
+    }
+    
+    public void setHasEditPane(boolean hasEditPane){
+        this.hasEditPane = hasEditPane;
+    }
+    
+    public ReturnCallBack<HBox> getGetEditPaneCallback(){
+        return getEditPaneCallback;
+    }
+    
+    public void setGetEditPaneCallback(ReturnCallBack<HBox> getEditPaneCallback){
+        this.getEditPaneCallback = getEditPaneCallback;
+    }
 }

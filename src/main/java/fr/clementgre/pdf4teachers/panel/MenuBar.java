@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageEditPane;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -139,7 +140,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     ////////// SETTINGS //////////
     
-    public Menu settings = new Menu(TR.tr("menuBar.settings"));
+    public Menu settings = new Menu();
     
     
     ////////// ABOUT / HELP //////////
@@ -177,24 +178,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition, new SeparatorMenuItem(), tools8FullScreen, new SeparatorMenuItem(), tools9Debug);
         
-        ////////// SETTINGS //////////
-        
-        Settings s = Main.settings;
-        for(Field field : s.getClass().getDeclaredFields()){
-            if(field.isAnnotationPresent(SettingObject.class)){
-                try{
-                    ((Setting) field.get(s)).setupMenuItem();
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        settings.getItems().addAll(
-                s.language.getMenuItem(), s.checkUpdates.getMenuItem(), s.sendStats.getMenuItem(),
-                new SeparatorMenuItem(), s.restoreLastSession.getMenuItem(), s.defaultZoom.getMenuItem(), s.zoomAnimations.getMenuItem(), s.darkTheme.getMenuItem(),
-                new SeparatorMenuItem(), s.autoSave.getMenuItem(), s.regularSave.getMenuItem(),
-                new SeparatorMenuItem(), s.textAutoRemove.getMenuItem(), s.textOnlyStart.getMenuItem(), s.textSmall.getMenuItem(),
-                new SeparatorMenuItem(), s.allowAutoTips.getMenuItem());
         
         ////////// HELP //////////
         
@@ -381,59 +364,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
         tools9Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
         
-        
-        ////////// SETTINGS //////////
-        
-        s.language.getMenuItem().setOnAction(e -> {
-            Main.showLanguageWindow(false);
-        });
-        s.defaultZoom.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
-            
-            List<Integer> choices = new ArrayList<>(Arrays.asList(50, 70, 80, 90, 100, 110, 120, 140, 160, 180, 200, 230, 250, 280, 300));
-            ChoiceDialog<Integer> dialog = DialogBuilder.getChoiceDialog(Main.settings.defaultZoom.getValue(), choices);
-            
-            dialog.setTitle(TR.tr("dialog.defaultZoomSetting.title"));
-            dialog.setHeaderText(TR.tr("dialog.defaultZoomSetting.header"));
-            dialog.setContentText(TR.tr("dialog.defaultZoomSetting.details"));
-            
-            Optional<Integer> newZoom = dialog.showAndWait();
-            if(!newZoom.isEmpty()) Main.settings.defaultZoom.setValue(newZoom.get());
-        });
-        s.regularSave.getMenuItem().setOnAction((ActionEvent actionEvent) -> {
-            
-            Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.regularSaving.title"));
-            
-            HBox pane = new HBox();
-            ComboBox<Integer> combo = new ComboBox<>(FXCollections.observableArrayList(1, 5, 10, 15, 20, 30, 45, 60));
-            combo.getSelectionModel().select(Main.settings.regularSave.getValue() == -1 ? (Integer) 5 : Main.settings.regularSave.getValue());
-            combo.setStyle("-fx-padding-left: 20px;");
-            CheckBox activated = new CheckBox(TR.tr("actions.enable"));
-            activated.setSelected(Main.settings.regularSave.getValue() != -1);
-            pane.getChildren().add(0, activated);
-            pane.getChildren().add(1, combo);
-            HBox.setMargin(activated, new Insets(5, 0, 0, 10));
-            HBox.setMargin(combo, new Insets(0, 0, 0, 30));
-            
-            combo.disableProperty().bind(activated.selectedProperty().not());
-            dialog.setHeaderText(TR.tr("dialog.regularSaving.header"));
-            dialog.getDialogPane().setContent(pane);
-            
-            Optional<ButtonType> option = dialog.showAndWait();
-            if(option.get() == ButtonType.OK){
-                s.regularSave.setRadioSelected(activated.isSelected());
-                if(activated.isSelected()) s.regularSave.setValue(combo.getSelectionModel().getSelectedItem());
-                else s.regularSave.setValue(-1);
-            }
-        });
+        ///////////// SETTINGS ///////////
+    
+        if(!isSystemMenuBarSupported()){
+            Label name = new Label(TR.tr("menuBar.settings"));
+            name.setAlignment(Pos.CENTER_LEFT);
+            name.setOnMouseClicked(e -> Main.showAboutWindow());
+            about.setGraphic(name);
+        }
         
         ////////// ABOUT / HELP //////////
         
-        if(isSystemMenuBarSupported()){
-            about.setText(TR.tr("menuBar.about"));
-            MenuItem triggerItem = new MenuItem(TR.tr("menuBar.about.openAboutWindow"));
-            about.getItems().add(triggerItem);
-            triggerItem.setOnAction(e -> Main.showAboutWindow());
-        }else{
+        if(!isSystemMenuBarSupported()){
             Label name = new Label(TR.tr("menuBar.about"));
             name.setAlignment(Pos.CENTER_LEFT);
             name.setOnMouseClicked(e -> Main.showAboutWindow());
@@ -456,23 +398,41 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         // UI Style
         setStyle("");
         StyleManager.putStyle(this, Style.ACCENT);
-        getMenus().addAll(file, tools, settings, help, about);
         
-        if(!isSystemMenuBarSupported()){
+        if(isSystemMenuBarSupported()){
+    
+            if(Main.isOSX()){
+                getMenus().addAll(file, tools, help);
+    
+                MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
+                
+                MenuItem about = new MenuItem(TR.tr("menuBar.osx.about", Main.APP_NAME));
+                about.setOnAction((e) -> Main.showAboutWindow());
+    
+                MenuItem settings = new MenuItem(TR.tr("menuBar.settings"));
+                settings.setOnAction((e) -> new SettingsWindow());
+                
+                MenuItem hide = tk.createHideMenuItem("");
+                hide.setText(TR.tr("menuBar.osx.hide", Main.APP_NAME));
+                MenuItem hideOthers = tk.createHideOthersMenuItem();
+                hideOthers.setText(TR.tr("menuBar.osx.hideOthers"));
+                MenuItem unhideAll = tk.createUnhideAllMenuItem();
+                unhideAll.setText(TR.tr("menuBar.osx.unhideAll"));
+                MenuItem quit = tk.createQuitMenuItem("");
+                quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
+                
+                Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
+                        about, new SeparatorMenuItem(), settings, new SeparatorMenuItem(),
+                        hide, hideOthers, unhideAll, new SeparatorMenuItem(), quit);
+                tk.setApplicationMenu(defaultApplicationMenu);
+            }
+            
+        }else{
+            getMenus().addAll(file, tools, help, settings, about);
+    
             for(Menu menu : getMenus()){
                 menu.setStyle("-fx-padding: 5 7 5 7;");
             }
-        }
-
-        if(Main.isOSX()){
-            MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
-            Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
-                    tk.createAboutMenuItem(Main.APP_NAME, e -> Main.showAboutWindow()), new SeparatorMenuItem(),
-                    tk.createHideMenuItem(Main.APP_NAME),
-                    tk.createHideOthersMenuItem(),
-                    tk.createUnhideAllMenuItem(), new SeparatorMenuItem(),
-                    tk.createQuitMenuItem(Main.APP_NAME));
-            tk.setApplicationMenu(defaultApplicationMenu);
         }
         
     }

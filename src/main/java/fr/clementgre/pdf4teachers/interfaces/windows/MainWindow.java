@@ -18,31 +18,22 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
-import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.awt.*;
 import java.io.File;
@@ -52,7 +43,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 public class MainWindow extends Stage{
     
@@ -252,39 +242,29 @@ public class MainWindow extends Stage{
     
     public void loadDimensions(){
         
-        String[] size = Main.settings.mainScreenSize.getValue().split(Pattern.quote(";"));
-        if(size.length == 5){
-            try{
-                setMaximized(Boolean.parseBoolean(size[4]));
-                double w = Double.parseDouble(size[0]);
-                double h = Double.parseDouble(size[1]);
-                double x = Double.parseDouble(size[2]);
-                double y = Double.parseDouble(size[3]);
-    
-                if(x != -1) setX(x);
-                if(y != -1) setY(y);
-                setWidth(w);
-                setHeight(h);
-                preventWindowOverflowScreen(this);
-            }catch(NumberFormatException e){
-                e.printStackTrace();
-            }
-        }
+        setMaximized(Main.syncUserData.mainWindowMaximized);
+
+        if(Main.syncUserData.mainWindowX != -1) setX(Main.syncUserData.mainWindowX);
+        if(Main.syncUserData.mainWindowY != -1) setY(Main.syncUserData.mainWindowY);
+        setWidth(Main.syncUserData.mainWindowWidth);
+        setHeight(Main.syncUserData.mainWindowHeight);
+        
+        preventWindowOverflowScreen(this);
     }
     
+    private boolean saveDimensionRunning = false;
     public void saveDimensions(){
-        String lastDimensions = getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized();
+        if(saveDimensionRunning) return;
         
-        new Thread(() -> {
-            try{
-                Thread.sleep(1000);
-            }catch(InterruptedException e){
-                e.printStackTrace();
-            }
-            if(lastDimensions.equals(getWidth() + ";" + getHeight() + ";" + getX() + ";" + getY() + ";" + isMaximized())){
-                Main.settings.mainScreenSize.setValue(lastDimensions);
-            }
-        }, "MainScreenDimensionsPreSaver").start();
+        saveDimensionRunning = true;
+        PlatformUtils.runLaterOnUIThread(1000, () -> {
+            saveDimensionRunning = false;
+            Main.syncUserData.mainWindowWidth = (long) getWidth();
+            Main.syncUserData.mainWindowHeight = (long) getHeight();
+            Main.syncUserData.mainWindowX = (long) getX();
+            Main.syncUserData.mainWindowY = (long) getY();
+            Main.syncUserData.mainWindowMaximized = isMaximized();
+        });
         
     }
     

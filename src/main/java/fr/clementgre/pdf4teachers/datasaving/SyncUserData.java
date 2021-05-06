@@ -1,14 +1,12 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.datasaving.settings.StringSetting;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class SyncUserData{
     
@@ -16,10 +14,21 @@ public class SyncUserData{
     // String, boolean, long, double, List, HashMap, LinkedHashMap
     
     @UserDataObject(path = "barsOrganization.leftBar")
-    public List<String> leftBarOrganization = Arrays.asList("files", "text");
+    public List<String> leftBarOrganization = Arrays.asList("files", "text", "grades", "paint");
     
     @UserDataObject(path = "barsOrganization.rightBar")
-    public List<String> rightBarOrganization = Arrays.asList("grades", "paint");
+    public List<String> rightBarOrganization = Collections.emptyList();
+    
+    @UserDataObject(path = "mainWindowSize.width")
+    public long mainWindowWidth = 1200;
+    @UserDataObject(path = "mainWindowSize.height")
+    public long mainWindowHeight = 675;
+    @UserDataObject(path = "mainWindowSize.x")
+    public long mainWindowX = -1;
+    @UserDataObject(path = "mainWindowSize.y")
+    public long mainWindowY = -1;
+    @UserDataObject(path = "mainWindowSize.fullScreen")
+    public boolean mainWindowMaximized = false;
     
     //////
     
