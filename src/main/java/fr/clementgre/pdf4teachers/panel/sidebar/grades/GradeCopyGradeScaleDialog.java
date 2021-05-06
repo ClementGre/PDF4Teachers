@@ -6,6 +6,10 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -26,20 +30,18 @@ public class GradeCopyGradeScaleDialog{
     
     public void show(){
         
-        Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("gradeTab.copyGradeScaleDialog.confirmation.title"));
-        dialog.setHeaderText(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.header"));
+        CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("gradeTab.copyGradeScaleDialog.confirmation.title"), TR.tr("gradeTab.copyGradeScaleDialog.confirmation.header"));
         
         CheckBox copyLocations = new CheckBox(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.copyLocations"));
         dialog.getDialogPane().setContent(copyLocations);
         
-        ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType yes = new ButtonType(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.actions.copySameFolder"), ButtonBar.ButtonData.OK_DONE);
-        ButtonType yesAll = new ButtonType(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.actions.copyAll"), ButtonBar.ButtonData.OTHER);
-        dialog.getButtonTypes().setAll(yesAll, yes, cancel);
+        dialog.addCancelButton(ButtonPosition.CLOSE);
+        dialog.addButton(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.actions.copySameFolder"), ButtonPosition.DEFAULT);
+        dialog.addButton(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.actions.copyAll"), ButtonPosition.OTHER_RIGHT);
         
-        Optional<ButtonType> option = dialog.showAndWait();
+        ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
         int copiedEditions = 0;
-        if(option.get() == yes){
+        if(option == ButtonPosition.DEFAULT){
             prepareCopyEditions();
             boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
@@ -50,7 +52,7 @@ public class GradeCopyGradeScaleDialog{
                     else if(result == 2) break;
                 }
             }
-        }else if(option.get() == yesAll){
+        }else if(option == ButtonPosition.OTHER_RIGHT){
             prepareCopyEditions();
             boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
@@ -61,10 +63,8 @@ public class GradeCopyGradeScaleDialog{
             }
         }else return;
         
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("gradeTab.copyGradeScaleDialog.completed.title"));
-        alert.setHeaderText(TR.tr("gradeTab.copyGradeScaleDialog.completed.header"));
-        alert.setContentText("(" + TR.tr("gradeTab.copyGradeScaleDialog.completed.details", copiedEditions) + ")");
-        alert.show();
+        new OKAlert(TR.tr("gradeTab.copyGradeScaleDialog.completed.title"),
+                TR.tr("gradeTab.copyGradeScaleDialog.completed.header"), "(" + TR.tr("gradeTab.copyGradeScaleDialog.completed.details", copiedEditions) + ")").show();
         
         MainWindow.filesTab.refresh();
         
@@ -100,24 +100,23 @@ public class GradeCopyGradeScaleDialog{
             }
             
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.title"));
-                dialog.setHeaderText(TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.header", file.getName()));
-                dialog.setContentText(TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.details"));
-                
-                ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.continue"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.continueAlways"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                
-                if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
-                else dialog.getButtonTypes().setAll(ignore, stopAll);
-                
-                Optional<ButtonType> option = dialog.showAndWait();
-                if(option.get() == stop){
+                CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.title"),
+                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.header", file.getName()), TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.details"));
+    
+                ButtonType ignore = alert.getButton(TR.tr("dialog.actionError.continue"), ButtonPosition.DEFAULT);
+                ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.continueAlways"), ButtonPosition.OTHER_RIGHT);
+                ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
+                ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
+    
+                if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else alert.getButtonTypes().setAll(ignore, stop);
+    
+                ButtonType option = alert.getShowAndWait();
+                if(option == stop){
                     return 1;
-                }else if(option.get() == stopAll){
+                }else if(option == stopAll){
                     return 2;
-                }else if(option.get() == ignoreAll){
+                }else if(option == ignoreAll){
                     ignoreAlreadyExist = true;
                 }
             }
@@ -143,26 +142,23 @@ public class GradeCopyGradeScaleDialog{
                 for(GradeElement grade : gradeElements){
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.format.format(grade.getTotal()) + ")";
                 }
+    
+                CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"),
+                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
                 
-                Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"));
-                dialog.setHeaderText(TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
+                ButtonType ignore = alert.getButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.DEFAULT);
+                ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
+                ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
+                ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
+    
+                if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else alert.getButtonTypes().setAll(ignore, stop);
+    
+                ButtonType option = alert.getShowAndWait();
+                if(option == stop) return 1;
+                else if(option == stopAll) return 2;
+                else if(option == ignoreAll) ignoreErase = true;
                 
-                ButtonType ignore = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType ignoreAll = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);
-                ButtonType stop = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType stopAll = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                
-                if(recursive) dialog.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
-                else dialog.getButtonTypes().setAll(ignore, stop);
-                
-                Optional<ButtonType> option = dialog.showAndWait();
-                if(option.get() == stop){
-                    return 1;
-                }else if(option.get() == stopAll){
-                    return 2;
-                }else if(option.get() == ignoreAll){
-                    ignoreErase = true;
-                }
             }
             
             otherElements = GradeElement.sortGradesBetweenNormalElements(otherElements);

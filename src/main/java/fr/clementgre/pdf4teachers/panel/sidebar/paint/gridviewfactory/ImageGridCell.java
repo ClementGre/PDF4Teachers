@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
@@ -110,7 +111,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                     PlatformUtils.openDirectory(item.getImageIdDirectory());
                 });
                 deleteItem.setOnAction((event) -> {
-                    if(DialogBuilder.showConfirmationDialog(true, TR.tr("dialog.confirmation.deleteFile.header", item.getImageIdFileName()))){
+                    if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", item.getImageIdFileName())).execute()){
                         if(new File(item.getImageId()).delete()){
                             gridView.removeItems(Collections.singletonList(item));
                         }else{

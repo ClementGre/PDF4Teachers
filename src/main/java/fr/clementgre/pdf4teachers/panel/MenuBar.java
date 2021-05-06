@@ -19,9 +19,13 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -33,7 +37,6 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -43,7 +46,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.HBox;
-import javafx.util.Duration;
 
 import java.awt.*;
 import java.io.File;
@@ -196,7 +198,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         file1Open.setOnAction((ActionEvent actionEvent) -> {
             
-            File[] files = DialogBuilder.showPDFFilesDialog(true);
+            File[] files = FIlesChooserManager.showPDFFilesDialog(true);
             if(files != null){
                 MainWindow.filesTab.openFiles(files);
                 if(files.length == 1){
@@ -206,7 +208,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
             
-            File directory = DialogBuilder.showDirectoryDialog(true);
+            File directory = FIlesChooserManager.showDirectoryDialog(true);
             if(directory != null){
                 MainWindow.filesTab.openFiles(new File[]{directory});
             }
@@ -254,8 +256,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         
         tools4DeleteAllEdits.setOnAction((ActionEvent e) -> {
-            Alert dialog = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("dialog.deleteEdits.confirmation.title"));
-            dialog.setHeaderText(TR.tr("dialog.deleteEdits.confirmation.header"));
+            CustomAlert dialog = new CustomAlert(Alert.AlertType.WARNING, TR.tr("dialog.deleteEdits.confirmation.title"), TR.tr("dialog.deleteEdits.confirmation.header"));
             
             float yesButSize = FilesUtils.convertOctetToMo(FilesUtils.getSize(new File(Main.dataFolder + "editions")));
             float yesSize = 0L;
@@ -265,28 +266,25 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             }
             yesSize = FilesUtils.convertOctetToMo((long) yesSize);
             
-            ButtonType cancel = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.CANCEL_CLOSE);
-            ButtonType yes = new ButtonType(TR.tr("actions.yes") + " (" + yesSize + "Mi" + TR.tr("data.byte") + ")", ButtonBar.ButtonData.OK_DONE);
-            ButtonType yesBut = new ButtonType(TR.tr("dialog.deleteEdits.confirmation.buttons.deleteAll") + " (" + yesButSize + "Mi" + TR.tr("data.byte") + ")", ButtonBar.ButtonData.OTHER);
-            dialog.getButtonTypes().setAll(yesBut, cancel, yes);
+            dialog.addNoButton(ButtonPosition.CLOSE);
+            dialog.addButton(TR.tr("actions.yes") + " (" + yesSize + "Mi" + TR.tr("data.byte") + ")", ButtonPosition.DEFAULT);
+            dialog.addButton(TR.tr("dialog.deleteEdits.confirmation.buttons.deleteAll") + " (" + yesButSize + "Mi" + TR.tr("data.byte") + ")", ButtonPosition.OTHER_RIGHT);
             
-            Optional<ButtonType> option = dialog.showAndWait();
-            float size = 0L;
-            if(option.get() == yes){
+            ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
+            float size;
+            if(option == ButtonPosition.DEFAULT){
                 if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.edition.clearEdit(false);
                 for(File file : MainWindow.filesTab.files.getItems()) Edition.getEditFile(file).delete();
                 size = yesSize;
-            }else if(option.get() == yesBut){
+            }else if(option == ButtonPosition.OTHER_RIGHT){
                 if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.edition.clearEdit(false);
                 for(File file : Objects.requireNonNull(new File(Main.dataFolder + "editions").listFiles()))
                     file.delete();
                 size = yesButSize;
             }else return;
             
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("dialog.deleteEdits.completed.title"));
-            alert.setHeaderText(TR.tr("dialog.deleteEdits.completed.header"));
-            alert.setContentText(TR.tr("dialog.deleteEdits.completed.details", String.valueOf(size)));
-            alert.show();
+            new OKAlert(TR.tr("dialog.deleteEdits.completed.title"),
+                    TR.tr("dialog.deleteEdits.completed.header"), TR.tr("dialog.deleteEdits.completed.details", String.valueOf(size))).show();
         });
         tools5SameNameEditions.setOnShowing((Event event) -> {
             tools5SameNameEditions.getItems().clear();
@@ -301,23 +299,21 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 
                 tools5SameNameEditions.getItems().add(item);
                 item.setOnAction((ActionEvent actionEvent) -> {
-                    Alert dialog = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
-                    dialog.setHeaderText(TR.tr("dialog.loadSameNameEdit.confirmation.header"));
+                    CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"), TR.tr("dialog.loadSameNameEdit.confirmation.header"));
                     
-                    ButtonType cancel = new ButtonType(TR.tr("actions.no"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType yes = new ButtonType(TR.tr("actions.yes"), ButtonBar.ButtonData.OK_DONE);
-                    ButtonType yesAll = new ButtonType(TR.tr("dialog.loadSameNameEdit.confirmation.buttons.yesForAllSameFolder"), ButtonBar.ButtonData.OTHER);
-                    dialog.getButtonTypes().setAll(cancel, yes, yesAll);
+                    dialog.addNoButton(ButtonPosition.CLOSE);
+                    dialog.addYesButton(ButtonPosition.DEFAULT);
+                    dialog.addButton(TR.tr("dialog.loadSameNameEdit.confirmation.buttons.yesForAllSameFolder"), ButtonPosition.OTHER_RIGHT);
                     
-                    Optional<ButtonType> option = dialog.showAndWait();
-                    if(option.get() == yes){
+                    ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
+                    if(option == ButtonPosition.DEFAULT){
                         if(MainWindow.mainScreen.hasDocument(true)){
                             
                             MainWindow.mainScreen.document.edition.clearEdit(false);
                             Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
                             MainWindow.mainScreen.document.loadEdition();
                         }
-                    }else if(option.get() == yesAll){
+                    }else if(option == ButtonPosition.OTHER_RIGHT){
                         if(MainWindow.mainScreen.hasDocument(true)){
                             
                             MainWindow.mainScreen.document.edition.clearEdit(false);
@@ -331,14 +327,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                                     if(fromEditFile.exists()){
                                         Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
                                     }else{
-                                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("dialog.loadSameNameEdit.fileNotFound.title"));
-                                        alert.setHeaderText(TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile())));
-                                        ButtonType ok = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.OK_DONE);
-                                        ButtonType cancelAll = new ButtonType(TR.tr("dialog.actionError.stopAll"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                                        alert.getButtonTypes().setAll(ok, cancelAll);
-                                        
-                                        Optional<ButtonType> option2 = alert.showAndWait();
-                                        if(option2.get() == cancelAll) return;
+                                        WrongAlert alert = new WrongAlert(TR.tr("dialog.loadSameNameEdit.fileNotFound.title"),
+                                                TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile())), true);
+                                        if(alert.execute()) return;
                                     }
                                 }
                             }

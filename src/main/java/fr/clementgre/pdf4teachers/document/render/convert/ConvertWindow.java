@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -8,15 +9,15 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.LoadingAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.DirectoryChooser;
@@ -26,10 +27,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -320,7 +318,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             
             // Definition COLUMN
             VBox definitionColumn = generateInfo(TR.tr("convertWindow.options.definition.title"), false);
-            definition = new ComboBox<>(definitions);
+            definition = new ScaledComboBox<>(definitions);
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
@@ -329,7 +327,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             // Format COLUMN
             
             VBox formatColumn = generateInfo(TR.tr("convertWindow.options.format.title"), false);
-            format = new ComboBox<>(formats);
+            format = new ScaledComboBox<>(formats);
             format.setEditable(true);
             PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
@@ -474,51 +472,46 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 if(convertDirs || (!docName.getText().isEmpty() && !docName.getText().equalsIgnoreCase(".PDF"))){
                     startConversion();
                 }else{
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                    alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.header"));
-                    alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.details"));
-                    alert.show();
+                    new WrongAlert(TR.tr("convertWindow.dialog.incorrectOptions.title"), TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.header"),
+                            TR.tr("convertWindow.dialog.incorrectOptions.fileWithoutName.details"), false).show();
                 }
             }else{
-                Alert alert = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("convertWindow.dialog.incorrectOptions.title"));
-                alert.setHeaderText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.header"));
-                alert.setContentText(TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.details"));
-                alert.show();
+                new WrongAlert(TR.tr("convertWindow.dialog.incorrectOptions.title"), TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.header"),
+                        TR.tr("convertWindow.dialog.incorrectOptions.0pxPage.details"), false).show();
             }
         }
         
-        Alert loadingAlert;
+        private LoadingAlert loadingAlert;
         private int converted;
-        private int total;
+        private boolean shouldStop = false;
         
         private void startConversion(){
             
             // Wait Dialog
             
-            loadingAlert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("convertWindow.dialog.loading.title"));
+            loadingAlert = new LoadingAlert(true, TR.tr("convertWindow.dialog.loading.title"), TR.tr("convertWindow.dialog.loading.title"));
             converted = 0;
-            
-            loadingAlert.setWidth(600);
-            loadingAlert.setHeaderText(TR.tr("dialogs.asyncAction.header"));
-            
-            VBox pane = new VBox();
-            Label currentDocument = new Label();
-            ProgressBar loadingBar = new ProgressBar();
-            loadingBar.setMinHeight(10);
-            VBox.setMargin(loadingBar, new Insets(10, 0, 0, 0));
-            pane.getChildren().addAll(currentDocument, loadingBar);
-            loadingAlert.getDialogPane().setContent(pane);
-            loadingAlert.show();
-            
+    
+            ConvertRenderer renderer = new ConvertRenderer(this);
+            loadingAlert.showAsync(() -> {
+                shouldStop = true; renderer.stop();
+            });
+           
             new Thread(() -> {
                 try{
-                    ConvertRenderer renderer = new ConvertRenderer(this);
-                    total = renderer.getFilesLength();
-                    ArrayList<ConvertedFile> convertedFiles = renderer.start(value -> {
+                    loadingAlert.setTotal(renderer.getFilesLength());
+                    
+                    // entry : String current document name | Double document internal advancement (range 0 ; 1)
+                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement-> {
                         Platform.runLater(() -> {
-                            currentDocument.setText(value + " (" + converted + "/" + total + ")");
-                            loadingBar.setProgress(converted / ((float) total));
-                            converted++;
+                            if(documentAndAdvancement.getKey().isBlank()){
+                                loadingAlert.setProgress(-1);
+                                loadingAlert.setCurrentTaskText("");
+                            }else{
+                                loadingAlert.setProgress(converted + Math.max(0, documentAndAdvancement.getValue()));
+                                loadingAlert.setCurrentTaskText(documentAndAdvancement.getKey());
+                            }
+                            if(documentAndAdvancement.getValue() == -1) converted++;
                         });
                     });
                     Platform.runLater(() -> {
@@ -528,19 +521,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                     e.printStackTrace();
                     Platform.runLater(() -> {
                         loadingAlert.close();
-                        // Error dialog
-                        Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("convertWindow.dialog.error.title"));
-                        alert.setHeaderText(TR.tr("convertWindow.dialog.error.header"));
-                        
-                        TextArea textArea = new TextArea(e.getMessage());
-                        textArea.setEditable(false);
-                        textArea.setWrapText(true);
-                        GridPane expContent = new GridPane();
-                        expContent.setMaxWidth(Double.MAX_VALUE);
-                        expContent.add(new Label(TR.tr("convertWindow.dialog.error.details")), 0, 0);
-                        expContent.add(textArea, 0, 1);
-                        alert.getDialogPane().setExpandableContent(expContent);
-                        alert.showAndWait();
+                        new ErrorAlert(TR.tr("convertWindow.dialog.error.header"), e.getMessage(), false).showAndWait();
                     });
                 }
             }, "conversion").start();
@@ -550,7 +531,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
         private void end(ArrayList<ConvertedFile> files){
             loadingAlert.close();
             close();
-            callBack.call(files);
+            if(!shouldStop) callBack.call(files);
         }
         
     }

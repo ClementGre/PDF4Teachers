@@ -18,7 +18,7 @@
     -fx-padding: 15;
 }
 .rootPane .label, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button{
-    -fx-font: 14 Marianne;
+    -fx-font: 13 Marianne;
     -fx-wrap-text: true;
 }
 .rootPane .check-box > .box{
@@ -38,5 +38,5 @@
     -fx-alignment: CENTER_RIGHT;
 }
 .buttonBox .button{
-    -fx-font: 14 Marianne;
+    -fx-font: 13 Marianne;
 }

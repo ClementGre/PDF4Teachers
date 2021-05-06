@@ -11,16 +11,13 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
 
-import java.awt.Image;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -320,7 +317,7 @@ public class Edition{
             Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
             e.printStackTrace();
-            DialogBuilder.showErrorAlert(DialogBuilder.unableToCopyFileHeader(fromEdit.getAbsolutePath(), destEdit.getAbsolutePath(), true), e.getMessage(), false);
+            new ErrorAlert(ErrorAlert.unableToCopyFileHeader(fromEdit.getAbsolutePath(), destEdit.getAbsolutePath(), true), e.getMessage(), false).showAndWait();
         }
         fromEdit.delete();
     }

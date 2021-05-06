@@ -6,16 +6,13 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 
 import java.io.File;
@@ -37,27 +34,18 @@ public class DirFilterListCell extends ListCell<String>{
             setStyle(null);
         }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere")) || item.equals(TR.tr("galleryWindow.filterAndEditCombo.favourites"))){
             // FAVORITES AND
-            HBox root = new HBox();
-            Label text = new Label(item);
-            text.setStyle("-fx-font-size: 12;");
-    
-            PaneUtils.setHBoxPosition(text, 0, 26, 0);
-            
-            root.getChildren().addAll(text);
-            
-            PaneUtils.setupScaling(root, true, false);
-            setGraphic(root);
-            setText(null);
-            setStyle(null);
+            setGraphic(null);
+            setText(item);
+            setStyle("-fx-font-size: "+ (12 * MainWindow.TEMP_SCALE) + ";");
             
         }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"))){
             // ADD BUTTON
             Button add = new Button(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
-            PaneUtils.setHBoxPosition(add, 0, 30, 10, 0);
+            PaneUtils.setHBoxPosition(add, 0, 30, 10, 2);
     
             add.setOnMousePressed((e) -> {
                 PlatformUtils.runLaterOnUIThread(100, () -> {
-                    File dir = DialogBuilder.showDirectoryDialog(false, gallery);
+                    File dir = FIlesChooserManager.showDirectoryDialog(false, gallery);
                     if(dir != null){
                         PlatformUtils.runLaterOnUIThread(100, () -> {
                             GalleryManager.addSavePath(dir.getAbsolutePath());
@@ -71,8 +59,10 @@ public class DirFilterListCell extends ListCell<String>{
             HBox root = new HBox();
             root.getChildren().addAll(new HBoxSpacer(), add, new HBoxSpacer());
     
-            if(MainWindow.TEMP_SCALE == 1) root.setStyle("-fx-padding: -4 0;");
-            else PaneUtils.setupScaling(root, true, false);
+            if(MainWindow.TEMP_SCALE != 1){
+                PaneUtils.setupScaling(root, true, false);
+            }
+            
             setGraphic(root);
             setText(null);
             setStyle("-fx-background-color: transparent;");
@@ -82,7 +72,6 @@ public class DirFilterListCell extends ListCell<String>{
             Label text = new Label(FilesUtils.getPathReplacingUserHome(item));
             text.setStyle("-fx-font-size: 12;");
             Button delete = new Button();
-    
             delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "red", 0, 14, 14));
             delete.setStyle("-fx-background-color: transparent;");
             delete.setOnMouseEntered((e) -> delete.setStyle(null));

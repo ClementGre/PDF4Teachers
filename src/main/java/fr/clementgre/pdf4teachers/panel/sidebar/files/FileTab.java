@@ -7,6 +7,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
@@ -189,14 +191,13 @@ public class FileTab extends SideTab{
         private boolean isRecursive(){
             if(alreadyAsked) return recursive;
             
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"));
-            alert.setHeaderText(TR.tr("dialog.confirmation.openRecursively.header"));
-            alert.setContentText(TR.tr("dialog.confirmation.openRecursively.details"));
+            CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"),
+                    TR.tr("dialog.confirmation.openRecursively.header"), TR.tr("dialog.confirmation.openRecursively.details"));
             
-            Optional<ButtonType> result = alert.showAndWait();
-            if(result.isEmpty()) return false;
-            recursive = result.get() == ButtonType.OK;
+            alert.addIgnoreButton(ButtonPosition.CLOSE);
+            alert.addButton(TR.tr("actions.openAll"), ButtonPosition.DEFAULT);
             
+            recursive = alert.getShowAndWaitIsDefaultButton();
             alreadyAsked = true;
             return recursive;
         }

@@ -17,6 +17,7 @@ import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -46,10 +47,10 @@ public class GalleryWindow extends Stage{
         Scene scene = new Scene(root);
     
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setWidth(1200);
-        setHeight(800);
-        setMinWidth(700);
-        setMinHeight(400);
+        setWidth(1200*MainWindow.TEMP_SCALE);
+        setHeight(800*MainWindow.TEMP_SCALE);
+        setMinWidth(700*MainWindow.TEMP_SCALE);
+        setMinHeight(400*MainWindow.TEMP_SCALE);
         Main.window.centerWindowIntoMe(this);
         setTitle(TR.tr("galleryWindow.title"));
         setScene(scene);
@@ -63,8 +64,6 @@ public class GalleryWindow extends Stage{
             MainWindow.paintTab.galleryWindow = null;
         });
         
-        list.prefHeightProperty().bind(heightProperty());
-        list.prefWidthProperty().bind(widthProperty());
         
         setup();
         Main.window.centerWindowIntoMe(this);
@@ -80,7 +79,9 @@ public class GalleryWindow extends Stage{
     private void setupSettings(){
         
         list.setupSortManager(sortPanel, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_NAME, ShapesGridView.SORT_FILE_EDIT_TIME, ShapesGridView.SORT_SIZE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
-
+        VBox.setVgrow(list, Priority.ALWAYS);
+        root.setFillWidth(true);
+        
         filter.setCellFactory(param -> new DirFilterListCell(this));
         filter.setVisibleRowCount(10);
         updateComboBoxItems();
@@ -122,10 +123,6 @@ public class GalleryWindow extends Stage{
     }
     private void setup(){
         setupSettings();
-
-        if(Main.isOSX()){
-            MenuBar menuBar = MainWindow.menuBar;
-        }
 
         root.getChildren().addAll(settings, list);
         list.addItems(getImages());

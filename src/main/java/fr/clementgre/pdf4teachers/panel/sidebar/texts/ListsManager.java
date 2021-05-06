@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -42,32 +43,25 @@ public class ListsManager{
         });
         
         saveListBtn.setOnAction(event -> {
-            TextInputDialog alert = new TextInputDialog(TR.tr("textTab.lists.defaultName"));
-            DialogBuilder.setupDialog(alert);
+            TextInputAlert inputAlert = new TextInputAlert(TR.tr("textTab.lists.save.dialog.title"), TR.tr("textTab.lists.save.dialog.header"), TR.tr("textTab.lists.save.dialog.details"));
+            inputAlert.setText(TR.tr("textTab.lists.defaultName"));
+            inputAlert.addOKButton(ButtonPosition.DEFAULT);
+            inputAlert.addCancelButton(ButtonPosition.CLOSE);
             
-            alert.setTitle(TR.tr("textTab.lists.save.dialog.title"));
-            alert.setHeaderText(TR.tr("textTab.lists.save.dialog.header"));
-            alert.setContentText(TR.tr("textTab.lists.save.dialog.details"));
-            
-            Optional<String> result = alert.showAndWait();
-            if(result.isPresent()){
-                if(!result.get().isEmpty()){
-                    if(TextTreeSection.lists.containsKey(result.get())){
-                        Alert alert2 = DialogBuilder.getAlert(Alert.AlertType.WARNING, TR.tr("textTab.lists.save.alreadyExistDialog.title"));
-                        alert2.setHeaderText(TR.tr("textTab.lists.save.alreadyExistDialog.header"));
-                        
-                        ButtonType rename = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.NO);
-                        ButtonType erase = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.APPLY);
-                        alert2.getButtonTypes().setAll(rename, erase);
-                        
-                        Optional<ButtonType> result2 = alert2.showAndWait();
-                        if(result2.get() == erase){
-                            saveList(result.get());
-                        }else{
-                            saveListBtn.fire();
-                        }
-                    }else saveList(result.get());
-                }
+            if(inputAlert.getShowAndWaitIsDefaultButton() && !inputAlert.getText().isBlank()){
+                if(TextTreeSection.lists.containsKey(inputAlert.getText())){
+                    CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("textTab.lists.save.alreadyExistDialog.title"),
+                            TR.tr("textTab.lists.save.alreadyExistDialog.header"));
+                    
+                    alert.addButton(TR.tr("dialog.actionError.rename"), ButtonPosition.CLOSE);
+                    alert.addButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.DEFAULT);
+                    
+                    if(alert.getShowAndWaitIsCancelButton()){
+                        saveListBtn.fire();
+                    }else{
+                        saveList(inputAlert.getText());
+                    }
+                }else saveList(inputAlert.getText());
             }
         });
     }
@@ -93,20 +87,18 @@ public class ListsManager{
                 menu.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     
-                    Alert alert = DialogBuilder.getAlert(Alert.AlertType.CONFIRMATION, TR.tr("textTab.lists.actionDialog.title"));
-                    alert.setHeaderText(TR.tr("textTab.lists.actionDialog.header"));
-                    alert.setContentText(TR.tr("textTab.lists.actionDialog.details"));
+                    CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("textTab.lists.actionDialog.title"),
+                            TR.tr("textTab.lists.actionDialog.header"), TR.tr("textTab.lists.actionDialog.details"));
                     
-                    ButtonType cancel = new ButtonType(TR.tr("actions.cancel"), ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType load = new ButtonType(TR.tr("actions.load"), ButtonBar.ButtonData.OK_DONE);
-                    ButtonType loadReplace = new ButtonType(TR.tr("Vider et charger"), ButtonBar.ButtonData.OK_DONE);
-                    ButtonType delete = new ButtonType(TR.tr("actions.delete"), ButtonBar.ButtonData.OTHER);
-                    alert.getButtonTypes().setAll(cancel, loadReplace, load, delete);
+                    alert.addCancelButton(ButtonPosition.CLOSE);
+                    ButtonType load =  alert.addButton(TR.tr("actions.load"), ButtonPosition.DEFAULT);
+                    ButtonType loadReplace = alert.addButton(TR.tr("Vider et charger"), ButtonPosition.OTHER_LEFT);
+                    ButtonType delete = alert.addButton(TR.tr("actions.delete"), ButtonPosition.OTHER_LEFT);
                     
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if(result.get() == load) loadList(list.getValue(), false);
-                    else if(result.get() == loadReplace) loadList(list.getValue(), true);
-                    else if(result.get() == delete) deleteList(list.getKey());
+                    ButtonType result = alert.getShowAndWait();
+                    if(result == load) loadList(list.getValue(), false);
+                    else if(result == loadReplace) loadList(list.getValue(), true);
+                    else if(result == delete) deleteList(list.getKey());
                     
                 });
             }
@@ -130,27 +122,22 @@ public class ListsManager{
             }
         }
         if(list.size() == 0){
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("textTab.lists.save.voidListDialog.title"));
-            alert.setHeaderText(TR.tr("textTab.lists.save.voidListDialog.header"));
-            alert.setContentText(TR.tr("textTab.lists.save.voidListDialog.details"));
-            alert.show();
+            new WrongAlert(Alert.AlertType.ERROR, TR.tr("textTab.lists.save.voidListDialog.title"),
+                    TR.tr("textTab.lists.save.voidListDialog.header"), TR.tr("textTab.lists.save.voidListDialog.details"), false).showAndWait();
             return;
         }
         TextTreeSection.lists.put(listName, list);
         
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("textTab.lists.save.completedDialog.title"));
-        alert.setHeaderText(TR.tr("textTab.lists.save.completedDialog.header"));
-        alert.setContentText(TR.tr("textTab.lists.save.completedDialog.details"));
-        alert.show();
+        new OKAlert(TR.tr("textTab.lists.save.completedDialog.title"),
+                TR.tr("textTab.lists.save.completedDialog.header"), TR.tr("textTab.lists.save.completedDialog.details")).showAndWait();
         ListsManager.setupMenus();
     }
     
     public void deleteList(String listName){
         TextTreeSection.lists.remove(listName);
         
-        Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("textTab.lists.deleteCompletedDialog.title"));
-        alert.setHeaderText(TR.tr("textTab.lists.deleteCompletedDialog.header", listName));
-        alert.show();
+        new OKAlert(TR.tr("textTab.lists.deleteCompletedDialog.title"),
+                TR.tr("textTab.lists.deleteCompletedDialog.header", listName)).show();
         ListsManager.setupMenus();
     }
     

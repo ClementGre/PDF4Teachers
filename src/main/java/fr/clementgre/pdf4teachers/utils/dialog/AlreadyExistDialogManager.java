@@ -3,6 +3,8 @@ package fr.clementgre.pdf4teachers.utils.dialog;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
@@ -10,37 +12,44 @@ import javafx.scene.control.ButtonType;
 import java.io.File;
 import java.util.Optional;
 
-public class AlreadyExistDialog{
+public class AlreadyExistDialogManager{
 
     private boolean alwaysSkip = false;
     private boolean alwaysOverwrite = false;
     private boolean alwaysRename = false;
-    public Alert alert;
+    public CustomAlert alert;
 
     private ButtonType stopAll;
     private ButtonType skip;
     private ButtonType skipAlways;
-    private ButtonType rename = new ButtonType(TR.tr("dialog.actionError.rename"), ButtonBar.ButtonData.YES);
+    private ButtonType rename;
     private ButtonType renameAlways;
-    private ButtonType overwrite = new ButtonType(TR.tr("dialog.actionError.overwrite"), ButtonBar.ButtonData.OK_DONE);
+    private ButtonType overwrite;
     private ButtonType overwriteAlways;
 
     private boolean recursive;
     private int recursions = 0;
 
-    public AlreadyExistDialog(boolean recursive){
+    public AlreadyExistDialogManager(boolean recursive){
         this.recursive = recursive;
-        alert = DialogBuilder.getAlert(Alert.AlertType.ERROR, TR.tr("dialog.file.alreadyExist.title"));
-
+        alert = new CustomAlert(Alert.AlertType.ERROR, TR.tr("dialog.file.alreadyExist.title"));
+    
+        stopAll = alert.getButton(TR.tr("dialog.actionError.cancelAll"), ButtonPosition.CLOSE);
+        overwrite = alert.getButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.OTHER_RIGHT);
+        
         if(recursive){
-            stopAll = new ButtonType(TR.tr("dialog.actionError.cancelAll"), ButtonBar.ButtonData.OK_DONE);
-            skip = new ButtonType(TR.tr("dialog.actionError.skip"), ButtonBar.ButtonData.YES);
-            skipAlways = new ButtonType(TR.tr("dialog.actionError.skipAlways"), ButtonBar.ButtonData.YES);
-            renameAlways = new ButtonType(TR.tr("dialog.actionError.renameAlways"), ButtonBar.ButtonData.YES);
-            overwriteAlways = new ButtonType(TR.tr("dialog.actionError.overwriteAlways"), ButtonBar.ButtonData.OK_DONE);
+            skip = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.DEFAULT);
+            skipAlways = alert.getButton(TR.tr("dialog.actionError.skipAlways"), ButtonPosition.OTHER_RIGHT);
+            rename = alert.getButton(TR.tr("dialog.actionError.rename"), ButtonPosition.OTHER_RIGHT);
+            renameAlways = alert.getButton(TR.tr("dialog.actionError.renameAlways"), ButtonPosition.OTHER_RIGHT);
+            overwriteAlways = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
 
             alert.getButtonTypes().setAll(overwrite, rename, skip, stopAll);
-        }else alert.getButtonTypes().setAll(overwrite, rename, ButtonType.CANCEL);
+        }else{
+            rename = alert.getButton(TR.tr("dialog.actionError.rename"), ButtonPosition.DEFAULT);
+            
+            alert.getButtonTypes().setAll(overwrite, rename, stopAll);
+        }
     }
 
     public enum ResultType{
@@ -58,26 +67,26 @@ public class AlreadyExistDialog{
         if(alwaysRename) return ResultType.RENAME;
 
         if(recursions == 2)
-            alert.getButtonTypes().setAll(overwrite, rename, renameAlways, skip, skipAlways, overwriteAlways, stopAll);
+            alert.getButtonTypes().setAll(overwriteAlways, overwrite, renameAlways, rename, skipAlways, skip, stopAll);
 
         alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
         alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
 
-        Optional<ButtonType> option = alert.showAndWait();
-        if(option.isPresent()){
-            if(option.get() == skip){
+        ButtonType option = alert.getShowAndWait();
+        if(option != null){
+            if(option == skip){
                 return ResultType.SKIP;
-            }else if(option.get() == skipAlways){
+            }else if(option == skipAlways){
                 alwaysSkip = true;
                 return ResultType.SKIP;
-            }else if(option.get() == overwrite){
+            }else if(option == overwrite){
                 return ResultType.ERASE;
-            }else if(option.get() == overwriteAlways){
+            }else if(option == overwriteAlways){
                 alwaysOverwrite = true;
                 return ResultType.ERASE;
-            }else if(option.get() == rename){
+            }else if(option == rename){
                 return ResultType.RENAME;
-            }else if(option.get() == renameAlways){
+            }else if(option == renameAlways){
                 alwaysRename = true;
                 return ResultType.RENAME;
             }else{

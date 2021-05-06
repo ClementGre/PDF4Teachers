@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -67,7 +68,7 @@ public class GradeSettingsWindow extends Stage{
         private FontComboBox fontCombo = new FontComboBox();
         private ToggleButton boldBtn = new ToggleButton();
         private ToggleButton itBtn = new ToggleButton();
-        private ComboBox<Double> sizeCombo = new ComboBox<>(FontUtils.sizes);
+        private ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
         private SyncColorPicker colorPicker = new SyncColorPicker();
         private CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
         private CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));

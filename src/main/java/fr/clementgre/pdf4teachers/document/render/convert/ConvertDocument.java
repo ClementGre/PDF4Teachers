@@ -2,9 +2,8 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialog;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import javafx.scene.control.Alert;
+import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,16 +15,15 @@ public class ConvertDocument{
     public ConvertDocument(){
         convertWindow = new ConvertWindow(null, (convertedFiles) -> {
             
-            boolean eraseAll = false;
             int converted = 0;
-            AlreadyExistDialog alreadyExistDialog = new AlreadyExistDialog(true);
+            AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(true);
             for(ConvertedFile file : convertedFiles){
                 
                 if(file.file.exists()){
-                    AlreadyExistDialog.ResultType result = alreadyExistDialog.showAndWait(file.file);
+                    AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file.file);
                     boolean doBreak = false;
                     switch(result){
-                        case RENAME -> file.file = AlreadyExistDialog.rename(file.file);
+                        case RENAME -> file.file = AlreadyExistDialogManager.rename(file.file);
                         case STOP -> {
                             try{
                                 file.document.close();
@@ -63,8 +61,8 @@ public class ConvertDocument{
                 MainWindow.filesTab.openFiles(new File[]{file.file});
                 converted++;
             }
-            
-            Alert alert = DialogBuilder.getAlert(Alert.AlertType.INFORMATION, TR.tr("convertWindow.dialog.completed.title"));
+    
+            OKAlert alert = new OKAlert(TR.tr("convertWindow.dialog.completed.title"));
             
             if(converted == 0) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.noDocument"));
             else if(converted == 1) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.oneDocument"));

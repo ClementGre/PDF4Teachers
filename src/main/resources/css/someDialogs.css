@@ -1,0 +1,6 @@
+.text-input > Pane {
+    -fx-background-color: black !important;
+}
+.text-input:focused > Pane {
+    -fx-background-color: white !important;
+}

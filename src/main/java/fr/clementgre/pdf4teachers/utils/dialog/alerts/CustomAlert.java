@@ -11,12 +11,12 @@ import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
-
 import java.util.Optional;
 
 public class CustomAlert extends Alert{
@@ -69,6 +69,53 @@ public class CustomAlert extends Alert{
         if(result.isEmpty()) return null;
         else return result.get();
     }
+    public ButtonPosition getShowAndWaitGetButtonPosition(ButtonPosition defaultPosition){
+        Optional<ButtonType> result = showAndWait();
+        if(result.isEmpty()) return defaultPosition;
+        ButtonPosition pos = buttonDataToPosition(result.get().getButtonData(), true);
+        if(pos == null) return defaultPosition;
+        else return pos;
+    }
+    // LINUX: NO - YES - BACK
+    // WINDOWS: BACK - YES - NO
+    // OSX: NO - YES - APPLY
+    public ButtonPosition buttonDataToPosition(ButtonBar.ButtonData data, boolean acceptNull){
+        if(data == ButtonBar.ButtonData.YES) return ButtonPosition.DEFAULT;
+        else if(data == ButtonBar.ButtonData.NO) return ButtonPosition.CLOSE;
+        else if(data == ButtonBar.ButtonData.LEFT) return ButtonPosition.OTHER_LEFT;
+        else{
+            if(!acceptNull) return ButtonPosition.OTHER_RIGHT;
+            else if(Main.isOSX() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
+            else if(data == ButtonData.BACK_PREVIOUS) return ButtonPosition.OTHER_RIGHT;
+        }
+        return null;
+    }
+    public ButtonData buttonPositionToData(ButtonPosition pos){
+        if(pos == ButtonPosition.DEFAULT) return ButtonBar.ButtonData.YES;
+        else if(pos == ButtonPosition.CLOSE) return ButtonBar.ButtonData.NO;
+        else if(pos == ButtonPosition.OTHER_LEFT) return ButtonBar.ButtonData.LEFT;
+        else{ // OTHER_RIGHT
+            if(Main.isOSX()) return ButtonBar.ButtonData.APPLY;
+            else return ButtonData.BACK_PREVIOUS;
+        }
+    }
+    
+    public boolean getShowAndWaitIsDefaultButton(){
+        Optional<ButtonType> result = showAndWait();
+        if(result.isEmpty()) return false;
+        else return result.get().getButtonData().isDefaultButton();
+    }
+    public boolean getShowAndWaitIsCancelCloseButton(){
+        Optional<ButtonType> result = showAndWait();
+        if(result.isEmpty()) return true;
+        else return result.get().getButtonData().isCancelButton();
+    }
+    public boolean getShowAndWaitIsCancelButton(){
+        Optional<ButtonType> result = showAndWait();
+        System.out.println(result);
+        if(result.isEmpty()) return false;
+        else return result.get().getButtonData().isCancelButton();
+    }
     public void callBackShow(CallBackArg<ButtonType> callback){
         new Thread(() -> callback.call(getShowAndWait()), "CustomAlertThread").start();
     }
@@ -81,11 +128,6 @@ public class CustomAlert extends Alert{
     
     // BUTTONS PRESETS
     
-    public ButtonType addCustomButton(String text, ButtonBar.ButtonData data){
-        ButtonType button = new ButtonType(text, data);
-        addButtonType(button);
-        return button;
-    }
     public ButtonType addLeftButton(String text){
         return addButton(text, ButtonPosition.OTHER_LEFT);
     }
@@ -99,19 +141,21 @@ public class CustomAlert extends Alert{
         return addButton(text, ButtonPosition.CLOSE);
     }
     
+    public ButtonType addButton(String text, ButtonBar.ButtonData data){
+        ButtonType button = new ButtonType(text, data);
+        addButtonType(button);
+        return button;
+    }
     public ButtonType addButton(String text, ButtonPosition pos){
-        if(pos == ButtonPosition.DEFAULT){
-            return addCustomButton(text, ButtonBar.ButtonData.OK_DONE);
-        }else if(pos == ButtonPosition.CLOSE){
-            return addCustomButton(text, ButtonBar.ButtonData.NO);
-        }else if(pos == ButtonPosition.OTHER_LEFT){
-            return addCustomButton(text, ButtonBar.ButtonData.LEFT);
-        }else{ // ButtonPosition.OTHER_RIGHT
-            return addCustomButton(text, ButtonBar.ButtonData.APPLY);
-        }
+        ButtonType button = getButton(text, pos);
+        addButtonType(button);
+        return button;
+    }
+    public ButtonType getButton(String text, ButtonPosition pos){
+        return new ButtonType(text, buttonPositionToData(pos));
     }
     public ButtonType addSmallSpace(){
-        return addCustomButton("", ButtonBar.ButtonData.SMALL_GAP);
+        return addButton("", ButtonBar.ButtonData.SMALL_GAP);
     }
     
     public ButtonType addOKButton(ButtonPosition pos){
@@ -143,13 +187,6 @@ public class CustomAlert extends Alert{
     }
     public ButtonType addConfirmButton(ButtonPosition pos){
         return addButton(TR.tr("actions.confirm"), pos);
-    }
-    
-    public enum ButtonPosition{
-        DEFAULT,
-        CLOSE,
-        OTHER_RIGHT,
-        OTHER_LEFT
     }
     
 }

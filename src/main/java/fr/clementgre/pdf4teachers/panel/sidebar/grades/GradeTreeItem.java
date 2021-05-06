@@ -148,7 +148,7 @@ public class GradeTreeItem extends TreeItem<String>{
         
         // TEXTS
         
-        HBox.setMargin(name, new Insets(0, 0, 0, 5));
+        HBox.setMargin(name, new Insets(0, 10, 0, 5));
         name.textProperty().bind(core.nameProperty());
         
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
@@ -193,8 +193,8 @@ public class GradeTreeItem extends TreeItem<String>{
         
         pane.setAlignment(Pos.CENTER);
         pane.setPrefHeight(18);
-        
         name.textProperty().bind(core.nameProperty());
+        HBox.setMargin(name, new Insets(0, 10, 0, 0));
         
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
         value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.format.format(core.getValue())), core.valueProperty()));
