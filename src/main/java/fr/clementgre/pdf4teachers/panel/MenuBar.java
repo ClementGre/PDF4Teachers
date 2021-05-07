@@ -46,6 +46,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -368,11 +369,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
                 
-                MenuItem about = new MenuItem(TR.tr("menuBar.osx.about", Main.APP_NAME));
+                MenuItem about = tk.createAboutMenuItem("");
+                about.setText(TR.tr("menuBar.osx.about", Main.APP_NAME));
                 about.setOnAction((e) -> Main.showAboutWindow());
     
-                MenuItem settings = new MenuItem(TR.tr("menuBar.settings"));
-                settings.setOnAction((e) -> new SettingsWindow());
+                MenuItem settings = tk.createAboutMenuItem("", (e) -> new SettingsWindow());
+                settings.setText(TR.tr("menuBar.settings"));
+                settings.setAccelerator(new KeyCodeCombination(KeyCode.COMMA, KeyCombination.META_DOWN));
                 
                 MenuItem hide = tk.createHideMenuItem("");
                 hide.setText(TR.tr("menuBar.osx.hide", Main.APP_NAME));
@@ -395,14 +398,43 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             
             getMenus().addAll(file, tools, help, settings, about);
     
-            for(Menu menu : getMenus()){
-                if(!menu.getItems().isEmpty()) menu.setStyle("-fx-padding: 5 7 5 7;");
-                else menu.setStyle("-fx-padding: 0;");
-            }
+            setupMenus();
+            Main.settings.menuForceOpenDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
+                setupMenus();
+            });
         }
         
     }
     
+    public void setupMenus(){
+        for(Menu menu : getMenus()){
+            if(!menu.getItems().isEmpty()){
+                menu.setStyle("-fx-padding: 5 7 5 7;");
+                if(Main.settings.menuForceOpenDelay.getValue() == 0){
+                    menu.setOnShowing((e) -> {
+                        for(int i = 50; i <= 500; i+=50){
+                            PlatformUtils.runLaterOnUIThread(i, () -> {
+                                for(Menu m : getMenus()){
+                                    if(m.isShowing()) return;
+                                }
+                                menu.show();
+                            });
+                        }
+                    });
+                }else if(Main.settings.menuForceOpenDelay.getValue() > 0){
+                    menu.setOnShowing((e) -> {
+                        PlatformUtils.runLaterOnUIThread(Main.settings.menuForceOpenDelay.getValue(), () -> {
+                            for(Menu m : getMenus()){
+                                if(m.isShowing()) return;
+                            }
+                            menu.show();
+                        });
+                    });
+                }
+            }
+            else menu.setStyle("-fx-padding: 0;");
+        }
+    }
     
     
     public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc){
