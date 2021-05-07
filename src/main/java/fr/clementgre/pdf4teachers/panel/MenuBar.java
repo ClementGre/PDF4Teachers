@@ -412,6 +412,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 menu.setStyle("-fx-padding: 5 7 5 7;");
                 if(Main.settings.menuForceOpenDelay.getValue() == 0){
                     menu.setOnShowing((e) -> {
+                        Platform.runLater(menu::show);
+                    });
+                }else if(Main.settings.menuForceOpenDelay.getValue() == 1){
+                    menu.setOnShowing((e) -> {
                         for(int i = 50; i <= 500; i+=50){
                             PlatformUtils.runLaterOnUIThread(i, () -> {
                                 for(Menu m : getMenus()){
