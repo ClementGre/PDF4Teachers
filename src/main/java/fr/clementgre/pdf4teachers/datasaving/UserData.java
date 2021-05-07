@@ -12,18 +12,14 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
@@ -80,6 +76,9 @@ public class UserData{
     // PaintTab
     @UserDataObject(path = "paintTab.gallery.paths")
     public List<String> galleryPaths = new ArrayList<>();
+    
+    @UserDataObject(path = "paintTab.gallery.lastOpenPath")
+    public String galleryLastOpenPath = "";
     
     // GradesExport Params & PdfExport Params
     @UserDataObject(path = "export.fields.fileName")

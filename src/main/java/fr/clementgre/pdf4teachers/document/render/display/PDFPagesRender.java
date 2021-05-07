@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
+import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;

@@ -10,25 +10,19 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ComboBoxDialog;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.components.dialogs.DialogBuilder;
+import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ComboBoxDialog;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ConfirmAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceDialog;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -407,17 +401,17 @@ public class PDFPagesEditor{
                 }
                 
                 @Override
-                public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive) throws IOException, Exception{
+                public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive){
                     File file;
                     if(!recursive){
-                        file = FIlesChooserManager.showSaveDialog(false, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                        file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
                         if(file == null)
                             return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         exportDir = file.getParentFile();
                         
                     }else{
                         if(exportDir == null){
-                            exportDir = FIlesChooserManager.showDirectoryDialog(false);
+                            exportDir = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
                             if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }

@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.utils.dialog.alerts;
+package fr.clementgre.pdf4teachers.components.dialogs.alerts;
 
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;

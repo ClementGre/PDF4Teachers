@@ -5,20 +5,16 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.OKAlert;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class GradeCopyGradeScaleDialog{

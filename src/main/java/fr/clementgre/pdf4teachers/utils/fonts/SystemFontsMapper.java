@@ -4,7 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.AlertIconType;
+import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
 import javafx.application.Platform;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;

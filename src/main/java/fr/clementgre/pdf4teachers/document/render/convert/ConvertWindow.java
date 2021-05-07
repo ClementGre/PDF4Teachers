@@ -2,16 +2,16 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
+import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.LoadingAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.LoadingAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
@@ -28,6 +28,7 @@ import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -182,7 +183,9 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 HBox filePathBox = new HBox();
                 
-                srcDir = new TextField(MainWindow.userData.lastConvertSrcDir);
+                srcDir = new TextField(FIlesChooserManager.pathToExistingPath(null, FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
+                        MainWindow.filesTab.getCurrentDirAlways().getAbsolutePath()));
+                
                 PaneUtils.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
                 srcDir.textProperty().addListener((observable, oldValue, newValue) -> {
                     if(new File(srcDir.getText()).exists()) MainWindow.userData.lastConvertSrcDir = srcDir.getText();
@@ -197,12 +200,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 root.getChildren().addAll(info, filePathBox);
                 
                 changePath.setOnAction(event -> {
-                    
-                    final DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-                    chooser.setInitialDirectory((new File(srcDir.getText()).exists() ? new File(srcDir.getText()) : new File(MainWindow.userData.lastConvertSrcDir)));
-                    
-                    File file = chooser.showDialog(Main.window);
+                    File file = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR);
                     if(file != null) srcDir.setText(file.getAbsolutePath() + File.separator);
                 });
                 
@@ -223,21 +221,12 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 changePath.setPadding(new Insets(0, 5, 0, 5));
                 
                 filePathBox.getChildren().addAll(srcFiles, changePath);
-                
                 root.getChildren().addAll(info, filePathBox);
-                
+    
                 changePath.setOnAction(event -> {
+                    File[] files = FIlesChooserManager.showFilesDialog(FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
+                            TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
                     
-                    final FileChooser chooser = new FileChooser();
-                    chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
-                    chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).collect(Collectors.toList())));
-                    if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists()){
-                        chooser.setInitialDirectory(new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile());
-                    }else{
-                        chooser.setInitialDirectory(new File(MainWindow.userData.lastConvertSrcDir).exists() ? new File(MainWindow.userData.lastConvertSrcDir) : FilesUtils.HOME_DIR);
-                    }
-                    
-                    List<File> files = chooser.showOpenMultipleDialog(Main.window);
                     if(files != null){
                         for(File file : files) srcFiles.appendText(file.getAbsolutePath() + "\n");
                     }
@@ -272,7 +261,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 HBox filePathBox = new HBox();
                 
-                outDir = new TextField(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : MainWindow.userData.lastConvertSrcDir);
+                outDir = new TextField(FIlesChooserManager.pathToExistingPath(MainWindow.filesTab.getCurrentDirAlways().getAbsolutePath(), MainWindow.userData.lastConvertSrcDir));
+                
                 PaneUtils.setHBoxPosition(outDir, -1, 30, 0, 2.5);
                 
                 Button changePath = new Button(TR.tr("file.browse"));
@@ -281,19 +271,13 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 filePathBox.getChildren().addAll(outDir, changePath);
                 
                 root.getChildren().addAll(info, filePathBox);
-                
+    
                 changePath.setOnAction(event -> {
-                    
-                    final DirectoryChooser chooser = new DirectoryChooser();
-                    chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-                    chooser.setInitialDirectory(new File(outDir.getText()).exists() ? new File(outDir.getText()) : ((MainWindow.filesTab.getCurrentDir() == null ? new File(MainWindow.userData.lastConvertSrcDir) : MainWindow.filesTab.getCurrentDir())));
-                    
-                    File file = chooser.showDialog(Main.window);
-                    if(file != null){
-                        outDir.setText(file.getAbsolutePath() + File.separator);
-                    }
+                    File file = FIlesChooserManager.showDirectoryDialog(outDir.getText(), FIlesChooserManager.SyncVar.NO_SYNC);
+                    if(file != null) outDir.setText(file.getAbsolutePath() + File.separator);
                 });
             }else{
+                // Not used with document conversion since the pages are directly added to the current document
                 outDir = new TextField(System.getProperty("user.home"));
             }
         }

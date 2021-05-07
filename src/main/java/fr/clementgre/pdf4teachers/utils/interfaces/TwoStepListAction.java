@@ -1,15 +1,9 @@
 package fr.clementgre.pdf4teachers.utils.interfaces;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.LoadingAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.LoadingAlert;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;

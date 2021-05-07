@@ -1,16 +1,14 @@
-package fr.clementgre.pdf4teachers.utils.dialog;
+package fr.clementgre.pdf4teachers.components.dialogs;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 
 import java.io.File;
-import java.util.Optional;
 
 public class AlreadyExistDialogManager{
 

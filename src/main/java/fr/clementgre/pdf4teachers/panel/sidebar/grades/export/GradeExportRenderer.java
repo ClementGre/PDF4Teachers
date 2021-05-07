@@ -6,18 +6,14 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeRating;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.AlreadyExistDialogManager;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ErrorAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
+import fr.clementgre.pdf4teachers.components.dialogs.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class GradeExportRenderer{

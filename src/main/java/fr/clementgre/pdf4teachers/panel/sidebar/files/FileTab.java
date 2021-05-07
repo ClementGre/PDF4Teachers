@@ -6,9 +6,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
@@ -278,6 +277,10 @@ public class FileTab extends SideTab{
         }
         if(files.getItems().size() != 0) return files.getItems().get(0).getParentFile();
         return null;
+    }
+    public File getCurrentDirAlways(){
+        File dir = getCurrentDir();
+        return dir != null ? dir : new File("this tile can't exist (I hope ;)!@#$%^&*()_)");
     }
     
     public ObservableList<File> getOpenedFiles(){

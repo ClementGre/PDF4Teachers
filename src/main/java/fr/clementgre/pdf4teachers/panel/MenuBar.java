@@ -18,11 +18,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.OKAlert;
-import fr.clementgre.pdf4teachers.utils.dialog.alerts.WrongAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.OKAlert;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -46,7 +46,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 @SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar{
@@ -186,7 +185,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         file1Open.setOnAction((ActionEvent actionEvent) -> {
             
-            File[] files = FIlesChooserManager.showPDFFilesDialog(true);
+            File[] files = FIlesChooserManager.showPDFFilesDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(files != null){
                 MainWindow.filesTab.openFiles(files);
                 if(files.length == 1){
@@ -196,7 +195,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
             
-            File directory = FIlesChooserManager.showDirectoryDialog(true);
+            File directory = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(directory != null){
                 MainWindow.filesTab.openFiles(new File[]{directory});
             }
