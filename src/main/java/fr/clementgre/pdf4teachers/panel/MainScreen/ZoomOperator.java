@@ -230,8 +230,8 @@ public class ZoomOperator{
         // determine offset that we will have to move the node
         // Since we are relatie to Scene, we have to apply the current Scale transformation
         Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
-        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / MainWindow.TEMP_SCALE;
-        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / MainWindow.TEMP_SCALE;
+        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
+        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
         
         double newTranslateX;
         double newTranslateY;

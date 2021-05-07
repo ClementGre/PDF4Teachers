@@ -42,7 +42,7 @@ public class CustomAlert extends Alert{
         getDialogPane().getStyleClass().add(JMetroStyleClass.BACKGROUND);
     
         // SCALING
-        if(MainWindow.TEMP_SCALE != 1){
+        if(Main.settings.zoom.getValue() != 1){
             getDialogPane().getScene().setFill(Color.web("#252525"));
             setOnShown((e) -> {
                 Platform.runLater(() -> {

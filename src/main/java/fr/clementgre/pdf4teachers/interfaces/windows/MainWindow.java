@@ -72,8 +72,6 @@ public class MainWindow extends Stage{
     public OSXTouchBarManager osxTouchBarManager;
     public JMetro jMetro;
     
-    public static double TEMP_SCALE = 1;
-    
     public MainWindow(){
         
         root = new BorderPane();
@@ -86,8 +84,8 @@ public class MainWindow extends Stage{
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
-        setMinWidth(700*MainWindow.TEMP_SCALE);
-        setMinHeight(393*MainWindow.TEMP_SCALE);
+        setMinWidth(700*Main.settings.zoom.getValue());
+        setMinHeight(393*Main.settings.zoom.getValue());
         setResizable(true);
         setScene(scene);
         
@@ -209,10 +207,8 @@ public class MainWindow extends Stage{
             if(UpdateWindow.checkVersion()){
                 Platform.runLater(() -> {
                     if(UpdateWindow.newVersion){
-                        if(MenuBar.isSystemMenuBarSupported()){
-                            menuBar.about.setText(TR.tr("menuBar.about") + " (" + TR.tr("aboutWindow.version.update.available.short") + ")");
-                        }else{
-                            menuBar.about.setStyle(menuBar.about.getStyle() + " -fx-background-color: #d6a600;");
+                        if(!MenuBar.isSystemMenuBarSupported()){
+                            menuBar.about.setEmptyMenuStyle("-fx-background-color: #d6a600;");
                             Tooltip.install(menuBar.about.getGraphic(), PaneUtils.genToolTip(TR.tr("aboutWindow.version.update.available")));
                         }
                         

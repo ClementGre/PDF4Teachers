@@ -76,9 +76,9 @@ public class PaintTab extends SideTab{
     public Spinner<Integer> spinnerHeight;
     
     public Label repeatModeLabel;
-    public ScaledComboBox repeatMode;
+    public ScaledComboBox<String> repeatMode;
     public Label resizeModeLabel;
-    public ScaledComboBox resizeMode;
+    public ScaledComboBox<String> resizeMode;
     
     // Lists
     

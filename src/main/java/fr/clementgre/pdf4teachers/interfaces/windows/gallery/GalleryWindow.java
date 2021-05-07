@@ -47,10 +47,10 @@ public class GalleryWindow extends Stage{
         Scene scene = new Scene(root);
     
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setWidth(1200*MainWindow.TEMP_SCALE);
-        setHeight(800*MainWindow.TEMP_SCALE);
-        setMinWidth(700*MainWindow.TEMP_SCALE);
-        setMinHeight(400*MainWindow.TEMP_SCALE);
+        setWidth(1200*Main.settings.zoom.getValue());
+        setHeight(800*Main.settings.zoom.getValue());
+        setMinWidth(700*Main.settings.zoom.getValue());
+        setMinHeight(400*Main.settings.zoom.getValue());
         Main.window.centerWindowIntoMe(this);
         setTitle(TR.tr("galleryWindow.title"));
         setScene(scene);

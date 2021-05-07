@@ -1,6 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -15,8 +15,6 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.VPos;
-import javafx.scene.control.CustomMenuItem;
-import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;

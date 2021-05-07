@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
 
@@ -16,7 +17,12 @@ public class BooleanSetting extends Setting<Boolean>{
     
     @Override
     public HBox getDefaultEditPane(){
-        return new HBox(new ToggleSwitch());
+        ToggleSwitch toggle = new ToggleSwitch();
+        
+        toggle.setSelected(getValue());
+        toggle.selectedProperty().addListener((observable, oldValue, newValue) -> setValue(newValue));
+        
+        return new HBox(toggle);
     }
     
     public BooleanProperty valueProperty(){

@@ -1,14 +1,13 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialog.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
@@ -21,7 +20,6 @@ import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;

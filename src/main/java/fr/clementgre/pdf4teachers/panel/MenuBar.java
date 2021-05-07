@@ -2,25 +2,22 @@ package fr.clementgre.pdf4teachers.panel;
 
 import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.components.NodeMenu;
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.NodeRadioMenuItem;
-import fr.clementgre.pdf4teachers.datasaving.settings.Setting;
-import fr.clementgre.pdf4teachers.datasaving.settings.SettingObject;
-import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
+import fr.clementgre.pdf4teachers.components.menus.EmptyMenu;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.EditionExporter;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageEditPane;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.SettingsWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialog.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialog.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialog.alerts.CustomAlert;
@@ -32,12 +29,8 @@ import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
@@ -45,15 +38,12 @@ import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.HBox;
 
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -140,21 +130,19 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
             TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false);
     
-    ////////// SETTINGS //////////
-    
-    public Menu settings = new Menu();
-    
-    
-    ////////// ABOUT / HELP //////////
-    
-    public Menu about = new Menu();
+    ////////// HELP //////////
     
     Menu help = new Menu(TR.tr("menuBar.help"));
-    
     MenuItem help1LoadDoc = createMenuItem(TR.tr("menuBar.help.loadDocumentation"), SVGPathIcons.INFO);
     MenuItem help2GitHubIssue = createMenuItem(TR.tr("menuBar.help.gitHubIssue"), SVGPathIcons.GITHUB);
     MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);
     MenuItem help4Website = createMenuItem(TR.tr("menuBar.help.website"), SVGPathIcons.GLOBE);
+    
+    ////////// EMPTY MENUS SETTINGS //////////
+    
+    public EmptyMenu settings = new EmptyMenu(TR.tr("menuBar.settings"), this);
+    public EmptyMenu about = new EmptyMenu(TR.tr("menuBar.about"), this);
+    
     
     public MenuBar(){
         setup();
@@ -191,7 +179,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         NodeMenuItem.setupMenu(tools);
         NodeMenuItem.setupMenu(tools6ExportImportEdition);
         NodeMenuItem.setupMenu(tools9Debug);
-        NodeMenuItem.setupMenu(settings);
         NodeMenuItem.setupMenu(help);
         
         ////////// FILE //////////
@@ -354,24 +341,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools9Debug1OpenConsole.setOnAction((e) -> new LogWindow());
         tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
         tools9Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
-        
-        ///////////// SETTINGS ///////////
     
-        if(!isSystemMenuBarSupported()){
-            Label name = new Label(TR.tr("menuBar.settings"));
-            name.setAlignment(Pos.CENTER_LEFT);
-            name.setOnMouseClicked(e -> Main.showAboutWindow());
-            about.setGraphic(name);
-        }
-        
         ////////// ABOUT / HELP //////////
-        
-        if(!isSystemMenuBarSupported()){
-            Label name = new Label(TR.tr("menuBar.about"));
-            name.setAlignment(Pos.CENTER_LEFT);
-            name.setOnMouseClicked(e -> Main.showAboutWindow());
-            about.setGraphic(name);
-        }
         
         help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(TR.getDocFile()));
         help2GitHubIssue.setOnAction((ActionEvent actionEvent) -> {
@@ -384,7 +355,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
         help4Website.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdf4teachers.org"));
         
-        ////////// ABOUT / HELP //////////
+        ////////// END PROCESS - OSX ADAPTION & MENU //////////
         
         // UI Style
         setStyle("");
@@ -419,14 +390,20 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             }
             
         }else{
+            settings.setOnClick(e -> new SettingsWindow());
+            about.setOnClick(e -> Main.showAboutWindow());
+            
             getMenus().addAll(file, tools, help, settings, about);
     
             for(Menu menu : getMenus()){
-                menu.setStyle("-fx-padding: 5 7 5 7;");
+                if(!menu.getItems().isEmpty()) menu.setStyle("-fx-padding: 5 7 5 7;");
+                else menu.setStyle("-fx-padding: 0;");
             }
         }
         
     }
+    
+    
     
     public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc){
     

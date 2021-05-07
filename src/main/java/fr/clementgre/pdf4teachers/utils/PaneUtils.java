@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.utils;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
@@ -82,11 +83,11 @@ public class PaneUtils{
     }
     
     public static Tooltip genWrappedToolTip(String text){
-        return genToolTip(new TextWrapper(text, new Font(14*MainWindow.TEMP_SCALE), (int) (350*MainWindow.TEMP_SCALE)).wrap());
+        return genToolTip(new TextWrapper(text, new Font(14*Main.settings.zoom.getValue()), (int) (350*Main.settings.zoom.getValue())).wrap());
     }
     public static Tooltip genToolTip(String text){
         Tooltip tooltip = new Tooltip(text);
-        tooltip.setStyle("-fx-font-size: " + (14*MainWindow.TEMP_SCALE) + ";");
+        tooltip.setStyle("-fx-font-size: " + (14*Main.settings.zoom.getValue()) + ";");
         return tooltip;
     }
     public static void setupScaling(Region pane, boolean listeners, boolean bind){
@@ -96,9 +97,9 @@ public class PaneUtils{
         setupScaling(pane, false, bind, false, true);
     }
     public static void setupScaling(Region pane, boolean listeners, boolean bind, boolean updatePadding, boolean paddingAround){
-        if(MainWindow.TEMP_SCALE == 1 && !bind) return;
-        pane.setScaleX(MainWindow.TEMP_SCALE);
-        pane.setScaleY(MainWindow.TEMP_SCALE);
+        if(Main.settings.zoom.getValue() == 1 && !bind) return;
+        pane.setScaleX(Main.settings.zoom.getValue());
+        pane.setScaleY(Main.settings.zoom.getValue());
         if(updatePadding){
             updateScalePadding(pane, paddingAround);
             if(listeners){
@@ -108,19 +109,23 @@ public class PaneUtils{
             }
         }
         if(bind){
-            // TODO: bind the scale to the scaleVar
+            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                pane.setScaleX(Main.settings.zoom.getValue());
+                pane.setScaleY(Main.settings.zoom.getValue());
+                updateScalePadding(pane, paddingAround);
+            });
         }
     }
     public static void updateScalePadding(Region pane, boolean paddingAround){
-        if(MainWindow.TEMP_SCALE == 0){
+        if(Main.settings.zoom.getValue() == 0){
             pane.setPadding(Insets.EMPTY);
             return;
         }
         
         // -1 to avoid small white borders on sides sometimes
         // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
-        double horizontal = (pane.getWidth() - pane.getWidth()/MainWindow.TEMP_SCALE)/2  -1;
-        double vertical = (pane.getHeight() - pane.getHeight()/MainWindow.TEMP_SCALE)/2  -1;
+        double horizontal = (pane.getWidth() - pane.getWidth()/Main.settings.zoom.getValue())/2  -1;
+        double vertical = (pane.getHeight() - pane.getHeight()/Main.settings.zoom.getValue())/2  -1;
         if(paddingAround){
             pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
         }else{

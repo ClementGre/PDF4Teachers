@@ -1,11 +1,10 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.dialog.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialog.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
@@ -14,7 +13,6 @@ import javafx.scene.control.*;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Optional;
 
 public class ListsManager{
     

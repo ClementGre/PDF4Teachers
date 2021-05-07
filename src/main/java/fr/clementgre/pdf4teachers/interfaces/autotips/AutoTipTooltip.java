@@ -73,7 +73,7 @@ public class AutoTipTooltip extends PopOver{
         if(!owner.isFocused()) return;
         closedByAutoHide = false;
         StyleManager.putStyle(getRoot(), Style.DEFAULT);
-        getRoot().getTransforms().add(new Scale(MainWindow.TEMP_SCALE, MainWindow.TEMP_SCALE, 0, 0));
+        getRoot().getTransforms().add(new Scale(Main.settings.zoom.getValue(), Main.settings.zoom.getValue(), 0, 0));
         
         if(objectWhereDisplay.isEmpty()){
             
@@ -101,7 +101,7 @@ public class AutoTipTooltip extends PopOver{
         final Scene scene = region.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
         
-        super.show(region, owner.getX()*MainWindow.TEMP_SCALE + region.getWidth() / 2, owner.getY()*MainWindow.TEMP_SCALE + region.getHeight() / 2);
+        super.show(region, owner.getX()*Main.settings.zoom.getValue() + region.getWidth() / 2, owner.getY()*Main.settings.zoom.getValue() + region.getHeight() / 2);
     }
     
     public String getName(){

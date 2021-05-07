@@ -41,7 +41,7 @@ public class SideTab extends Tab{
         
         getGraphic().setOnDragDetected(e -> {
             Dragboard dragboard = getGraphic().startDragAndDrop(TransferMode.MOVE);
-            dragboard.setDragView(SVGPathIcons.generateNonSvgImage(iconPath, Color.GRAY, ImageUtils.defaultGrayColorAdjust, .06 * MainWindow.TEMP_SCALE));
+            dragboard.setDragView(SVGPathIcons.generateNonSvgImage(iconPath, Color.GRAY, ImageUtils.defaultGrayColorAdjust, .06 * Main.settings.zoom.getValue()));
             
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.put(Main.INTERNAL_FORMAT, SideBar.TAB_DRAG_KEY);

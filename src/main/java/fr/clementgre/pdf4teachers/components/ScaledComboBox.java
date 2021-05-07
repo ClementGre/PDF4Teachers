@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.components;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -28,8 +29,10 @@ public class ScaledComboBox<T> extends ComboBox<T>{
                         super.updateItem(item, empty);
                         if(!empty && item != null){
                             setText(item.toString());
-                            setStyle("-fx-font-size: " + 12 * MainWindow.TEMP_SCALE);
-                            // TODO: bind font size to scale
+                            setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
+                            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                                setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
+                            });
                         }
                     }
                 };

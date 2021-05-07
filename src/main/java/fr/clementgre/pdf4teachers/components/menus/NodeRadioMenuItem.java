@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components;
+package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import javafx.beans.property.BooleanProperty;

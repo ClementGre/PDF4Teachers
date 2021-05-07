@@ -6,20 +6,23 @@
     -fx-font: 35 Marianne;
     -fx-font-weight: 700;
     -fx-wrap-text: true;
+    -fx-font-smoothing-type: gray;
 }
 .header .subHeaderText{
     -fx-font: 16 Marianne;
     -fx-font-weight: 400;
     -fx-wrap-text: true;
+    -fx-font-smoothing-type: gray;
 }
 
 /* CONTENT */
 .rootPane{
     -fx-padding: 15;
 }
-.rootPane .label, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button{
+.rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner{
     -fx-font: 13 Marianne;
     -fx-wrap-text: true;
+    -fx-font-smoothing-type: gray;
 }
 .rootPane .check-box > .box{
     -fx-pref-width: 20px;
@@ -39,4 +42,5 @@
 }
 .buttonBox .button{
     -fx-font: 13 Marianne;
+    -fx-font-smoothing-type: gray;
 }

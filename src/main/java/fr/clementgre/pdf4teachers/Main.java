@@ -51,6 +51,9 @@ public class Main extends Application{
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
+    
+        // Enable anti aliasing
+        System.setProperty("prism.lcdtext", "false");
         
         ///// START APP /////
         launch(args);
@@ -100,6 +103,7 @@ public class Main extends Application{
             String language = TR.getLanguageFromComputerLanguage();
             if(language != null){
                 Main.settings.language.setValue(language);
+                Main.settings.saveSettings();
                 TR.updateLocale();
             }else{
                 showLanguageWindow(true);
@@ -111,8 +115,9 @@ public class Main extends Application{
 
     public static void showLanguageWindow(boolean firstStartBehaviour){
         new LanguageWindow(value -> {
-            if(!value.isEmpty()){
+            if(!value.isEmpty() && !value.equals(Main.settings.language.getValue())){
                 Main.settings.language.setValue(value);
+                Main.settings.saveSettings();
                 if(!firstStartBehaviour){
                     Main.window.restart();
                 }else{

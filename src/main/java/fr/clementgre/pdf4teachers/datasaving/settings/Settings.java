@@ -4,10 +4,12 @@ import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.beans.value.ObservableValue;
-
+import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -16,34 +18,38 @@ public class Settings{
     
     private String settingsVersion = "";
     
+    
     @SettingObject
-    public StringSetting language = new StringSetting("", false, SVGPathIcons.GLOBE, "language",
-            "settings.language.title", "settings.language.tooltip");
+    public StringSetting language = new StringSetting("en_us", false, SVGPathIcons.GLOBE, "language",
+            "settings.language.title", "");
+    
+    
+    @SettingObject
+    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
+            "settings.darkTheme.title", "");
+    @SettingObject
+    public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), true, SVGPathIcons.LAYERS, "zoomAnimations",
+            "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
     @SettingObject
     public BooleanSetting restoreLastSession = new BooleanSetting(true, true, SVGPathIcons.REDO, "restoreLastSession",
             "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
+    
+    
     @SettingObject
     public BooleanSetting checkUpdates = new BooleanSetting(true, true, SVGPathIcons.WIFI, "checkUpdates",
             "settings.checkUpdates.title", "settings.checkUpdates.tooltip");
     @SettingObject
     public BooleanSetting sendStats = new BooleanSetting(true, true, SVGPathIcons.STATS, "sendStatistics",
             "settings.sendStatistics.title", "settings.sendStatistics.tooltip");
-    @SettingObject
-    public IntSetting defaultZoom = new IntSetting(130, true, SVGPathIcons.SEARCH, "defaultZoom",
-            "settings.defaultZoom.title", "settings.defaultZoom.tooltip");
-    @SettingObject
-    public BooleanSetting zoomAnimations = new BooleanSetting(!Main.isOSX(), true, SVGPathIcons.LAYERS, "zoomAnimations",
-            "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
-    @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
-            "settings.darkTheme.title", "settings.darkTheme.tooltip");
+    
     
     @SettingObject
     public BooleanSetting autoSave = new BooleanSetting(true, true, SVGPathIcons.SAVE, "autoSave",
             "settings.autoSave.title", "settings.autoSave.tooltip");
     @SettingObject
-    public IntSetting regularSave = new IntSetting(-1, true, SVGPathIcons.CLOCK, "regularSave",
+    public IntSetting regularSave = new IntSetting(-1, true, 1, 60, 5, true, false, SVGPathIcons.CLOCK, "regularSave",
             "settings.regularSave.title", "settings.regularSave.tooltip");
+    
     
     @SettingObject
     public BooleanSetting textAutoRemove = new BooleanSetting(true, true, SVGPathIcons.STAR, "textAutoRemove",
@@ -53,11 +59,44 @@ public class Settings{
             "settings.textOnlyStart.title", "settings.textOnlyStart.tooltip");
     @SettingObject
     public BooleanSetting textSmall = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
-            "settings.textSmall.title", "settings.textSmall.tooltip");
+            "settings.textSmall.title", "");
+    
     
     @SettingObject
     public BooleanSetting allowAutoTips = new BooleanSetting(true, true, SVGPathIcons.TOOLTIP, "allowAutoTips",
             "settings.allowAutoTips.title", "settings.allowAutoTips.tooltip");
+    
+    @SettingObject
+    public DoubleSetting zoom = new DoubleSetting(1d, true, .25, 4, .25, false, false, SVGPathIcons.SEARCH, "zoom",
+            "settings.zoom", "settings.zoom.tooltip");
+    
+    @SettingObject
+    public IntSetting menuForceOpenDelay = new IntSetting(-1, true, 0, 3000, 10, true, false, SVGPathIcons.CLOCK, "menuForceOpenDelay",
+            "settings.menuForceOpenDelay", "settings.menuForceOpenDelay.tooltip");
+    
+    
+    ////////// GROUPS //////////
+    
+    @SettingsGroup(title="settings.group.accessibility")
+    public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
+    
+    @SettingsGroup(title="settings.group.ergonomics")
+    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, zoomAnimations};
+    
+    @SettingsGroup(title="settings.group.network")
+    public Setting<?>[] networkGroup = {checkUpdates, sendStats};
+    
+    @SettingsGroup(title="settings.group.save")
+    public Setting<?>[] saveGroup = {autoSave, regularSave};
+    
+    @SettingsGroup(title="settings.group.textElements")
+    public Setting<?>[] textElementsGroup = {textAutoRemove, textOnlyStart, textSmall};
+    
+    @SettingsGroup(title="settings.group.help")
+    public Setting<?>[] helpGroup = {allowAutoTips};
+    
+    @SettingsGroup(title="settings.group.debug")
+    public Setting<?>[] debugGroup = {zoom, menuForceOpenDelay}; // menu popup force
     
     public Settings(){
         loadSettings();
@@ -69,6 +108,12 @@ public class Settings{
             if(MainWindow.textTab != null) TextTreeView.updateListsGraphic();
             if(t1) MainWindow.textTab.txtArea.setStyle("-fx-font-size: 12");
             else MainWindow.textTab.txtArea.setStyle("-fx-font-size: 13");
+        });
+        language.setGetEditPaneCallback(() -> {
+            Button button = new Button(TR.tr("actions.choose"));
+            button.setOnAction((e) -> Main.showLanguageWindow(false));
+            button.setDefaultButton(true);
+            return new HBox(button);
         });
     }
     
@@ -104,6 +149,10 @@ public class Settings{
                                 IntSetting var = (IntSetting) field.get(this);
                                 Long value = config.getLongNull(var.getPath());
                                 if(value != null) var.setValue(Math.toIntExact(value));
+                            }else if(field.getType() == DoubleSetting.class){
+                                DoubleSetting var = (DoubleSetting) field.get(this);
+                                Double value = config.getDoubleNull(var.getPath());
+                                if(value != null) var.setValue(value);
                             }
                         }catch(Exception e){
                             e.printStackTrace();

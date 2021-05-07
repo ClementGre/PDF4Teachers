@@ -365,8 +365,8 @@ public class MainScreen extends Pane{
         
         pane.getChildren().clear();
         
-        pane.setScaleX(Main.settings.defaultZoom.getValue() / 100.0);
-        pane.setScaleY(Main.settings.defaultZoom.getValue() / 100.0);
+        pane.setScaleX(1);
+        pane.setScaleY(1);
         
         pane.setPrefHeight(1);
         pane.setPrefWidth(1);

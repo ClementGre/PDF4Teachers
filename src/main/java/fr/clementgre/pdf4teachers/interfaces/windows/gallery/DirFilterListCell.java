@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -36,7 +37,7 @@ public class DirFilterListCell extends ListCell<String>{
             // FAVORITES AND
             setGraphic(null);
             setText(item);
-            setStyle("-fx-font-size: "+ (12 * MainWindow.TEMP_SCALE) + ";");
+            setStyle("-fx-font-size: "+ (12 * Main.settings.zoom.getValue()) + ";");
             
         }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"))){
             // ADD BUTTON
@@ -59,7 +60,7 @@ public class DirFilterListCell extends ListCell<String>{
             HBox root = new HBox();
             root.getChildren().addAll(new HBoxSpacer(), add, new HBoxSpacer());
     
-            if(MainWindow.TEMP_SCALE != 1){
+            if(Main.settings.zoom.getValue() != 1){
                 PaneUtils.setupScaling(root, true, false);
             }
             
@@ -89,7 +90,7 @@ public class DirFilterListCell extends ListCell<String>{
                 }
             });
     
-            if(MainWindow.TEMP_SCALE == 1) root.setStyle("-fx-padding: -4 0;");
+            if(Main.settings.zoom.getValue() == 1) root.setStyle("-fx-padding: -4 0;");
             else PaneUtils.setupScaling(root, true, false);
             
             PaneUtils.setHBoxPosition(text, 0, 26, 0);

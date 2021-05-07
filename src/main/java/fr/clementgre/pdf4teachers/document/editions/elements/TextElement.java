@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.components.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;

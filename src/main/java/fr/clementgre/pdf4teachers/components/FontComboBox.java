@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.components;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.scene.control.ComboBox;
@@ -30,10 +31,14 @@ public class FontComboBox extends ComboBox<String>{
             }else{
                 setText(item);
                 if(FontUtils.isDefaultFont(item)){
-                    FontUtils.getFont(item, false, false, 14 * MainWindow.TEMP_SCALE);
+                    FontUtils.getFont(item, false, false, 14 * Main.settings.zoom.getValue());
                 }
-                // TODO: bind the font with the scale
-                setStyle("-fx-font: " + (14 * MainWindow.TEMP_SCALE) + " \"" + item + "\";");
+                
+                setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + item + "\";");
+                Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                    setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + item + "\";");
+                });
+                
             }
         }
     }

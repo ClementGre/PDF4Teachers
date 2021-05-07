@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -14,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -73,11 +75,13 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
             StagesUtils.resizeStageAccordingToAppScale(this, scene);
     
             setContentMinWidth(400, true);
-            setMinHeight(300 * MainWindow.TEMP_SCALE);
-            setMaxWidth(width.getWidth()*2 * MainWindow.TEMP_SCALE);
+            setMinHeight(300 * Main.settings.zoom.getValue());
+            setMaxWidth(width.getWidth()*2 * Main.settings.zoom.getValue());
             
             Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);
+            
+            if(getHeight() > 2*getWidth()) setHeight(2*getWidth());
     
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();
@@ -90,8 +94,22 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         setup(header, subHeader);
         Platform.runLater(() -> {
             setupSubClass();
-            Main.window.centerWindowIntoMe(this, width.getWidth() * MainWindow.TEMP_SCALE, 600 * MainWindow.TEMP_SCALE);
+            Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
             show();
+        });
+        
+        // SCROLLPANE SPEED FIX //
+        
+        scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
+            e.consume();
+            if(Math.abs(e.getDeltaX()) > Math.abs(e.getDeltaY()) / 2){ // Accept side scrolling only if the scroll is not too vertical
+                double hValue = scrollPane.getHvalue() + e.getDeltaY() * 2 / (scrollPane.getWidth() - container.getWidth());
+                scrollPane.setHvalue(StringUtils.clamp(hValue, scrollPane.getHmin(), scrollPane.getHmax()));
+            }
+    
+            double vValue = scrollPane.getVvalue() + e.getDeltaY() * 2 / (scrollPane.getHeight() - container.getHeight());
+            scrollPane.setVvalue(StringUtils.clamp(vValue, scrollPane.getVmin(), scrollPane.getVmax()));
+            
         });
     }
     
@@ -135,8 +153,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
     }
     
     public void setContentMinWidth(int width, boolean affectWindow){
-        if(affectWindow) setMinWidth((width+20+16) * MainWindow.TEMP_SCALE);
-        else container.setMinWidth(width * MainWindow.TEMP_SCALE);
+        if(affectWindow) setMinWidth((width+20+16) * Main.settings.zoom.getValue());
+        else container.setMinWidth(width * Main.settings.zoom.getValue());
     }
     
     public void setHeaderText(String text){

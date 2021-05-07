@@ -77,5 +77,7 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.fonts;
     exports fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
     exports fr.clementgre.pdf4teachers.utils.dialog.alerts;
+    exports fr.clementgre.pdf4teachers.components.menus;
+    exports fr.clementgre.pdf4teachers.interfaces.windows.settings;
     
 }

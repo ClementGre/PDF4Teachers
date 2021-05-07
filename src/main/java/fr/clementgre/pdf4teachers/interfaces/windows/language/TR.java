@@ -27,8 +27,10 @@ public class TR{
         // Translate translations from 1.2.0- naming system
         if(Main.settings.language.getValue().equals("Français France (Defaut)")){
             Main.settings.language.setValue("fr_fr");
+            Main.settings.saveSettings();
         }else if(Main.settings.language.getValue().equals("English US")){
             Main.settings.language.setValue("en_us");
+            Main.settings.saveSettings();
         }
         
         // Delete Old files

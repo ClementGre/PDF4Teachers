@@ -1,5 +1,6 @@
-package fr.clementgre.pdf4teachers.components;
+package fr.clementgre.pdf4teachers.components.menus;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import javafx.scene.Group;
@@ -131,8 +132,8 @@ public class NodeMenuItem extends CustomMenuItem{
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
                     if(arrow instanceof Region region){
-                        region.setScaleX(MainWindow.TEMP_SCALE);
-                        region.setScaleY(MainWindow.TEMP_SCALE);
+                        region.setScaleX(Main.settings.zoom.getValue());
+                        region.setScaleY(Main.settings.zoom.getValue());
                     }
                 }
             }

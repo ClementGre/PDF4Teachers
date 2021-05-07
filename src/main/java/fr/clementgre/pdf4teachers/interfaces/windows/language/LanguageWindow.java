@@ -197,7 +197,6 @@ public class LanguageWindow extends Stage{
         
         accept.setOnAction((ActionEvent event) -> {
             TR.updateLocale();
-            //TR.updateTranslation();
             close();
             callBack.call(((Label) languages.getSelectionModel().getSelectedItem().getChildren().get(2)).getText());
         });

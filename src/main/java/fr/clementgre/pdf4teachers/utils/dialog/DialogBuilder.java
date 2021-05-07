@@ -60,7 +60,7 @@ public class DialogBuilder{
             pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             
-            pane.setMaxWidth(700*MainWindow.TEMP_SCALE);
+            pane.setMaxWidth(700*Main.settings.zoom.getValue());
             pane.setMaxHeight(Double.MAX_VALUE);
             
         }else throw new RuntimeException("Dialog Parent is not an instance of DialogPane, can't apply scaling... (class: " + dialog.getDialogPane().getScene().getRoot() + ")");
@@ -72,8 +72,8 @@ public class DialogBuilder{
                 try{ Thread.sleep(10); }catch(InterruptedException ex){ ex.printStackTrace(); }
             }
             Platform.runLater(() -> {
-                dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30*MainWindow.TEMP_SCALE);
-                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 40*MainWindow.TEMP_SCALE);
+                dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30*Main.settings.zoom.getValue());
+                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 40*Main.settings.zoom.getValue());
             });
 
         }, "AlertResizer").start());
