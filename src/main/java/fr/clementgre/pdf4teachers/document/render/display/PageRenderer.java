@@ -31,7 +31,8 @@ import java.util.List;
 
 public class PageRenderer extends Pane{
     
-    public static int PAGE_HORIZONTAL_MARGIN = 30;
+    public static final int PAGE_WIDTH = 596;
+    public static final int PAGE_HORIZONTAL_MARGIN = 30;
     
     private PageStatus status = PageStatus.HIDE;
     

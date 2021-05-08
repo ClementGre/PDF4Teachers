@@ -39,8 +39,6 @@ public class MainScreen extends Pane{
     public Pane pane = new Pane();
     public ZoomOperator zoomOperator;
     
-    private int pageWidth = 596;
-    
     public double paneMouseX = 0;
     public double paneMouseY = 0;
     
@@ -334,7 +332,11 @@ public class MainScreen extends Pane{
         }
         
         repaint();
-        Platform.runLater(() -> zoomOperator.updatePaneHeight(0, 0.5));
+    
+        zoomOperator.fitWidth(true);
+        Platform.runLater(() -> {
+            zoomOperator.updatePaneHeight(0, 0.5);
+        });
         AutoTipsManager.showByAction("opendocument");
     }
     
@@ -436,14 +438,14 @@ public class MainScreen extends Pane{
     }
     
     public int getPageWidth(){
-        return pageWidth;
+        return PageRenderer.PAGE_WIDTH;
     }
     public void addPage(PageRenderer page){
         pane.getChildren().add(page);
     }
     public void updateSize(int totalHeight){
         
-        pane.setPrefWidth(pageWidth + (PageRenderer.PAGE_HORIZONTAL_MARGIN * 2));
+        pane.setPrefWidth(PageRenderer.PAGE_WIDTH + (PageRenderer.PAGE_HORIZONTAL_MARGIN * 2));
         pane.setPrefHeight(totalHeight);
     }
 }

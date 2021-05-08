@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.animation.KeyFrame;
@@ -18,11 +19,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
-import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 public class FooterBar extends StackPane{
@@ -36,6 +36,8 @@ public class FooterBar extends StackPane{
     private final Label zoomInfo = new Label();
     private final SliderWithoutPopup zoomController = new SliderWithoutPopup(0.05, 5, 1);
     private final Label zoomPercent = new Label();
+    private final ColorAdjust fitZoomColorAdjust = new ColorAdjust();
+    private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, fitZoomColorAdjust);
     
     private final Label statsElements = new Label();
     private final Label statsTexts = new Label();
@@ -57,7 +59,8 @@ public class FooterBar extends StackPane{
     }
     
     public void setup(){
-        
+    
+        zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
@@ -66,11 +69,23 @@ public class FooterBar extends StackPane{
         });
         PaneUtils.setHBoxPosition(zoomController, 0, 20, 0);
         zoomController.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.mainScreen.zoomOperator.zoom(newValue.doubleValue());
+            MainWindow.mainScreen.zoomOperator.zoom(newValue.doubleValue(), true);
+        });
+        fitZoom.setOnMouseClicked((e) -> {
+            MainWindow.mainScreen.zoomOperator.fitWidth(false);
+        });
+        fitZoom.setOnMouseEntered((e) -> {
+            if(!fitZoom.isDisabled()) fitZoom.setStyle("-fx-background-color: white;");
+        });
+        fitZoom.setOnMouseExited((e) -> fitZoom.setStyle("-fx-background-color: lightgray;"));
+        fitZoom.disabledProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) fitZoomColorAdjust.setBrightness(-0.6);
+            else fitZoomColorAdjust.setBrightness(0);
         });
         zoomInfo.setText(TR.tr("footerBar.zoom"));
+        HBox.setMargin(fitZoom, new Insets(3, 5, 3, 5));
         zoom.setSpacing(5);
-        zoom.getChildren().addAll(zoomInfo, zoomController, zoomPercent);
+        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom);
         
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
@@ -167,12 +182,18 @@ public class FooterBar extends StackPane{
                 updateStats();
             }
             zoomController.setDisable(false);
+            zoomPercent.setDisable(false);
+            zoomInfo.setDisable(false);
+            fitZoom.setDisable(false);
             if(MainWindow.mainScreen.document.getCurrentPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
             }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getCurrentPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
             
         }else{
             zoomController.setDisable(true);
+            zoomPercent.setDisable(true);
+            zoomInfo.setDisable(true);
+            fitZoom.setDisable(true);
             if(hard){
                 root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
             }

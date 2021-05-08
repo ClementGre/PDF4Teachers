@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.animation.KeyFrame;
@@ -10,6 +11,7 @@ import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -126,18 +128,7 @@ public class ZoomOperator{
         });
         // Modifie la valeur de la scrollBar lorsque translateY est modifié.
         pane.translateYProperty().addListener((observable, oldValue, newValue) -> {
-            
-            if(getScrollableHeight() <= 0){
-                vScrollBar.setVisible(false);
-                pane.setTranslateY(centerTranslationY());
-                aimTranslateY = pane.getTranslateY();
-            }else{
-                vScrollBar.setVisible(true);
-                double vValue = (-newValue.doubleValue() + getPaneShiftY()) / getScrollableHeight();
-                if(vValue != vScrollBar.getValue()){
-                    vScrollBar.setValue(vValue);
-                }
-            }
+            updateVScrollBar();
         });
         
         // Modifie translateX lorsque la valeur de la scrollBar est modifié.
@@ -151,18 +142,7 @@ public class ZoomOperator{
         });
         // Modifie la valeur de la scrollBar lorsque translateX est modifié.
         pane.translateXProperty().addListener((observable, oldValue, newValue) -> {
-            
-            if(getScrollableWidth() <= 0){
-                hScrollBar.setVisible(false);
-                pane.setTranslateX(centerTranslationX());
-                aimTranslateX = pane.getTranslateX();
-            }else{
-                hScrollBar.setVisible(true);
-                double hValue = (-newValue.doubleValue() + getPaneShiftX()) / getScrollableWidth();
-                if(hValue != hScrollBar.getValue()){
-                    hScrollBar.setValue(hValue);
-                }
-            }
+            updateHScrollBar();
         });
         
         pane.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -170,6 +150,33 @@ public class ZoomOperator{
         });
         
         
+    }
+    
+    public void updateVScrollBar(){
+        if(getScrollableHeight() <= 0){
+            vScrollBar.setVisible(false);
+            pane.setTranslateY(centerTranslationY());
+            aimTranslateY = pane.getTranslateY();
+        }else{
+            vScrollBar.setVisible(true);
+            double vValue = (-pane.getTranslateY() + getPaneShiftY()) / getScrollableHeight();
+            if(vValue != vScrollBar.getValue()){
+                vScrollBar.setValue(vValue);
+            }
+        }
+    }
+    public void updateHScrollBar(){
+        if(getScrollableWidth() <= 0){
+            hScrollBar.setVisible(false);
+            pane.setTranslateX(centerTranslationX());
+            aimTranslateX = pane.getTranslateX();
+        }else{
+            hScrollBar.setVisible(true);
+            double hValue = (-pane.getTranslateX() + getPaneShiftX()) / getScrollableWidth();
+            if(hValue != hScrollBar.getValue()){
+                hScrollBar.setValue(hValue);
+            }
+        }
     }
     
     public void updatePaneHeight(double newVValue, double newHValue){
@@ -214,24 +221,47 @@ public class ZoomOperator{
     
     // x and y should be relative to Scene because MainScreen is bigger than the visible part (e.getX()/Y couldn't work)
     public void zoom(double factor, double x, double y){
+    
+        // determine offset that we will have to move the node
+        // Since we are relative to Scene, we have to apply the current Scale transformation
+        Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
+        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
+        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
+    
+        double scale = Math.min(5, Math.max(aimScale * factor, 0.05));
+        double f = (scale / pane.getScaleX()) - 1;
+        
+        zoom(Main.settings.zoomAnimations.getValue() && factor > 0.05, scale, dx, dy, f);
+        
+    }
+    public void zoom(double scale, boolean removeTransitions){
+        if(scale == pane.getScaleX()) return;
+        
+        // Get bounds relative to scene
+        Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
+        // Find the middle coordinates of MainScreen relative to scene (To zoom center);
+        Bounds mainScreenBounds = MainWindow.mainScreen.localToScene(MainWindow.mainScreen.getLayoutBounds());
+        double mainScreenMiddleXInScene = (mainScreenBounds.getMinX() + mainScreenBounds.getWidth()/2);
+        double mainScreenMiddleYInScene = (mainScreenBounds.getMinY() + mainScreenBounds.getHeight()/2);
+    
+        // determine offset that we will have to move the node
+        // Since we are relative to Scene, we have to apply the current Scale transformation
+        double dx = (mainScreenMiddleXInScene - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
+        double dy = (mainScreenMiddleYInScene - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
+    
+        double f = (scale / pane.getScaleX()) - 1;
+        
+        zoom(!removeTransitions, scale, dx, dy, f);
+        
+    }
+    public void zoom(boolean transition, double scale, double horizontal, double vertical, double translateFactor){
         
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
             aimScale = pane.getScaleX();
         }
-        
-        
-        // determine scale
-        double oldScale = pane.getScaleX();
-        double scale = Math.min(5, Math.max(aimScale * factor, 0.05));
-        double f = (scale / oldScale) - 1;
-        
-        // determine offset that we will have to move the node
-        // Since we are relatie to Scene, we have to apply the current Scale transformation
-        Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
-        double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
-        double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
+    
         
         double newTranslateX;
         double newTranslateY;
@@ -252,7 +282,7 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             hScrollBar.setVisible(true);
-            newTranslateX = StringUtils.clamp(pane.getTranslateX() - f * dx,
+            newTranslateX = StringUtils.clamp(pane.getTranslateX() - translateFactor * horizontal,
                     paneShiftX-scrollableWidth, paneShiftX);
         }
         // Y
@@ -263,16 +293,16 @@ public class ZoomOperator{
         }else{
             // Vérifie les limites des translations
             vScrollBar.setVisible(true);
-            newTranslateY = StringUtils.clamp(pane.getTranslateY() - f * dy,
+            newTranslateY = StringUtils.clamp(pane.getTranslateY() - translateFactor * vertical,
                     paneShiftY - scrollableHeight, paneShiftY);
             
         }
-        
+    
         aimTranslateY = newTranslateY;
         aimTranslateX = newTranslateX;
         aimScale = scale;
         
-        if(Main.settings.zoomAnimations.getValue() && factor > 0.05){
+        if(transition){
             
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
@@ -284,72 +314,30 @@ public class ZoomOperator{
             timeline.stop();
             isPlaying = true;
             timeline.play();
+            timeline.setOnFinished((e) -> {
+                updateVScrollBar();
+                updateHScrollBar();
+                timeline.setOnFinished(null);
+            });
         }else{
             pane.setTranslateY(newTranslateY);
             pane.setTranslateX(newTranslateX);
             pane.setScaleY(scale);
             pane.setScaleX(scale);
+            updateVScrollBar();
+            updateHScrollBar();
         }
         
     }
     
-    public void zoom(double scale){
+    public void fitWidth(boolean removeTransition){
         
-        if(!isPlaying){
-            aimTranslateY = pane.getTranslateY();
-            aimTranslateX = pane.getTranslateX();
-            aimScale = pane.getScaleX();
-        }
+        double pageWidth = PageRenderer.PAGE_WIDTH + 2*PageRenderer.PAGE_HORIZONTAL_MARGIN;
+        double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
         
+        double targetScale = (availableWidth / pageWidth);
         
-        // determine scale
-        double oldScale = pane.getScaleX();
-        double f = (scale / oldScale) - 1;
-        
-        double newTranslateX;
-        double newTranslateY;
-        
-        // Donnés pour le traitement de juste après
-        final double paneShiftX = (pane.getWidth() * scale - pane.getWidth()) / 2;
-        final double paneShiftY = (pane.getHeight() * scale - pane.getHeight()) / 2;
-        final double scrollableWidth = pane.getWidth() * scale - getMainScreenWidth();
-        final double scrollableHeight = pane.getHeight() * scale - getMainScreenHeight();
-        
-        
-        // Vérifie si pane peut rentrer entièrement dans MainScreen ? centre pane : vérifie les translations
-        // X
-        if(scrollableWidth <= 0){
-            // Centre pane dans MainScreen sur l'axe X
-            hScrollBar.setVisible(false);
-            newTranslateX = centerTranslationX();
-        }else{
-            // Vérifie les limites des translations
-            hScrollBar.setVisible(true);
-            newTranslateX = StringUtils.clamp(pane.getTranslateX() - f,
-                    paneShiftX-scrollableWidth, paneShiftX);
-        }
-        // Y
-        if(scrollableHeight <= 0){
-            // Centre pane dans MainScreen sur l'axe Y
-            vScrollBar.setVisible(false);
-            newTranslateY = centerTranslationY();
-        }else{
-            // Vérifie les limites des translations
-            vScrollBar.setVisible(true);
-            newTranslateY = StringUtils.clamp(pane.getTranslateY() - f,
-                    paneShiftY - scrollableHeight, paneShiftY);
-            
-        }
-        
-        aimTranslateY = newTranslateY;
-        aimTranslateX = newTranslateX;
-        aimScale = scale;
-        
-        pane.setTranslateY(newTranslateY);
-        pane.setTranslateX(newTranslateX);
-        pane.setScaleY(scale);
-        pane.setScaleX(scale);
-        
+        zoom(targetScale, removeTransition);
     }
     
     public void scrollDown(int factor, boolean removeTransition){
