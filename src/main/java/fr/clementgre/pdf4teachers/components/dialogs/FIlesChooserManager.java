@@ -41,7 +41,7 @@ public class FIlesChooserManager{
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
         if(multiple) chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
         else chooser.setTitle(TR.tr(""));
-        chooser.setInitialDirectory(pathToExistingFile(getPathFromSyncVar(syncVar), syncVar.getFallback()));
+        chooser.setInitialDirectory(pathToExistingFile(getPathFromSyncVar(syncVar)));
         
         List<File> listFiles = null;
         if(multiple) listFiles = chooser.showOpenMultipleDialog(Main.window);
@@ -64,25 +64,33 @@ public class FIlesChooserManager{
     /***************************************************************************
      ********************** CHOOSE DIRECTORY DIALOG ****************************
      ***************************************************************************/
-    
     public static File showDirectoryDialog(SyncVar syncVar){
-        return showDirectoryDialog(null, syncVar, Main.window);
+        return showDirectoryDialog(null, syncVar, null, Main.window);
     }
-    public static File showDirectoryDialog(String preferredValue, SyncVar syncVar){
-        return showDirectoryDialog(preferredValue, syncVar, Main.window);
+    public static File showDirectoryDialog(SyncVar syncVar, Stage window){
+        return showDirectoryDialog(null, syncVar, null, window);
     }
-    public static File showDirectoryDialog(String preferredValue, SyncVar syncVar, Stage window){
-        final DirectoryChooser chooser = new DirectoryChooser();
-        chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-        chooser.setInitialDirectory(pathToExistingFile(preferredValue, getPathFromSyncVar(syncVar), syncVar.getFallback()));
+    public static File showDirectoryDialog(String preferred, SyncVar syncVar, String fallback){
+        return showDirectoryDialog(preferred, syncVar, fallback, Main.window);
+    }
+    public static File showDirectoryDialog(String preferred, SyncVar syncVar, String fallback, Stage window){
         
-        File file = chooser.showDialog(window);
-        if(file != null){
-            if(!file.exists()) return null;
+        File file = showDirectoryDialog(pathToExistingPath(preferred, getPathFromSyncVar(syncVar), fallback), window);
+        if(file != null && file.exists()){
             setPathFromSyncVar(syncVar, file.getAbsolutePath());
             return file;
         }
         return null;
+    }
+    public static File showDirectoryDialog(String... paths){
+        return showDirectoryDialog(pathToExistingPath(paths), Main.window);
+    }
+    public static File showDirectoryDialog(String path, Stage window){
+        final DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
+        chooser.setInitialDirectory(new File(path));
+        
+        return chooser.showDialog(window);
     }
     
     /***************************************************************************
@@ -90,18 +98,23 @@ public class FIlesChooserManager{
      ***************************************************************************/
 
     public static File showSaveDialog(SyncVar syncVar, String initialFileName, String extensionsName, String... extensions){
-        final FileChooser chooser = new FileChooser();
-        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        chooser.setTitle(TR.tr("dialog.file.saveFile.title"));
-        chooser.setInitialFileName(initialFileName);
-        chooser.setInitialDirectory(pathToExistingFile(getPathFromSyncVar(syncVar), syncVar.getFallback()));
     
-        File file = chooser.showSaveDialog(Main.window);
-        if(file != null){
+        File file = showSaveDialog(pathToExistingPath(getPathFromSyncVar(syncVar)), initialFileName, extensionsName, extensions);
+        if(file != null && file.exists()){
             setPathFromSyncVar(syncVar, file.getParentFile().getAbsolutePath());
             return file;
         }
         return null;
+    }
+    
+    private static File showSaveDialog(String path, String initialFileName, String extensionsName, String... extensions){
+        final FileChooser chooser = new FileChooser();
+        chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
+        chooser.setTitle(TR.tr("dialog.file.saveFile.title"));
+        chooser.setInitialFileName(initialFileName);
+        chooser.setInitialDirectory(new File(path));
+        
+        return chooser.showSaveDialog(Main.window);
     }
     
     /***************************************************************************
@@ -109,25 +122,14 @@ public class FIlesChooserManager{
      ***************************************************************************/
 
     public enum SyncVar{
-        LAST_OPEN_DIR(System.getProperty("user.home")),
-        LAST_CONVERT_SRC_DIR(System.getProperty("user.home")),
-        LAST_GALLERY_OPEN_DIR(System.getProperty("user.home")),
-        NO_SYNC(System.getProperty("user.home"));
-    
-        private String fallback;
-        SyncVar(String fallback){
-            this.fallback = fallback;
-        }
-        public String getFallback(){
-            return fallback;
-        }
+        LAST_OPEN_DIR,
+        LAST_CONVERT_SRC_DIR,
+        LAST_GALLERY_OPEN_DIR;
     }
-    
     public static String getPathFromSyncVar(SyncVar syncVar){
         if(syncVar == SyncVar.LAST_OPEN_DIR) return MainWindow.userData.lastOpenDir;
         else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) return MainWindow.userData.lastConvertSrcDir;
         else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) return MainWindow.userData.galleryLastOpenPath;
-        else if(syncVar == SyncVar.NO_SYNC) return syncVar.fallback;
         return null;
     }
     public static void setPathFromSyncVar(SyncVar syncVar, String value){
@@ -143,11 +145,8 @@ public class FIlesChooserManager{
     public static File pathToExistingFile(String preferredValue, SyncVar syncVar, String fallback){
         return new File(pathToExistingPath(preferredValue, getPathFromSyncVar(syncVar), fallback));
     }
-    public static File pathToExistingFile(String preferredValue, String path){
-        return new File(pathToExistingPath(preferredValue, path, null));
-    }
-    public static File pathToExistingFile(String preferredValue, String path, String fallback){
-        return new File(pathToExistingPath(preferredValue, path, fallback));
+    public static File pathToExistingFile(String... paths){
+        return new File(pathToExistingPath(paths));
     }
     
     public static String pathToExistingPath(String preferredValue, SyncVar syncVar){
@@ -156,13 +155,10 @@ public class FIlesChooserManager{
     public static String pathToExistingPath(String preferredValue, SyncVar syncVar, String fallback){
         return pathToExistingPath(preferredValue, getPathFromSyncVar(syncVar), fallback);
     }
-    public static String pathToExistingPath(String preferredValue, String path){
-        return pathToExistingPath(preferredValue, path, null);
-    }
-    public static String pathToExistingPath(String preferredValue, String path, String fallback){
-        if(preferredValue != null && new File(preferredValue).exists()) return preferredValue;
-        else if(path != null && new File(path).exists()) return path;
-        else if(fallback != null && new File(fallback).exists()) return fallback;
-        else return System.getProperty("user.home");
+    public static String pathToExistingPath(String... paths){
+        for(String path : paths){
+            if(path != null && new File(path).exists()) return path;
+        }
+        return System.getProperty("user.home");
     }
 }

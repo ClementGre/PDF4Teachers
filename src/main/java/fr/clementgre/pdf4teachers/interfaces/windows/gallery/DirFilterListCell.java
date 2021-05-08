@@ -45,7 +45,7 @@ public class DirFilterListCell extends ListCell<String>{
     
             add.setOnMousePressed((e) -> {
                 PlatformUtils.runLaterOnUIThread(100, () -> {
-                    File dir = FIlesChooserManager.showDirectoryDialog(null, FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, gallery);
+                    File dir = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, gallery);
                     if(dir != null){
                         PlatformUtils.runLaterOnUIThread(100, () -> {
                             GalleryManager.addSavePath(dir.getAbsolutePath());

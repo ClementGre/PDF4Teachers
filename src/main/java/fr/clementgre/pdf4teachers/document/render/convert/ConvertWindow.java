@@ -273,7 +273,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 root.getChildren().addAll(info, filePathBox);
     
                 changePath.setOnAction(event -> {
-                    File file = FIlesChooserManager.showDirectoryDialog(outDir.getText(), FIlesChooserManager.SyncVar.NO_SYNC);
+                    File file = FIlesChooserManager.showDirectoryDialog(outDir.getText(), MainWindow.userData.lastConvertSrcDir);
                     if(file != null) outDir.setText(file.getAbsolutePath() + File.separator);
                 });
             }else{
