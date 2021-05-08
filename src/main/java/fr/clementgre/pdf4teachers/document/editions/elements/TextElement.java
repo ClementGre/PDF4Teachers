@@ -230,11 +230,9 @@ public class TextElement extends Element{
         String latexText = "";
         boolean isText = !text.getText().startsWith(Pattern.quote("$$"));
         for(String part : text.getText().split(Pattern.quote("$$"))){
-            //if(part.startsWith(" ")) part = part.substring(1);
-            //if(part.endsWith(" ")) part = part.substring(0, part.length()-1);
             
             if(isText) latexText += formatLatexText(part);
-            else latexText += part;
+            else latexText += part.replace("\n", " \\\\ ");
             
             isText = !isText;
         }
@@ -250,7 +248,8 @@ public class TextElement extends Element{
                 .replace("^", "\\^")
                 .replace("&", "\\&")
                 .replace("_", "\\_")
-                .replace("~", "\\~") + "}";
+                .replace("~", "\\~")
+                .replace("\n", "} \\\\ \\text{") + "}";
     }
     
     public java.awt.Color getAwtColor(){
