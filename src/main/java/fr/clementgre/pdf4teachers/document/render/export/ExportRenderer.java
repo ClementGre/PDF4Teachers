@@ -30,6 +30,7 @@ public class ExportRenderer{
             try{
                 doc.setAllSecurityToBeRemoved(true);
             }catch(Exception e){
+                doc.close();
                 throw new Exception("The document is encrypted, and we can't decrypt it.", e);
             }
         }

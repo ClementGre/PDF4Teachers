@@ -9,6 +9,9 @@ import javafx.application.Platform;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import org.apache.fontbox.ttf.*;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
+
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileInputStream;
@@ -124,9 +127,14 @@ public class SystemFontsMapper{
     private boolean addFontToMap(Font font, String path){
         
         // Check if PDFBox is able to load the font, otherwise, cancel the add.
+        PDDocument doc = new PDDocument();
         try{
-            new TTFParser().parse(new FileInputStream(path));
+            PDType0Font.load(doc, new FileInputStream(path));
+            doc.close();
         }catch(IOException e){
+            try{
+                doc.close();
+            }catch(IOException ioException){ ioException.printStackTrace(); }
             return false;
         }
     

@@ -203,7 +203,7 @@ public class TextTreeItem extends TreeItem<String>{
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 38);
         if(maxWidth < 0) return;
-        
+    
         Font font = getListFont();
         String wrappedText = "";
         final String[] splitText = getText().split(Pattern.quote("\n"));
@@ -250,11 +250,9 @@ public class TextTreeItem extends TreeItem<String>{
         }
         HBox.setMargin(namePane, new Insets(-negativePadding / 2d, 0, -negativePadding / 2d, 0));
         
-        
         if(updateParentHeight && pane.getParent() != null && pane.getParent() instanceof TreeCell){
             ((TreeCell<?>) pane.getParent()).setPrefHeight(cellHeight + 4);
         }
-        
     }
     
     Rectangle rect = new Rectangle();

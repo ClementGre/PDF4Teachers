@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils.fonts;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.MoreCollectors;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -60,6 +61,7 @@ public class FontUtils{
             if(!isFontAlreadyLoaded(family)) loadFont(family);
             return initFont(family, italic, bold, size);
         }else if(isSystemFont(family)){
+            AutoTipsManager.showByAction("useSystemFont");
             return initFont(family, italic, bold, size);
         }else{
             return getDefaultFont(italic, bold, size);

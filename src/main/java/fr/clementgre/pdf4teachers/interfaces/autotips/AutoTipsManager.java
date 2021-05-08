@@ -86,6 +86,9 @@ public class AutoTipsManager{
     @ToolTipVar(actionKey = "gradereset", prerequisiteKey = "", objectWhereDisplay = "")
     private static final String gradeSet0WithDoubleClick = "autoTips.gradeSet0WithDoubleClick";
     
+    @ToolTipVar(actionKey = "useSystemFont", prerequisiteKey = "", objectWhereDisplay = "auto")
+    private static final String textUseSystemFont = "autoTips.textUseSystemFont";
+    
     // GALLERY
     
     @ToolTipVar(actionKey = "opengallery", prerequisiteKey = "", objectWhereDisplay = "gallerycombobox")

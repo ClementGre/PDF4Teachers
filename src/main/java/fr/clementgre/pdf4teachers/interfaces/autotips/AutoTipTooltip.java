@@ -62,7 +62,9 @@ public class AutoTipTooltip extends PopOver{
             closedByAutoHide = true;
         });
         setOnHidden((e) -> {
-            if(!closedByAutoHide) AutoTipsManager.removeTip(name);
+            if(!closedByAutoHide){
+                AutoTipsManager.removeTip(name);
+            }
         });
         
     }
@@ -71,6 +73,7 @@ public class AutoTipTooltip extends PopOver{
     public void showAuto(Stage owner){
         if(owner == null) return;
         if(!owner.isFocused()) return;
+        if(isShowing()) return;
         closedByAutoHide = false;
         StyleManager.putStyle(getRoot(), Style.DEFAULT);
         getRoot().getTransforms().add(new Scale(Main.settings.zoom.getValue(), Main.settings.zoom.getValue(), 0, 0));
