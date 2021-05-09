@@ -45,6 +45,7 @@ public class SortManager{
             button.setAlignment(Pos.CENTER_LEFT);
             button.setMaxWidth(Double.MAX_VALUE);
             button.setPrefHeight(26);
+            button.setMinHeight(26);
             GridPane.setHgrow(button, Priority.ALWAYS);
             BooleanProperty order = new SimpleBooleanProperty(true);
             buttons.put(button, order);

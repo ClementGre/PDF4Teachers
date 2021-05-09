@@ -102,7 +102,7 @@ public abstract class GraphicElement extends Element{
         });
         
         setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.DELETE){
+            if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
                 delete();
                 e.consume();
             }

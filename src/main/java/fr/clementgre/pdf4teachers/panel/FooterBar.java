@@ -14,8 +14,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -34,7 +32,7 @@ public class FooterBar extends StackPane{
     
     private final HBox zoom = new HBox();
     private final Label zoomInfo = new Label();
-    private final SliderWithoutPopup zoomController = new SliderWithoutPopup(0.05, 5, 1);
+    private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 40, 20);
     private final Label zoomPercent = new Label();
     private final ColorAdjust fitZoomColorAdjust = new ColorAdjust();
     private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, fitZoomColorAdjust);
@@ -64,12 +62,29 @@ public class FooterBar extends StackPane{
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
-                zoomController.setValue(newValue.doubleValue());
+                double scale = newValue.doubleValue();
+                double val = 20;
+                
+                if(scale < 1){
+                    val = scale * 20;
+                }else if(scale > 1){
+                    val = 20 + (20 * (scale-1)) / 4;
+                }
+                zoomController.setValue(val);
             }
         });
         PaneUtils.setHBoxPosition(zoomController, 0, 20, 0);
         zoomController.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.mainScreen.zoomOperator.zoom(newValue.doubleValue(), true);
+            double val = newValue.doubleValue();
+            double scale = 1;
+            // val < 20 : scale = val / 20
+            // val > 20 : scale = 1 + (4 * (val-20)) / 20
+            if(val < 20){
+                scale = val / 20;
+            }else if(val > 20){
+                scale = 1 + (4 * (val-20)) / 20;
+            }
+            MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
         fitZoom.setOnMouseClicked((e) -> {
             MainWindow.mainScreen.zoomOperator.fitWidth(false);
@@ -84,6 +99,7 @@ public class FooterBar extends StackPane{
         });
         zoomInfo.setText(TR.tr("footerBar.zoom"));
         HBox.setMargin(fitZoom, new Insets(3, 5, 3, 5));
+        zoomPercent.setMinWidth(40);
         zoom.setSpacing(5);
         zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom);
         
@@ -185,9 +201,9 @@ public class FooterBar extends StackPane{
             zoomPercent.setDisable(false);
             zoomInfo.setDisable(false);
             fitZoom.setDisable(false);
-            if(MainWindow.mainScreen.document.getCurrentPage() == -1){
+            if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
-            }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getCurrentPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
+            }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
             
         }else{
             zoomController.setDisable(true);

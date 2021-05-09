@@ -49,6 +49,9 @@ public class Edition{
             if(!editFile.exists()) return; // File does not exist
             Config config = new Config(editFile);
             config.load();
+    
+            Double lastScrollValue = config.getDoubleNull("lastScrollValue");
+            if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
             
             loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
                 TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
@@ -73,7 +76,10 @@ public class Edition{
     }
     
     public void save(){
-        if(Edition.isSave()) return;
+        if(Edition.isSave()){
+            saveLastScrollValue();
+            return;
+        }
         
         try{
             editFile.createNewFile();
@@ -113,6 +119,7 @@ public class Edition{
             // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
             else{
+                config.base.put("lastScrollValue", document.getCurrentScrollValue());
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
                 config.base.put("images", images);
@@ -130,6 +137,20 @@ public class Edition{
         
     }
     
+    public void saveLastScrollValue(){
+        if(!editFile.exists()) return;
+        try{
+            Config config = new Config(editFile);
+            config.load();
+            
+            config.base.put("lastScrollValue", document.getCurrentScrollValue());
+            
+            config.save();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    
     private ArrayList<Object> getPageDataFromElements(ArrayList<Element> elements, Class<? extends Element> acceptedElements){
         ArrayList<Object> pageData = new ArrayList<>();
         for(Element element : elements){
@@ -141,7 +162,9 @@ public class Edition{
         else return null;
     }
     
-    // STATIC
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////// STATIC //////////////////////////////
+    ///////////////////////////////////////////////////////////////////
     
     public static Element[] simpleLoad(File editFile) throws Exception{
         

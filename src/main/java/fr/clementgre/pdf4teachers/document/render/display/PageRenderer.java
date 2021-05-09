@@ -10,7 +10,9 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -33,6 +35,7 @@ public class PageRenderer extends Pane{
     
     public static final int PAGE_WIDTH = 596;
     public static final int PAGE_HORIZONTAL_MARGIN = 30;
+    public static final int PAGE_VERTICAL_MARGIN = 30;
     
     private PageStatus status = PageStatus.HIDE;
     
@@ -106,6 +109,7 @@ public class PageRenderer extends Pane{
         });
         
         setOnMousePressed(e -> {
+            requestFocus();
             MainWindow.mainScreen.setSelected(null);
             menu.hide(); menu.getItems().clear();
             
@@ -190,6 +194,7 @@ public class PageRenderer extends Pane{
                 menuItem.setLeftData(name);
                 menuItem.setOnAction((e) -> {
                     item.addToDocument(false);
+                    MainWindow.textTab.selectItem();
                 });
                 menu.getItems().add(menuItem);
             }
@@ -217,7 +222,7 @@ public class PageRenderer extends Pane{
         setTranslateX(PAGE_HORIZONTAL_MARGIN);
         setTranslateY(totalHeight);
         
-        totalHeight = (int) (totalHeight + getHeight() + 30);
+        totalHeight = (int) (totalHeight + getHeight() + PAGE_VERTICAL_MARGIN);
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
             MainWindow.mainScreen.document.pages.get(page + 1).updatePosition(totalHeight);

@@ -3,7 +3,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
-import fr.clementgre.pdf4teachers.interfaces.Macro;
+import fr.clementgre.pdf4teachers.interfaces.KeyboardShortcuts;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
@@ -23,7 +23,10 @@ import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
@@ -65,6 +68,7 @@ public class MainWindow extends Stage{
     public static GradeTab gradeTab;
     public static PaintTab paintTab;
     
+    public static KeyboardShortcuts keyboardShortcuts;
     
     public static DecimalFormat format;
     public static DecimalFormat twoDigFormat;
@@ -89,7 +93,7 @@ public class MainWindow extends Stage{
         setResizable(true);
         setScene(scene);
         
-        new Macro(scene);
+        keyboardShortcuts = new KeyboardShortcuts(scene);
         
         setOnCloseRequest(e -> {
             userData.save();
@@ -164,13 +168,6 @@ public class MainWindow extends Stage{
         Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue) root.setBottom(null);
             else root.setBottom(footerBar);
-        });
-        root.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.TAB){
-                if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
-                if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
-                e.consume();
-            }
         });
 
 //		SHOWING

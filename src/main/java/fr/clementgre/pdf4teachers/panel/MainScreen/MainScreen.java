@@ -71,9 +71,9 @@ public class MainScreen extends Pane{
             if(dragNScrollFactor != 0){
                 Platform.runLater(() -> {
                     if(dragNScrollFactor < 0){
-                        MainWindow.mainScreen.zoomOperator.scrollUp((dragNScrollFactor + 50) / 2, true);
+                        MainWindow.mainScreen.zoomOperator.scrollUp((dragNScrollFactor + 50) / 2, true, false);
                     }else if(dragNScrollFactor > 0){
-                        MainWindow.mainScreen.zoomOperator.scrollDown(dragNScrollFactor / 2, true);
+                        MainWindow.mainScreen.zoomOperator.scrollDown(dragNScrollFactor / 2, true, false);
                     }
                 });
                 try{
@@ -178,7 +178,7 @@ public class MainScreen extends Pane{
         
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             if(getStatus() == Status.OPEN){
-                zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY());
+                zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY(), true);
             }
         });
         
@@ -187,9 +187,9 @@ public class MainScreen extends Pane{
                 
                 if(getStatus() == Status.OPEN){
                     if(e.getDeltaY() < 0){
-                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY());
+                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), true);
                     }else if(e.getDeltaY() > 0){
-                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY());
+                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), true);
                     }
                 }
             }else{ // SCROLL
@@ -198,18 +198,18 @@ public class MainScreen extends Pane{
                     
                     if(e.getDeltaX() != 0){
                         if(e.getDeltaX() > 0){
-                            zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false);
+                            zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false, true);
                         }else{
-                            zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false);
+                            zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false, true);
                         }
                     }
                 }
                 
                 if(e.getDeltaY() != 0){
                     if(e.getDeltaY() > 0){
-                        zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false);
+                        zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false, true);
                     }else{
-                        zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5), false);
+                        zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5), false, true);
                     }
                 }
                 
@@ -231,15 +231,15 @@ public class MainScreen extends Pane{
                 double distX = e.getX() - dragStartX;
                 
                 if(distY > 0){
-                    zoomOperator.scrollUp((int) distY, true);
+                    zoomOperator.scrollUp((int) distY, true, false);
                 }else if(distY < 0){
-                    zoomOperator.scrollDown((int) -distY, true);
+                    zoomOperator.scrollDown((int) -distY, true, false);
                 }
                 
                 if(distX > 0){
-                    zoomOperator.scrollLeft((int) distX, true);
+                    zoomOperator.scrollLeft((int) distX, true, false);
                 }else if(distX < 0){
-                    zoomOperator.scrollRight((int) -distX, true);
+                    zoomOperator.scrollRight((int) -distX, true, false);
                 }
             }else{ // DragNScroll with an Element
                 double y = Math.max(1, Math.min(getHeight(), e.getY()));
@@ -259,6 +259,7 @@ public class MainScreen extends Pane{
             mouseX = e.getX();
         });
         setOnMousePressed(e -> {
+            requestFocus();
             dragStartX = e.getX();
             dragStartY = e.getY();
             setSelected(null);
@@ -271,6 +272,9 @@ public class MainScreen extends Pane{
         setOnMouseMoved(e -> {
             mouseY = e.getY();
             mouseX = e.getX();
+        });
+        setOnKeyPressed((e) -> {
+            MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
         });
         pane.setOnMouseMoved(e -> {
             paneMouseY = e.getY();
@@ -319,7 +323,8 @@ public class MainScreen extends Pane{
         }
         status.set(Status.OPEN);
         MainWindow.filesTab.files.getSelectionModel().select(file);
-        
+    
+        zoomOperator.vScrollBar.setValue(0);
         document.showPages();
         try{
             document.loadEdition();
@@ -332,10 +337,11 @@ public class MainScreen extends Pane{
         }
         
         repaint();
-    
+        
+        double scrollValue = zoomOperator.vScrollBar.getValue();
         zoomOperator.fitWidth(true);
         Platform.runLater(() -> {
-            zoomOperator.updatePaneHeight(0, 0.5);
+            zoomOperator.updatePaneHeight(scrollValue, 0.5);
         });
         AutoTipsManager.showByAction("opendocument");
     }
@@ -351,13 +357,12 @@ public class MainScreen extends Pane{
         
         if(document != null){
             
-            if(!Edition.isSave()){
-                if(confirm){
-                    if(!document.save()){
-                        return false;
-                    }
-                }else document.edition.save();
-            }
+            if(confirm){
+                if(!document.save()){
+                    return false;
+                }
+            }else document.edition.save();
+            
             document.stopDocumentSaver();
             document.close();
             document = null;
@@ -394,6 +399,83 @@ public class MainScreen extends Pane{
             return false;
         }
         return true;
+    }
+    
+    // Navigation
+    public void navigateBegin(){
+        if(hasDocument(false)){
+            zoomOperator.scrollUp(Integer.MAX_VALUE, false, false);
+        }
+    }
+    public void navigateEnd(){
+        if(hasDocument(false)){
+            zoomOperator.scrollDown(Integer.MAX_VALUE, false, false);
+        }
+    }
+    public void pageUp(){
+        if(hasDocument(false)){
+            PageRenderer firstTopVisiblePage = document.getFirstTopVisiblePage();
+            
+            PageRenderer topPage;
+            if(firstTopVisiblePage == null){ // Navigate last page
+                topPage = document.pages.get(document.pages.size()-1);
+            }else if(firstTopVisiblePage.getPage() == 0){ // Navigate begin
+                navigateBegin(); return;
+            }else{ // Navigate to page
+                topPage = document.pages.get(firstTopVisiblePage.getPage()-1);
+            }
+    
+            int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());
+            zoomOperator.scroll(toScroll, false, false);
+        }
+    }
+    public void pageDown(){
+        if(hasDocument(false)){
+            PageRenderer firstTopVisiblePage = document.getFirstTopVisiblePage();
+    
+            PageRenderer bottomPage;
+            if(firstTopVisiblePage == null){ // Navigate end
+                bottomPage = document.pages.get(document.pages.size()-1);
+            }else if(firstTopVisiblePage.getPage() == document.pages.size()-1){ // Navigate last page
+                navigateEnd(); return;
+            }else{ // Navigate to page
+                bottomPage = document.pages.get(firstTopVisiblePage.getPage()+1);
+            }
+            
+            int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());
+            zoomOperator.scroll(toScroll, false, false);
+        }
+    }
+    private final static int ARROW_NAV_FACTOR = 300;
+    public void navigateUp(){
+        if(hasDocument(false)){
+            zoomOperator.scrollUp(ARROW_NAV_FACTOR, false, false);
+        }
+    }
+    public void navigateDown(){
+        if(hasDocument(false)){
+            zoomOperator.scrollDown(ARROW_NAV_FACTOR, false, false);
+        }
+    }
+    public void navigateLeft(){
+        if(hasDocument(false)){
+            zoomOperator.scrollLeft(ARROW_NAV_FACTOR, false, false);
+        }
+    }
+    public void navigateRight(){
+        if(hasDocument(false)){
+            zoomOperator.scrollRight(ARROW_NAV_FACTOR, false, false);
+        }
+    }
+    public void zoomMore(){
+        if(hasDocument(false)){
+            zoomOperator.zoomFactor(1.4, false, false);
+        }
+    }
+    public void zoomLess(){
+        if(hasDocument(false)){
+            zoomOperator.zoomFactor(0.6, false, false);
+        }
     }
     
     

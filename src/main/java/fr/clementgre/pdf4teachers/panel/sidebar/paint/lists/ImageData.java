@@ -32,7 +32,7 @@ public class ImageData extends ImageLambdaData{
     
     public void addToDocument(boolean link){
         ImageData linkedImage = link ? this : null;
-        PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
         ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                 width, height, repeatMode, resizeMode, imageId, linkedImage);

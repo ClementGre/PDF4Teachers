@@ -11,7 +11,6 @@ import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -220,7 +219,7 @@ public class ZoomOperator{
     }
     
     // x and y should be relative to Scene because MainScreen is bigger than the visible part (e.getX()/Y couldn't work)
-    public void zoom(double factor, double x, double y){
+    public void zoom(double factor, double x, double y, boolean trackpad){
     
         // determine offset that we will have to move the node
         // Since we are relative to Scene, we have to apply the current Scale transformation
@@ -231,8 +230,11 @@ public class ZoomOperator{
         double scale = Math.min(5, Math.max(aimScale * factor, 0.05));
         double f = (scale / pane.getScaleX()) - 1;
         
-        zoom(Main.settings.zoomAnimations.getValue() && factor > 0.05, scale, dx, dy, f);
+        zoom(doRemoveZoomAnimations(factor, trackpad, false), scale, dx, dy, f);
         
+    }
+    public void zoomFactor(double factor, boolean removeTransitions, boolean trackpad){
+        zoom(Math.min(5, Math.max(aimScale * factor, 0.05)), doRemoveZoomAnimations(factor, trackpad, removeTransitions));
     }
     public void zoom(double scale, boolean removeTransitions){
         if(scale == pane.getScaleX()) return;
@@ -251,10 +253,10 @@ public class ZoomOperator{
     
         double f = (scale / pane.getScaleX()) - 1;
         
-        zoom(!removeTransitions, scale, dx, dy, f);
+        zoom(removeTransitions, scale, dx, dy, f);
         
     }
-    public void zoom(boolean transition, double scale, double horizontal, double vertical, double translateFactor){
+    public void zoom(boolean removeTransition, double scale, double horizontal, double vertical, double translateFactor){
         
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
@@ -302,7 +304,7 @@ public class ZoomOperator{
         aimTranslateX = newTranslateX;
         aimScale = scale;
         
-        if(transition){
+        if(!removeTransition && Main.settings.zoomAnimations.getValue()){
             
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
@@ -340,7 +342,16 @@ public class ZoomOperator{
         zoom(targetScale, removeTransition);
     }
     
-    public void scrollDown(int factor, boolean removeTransition){
+    // V SCROLL
+    
+    public void scrollDown(int factor, boolean removeTransition, boolean trackpad){
+        scroll(factor, removeTransition, trackpad);
+    }
+    public void scrollUp(int factor, boolean removeTransition, boolean trackpad){
+        scroll(-factor, removeTransition, trackpad);
+    }
+    
+    public void scroll(int factor, boolean removeTransition, boolean trackpad){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -348,38 +359,13 @@ public class ZoomOperator{
         }
         
         double newTranslateY = aimTranslateY - factor;
+        if(newTranslateY - getPaneShiftY() > 0) newTranslateY = getPaneShiftY();
         if(newTranslateY - getPaneShiftY() < -getScrollableHeight())
             newTranslateY = -getScrollableHeight() + getPaneShiftY();
         
         aimTranslateY = newTranslateY;
         
-        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
-            timeline.getKeyFrames().clear();
-            timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), aimTranslateY))
-            );
-            timeline.stop();
-            isPlaying = true;
-            timeline.play();
-            
-        }else{
-            pane.setTranslateY(aimTranslateY);
-        }
-    }
-    
-    public void scrollUp(int factor, boolean removeTransition){
-        if(!isPlaying){
-            aimTranslateY = pane.getTranslateY();
-            aimTranslateX = pane.getTranslateX();
-            aimScale = pane.getScaleX();
-        }
-        
-        double newTranslateY = aimTranslateY + factor;
-        if(newTranslateY - getPaneShiftY() > 0) newTranslateY = getPaneShiftY();
-        
-        aimTranslateY = newTranslateY;
-        
-        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
+        if(!doRemoveScrollAnimations(factor, trackpad, removeTransition)){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateYProperty(), newTranslateY))
@@ -392,7 +378,15 @@ public class ZoomOperator{
         }
     }
     
-    public void scrollRight(int factor, boolean removeTransition){
+    // H SCROLL
+    
+    public void scrollRight(int factor, boolean removeTransition, boolean trackpad){
+        scrollHorizontally(factor, removeTransition, trackpad);
+    }
+    public void scrollLeft(int factor, boolean removeTransition, boolean trackpad){
+        scrollHorizontally(-factor, removeTransition, trackpad);
+    }
+    public void scrollHorizontally(int factor, boolean removeTransition, boolean trackpad){
         if(!isPlaying){
             aimTranslateY = pane.getTranslateY();
             aimTranslateX = pane.getTranslateX();
@@ -400,12 +394,13 @@ public class ZoomOperator{
         }
         
         double newTranslateX = aimTranslateX - factor;
+        if(newTranslateX - getPaneShiftX() > 0) newTranslateX = getPaneShiftX();
         if(newTranslateX - getPaneShiftX() < -getScrollableWidth())
             newTranslateX = -getScrollableWidth() + getPaneShiftX();
         
         aimTranslateX = newTranslateX;
         
-        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
+        if(!doRemoveScrollAnimations(factor, trackpad, removeTransition)){
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
                     new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), newTranslateX))
@@ -418,30 +413,11 @@ public class ZoomOperator{
         }
     }
     
-    public void scrollLeft(int factor, boolean removeTransition){
-        if(!isPlaying){
-            aimTranslateY = pane.getTranslateY();
-            aimTranslateX = pane.getTranslateX();
-            aimScale = pane.getScaleX();
-        }
-        
-        double newTranslateX = aimTranslateX + factor;
-        if(newTranslateX - getPaneShiftX() > 0) newTranslateX = getPaneShiftX();
-        
-        aimTranslateX = newTranslateX;
-        
-        if(Main.settings.zoomAnimations.getValue() && factor > 25 && !removeTransition){
-            timeline.getKeyFrames().clear();
-            timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(200), new KeyValue(pane.translateXProperty(), aimTranslateX))
-            );
-            timeline.stop();
-            isPlaying = true;
-            timeline.play();
-            
-        }else{
-            pane.setTranslateX(aimTranslateX);
-        }
+    private boolean doRemoveScrollAnimations(double factor, boolean trackpad, boolean removeTransition){
+        return !Main.settings.zoomAnimations.getValue() || Math.abs(factor) < 25 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
+    }
+    private boolean doRemoveZoomAnimations(double factor, boolean trackpad, boolean removeTransition){
+        return !Main.settings.zoomAnimations.getValue() || Math.abs(factor) < 0.05 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
     }
     
     // Renvoie le décalage entre les vrais coordonés de pane et entre les coordonés de sa partie visible.

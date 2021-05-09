@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
+import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -282,10 +283,35 @@ public class FileTab extends SideTab{
         File dir = getCurrentDir();
         return dir != null ? dir : new File("this tile can't exist (I hope ;)!@#$%^&*()_)");
     }
-    
     public ObservableList<File> getOpenedFiles(){
         return files.getItems();
     }
+    
+    // NAVIGATION
+    public void loadPreviousFile(){
+        int selected = files.getSelectionModel().getSelectedIndex();
+        if(selected == 0){
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.beginningOfList"), 15);
+            return;
+        }
+    
+        File toOpen = files.getItems().get(selected-1);
+        if(toOpen == null) return;
+        MainWindow.mainScreen.openFile(toOpen);
+    }
+    public void loadNextFile(){
+        int selected = files.getSelectionModel().getSelectedIndex();
+        if(selected == files.getItems().size()-1){
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.endOfList"), 15);
+            return;
+        }
+    
+        File toOpen = files.getItems().get(selected+1);
+        if(toOpen == null) return;
+        MainWindow.mainScreen.openFile(toOpen);
+    }
+    
+    
     
     public void refresh(){
         files.refresh();

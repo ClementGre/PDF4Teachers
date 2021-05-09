@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -66,7 +67,7 @@ public class Document{
             MainWindow.mainScreen.addPage(page);
             pages.add(page);
         }
-        pages.get(0).updatePosition(30);
+        pages.get(0).updatePosition(PageRenderer.PAGE_VERTICAL_MARGIN);
         updateShowsStatus();
     }
     
@@ -92,6 +93,12 @@ public class Document{
     public void loadEdition(){
         this.edition = new Edition(file, this);
         if(!documentSaver.isAlive()) documentSaver.start();
+    }
+    public double getCurrentScrollValue(){
+        return MainWindow.mainScreen.zoomOperator.vScrollBar.getValue();
+    }
+    public void setCurrentScrollValue(double value){
+        MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(value);
     }
     
     public ArrayList<Element> getElements(){
@@ -144,28 +151,31 @@ public class Document{
     public boolean save(){
         
         if(Edition.isSave()){
+            edition.saveLastScrollValue();
             return true;
         }
         
         if(Main.settings.autoSave.getValue()){
             edition.save();
-        }else{
-            CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"), TR.tr("dialog.unsavedEdit.header"), TR.tr("dialog.unsavedEdit.details"));
-
-            alert.addCancelButton(ButtonPosition.CLOSE);
-            alert.addButton(TR.tr("actions.save"), ButtonPosition.DEFAULT);
-            alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
+            return true;
             
-            ButtonType option = alert.getShowAndWait();
-            if(option == null) return false; // Window close button (null)
-            if(option.getButtonData().isDefaultButton()){ // Save button (Default)
-                edition.save();
-                return true;
-            }else{
-                return !option.getButtonData().isCancelButton(); // Close button OR Ignore button
-            }
         }
-        return true;
+        
+        CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"), TR.tr("dialog.unsavedEdit.header"), TR.tr("dialog.unsavedEdit.details"));
+        alert.addCancelButton(ButtonPosition.CLOSE);
+        alert.addButton(TR.tr("actions.save"), ButtonPosition.DEFAULT);
+        alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
+        
+        ButtonType option = alert.getShowAndWait();
+        if(option == null) return false; // Window close button (null)
+        if(option.getButtonData().isDefaultButton()){ // Save button (Default)
+            edition.save();
+            return true;
+        }else{
+            edition.saveLastScrollValue();
+            return !option.getButtonData().isCancelButton(); // Close button OR Ignore button
+        }
+        
     }
     
     public String getFileName(){
@@ -176,11 +186,44 @@ public class Document{
         return file;
     }
     
-    public int getCurrentPage(){
+    // Return null if there is no top page below the top of MainScreen
+    public PageRenderer getFirstTopVisiblePage(){
+        
+        Bounds mainScreenBoundsInScene = MainWindow.mainScreen.localToScene(MainWindow.mainScreen.getLayoutBounds());
+        
+        int i = 0;
+        int iMax = pages.size();
+        for(PageRenderer page : pages){
+            Bounds boundsInScene = MainWindow.mainScreen.pane.localToScene(page.getBoundsInParent());
+            if(boundsInScene.getMinY() > mainScreenBoundsInScene.getMinY()){
+                return page;
+            }
+            i++;
+        }
+        return null;
+    }
+    // Return null if there is no bottom page above the bottom of MainScreen
+    public PageRenderer getFirstBottomVisiblePage(){
+        
+        Bounds mainScreenBoundsInScene = MainWindow.mainScreen.localToScene(MainWindow.mainScreen.getLayoutBounds());
+        
+        int iMax = pages.size();
+        for(int i = 1; i <= iMax; i++){
+            PageRenderer page = pages.get(iMax-i);
+            
+            Bounds boundsInScene = MainWindow.mainScreen.pane.localToScene(page.getBoundsInParent());
+            if(boundsInScene.getMaxY() < mainScreenBoundsInScene.getMaxY()){
+                return page;
+            }
+        }
+        return null;
+    }
+    
+    public int getLastCursorOverPage(){
         return currentPage;
     }
-    public PageRenderer getCurrentPageObject(){
-        return (getCurrentPage() != -1) ? pages.get(getCurrentPage()) : pages.get(0);
+    public PageRenderer getLastCursorOverPageObject(){
+        return (getLastCursorOverPage() != -1) ? pages.get(getLastCursorOverPage()) : pages.get(0);
     }
     
     public void setCurrentPage(int currentPage){

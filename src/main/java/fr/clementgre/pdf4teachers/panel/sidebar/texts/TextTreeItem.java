@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.KeyableHBox;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -23,7 +24,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
-import javafx.scene.Group;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
@@ -57,7 +57,7 @@ public class TextTreeItem extends TreeItem<String>{
     
     // Graphics items
     private HBox spacer = new HBox();
-    public HBox pane = new HBox();
+    public KeyableHBox pane = new KeyableHBox();
     public Pane namePane = new Pane();
     public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust);
     public ScratchText name = new ScratchText();
@@ -169,7 +169,10 @@ public class TextTreeItem extends TreeItem<String>{
                     TextElement oldElement = (TextElement) MainWindow.mainScreen.getSelected();
                     oldElement.delete();
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
-                }else addToDocument(e.isShiftDown());
+                }else{
+                    addToDocument(e.isShiftDown());
+                    MainWindow.textTab.selectItem();
+                }
                 
                 // Update the sorting if is sort by utils
                 if(getType() == TextTreeSection.FAVORITE_TYPE){
@@ -296,7 +299,8 @@ public class TextTreeItem extends TreeItem<String>{
         cell.setStyle("-fx-padding: 0 0 0 -38;"); // top - right - bottom - left
         cell.setContextMenu(menu);
         cell.setOnMouseClicked(onMouseCLick);
-        
+    
+        if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
     }
     
     private Font getListFont(){
@@ -381,8 +385,8 @@ public class TextTreeItem extends TreeItem<String>{
         
         if(MainWindow.mainScreen.hasDocument(false)){
             PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-            if(MainWindow.mainScreen.document.getCurrentPage() != -1)
-                page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
+            if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
+                page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
             
             int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
             int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());

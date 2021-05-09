@@ -10,7 +10,6 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -20,14 +19,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class PaintTab extends SideTab{
@@ -204,7 +199,7 @@ public class PaintTab extends SideTab{
         delete.setOnAction(e -> deleteSelected());
     
         newImage.setOnAction((e) -> {
-            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
             ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                     50, 50, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, "");

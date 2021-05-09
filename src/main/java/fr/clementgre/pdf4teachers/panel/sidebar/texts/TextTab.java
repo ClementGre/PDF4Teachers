@@ -257,7 +257,8 @@ public class TextTab extends SideTab{
             }
         }));
         txtArea.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.DELETE){
+            if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
+                e.consume();
                 if(txtArea.getCaretPosition() == txtArea.getText().length()){
                     Element element = MainWindow.mainScreen.getSelected();
                     if(element != null){
@@ -266,21 +267,25 @@ public class TextTab extends SideTab{
                     }
                 }
             }else if(e.getCode() == KeyCode.TAB){
-                if(MainWindow.textTab.isSelected() && !MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
-                if(!MainWindow.textTab.isSelected() && MainWindow.gradeTab.isSelected()) MainWindow.textTab.select();
+                e.consume();
+                MainWindow.paintTab.select();
                 
-            }else if(e.getCode() == KeyCode.DOWN){
+            }else if(e.getCode() == KeyCode.DOWN && txtArea.getText().split("\n").length == 1){
                 e.consume();
                 if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
-                treeView.selectNextInSelection();
-            }else if(e.getCode() == KeyCode.UP){
+                if(!treeView.selectNextInSelection()){
+                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                }
+            }else if(e.getCode() == KeyCode.UP && txtArea.getText().split("\n").length == 1){
                 e.consume();
                 if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
-                treeView.selectPreviousInSelection();
+                if(!treeView.selectPreviousInSelection()){
+                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                }
             }
         });
         colorPicker.setOnAction((ActionEvent e) -> {
@@ -294,7 +299,7 @@ public class TextTab extends SideTab{
         });
         newBtn.setOnAction(e -> {
             
-            PageRenderer page = MainWindow.mainScreen.document.getCurrentPageObject();
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             
             MainWindow.mainScreen.setSelected(null);
             

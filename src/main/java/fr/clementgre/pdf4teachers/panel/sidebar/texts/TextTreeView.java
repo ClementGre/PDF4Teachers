@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeF
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeLasts;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeOnFile;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -29,7 +30,7 @@ public class TextTreeView extends TreeView<String>{
     public TextTreeFavorites favoritesSection = new TextTreeFavorites();
     public TextTreeLasts lastsSection = new TextTreeLasts();
     public TextTreeOnFile onFileSection = new TextTreeOnFile();
-
+    
     @SuppressWarnings("unchecked")
     public TextTreeView(Pane pane){
         
@@ -192,7 +193,7 @@ public class TextTreeView extends TreeView<String>{
         
     }
     
-    public void selectNextInSelection(){
+    public boolean selectNextInSelection(){
         if(getSelectionModel().getSelectedIndices().size() != 0){
             
             if(getSelectionModel().getSelectedItem() == null){
@@ -204,11 +205,12 @@ public class TextTreeView extends TreeView<String>{
                 if(toSelectIndex > lastIndex) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
-            
+            return true;
         }
+        return false;
     }
     
-    public void selectPreviousInSelection(){
+    public boolean selectPreviousInSelection(){
         if(getSelectionModel().getSelectedIndices().size() != 0){
             int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
             
@@ -220,22 +222,26 @@ public class TextTreeView extends TreeView<String>{
                 if(toSelectIndex < 0) selectTextField();
                 else selectFromSelectedIndex(toSelectIndex);
             }
-            
+            return true;
         }
+        return false;
     }
     
     private void selectTextField(){
-        MainWindow.textTab.treeView.scrollTo(0);
+        scrollTo(0);
         getSelectionModel().select(null);
         MainWindow.textTab.txtArea.requestFocus();
     }
     
     private void selectFromSelectedIndex(int index){
-        MainWindow.textTab.treeView.scrollTo(getSelectionModel().getSelectedIndices().get(index) - 3);
-        Platform.runLater(() -> {
-            int realIndex = getSelectionModel().getSelectedIndices().get(index);
-            getSelectionModel().select(realIndex);
-        });
+        scrollTo(getSelectionModel().getSelectedIndices().get(index) - 3);
+        int realIndex = getSelectionModel().getSelectedIndices().get(index);
+        
+        if(getTreeItem(realIndex) instanceof TextTreeItem textTreeItem){
+            PlatformUtils.runLaterOnUIThread(25, () -> {
+                getSelectionModel().select(textTreeItem);
+            });
+        }
     }
     
     
@@ -276,6 +282,7 @@ public class TextTreeView extends TreeView<String>{
                     MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
                 }
             }
+            MainWindow.textTab.selectItem();
         });
         item2.setOnAction((e) -> {
             if(element.getType() == TextTreeSection.ONFILE_TYPE){

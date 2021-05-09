@@ -71,7 +71,8 @@ public class GradeElement extends Element{
         }
         
         setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.DELETE){
+            if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
+                e.consume();
                 getGradeTreeItem().gradeField.setText("");
             }
         });
@@ -123,8 +124,8 @@ public class GradeElement extends Element{
             }else{
                 if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
                     
-                    if(MainWindow.mainScreen.document.getCurrentPage() != -1 && MainWindow.mainScreen.document.getCurrentPage() != getPage().getPage()){
-                        switchPage(MainWindow.mainScreen.document.getCurrentPage());
+                    if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
+                        switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
                     }
                     setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
                     

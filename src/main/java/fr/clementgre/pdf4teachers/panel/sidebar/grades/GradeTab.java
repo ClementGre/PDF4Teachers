@@ -111,8 +111,8 @@ public class GradeTab extends SideTab{
     public GradeElement newGradeElementAuto(GradeTreeItem parent){
         
         PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-        if(MainWindow.mainScreen.document.getCurrentPage() != -1)
-            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
+        if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
+            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
         
         MainWindow.mainScreen.setSelected(null);
         
@@ -136,8 +136,8 @@ public class GradeTab extends SideTab{
     public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
         
         PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-        if(MainWindow.mainScreen.document.getCurrentPage() != -1)
-            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getCurrentPage());
+        if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
+            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
         
         if(update) MainWindow.mainScreen.setSelected(null);
         

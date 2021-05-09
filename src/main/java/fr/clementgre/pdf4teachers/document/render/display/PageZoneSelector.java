@@ -66,7 +66,10 @@ public class PageZoneSelector extends Pane{
         setOnMouseDragged(this::updateSelectionPositionDimensions);
         
         setOnKeyPressed((e) -> {
-            if(e.getCode() == KeyCode.ESCAPE) end();
+            if(e.getCode() == KeyCode.ESCAPE){
+                e.consume();
+                end();
+            }
         });
         
         setOnMouseReleased((e) -> {
