@@ -17,8 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Slider;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 
 import java.util.ArrayList;
 
@@ -187,6 +186,21 @@ public class KeyboardShortcuts{
                 e.consume();
                 MainWindow.mainScreen.navigateRight();
             }
+        }else{ // SHORTCUT PRESSED
+            
+            if(e.getCode() == KeyCode.V){
+                e.consume();
+                
+                final Clipboard clipboard = Clipboard.getSystemClipboard();
+                String string = clipboard.getString();
+                if(string == null) string = clipboard.getRtf();
+                if(string == null) string = clipboard.getUrl();
+                if(string == null) string = clipboard.getHtml();
+                if(string != null){
+                    MainWindow.mainScreen.pasteText(string);
+                }
+            }
+            
         }
     }
     

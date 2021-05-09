@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -23,6 +24,9 @@ import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
@@ -368,12 +372,12 @@ public class PDFPagesEditor{
         List<Image> images = new ArrayList<>();
         if(pageIndex == -1){
             PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-            pageImage = capturePage(page, null);
-            images.add(capturePage(page, dimensions));
+            pageImage = capturePagePreview(page, null);
+            images.add(capturePagePreview(page, dimensions));
         }else{
             PageRenderer page = MainWindow.mainScreen.document.pages.get(pageIndex);
-            pageImage = capturePage(page, null);
-            images.add(capturePage(page, dimensions));
+            pageImage = capturePagePreview(page, null);
+            images.add(capturePagePreview(page, dimensions));
         }
         
         List<String> definitions = ConvertWindow.definitions;
@@ -383,7 +387,14 @@ public class PDFPagesEditor{
         alert.setItems(FXCollections.observableList(definitions));
         alert.setSelected(definitions.get(0));
         
-        String choosed = alert.execute();
+        alert.getButtonTypes().clear();
+        alert.addDefaultButton(TR.tr("actions.save"));
+        alert.addCancelButton(ButtonPosition.CLOSE);
+        if(pageIndex != -1) alert.addRightButton(TR.tr("actions.copyClipboard"));
+        
+        ButtonPosition buttonPos = alert.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
+        if(buttonPos == ButtonPosition.CLOSE) return;
+        String choosed = alert.getSelected();
         if(choosed != null){
             int definition = (int) (Double.parseDouble(choosed.split("Mp")[0]) * 1000000);
             
@@ -404,14 +415,18 @@ public class PDFPagesEditor{
                 public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive){
                     File file;
                     if(!recursive){
-                        file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
-                        if(file == null)
-                            return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
-                        exportDir = file.getParentFile();
-                        
+                        if(buttonPos == ButtonPosition.DEFAULT){
+                            file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                            if(file == null){
+                                return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
+                            }
+                            exportDir = file.getParentFile();
+                        }else{
+                            return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_OK);
+                        }
                     }else{
                         if(exportDir == null){
-                            exportDir = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
+                            exportDir = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR);
                             if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }
@@ -437,16 +452,30 @@ public class PDFPagesEditor{
                 public TwoStepListAction.ProcessResult completeData(Map.Entry<File, Integer> data, boolean recursive){
                     PageRenderer page = MainWindow.mainScreen.document.pages.get(data.getValue());
                     try{
-                        BufferedImage image = capturePage(page, dimensions, definition);
-                        try{
-                            ImageIO.write(image, "png", data.getKey());
-                        }catch(IOException e){
-                            e.printStackTrace();
-                            boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
-                            if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                            if(result) return TwoStepListAction.ProcessResult.STOP;
-                            else return TwoStepListAction.ProcessResult.SKIPPED;
+                        if(buttonPos == ButtonPosition.DEFAULT){
+                            BufferedImage image = capturePage(page, dimensions, definition);
+                        
+                            try{
+                                ImageIO.write(image, "png", data.getKey());
+                            }catch(IOException e){
+                                e.printStackTrace();
+                                boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
+                                if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                                if(result) return TwoStepListAction.ProcessResult.STOP;
+                                else return TwoStepListAction.ProcessResult.SKIPPED;
+                            }
+                        }else{ // clipboard copy
+                            Image image = capturePageInFXImage(page, dimensions, definition);;
+                            PlatformUtils.runAndWait(() -> {
+                                final Clipboard clipboard = Clipboard.getSystemClipboard();
+                                final ClipboardContent content = new ClipboardContent();
+    
+                                content.putImage(image);
+                                clipboard.setContent(content);
+                                return null;
+                            });
                         }
+                        
                     }catch(Exception e){
                         e.printStackTrace();
                         boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(null, e.getMessage(), recursive).execute());
@@ -459,8 +488,10 @@ public class PDFPagesEditor{
                 
                 @Override
                 public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
-                    
-                    
+                    if(exportDir == null){
+                        MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("messages.copied"));
+                        return;
+                    }
                     String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("document.pageActions.capture.completedDialog.ignored.alreadyExisting", excludedReasons.get(1)) + ")";
                     String details = TR.tr("document.pageActions.capture.completedDialog.exported", completedSize, originSize) + alreadyExistText;
                     
@@ -472,7 +503,7 @@ public class PDFPagesEditor{
         }
     }
     
-    private Image capturePage(PageRenderer page, PositionDimensions dimensions){
+    private Image capturePagePreview(PageRenderer page, PositionDimensions dimensions){
         if(page.getBackground().getImages().size() == 0)
             return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
         if(dimensions == null){
@@ -507,6 +538,27 @@ public class PDFPagesEditor{
             int subWidth = (int) (dimensions.getWidth() * factor);
             int subHeight = (int) (dimensions.getHeight() * factor);
             return image.getSubimage(subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX - 1 : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY - 1 : subHeight);
+        }
+    }
+    
+    private Image capturePageInFXImage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
+        
+        int width = (int) (Math.sqrt(pixels) / (841d / 594d));
+        int height = (int) (width * (page.getHeight() / page.getWidth()));
+        
+        BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), width, height);
+        
+        if(dimensions == null){
+            return SwingFXUtils.toFXImage(image, null);
+        }else{
+            Image fxImage = SwingFXUtils.toFXImage(image, null);
+            double factor = image.getHeight() / page.getHeight();
+            int subX = (int) (dimensions.getX() * factor);
+            int subY = (int) (dimensions.getY() * factor);
+            int subWidth = (int) (dimensions.getWidth() * factor);
+            int subHeight = (int) (dimensions.getHeight() * factor);
+            return new WritableImage(fxImage.getPixelReader(),
+                    subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
         }
     }
     

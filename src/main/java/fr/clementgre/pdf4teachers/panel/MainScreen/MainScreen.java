@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
@@ -529,5 +530,12 @@ public class MainScreen extends Pane{
         
         pane.setPrefWidth(PageRenderer.PAGE_WIDTH + (PageRenderer.PAGE_HORIZONTAL_MARGIN * 2));
         pane.setPrefHeight(totalHeight);
+    }
+    
+    public void pasteText(String text){
+        if(hasDocument(false)){
+            MainWindow.textTab.newBtn.fire();
+            MainWindow.textTab.txtArea.setText(text);
+        }
     }
 }

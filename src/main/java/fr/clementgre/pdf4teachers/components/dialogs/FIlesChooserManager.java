@@ -100,8 +100,8 @@ public class FIlesChooserManager{
     public static File showSaveDialog(SyncVar syncVar, String initialFileName, String extensionsName, String... extensions){
     
         File file = showSaveDialog(pathToExistingPath(getPathFromSyncVar(syncVar)), initialFileName, extensionsName, extensions);
-        if(file != null && file.exists()){
-            setPathFromSyncVar(syncVar, file.getParentFile().getAbsolutePath());
+        if(file != null){
+            setPathFromSyncVar(syncVar, file.getParent());
             return file;
         }
         return null;
