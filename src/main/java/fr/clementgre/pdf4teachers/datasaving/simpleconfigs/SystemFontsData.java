@@ -2,8 +2,6 @@ package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.datasaving.UserData;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.FontPaths;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.SystemFontsMapper;
@@ -15,6 +13,8 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class SystemFontsData extends SimpleConfig{
     
+    int realSysFontsCount = 0;
+    
     public SystemFontsData(){
         super("sysfonts_cache");
     }
@@ -23,7 +23,9 @@ public class SystemFontsData extends SimpleConfig{
     protected void manageLoadedData(Config config){
         
         long fontsCount = config.getLong("systemFontsCount");
-        if(fontsCount != SystemFontsMapper.getSystemFontNames().length){
+        realSysFontsCount = SystemFontsMapper.getSystemFontNames().length;
+        
+        if(fontsCount != realSysFontsCount){
             System.out.println("Updating system fonts indexing because fonts list length changed.");
             FontUtils.getSystemFontsMapper().loadFontsFromSystemFiles();
             return;
@@ -59,8 +61,8 @@ public class SystemFontsData extends SimpleConfig{
         for(FontPaths font : FontUtils.getSystemFonts()){
             systemFontsCache.put(font.getName(), font.serialize());
         }
-    
-        config.set("systemFontsCount", SystemFontsMapper.getSystemFontNames().length);
+        
+        config.set("systemFontsCount", realSysFontsCount);
         config.set("systemFontsCache", systemFontsCache);
     }
 }

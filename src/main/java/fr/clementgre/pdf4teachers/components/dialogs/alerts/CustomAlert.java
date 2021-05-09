@@ -9,6 +9,8 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -112,7 +114,6 @@ public class CustomAlert extends Alert{
     }
     public boolean getShowAndWaitIsCancelButton(){
         Optional<ButtonType> result = showAndWait();
-        System.out.println(result);
         if(result.isEmpty()) return false;
         else return result.get().getButtonData().isCancelButton();
     }
