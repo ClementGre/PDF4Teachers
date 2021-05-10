@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -69,6 +70,19 @@ public class NodeMenu extends Menu{
         Tooltip toolTipUI = PaneUtils.genWrappedToolTip(toolTip);
         toolTipUI.setShowDuration(Duration.INDEFINITE);
         Tooltip.install(root, toolTipUI);
+    }
+    
+    public void hideAll(){
+        hideParent(this);
+    }
+    private static void hideParent(Menu item){
+        if(item.getParentMenu() != null){
+            hideParent(item.getParentMenu());
+        }else if(item.getParentPopup() != null){
+            item.getParentPopup().hide();
+        }else{
+            item.hide();
+        }
     }
 
 }

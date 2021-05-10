@@ -23,15 +23,11 @@ import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -70,7 +66,8 @@ public class MainWindow extends Stage{
     
     public static KeyboardShortcuts keyboardShortcuts;
     
-    public static DecimalFormat format;
+    public static DecimalFormat fourDigFormat;
+    public static DecimalFormat gradesDigFormat;
     public static DecimalFormat twoDigFormat;
     
     public OSXTouchBarManager osxTouchBarManager;
@@ -362,8 +359,12 @@ public class MainWindow extends Stage{
         if(separator == 'D') separator = ',';
         else if(separator != ',' && separator != '.') separator = '.';
         symbols.setDecimalSeparator(separator);
-        format = new DecimalFormat("0.####", symbols);
+        
+        fourDigFormat = new DecimalFormat("0.####", symbols);
         twoDigFormat = new DecimalFormat("0.##", symbols);
+        
+        gradesDigFormat = new DecimalFormat("0.###", symbols);
+        gradesDigFormat.setMaximumIntegerDigits(4);
     }
     
 }

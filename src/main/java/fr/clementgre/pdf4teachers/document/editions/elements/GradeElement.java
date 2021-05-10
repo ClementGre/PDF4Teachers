@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -15,6 +16,7 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.VPos;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -93,7 +95,7 @@ public class GradeElement extends Element{
         });
         nameProperty().addListener((observable, oldValue, newValue) -> {
             
-            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             Edition.setUnsave();
             
             // Check if name is null
@@ -120,7 +122,7 @@ public class GradeElement extends Element{
             Edition.setUnsave();
             if(!isShouldVisible()){
                 setVisible(false);
-                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             }else{
                 if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
                     
@@ -138,7 +140,7 @@ public class GradeElement extends Element{
                     }
                 }
                 setVisible(true);
-                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+                text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             }
             
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -149,7 +151,7 @@ public class GradeElement extends Element{
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave();
-            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+            text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
             ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
@@ -175,7 +177,7 @@ public class GradeElement extends Element{
         
         menu.setOnShowing((e) -> {
             Platform.runLater(() -> {
-                NodeMenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
+                MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
                 
                 if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
                 else menu.getItems().set(0, menuItem);
@@ -189,7 +191,7 @@ public class GradeElement extends Element{
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
-            treeItemElement.gradeField.setText(MainWindow.format.format(getTotal()));
+            treeItemElement.gradeField.setText(MainWindow.gradesDigFormat.format(getTotal()));
             treeItemElement.setChildrenValuesToMax();
         });
         item2.setOnAction(e -> {
@@ -345,7 +347,7 @@ public class GradeElement extends Element{
     public void updateFont(){
         text.setFont(GradeTab.getTierFont(GradeTreeView.getElementTier(parentPath)));
         text.setFill(GradeTab.getTierColor(GradeTreeView.getElementTier(parentPath)));
-        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.format.format(getValue())) + "/" + MainWindow.format.format(getTotal()));
+        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
         setVisible(isShouldVisible());
     }
     

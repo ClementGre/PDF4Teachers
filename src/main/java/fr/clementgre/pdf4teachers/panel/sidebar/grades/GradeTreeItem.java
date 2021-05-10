@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -18,6 +19,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -25,6 +27,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Pattern;
 
@@ -75,8 +78,8 @@ public class GradeTreeItem extends TreeItem<String>{
                         core.setName(core.getName() + "(1)");
                 }
                 
-                gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
-                totalField.setText(MainWindow.format.format(core.getTotal()));
+                gradeField.setText(core.getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(core.getValue()));
+                totalField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
                 pane.getChildren().clear();
                 
                 if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
@@ -152,10 +155,10 @@ public class GradeTreeItem extends TreeItem<String>{
         name.textProperty().bind(core.nameProperty());
         
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.format.format(core.getValue())), core.valueProperty()));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(core.getValue())), core.valueProperty()));
         
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.format.format(core.getTotal()), core.totalProperty()));
+        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.gradesDigFormat.format(core.getTotal()), core.totalProperty()));
         
         // FIELDS
         
@@ -180,7 +183,7 @@ public class GradeTreeItem extends TreeItem<String>{
         
     }
     
-    public NodeMenuItem getEditMenuItem(ContextMenu menu){
+    public MenuItem getEditMenuItem(ContextMenu menu){
         
         HBox pane = new HBox();
         NodeMenuItem menuItem = new NodeMenuItem(pane);
@@ -197,16 +200,17 @@ public class GradeTreeItem extends TreeItem<String>{
         HBox.setMargin(name, new Insets(0, 10, 0, 0));
         
         HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.format.format(core.getValue())), core.valueProperty()));
+        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(core.getValue())), core.valueProperty()));
         
         HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.format.format(core.getTotal()), core.totalProperty()));
+        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.gradesDigFormat.format(core.getTotal()), core.totalProperty()));
         
         // SETUP
         
         TextArea gradeField = getField(FieldType.GRADE, false);
         HBox.setMargin(gradeField, new Insets(-7, 0, -7, 0));
-        gradeField.setText(core.getValue() == -1 ? "" : MainWindow.format.format(core.getValue()));
+        
+        gradeField.setText(core.getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(core.getValue()));
         if(!isRoot() && getParent() != null){
             if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
@@ -226,12 +230,73 @@ public class GradeTreeItem extends TreeItem<String>{
             MainWindow.gradeTab.treeView.getSelectionModel().select(this);
         });
     
-        menuItem.setOnAction((actionEvent) -> {
-            this.gradeField.setText(MainWindow.format.format(core.getTotal()));
-            setChildrenValuesToMax();
-        });
+        if(!hasSubGrade()){
+            pane.setOnMouseClicked((e) -> {
+                if(e.getButton() == MouseButton.PRIMARY){
+                    this.gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
+                    setChildrenValuesToMax();
+                }else{
+                    ContextMenu contextMenu = new ContextMenu();
+                    contextMenu.getItems().addAll(getChooseValueMenuItemsAuto());
+                    NodeMenuItem.setupMenu(contextMenu);
+            
+                    contextMenu.show(Main.window, e.getScreenX(), e.getScreenY());
+                }
+            });
+        }
         
         return menuItem;
+    }
+    
+    public ArrayList<MenuItem> getChooseValueMenuItemsAuto(){
+        return getChooseValueMenuItems(0, getCore().getTotal(), 0, true);
+    }
+    public ArrayList<MenuItem> getChooseValueMenuItems(double min, double max, int deep, boolean includeEdges){
+        ArrayList<MenuItem> items = new ArrayList<>();
+        
+        int maxDivisions = 11;
+        double[] intervalsToTest = {.25, .5, 1, 5, 10, 25, 50};
+        double finalInterval = 100;
+        
+        for(double interval : intervalsToTest){
+            int divisions = (int) ((max-min) / interval);
+            if(divisions < maxDivisions){
+                finalInterval = interval;
+                break;
+            }
+        }
+    
+        double actualValue = min;
+        while(actualValue < max){
+            items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue+finalInterval), deep+1));
+            actualValue += finalInterval;
+        }
+        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, deep+1));
+        
+        return items;
+    }
+    private MenuItem getChooseValueMenuItem(double value, double min, double max, int deep){
+        
+        if(max-min > .25 && deep < 3){
+            NodeMenu menuItem = new NodeMenu(new HBox());
+            menuItem.setName(MainWindow.gradesDigFormat.format(value));
+            menuItem.setOnAction(e -> {
+                this.gradeField.setText(MainWindow.gradesDigFormat.format(value));
+                menuItem.hideAll();
+            });
+            menuItem.setOnShown(e -> {
+                NodeMenuItem.setupMenuNow(menuItem);
+            });
+            menuItem.getItems().addAll(getChooseValueMenuItems(min, max, deep, false));
+            return menuItem;
+        }else{
+            NodeMenuItem menuItem = new NodeMenuItem(new HBox());
+            menuItem.setName(MainWindow.gradesDigFormat.format(value));
+            menuItem.setOnAction(e -> {
+                this.gradeField.setText(MainWindow.gradesDigFormat.format(value));
+            });
+            return menuItem;
+        }
     }
     
     public void updateCell(TreeCell<String> cell){
@@ -527,12 +592,22 @@ public class GradeTreeItem extends TreeItem<String>{
                 if(newText.length() >= 20) newText = newText.substring(0, 20);
             }else{
                 newText = newValue.replaceAll("[^0123456789.,]", "");
-                if(newText.length() >= 5) newText = newText.substring(0, 5);
+                String[] splitted = newText.split("[.,]");
+                String integers = splitted.length >= 1 ? splitted[0] : "0";
+                String decimals = splitted.length >= 2 ? splitted[1] : "";
+                
+                if(integers.length() > 4){
+                    if(splitted.length >= 2) newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
+                    else newText = integers.substring(0, 4);
+                }if(decimals.length() > 3){
+                    newText = integers + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + splitted[1].substring(0, 3);
+                }
             }
             
             field.setText(newText);
             meter.setText(newText);
-            field.setMaxWidth(meter.getLayoutBounds().getWidth() + 20);
+            field.setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
+            field.setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             
             if(type == FieldType.GRADE && field != gradeField){
                 gradeField.setText(newText);
@@ -548,8 +623,8 @@ public class GradeTreeItem extends TreeItem<String>{
                     try{
                         double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
                         if(value > core.getTotal() && !hasSubGrade()){
-                            field.setText(MainWindow.format.format(core.getTotal()));
-                            gradeField.setText(MainWindow.format.format(core.getTotal()));
+                            field.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
+                            gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
                         }else core.setValue(value);
                     }catch(NumberFormatException e){
                         core.setValue(-1);

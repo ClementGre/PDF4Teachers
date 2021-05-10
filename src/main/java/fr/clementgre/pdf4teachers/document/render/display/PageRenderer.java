@@ -18,6 +18,7 @@ import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
@@ -165,14 +166,14 @@ public class PageRenderer extends Pane{
             GradeTreeView.defineNaNLocations();
             GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
             if(logicalNextGrade != null){
-                CustomMenuItem menuItem = logicalNextGrade.getEditMenuItem(menu);
+                MenuItem menuItem = logicalNextGrade.getEditMenuItem(menu);
                 menu.getItems().add(menuItem);
             }
         
             GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) pageY);
             GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
             if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
-                NodeMenuItem menuItem = documentNextGrade.getEditMenuItem(menu);
+                MenuItem menuItem = documentNextGrade.getEditMenuItem(menu);
                 menu.getItems().add(0, menuItem);
             }
         

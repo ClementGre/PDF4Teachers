@@ -94,7 +94,7 @@ public class DoubleSetting extends Setting<Double>{
     }
     public String getValueOrEmpty(){
         if(getValue() == -1 && disableInMinus1) return "";
-        else return MainWindow.twoDigFormat.format(getValue());
+        else return MainWindow.fourDigFormat.format(getValue());
     }
     
     public DoubleProperty valueProperty(){

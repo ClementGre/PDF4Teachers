@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.components.menus;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -127,7 +128,7 @@ public class NodeMenuItem extends CustomMenuItem{
                 if(nodeItem.getNode().getWidth() > maxWidth)
                     maxWidth = nodeItem.getNode().getWidth();
             }else if(item instanceof Menu){
-                extra = 28; // Menus has a little Arrow, this add 25px
+                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
@@ -154,14 +155,24 @@ public class NodeMenuItem extends CustomMenuItem{
         double maxWidth = 0;
         int extra = 0;
         for(MenuItem item : menu.getItems()){
-            if(item instanceof NodeMenuItem){
-                if(((NodeMenuItem) item).getNode().getWidth() > maxWidth)
-                    maxWidth = ((NodeMenuItem) item).getNode().getWidth();
+            if(item instanceof NodeMenuItem nodeItem){
+                if(nodeItem.getNode().getWidth() > maxWidth)
+                    maxWidth = nodeItem.getNode().getWidth();
+            }else if(item instanceof Menu){
+                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+            
+                if(item.getStyleableNode() != null){
+                    Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
+                    if(arrow instanceof Region region){
+                        region.setScaleX(Main.settings.zoom.getValue());
+                        region.setScaleY(Main.settings.zoom.getValue());
+                    }
+                }
             }
         }
         for(MenuItem item : menu.getItems()){
-            if(item instanceof NodeMenuItem){
-                ((NodeMenuItem) item).getNode().setPrefWidth(maxWidth + extra);
+            if(item instanceof NodeMenuItem nodeItem){
+                nodeItem.getNode().setPrefWidth((maxWidth + extra));
             }
         }
     }

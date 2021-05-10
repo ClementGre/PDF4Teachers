@@ -98,25 +98,27 @@ public class PaneUtils{
     }
     public static void setupScaling(Region pane, boolean listeners, boolean bind, boolean updatePadding, boolean paddingAround){
         if(Main.settings.zoom.getValue() == 1 && !bind) return;
+        double nonBindScaleValue = Main.settings.zoom.getValue();
+        
         pane.setScaleX(Main.settings.zoom.getValue());
         pane.setScaleY(Main.settings.zoom.getValue());
         if(updatePadding){
-            updateScalePadding(pane, paddingAround);
+            updateScalePadding(pane, paddingAround, bind ? Main.settings.zoom.getValue() : nonBindScaleValue);
             if(listeners){
-                pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
-                pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
-                pane.scaleYProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround));
+                pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround, bind ? Main.settings.zoom.getValue() : nonBindScaleValue));
+                pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround, bind ? Main.settings.zoom.getValue() : nonBindScaleValue));
+                pane.scaleYProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, paddingAround, bind ? Main.settings.zoom.getValue() : nonBindScaleValue));
             }
         }
         if(bind){
             Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
                 pane.setScaleX(Main.settings.zoom.getValue());
                 pane.setScaleY(Main.settings.zoom.getValue());
-                updateScalePadding(pane, paddingAround);
+                updateScalePadding(pane, paddingAround, Main.settings.zoom.getValue());
             });
         }
     }
-    public static void updateScalePadding(Region pane, boolean paddingAround){
+    public static void updateScalePadding(Region pane, boolean paddingAround, double scale){
         if(Main.settings.zoom.getValue() == 0){
             pane.setPadding(Insets.EMPTY);
             return;
@@ -124,8 +126,8 @@ public class PaneUtils{
         
         // -1 to avoid small white borders on sides sometimes
         // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
-        double horizontal = (pane.getWidth() - pane.getWidth()/Main.settings.zoom.getValue())/2  -1;
-        double vertical = (pane.getHeight() - pane.getHeight()/Main.settings.zoom.getValue())/2  -1;
+        double horizontal = (pane.getWidth() - pane.getWidth()/scale)/2  -1;
+        double vertical = (pane.getHeight() - pane.getHeight()/scale)/2  -1;
         if(paddingAround){
             pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
         }else{

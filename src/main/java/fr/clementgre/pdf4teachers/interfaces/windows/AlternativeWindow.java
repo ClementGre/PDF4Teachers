@@ -77,11 +77,11 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
             setContentMinWidth(400, true);
             setMinHeight(300 * Main.settings.zoom.getValue());
             setMaxWidth(width.getWidth()*2 * Main.settings.zoom.getValue());
+    
+            if(getHeight() > 1.5*getWidth()) setHeight(1.5*getWidth());
             
             Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);
-            
-            if(getHeight() > 1.5*getWidth()) setHeight(2*getWidth());
             
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();

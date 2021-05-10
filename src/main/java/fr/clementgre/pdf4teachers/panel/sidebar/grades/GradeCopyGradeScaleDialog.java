@@ -136,7 +136,7 @@ public class GradeCopyGradeScaleDialog{
             if(gradeElements.size() >= 1 && !ignoreErase){
                 String grades = "";
                 for(GradeElement grade : gradeElements){
-                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.format.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.format.format(grade.getTotal()) + ")";
+                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.gradesDigFormat.format(grade.getTotal()) + ")";
                 }
     
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"),

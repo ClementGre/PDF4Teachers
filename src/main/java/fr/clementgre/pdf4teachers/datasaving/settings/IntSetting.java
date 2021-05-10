@@ -7,14 +7,11 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
-
-import java.util.concurrent.Callable;
 
 public class IntSetting extends Setting<Integer>{
     
@@ -95,7 +92,7 @@ public class IntSetting extends Setting<Integer>{
     }
     public String getValueOrEmpty(){
         if(getValue() == -1 && disableInMinus1) return "";
-        else return MainWindow.format.format(getValue());
+        else return MainWindow.fourDigFormat.format(getValue());
     }
     
     public IntegerProperty valueProperty(){
