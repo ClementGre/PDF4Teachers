@@ -51,7 +51,8 @@ public class DoubleSetting extends Setting<Double>{
             slider.setMinorTickCount(0);
             slider.setMajorTickUnit(step);
             
-            slider.setMaxWidth(80);
+            slider.setPrefWidth(80);
+            slider.setMinWidth(80);
             
             Label valueDisplay = new Label(getValueOrEmpty());
             valueDisplay.textProperty().bind(Bindings.createStringBinding(this::getValueOrEmpty, valueProperty()));
@@ -66,7 +67,8 @@ public class DoubleSetting extends Setting<Double>{
             spinner.getValueFactory().setConverter(new StringToDoubleConverter(getValueOrStep()));
             ((SpinnerValueFactory.DoubleSpinnerValueFactory) spinner.getValueFactory()).setAmountToStepBy(step);
             
-            spinner.setMaxWidth(80);
+            spinner.setPrefWidth(80);
+            spinner.setMinWidth(80);
             root.getChildren().addAll(spinner);
         }
         

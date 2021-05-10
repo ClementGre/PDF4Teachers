@@ -48,7 +48,8 @@ public class IntSetting extends Setting<Integer>{
             slider.setMinorTickCount(0);
             slider.setMajorTickUnit(step);
     
-            slider.setMaxWidth(80);
+            slider.setPrefWidth(80);
+            slider.setMinWidth(80);
             root.getChildren().add(slider);
     
             Label valueDisplay = new Label(getValueOrEmpty());
@@ -64,7 +65,8 @@ public class IntSetting extends Setting<Integer>{
             spinner.getValueFactory().setConverter(new StringToIntConverter(getValueOrStep()));
             ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).setAmountToStepBy(step);
     
-            spinner.setMaxWidth(80);
+            spinner.setMinWidth(80);
+            spinner.setPrefWidth(80);
             root.getChildren().addAll(spinner);
         }
         

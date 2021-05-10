@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.render.display;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -10,14 +11,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
@@ -248,7 +246,7 @@ public class PageRenderer extends Pane{
     public void updateZoom(){
         if(lastShowStatus != 0) return; // Verify that the page is visible
         if(status != PageStatus.RENDERED) return; // Verify that the page is rendered
-        if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
+        if(Math.abs(renderedZoomFactor - getRenderingZoomFactor()) > 0.2){
             status = PageStatus.RENDERING;
             render();
         }
@@ -303,10 +301,7 @@ public class PageRenderer extends Pane{
                 
                 render();
             }else{
-                // Update zoom render
-                if(Math.abs(renderedZoomFactor - getNewRenderedZoomFactor()) > 0.2){
-                    render();
-                }
+                updateZoom();
             }
         }else if(showStatus >= 1){
             
@@ -327,13 +322,17 @@ public class PageRenderer extends Pane{
         }
     }
     
-    private double getNewRenderedZoomFactor(){
-        return Math.min(MainWindow.mainScreen.getZoomFactor(), 3);
+    private double getRenderingZoomFactor(){
+        if(Main.settings.renderWithZoom.getValue()){
+            return Math.min(MainWindow.mainScreen.getZoomFactor(), 3) * Main.settings.renderZoom.getValue();
+        }else{
+            return 1.5 * Main.settings.renderZoom.getValue();
+        }
+        
     }
     
     private void render(){
-        
-        renderedZoomFactor = getNewRenderedZoomFactor();
+        renderedZoomFactor = getRenderingZoomFactor();
         
         MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (background) -> {
             

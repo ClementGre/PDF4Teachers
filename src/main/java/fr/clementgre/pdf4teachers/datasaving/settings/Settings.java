@@ -74,6 +74,14 @@ public class Settings{
             "settings.zoom", "settings.zoom.tooltip");
     
     @SettingObject
+    public DoubleSetting renderZoom = new DoubleSetting(1d, true, .01, 5, .25, false, false, SVGPathIcons.SEARCH, "renderZoom",
+            "settings.renderZoom", "");
+    
+    @SettingObject
+    public BooleanSetting renderWithZoom = new BooleanSetting(true, true, SVGPathIcons.REDO, "renderWithZoom",
+            "settings.renderWithZoom", "");
+    
+    @SettingObject
     public IntSetting menuForceOpenDelay = new IntSetting(-1, true, 0, 3000, 10, true, false, SVGPathIcons.CLOCK, "menuForceOpenDelay",
             "settings.menuForceOpenDelay", "settings.menuForceOpenDelay.tooltip");
     
@@ -99,7 +107,7 @@ public class Settings{
     public Setting<?>[] helpGroup = {allowAutoTips};
     
     @SettingsGroup(title="settings.group.debug")
-    public Setting<?>[] debugGroup = {zoom, menuForceOpenDelay}; // menu popup force
+    public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpenDelay}; // menu popup force
     
     public Settings(){
         loadSettings();
