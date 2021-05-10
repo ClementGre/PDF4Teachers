@@ -6,12 +6,19 @@ import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -20,11 +27,14 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.util.ArrayList;
@@ -157,6 +167,50 @@ public class PageRenderer extends Pane{
                 }
             }
         });
+        
+        setEventHandler(RotateEvent.ROTATE, e -> {
+            double rotate = e.getTotalAngle()*2;
+            if(rotate > 85) rotate = 90;
+            else if(rotate < -85) rotate = -90;
+            else if(rotate > -3 && rotate < 3) rotate = 0;
+            setVisibleRotate(rotate, false);
+        });
+        setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
+            double rotate = e.getTotalAngle()*2;
+            if(rotate < -45){
+                setVisibleRotate(-90, true, () -> {
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this);
+                    setRotate(0);
+                });
+            }else if(rotate > 45){
+                setVisibleRotate(90, true, () -> {
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this);
+                    setRotate(0);
+                });
+            }else{
+                setVisibleRotate(0, true);
+            }
+        });
+    }
+    public void setVisibleRotate(double rotate, boolean animated){
+        setVisibleRotate(rotate, animated, null);
+    }
+    public void setVisibleRotate(double rotate, boolean animated, CallBack finished){
+        if(rotate == getRotate()){
+            if(finished != null) finished.call();
+        }else if(animated){
+            Timeline timeline = new Timeline(60);
+            timeline.getKeyFrames().clear();
+            double durationFactor = Math.abs(rotate - getRotate()) / 45;
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(200 * durationFactor), new KeyValue(rotateProperty(), rotate))
+            );
+            timeline.play();
+            if(finished != null) timeline.setOnFinished(e -> finished.call());
+        }else{
+            setRotate(rotate);
+            if(finished != null) finished.call();
+        }
     }
     
     public void showContextMenu(double pageY, double screenX, double screenY){

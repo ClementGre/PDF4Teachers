@@ -290,7 +290,7 @@ public class FileTab extends SideTab{
     // NAVIGATION
     public void loadPreviousFile(){
         int selected = files.getSelectionModel().getSelectedIndex();
-        if(selected == 0){
+        if(selected <= 0){
             MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.beginningOfList"), 15);
             return;
         }
