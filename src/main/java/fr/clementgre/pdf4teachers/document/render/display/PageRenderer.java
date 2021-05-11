@@ -22,6 +22,7 @@ import javafx.animation.Timeline;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
@@ -102,6 +103,10 @@ public class PageRenderer extends Pane{
                 e.consume();
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
             }
+        });
+    
+        setOnMouseDragged(e -> {
+        
         });
         
         setOnMouseEntered(e -> {

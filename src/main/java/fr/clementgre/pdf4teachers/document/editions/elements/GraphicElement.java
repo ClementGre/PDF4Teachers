@@ -367,7 +367,7 @@ public abstract class GraphicElement extends Element{
             case CORNERS -> {
                 if(selected){
                     setBorder(new Border(STROKE_DEFAULT));
-                    getChildren().setAll(getPoint(true, true), getPoint(true, false), getPoint(false, true), getPoint(false, false));
+                    getChildren().setAll(getGrabPoint(true, true), getGrabPoint(true, false), getGrabPoint(false, true), getGrabPoint(false, false));
                 }
             }
             case SIDE_EDGES -> {
@@ -379,7 +379,7 @@ public abstract class GraphicElement extends Element{
             case OPPOSITE_CORNERS -> {
                 if(selected){
                     setBorder(null);
-                    getChildren().setAll(getPoint(false, true), getPoint(true, false));
+                    getChildren().setAll(getGrabPoint(false, true), getGrabPoint(true, false));
                 }
             }
         }
@@ -387,7 +387,7 @@ public abstract class GraphicElement extends Element{
     
     private static final int POINT_WIDTH = 6;
     private static final int POINT_OUTER = 2;
-    private Region getPoint(boolean top, boolean left){
+    private Region getGrabPoint(boolean top, boolean left){
         Region region = new Region();
         region.setPrefWidth(POINT_WIDTH);
         region.setPrefHeight(POINT_WIDTH);
