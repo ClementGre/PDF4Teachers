@@ -1,10 +1,12 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
@@ -85,10 +87,18 @@ public class ImageElement extends GraphicElement{
     @Override
     protected void setupMenu(){
         super.setupMenu();
-    
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("paintTab.images.resetRatio"));
         
-        menu.getItems().addAll(item1);
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("paintTab.images.resetRatio"));
+        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("gallery.imageContextMenu.isFavorite"), true, true);
+        
+        menu.getItems().addAll(item1, isFavoriteItem);
+        menu.setOnShowing(e -> {
+            isFavoriteItem.setSelected(MainWindow.paintTab.favouriteImages.isFavoriteImage(this));
+        });
+        
+        isFavoriteItem.setOnAction((event) -> {
+            linkedImageData = MainWindow.paintTab.favouriteImages.toggleFavoriteImage(this);
+        });
     
         item1.setOnAction(e -> {
             checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth()/getRatio(), false);

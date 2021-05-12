@@ -171,7 +171,8 @@ public class MainScreen extends Pane{
         });
         
         selectedProperty().addListener((observable, oldValue, newValue) -> {
-            setToPlace(null);
+            // Reset toPlace only if the user select something (and not de-select)
+            if(newValue != null) setToPlace(null);
         });
         
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {

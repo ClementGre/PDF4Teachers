@@ -12,17 +12,21 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridV
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
@@ -39,6 +43,8 @@ public class GalleryWindow extends Stage{
     public final ComboBox<String> filter = new ComboBox<>();
     protected final SliderWithoutPopup zoomSlider = new SliderWithoutPopup(50, 500, 150);
     private final Button reload = new Button();
+    private final Label emptyGalleryLabel = new Label(TR.tr("galleryWindow.noImagesMessage"));
+    private final HBox messageContainer = new HBox(emptyGalleryLabel);
     
     private final ImageGridView list = new ImageGridView(false,500, zoomSlider);
     
@@ -123,9 +129,30 @@ public class GalleryWindow extends Stage{
     }
     private void setup(){
         setupSettings();
-
+    
+        AppFontsLoader.loadFont("Marianne-Regular.otf");
+        emptyGalleryLabel.setStyle("-fx-font: 18 Marianne;");
+        emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
+        messageContainer.setAlignment(Pos.CENTER);
+        VBox.setVgrow(messageContainer, Priority.ALWAYS);
+        list.getItems().addListener((ListChangeListener<ImageGridElement>) c -> {
+            updateMessage();
+        });
+        
+        root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(settings, list);
         list.addItems(getImages());
+        updateMessage();
+    }
+    
+    private void updateMessage(){
+        if(list.getAllItems().isEmpty()){
+            root.getChildren().add(messageContainer);
+            list.setMaxHeight(0);
+        }else{
+            root.getChildren().remove(messageContainer);
+            list.setMaxHeight(Double.MAX_VALUE);
+        }
     }
     
     

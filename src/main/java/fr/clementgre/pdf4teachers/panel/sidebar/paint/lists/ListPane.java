@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -10,11 +11,13 @@ import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
 
 public abstract class ListPane<T> extends TitledPane{
     
@@ -30,6 +33,8 @@ public abstract class ListPane<T> extends TitledPane{
     // CONTENT
     protected final VBox root = new VBox();
     protected final GridPane sortPanel = new GridPane();
+    private final Label emptyListLabel = new Label();
+    private final HBox messageContainer = new HBox(emptyListLabel);
     
     protected PaintTab paintTab;
     public ListPane(PaintTab paintTab){
@@ -77,7 +82,25 @@ public abstract class ListPane<T> extends TitledPane{
         setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
         graphics.setCursor(Cursor.DEFAULT);
         setGraphic(graphics);
+    
+        root.setAlignment(Pos.CENTER);
         
+        // Message setup
+        emptyListLabel.setTextAlignment(TextAlignment.CENTER);
+        emptyListLabel.setWrapText(true);
+        messageContainer.setPadding(new Insets(10));
+        messageContainer.setAlignment(Pos.CENTER);
+        VBox.setVgrow(messageContainer, Priority.ALWAYS);
+    }
+    protected void setEmptyMessage(String text){
+        emptyListLabel.setText(text);
+    }
+    protected void updateMessage(boolean empty){
+        if(empty){
+            root.getChildren().add(messageContainer);
+        }else{
+            root.getChildren().remove(messageContainer);
+        }
     }
     
     public abstract void updateGraphics();

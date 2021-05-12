@@ -1,5 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -7,10 +9,17 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridE
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ImageListPane extends ListPane<ImageGridElement>{
 
@@ -27,6 +36,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         root.getChildren().add(list);
         
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());
+        VBox.setVgrow(list, Priority.ALWAYS);
        
         if(isFavouriteImages()){
             list.setupSortManager(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
@@ -47,6 +57,22 @@ public class ImageListPane extends ListPane<ImageGridElement>{
                 setLoaded(true);
             }
         });
+        
+        if(isFavouriteImages()) setEmptyMessage(TR.tr("paintTab.favouriteImages.emptyList"));
+        else if(isGallery()) setEmptyMessage(TR.tr("paintTab.gallery.emptyList"));
+        list.getItems().addListener((InvalidationListener) o -> {
+            updateMessage();
+        });
+        updateMessage();
+    }
+    
+    private void updateMessage(){
+        if(list.getAllItems().isEmpty()){
+            list.setMaxHeight(0);
+        }else{
+            list.setMaxHeight(Double.MAX_VALUE);
+        }
+        super.updateMessage(list.getAllItems().isEmpty());
     }
     
     public void reloadGalleryImageList(){
@@ -57,7 +83,26 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }
     }
     public void reloadFavouritesImageList(ArrayList<ImageData> images){
-        list.setItems(images.stream().map(ImageGridElement::new).toList());
+        list.setItems(PlatformUtils.runAndWait(() -> images.stream().map(ImageGridElement::new)).toList());
+    }
+    public ImageData toggleFavoriteImage(ImageElement element){
+        // If image is already favorite
+        for(ImageGridElement gridElement : MainWindow.paintTab.favouriteImages.getList().getAllItems()){
+            if(gridElement.getImageId().equals(element.getImageId())){
+                gridElement.toggleFavorite();
+                return null;
+            }
+        }
+        // Else, create new ImageGrid element
+        ImageData linkedImageData = new ImageData(element.getImageId(), 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0);
+        MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(new ImageGridElement(linkedImageData)));
+        return linkedImageData;
+    }
+    public boolean isFavoriteImage(ImageElement element){
+        for(ImageGridElement gridElement : MainWindow.paintTab.favouriteImages.getList().getAllItems()){
+            if(gridElement.getImageId().equals(element.getImageId())) return true;
+        }
+        return false;
     }
     
     
