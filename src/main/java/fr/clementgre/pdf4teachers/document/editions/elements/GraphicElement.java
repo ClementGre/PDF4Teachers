@@ -25,6 +25,7 @@ import java.util.LinkedHashMap;
 public abstract class GraphicElement extends Element{
     
     public enum RepeatMode{
+        AUTO("status.auto"),
         KEEP_RATIO("paintTab.repeatMode.keepRatio"),
         STRETCH("paintTab.repeatMode.stretch"),
         CROP("paintTab.repeatMode.crop"),
@@ -183,7 +184,7 @@ public abstract class GraphicElement extends Element{
             if(width < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
             else if(height < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
             else{
-                if(doKeepRatio(shift)){
+                if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio) height = width / ratio;
                     else width = height * ratio;
@@ -194,7 +195,7 @@ public abstract class GraphicElement extends Element{
         }else if(dragType == Cursor.S_RESIZE){
             double height = y + shiftYFromEnd;
         
-            if(doKeepRatio(shift)){
+            if(doKeepRatio(shift, false)){
                 originX = originX + (originWidth - height*ratio)/2;
                 originWidth = height * ratio;
             }
@@ -205,7 +206,7 @@ public abstract class GraphicElement extends Element{
         }else if(dragType == Cursor.E_RESIZE){
             double width = x + shiftXFromEnd;
         
-            if(doKeepRatio(shift)){
+            if(doKeepRatio(shift, false)){
                 originY = originY + (originHeight - width/ratio)/2;
                 originHeight = width / ratio;
             }
@@ -224,7 +225,7 @@ public abstract class GraphicElement extends Element{
             if(width < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
             else if(height < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
             else{
-                if(doKeepRatio(shift)){
+                if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
                         height = width / ratio;
@@ -243,7 +244,7 @@ public abstract class GraphicElement extends Element{
             if(width < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
             else if(height < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
             else{
-                if(doKeepRatio(shift)){
+                if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
                         height = width / ratio;
@@ -268,7 +269,7 @@ public abstract class GraphicElement extends Element{
             if(width < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
             else if(height < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
             else{
-                if(doKeepRatio(shift)){
+                if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
                         height = width / ratio;
@@ -284,7 +285,7 @@ public abstract class GraphicElement extends Element{
             double newY = getLayoutY() + y - shiftY;
             double height = originHeight + (originY - newY);
         
-            if(doKeepRatio(shift)){
+            if(doKeepRatio(shift, false)){
                 originX = originX + (originWidth - height*ratio)/2;
                 originWidth = height * ratio;
             }
@@ -296,7 +297,7 @@ public abstract class GraphicElement extends Element{
             double newX = getLayoutX() + x - shiftX;
             double width = originWidth + (originX - newX);
         
-            if(doKeepRatio(shift)){
+            if(doKeepRatio(shift, false)){
                 originY = originY + (originHeight - width/ratio)/2;
                 originHeight = width/ratio;
             }
@@ -463,8 +464,9 @@ public abstract class GraphicElement extends Element{
     
     // GETTER AND SETTER
 
-    public boolean doKeepRatio(boolean shift){
-        if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !shift;
+    public boolean doKeepRatio(boolean shift, boolean angle){
+        if(getRepeatMode() == RepeatMode.AUTO) return angle != shift;
+        else if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !shift;
         else return shift;
     }
     

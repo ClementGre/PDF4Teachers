@@ -60,7 +60,7 @@ public class ImageGridElement extends ImageLambdaData{
             MainWindow.paintTab.favouriteImages.getList().removeItems(Collections.singletonList(this));
             linkedImageData = null;
         }else{
-            linkedImageData = new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, 0, 0);
+            linkedImageData = new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0);
             MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(this));
         }
         if(MainWindow.paintTab.galleryWindow != null && MainWindow.paintTab.galleryWindow.isShowing()){

@@ -317,6 +317,10 @@ public class ZoomOperator{
             isPlaying = true;
             timeline.play();
             timeline.setOnFinished((e) -> {
+                pane.setScaleX(scale);
+                pane.setScaleY(scale);
+                pane.setTranslateX(newTranslateX);
+                pane.setTranslateY(newTranslateY);
                 updateVScrollBar();
                 updateHScrollBar();
                 timeline.setOnFinished(null);

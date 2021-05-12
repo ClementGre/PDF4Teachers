@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -14,6 +16,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
+import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -22,6 +26,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -198,19 +203,50 @@ public class PaintTab extends SideTab{
     
         delete.setOnAction(e -> deleteSelected());
     
-        newImage.setOnAction((e) -> {
-            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        
-            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    50, 50, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS, "");
-        
-            page.addElement(element, true);
-            element.centerOnCoordinatesY();
-            MainWindow.mainScreen.setSelected(element);
+        newImage.setOnMouseClicked((e) -> {
+            ContextMenu menu = new ContextMenu();
+            NodeMenuItem browse = new NodeMenuItem(TR.tr("file.browse"));
+            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("actions.new.image"));
+            NodeMenuItem gallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"));
+            menu.getItems().addAll(browse, newEmpty, gallery);
+            NodeMenuItem.setupMenu(menu);
+            
+            browse.setOnAction(ae -> {
+                browseImagePath(path -> {
+                    PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+                    ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                            0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
+    
+                    page.addElement(element, true);
+                    element.centerOnCoordinatesY();
+                    MainWindow.mainScreen.setSelected(element);
+                });
+            });
+            newEmpty.setOnAction(ae -> {
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+                ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
+    
+                page.addElement(element, true);
+                element.centerOnCoordinatesY();
+                MainWindow.mainScreen.setSelected(element);
+            });
+            gallery.setOnAction(ae -> {
+                openGallery();
+            });
+            menu.show(newImage, e.getScreenX(), e.getScreenY());
         });
         
         newVector.setOnAction(e -> {
         
+        });
+        
+        browsePath.setOnAction(e -> {
+            if(MainWindow.mainScreen.getSelected() instanceof ImageElement){
+                browseImagePath(null);
+            }
         });
         
         MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
@@ -222,6 +258,15 @@ public class PaintTab extends SideTab{
         Element element = MainWindow.mainScreen.getSelected();
         if(element != null){
             element.delete();
+        }
+    }
+    
+    private void browseImagePath(CallBackArg<String> callBack){
+        File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
+                ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
+        if(file != null){
+            if(callBack == null) path.setText(file.getAbsolutePath());
+            else callBack.call(file.getAbsolutePath());
         }
     }
     

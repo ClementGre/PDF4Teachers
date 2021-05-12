@@ -51,7 +51,7 @@ public class PageEditPane extends VBox{
             menu.getItems().clear();
             menu.getItems().addAll(getNewPageMenu(page.getPage(), 0, false));
             NodeMenuItem.setupMenu(menu);
-            menu.show(page, e.getScreenX(), e.getScreenY());
+            menu.show(newButton, e.getScreenX(), e.getScreenY());
         });
         
         captureButton.setOnMouseClicked((e) -> {
@@ -59,7 +59,7 @@ public class PageEditPane extends VBox{
             menu.getItems().clear();
             menu.getItems().addAll(getCaptureMenu(page, false));
             NodeMenuItem.setupMenu(menu);
-            menu.show(page, e.getScreenX(), e.getScreenY());
+            menu.show(captureButton, e.getScreenX(), e.getScreenY());
         });
         
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);

@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
@@ -7,6 +8,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridCell;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,6 +42,7 @@ public class ImageData extends ImageLambdaData{
         page.addElement(element, true);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
+        Main.window.requestFocus();
         
         incrementUsesAndLastUse();
     }
@@ -48,6 +51,9 @@ public class ImageData extends ImageLambdaData{
         ImageElement element = new ImageElement(0, 0, 0, false, 1, 1, repeatMode, resizeMode, imageId, linkedImage);
     
         MainWindow.mainScreen.setToPlace(element);
+        PlatformUtils.runLaterOnUIThread(200, () -> { // Allow the time to double click if wanted
+            Main.window.requestFocus();
+        });
     }
     
     public void incrementUsesAndLastUse(){

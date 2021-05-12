@@ -1,14 +1,18 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -81,6 +85,15 @@ public class ImageElement extends GraphicElement{
     @Override
     protected void setupMenu(){
         super.setupMenu();
+    
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("paintTab.images.resetRatio"));
+        
+        menu.getItems().addAll(item1);
+    
+        item1.setOnAction(e -> {
+            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth()/getRatio(), false);
+        });
+        
     }
     
     // ACTIONS
@@ -174,8 +187,8 @@ public class ImageElement extends GraphicElement{
         BackgroundPosition position = BackgroundPosition.DEFAULT;
         
         if(notFound){
-            repeat = BackgroundRepeat.NO_REPEAT;
-            size = new BackgroundSize(1, 1, true, true, false, false);
+            repeat = BackgroundRepeat.REPEAT;
+            size = new BackgroundSize(1, 1, true, true, true, false);
         }
         
         setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
