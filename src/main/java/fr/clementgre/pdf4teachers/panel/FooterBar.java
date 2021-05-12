@@ -34,8 +34,9 @@ public class FooterBar extends StackPane{
     private final Label zoomInfo = new Label();
     private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 40, 20);
     private final Label zoomPercent = new Label();
-    private final ColorAdjust fitZoomColorAdjust = new ColorAdjust();
-    private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, fitZoomColorAdjust);
+    private final ColorAdjust lightGrayColorAdjust = new ColorAdjust();
+    private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, lightGrayColorAdjust);
+    private final Region overviewZoom = SVGPathIcons.generateImage(SVGPathIcons.SMALL_SCREEN, "lightgray", 0, 14, 14, lightGrayColorAdjust);
     
     private final Label statsElements = new Label();
     private final Label statsTexts = new Label();
@@ -86,6 +87,7 @@ public class FooterBar extends StackPane{
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
+        // FIT ZOOM
         fitZoom.setOnMouseClicked((e) -> {
             MainWindow.mainScreen.zoomOperator.fitWidth(false);
         });
@@ -93,15 +95,26 @@ public class FooterBar extends StackPane{
             if(!fitZoom.isDisabled()) fitZoom.setStyle("-fx-background-color: white;");
         });
         fitZoom.setOnMouseExited((e) -> fitZoom.setStyle("-fx-background-color: lightgray;"));
+        // COLORS ADJUST
         fitZoom.disabledProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) fitZoomColorAdjust.setBrightness(-0.6);
-            else fitZoomColorAdjust.setBrightness(0);
+            if(newValue) lightGrayColorAdjust.setBrightness(-0.6);
+            else lightGrayColorAdjust.setBrightness(0);
         });
+        // OVERVIEW ZOOM
+        overviewZoom.setOnMouseClicked((e) -> {
+            MainWindow.mainScreen.zoomOperator.overviewWidth(false);
+        });
+        overviewZoom.setOnMouseEntered((e) -> {
+            if(!overviewZoom.isDisabled()) overviewZoom.setStyle("-fx-background-color: white;");
+        });
+        overviewZoom.setOnMouseExited((e) -> overviewZoom.setStyle("-fx-background-color: lightgray;"));
+        // ZOOM INFO
         zoomInfo.setText(TR.tr("footerBar.zoom"));
         HBox.setMargin(fitZoom, new Insets(3, 5, 3, 5));
+        HBox.setMargin(overviewZoom, new Insets(3, 0, 3, 3));
         zoomPercent.setMinWidth(40);
         zoom.setSpacing(5);
-        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom);
+        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom, overviewZoom);
         
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
@@ -201,6 +214,7 @@ public class FooterBar extends StackPane{
             zoomPercent.setDisable(false);
             zoomInfo.setDisable(false);
             fitZoom.setDisable(false);
+            overviewZoom.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
             }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
@@ -210,6 +224,7 @@ public class FooterBar extends StackPane{
             zoomPercent.setDisable(true);
             zoomInfo.setDisable(true);
             fitZoom.setDisable(true);
+            overviewZoom.setDisable(true);
             if(hard){
                 root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
             }

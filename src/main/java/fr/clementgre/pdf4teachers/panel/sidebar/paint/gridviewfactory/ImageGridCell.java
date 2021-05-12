@@ -43,7 +43,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("gallery.imageContextMenu.isFavorite"), true, true);
     private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"));
     private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"));
-    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.deleteFile"));
+    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"));
     
     public static final int PADDING = 2;
     

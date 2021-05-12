@@ -20,6 +20,9 @@ import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
@@ -28,6 +31,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.util.Duration;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -38,6 +42,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class PDFPagesEditor{
@@ -51,38 +56,18 @@ public class PDFPagesEditor{
     }
     
     public void ascendPage(PageRenderer page){
-        PDPage docPage = document.getPage(page.getPage());
-        
-        document.removePage(docPage);
-        addDocumentPage(page.getPage() - 1, docPage);
-        try{
-            document.save(file);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        
-        Document document = MainWindow.mainScreen.document;
-        
-        // remove page
-        document.pages.remove(page);
-        document.pages.add(page.getPage() - 1, page);
-        
-        // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
-        
-        // update coordinates of the pages
-        document.pages.get(0).updatePosition(30);
-        document.updateShowsStatus();
-        
-        // update current page
-        document.setCurrentPage(page.getPage() - 1);
+        movePage(page, -1);
     }
     
     public void descendPage(PageRenderer page){
+        movePage(page, +1);
+    }
+    public void movePage(PageRenderer page, int index){
+        assert index != 0 : "You can't move a page with an index of 0, this means to not move the page.";
         PDPage docPage = document.getPage(page.getPage());
         
         document.removePage(docPage);
-        addDocumentPage(page.getPage() + 1, docPage);
+        addDocumentPage(page.getPage() + index, docPage);
         try{
             document.save(file);
         }catch(IOException e){
@@ -93,20 +78,20 @@ public class PDFPagesEditor{
         
         // remove page
         document.pages.remove(page);
-        document.pages.add(page.getPage() + 1, page);
+        document.pages.add(page.getPage() + index, page);
         
         // Update pages of all pages
         for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
         
         // update coordinates of the pages
-        document.pages.get(0).updatePosition(30);
+        document.pages.get(0).updatePosition(30, true);
         document.updateShowsStatus();
         
         // update current page
-        document.setCurrentPage(page.getPage() + 1);
+        document.setCurrentPage(page.getPage() + index);
     }
     
-    public void rotateLeftPage(PageRenderer page){
+    public void rotateLeftPage(PageRenderer page, boolean animated){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() - 90);
         try{
             document.save(file);
@@ -114,20 +99,65 @@ public class PDFPagesEditor{
             e.printStackTrace();
         }
         
-        page.updatePosition((int) page.getTranslateY());
-        page.updateRender();
+        if(!animated){
+            page.updatePosition((int) page.getTranslateY(), true);
+            page.updateRender();
+        }else{
+            Timeline timeline = new Timeline(60);
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(200), new KeyValue(page.rotateProperty(), -90))
+            );
+            timeline.play();
+            
+            AtomicBoolean timelineFinished = new AtomicBoolean(false);
+            AtomicBoolean renderFinished = new AtomicBoolean(false);
+            timeline.setOnFinished((e) -> {
+                timelineFinished.set(true);
+                if(renderFinished.get()) endRotateAnimation(page);
+            });
+            page.updateRenderAsync(() -> {
+                renderFinished.set(true);
+                if(timelineFinished.get()) endRotateAnimation(page);
+            }, false);
+        }
+        
+        
     }
     
-    public void rotateRightPage(PageRenderer page){
+    public void rotateRightPage(PageRenderer page, boolean animated){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + 90);
         try{
             document.save(file);
         }catch(IOException e){
             e.printStackTrace();
         }
-        
-        page.updatePosition((int) page.getTranslateY());
-        page.updateRender();
+        if(!animated){
+            page.updatePosition((int) page.getTranslateY(), true);
+            page.updateRender();
+        }else{
+            Timeline timeline = new Timeline(60);
+            timeline.getKeyFrames().clear();
+            timeline.getKeyFrames().addAll(
+                    new KeyFrame(Duration.millis(200), new KeyValue(page.rotateProperty(), 90))
+            );
+            timeline.play();
+            
+            AtomicBoolean timelineFinished = new AtomicBoolean(false);
+            AtomicBoolean renderFinished = new AtomicBoolean(false);
+            timeline.setOnFinished((e) -> {
+                timelineFinished.set(true);
+                if(renderFinished.get()) endRotateAnimation(page);
+            });
+            page.updateRenderAsync(() -> {
+                renderFinished.set(true);
+                if(timelineFinished.get()) endRotateAnimation(page);
+            }, false);
+        }
+    }
+    private void endRotateAnimation(PageRenderer page){
+        page.setRotate(0);
+        page.updatePosition((int) page.getTranslateY(), true);
     }
     
     public void deletePage(PageRenderer page){
@@ -166,7 +196,7 @@ public class PDFPagesEditor{
                 for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
                 
                 // update coordinates of the pages
-                document.pages.get(0).updatePosition(30);
+                document.pages.get(0).updatePosition(30, true);
                 document.updateShowsStatus();
                 
                 // update current page
@@ -200,7 +230,7 @@ public class PDFPagesEditor{
         for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
         
         // update coordinates of the pages
-        document.pages.get(0).updatePosition(30);
+        document.pages.get(0).updatePosition(30, true);
         document.updateShowsStatus();
         
         // update current page
@@ -252,7 +282,7 @@ public class PDFPagesEditor{
             }
             
             // update coordinates of the pages
-            document.pages.get(0).updatePosition(30);
+            document.pages.get(0).updatePosition(30, true);
             document.updateShowsStatus();
             
             // update current page
@@ -312,7 +342,7 @@ public class PDFPagesEditor{
                 }
                 
                 // update coordinates of the pages
-                document.pages.get(0).updatePosition(30);
+                document.pages.get(0).updatePosition(30, true);
                 document.updateShowsStatus();
                 
                 // update current page

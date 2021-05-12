@@ -341,6 +341,9 @@ public class ZoomOperator{
         
         zoom(targetScale, removeTransition);
     }
+    public void overviewWidth(boolean removeTransition){
+        zoom(.4, removeTransition);
+    }
     
     // V SCROLL
     

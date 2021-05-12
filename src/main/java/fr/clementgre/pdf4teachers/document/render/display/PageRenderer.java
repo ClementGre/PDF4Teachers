@@ -19,6 +19,8 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -27,9 +29,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.RotateEvent;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -38,6 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import java.awt.dnd.DragSourceDragEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,8 +65,9 @@ public class PageRenderer extends Pane{
     private PageZoneSelector pageCursorRecord;
     
     private GraphicElement placingElement = null;
-    private int shiftX;
-    private int shiftY;
+    
+    private double shiftY = 0;
+    private double defaultTranslateY = 0;
     
     public PageRenderer(int page){
         this.page = page;
@@ -95,37 +97,92 @@ public class PageRenderer extends Pane{
             mouseX = e.getX();
             mouseY = e.getY();
         });
+        
+        translateYProperty().addListener(e -> {
+            updateShowStatus();
+        });
+    
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////// ZOOM //////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        
+        MainWindow.mainScreen.zoomProperty().addListener((observable, oldValue, newValue) -> {
+            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+            else setCursor(Cursor.DEFAULT);
+        });
+        
+        //////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////// DRAGGING ////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        
         setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
             
-            if(placingElement != null){
-                e.consume();
-                placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
+            if(isEditPagesMode()){
+                
+                double translateY = getTranslateY() + e.getY() - shiftY;
+                if(getPage() == 0) translateY = Math.max(translateY, defaultTranslateY);
+                if(getPage() == MainWindow.mainScreen.document.totalPages - 1) translateY = Math.min(translateY, defaultTranslateY);
+                setTranslateY(translateY);
+                
+                if(getTranslateY() - defaultTranslateY > getHeight()*3/4 && getPage() != MainWindow.mainScreen.document.totalPages - 1){
+                    if(getTranslateY() - defaultTranslateY > (getHeight()+PAGE_VERTICAL_MARGIN)*2){ // Descend multiple pages
+                        MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this,
+                                StringUtils.clamp((int) ((getTranslateY() - defaultTranslateY) / (getHeight()+PAGE_VERTICAL_MARGIN)), 1, MainWindow.mainScreen.document.totalPages-1-getPage()));
+                    }else{ // Descend one page
+                        MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(this);
+                    }
+                }else if(getTranslateY() - defaultTranslateY < -getHeight()*3/4 && getPage() != 0){
+                    if(getTranslateY() - defaultTranslateY < -(getHeight()+PAGE_VERTICAL_MARGIN)*2){ // Ascend multiple pages
+                        MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this,
+                                StringUtils.clamp((int) ((getTranslateY() - defaultTranslateY) / (getHeight()+PAGE_VERTICAL_MARGIN)), -getPage(), -1));
+                    }else{ // Ascend one page
+                        MainWindow.mainScreen.document.pdfPagesRender.editor.ascendPage(this);
+                    }
+                }
+            }else{
+                if(placingElement != null){
+                    e.consume();
+                    placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
+                }
             }
+            
         });
     
-        setOnMouseDragged(e -> {
-        
-        });
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////// ENTER / EXIT //////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
         
         setOnMouseEntered(e -> {
             MainWindow.mainScreen.document.setCurrentPage(page);
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             else pageEditPane.setVisible(true);
             
-            if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
+            
         });
         setOnMouseExited(e -> {
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             pageEditPane.setVisible(false);
         });
+    
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////// PRESS / RELEASE ////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
         
         setOnMousePressed(e -> {
             requestFocus();
+            toFront();
+            shiftY = e.getY();
+            defaultTranslateY = getTranslateY();
             MainWindow.mainScreen.setSelected(null);
             menu.hide(); menu.getItems().clear();
+            
+            if(isEditPagesMode()) return;
             
             if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
@@ -135,8 +192,8 @@ public class PageRenderer extends Pane{
                 placingElement.requestFocus();
                 placingElement.incrementUsesAndLastUse();
                 
-                shiftX = (int) placingElement.getLayoutX();
-                shiftY = (int) placingElement.getLayoutY();
+                int shiftX = (int) placingElement.getLayoutX();
+                int shiftY = (int) placingElement.getLayoutY();
                 placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true);
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
                 
@@ -147,7 +204,9 @@ public class PageRenderer extends Pane{
             }
         });
         setOnMouseReleased(e -> {
-            if(placingElement != null){
+            if(getTranslateY() != defaultTranslateY) animateTranslateY(defaultTranslateY);
+            
+            if(placingElement != null && !isEditPagesMode()){
                 e.consume();
                 if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10){
                     placingElement.simulateReleaseFromResize();
@@ -157,11 +216,12 @@ public class PageRenderer extends Pane{
                 }
                 placingElement = null;
             }
-            setCursor(Cursor.DEFAULT);
+            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            else setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {
             // ADD TextElement when double click
-            if(e.getClickCount() == 2){
+            if(e.getClickCount() == 2 && !isEditPagesMode()){
                 SideBar.selectTab(MainWindow.textTab);
                 MainWindow.textTab.newBtn.fire();
                 Element selected = MainWindow.mainScreen.getSelected();
@@ -172,6 +232,10 @@ public class PageRenderer extends Pane{
                 }
             }
         });
+    
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////// ROTATE /////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
         
         setEventHandler(RotateEvent.ROTATE, e -> {
             double rotate = e.getTotalAngle()*2;
@@ -184,18 +248,22 @@ public class PageRenderer extends Pane{
             double rotate = e.getTotalAngle()*2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
                     setRotate(0);
                 });
             }else if(rotate > 45){
                 setVisibleRotate(90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
                     setRotate(0);
                 });
             }else{
                 setVisibleRotate(0, true);
             }
         });
+        
+    }
+    public static boolean isEditPagesMode(){
+        return MainWindow.mainScreen.getZoomPercent() < 41;
     }
     public void setVisibleRotate(double rotate, boolean animated){
         setVisibleRotate(rotate, animated, null);
@@ -262,7 +330,7 @@ public class PageRenderer extends Pane{
         menu.show(this, screenX, screenY);
     }
     
-    public void updatePosition(int totalHeight){
+    public void updatePosition(int totalHeight, boolean animated){
         if(totalHeight == -1) totalHeight = (int) getTranslateY();
         
         PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
@@ -278,18 +346,30 @@ public class PageRenderer extends Pane{
         setMinHeight(MainWindow.mainScreen.getPageWidth() * ratio);
         
         setTranslateX(PAGE_HORIZONTAL_MARGIN);
-        setTranslateY(totalHeight);
+        if(animated) animateTranslateY(totalHeight);
+        else setTranslateY(totalHeight);
+        
+        defaultTranslateY = totalHeight;
         
         totalHeight = (int) (totalHeight + getHeight() + PAGE_VERTICAL_MARGIN);
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
-            MainWindow.mainScreen.document.pages.get(page + 1).updatePosition(totalHeight);
+            MainWindow.mainScreen.document.pages.get(page + 1).updatePosition(totalHeight, animated);
         }else{
             MainWindow.mainScreen.updateSize(totalHeight);
         }
         
         if(pageEditPane != null) pageEditPane.updatePosition();
         
+    }
+    private void animateTranslateY(double translateY){
+        Timeline timeline = new Timeline(60);
+        timeline.getKeyFrames().clear();
+        double durationFactor = Math.abs(translateY - getTranslateY()) / 800;
+        timeline.getKeyFrames().addAll(
+                new KeyFrame(Duration.millis(200 * durationFactor), new KeyValue(translateYProperty(), translateY))
+        );
+        timeline.play();
     }
     
     public void updateShowStatus(){
@@ -307,14 +387,18 @@ public class PageRenderer extends Pane{
         if(status != PageStatus.RENDERED) return; // Verify that the page is rendered
         if(Math.abs(renderedZoomFactor - getRenderingZoomFactor()) > 0.2){
             status = PageStatus.RENDERING;
-            render();
+            render(null);
         }
         
     }
     
     public void updateRender(){
         setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-        render();
+        render(null);
+    }
+    public void updateRenderAsync(CallBack callback, boolean clearRender){
+        if(clearRender) setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        render(callback);
     }
     
     public void remove(){
@@ -358,7 +442,7 @@ public class PageRenderer extends Pane{
                 loader.setVisible(true);
                 setCursor(Cursor.WAIT);
                 
-                render();
+                render(null);
             }else{
                 updateZoom();
             }
@@ -390,7 +474,7 @@ public class PageRenderer extends Pane{
         
     }
     
-    private void render(){
+    private void render(CallBack callBack){
         renderedZoomFactor = getRenderingZoomFactor();
         
         MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (background) -> {
@@ -405,6 +489,7 @@ public class PageRenderer extends Pane{
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);
             status = PageStatus.RENDERED;
+            if(callBack != null) callBack.call();
         });
     }
     

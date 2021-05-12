@@ -109,10 +109,14 @@ public abstract class GraphicElement extends Element{
         });
         
         setOnMouseMoved(e -> {
-            setCursor(getDragCursorType(e.getX(), e.getY()));
+            if(PageRenderer.isEditPagesMode()) setCursor(Cursor.MOVE);
+            else setCursor(getDragCursorType(e.getX(), e.getY()));
         });
     
         setOnMousePressed(e -> {
+            wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
+            if(wasInEditPagesModeWhenMousePressed) return;
+            
             e.consume();
             requestFocus();
             setupMousePressVars(e.getX(), e.getY(), null, false);
@@ -122,6 +126,7 @@ public abstract class GraphicElement extends Element{
         });
         
         setOnMouseDragged(e -> {
+            if(wasInEditPagesModeWhenMousePressed) return;
             if(dragType == Cursor.MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
@@ -132,6 +137,7 @@ public abstract class GraphicElement extends Element{
         });
 
         setOnMouseReleased(e -> {
+            if(wasInEditPagesModeWhenMousePressed) return;
             Edition.setUnsave();
             if(dragType == Cursor.MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;

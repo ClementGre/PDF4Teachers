@@ -16,10 +16,7 @@ import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.components.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -227,7 +224,9 @@ public class MainScreen extends Pane{
         });
         
         setOnMouseDragged(e -> {
-            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) && !(e.getTarget() instanceof PageZoneSelector)){ // GrabNScroll
+            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) && !(e.getTarget() instanceof PageZoneSelector)
+                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // GrabNScroll
+    
                 double distY = e.getY() - dragStartY;
                 double distX = e.getX() - dragStartX;
                 
@@ -518,6 +517,9 @@ public class MainScreen extends Pane{
     }
     public DoubleBinding zoomPercentProperty(){
         return pane.scaleXProperty().multiply(100);
+    }
+    public DoubleProperty zoomProperty(){
+        return pane.scaleXProperty();
     }
     
     public int getPageWidth(){

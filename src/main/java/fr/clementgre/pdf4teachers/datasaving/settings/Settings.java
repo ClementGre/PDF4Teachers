@@ -103,10 +103,10 @@ public class Settings{
     @SettingsGroup(title="settings.group.textElements")
     public Setting<?>[] textElementsGroup = {textAutoRemove, textOnlyStart, textSmall};
     
-    @SettingsGroup(title="settings.group.help")
+    @SettingsGroup(title="menuBar.help")
     public Setting<?>[] helpGroup = {allowAutoTips};
     
-    @SettingsGroup(title="settings.group.debug")
+    @SettingsGroup(title="menuBar.tools.debug")
     public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpenDelay}; // menu popup force
     
     public Settings(){

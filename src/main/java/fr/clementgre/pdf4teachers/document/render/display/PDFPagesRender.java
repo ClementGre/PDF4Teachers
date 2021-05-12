@@ -55,11 +55,11 @@ public class PDFPagesRender{
             graphics.setBackground(Color.WHITE);
             
             try{
-                PDDocument document = PDDocument.load(file);
+                //PDDocument document = PDDocument.load(file);
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth / pageSize.getWidth(), destWidth / pageSize.getWidth(), RenderDestination.VIEW);
                 //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-                document.close();
+                //document.close();
                 
                 graphics.dispose();
                 Background background = new Background(

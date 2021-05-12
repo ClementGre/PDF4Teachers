@@ -33,6 +33,7 @@ public abstract class Element extends Region{
     protected int pageNumber;
     protected int shiftX = 0;
     protected int shiftY = 0;
+    protected boolean wasInEditPagesModeWhenMousePressed = false;
     
     public ContextMenu menu = new ContextMenu();
     
@@ -65,7 +66,28 @@ public abstract class Element extends Region{
                 }
             });
             
+            setOnMousePressed(e -> {
+                wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
+                if(wasInEditPagesModeWhenMousePressed) return;
+                e.consume();
+        
+                shiftX = (int) e.getX();
+                shiftY = (int) e.getY();
+                menu.hide();
+                select();
+        
+                if(e.getButton() == MouseButton.SECONDARY){
+                    menu.show(getPage(), e.getScreenX(), e.getScreenY());
+                }
+            });
+            setOnMouseDragged(e -> {
+                if(wasInEditPagesModeWhenMousePressed) return;
+                double itemX = getLayoutX() + e.getX() - shiftX;
+                double itemY = getLayoutY() + e.getY() - shiftY;
+                checkLocation(itemX, itemY, true);
+            });
             setOnMouseReleased(e -> {
+                if(wasInEditPagesModeWhenMousePressed) return;
                 Edition.setUnsave();
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
@@ -87,26 +109,10 @@ public abstract class Element extends Region{
                 checkLocation(false);
                 onMouseRelease();
             });
-            setOnMousePressed(e -> {
-                e.consume();
-        
-                shiftX = (int) e.getX();
-                shiftY = (int) e.getY();
-                menu.hide();
-                select();
-        
-                if(e.getButton() == MouseButton.SECONDARY){
-                    menu.show(getPage(), e.getScreenX(), e.getScreenY());
-                }
-            });
-            setOnMouseDragged(e -> {
-                double itemX = getLayoutX() + e.getX() - shiftX;
-                double itemY = getLayoutY() + e.getY() - shiftY;
-                checkLocation(itemX, itemY, true);
-            });
         }
         
         setOnMouseClicked(e -> {
+            if(PageRenderer.isEditPagesMode()) return;
             e.consume();
             if(e.getClickCount() == 2){
                 doubleClick();

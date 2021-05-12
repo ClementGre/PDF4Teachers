@@ -67,7 +67,7 @@ public class Document{
             MainWindow.mainScreen.addPage(page);
             pages.add(page);
         }
-        pages.get(0).updatePosition(PageRenderer.PAGE_VERTICAL_MARGIN);
+        pages.get(0).updatePosition(PageRenderer.PAGE_VERTICAL_MARGIN, false);
         updateShowsStatus();
     }
     

@@ -111,9 +111,16 @@ public class TextTreeItem extends TreeItem<String>{
         // Setup les éléments graphiques
         menu = TextTreeView.getNewMenu(this);
         
-        onMouseCLick = (MouseEvent mouseEvent) -> {
-            if(mouseEvent.getButton().equals(MouseButton.PRIMARY)){
-                addToDocument(mouseEvent.isShiftDown());
+        onMouseCLick = (MouseEvent e) -> {
+            if(e.getButton().equals(MouseButton.PRIMARY)){
+                
+                if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement && e.isShortcutDown()){
+                    oldElement.delete();
+                    addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
+                }else{
+                    addToDocument(e.isShiftDown());
+                }
+                
                 // Update the sorting if is sort by utils
                 if(getType() == TextTreeSection.FAVORITE_TYPE){
                     if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
@@ -125,7 +132,7 @@ public class TextTreeItem extends TreeItem<String>{
                     }
                 }
                 MainWindow.textTab.selectItem();
-                mouseEvent.consume();
+                e.consume();
             }
         };
         name.setFill(StyleManager.shiftColorWithTheme(color.get()));
@@ -165,8 +172,7 @@ public class TextTreeItem extends TreeItem<String>{
                 MainWindow.textTab.treeView.selectPreviousInSelection();
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
-                if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-                    TextElement oldElement = (TextElement) MainWindow.mainScreen.getSelected();
+                if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
                     oldElement.delete();
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{

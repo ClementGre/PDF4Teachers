@@ -65,7 +65,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
     CallBackArg<ArrayList<ConvertedFile>> callBack;
     
     public ConvertWindow(PDRectangle defaultSize, CallBackArg<ArrayList<ConvertedFile>> callBack){
-        super(new TabPane(), StageWidth.LARGE, TR.tr("convertWindow.title"));
+        super(new TabPane(), StageWidth.LARGE, TR.tr("actions.convert"));
         this.defaultSize = defaultSize;
         this.callBack = callBack;
     }

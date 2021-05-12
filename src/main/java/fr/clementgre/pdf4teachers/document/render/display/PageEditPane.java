@@ -4,7 +4,12 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -22,7 +27,7 @@ public class PageEditPane extends VBox{
     Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("document.pageActions.rotateRight.tooltip"));
     Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.delete.tooltip"), 45);
     Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.addPages.tooltip"));
-    Button captureButton = getCustomButton(SVGPathIcons.SCREEN_CORNERS, TR.tr("document.pageActions.capture.tooltip"));
+    Button captureButton = getCustomButton(SVGPathIcons.FULL_SCREEN, TR.tr("document.pageActions.capture.tooltip"));
     
     ContextMenu menu = new ContextMenu();
     
@@ -35,9 +40,9 @@ public class PageEditPane extends VBox{
         
         descendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(page));
         
-        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(page));
+        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(page, true));
         
-        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(page));
+        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(page, true));
         
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
         
@@ -58,6 +63,10 @@ public class PageEditPane extends VBox{
         });
         
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
+    
+        MainWindow.mainScreen.zoomProperty().addListener((observable, oldValue, newValue) -> {
+            updatePosition();
+        });
         
         updateVisibility();
         updatePosition();
@@ -150,10 +159,15 @@ public class PageEditPane extends VBox{
     
     public void updatePosition(){
         int buttonNumber = 7;
-        setLayoutY(0 - 30 * buttonNumber / 4D);
-        setLayoutX(page.getWidth() - 30 / 4D);
-        setScaleX(0.5);
-        setScaleY(0.5);
+        double factor = StringUtils.clamp(.5 / MainWindow.mainScreen.getZoomFactor(), .5, 6);
+        double height = 30 * buttonNumber;
+        double width = 30;
+    
+        setLayoutY((height * factor - height) / 2d);
+        setLayoutX(page.getWidth() + (width * factor - width) / 2d);
+        
+        setScaleX(factor);
+        setScaleY(factor);
     }
     
     public void updateVisibility(){
