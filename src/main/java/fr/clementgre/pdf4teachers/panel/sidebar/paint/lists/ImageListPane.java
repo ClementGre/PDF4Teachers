@@ -43,6 +43,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }else if(isGallery()){
             list.setupSortManager(sortPanel, ShapesGridView.SORT_FILE_EDIT_TIME, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_FILE_EDIT_TIME);
             Button openGallery = new Button(TR.tr("actions.open"));
+            openGallery.setPadding(new Insets(0, 4, 0, 4));
             PaneUtils.setHBoxPosition(openGallery, 0, 26, new Insets(0, 7, 0, 0));
             graphics.getChildren().add(2, openGallery);
             

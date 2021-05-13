@@ -122,9 +122,6 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         headerText.getStyleClass().add("headerText");
         subHeaderText.getStyleClass().add("subHeaderText");
         
-        AppFontsLoader.loadFont("Marianne-Bold.otf");
-        AppFontsLoader.loadFont("Marianne-Regular.otf");
-        
         VBox.setMargin(headerText, new Insets(30, 20, -5, 20));
         VBox.setMargin(subHeaderText, new Insets(0, 20, 30, 20));
         

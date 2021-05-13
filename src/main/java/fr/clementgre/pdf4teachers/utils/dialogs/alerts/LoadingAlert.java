@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components.dialogs.alerts;
+package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;

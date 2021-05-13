@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components.dialogs;
+package fr.clementgre.pdf4teachers.utils.dialogs;
 
 public enum AlertIconType{
     CONFIRM, ERROR, INFORMATION, WARNING;

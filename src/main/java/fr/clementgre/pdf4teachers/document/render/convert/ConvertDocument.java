@@ -2,8 +2,8 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.components.dialogs.AlreadyExistDialogManager;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.OKAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 
 import java.io.File;
 import java.io.IOException;

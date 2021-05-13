@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -44,15 +45,16 @@ public class SideBar extends TabPane{
         
         getTabs().addListener((ListChangeListener<Tab>) c -> {
             c.next();
-            if(getTabs().size() == 0){
+            if(getTabs().size() == 0){ // No tab in this pane
                 removeToPane();
                 setWidthByEditingDivider(0);
                 setMaxWidth(0);
-            }else if(c.wasAdded() && getTabs().size() == 1){
+            }else if(c.wasAdded() && getTabs().size() == 1){ // The tab is the first added
                 Platform.runLater(() -> {
                     setMaxWidth(MAX_WIDTH);
                     if(getWidth() <= 50){
                         setWidthByEditingDivider(DEFAULT_WIDTH);
+                        PlatformUtils.runLaterOnUIThread(500, this::requestLayout);
                     }
                 });
             }

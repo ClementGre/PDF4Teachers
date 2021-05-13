@@ -4,11 +4,10 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import javafx.application.Platform;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
-import org.apache.fontbox.ttf.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 

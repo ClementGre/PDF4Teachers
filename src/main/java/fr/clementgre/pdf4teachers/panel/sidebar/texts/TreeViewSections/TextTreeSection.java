@@ -98,9 +98,10 @@ public abstract class TextTreeSection extends TreeItem<String>{
         
         pane.setAlignment(Pos.CENTER);
         pane.setPrefHeight(18);
-        pane.setStyle("-fx-padding: -6 -6 -6 0;");
+        pane.setStyle("-fx-padding: -6 -6 -6 -4;");
         
         Text name = new Text(sectionName);
+        name.setStyle("-fx-font-size: 13;");
         pane.getChildren().add(name);
         
         Region spacer = new Region();

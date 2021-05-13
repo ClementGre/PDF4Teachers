@@ -12,8 +12,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 

@@ -110,8 +110,11 @@ public class FooterBar extends StackPane{
         overviewZoom.setOnMouseExited((e) -> overviewZoom.setStyle("-fx-background-color: lightgray;"));
         // ZOOM INFO
         zoomInfo.setText(TR.tr("footerBar.zoom"));
-        HBox.setMargin(fitZoom, new Insets(3, 5, 3, 5));
-        HBox.setMargin(overviewZoom, new Insets(3, 0, 3, 3));
+        fitZoom.setMaxHeight(14);
+        overviewZoom.setMaxHeight(14);
+        zoom.setAlignment(Pos.CENTER_LEFT);
+        HBox.setMargin(fitZoom, new Insets(0, 5, 1, 5));
+        HBox.setMargin(overviewZoom, new Insets(0, 0, 1, 3));
         zoomPercent.setMinWidth(40);
         zoom.setSpacing(5);
         zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom, overviewZoom);
@@ -129,6 +132,7 @@ public class FooterBar extends StackPane{
         
         root.setPadding(new Insets(0, 10, 0, 10));
         root.setSpacing(10);
+        root.setAlignment(Pos.CENTER_LEFT);
         root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
         getChildren().add(root);
         

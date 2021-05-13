@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
-import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
@@ -17,7 +17,6 @@ import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
-import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;

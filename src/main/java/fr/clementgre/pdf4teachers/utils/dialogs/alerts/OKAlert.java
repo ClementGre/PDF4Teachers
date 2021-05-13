@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components.dialogs.alerts;
+package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
 public class OKAlert extends CustomAlert{
     

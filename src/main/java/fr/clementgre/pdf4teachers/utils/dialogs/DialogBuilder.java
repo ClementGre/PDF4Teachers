@@ -1,11 +1,11 @@
-package fr.clementgre.pdf4teachers.components.dialogs;
+package fr.clementgre.pdf4teachers.utils.dialogs;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.ButtonPosition;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;

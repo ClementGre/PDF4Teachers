@@ -19,7 +19,7 @@
 .rootPane{
     -fx-padding: 15;
 }
-.rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner{
+.rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner, .tooltip{
     -fx-font: 13 Marianne;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;

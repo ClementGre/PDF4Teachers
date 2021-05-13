@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components.dialogs;
+package fr.clementgre.pdf4teachers.utils.dialogs;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;

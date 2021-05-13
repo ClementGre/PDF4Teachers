@@ -70,10 +70,10 @@ public abstract class ListPane<T> extends TitledPane{
         });
         
         zoomSlider.setBlockIncrement(1);
-        zoomSlider.setPrefWidth(75);
+        zoomSlider.setPrefWidth(65);
         
         graphics.minWidthProperty().bind(widthProperty());
-        graphics.setPadding(new Insets(0, 24, 0, 0));
+        graphics.setPadding(new Insets(0, 26, 0, 0));
         graphics.setAlignment(Pos.CENTER);
         
         Region spacer = new HBoxSpacer();

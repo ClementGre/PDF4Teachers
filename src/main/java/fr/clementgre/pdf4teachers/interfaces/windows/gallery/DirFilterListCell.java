@@ -6,7 +6,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;

@@ -4,6 +4,11 @@
  *                                                                             *
  ******************************************************************************/
 
+.text, .label, Label, Text, .tab-label, .menu-bar, .list-cell, .table-cell, .titled-pane > .title > .text,
+.text-area, .text-field, .tooltip{
+    -fx-font-family: "Open Sans";
+}
+
 .notification-bar > .pane .close-button:hover{
     -fx-background-color: #464646;
 }

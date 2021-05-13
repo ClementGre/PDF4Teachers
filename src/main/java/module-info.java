@@ -67,7 +67,7 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
     exports fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
     exports fr.clementgre.pdf4teachers.utils;
-    exports fr.clementgre.pdf4teachers.components.dialogs;
+    exports fr.clementgre.pdf4teachers.utils.dialogs;
     exports fr.clementgre.pdf4teachers.utils.image;
     exports fr.clementgre.pdf4teachers.utils.interfaces;
     exports fr.clementgre.pdf4teachers.utils.sort;
@@ -76,7 +76,7 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.interfaces.windows;
     exports fr.clementgre.pdf4teachers.utils.fonts;
     exports fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
-    exports fr.clementgre.pdf4teachers.components.dialogs.alerts;
+    exports fr.clementgre.pdf4teachers.utils.dialogs.alerts;
     exports fr.clementgre.pdf4teachers.components.menus;
     exports fr.clementgre.pdf4teachers.interfaces.windows.settings;
     

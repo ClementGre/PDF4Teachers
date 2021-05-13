@@ -1,8 +1,8 @@
 package fr.clementgre.pdf4teachers.utils.interfaces;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.LoadingAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.LoadingAlert;
 import javafx.application.Platform;
 
 import java.util.ArrayList;

@@ -6,8 +6,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeRating;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.AlreadyExistDialogManager;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 
 import java.io.BufferedWriter;
 import java.io.File;

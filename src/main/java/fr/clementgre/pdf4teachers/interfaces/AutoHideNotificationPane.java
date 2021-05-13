@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces;
 
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;

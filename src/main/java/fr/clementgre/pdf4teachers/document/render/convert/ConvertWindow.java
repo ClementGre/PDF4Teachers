@@ -1,17 +1,15 @@
 package fr.clementgre.pdf4teachers.document.render.convert;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
-import fr.clementgre.pdf4teachers.components.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.ErrorAlert;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.LoadingAlert;
-import fr.clementgre.pdf4teachers.components.dialogs.alerts.WrongAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.LoadingAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
@@ -20,17 +18,13 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
-import java.util.function.IntFunction;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class ConvertWindow extends AlternativeWindow<TabPane>{
     

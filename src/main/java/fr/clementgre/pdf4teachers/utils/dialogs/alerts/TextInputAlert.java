@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.components.dialogs.alerts;
+package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import jfxtras.styles.jmetro.Style;
 
 public class TextInputAlert extends CustomAlert{
     
@@ -27,6 +28,9 @@ public class TextInputAlert extends CustomAlert{
         }
     
         StyleManager.putCustomStyle(getDialogPane(), "someDialogs.css");
+        if(StyleManager.DEFAULT_STYLE == Style.LIGHT) StyleManager.putCustomStyle(getDialogPane(), "someDialogs-light.css");
+        else StyleManager.putCustomStyle(getDialogPane(), "someDialogs-dark.css");
+        
         getDialogPane().setContent(box);
     }
     

@@ -210,7 +210,7 @@ public class TextTreeItem extends TreeItem<String>{
     static long lastKeyPressTime = 0;
     
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
-        int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 38);
+        int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
         if(maxWidth < 0) return;
     
         Font font = getListFont();

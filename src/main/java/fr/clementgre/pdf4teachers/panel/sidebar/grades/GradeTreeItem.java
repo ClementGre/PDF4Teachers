@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -551,7 +552,7 @@ public class GradeTreeItem extends TreeItem<String>{
             });
         });
         ScratchText meter = new ScratchText();
-        meter.setFont(new Font(field.getFont().getFamily(), 13));
+        meter.setFont(AppFontsLoader.getFontPath(AppFontsLoader.OPEN_SANS, 13));
         
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){ // Enter : Switch to the next grade

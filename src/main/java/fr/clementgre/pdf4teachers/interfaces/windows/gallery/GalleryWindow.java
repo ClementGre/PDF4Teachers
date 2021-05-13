@@ -130,7 +130,6 @@ public class GalleryWindow extends Stage{
     private void setup(){
         setupSettings();
     
-        AppFontsLoader.loadFont("Marianne-Regular.otf");
         emptyGalleryLabel.setStyle("-fx-font: 18 Marianne;");
         emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
         messageContainer.setAlignment(Pos.CENTER);

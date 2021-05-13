@@ -1,6 +1,6 @@
 package fr.clementgre.pdf4teachers;
 
-import fr.clementgre.pdf4teachers.components.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -22,9 +23,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.*;
-import java.nio.file.CopyOption;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Objects;
 
@@ -143,6 +141,9 @@ public class Main extends Application{
         AutoTipsManager.setup();
         ImageUtils.setupListeners();
         FontUtils.setup();
+        AppFontsLoader.loadFont("Marianne-Regular.otf");
+        AppFontsLoader.loadFont("Marianne-Bold.otf");
+        AppFontsLoader.loadFontPath("/fonts/Open Sans/regular.ttf");
         
         
         if(languageAsk()){
