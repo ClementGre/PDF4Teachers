@@ -1,8 +1,8 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.components.FontComboBox;
@@ -10,57 +10,47 @@ import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
-import fr.clementgre.pdf4teachers.utils.style.Style;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
-public class GradeSettingsWindow extends Stage{
+public class GradeSettingsWindow extends AlternativeWindow<HBox>{
 
     public GradeSettingsWindow(){
-
-        VBox root = new VBox();
-        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        Scene scene = new Scene(root);
-
-        initOwner(Main.window);
-        initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setTitle(TR.tr("gradeTab.gradeFormatWindow.title"));
-        setResizable(false);
-        setScene(scene);
-        StyleManager.putStyle(scene, Style.DEFAULT);
-
-        setupPanel(root);
-        show();
+        super(new HBox(), StageWidth.ULTRA_LARGE, TR.tr("gradeTab.gradeFormatWindow.title"),
+                TR.tr("gradeTab.gradeFormatWindow.title"), TR.tr("gradeTab.gradeFormatWindow.header"));
     }
 
-    public void setupPanel(VBox root){
-
-        Text info = new Text(TR.tr("gradeTab.gradeFormatWindow.header"));
-        VBox.setMargin(info, new Insets(40, 0, 40, 0));
-        root.setStyle("-fx-padding: 10;");
-
-        HBox panes = new HBox();
-        root.getChildren().addAll(info, panes);
-
-        for(int i = 0; i < 5; i++) panes.getChildren().add(new TierPane(i));
-
+    @Override
+    public void setupSubClass(){
+    
+        for(int i = 0; i < 5; i++)
+            root.getChildren().add(new TierPane(i));
+        
+        setupBtns();
     }
-
+    
+    public void setupBtns(){
+        
+        Button ok = new Button(TR.tr("actions.ok"));
+        ok.setOnAction(event -> {
+            close();
+        });
+    
+        setButtons(ok);
+    }
+    
+    @Override
+    public void afterShown(){
+    
+    }
+    
     private class TierPane extends VBox{
 
         private final int tier;
@@ -84,7 +74,8 @@ public class GradeSettingsWindow extends Stage{
             name.setStyle("-fx-font-size: 13");
             VBox.setMargin(name, new Insets(7, 0, 7, 2.5));
 
-            PaneUtils.setVBoxPosition(fontCombo, 170, 30, 2.5);
+            PaneUtils.setVBoxPosition(fontCombo, 0, 30, 2.5);
+            fontCombo.setMaxWidth(250);
             fontCombo.setStyle("-fx-font-size: 13");
             fontCombo.getSelectionModel().select(font.getFamily());
             fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
@@ -105,8 +96,9 @@ public class GradeSettingsWindow extends Stage{
             itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            PaneUtils.setVBoxPosition(sizeCombo, 85, 30, 0);
+            PaneUtils.setVBoxPosition(sizeCombo, 0, 30, 0);
             sizeCombo.setStyle("-fx-font-size: 13");
+            sizeCombo.setMaxWidth(165);
             sizeCombo.setEditable(true);
             sizeCombo.getSelectionModel().select(font.getSize());
             sizeCombo.setConverter(new StringToDoubleConverter(sizeCombo.getValue()));
@@ -114,12 +106,13 @@ public class GradeSettingsWindow extends Stage{
 
             fontSpecs.getChildren().addAll(boldBtn, itBtn, sizeCombo);
 
-            PaneUtils.setVBoxPosition(colorPicker, 170, 30, 2.5);
+            PaneUtils.setVBoxPosition(colorPicker, 0, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
+            colorPicker.setMaxWidth(250);
             colorPicker.setValue(GradeTab.getTierColor(tier));
             colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            PaneUtils.setVBoxPosition(showName, 170, 0, new Insets(5, 2.5, 5, 2.5));
+            PaneUtils.setVBoxPosition(showName, 0, 0, new Insets(5, 2.5, 5, 2.5));
             showName.setSelected(GradeTab.getTierShowName(tier));
             showName.setCursor(Cursor.HAND);
             showName.setWrapText(true);
@@ -130,14 +123,14 @@ public class GradeSettingsWindow extends Stage{
             hideWhenAllPoints.disableProperty().bind(hide.selectedProperty());
             hide.disableProperty().bind(hideWhenAllPoints.selectedProperty());
 
-            PaneUtils.setVBoxPosition(hide, 170, 0, new Insets(5, 2.5, 5, 2.5));
+            PaneUtils.setVBoxPosition(hide, 0, 0, new Insets(5, 2.5, 5, 2.5));
             hide.setSelected(GradeTab.getTierHide(tier));
             hide.setCursor(Cursor.HAND);
             hide.setWrapText(true);
             hide.setAlignment(Pos.TOP_LEFT);
             hide.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            PaneUtils.setVBoxPosition(hideWhenAllPoints, 170, 0, new Insets(5, 2.5, 5, 2.5));
+            PaneUtils.setVBoxPosition(hideWhenAllPoints, 0, 0, new Insets(5, 2.5, 5, 2.5));
             hideWhenAllPoints.setSelected(GradeTab.getTierHideWhenAllPoints(tier));
             hideWhenAllPoints.setCursor(Cursor.HAND);
             hideWhenAllPoints.setWrapText(true);

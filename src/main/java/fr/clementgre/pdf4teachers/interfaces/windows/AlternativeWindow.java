@@ -37,6 +37,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
     public enum StageWidth{
         NORMAL(545),
         LARGE(700),
+        ULTRA_LARGE(1000),
         MAXIMUM(99999);
         private final int width;
         StageWidth(int width){

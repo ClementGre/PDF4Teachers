@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
@@ -25,36 +26,55 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.File;
 
-public class GradeExportWindow extends Stage{
-    
-    TabPane tabPane = new TabPane();
+public class GradeExportWindow extends AlternativeWindow<TabPane>{
     
     ExportPane exportAllTab = new ExportPane(this, TR.tr("gradeTab.gradeExportWindow.exportMode.together.name"), 0, false, true, true, false);
     ExportPane exportAllSplitTab = new ExportPane(this, TR.tr("gradeTab.gradeExportWindow.exportMode.separately.name"), 1, true, true, true, true);
     ExportPane exportThisTab = new ExportPane(this, TR.tr("gradeTab.gradeExportWindow.exportMode.onlyThis.name"), 2, false, false, false, true);
     
     public GradeExportWindow(){
+        super(new TabPane(), StageWidth.LARGE, TR.tr("gradeTab.gradeExportWindow.title"),
+                TR.tr("gradeTab.gradeExportWindow.title"), TR.tr("gradeTab.gradeExportWindow.header"));
+    }
+    
+    @Override
+    public void setupSubClass(){
+        root.setStyle("-fx-padding: 0;");
+        root.getTabs().addAll(exportAllTab, exportAllSplitTab, exportThisTab);
         
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
+        setupButtons();
+    }
+    
+    private void setupButtons(){
+        Button cancel = new Button(TR.tr("actions.cancel"));
+        Button export = new Button(TR.tr("actions.export"));
+    
+        export.setOnAction(event -> {
+            ExportPane pane = (ExportPane) root.getSelectionModel().getSelectedItem();
+            end(new GradeExportRenderer(pane).start(), pane);
+        });
+        cancel.setOnAction(event -> {
+            close();
+        });
+    
+        setButtons(cancel, export);
+    }
+    
+    private void end(int exported, ExportPane pane){
+        close();
         
-        initOwner(Main.window);
-        initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setWidth(650);
-        setResizable(false);
-        setTitle(TR.tr("gradeTab.gradeExportWindow.title"));
-        setScene(scene);
-        StyleManager.putStyle(scene, Style.DEFAULT);
-        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        String header;
+        if(exported == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
+        else if(exported == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
+        else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", exported);
         
-        Text info = new Text(TR.tr("gradeTab.gradeExportWindow.header"));
-        VBox.setMargin(info, new Insets(40, 0, 40, 10));
+        DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, null, pane.filePath.getText());
         
-        tabPane.getTabs().addAll(exportAllTab, exportAllSplitTab, exportThisTab);
-        root.getChildren().addAll(info, tabPane);
-        
-        show();
+    }
+    
+    @Override
+    public void afterShown(){
+    
     }
     
     class ExportPane extends Tab{
@@ -97,7 +117,6 @@ public class GradeExportWindow extends Stage{
             setupStudentNameForm();
             setupPathForm();
             setupSettingsForm();
-            setupBtns();
             
         }
         
@@ -272,33 +291,6 @@ public class GradeExportWindow extends Stage{
             
         }
         
-        public void setupBtns(){
-            
-            HBox btnBox = new HBox();
-            
-            Button cancel = new Button(TR.tr("actions.cancel"));
-            Button export = new Button(TR.tr("actions.export"));
-            export.requestFocus();
-            
-            btnBox.getChildren().addAll(cancel, export);
-            btnBox.setAlignment(Pos.CENTER_RIGHT);
-            
-            HBox.setMargin(cancel, new Insets(20, 5, 0, 10));
-            HBox.setMargin(export, new Insets(20, 10, 0, 5));
-            
-            Region spacer = new Region();
-            VBox.setVgrow(spacer, Priority.ALWAYS);
-            
-            export.setOnAction(event -> {
-                end(new GradeExportRenderer(this).start());
-            });
-            cancel.setOnAction(event -> {
-                window.close();
-            });
-            
-            root.getChildren().addAll(spacer, btnBox);
-        }
-        
         public VBox generateInfo(String text, boolean topBar){
             
             VBox box = new VBox();
@@ -314,18 +306,6 @@ public class GradeExportWindow extends Stage{
             box.getChildren().add(info);
             
             return box;
-        }
-        
-        private void end(int exported){
-            close();
-            
-            String header;
-            if(exported == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
-            else if(exported == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
-            else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", exported);
-            
-            DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, null, filePath.getText());
-            
         }
         
     }
