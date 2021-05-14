@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.document.render.export;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import javafx.scene.paint.Color;
 import org.apache.pdfbox.cos.COSName;
@@ -20,7 +21,7 @@ import java.util.Calendar;
 
 public class ExportRenderer{
     
-    public void exportFile(File pdfFile, File toFile, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception{
+    public void exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception{
         
         File editFile = Edition.getEditFile(pdfFile);
         
@@ -40,6 +41,7 @@ public class ExportRenderer{
         
         TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
         GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc);
+        ImageElementRenderer imageElementRenderer = new ImageElementRenderer(doc, imagesDPI);
         
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0; pageNumber < doc.getNumberOfPages(); pageNumber++){
@@ -83,15 +85,16 @@ public class ExportRenderer{
                 
                 if(element.getPageNumber() != pageNumber) continue;
                 
-                if(element instanceof TextElement){
+                if(element instanceof TextElement tElement){
                     if(textElements)
-                        textElementRenderer.renderElement((TextElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
-                }else if(element instanceof GradeElement){
+                        textElementRenderer.renderElement(tElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }else if(element instanceof GradeElement gElement){
                     if(gradesElements)
-                        gradeElementRenderer.renderElement((GradeElement) element, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
-                }/*else if(element instanceof DrawElement){
+                        gradeElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }else if(element instanceof ImageElement gElement){
                     if(drawElements)
-                }*/
+                        imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }
             }
             
             contentStream.close();

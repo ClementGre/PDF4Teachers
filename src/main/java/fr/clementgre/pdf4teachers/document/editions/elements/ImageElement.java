@@ -6,15 +6,12 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -33,8 +30,6 @@ public class ImageElement extends GraphicElement{
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
-        updateImage(true, hasPage);
-    
         if(linkedImageData != null){
             this.linkedImageData = linkedImageData;
             realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
@@ -45,6 +40,7 @@ public class ImageElement extends GraphicElement{
         }
         
         if(hasPage && getPage() != null){
+            updateImage(true);
             setupGeneral();
         }
     }
@@ -52,8 +48,8 @@ public class ImageElement extends GraphicElement{
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
-        updateImage(true, hasPage);
         if(hasPage && getPage() != null){
+            updateImage(true);
             setupGeneral();
         }
     }
@@ -62,7 +58,7 @@ public class ImageElement extends GraphicElement{
         this.pageNumber = pageNumber;
         setupGeneral();
         checkLocation(x, y, false);
-        updateImage(false, true);
+        updateImage(false);
     }
     
     // SETUP / EVENT CALL BACK
@@ -71,7 +67,7 @@ public class ImageElement extends GraphicElement{
     protected void setupBindings(){
         super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
-            updateImage(false, true);
+            updateImage(false);
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
@@ -169,9 +165,9 @@ public class ImageElement extends GraphicElement{
         return image.getWidth() / image.getHeight();
     }
     
-    public void updateImage(boolean checkAutoSize, boolean updateBackground){
-        generateImageAsync(() -> {
-            if(updateBackground) updateBackground();
+    public void updateImage(boolean checkAutoSize){
+        renderImageAsync(() -> {
+            updateBackground();
             
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
                 defineSizeAuto();
@@ -204,22 +200,27 @@ public class ImageElement extends GraphicElement{
         setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
     }
     
-    private void generateImageAsync(CallBack callBack){
+    private void renderImageAsync(CallBack callBack){
         new Thread(() -> {
-    
-            File file = new File(getImageId());
-            if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
-                try{
-                    image = new Image("file:///" + getImageId());
-                }catch(Exception e){
-                    e.printStackTrace(); image = getNotFoundImage();
-                }
-                if(image.getWidth() == 0) image = getNotFoundImage();
-                else notFound = false;
-            }else image = getNotFoundImage();
+            image = renderImage(0, 0);
+            if(image == null) image = getNotFoundImage();
             
             Platform.runLater(callBack::call);
         }, "ImageElement Renderer").start();
+    }
+    public Image renderImage(int requestedWidth, int requestedHeight){
+        File file = new File(getImageId());
+        if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
+            try{
+                Image image =  new Image("file:///" + getImageId(), requestedWidth, requestedHeight, false, true);
+                if(image.getWidth() == 0) return null;
+                return image;
+            }catch(Exception e){
+                e.printStackTrace();
+                return null;
+            }
+        }
+        return null;
     }
     
     private Image getNotFoundImage(){

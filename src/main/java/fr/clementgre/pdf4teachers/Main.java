@@ -55,7 +55,7 @@ public class Main extends Application{
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
         
         // Enable anti aliasing
-        System.setProperty("prism.lcdtext", "false");
+        //System.setProperty("prism.lcdtext", "false");
         ///// START APP /////
         launch(args);
     }

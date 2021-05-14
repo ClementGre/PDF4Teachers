@@ -49,7 +49,8 @@ public class ImageData extends ImageLambdaData{
     public void setAsToPlaceElement(boolean link){
         ImageData linkedImage = link ? this : null;
         ImageElement element = new ImageElement(0, 0, 0, false, 1, 1, repeatMode, resizeMode, imageId, linkedImage);
-    
+        element.updateImage(true);
+        
         MainWindow.mainScreen.setToPlace(element);
         PlatformUtils.runLaterOnUIThread(200, () -> { // Allow the time to double click if wanted
             Main.window.requestFocus();

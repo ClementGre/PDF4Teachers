@@ -13,17 +13,18 @@ import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
+import fr.clementgre.pdf4teachers.utils.interfaces.UnitStringConverter;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -113,21 +114,31 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         PaneUtils.setHBoxPosition(fileName, 0, 30, 0);
         name.getChildren().addAll(fileName);
         
-        VBox settings = new VBox();
-        CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
-        delEdit.setWrapText(true);
-        settings.getChildren().addAll(delEdit);
+        Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
+        
+        Slider imagesDPI = new Slider(50, 900, MainWindow.userData.settingsExportImagesDPI);
+        imagesDPI.setMajorTickUnit(200);
+        imagesDPI.setMinorTickCount(0);
+        imagesDPI.setBlockIncrement(10);
+        imagesDPI.setSnapToTicks(true);
+        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.settingsExportImagesDPI = newValue.intValue();
+        });
+    
+        HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
+    
+        VBox settings = new VBox(10, dpiSettings);
         
         root.getChildren().addAll(name, path, types, settings);
         
-        VBox.setMargin(delEdit, new Insets(20, 0, 0, 0));
+        VBox.setMargin(settings, new Insets(20, 0, 0, 0));
         
         export.setOnAction(event -> {
             
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
             
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    false, delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
+                    (int) imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
         });
     }
     
@@ -179,14 +190,29 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         byInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
         
         replace.getChildren().addAll(replaceText, replaceInput, byText, byInput);
+    
         
-        VBox settings = new VBox();
+        // SETTINGS
+        
+        
+        
         onlyEdited = new CheckBox(TR.tr("exportWindow.options.onlyEdited"));
         onlyEdited.setSelected(true);
         onlyEdited.setWrapText(true);
-        CheckBox delEdit = new CheckBox(TR.tr("exportWindow.options.deleteEdits"));
-        delEdit.setWrapText(true);
-        settings.getChildren().addAll(onlyEdited, delEdit);
+    
+        Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
+    
+        Slider imagesDPI = new Slider(50, 900, MainWindow.userData.settingsExportImagesDPI);
+        imagesDPI.setMajorTickUnit(200);
+        imagesDPI.setMinorTickCount(0);
+        imagesDPI.setBlockIncrement(10);
+        imagesDPI.setSnapToTicks(true);
+        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.settingsExportImagesDPI = newValue.intValue();
+        });
+    
+        HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
+        VBox settings = new VBox(10, onlyEdited, dpiSettings);
         
         root.getChildren().addAll(name, replace, path, types, settings);
         
@@ -202,7 +228,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         VBox.setMargin(onlyEdited, new Insets(20, 0, 5, 0));
         
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                onlyEdited.isSelected(), delEdit.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
+                (int) imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
         
         onlyEdited.selectedProperty().addListener((observable, oldValue, newValue) -> updateMultipleFilesTitle());
         updateMultipleFilesTitle();
@@ -216,7 +242,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
     }
     
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
-                                 boolean onlyEdited, boolean deleteEdit, boolean textElements, boolean gradesElements, boolean drawElements){
+                                 int imagesDPI, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements){
         
         directory.mkdirs();
         
@@ -268,16 +294,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
             @Override
             public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive){
                 try{
-                    new ExportRenderer().exportFile(data.getKey(), data.getValue(), textElements, gradesElements, drawElements);
-                    if(deleteEdit){
-                        Platform.runLater(() -> {
-                            if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(data.getKey().getAbsolutePath())){
-                                MainWindow.mainScreen.document.edition.clearEdit(false);
-                            }else{
-                                Edition.getEditFile(data.getKey()).delete();
-                            }
-                        });
-                    }
+                    new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements);
                 }catch(Exception e){
                     e.printStackTrace();
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){
@@ -295,7 +312,6 @@ public class ExportWindow extends AlternativeWindow<VBox>{
             public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
                 close();
                 close();
-                if(deleteEdit) MainWindow.filesTab.refresh();
                 
                 String header;
                 if(completedSize == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
