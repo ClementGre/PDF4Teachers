@@ -179,11 +179,11 @@ public class ImageElement extends GraphicElement{
     public void defineSizeAuto(){
         double imgWidth = image.getWidth();
         double imgHeight = image.getHeight();
-        double width = Math.min(GRID_WIDTH/2, imgWidth);
+        double width = Math.min(getPage().getWidth()/3, imgWidth);
         double height = imgHeight * width/imgWidth;
     
         checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
-                width * getPage().getWidth() / GRID_WIDTH, height * getPage().getHeight() / GRID_HEIGHT, false);
+                width, height, false);
     }
     
     public void updateBackground(){

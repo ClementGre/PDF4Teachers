@@ -175,7 +175,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     private static Image getImageCropped(ImageGridElement image, int renderSize) throws IOException, ImageProcessingException{
         File file = new File(image.getImageId());
         
-        BufferedImage cropped = new BufferedImage(renderSize, renderSize, BufferedImage.TYPE_INT_RGB);
+        BufferedImage cropped = new BufferedImage(renderSize, renderSize, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = cropped.createGraphics();
     
         image.getExifData().getRotation().applyTransformToGraphics2D(g, renderSize, renderSize);

@@ -450,6 +450,20 @@ public abstract class GraphicElement extends Element{
     
     }
     
+    @Override
+    public void switchPage(int page){
+        double oldPageWidth = getPage().getWidth();
+        double oldPageHeight = getPage().getHeight();
+    
+        super.switchPage(page);
+        
+        setRealHeight((int) (getRealHeight() * oldPageHeight / getPage().getHeight()));
+        setRealWidth((int) (getRealWidth() * oldPageWidth / getPage().getWidth()));
+        
+        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
+        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+    }
+    
     // READERS AND WRITERS
     
     protected LinkedHashMap<Object, Object> getYAMLPartialData(){
