@@ -26,7 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public class UpdateWindow extends Stage{
+public class UpdateWindow extends AlternativeWindow<VBox>{
     
     public static String version = "";
     public static String description = "";
@@ -176,52 +176,37 @@ public class UpdateWindow extends Stage{
     }
     
     public UpdateWindow(){
-        
-        VBox root = new VBox();
-        Scene scene = new Scene(root);
-        
-        initOwner(Main.window);
-        initModality(Modality.WINDOW_MODAL);
-        getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setWidth(600);
-        setResizable(false);
-        setTitle(TR.tr("updateWindow.title"));
-        setScene(scene);
-        StyleManager.putStyle(getScene(), Style.DEFAULT);
-        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-
-        
-        setupPanel(root);
-        show();
-        Main.window.centerWindowIntoMe(this);
+        super(new VBox(), StageWidth.NORMAL, TR.tr("updateWindow.title"), TR.tr("updateWindow.title"));
     }
-    
-    public void setupPanel(VBox root){
+    @Override
+    public void setupSubClass(){
+        Label info;
         
-        Text info;
-        Text version;
         if(newPre){
-            info = new Text(TR.tr("aboutWindow.version.update.preRelease") + "\n" + TR.tr("updateWindow.preReleaseInfo"));
-            version = new Text(TR.tr("updateWindow.details.preRelease", Main.VERSION, UpdateWindow.version) + "\n\n" + TR.tr("updateWindow.description.title"));
+            setSubHeaderText(TR.tr("aboutWindow.version.update.preRelease") + "\n" + TR.tr("updateWindow.preReleaseInfo"));
+            info = new Label(TR.tr("updateWindow.details.preRelease", Main.VERSION, UpdateWindow.version));
         }else{
-            info = new Text(TR.tr("aboutWindow.version.update.available"));
-            version = new Text(TR.tr("updateWindow.details", Main.VERSION, UpdateWindow.version) + "\n\n" + TR.tr("updateWindow.description.title"));
+            setSubHeaderText(TR.tr("aboutWindow.version.update.available"));
+            info = new Label(TR.tr("updateWindow.details", Main.VERSION, UpdateWindow.version));
         }
         
-        HBox buttons = new HBox();
+        info.setWrapText(true);
+        VBox.setMargin(info, new Insets(10, 0, 10, 0));
         
         VBox description = new VBox();
-        description.setStyle("-fx-padding: 10;");
         generateDescription(description);
-        ScrollPane descriptionPane = new ScrollPane(description);
-        descriptionPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-        descriptionPane.setMaxHeight(500);
-        descriptionPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+    
+        root.getChildren().addAll(info, description);
+        
+        setupButtons();
+    }
+    
+    public void setupButtons(){
+        Button ignore = new Button(TR.tr("actions.ignore"));
+        ignore.setOnAction((e) -> close());
         
         Button see = new Button(TR.tr("updateWindow.buttons.openDownloadPage"));
         see.setOnAction(t -> Main.hostServices.showDocument("https://pdf4teachers.org/Download/?v=" + UpdateWindow.version));
-        //see.setStyle("-fx-background-color: #ba6800;");
-        see.setAlignment(Pos.BASELINE_CENTER);
         
         String platform = "Linux";
         String extension = "deb";
@@ -236,21 +221,13 @@ public class UpdateWindow extends Stage{
         
         Button maj = new Button(TR.tr("updateWindow.buttons.directDownload"));
         maj.setOnAction(t -> Main.hostServices.showDocument(url));
-        //maj.setStyle("-fx-background-color: #ba6800;");
-        maj.setAlignment(Pos.BASELINE_CENTER);
         
-        buttons.getChildren().addAll(see, maj);
-        
-        root.getChildren().addAll(info, version, descriptionPane, buttons);
-        root.setStyle("-fx-padding: 10;");
-        
-        VBox.setMargin(info, new Insets(40, 10, 40, 10));
-        
-        HBox.setMargin(see, new Insets(0, 10, 0, 0));
-        VBox.setMargin(buttons, new Insets(20, 0, 0, 0));
-        
-        maj.requestFocus();
-        
+        setButtons(ignore, see, maj);
+    }
+    
+    @Override
+    public void afterShown(){
+    
     }
     
     public void generateDescription(VBox root){
@@ -305,5 +282,4 @@ public class UpdateWindow extends Stage{
             first = false;
         }
     }
-    
 }
