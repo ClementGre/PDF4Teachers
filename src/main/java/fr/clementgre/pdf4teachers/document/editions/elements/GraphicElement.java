@@ -368,42 +368,38 @@ public abstract class GraphicElement extends Element{
     public void updateGrabIndicators(boolean selected){
         if(!selected){
             setBorder(null);
-            getChildren().clear();
         }
+        getChildren().removeIf((node) -> node instanceof GrabPoint);
+        
         switch(getResizeMode()){
             case CORNERS -> {
                 if(selected){
                     setBorder(new Border(STROKE_DEFAULT));
-                    getChildren().setAll(getGrabPoint(true, true), getGrabPoint(true, false), getGrabPoint(false, true), getGrabPoint(false, false));
+                    getChildren().addAll(getGrabPoint(true, true), getGrabPoint(true, false), getGrabPoint(false, true), getGrabPoint(false, false));
                 }
             }
             case SIDE_EDGES -> {
                 if(selected){
                     setBorder(new Border(STROKE_DEFAULT, STROKE_SIDE_EDGES));
-                    getChildren().clear();
                 }
             }
             case OPPOSITE_CORNERS -> {
                 if(selected){
                     setBorder(null);
-                    getChildren().setAll(getGrabPoint(false, true), getGrabPoint(true, false));
+                    getChildren().addAll(getGrabPoint(false, true), getGrabPoint(true, false));
                 }
             }
         }
     }
     
-    private static final int POINT_WIDTH = 6;
-    private static final int POINT_OUTER = 2;
+    
     private Region getGrabPoint(boolean top, boolean left){
-        Region region = new Region();
-        region.setPrefWidth(POINT_WIDTH);
-        region.setPrefHeight(POINT_WIDTH);
-        region.setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), new CornerRadii(1), Insets.EMPTY)));
-
-        if(top) region.setLayoutY(0d - POINT_OUTER);
-        else region.layoutYProperty().bind(heightProperty().subtract(POINT_WIDTH - POINT_OUTER));
-        if(left) region.setLayoutX(0d - POINT_OUTER);
-        else region.layoutXProperty().bind(widthProperty().subtract(POINT_WIDTH - POINT_OUTER));
+        Region region = new GrabPoint();
+        
+        if(top) region.setLayoutY(0d - GrabPoint.POINT_OUTER);
+        else region.layoutYProperty().bind(heightProperty().subtract(GrabPoint.POINT_WIDTH - GrabPoint.POINT_OUTER));
+        if(left) region.setLayoutX(0d - GrabPoint.POINT_OUTER);
+        else region.layoutXProperty().bind(widthProperty().subtract(GrabPoint.POINT_WIDTH - GrabPoint.POINT_OUTER));
         
         return region;
     }

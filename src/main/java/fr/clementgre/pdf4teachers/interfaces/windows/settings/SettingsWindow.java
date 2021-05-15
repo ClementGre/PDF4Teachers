@@ -2,25 +2,14 @@ package fr.clementgre.pdf4teachers.interfaces.windows.settings;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.settings.Setting;
-import fr.clementgre.pdf4teachers.datasaving.settings.SettingObject;
-import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.datasaving.settings.SettingsGroup;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
-import javafx.util.Duration;
-
 import java.lang.reflect.Field;
-import java.util.List;
 
 public class SettingsWindow extends AlternativeWindow<VBox>{
     

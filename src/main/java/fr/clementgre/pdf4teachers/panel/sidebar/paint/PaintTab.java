@@ -24,6 +24,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.util.Arrays;
@@ -238,8 +239,37 @@ public class PaintTab extends SideTab{
             menu.show(newImage, e.getScreenX(), e.getScreenY());
         });
         
-        newVector.setOnAction(e -> {
+        newVector.setOnMouseClicked((e) -> {
+            ContextMenu menu = new ContextMenu();
+            NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
+            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
+            menu.getItems().addAll(browse, newEmpty);
+            NodeMenuItem.setupMenu(menu);
+    
+            browse.setOnAction(ae -> {
+                browseSVGPath(path -> {
+                    /*PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+            
+                    ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                            0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
+            
+                    page.addElement(element, true);
+                    element.centerOnCoordinatesY();
+                    MainWindow.mainScreen.setSelected(element);*/
+                });
+            });
+            newEmpty.setOnAction(ae -> {
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
+                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                        false, Color.RED, Color.LIGHTBLUE, 2, "");
+        
+                page.addElement(element, true);
+                element.centerOnCoordinatesY();
+                MainWindow.mainScreen.setSelected(element);
+            });
+            menu.show(newImage, e.getScreenX(), e.getScreenY());
         });
         
         browsePath.setOnAction(e -> {
@@ -268,6 +298,14 @@ public class PaintTab extends SideTab{
             else callBack.call(file.getAbsolutePath());
         }
     }
+    private void browseSVGPath(CallBackArg<String> callBack){
+        /*File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
+                ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
+        if(file != null){
+            if(callBack == null) path.setText(file.getAbsolutePath());
+            else callBack.call(file.getAbsolutePath());
+        }*/
+    }
     
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
         if(newValue.intValue() == MainScreen.Status.OPEN){
@@ -280,7 +318,11 @@ public class PaintTab extends SideTab{
         // Old element
         if(oldValue instanceof GraphicElement gElement){
             if(oldValue instanceof VectorElement element){ // Vector
-            
+                element.pathProperty().unbind();
+                element.fillProperty().unbind();
+                element.strokeProperty().unbind();
+                element.doFillProperty().unbind();
+                element.strokeWidthProperty().unbind();
             }else if(oldValue instanceof ImageElement element){ // Image
                 element.imageIdProperty().unbind();
             }
@@ -296,6 +338,19 @@ public class PaintTab extends SideTab{
     
             if(newValue instanceof VectorElement element){ // Vector
                 setVectorsDisable(false);
+                
+                path.setText(element.getPath());
+                vectorStrokeColor.setValue(element.getStroke());
+                vectorFillColor.setValue(element.getFill());
+                vectorStrokeWidth.getValueFactory().setValue(element.getStrokeWidth());
+                doFillButton.setSelected(element.isDoFill());
+                
+                element.pathProperty().bind(path.textProperty());
+                element.strokeProperty().bind(vectorStrokeColor.valueProperty());
+                element.fillProperty().bind(vectorFillColor.valueProperty());
+                element.doFillProperty().bind(doFillButton.selectedProperty());
+                element.strokeWidthProperty().bind(vectorStrokeWidth.valueProperty());
+                
             }else if(newValue instanceof ImageElement element){ // Image
                 setVectorsDisable(true);
                 path.setText(element.getImageId());
@@ -317,16 +372,6 @@ public class PaintTab extends SideTab{
         }else{
             setGlobalDisable(true);
             setVectorsDisable(true);
-        }
-        
-        // Load/Bind data
-        if(newValue instanceof GraphicElement){
-            
-            if(newValue instanceof VectorElement){ // Vector
-            
-            }else{ // Image
-            
-            }
         }
     }
     

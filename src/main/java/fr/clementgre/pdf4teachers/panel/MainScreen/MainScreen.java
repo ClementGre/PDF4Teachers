@@ -329,13 +329,16 @@ public class MainScreen extends Pane{
         try{
             document.loadEdition();
         }catch(Exception e){
-            System.err.println("ERREUR : Impossible de changer l'édition");
+            System.err.println("Error: Unable to load the edit file.");
             e.printStackTrace();
+            document = null;
             closeFile(false);
             failedEditFile = Edition.getEditFile(file).getAbsolutePath();
             status.set(Status.ERROR_EDITION);
+            repaint();
+            return;
         }
-        
+    
         repaint();
         
         double scrollValue = zoomOperator.vScrollBar.getValue();

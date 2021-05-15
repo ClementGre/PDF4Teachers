@@ -23,7 +23,10 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class Main extends Application{
@@ -47,6 +50,12 @@ public class Main extends Application{
     public static final Rectangle2D SCREEN_VISUAL_BOUNDS = Screen.getPrimary().getVisualBounds();
     public static String systemShortcut = "Ctrl";
     public static List<String> params;
+    
+    public static DecimalFormatSymbols baseDecimalFormatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+    static{
+        baseDecimalFormatSymbols.setDecimalSeparator('.');
+    }
+    public static DecimalFormat baseFormat = new DecimalFormat("0.######", baseDecimalFormatSymbols);
     
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     
