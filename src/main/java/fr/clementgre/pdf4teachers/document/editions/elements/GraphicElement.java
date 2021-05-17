@@ -12,7 +12,6 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
@@ -119,8 +118,8 @@ public abstract class GraphicElement extends Element{
             if(wasInEditPagesModeWhenMousePressed) return;
             
             e.consume();
-            requestFocus();
             setupMousePressVars(e.getX(), e.getY(), null, false);
+            requestFocus();
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
@@ -181,8 +180,8 @@ public abstract class GraphicElement extends Element{
             double width = x + shiftXFromEnd;
             double height = y + shiftYFromEnd;
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
-            else if(height < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.SW_RESIZE);
+            else if(height < 0) invertY(x, y, Cursor.NE_RESIZE);
             else{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
@@ -200,7 +199,7 @@ public abstract class GraphicElement extends Element{
                 originWidth = height * ratio;
             }
         
-            if(height < 0) setupMousePressVars(x, y, Cursor.N_RESIZE, false);
+            if(height < 0) invertY(x, y, Cursor.N_RESIZE);
             else checkLocation(originX, getLayoutY(), originWidth, height, false);
         
         }else if(dragType == Cursor.E_RESIZE){
@@ -211,7 +210,7 @@ public abstract class GraphicElement extends Element{
                 originHeight = width / ratio;
             }
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.W_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.W_RESIZE);
             else checkLocation(getLayoutX(), originY, width, originHeight, false);
         }
         //               +
@@ -222,8 +221,8 @@ public abstract class GraphicElement extends Element{
             double newY = getLayoutY() + y - shiftY;
             double height = originHeight + (originY - newY);
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
-            else if(height < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.NW_RESIZE);
+            else if(height < 0) invertY(x, y, Cursor.SE_RESIZE);
             else{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
@@ -241,8 +240,8 @@ public abstract class GraphicElement extends Element{
             double newX = getLayoutX() + x - shiftX;
             double width = originWidth + (originX - newX);
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.SE_RESIZE, false);
-            else if(height < 0) setupMousePressVars(x, y, Cursor.NW_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.SE_RESIZE);
+            else if(height < 0) invertY(x, y, Cursor.NW_RESIZE);
             else{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
@@ -266,8 +265,8 @@ public abstract class GraphicElement extends Element{
             double newY = getLayoutY() + y - shiftY;
             double height = originHeight + (originY - newY);
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.NE_RESIZE, false);
-            else if(height < 0) setupMousePressVars(x, y, Cursor.SW_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.NE_RESIZE);
+            else if(height < 0) invertY(x, y, Cursor.SW_RESIZE);
             else{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
@@ -290,7 +289,7 @@ public abstract class GraphicElement extends Element{
                 originWidth = height * ratio;
             }
         
-            if(height < 0) setupMousePressVars(x, y, Cursor.S_RESIZE, false);
+            if(height < 0) invertY(x, y, Cursor.S_RESIZE);
             else checkLocation(originX, newY, originWidth, height, false);
         
         }else if(dragType == Cursor.W_RESIZE){
@@ -302,7 +301,7 @@ public abstract class GraphicElement extends Element{
                 originHeight = width/ratio;
             }
         
-            if(width < 0) setupMousePressVars(x, y, Cursor.E_RESIZE, false);
+            if(width < 0) invertX(x, y, Cursor.E_RESIZE);
             else checkLocation(newX, originY, width, originHeight, false);
         
         }
@@ -317,8 +316,8 @@ public abstract class GraphicElement extends Element{
         originHeight = getHeight();
         originX = getLayoutX();
         originY = getLayoutY();
-        menu.hide(); select();
-        
+        menu.hide();
+    
         if(forceDragType != null){
             dragType = forceDragType;
             shiftX = 0;
@@ -329,9 +328,13 @@ public abstract class GraphicElement extends Element{
             else ratio = originWidth / originHeight;
         }
         setCursor(dragType);
+        
+        select();
     }
     
     public Cursor getDragCursorType(double x, double y){
+        if(MainWindow.mainScreen.getSelected() != this) return Cursor.MOVE;
+        
         int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
         
         // RESIZE
@@ -365,33 +368,94 @@ public abstract class GraphicElement extends Element{
     
     protected static BorderStroke STROKE_SIDE_EDGES = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
             BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0, 2, 0, 2));
+    
+    private Region topLeftPoint;
+    private Region topRightPoint;
+    private Region bottomLeftPoint;
+    private Region bottomRightPoint;
+    
     public void updateGrabIndicators(boolean selected){
+        
         if(!selected){
             setBorder(null);
-        }
-        getChildren().removeIf((node) -> node instanceof GrabPoint);
-        
-        switch(getResizeMode()){
-            case CORNERS -> {
-                if(selected){
+            getChildren().removeIf((node) -> node instanceof GrabPoint);
+            
+        }else{
+            if(topLeftPoint == null) topLeftPoint = getGrabPoint(true, true);
+            if(topRightPoint == null) topRightPoint = getGrabPoint(true, false);
+            if(bottomLeftPoint == null) bottomLeftPoint = getGrabPoint(false, true);
+            if(bottomRightPoint == null) bottomRightPoint = getGrabPoint(false, false);
+            
+            if(!getChildren().contains(topLeftPoint)) getChildren().add(topLeftPoint);
+            if(!getChildren().contains(topRightPoint)) getChildren().add(topRightPoint);
+            if(!getChildren().contains(bottomLeftPoint)) getChildren().add(bottomLeftPoint);
+            if(!getChildren().contains(bottomRightPoint)) getChildren().add(bottomRightPoint);
+            
+            switch(getResizeMode()){
+                case CORNERS -> {
                     setBorder(new Border(STROKE_DEFAULT));
-                    getChildren().addAll(getGrabPoint(true, true), getGrabPoint(true, false), getGrabPoint(false, true), getGrabPoint(false, false));
+                    topLeftPoint.setVisible(true);
+                    bottomRightPoint.setVisible(true);
+                    topRightPoint.setVisible(true);
+                    bottomLeftPoint.setVisible(true);
                 }
-            }
-            case SIDE_EDGES -> {
-                if(selected){
+                case SIDE_EDGES -> {
                     setBorder(new Border(STROKE_DEFAULT, STROKE_SIDE_EDGES));
+                    topLeftPoint.setVisible(true);
+                    bottomRightPoint.setVisible(true);
+                    topRightPoint.setVisible(true);
+                    bottomLeftPoint.setVisible(true);
                 }
-            }
-            case OPPOSITE_CORNERS -> {
-                if(selected){
+                case OPPOSITE_CORNERS -> {
                     setBorder(null);
-                    getChildren().addAll(getGrabPoint(false, true), getGrabPoint(true, false));
+                    if(this instanceof VectorElement ve){
+                        if(ve.isInvertX() && ve.isInvertY()){
+                            topLeftPoint.setVisible(false);
+                            topRightPoint.setVisible(true);
+                            bottomLeftPoint.setVisible(true);
+                            bottomRightPoint.setVisible(false);
+                        }else if(ve.isInvertX()){
+                            topLeftPoint.setVisible(true);
+                            topRightPoint.setVisible(false);
+                            bottomLeftPoint.setVisible(false);
+                            bottomRightPoint.setVisible(true);
+                        }else if(ve.isInvertY()){
+                            topLeftPoint.setVisible(true);
+                            topRightPoint.setVisible(false);
+                            bottomLeftPoint.setVisible(false);
+                            bottomRightPoint.setVisible(true);
+                        }else{
+                            topLeftPoint.setVisible(false);
+                            topRightPoint.setVisible(true);
+                            bottomLeftPoint.setVisible(true);
+                            bottomRightPoint.setVisible(false);
+                        }
+                    }else{
+                        topLeftPoint.setVisible(false);
+                        topRightPoint.setVisible(true);
+                        bottomLeftPoint.setVisible(true);
+                        bottomRightPoint.setVisible(false);
+                    }
+    
                 }
             }
         }
     }
     
+    private void invertX(double x, double y, Cursor forceDragType){
+        setupMousePressVars(x, y, forceDragType, false);
+        if(this instanceof VectorElement ve){
+            ve.setInvertX(!ve.isInvertX());
+            updateGrabIndicators(true);
+        }
+    }
+    private void invertY(double x, double y, Cursor forceDragType){
+        setupMousePressVars(x, y, forceDragType, false);
+        if(this instanceof VectorElement ve){
+            ve.setInvertY(!ve.isInvertY());
+            updateGrabIndicators(true);
+        }
+    }
     
     private Region getGrabPoint(boolean top, boolean left){
         Region region = new GrabPoint();

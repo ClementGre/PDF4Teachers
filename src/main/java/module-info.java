@@ -34,8 +34,6 @@ open module fr.clementgre.pdf4teachers {
     requires nsmenufx;
 
     // JAVAFX
-    
-
     requires javafx.base;
     requires javafx.controls;
     requires javafx.fxml;
@@ -43,6 +41,9 @@ open module fr.clementgre.pdf4teachers {
     
     //requires jtouchbar;
     //requires jtouchbar.javafx;
+    
+    // SVG
+    requires batik.parser;
 
     // EXPORTS
 

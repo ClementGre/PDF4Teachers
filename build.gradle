@@ -10,6 +10,8 @@ repositories{
 }
 
 extraJavaModuleInfo {
+    failOnMissingModuleInfo.set(false)
+
     automaticModule("jlatexmath-1.0.7.jar", "jlatexmath")
 
     automaticModule("jlatexmath-font-greek-1.0.7.jar", "jlatexmath.font.greek")
@@ -23,6 +25,8 @@ extraJavaModuleInfo {
 
     automaticModule("jai-imageio-core-1.4.0.jar", "imageio.core")
     automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
+
+    automaticModule("batik-parser-1.14.jar", "batik.parser")
 }
 
 dependencies{
@@ -59,6 +63,9 @@ dependencies{
 
     // OSX
     implementation 'de.jangassen:nsmenufx:3.1.0'
+
+    // SVG
+    implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
 
 }
 

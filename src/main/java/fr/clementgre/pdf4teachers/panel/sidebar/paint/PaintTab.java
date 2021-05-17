@@ -263,7 +263,7 @@ public class PaintTab extends SideTab{
         
                 VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                         100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                        false, Color.RED, Color.LIGHTBLUE, 2, "");
+                        false, Color.RED, Color.LIGHTBLUE, 2, "", false, false);
         
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
