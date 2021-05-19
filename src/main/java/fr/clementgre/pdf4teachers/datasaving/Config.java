@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.scene.paint.Color;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
@@ -144,6 +145,9 @@ public class Config{
     public Double getDoubleNull(String path){
         return getDoubleNull(base, path);
     }
+    public Color getColor(String path){
+        return getColor(base, path);
+    }
     
     public boolean getBoolean(String path){
         return getBoolean(base, path);
@@ -179,6 +183,14 @@ public class Config{
     
     public static Double getDoubleNull(HashMap<String, Object> base, String path){
         return StringUtils.getDouble(getValue(base, path).toString());
+    }
+    
+    public static Color getColor(HashMap<String, Object> base, String path){
+        try{
+            return Color.valueOf(getValue(base, path).toString());
+        }catch(NullPointerException | IllegalArgumentException ignored){
+            return Color.BLACK;
+        }
     }
     
     public static boolean getBoolean(HashMap<String, Object> base, String path){

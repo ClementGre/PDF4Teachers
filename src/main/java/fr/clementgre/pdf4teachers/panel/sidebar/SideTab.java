@@ -3,7 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
 import javafx.scene.input.ClipboardContent;

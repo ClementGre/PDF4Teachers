@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +80,15 @@ public class UserData{
     
     @UserDataObject(path = "paintTab.gallery.lastOpenPath")
     public String galleryLastOpenPath = "";
+    
+    @UserDataObject(path = "paintTab.vectors.lastDoFill")
+    public boolean vectorsLastDoFIll = true;
+    @UserDataObject(path = "paintTab.vectors.lastFillColor")
+    public Color vectorsLastFill = Color.BLACK;
+    @UserDataObject(path = "paintTab.vectors.lastStrokeColor")
+    public Color vectorsLastStroke = Color.BLACK;
+    @UserDataObject(path = "paintTab.vectors.lastStrokeWidth")
+    public long vectorsLastStrokeWidth = 5;
     
     // GradesExport Params & PdfExport Params
     @UserDataObject(path = "export.fields.fileName")
@@ -229,6 +239,8 @@ public class UserData{
                                 field.set(this, config.getSection(field.getAnnotation(UserDataObject.class).path()));
                             }else if(field.getType() == LinkedHashMap.class){
                                 field.set(this, config.getLinkedSection(field.getAnnotation(UserDataObject.class).path()));
+                            }else if(field.getType() == Color.class){
+                                field.set(this, config.getColor(field.getAnnotation(UserDataObject.class).path()));
                             }
                         }catch(Exception e){
                             e.printStackTrace();
@@ -337,7 +349,12 @@ public class UserData{
             for(Field field : getClass().getDeclaredFields()){
                 if(field.isAnnotationPresent(UserDataObject.class)){
                     try{
-                        config.set(field.getAnnotation(UserDataObject.class).path(), field.get(this));
+                        if(field.getType() == Color.class){
+                            config.set(field.getAnnotation(UserDataObject.class).path(), field.get(this).toString());
+                        }else{
+                            config.set(field.getAnnotation(UserDataObject.class).path(), field.get(this));
+                        }
+                        
                     }catch(Exception e){
                         e.printStackTrace();
                     }

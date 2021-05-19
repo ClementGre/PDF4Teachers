@@ -1,63 +1,26 @@
-package fr.clementgre.pdf4teachers.utils.image;
+package fr.clementgre.pdf4teachers.utils.svg;
 
 import org.apache.batik.parser.ParseException;
 import org.apache.batik.parser.PathHandler;
 
-public class SVGScalerHandler implements PathHandler{
+public abstract class SVGSimpleTransformHandler implements PathHandler{
     
-    private StringBuilder newPath = new StringBuilder();
+    protected StringBuilder newPath = new StringBuilder();
     
-    private float scaleX, scaleY, translateX, translateY;
-    
-    // Translate Y/X should be relative to original coordinates
-    // Width and Height too.
-    public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY){
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.translateX = translateX;
-        this.translateY = translateY;
-    }
-    public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY,
-                            boolean invertX, boolean invertY, float width, float height){
-        
-        this.scaleX = scaleX;
-        this.scaleY = scaleY;
-        this.translateX = translateX;
-        this.translateY = translateY;
-        
-        if(invertX){
-            this.translateX -= width;
-            this.scaleX = -this.scaleX;
-        }
-        if(invertY){
-            this.translateY -= height;
-            this.scaleY = -this.scaleY;
-        }
-    }
-    
-    public String getScaledPath(){
+    public String getTransformedPath(){
         return newPath.toString();
     }
     
+    protected abstract float manageX(float x, boolean rel);
     
-    private float manageX(float x, boolean rel){
-        if(rel) return x * scaleX;
-        else return (x+translateX) * scaleX;
-    }
-    private float manageY(float y, boolean rel){
-        if(rel) return y * scaleY;
-        else return (y+translateY) * scaleY;
-    }
-    
+    protected abstract float manageY(float y, boolean rel);
     
     @Override
     public void startPath() throws ParseException{
-    
     }
     
     @Override
     public void endPath() throws ParseException{
-    
     }
     
     @Override
@@ -107,8 +70,8 @@ public class SVGScalerHandler implements PathHandler{
     
     @Override
     public void curvetoCubicRel(float x1, float y1, float x2, float y2, float x, float y) throws ParseException{
-        newPath.append("c").append(manageX(x1, true)).append(" ").append(y1 * scaleY).append(" ")
-                .append(manageX(x2, true)).append(" ").append(y2 * scaleY).append(" ")
+        newPath.append("c").append(manageX(x1, true)).append(" ").append(manageY(y1, true)).append(" ")
+                .append(manageX(x2, true)).append(" ").append(manageY(y2, true)).append(" ")
                 .append(manageX(x, true)).append(" ").append(manageY(y, true));
     }
     
@@ -121,7 +84,7 @@ public class SVGScalerHandler implements PathHandler{
     
     @Override
     public void curvetoCubicSmoothRel(float x2, float y2, float x, float y) throws ParseException{
-        newPath.append("s").append(manageX(x2, true)).append(" ").append(y2 * scaleY).append(" ")
+        newPath.append("s").append(manageX(x2, true)).append(" ").append(manageY(y2, true)).append(" ")
                 .append(manageX(x, true)).append(" ").append(manageY(y, true));
     }
     
@@ -133,7 +96,7 @@ public class SVGScalerHandler implements PathHandler{
     
     @Override
     public void curvetoQuadraticRel(float x1, float y1, float x, float y) throws ParseException{
-        newPath.append("q").append(manageX(x1, true)).append(" ").append(y1 * scaleY).append(" ")
+        newPath.append("q").append(manageX(x1, true)).append(" ").append(manageY(y1, true)).append(" ")
                 .append(manageX(x, true)).append(" ").append(manageY(y, true));
     }
     
@@ -155,7 +118,7 @@ public class SVGScalerHandler implements PathHandler{
     
     @Override
     public void arcRel(float rx, float ry, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag, float x, float y) throws ParseException{
-        newPath.append("a").append(manageX(rx, true)).append(" ").append(manageX(ry, true)).append(" ")
+        newPath.append("a").append(manageX(rx, true)).append(" ").append(manageY(ry, true)).append(" ")
                 .append(xAxisRotation).append(" ")
                 .append(largeArcFlag ? "1" : "0").append(" ").append(sweepFlag ? "1" : "0").append(" ")
                 .append(manageX(x, true)).append(" ").append(manageY(y, true));
@@ -163,7 +126,7 @@ public class SVGScalerHandler implements PathHandler{
     
     @Override
     public void arcAbs(float rx, float ry, float xAxisRotation, boolean largeArcFlag, boolean sweepFlag, float x, float y) throws ParseException{
-        newPath.append("A").append((rx+translateX) * scaleX).append(" ").append((ry+translateY) * scaleY).append(" ")
+        newPath.append("A").append(manageX(rx, false)).append(" ").append(manageY(ry, false)).append(" ")
                 .append(xAxisRotation).append(" ")
                 .append(largeArcFlag ? "1" : "0").append(" ").append(sweepFlag ? "1" : "0").append(" ")
                 .append(manageX(x, false)).append(" ").append(manageY(y, false));

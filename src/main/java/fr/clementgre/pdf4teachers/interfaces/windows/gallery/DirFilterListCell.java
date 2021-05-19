@@ -7,7 +7,7 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

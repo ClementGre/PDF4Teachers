@@ -84,10 +84,9 @@ public class ImageElement extends GraphicElement{
     protected void setupMenu(){
         super.setupMenu();
         
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("paintTab.images.resetRatio"));
         NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("gallery.imageContextMenu.isFavorite"), true, true);
         
-        menu.getItems().addAll(item1, isFavoriteItem);
+        menu.getItems().addAll(isFavoriteItem);
         menu.setOnShowing(e -> {
             isFavoriteItem.setSelected(MainWindow.paintTab.favouriteImages.isFavoriteImage(this));
         });
@@ -95,11 +94,6 @@ public class ImageElement extends GraphicElement{
         isFavoriteItem.setOnAction((event) -> {
             linkedImageData = MainWindow.paintTab.favouriteImages.toggleFavoriteImage(this);
         });
-    
-        item1.setOnAction(e -> {
-            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth()/getRatio(), false);
-        });
-        
     }
     
     // ACTIONS

@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.utils.image;
+package fr.clementgre.pdf4teachers.utils.svg;
 
 import javafx.geometry.Insets;
 import javafx.scene.SnapshotParameters;

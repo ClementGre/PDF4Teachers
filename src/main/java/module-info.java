@@ -44,7 +44,8 @@ open module fr.clementgre.pdf4teachers {
     
     // SVG
     requires batik.parser;
-
+    requires org.jetbrains.annotations;
+    
     // EXPORTS
 
     exports fr.clementgre.pdf4teachers;
@@ -80,5 +81,6 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.dialogs.alerts;
     exports fr.clementgre.pdf4teachers.components.menus;
     exports fr.clementgre.pdf4teachers.interfaces.windows.settings;
+    exports fr.clementgre.pdf4teachers.utils.svg;
     
 }

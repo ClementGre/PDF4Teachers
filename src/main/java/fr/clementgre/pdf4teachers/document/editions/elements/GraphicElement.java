@@ -166,7 +166,7 @@ public abstract class GraphicElement extends Element{
     
     public void simulateReleaseFromResize(){
         checkLocation(false);
-        if(getWidth() < 20 || getHeight() < 20){
+        if(getWidth() < 20 && getHeight() < 20){
             checkLocation(getLayoutX(), getLayoutY(),
                     StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
         }
@@ -337,32 +337,57 @@ public abstract class GraphicElement extends Element{
         
         int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
         
-        // RESIZE
-        if(x < grabSize){ // Left Side
-            if(y < grabSize){ // Top Left
-                return Cursor.NW_RESIZE;
-            }else if(y > getHeight()-grabSize){ // Bottom Left
+        if(getResizeMode() == ResizeMode.OPPOSITE_CORNERS){
+            
+            if(x < grabSize && y > getHeight()-grabSize && bottomLeftPoint.isVisible()){ // Bottom Left
                 return Cursor.SW_RESIZE;
-            }else{ // Left only
-                return Cursor.W_RESIZE;
-            }
-        }
-        if(x > getWidth()-grabSize){ // Right Side
-            if(y < grabSize){ // Top Right
+            }if(x > getWidth()-grabSize && y < grabSize && topRightPoint.isVisible()){ // Top Right
                 return Cursor.NE_RESIZE;
-            }else if(y > getHeight()-grabSize){ // Bottom Right
+            }if(x < grabSize && y < grabSize && topLeftPoint.isVisible()){ // Top Left
+                return Cursor.NW_RESIZE;
+            }if(x > getWidth()-grabSize && y > getHeight()-grabSize && bottomRightPoint.isVisible()){ // Bottom Right
                 return Cursor.SE_RESIZE;
-            }else{ // Right only
+            }
+        }else if(getResizeMode() == ResizeMode.SIDE_EDGES){
+            
+            if(x < grabSize){ // Left Side
+                return Cursor.W_RESIZE;
+            }if(x > getWidth()-grabSize){ // Right Side
                 return Cursor.E_RESIZE;
+            }if(y < grabSize){ // Top only
+                return Cursor.N_RESIZE;
+            }if(y > getHeight()-grabSize){ // Bottom only
+                return Cursor.S_RESIZE;
+            }
+            
+        }else{
+            // RESIZE
+            if(x < grabSize){ // Left Side
+                if(y < grabSize){ // Top Left
+                    return Cursor.NW_RESIZE;
+                }else if(y > getHeight()-grabSize){ // Bottom Left
+                    return Cursor.SW_RESIZE;
+                }else{ // Left only
+                    return Cursor.W_RESIZE;
+                }
+            }
+            if(x > getWidth()-grabSize){ // Right Side
+                if(y < grabSize){ // Top Right
+                    return Cursor.NE_RESIZE;
+                }else if(y > getHeight()-grabSize){ // Bottom Right
+                    return Cursor.SE_RESIZE;
+                }else{ // Right only
+                    return Cursor.E_RESIZE;
+                }
+            }
+    
+            if(y < grabSize){ // Top only
+                return Cursor.N_RESIZE;
+            }if(y > getHeight()-grabSize){ // Bottom only
+                return Cursor.S_RESIZE;
             }
         }
-    
-        if(y < grabSize){ // Top only
-            return Cursor.N_RESIZE;
-        }
-        if(y > getHeight()-grabSize){ // Bottom only
-            return Cursor.S_RESIZE;
-        }
+        
         return Cursor.MOVE;
     }
     
@@ -401,10 +426,10 @@ public abstract class GraphicElement extends Element{
                 }
                 case SIDE_EDGES -> {
                     setBorder(new Border(STROKE_DEFAULT, STROKE_SIDE_EDGES));
-                    topLeftPoint.setVisible(true);
-                    bottomRightPoint.setVisible(true);
-                    topRightPoint.setVisible(true);
-                    bottomLeftPoint.setVisible(true);
+                    topLeftPoint.setVisible(false);
+                    bottomRightPoint.setVisible(false);
+                    topRightPoint.setVisible(false);
+                    bottomLeftPoint.setVisible(false);
                 }
                 case OPPOSITE_CORNERS -> {
                     setBorder(null);
@@ -490,7 +515,13 @@ public abstract class GraphicElement extends Element{
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
         NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"));
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
-        menu.getItems().addAll(item1, item2);
+    
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("paintTab.resetRatio"));
+        item3.setOnAction(e -> {
+            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth()/getRatio(), false);
+        });
+        
+        menu.getItems().addAll(item1, item2, item3);
         NodeMenuItem.setupMenu(menu);
         
         item1.setOnAction(e -> delete());

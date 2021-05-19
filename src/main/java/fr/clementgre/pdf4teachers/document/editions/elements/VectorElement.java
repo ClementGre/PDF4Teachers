@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.utils.image.SVGUtils;
+import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.SVGPath;
@@ -25,6 +25,8 @@ public class VectorElement extends GraphicElement{
     private BooleanProperty invertX = new SimpleBooleanProperty();
     private BooleanProperty invertY = new SimpleBooleanProperty();
     
+    private BooleanProperty isEditMode = new SimpleBooleanProperty(false);
+    
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
                          boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
@@ -37,33 +39,30 @@ public class VectorElement extends GraphicElement{
         this.invertX.set(invertX);
         this.invertY.set(invertY);
         
-        if(hasPage && getPage() != null){
-            updateFill();
-            updateStroke();
-            noScaledSvgPath.setContent(getPath());
-            svgPath.setContent(getPath());
-    
-            widthProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
-            heightProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
-    
-            svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
-            setupGeneral(svgPath);
-        }
+        if(hasPage && getPage() != null) setupPage(true);
     }
     
-    public void initializePage(int pageNumber, double x, double y){
-        this.pageNumber = pageNumber;
-        
+    private void setupPage(boolean checkSize){
         updateFill();
         updateStroke();
         noScaledSvgPath.setContent(getPath());
-        svgPath.setContent(getPath());
+        onSizeChanged();
     
         widthProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
         heightProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
     
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         setupGeneral(svgPath);
+    
+        if(checkSize && getRealWidth() == 0 && getRealHeight() == 0){
+            defineSizeAuto();
+        }
+    }
+    
+    public void initializePage(int pageNumber, double x, double y){
+        this.pageNumber = pageNumber;
+        
+        setupPage(false);
         checkLocation(x, y, false);
     }
     
@@ -83,7 +82,12 @@ public class VectorElement extends GraphicElement{
         doFill.addListener((observable, oldValue, newValue) -> updateFill());
         
         stroke.addListener((observable, oldValue, newValue) -> updateStroke());
-        strokeWidth.addListener((observable, oldValue, newValue) -> updateStroke());
+        strokeWidth.addListener((observable, oldValue, newValue) -> {
+            updateStroke();
+            onSizeChanged();
+        });
+        
+        resizeModeProperty().addListener((o, oldValue, newValue) -> onSizeChanged());
         
         invertXProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
         invertYProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
@@ -115,14 +119,21 @@ public class VectorElement extends GraphicElement{
     private void onSizeChanged(){
         if(getWidth() == 0 || getHeight() == 0) return;
         
+        double padding = getSVGPadding();
+        svgPath.setLayoutX(padding);
+        svgPath.setLayoutY(padding);
         svgPath.setContent(SVGUtils.transformPath(getPath(),
-                (float) (getLayoutBounds().getWidth() / noScaledSvgPath.getLayoutBounds().getWidth()),
-                (float) (getLayoutBounds().getHeight() / noScaledSvgPath.getLayoutBounds().getHeight()),
+                (float) ((getLayoutBounds().getWidth()-padding*2) / noScaledSvgPath.getLayoutBounds().getWidth()),
+                (float) ((getLayoutBounds().getHeight()-padding*2) / noScaledSvgPath.getLayoutBounds().getHeight()),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinX(),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinY(),
                 isInvertX(), isInvertY(),
                 (float) noScaledSvgPath.getLayoutBounds().getWidth(),
                 (float) noScaledSvgPath.getLayoutBounds().getHeight()));
+    }
+    
+    public double getSVGPadding(){
+        return STROKE_DEFAULT.getWidths().getTop() + (getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidth()/2d);
     }
     
     // ACTIONS
@@ -202,12 +213,18 @@ public class VectorElement extends GraphicElement{
     
     @Override
     public double getRatio(){
-        return 1;
+        return noScaledSvgPath.getLayoutBounds().getWidth() / noScaledSvgPath.getLayoutBounds().getHeight();
     }
     
     @Override
     public void defineSizeAuto(){
+        double imgWidth = noScaledSvgPath.getLayoutBounds().getWidth();
+        double imgHeight = noScaledSvgPath.getLayoutBounds().getHeight();
+        double width = Math.min(getPage().getWidth()/3, imgWidth);
+        double height = imgHeight * width/imgWidth;
     
+        checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                width, height, false);
     }
     
     @Override
@@ -217,7 +234,8 @@ public class VectorElement extends GraphicElement{
     
     @Override
     public Element clone(){
-        return null;
+        return new VectorElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(),
+                isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY());
     }
 
     
@@ -291,5 +309,14 @@ public class VectorElement extends GraphicElement{
     }
     public void setInvertY(boolean invertY){
         this.invertY.set(invertY);
+    }
+    public boolean isIsEditMode(){
+        return isEditMode.get();
+    }
+    public BooleanProperty isEditModeProperty(){
+        return isEditMode;
+    }
+    public void setIsEditMode(boolean isEditMode){
+        this.isEditMode.set(isEditMode);
     }
 }

@@ -9,7 +9,7 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -20,6 +20,7 @@ import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -122,11 +123,13 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             
             setGraphic(imageView);
             setOnMouseClicked((e) -> {
-                if(e.getClickCount() >= 2){
-                    item.addToDocument();
-                    updateGalleryAndFavoritesSort();
-                }else if(e.getClickCount() == 1){
-                    item.setAsToPlaceElement();
+                if(e.getButton() == MouseButton.PRIMARY){
+                    if(e.getClickCount() >= 2){
+                        item.addToDocument();
+                        updateGalleryAndFavoritesSort();
+                    }else if(e.getClickCount() == 1){
+                        item.setAsToPlaceElement();
+                    }
                 }
             });
         }

@@ -7,7 +7,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeS
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.scene.control.*;
 

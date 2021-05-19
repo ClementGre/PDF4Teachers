@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
@@ -14,8 +15,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.image.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.value.ObservableValue;
@@ -25,8 +29,12 @@ import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -203,6 +211,20 @@ public class PaintTab extends SideTab{
     
         delete.setOnAction(e -> deleteSelected());
     
+        vectorFillColor.valueProperty().addListener((observable, oldValue, newValue) -> {
+            doFillButton.setSelected(true);
+            MainWindow.userData.vectorsLastFill = newValue;
+        });
+        doFillButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.vectorsLastDoFIll = newValue;
+        });
+        vectorStrokeColor.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.vectorsLastStroke = newValue;
+        });
+        vectorStrokeWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.vectorsLastStrokeWidth = newValue;
+        });
+        
         newImage.setOnMouseClicked((e) -> {
             ContextMenu menu = new ContextMenu();
             NodeMenuItem browse = new NodeMenuItem(TR.tr("file.browse"));
@@ -241,40 +263,63 @@ public class PaintTab extends SideTab{
         
         newVector.setOnMouseClicked((e) -> {
             ContextMenu menu = new ContextMenu();
+            NodeMenuItem newDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
+            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"));
             NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
-            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
-            menu.getItems().addAll(browse, newEmpty);
+            menu.getItems().addAll(newDrawing, newEmpty, browse);
             NodeMenuItem.setupMenu(menu);
     
-            browse.setOnAction(ae -> {
-                browseSVGPath(path -> {
-                    /*PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-            
-                    ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                            0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
-            
-                    page.addElement(element, true);
-                    element.centerOnCoordinatesY();
-                    MainWindow.mainScreen.setSelected(element);*/
-                });
+            newDrawing.setOnAction(ae -> {
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+        
+                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                        false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
+                        "", false, false);
+        
+                page.addElement(element, true);
+                element.centerOnCoordinatesY();
+                element.setIsEditMode(true);
+                MainWindow.mainScreen.setSelected(element);
             });
             newEmpty.setOnAction(ae -> {
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
                 VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                         100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                        false, Color.RED, Color.LIGHTBLUE, 2, "", false, false);
+                        MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
+                        "", false, false);
         
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
             });
+            browse.setOnAction(ae -> browseSVGPath(null));
             menu.show(newImage, e.getScreenX(), e.getScreenY());
         });
         
-        browsePath.setOnAction(e -> {
+        browsePath.setOnMouseClicked(e -> {
             if(MainWindow.mainScreen.getSelected() instanceof ImageElement){
                 browseImagePath(null);
+            }else if(MainWindow.mainScreen.getSelected() instanceof VectorElement element){ // VECTOR
+                ContextMenu menu = new ContextMenu();
+                NodeMenuItem rotate = new NodeMenuItem(TR.tr("paintTab.vectorElements.rotate"));
+                NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
+                menu.getItems().addAll(rotate, browse);
+                NodeMenuItem.setupMenu(menu);
+    
+                rotate.setOnAction(ae -> {
+                    DoubleInputAlert inputAlert = new DoubleInputAlert(-360, 360, 90, 90,
+                            TR.tr("paintTab.vectorElements.rotate"), TR.tr("paintTab.vectorElements.rotate.dialog.header"), TR.tr("paintTab.vectorElements.rotate.dialog.details"));
+                    inputAlert.addApplyButton(ButtonPosition.DEFAULT);
+                    inputAlert.addCancelButton(ButtonPosition.CLOSE);
+    
+                    if(inputAlert.getShowAndWaitIsDefaultButton() && inputAlert.getValue() != null && inputAlert.getValue() != 0){
+                        path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue())));
+                    }
+                });
+                browse.setOnAction(ae -> browseSVGPath(path::setText));
+                menu.show(newImage, e.getScreenX(), e.getScreenY());
             }
         });
         
@@ -299,12 +344,39 @@ public class PaintTab extends SideTab{
         }
     }
     private void browseSVGPath(CallBackArg<String> callBack){
-        /*File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
-                ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
+        File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.svg"),
+                SVGUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
         if(file != null){
-            if(callBack == null) path.setText(file.getAbsolutePath());
-            else callBack.call(file.getAbsolutePath());
-        }*/
+            try{
+                SVGFileParser parser = new SVGFileParser(file);
+                parser.load();
+                
+                if(callBack != null){
+                    callBack.call(parser.getPath());
+                    return;
+                }
+                
+                Color fillColor = parser.getFillColor();
+                Color strokeColor = parser.getStrokeColor();
+                int strokeWidth = parser.getStrokeWidth();
+                if((strokeWidth == 0 || strokeColor == null) && fillColor == null) fillColor = MainWindow.userData.vectorsLastFill;
+                
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+        
+                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                        0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                        fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
+                        parser.getPath(), false, false);
+        
+                page.addElement(element, true);
+                element.centerOnCoordinatesY();
+                MainWindow.mainScreen.setSelected(element);
+        
+            }catch(ParserConfigurationException | XPathExpressionException | IOException | SAXException ex){
+                new ErrorAlert(TR.tr("paintTab.vectorElements.browseSVG.error"), ex.getMessage(), false).show();
+                ex.printStackTrace();
+            }
+        }
     }
     
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
@@ -423,7 +495,7 @@ public class PaintTab extends SideTab{
         browsePath.setDisable(disable);
     }
     public void setAllDisable(boolean disable){
-        setGlobalDisable(disable);
+        if(disable) setGlobalDisable(true);
         newImage.setDisable(disable);
         newVector.setDisable(disable);
     }
