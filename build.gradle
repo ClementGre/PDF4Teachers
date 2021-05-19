@@ -123,10 +123,6 @@ jlink {
 
     jpackage {
 
-        if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
-        else if(os.macOsX) targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
-        else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
-
         installerType = os.windows ? 'msi' : (os.macOsX ? 'dmg' : 'deb')
         installerOptions = [
                 '--description', project.description,
