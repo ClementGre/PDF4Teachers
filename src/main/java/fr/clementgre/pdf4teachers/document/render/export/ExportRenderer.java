@@ -1,10 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
-import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import javafx.scene.paint.Color;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -42,6 +39,7 @@ public class ExportRenderer{
         TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
         GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc);
         ImageElementRenderer imageElementRenderer = new ImageElementRenderer(doc, imagesDPI);
+        VectorElementRenderer vectorElementRenderer = new VectorElementRenderer(doc);
         
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0; pageNumber < doc.getNumberOfPages(); pageNumber++){
@@ -94,6 +92,9 @@ public class ExportRenderer{
                 }else if(element instanceof ImageElement gElement){
                     if(drawElements)
                         imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }else if(element instanceof VectorElement gElement){
+                    if(drawElements)
+                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }
             }
             

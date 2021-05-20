@@ -18,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -84,7 +85,9 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }
     }
     public void reloadFavouritesImageList(ArrayList<ImageData> images){
-        list.setItems(PlatformUtils.runAndWait(() -> images.stream().map(ImageGridElement::new)).toList());
+        list.setItems(PlatformUtils.runAndWait(() -> images.stream()
+                .filter((imageData) -> new File(imageData.getImageId()).exists())
+                .map(ImageGridElement::new)).toList());
     }
     public ImageData toggleFavoriteImage(ImageElement element){
         // If image is already favorite

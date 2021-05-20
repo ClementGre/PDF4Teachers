@@ -198,5 +198,11 @@ public class StyleManager{
         );
     }
     
+    public static java.awt.Color fxColorToAWT(Color color){
+        return new java.awt.Color((float) color.getRed(),
+                (float) color.getGreen(),
+                (float) color.getBlue(),
+                (float) color.getOpacity());
+    }
     
 }

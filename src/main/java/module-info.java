@@ -44,6 +44,8 @@ open module fr.clementgre.pdf4teachers {
     
     // SVG
     requires batik.parser;
+    requires de.rototor.graphics2d;
+    
     requires org.jetbrains.annotations;
     
     // EXPORTS

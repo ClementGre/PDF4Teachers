@@ -38,6 +38,7 @@ public class VectorElement extends GraphicElement{
         this.strokeWidth.set(strokeWidth);
         this.invertX.set(invertX);
         this.invertY.set(invertY);
+        noScaledSvgPath.setContent(getPath());
         
         if(hasPage && getPage() != null) setupPage(true);
     }
@@ -45,12 +46,12 @@ public class VectorElement extends GraphicElement{
     private void setupPage(boolean checkSize){
         updateFill();
         updateStroke();
-        noScaledSvgPath.setContent(getPath());
         onSizeChanged();
     
         widthProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
         heightProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
-    
+        
+        noScaledSvgPath.setContent(getPath());
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         setupGeneral(svgPath);
     
@@ -118,18 +119,24 @@ public class VectorElement extends GraphicElement{
     
     private void onSizeChanged(){
         if(getWidth() == 0 || getHeight() == 0) return;
-        
+    
         double padding = getSVGPadding();
         svgPath.setLayoutX(padding);
         svgPath.setLayoutY(padding);
-        svgPath.setContent(SVGUtils.transformPath(getPath(),
-                (float) ((getLayoutBounds().getWidth()-padding*2) / noScaledSvgPath.getLayoutBounds().getWidth()),
-                (float) ((getLayoutBounds().getHeight()-padding*2) / noScaledSvgPath.getLayoutBounds().getHeight()),
+        svgPath.setContent(getScaledPath((float) getLayoutBounds().getWidth(), (float) getLayoutBounds().getHeight()));
+    }
+    
+    public String getScaledPath(float wantedWidth, float wantedHeight){
+        double padding = getSVGPadding();
+        
+        return SVGUtils.transformPath(getPath(),
+                (float) ((wantedWidth-padding*2) / noScaledSvgPath.getLayoutBounds().getWidth()),
+                (float) ((wantedHeight-padding*2) / noScaledSvgPath.getLayoutBounds().getHeight()),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinX(),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinY(),
                 isInvertX(), isInvertY(),
                 (float) noScaledSvgPath.getLayoutBounds().getWidth(),
-                (float) noScaledSvgPath.getLayoutBounds().getHeight()));
+                (float) noScaledSvgPath.getLayoutBounds().getHeight());
     }
     
     public double getSVGPadding(){
@@ -318,5 +325,8 @@ public class VectorElement extends GraphicElement{
     }
     public void setIsEditMode(boolean isEditMode){
         this.isEditMode.set(isEditMode);
+    }
+    public SVGPath getNoScaledSvgPath(){
+        return noScaledSvgPath;
     }
 }
