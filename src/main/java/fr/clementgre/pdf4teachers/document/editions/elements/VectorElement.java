@@ -130,15 +130,17 @@ public class VectorElement extends GraphicElement{
     }
     
     public String getScaledPath(float wantedWidth, float wantedHeight, float padding){
+        double finalCurrentWidth = Math.max(1d, noScaledSvgPath.getLayoutBounds().getWidth());
+        double finalCurrentHeight = Math.max(1d, noScaledSvgPath.getLayoutBounds().getHeight());
         
         return SVGUtils.transformPath(getPath(),
-                (float) ((wantedWidth-padding*2) / noScaledSvgPath.getLayoutBounds().getWidth()),
-                (float) ((wantedHeight-padding*2) / noScaledSvgPath.getLayoutBounds().getHeight()),
+                (float) ((wantedWidth-padding*2) / finalCurrentWidth),
+                (float) ((wantedHeight-padding*2) / finalCurrentHeight),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinX(),
                 (float) -noScaledSvgPath.getBoundsInLocal().getMinY(),
                 isInvertX(), isInvertY(),
-                (float) noScaledSvgPath.getLayoutBounds().getWidth(),
-                (float) noScaledSvgPath.getLayoutBounds().getHeight());
+                (float) finalCurrentWidth,
+                (float) finalCurrentHeight);
     }
     
     public double getSVGPadding(){
