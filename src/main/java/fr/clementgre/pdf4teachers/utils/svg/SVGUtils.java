@@ -5,6 +5,7 @@ import org.apache.batik.parser.PathParser;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Collections;
@@ -38,7 +39,7 @@ public class SVGUtils{
         PathParser parser = new PathParser();
         AWTPathProducer producer = new AWTPathProducer();
     
-        producer.setWindingRule(0);
+        producer.setWindingRule(Path2D.WIND_NON_ZERO);
         parser.setPathHandler(producer);
         parser.parse(path);
     

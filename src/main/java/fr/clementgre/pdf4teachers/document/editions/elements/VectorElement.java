@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.FillRule;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 
@@ -53,6 +54,7 @@ public class VectorElement extends GraphicElement{
         
         noScaledSvgPath.setContent(getPath());
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        svgPath.setFillRule(FillRule.NON_ZERO);
         setupGeneral(svgPath);
     
         if(checkSize && getRealWidth() == 0 && getRealHeight() == 0){
@@ -105,6 +107,7 @@ public class VectorElement extends GraphicElement{
     private void updateStroke(){
         svgPath.setStroke(getStroke());
         svgPath.setStrokeWidth(getStrokeWidth());
+        svgPath.setStrokeMiterLimit(getStrokeWidth());
     }
     
     @Override
@@ -123,11 +126,10 @@ public class VectorElement extends GraphicElement{
         double padding = getSVGPadding();
         svgPath.setLayoutX(padding);
         svgPath.setLayoutY(padding);
-        svgPath.setContent(getScaledPath((float) getLayoutBounds().getWidth(), (float) getLayoutBounds().getHeight()));
+        svgPath.setContent(getScaledPath((float) getLayoutBounds().getWidth(), (float) getLayoutBounds().getHeight(), (float) padding));
     }
     
-    public String getScaledPath(float wantedWidth, float wantedHeight){
-        double padding = getSVGPadding();
+    public String getScaledPath(float wantedWidth, float wantedHeight, float padding){
         
         return SVGUtils.transformPath(getPath(),
                 (float) ((wantedWidth-padding*2) / noScaledSvgPath.getLayoutBounds().getWidth()),

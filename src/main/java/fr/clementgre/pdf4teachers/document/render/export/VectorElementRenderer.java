@@ -42,26 +42,41 @@ public class VectorElementRenderer{
         
         }
     
-        int width = (int) ((element.getRealWidth()) / Element.GRID_WIDTH * pageWidth);
-        int height = (int) ((element.getRealHeight()) / Element.GRID_HEIGHT * pageHeight);
+        int safetyPadding = element.getStrokeWidth();
         
-        PdfBoxGraphics2D graphics = new PdfBoxGraphics2D(doc, width, height);
-        try {
-            graphics.setStroke(new BasicStroke(element.getStrokeWidth()));
-            graphics.setColor(StyleManager.fxColorToAWT(element.getStroke()));
-            graphics.setBackground(Color.BLACK);
-            graphics.draw(SVGUtils.convertToAwtShape(
-                    element.getScaledPath(width, height)));
-        } finally {
-            graphics.dispose();
+        int width = (int) ((element.getRealWidth() / Element.GRID_WIDTH * pageWidth) + safetyPadding*2);
+        int height = (int) ((element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) + safetyPadding*2);
+        
+        PdfBoxGraphics2D g = new PdfBoxGraphics2D(doc, width, height);
+        try{
+            AffineTransform originalTransform = g.getTransform();
+            g.transform(AffineTransform.getTranslateInstance(safetyPadding + element.getSVGPadding(), safetyPadding + element.getSVGPadding()));
+    
+            Shape shape = SVGUtils.convertToAwtShape(element.getScaledPath(width, height, (float) (safetyPadding + element.getSVGPadding())));
+    
+            // Fill
+            if(element.isDoFill()){
+                g.setColor(StyleManager.fxColorToAWT(element.getFill()));
+                g.fill(shape);
+            }
+            
+            // Stroke
+            g.setStroke(new BasicStroke(element.getStrokeWidth(), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, element.getStrokeWidth()));
+            g.setColor(StyleManager.fxColorToAWT(element.getStroke()));
+            g.draw(shape);
+            
+            // Restore original transform
+            g.setTransform(originalTransform);
+        }finally{
+            g.dispose();
         }
         
-        PDFormXObject xForm = graphics.getXFormObject();
+        PDFormXObject xForm = g.getXFormObject();
     
         float bottomMargin = pageRealHeight - pageHeight - startY;
         AffineTransform transform = AffineTransform.getTranslateInstance(
-                startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
-                bottomMargin + pageRealHeight - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - element.getRealY() / Element.GRID_HEIGHT * pageHeight);
+                startX + (element.getRealX() / Element.GRID_WIDTH * pageWidth) - safetyPadding,
+                bottomMargin + pageRealHeight - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - (element.getRealY() / Element.GRID_HEIGHT * pageHeight) - safetyPadding);
         xForm.setMatrix(transform);
         
         contentStream.drawForm(xForm);
