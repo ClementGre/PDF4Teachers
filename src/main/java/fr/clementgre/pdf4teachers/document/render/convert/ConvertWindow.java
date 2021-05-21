@@ -28,27 +28,33 @@ import java.util.regex.Pattern;
 
 public class ConvertWindow extends AlternativeWindow<TabPane>{
     
-    public static ObservableList<String> definitions = FXCollections.observableArrayList(
-            TR.tr("convertWindow.options.format.fitToImage"),
-            "0.501832Mpix (A4, 72 dpi, ~90kB)",
-            "0.967000Mpix (A4, 100dpi, ~150kB)",
-            "2.175750Mpix (A4, 150dpi, ~280kB)",
-            "3.868000Mpix (A4, 200dpi, ~450kB)",
-            "8.699840Mpix (A4, 300dpi, ~800kB)",
-            "34.81200Mpix (A4, 600dpi, 1.2MB)");
+    public static ObservableList<String> definitions;
     
-    public static ObservableList<String> formats = FXCollections.observableArrayList(
-            TR.tr("convertWindow.options.format.fitToImage"),
-            "594:841 (A4 " + TR.tr("convertWindow.options.format.portrait") + ")",
-            "841:594 (A4 " + TR.tr("convertWindow.options.format.landscape") + ")",
-            "216:279 (US Letter " + TR.tr("convertWindow.options.format.portrait") + ")",
-            "279:216 (US Letter " + TR.tr("convertWindow.options.format.landscape") + ")",
-            "216:356 (US Legal " + TR.tr("convertWindow.options.format.portrait") + ")",
-            "356:216 (US Legal " + TR.tr("convertWindow.options.format.landscape") + ")",
-            "16:9",
-            "9:16",
-            "4:3",
-            "3:4");
+    public static ObservableList<String> formats;
+    
+    public static void setupTranslations(){
+        definitions = FXCollections.observableArrayList(
+                TR.tr("convertWindow.options.format.fitToImage"),
+                "0.501832Mpix (A4, 72 dpi, ~90kB)",
+                "0.967000Mpix (A4, 100dpi, ~150kB)",
+                "2.175750Mpix (A4, 150dpi, ~280kB)",
+                "3.868000Mpix (A4, 200dpi, ~450kB)",
+                "8.699840Mpix (A4, 300dpi, ~800kB)",
+                "34.81200Mpix (A4, 600dpi, 1.2MB)");
+    
+        formats = FXCollections.observableArrayList(
+                TR.tr("convertWindow.options.format.fitToImage"),
+                "594:841 (A4 " + TR.tr("convertWindow.options.format.portrait") + ")",
+                "841:594 (A4 " + TR.tr("convertWindow.options.format.landscape") + ")",
+                "216:279 (US Letter " + TR.tr("convertWindow.options.format.portrait") + ")",
+                "279:216 (US Letter " + TR.tr("convertWindow.options.format.landscape") + ")",
+                "216:356 (US Legal " + TR.tr("convertWindow.options.format.portrait") + ")",
+                "356:216 (US Legal " + TR.tr("convertWindow.options.format.landscape") + ")",
+                "16:9",
+                "9:16",
+                "4:3",
+                "3:4");
+    }
     
     DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
     
@@ -316,7 +322,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 updateDefaultValues();
                 definition.applyCss(); // Prevent the black text on black bg bug
 
-                String data = StringUtils.removeAfterLastRegex(newValue, "Mpix");
+                String data = StringUtils.removeAfterLastRegex(newValue, "Mp");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
                     this.mp = mp;

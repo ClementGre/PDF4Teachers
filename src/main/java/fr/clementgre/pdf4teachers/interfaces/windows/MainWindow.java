@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.document.render.convert.ConvertWindow;
 import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
 import fr.clementgre.pdf4teachers.interfaces.KeyboardShortcuts;
 import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
@@ -54,7 +55,6 @@ public class MainWindow extends Stage{
     public static MainScreen mainScreen;
     public static FooterBar footerBar;
     public static MenuBar menuBar;
-    
     
     public static SideBar leftBar;
     public static SideBar rightBar;
@@ -126,6 +126,8 @@ public class MainWindow extends Stage{
     }
     
     public void setup(){
+        
+        ConvertWindow.setupTranslations();
         
         //		SETUPS
         

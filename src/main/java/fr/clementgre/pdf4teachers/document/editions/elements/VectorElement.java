@@ -148,7 +148,6 @@ public class VectorElement extends GraphicElement{
     }
     
     // ACTIONS
-    
     @Override
     public void select(){
         super.selectPartial();

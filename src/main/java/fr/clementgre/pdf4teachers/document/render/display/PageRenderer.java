@@ -21,6 +21,7 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.EventTarget;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -198,9 +199,25 @@ public class PageRenderer extends Pane{
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
                 
                 setCursor(Cursor.CROSSHAIR);
+                
             }else{
                 if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
-                else setCursor(Cursor.CLOSED_HAND);
+                else{
+                    setCursor(Cursor.CLOSED_HAND);
+                    
+                    if(e.getClickCount() == 2 && !isEditPagesMode()){
+                        e.consume();
+                        SideBar.selectTab(MainWindow.textTab);
+                        MainWindow.textTab.newBtn.fire();
+                        Element selected = MainWindow.mainScreen.getSelected();
+                        if(selected != null){
+                            if(selected instanceof TextElement){
+                                selected.setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
+                            }
+                        }
+                    }
+                    
+                }
             }
         });
         setOnMouseReleased(e -> {
@@ -218,19 +235,6 @@ public class PageRenderer extends Pane{
             }
             if(isEditPagesMode()) setCursor(Cursor.MOVE);
             else setCursor(Cursor.DEFAULT);
-        });
-        setOnMouseClicked(e -> {
-            // ADD TextElement when double click
-            if(e.getClickCount() == 2 && !isEditPagesMode()){
-                SideBar.selectTab(MainWindow.textTab);
-                MainWindow.textTab.newBtn.fire();
-                Element selected = MainWindow.mainScreen.getSelected();
-                if(selected != null){
-                    if(selected instanceof TextElement){
-                        selected.setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
-                    }
-                }
-            }
         });
     
         //////////////////////////////////////////////////////////////////////////////////////////

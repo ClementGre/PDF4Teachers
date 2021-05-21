@@ -15,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.LinkedHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Element extends Region{
     
@@ -65,19 +66,27 @@ public abstract class Element extends Region{
                     setBorder(new Border(STROKE_DEFAULT));
                 }
             });
-            
+    
+            AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
                 wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
                 if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
-        
-                shiftX = (int) e.getX();
-                shiftY = (int) e.getY();
-                menu.hide();
-                select();
-        
-                if(e.getButton() == MouseButton.SECONDARY){
-                    menu.show(getPage(), e.getScreenX(), e.getScreenY());
+    
+                if(e.getClickCount() == 1){
+                    lastClickSelected.set(MainWindow.mainScreen.getSelected() == this);
+    
+                    shiftX = (int) e.getX();
+                    shiftY = (int) e.getY();
+                    menu.hide();
+                    select();
+    
+                    if(e.getButton() == MouseButton.SECONDARY){
+                        menu.show(getPage(), e.getScreenX(), e.getScreenY());
+                    }
+                    
+                }else if(e.getClickCount() == 2 && lastClickSelected.get()){
+                    doubleClick();
                 }
             });
             setOnMouseDragged(e -> {
@@ -114,9 +123,6 @@ public abstract class Element extends Region{
         setOnMouseClicked(e -> {
             if(PageRenderer.isEditPagesMode()) return;
             e.consume();
-            if(e.getClickCount() == 2){
-                doubleClick();
-            }
         });
         
         /////////////////////////////////////////////////////////////////////////
