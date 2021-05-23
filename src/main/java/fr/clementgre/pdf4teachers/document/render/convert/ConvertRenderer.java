@@ -89,8 +89,9 @@ public class ConvertRenderer{
             convertedFile = new ConvertedFile(out, MainWindow.mainScreen.document.pdfPagesRender.getDocument());
         }*/
         
-        double pageHeight = 841; // the page height is always 841 (A4 72dpi)
-        double pageWidth = convertPane.widthFactor * pageHeight / convertPane.heightFactor;
+        
+        double pageWidth = 596;
+        double pageHeight = pageWidth / convertPane.widthFactor * convertPane.heightFactor;
         PDRectangle pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
         PDRectangle defaultPageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
         if(convertPane.format.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage")))
@@ -110,7 +111,7 @@ public class ConvertRenderer{
                 
                 if(convertPane.format.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))){
                     // redefine the page size with the image size
-                    pageWidth = pdImage.getWidth() * pageHeight / pdImage.getHeight();
+                    pageHeight = pageWidth / pdImage.getWidth() * pdImage.getHeight();
                     pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
                 }
                 

@@ -41,6 +41,7 @@ public class Edition{
         load();
     }
     
+    // LOAD ORDER: Texts < Images < Vectors < Grades
     public void load(){
         new File(Main.dataFolder + "editions").mkdirs();
         MainWindow.gradeTab.treeView.hardClear();

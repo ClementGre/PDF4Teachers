@@ -10,7 +10,7 @@ import javafx.scene.paint.Color;
 public class GrabPoint extends Region{
     
     public static final int POINT_WIDTH = 6;
-    public static final int POINT_OUTER = 2;
+    public static final int POINT_OUTER = 3;
     
     public GrabPoint(){
         setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), new CornerRadii(1), Insets.EMPTY)));

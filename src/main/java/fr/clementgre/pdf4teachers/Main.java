@@ -55,7 +55,7 @@ public class Main extends Application{
     static{
         baseDecimalFormatSymbols.setDecimalSeparator('.');
     }
-    public static DecimalFormat baseFormat = new DecimalFormat("0.######", baseDecimalFormatSymbols);
+    public static DecimalFormat baseFormat = new DecimalFormat("0.####", baseDecimalFormatSymbols);
     
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     

@@ -47,7 +47,6 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public void loadExifData(){
-        // TODO: create thread for async
         exifData = new ExifUtils.BasicExifData(new File(imageId));
     }
     

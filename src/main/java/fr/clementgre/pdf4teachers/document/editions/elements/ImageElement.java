@@ -100,7 +100,7 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public void select(){
-        super.selectPartial();
+        super.select();
         
     }
     

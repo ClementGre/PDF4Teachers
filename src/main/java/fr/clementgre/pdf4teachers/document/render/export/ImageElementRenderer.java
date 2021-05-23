@@ -35,44 +35,40 @@ public class ImageElementRenderer{
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         BufferedImage image;
         
-        if(element.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-    
-            int showWidth = dpiManager.getPixelsLength(element.getRealWidth() / Element.GRID_WIDTH * pageWidth);
-            int showHeight = dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
-    
-            image = SwingFXUtils.fromFXImage(element.renderImage(0, 0), null);
-            double imageRatio = ((double) image.getWidth()) / image.getHeight();
-    
-            if(showWidth > showHeight*imageRatio){ // Multiply X
-                image = resizeImage(image, (int) (showHeight*imageRatio), showHeight);
-                image = multiplyImage(image, true, showWidth, showHeight, imageRatio);
-                
-            }else{ // Multiply Y
-                image = resizeImage(image, showWidth, (int) (showWidth/imageRatio));
-                image = multiplyImage(image, false, showWidth, showHeight, imageRatio);
-            }
-            
-        }else if(element.getRepeatMode() == GraphicElement.RepeatMode.CROP){
+        if(element.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY || element.getRepeatMode() == GraphicElement.RepeatMode.CROP){
             
             int showWidth = dpiManager.getPixelsLength(element.getRealWidth() / Element.GRID_WIDTH * pageWidth);
             int showHeight = dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
-            
-            image = SwingFXUtils.fromFXImage(element.renderImage(0, 0), null);
+    
+            javafx.scene.image.Image fxImage = element.renderImage(0, 0);
+            if(fxImage == null) return;
+            image = SwingFXUtils.fromFXImage(fxImage, null);
             double imageRatio = ((double) image.getWidth()) / image.getHeight();
-            
-            if(showWidth > showHeight*imageRatio){ // Crop Y
-                image = resizeImage(image, showWidth, (int) (showWidth/imageRatio)).getSubimage(0, 0, showWidth, showHeight);
-                
-            }else{ // Crop X
-                image = resizeImage(image, (int) (showHeight*imageRatio), showHeight).getSubimage(0, 0, showWidth, showHeight);
+    
+            if(element.getRepeatMode() == GraphicElement.RepeatMode.CROP){
+                if(showWidth > showHeight*imageRatio){ // Crop Y
+                    image = resizeImage(image, showWidth, (int) (showWidth/imageRatio)).getSubimage(0, 0, showWidth, showHeight);
+                }else{ // Crop X
+                    image = resizeImage(image, (int) (showHeight*imageRatio), showHeight).getSubimage(0, 0, showWidth, showHeight);
+                }
+        
+            }else{ // MULTIPLY
+                if(showWidth > showHeight*imageRatio){ // Multiply X
+                    image = resizeImage(image, (int) (showHeight*imageRatio), showHeight);
+                    image = multiplyImage(image, true, showWidth, showHeight, imageRatio);
+                }else{ // Multiply Y
+                    image = resizeImage(image, showWidth, (int) (showWidth/imageRatio));
+                    image = multiplyImage(image, false, showWidth, showHeight, imageRatio);
+                }
             }
             
         }else{ // Stretch
-            
-            image = SwingFXUtils.fromFXImage(element.renderImage(
+            javafx.scene.image.Image fxImage = element.renderImage(
                     dpiManager.getPixelsLength(element.getRealWidth() / Element.GRID_WIDTH * pageWidth),
                     dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight)
-            ), null);
+            );
+            if(fxImage == null) return;
+            image = SwingFXUtils.fromFXImage(fxImage, null);
         }
         
         ImageIO.write(image, "png", bos);

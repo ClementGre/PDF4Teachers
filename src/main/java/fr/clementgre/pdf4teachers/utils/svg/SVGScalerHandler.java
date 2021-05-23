@@ -13,7 +13,7 @@ public class SVGScalerHandler extends SVGSimpleTransformHandler{
         this.translateY = translateY;
     }
     public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY,
-                            boolean invertX, boolean invertY, float width, float height){
+                            boolean invertX, boolean invertY, float currentWidth, float currentHeight){
         
         this.scaleX = scaleX;
         this.scaleY = scaleY;
@@ -21,11 +21,11 @@ public class SVGScalerHandler extends SVGSimpleTransformHandler{
         this.translateY = translateY;
         
         if(invertX){
-            this.translateX -= width;
+            this.translateX -= currentWidth;
             this.scaleX = -this.scaleX;
         }
         if(invertY){
-            this.translateY -= height;
+            this.translateY -= currentHeight;
             this.scaleY = -this.scaleY;
         }
     }

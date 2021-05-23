@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.utils.svg;
 
+import fr.clementgre.pdf4teachers.Main;
 import org.apache.batik.parser.ParseException;
 import org.apache.batik.parser.PathHandler;
 
@@ -18,15 +19,24 @@ public abstract class SVGTransformHandler implements PathHandler{
     private float lastX = 0;
     private float lastY = 0;
     
-    private float preManageX(float x, float y, boolean rel){
+    private final boolean formatNumbers;
+    public SVGTransformHandler(boolean formatNumbers){
+        this.formatNumbers = formatNumbers;
+    }
+    
+    private String preManageX(float x, float y, boolean rel){
         if(!rel) lastX = x;
         else lastX += x;
-        return manageX(x, y, rel);
+        
+        if(formatNumbers) return Main.baseFormat.format(manageX(x, y, rel));
+        return String.valueOf(manageX(x, y, rel));
     }
-    private float preManageY(float y, float x, boolean rel){
+    private String preManageY(float y, float x, boolean rel){
         if(!rel) lastY = y;
         else lastY += y;
-        return manageY(y, x, rel);
+    
+        if(formatNumbers) return Main.baseFormat.format(manageY(y, x, rel));
+        return String.valueOf(manageY(y, x, rel));
     }
     
     @Override

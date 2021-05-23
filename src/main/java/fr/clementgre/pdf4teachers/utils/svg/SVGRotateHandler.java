@@ -9,7 +9,8 @@ public class SVGRotateHandler extends SVGTransformHandler{
     private float sinA;
     
     // Rotation in Degrees
-    public SVGRotateHandler(float rotate){
+    public SVGRotateHandler(float rotate, boolean formatNumbers){
+        super(formatNumbers);
         
         this.rotate = (float) Math.toRadians(rotate);
         this.cosA = (float) Math.cos(this.rotate);

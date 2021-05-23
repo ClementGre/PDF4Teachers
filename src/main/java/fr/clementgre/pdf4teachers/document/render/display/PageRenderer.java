@@ -617,4 +617,8 @@ public class PageRenderer extends Pane{
         if(pageCursorRecord == null) pageCursorRecord = new PageZoneSelector(this);
         return pageCursorRecord;
     }
+    
+    public double getRatio(){
+        return getWidth() / getHeight();
+    }
 }

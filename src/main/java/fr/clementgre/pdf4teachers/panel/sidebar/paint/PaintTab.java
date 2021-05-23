@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
+import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
@@ -249,7 +250,7 @@ public class PaintTab extends SideTab{
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
                 ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
+                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
     
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
@@ -273,7 +274,7 @@ public class PaintTab extends SideTab{
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
                 VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                         "", false, false);
         
@@ -286,7 +287,7 @@ public class PaintTab extends SideTab{
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
                 VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        100, 100, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
                         "", false, false);
         
@@ -315,7 +316,11 @@ public class PaintTab extends SideTab{
                     inputAlert.addCancelButton(ButtonPosition.CLOSE);
     
                     if(inputAlert.getShowAndWaitIsDefaultButton() && inputAlert.getValue() != null && inputAlert.getValue() != 0){
-                        path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue())));
+                        try{
+                            path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue())));
+                        }catch(PathParseException ex){
+                            System.err.println(ex.getMessage());
+                        }
                     }
                 });
                 browse.setOnAction(ae -> browseSVGPath(path::setText));

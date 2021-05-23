@@ -338,16 +338,20 @@ public abstract class GraphicElement extends Element{
         int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
         
         if(getResizeMode() == ResizeMode.OPPOSITE_CORNERS){
-            
-            if(x < grabSize && y > getHeight()-grabSize && bottomLeftPoint.isVisible()){ // Bottom Left
-                return Cursor.SW_RESIZE;
-            }if(x > getWidth()-grabSize && y < grabSize && topRightPoint.isVisible()){ // Top Right
-                return Cursor.NE_RESIZE;
-            }if(x < grabSize && y < grabSize && topLeftPoint.isVisible()){ // Top Left
-                return Cursor.NW_RESIZE;
-            }if(x > getWidth()-grabSize && y > getHeight()-grabSize && bottomRightPoint.isVisible()){ // Bottom Right
-                return Cursor.SE_RESIZE;
+            if(this instanceof VectorElement ve && ve.isInvertX() != ve.isInvertY()){
+                if(x < grabSize && y < grabSize){ // Top Left
+                    return Cursor.NW_RESIZE;
+                }if(x > getWidth()-grabSize && y > getHeight()-grabSize){ // Bottom Right
+                    return Cursor.SE_RESIZE;
+                }
+            }else{
+                if(x < grabSize && y > getHeight()-grabSize){ // Bottom Left
+                    return Cursor.SW_RESIZE;
+                }if(x > getWidth()-grabSize && y < grabSize){ // Top Right
+                    return Cursor.NE_RESIZE;
+                }
             }
+            
         }else if(getResizeMode() == ResizeMode.SIDE_EDGES){
             
             if(x < grabSize){ // Left Side
@@ -394,72 +398,35 @@ public abstract class GraphicElement extends Element{
     protected static BorderStroke STROKE_SIDE_EDGES = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
             BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(0, 2, 0, 2));
     
-    private Region topLeftPoint;
-    private Region topRightPoint;
-    private Region bottomLeftPoint;
-    private Region bottomRightPoint;
-    
     public void updateGrabIndicators(boolean selected){
-        
         if(!selected){
             setBorder(null);
             getChildren().removeIf((node) -> node instanceof GrabPoint);
             
         }else{
-            if(topLeftPoint == null) topLeftPoint = getGrabPoint(true, true);
-            if(topRightPoint == null) topRightPoint = getGrabPoint(true, false);
-            if(bottomLeftPoint == null) bottomLeftPoint = getGrabPoint(false, true);
-            if(bottomRightPoint == null) bottomRightPoint = getGrabPoint(false, false);
-            
-            if(!getChildren().contains(topLeftPoint)) getChildren().add(topLeftPoint);
-            if(!getChildren().contains(topRightPoint)) getChildren().add(topRightPoint);
-            if(!getChildren().contains(bottomLeftPoint)) getChildren().add(bottomLeftPoint);
-            if(!getChildren().contains(bottomRightPoint)) getChildren().add(bottomRightPoint);
+            getChildren().forEach((node) -> {
+                if(node instanceof GrabPoint) node.setVisible(false);
+            });
             
             switch(getResizeMode()){
                 case CORNERS -> {
                     setBorder(new Border(STROKE_DEFAULT));
-                    topLeftPoint.setVisible(true);
-                    bottomRightPoint.setVisible(true);
-                    topRightPoint.setVisible(true);
-                    bottomLeftPoint.setVisible(true);
+                    getChildren().add(getGrabPoint(true, true, true));
+                    getChildren().add(getGrabPoint(true, false, true));
+                    getChildren().add(getGrabPoint(false, true, true));
+                    getChildren().add(getGrabPoint(false, false, true));
                 }
                 case SIDE_EDGES -> {
                     setBorder(new Border(STROKE_DEFAULT, STROKE_SIDE_EDGES));
-                    topLeftPoint.setVisible(false);
-                    bottomRightPoint.setVisible(false);
-                    topRightPoint.setVisible(false);
-                    bottomLeftPoint.setVisible(false);
                 }
                 case OPPOSITE_CORNERS -> {
                     setBorder(null);
-                    if(this instanceof VectorElement ve){
-                        if(ve.isInvertX() && ve.isInvertY()){
-                            topLeftPoint.setVisible(false);
-                            topRightPoint.setVisible(true);
-                            bottomLeftPoint.setVisible(true);
-                            bottomRightPoint.setVisible(false);
-                        }else if(ve.isInvertX()){
-                            topLeftPoint.setVisible(true);
-                            topRightPoint.setVisible(false);
-                            bottomLeftPoint.setVisible(false);
-                            bottomRightPoint.setVisible(true);
-                        }else if(ve.isInvertY()){
-                            topLeftPoint.setVisible(true);
-                            topRightPoint.setVisible(false);
-                            bottomLeftPoint.setVisible(false);
-                            bottomRightPoint.setVisible(true);
-                        }else{
-                            topLeftPoint.setVisible(false);
-                            topRightPoint.setVisible(true);
-                            bottomLeftPoint.setVisible(true);
-                            bottomRightPoint.setVisible(false);
-                        }
+                    if(this instanceof VectorElement ve && ve.isInvertX() != ve.isInvertY()){
+                        getChildren().add(getGrabPoint(true, true, false));
+                        getChildren().add(getGrabPoint(false, false, false));
                     }else{
-                        topLeftPoint.setVisible(false);
-                        topRightPoint.setVisible(true);
-                        bottomLeftPoint.setVisible(true);
-                        bottomRightPoint.setVisible(false);
+                        getChildren().add(getGrabPoint(true, false, false));
+                        getChildren().add(getGrabPoint(false, true, false));
                     }
     
                 }
@@ -482,13 +449,18 @@ public abstract class GraphicElement extends Element{
         }
     }
     
-    private Region getGrabPoint(boolean top, boolean left){
+    private Region getGrabPoint(boolean top, boolean left, boolean withBorder){
         Region region = new GrabPoint();
         
-        if(top) region.setLayoutY(0d - GrabPoint.POINT_OUTER);
-        else region.layoutYProperty().bind(heightProperty().subtract(GrabPoint.POINT_WIDTH - GrabPoint.POINT_OUTER));
-        if(left) region.setLayoutX(0d - GrabPoint.POINT_OUTER);
-        else region.layoutXProperty().bind(widthProperty().subtract(GrabPoint.POINT_WIDTH - GrabPoint.POINT_OUTER));
+        double outer = GrabPoint.POINT_OUTER;
+        if(withBorder){
+            outer -= STROKE_DEFAULT.getWidths().getTop()/2;
+        }
+        
+        if(top) region.setLayoutY(-outer);
+        else region.layoutYProperty().bind(heightProperty().subtract(GrabPoint.POINT_WIDTH - outer));
+        if(left) region.setLayoutX(-outer);
+        else region.layoutXProperty().bind(widthProperty().subtract(GrabPoint.POINT_WIDTH - outer));
         
         return region;
     }

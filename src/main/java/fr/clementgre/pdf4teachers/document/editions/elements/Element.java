@@ -25,6 +25,7 @@ public abstract class Element extends Region{
     // Size for A4 - 200dpi (Static)
     public static float GRID_WIDTH = 1654;
     public static float GRID_HEIGHT = 2339;
+    public static float GRID_RATIO = GRID_WIDTH / GRID_HEIGHT;
     
     // ATTRIBUTES
     
