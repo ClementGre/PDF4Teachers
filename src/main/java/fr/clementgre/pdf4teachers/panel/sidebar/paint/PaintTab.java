@@ -1,8 +1,10 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
+import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
@@ -23,9 +25,11 @@ import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -46,8 +50,8 @@ public class PaintTab extends SideTab{
     // actions buttons
     public HBox commonActionButtons;
     
-    public Button newImage;
-    public Button newVector;
+    public MenuButton newImage;
+    public NoArrowMenuButton newVector;
     public Button delete;
     
     public HBox vectorsActonButtons;
@@ -108,6 +112,7 @@ public class PaintTab extends SideTab{
     @FXML
     public void initialize(){
         setContent(root);
+        
         newImage.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PICTURES, "darkgreen", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         newVector.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.VECTOR_SQUARE, "darkblue", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
@@ -226,78 +231,75 @@ public class PaintTab extends SideTab{
             MainWindow.userData.vectorsLastStrokeWidth = newValue;
         });
         
-        newImage.setOnMouseClicked((e) -> {
-            ContextMenu menu = new ContextMenu();
-            NodeMenuItem browse = new NodeMenuItem(TR.tr("file.browse"));
-            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("actions.new.image"));
-            NodeMenuItem gallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"));
-            menu.getItems().addAll(browse, newEmpty, gallery);
-            NodeMenuItem.setupMenu(menu);
+        ////////// New Image menu //////////
+        
+        
+        NodeMenuItem browseImage = new NodeMenuItem(TR.tr("file.browse"));
+        NodeMenuItem newImageEmpty = new NodeMenuItem(TR.tr("actions.new.image"));
+        NodeMenuItem openGallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"));
+        newImage.getItems().addAll(browseImage, newImageEmpty, openGallery);
+        //NodeMenuItem.setupMenu(newImage);
             
-            browse.setOnAction(ae -> {
-                browseImagePath(path -> {
-                    PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
-                    ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                            0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
-    
-                    page.addElement(element, true);
-                    element.centerOnCoordinatesY();
-                    MainWindow.mainScreen.setSelected(element);
-                });
-            });
-            newEmpty.setOnAction(ae -> {
+        browseImage.setOnAction(ae -> {
+            browseImagePath(path -> {
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
+
                 ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
-    
+                        0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
+
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
             });
-            gallery.setOnAction(ae -> {
-                openGallery();
-            });
-            menu.show(newImage, e.getScreenX(), e.getScreenY());
         });
-        
-        newVector.setOnMouseClicked((e) -> {
-            ContextMenu menu = new ContextMenu();
-            NodeMenuItem newDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
-            NodeMenuItem newEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"));
-            NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
-            menu.getItems().addAll(newDrawing, newEmpty, browse);
-            NodeMenuItem.setupMenu(menu);
-    
-            newDrawing.setOnAction(ae -> {
-                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        
-                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                        false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                        "", false, false);
-        
-                page.addElement(element, true);
-                element.centerOnCoordinatesY();
-                element.setIsEditMode(true);
-                MainWindow.mainScreen.setSelected(element);
-            });
-            newEmpty.setOnAction(ae -> {
-                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        
-                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                        (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                        MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
-                        "", false, false);
-        
-                page.addElement(element, true);
-                element.centerOnCoordinatesY();
-                MainWindow.mainScreen.setSelected(element);
-            });
-            browse.setOnAction(ae -> browseSVGPath(null));
-            menu.show(newImage, e.getScreenX(), e.getScreenY());
+        newImageEmpty.setOnAction(ae -> {
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+
+            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
+
+            page.addElement(element, true);
+            element.centerOnCoordinatesY();
+            MainWindow.mainScreen.setSelected(element);
         });
+        openGallery.setOnAction(ae -> {
+            openGallery();
+        });
+    
+        ////////// New Vector menu //////////
+        
+        NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
+        NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"));
+        NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
+        newVector.getItems().addAll(newVectorDrawing, newVectorEmpty, browseVector);
+        //NodeMenuItem.setupMenu(menu);
+    
+        newVectorDrawing.setOnAction(ae -> {
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
+                    "", false, false);
+    
+            page.addElement(element, true);
+            element.centerOnCoordinatesY();
+            element.setIsEditMode(true);
+            MainWindow.mainScreen.setSelected(element);
+        });
+        newVectorEmpty.setOnAction(ae -> {
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                    MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
+                    "", false, false);
+    
+            page.addElement(element, true);
+            element.centerOnCoordinatesY();
+            MainWindow.mainScreen.setSelected(element);
+        });
+        browseVector.setOnAction(ae -> browseSVGPath(null));
         
         browsePath.setOnMouseClicked(e -> {
             if(MainWindow.mainScreen.getSelected() instanceof ImageElement){
@@ -324,7 +326,7 @@ public class PaintTab extends SideTab{
                     }
                 });
                 browse.setOnAction(ae -> browseSVGPath(path::setText));
-                menu.show(newImage, e.getScreenX(), e.getScreenY());
+                menu.show(browsePath, e.getScreenX(), e.getScreenY());
             }
         });
         

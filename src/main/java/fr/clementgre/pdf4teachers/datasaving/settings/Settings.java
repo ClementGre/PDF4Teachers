@@ -28,8 +28,8 @@ public class Settings{
     public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "");
     @SettingObject
-    public BooleanSetting zoomAnimations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "zoomAnimations",
-            "settings.zoomAnimations.title", "settings.zoomAnimations.tooltip");
+    public BooleanSetting animations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "animations",
+            "settings.animations.title", "settings.animations.tooltip");
     @SettingObject
     public BooleanSetting trackpadMode = new BooleanSetting(Main.isOSX(), true, SVGPathIcons.LAYERS, "trackpadMode",
             "settings.trackpadMode.title", "settings.trackpadMode.tooltip");
@@ -92,7 +92,7 @@ public class Settings{
     public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
     
     @SettingsGroup(title="settings.group.ergonomics")
-    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, zoomAnimations, trackpadMode};
+    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations, trackpadMode};
     
     @SettingsGroup(title="settings.group.network")
     public Setting<?>[] networkGroup = {checkUpdates, sendStats};

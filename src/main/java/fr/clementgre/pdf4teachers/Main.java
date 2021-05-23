@@ -178,7 +178,7 @@ public class Main extends Application{
     }
 
     public static void showLanguageWindow(boolean firstStartBehaviour){
-        new LanguageWindow(value -> {
+        LanguageWindow.checkUpdatesAndShow(value -> {
             if(!value.isEmpty() && !value.equals(Main.settings.language.getValue())){
                 Main.settings.language.setValue(value);
                 Main.settings.saveSettings();

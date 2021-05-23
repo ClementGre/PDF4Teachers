@@ -304,7 +304,7 @@ public class ZoomOperator{
         aimTranslateX = newTranslateX;
         aimScale = scale;
         
-        if(!removeTransition && Main.settings.zoomAnimations.getValue()){
+        if(!removeTransition && Main.settings.animations.getValue()){
             
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
@@ -421,10 +421,10 @@ public class ZoomOperator{
     }
     
     private boolean doRemoveScrollAnimations(double factor, boolean trackpad, boolean removeTransition){
-        return !Main.settings.zoomAnimations.getValue() || Math.abs(factor) < 25 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
+        return !Main.settings.animations.getValue() || Math.abs(factor) < 25 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
     }
     private boolean doRemoveZoomAnimations(double factor, boolean trackpad, boolean removeTransition){
-        return !Main.settings.zoomAnimations.getValue() || Math.abs(factor) < 0.05 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
+        return !Main.settings.animations.getValue() || Math.abs(factor) < 0.05 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
     }
     
     // Renvoie le décalage entre les vrais coordonés de pane et entre les coordonés de sa partie visible.

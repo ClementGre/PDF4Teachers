@@ -4,5 +4,7 @@
 }
 
 /* CONTENT */
-
+.rootPane{
+    -fx-background-color: #262626;
+}
 /* BUTTONS */

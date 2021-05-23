@@ -4,6 +4,8 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
@@ -11,6 +13,18 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 
 public class PaneUtils{
+    
+    public static void printParentStructure(Parent parent, int depth){
+        for(Node children : parent.getChildrenUnmodifiable()){
+            
+            System.out.println("   " + "|   ".repeat(Math.max(0, depth-1)) + (depth == 0 ? "-" : "|- ")  +
+                    children.getClass().getSimpleName() + " [" + children.getStyleClass().toString() + "]");
+            
+            if(children instanceof Parent newParent){
+                printParentStructure(newParent, depth+1);
+            }
+        }
+    }
     
     public static void setPosition(Region element, double x, double y, double width, double height, boolean force){
         

@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.scene.control.Tab;
+import javafx.scene.image.Image;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -41,7 +42,8 @@ public class SideTab extends Tab{
         
         getGraphic().setOnDragDetected(e -> {
             Dragboard dragboard = getGraphic().startDragAndDrop(TransferMode.MOVE);
-            dragboard.setDragView(SVGPathIcons.generateNonSvgImage(iconPath, Color.GRAY, ImageUtils.defaultGrayColorAdjust, .06 * Main.settings.zoom.getValue()));
+            Image image = SVGPathIcons.generateNonSvgImage(iconPath, Color.GRAY, ImageUtils.defaultGrayColorAdjust, .06 * Main.settings.zoom.getValue());
+            dragboard.setDragView(image);
             
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.put(Main.INTERNAL_FORMAT, SideBar.TAB_DRAG_KEY);

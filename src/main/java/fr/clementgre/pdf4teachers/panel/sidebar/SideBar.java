@@ -54,10 +54,11 @@ public class SideBar extends TabPane{
                     setMaxWidth(MAX_WIDTH);
                     if(getWidth() <= 50){
                         setWidthByEditingDivider(DEFAULT_WIDTH);
-                        PlatformUtils.runLaterOnUIThread(500, this::requestLayout);
                     }
                 });
             }
+            PlatformUtils.runLaterOnUIThread(200, this::requestLayout);
+            PlatformUtils.runLaterOnUIThread(500, this::requestLayout);
         });
         
         AtomicReference<TabPane> previewLastTabPane = new AtomicReference<>(null);

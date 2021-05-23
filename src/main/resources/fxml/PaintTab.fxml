@@ -16,6 +16,7 @@
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
 <?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
 <?import fr.clementgre.pdf4teachers.components.ScaledComboBox?>
+<?import fr.clementgre.pdf4teachers.components.NoArrowMenuButton?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -26,12 +27,8 @@
         <VBox.margin><Insets top="2" bottom="5" left="2" right="2"/></VBox.margin>
 
         <HBox spacing="2" fx:id="commonActionButtons">
-            <Button fx:id="newImage">
-                <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
-            </Button>
-            <Button fx:id="newVector">
-                <padding><Insets topRightBottomLeft="4"/></padding>
-            </Button>
+            <NoArrowMenuButton fx:id="newImage"/>
+            <NoArrowMenuButton fx:id="newVector"/>
             <Button fx:id="delete">
                 <padding><Insets topRightBottomLeft="4"/></padding>
             </Button>

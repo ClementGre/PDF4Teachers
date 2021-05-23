@@ -62,6 +62,22 @@ Hyperlink{
 
 /*******************************************************************************
  *                                                                             *
+ * Menu Button Without Arrow                                                   *
+ *                                                                             *
+ ******************************************************************************/
+.noArrowMenuButton > .arrow-button, .noArrowMenuButton > .arrow-button > .arrow {
+    -fx-padding: 0;
+    -fx-max-width: 0;
+}
+.noArrowMenuButton {
+    -fx-padding: 4px;
+}
+.noArrowMenuButton .label{
+    -fx-padding: 0;
+}
+
+/*******************************************************************************
+ *                                                                             *
  * Common properties                                                           *
  *                                                                             *
  ******************************************************************************/

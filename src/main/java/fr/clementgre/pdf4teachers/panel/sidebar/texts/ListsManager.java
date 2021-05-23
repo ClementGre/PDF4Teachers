@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
+import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -9,6 +10,8 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;
@@ -16,10 +19,9 @@ import java.util.Map;
 
 public class ListsManager{
     
-    public final Button loadListBtn = new Button();
+    public final MenuButton loadListBtn = new NoArrowMenuButton();
     public final Button saveListBtn = new Button();
     
-    private ContextMenu menu = new ContextMenu();
     private final TextTreeSection section;
     
     public ListsManager(TextTreeSection section){
@@ -36,9 +38,9 @@ public class ListsManager{
         updateGraphics();
         
         setupMenu();
-        loadListBtn.setOnMouseClicked(e -> {
-            menu.show(loadListBtn, e.getScreenX(), e.getScreenY());
-        });
+//        loadListBtn.setOnMouseClicked(e -> {
+//            menu.show(loadListBtn, e.getScreenX(), e.getScreenY());
+//        });
         
         saveListBtn.setOnAction(event -> {
             TextInputAlert inputAlert = new TextInputAlert(TR.tr("textTab.lists.save.dialog.title"), TR.tr("textTab.lists.save.dialog.header"), TR.tr("textTab.lists.save.dialog.details"));
@@ -75,14 +77,14 @@ public class ListsManager{
     }
     
     public void setupMenu(){
-        menu.getItems().clear();
-        menu.setMinWidth(400);
-        menu.setPrefWidth(400);
+        loadListBtn.getItems().clear();
+        //menu.setMinWidth(400);
+        //menu.setPrefWidth(400);
         
         if(TextTreeSection.lists.size() >= 1){
             for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
                 NodeMenuItem menuItem = new NodeMenuItem(list.getKey());
-                menu.getItems().add(menuItem);
+                loadListBtn.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     
                     CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("textTab.lists.actionDialog.title"),
@@ -101,7 +103,7 @@ public class ListsManager{
                 });
             }
         }else{
-            menu.getItems().add(new NodeMenuItem(TR.tr("textTab.lists.show.none")));
+            loadListBtn.getItems().add(new NodeMenuItem(TR.tr("textTab.lists.show.none")));
         }
     }
     

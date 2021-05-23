@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -27,7 +28,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
     public R root;
     public HBox buttonsBox;
     
-    private ScrollPane scrollPane = new ScrollPane(container);
+    protected ScrollPane scrollPane = new ScrollPane(container);
     private BorderPane borderPane = new BorderPane(scrollPane);
     private Scene scene = new Scene(borderPane);
     
@@ -140,10 +141,20 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         
         container.getStyleClass().add("buttonBoxContainer");
         buttonsBox.getStyleClass().add("buttonBox");
-    
+        
+        HBox.setHgrow(buttonsBox, Priority.ALWAYS);
         borderPane.setBottom(container);
     }
     private Button toRequestFocus;
+    
+    // Must be called after setButtons(), only once
+    public void setLeftButtons(Button... buttons){
+        buttonsBox.getChildren().add(0, new HBoxSpacer());
+        for(Button button : buttons){
+            buttonsBox.getChildren().add(0, button);
+        }
+    }
+    // Should be called only once
     public void setButtons(Button... buttons){
         setupButtonsBox();
         toRequestFocus = buttons[buttons.length-1];
