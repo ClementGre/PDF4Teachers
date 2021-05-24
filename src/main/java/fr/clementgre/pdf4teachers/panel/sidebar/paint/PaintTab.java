@@ -282,10 +282,12 @@ public class PaintTab extends SideTab{
                     false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false);
     
+            
             page.addElement(element, true);
             element.centerOnCoordinatesY();
             element.setIsEditMode(true);
             MainWindow.mainScreen.setSelected(element);
+            element.setLinkedVectorData(VectorListPane.addLastVector(element));
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
@@ -298,6 +300,7 @@ public class PaintTab extends SideTab{
             page.addElement(element, true);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
+            element.setLinkedVectorData(VectorListPane.addLastVector(element));
         });
         browseVector.setOnAction(ae -> browseSVGPath(null));
         
@@ -378,6 +381,7 @@ public class PaintTab extends SideTab{
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
+                element.setLinkedVectorData(VectorListPane.addLastVector(element));
         
             }catch(ParserConfigurationException | XPathExpressionException | IOException | SAXException ex){
                 new ErrorAlert(TR.tr("paintTab.vectorElements.browseSVG.error"), ex.getMessage(), false).show();

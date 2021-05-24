@@ -505,6 +505,7 @@ public abstract class GraphicElement extends Element{
     @Override
     public void select(){
         super.selectPartial();
+        requestFocus();
         SideBar.selectTab(MainWindow.paintTab);
     }
     

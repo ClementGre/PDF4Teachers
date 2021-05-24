@@ -55,6 +55,8 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             if(newValue && !isLoaded()){
                 if(isGallery()){
                     reloadGalleryImageList();
+                }else{
+                    list.updateItemsFiltered();
                 }
                 setLoaded(true);
             }
@@ -62,9 +64,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         
         if(isFavouriteImages()) setEmptyMessage(TR.tr("paintTab.favouriteImages.emptyList"));
         else if(isGallery()) setEmptyMessage(TR.tr("paintTab.gallery.emptyList"));
-        list.getItems().addListener((InvalidationListener) o -> {
-            updateMessage();
-        });
+        list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
     }
     
@@ -84,10 +84,11 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             list.setItems(GalleryWindow.getImages());
         }
     }
-    public void reloadFavouritesImageList(ArrayList<ImageData> images){
-        list.setItems(PlatformUtils.runAndWait(() -> images.stream()
+    public void reloadFavouritesImageList(ArrayList<ImageData> images, boolean updateVisual){
+        list.setItems(images.stream()
                 .filter((imageData) -> new File(imageData.getImageId()).exists())
-                .map(ImageGridElement::new)).toList());
+                .map(ImageGridElement::new)
+                .toList(), updateVisual);
     }
     public ImageData toggleFavoriteImage(ImageElement element){
         // If image is already favorite
@@ -98,7 +99,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             }
         }
         // Else, create new ImageGrid element
-        ImageData linkedImageData = new ImageData(element.getImageId(), 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0);
+        ImageData linkedImageData = new ImageData(element.getImageId(), element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(), 0, 0);
         MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(new ImageGridElement(linkedImageData)));
         return linkedImageData;
     }

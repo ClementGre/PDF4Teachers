@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.application.Platform;
 
 import java.util.*;
@@ -25,9 +26,9 @@ public class FavouriteImageData extends SimpleConfig{
             }
         }
         
-        Platform.runLater(() -> {
-            MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData);
-        });
+        PlatformUtils.printActionTimeIfDebug(() -> {
+            MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData, false);
+        }, "Load favorites images");
         
     }
     

@@ -106,7 +106,7 @@ public class Main extends Application{
     
     @Override
     public void start(Stage stage){
-
+        
         // define crucial vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
         else if(isOSX()){

@@ -84,7 +84,7 @@ public class ImageElement extends GraphicElement{
     protected void setupMenu(){
         super.setupMenu();
         
-        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("gallery.imageContextMenu.isFavorite"), true, true);
+        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
         
         menu.getItems().addAll(isFavoriteItem);
         menu.setOnShowing(e -> {

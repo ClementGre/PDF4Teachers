@@ -1,19 +1,21 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
-import org.apache.batik.parser.ParseException;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,8 +36,14 @@ public class VectorElement extends GraphicElement{
     
     private BooleanProperty isEditMode = new SimpleBooleanProperty(false);
     
+    private VectorData linkedVectorData;
+    
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
                          boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY){
+        this(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, null);
+    }
+    public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
+                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY, VectorData linkedVectorData){
         super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
     
         this.path.set(path);
@@ -46,6 +54,8 @@ public class VectorElement extends GraphicElement{
         this.invertX.set(invertX);
         this.invertY.set(invertY);
         noScaledSvgPath.setContent(getPath());
+    
+        if(linkedVectorData != null) setLinkedVectorData(linkedVectorData);
         
         if(hasPage && getPage() != null) setupPage(true);
     }
@@ -104,12 +114,7 @@ public class VectorElement extends GraphicElement{
     }
     
     private void updateFill(){
-        if(isDoFill()){
-            svgPath.setFill(getFill());
-        }
-        else{
-            svgPath.setFill(null);
-        }
+        svgPath.setFill(isDoFill() ? getFill() : null);
     }
     private void updateStroke(){
         svgPath.setStroke(getStroke());
@@ -125,6 +130,17 @@ public class VectorElement extends GraphicElement{
     @Override
     protected void setupMenu(){
         super.setupMenu();
+    
+        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
+    
+        menu.getItems().addAll(isFavoriteItem);
+        menu.setOnShowing(e -> {
+            isFavoriteItem.setSelected(MainWindow.paintTab.favouriteVectors.isFavoriteVector(this));
+        });
+    
+        isFavoriteItem.setOnAction((event) -> {
+            linkedVectorData = VectorListPane.toggleFavoriteVector(this);
+        });
     }
     
     private void onSizeChanged(){
@@ -156,35 +172,43 @@ public class VectorElement extends GraphicElement{
     }
     
     public String getScaledPath(float wantedWidth, float wantedHeight, float padding) throws PathParseException{
-        double finalCurrentWidth = Math.max(1d, noScaledSvgPath.getLayoutBounds().getWidth());
-        double finalCurrentHeight = Math.max(1d, noScaledSvgPath.getLayoutBounds().getHeight());
+        return getScaledPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY());
+    }
+    public static String getScaledPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY) throws PathParseException{
+        double finalCurrentWidth = Math.max(1d, sourceSVG.getLayoutBounds().getWidth());
+        double finalCurrentHeight = Math.max(1d, sourceSVG.getLayoutBounds().getHeight());
         
-        return "M0 0 " + SVGUtils.transformPath(getPath(),
+        return "M0 0 " + SVGUtils.transformPath(path,
                 (float) ((wantedWidth-padding*2) / finalCurrentWidth),
                 (float) ((wantedHeight-padding*2) / finalCurrentHeight),
-                (float) -noScaledSvgPath.getBoundsInLocal().getMinX(),
-                (float) -noScaledSvgPath.getBoundsInLocal().getMinY(),
-                isInvertX(), isInvertY(),
+                (float) -sourceSVG.getBoundsInLocal().getMinX(),
+                (float) -sourceSVG.getBoundsInLocal().getMinY(),
+                invertX, invertY,
                 (float) finalCurrentWidth,
                 (float) finalCurrentHeight);
     }
     
     public String getRepeatedPath(float wantedWidth, float wantedHeight, float padding) throws PathParseException{
-        double finalCurrentWidth = Math.max(1d, noScaledSvgPath.getLayoutBounds().getWidth());
-        double finalCurrentHeight = Math.max(1d, noScaledSvgPath.getLayoutBounds().getHeight());
-        StringBuilder path = new StringBuilder("M0 0 ");
+        return getRepeatedPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY());
+    }
+    public static String getRepeatedPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY) throws PathParseException{
+        double finalCurrentWidth = Math.max(1d, sourceSVG.getLayoutBounds().getWidth());
+        double finalCurrentHeight = Math.max(1d, sourceSVG.getLayoutBounds().getHeight());
+        double ratio = sourceSVG.getLayoutBounds().getWidth() / sourceSVG.getLayoutBounds().getHeight();
         
-        if(wantedWidth > wantedHeight*getRatio()){ // Multiply X
+        StringBuilder newPath = new StringBuilder("M0 0 ");
+        
+        if(wantedWidth > wantedHeight*ratio){ // Multiply X
     
-            float unitWidth = (float) ((wantedHeight - padding * 2) * getRatio());
+            float unitWidth = (float) ((wantedHeight - padding * 2) * ratio);
             float startX = 0;
             while(startX < wantedWidth && unitWidth > 0){
-                path.append(SVGUtils.transformPath(getPath(),
+                newPath.append(SVGUtils.transformPath(path,
                         (float) ((unitWidth) / finalCurrentWidth),
                         (float) ((wantedHeight - padding * 2) / finalCurrentHeight),
-                        (float) (-noScaledSvgPath.getBoundsInLocal().getMinX() + (isInvertX() ? -1 : 1) * startX/(wantedHeight - padding * 2)*finalCurrentHeight),
-                        (float) -noScaledSvgPath.getBoundsInLocal().getMinY(),
-                        isInvertX(), isInvertY(),
+                        (float) (-sourceSVG.getBoundsInLocal().getMinX() + (invertX ? -1 : 1) * startX/(wantedHeight - padding * 2)*finalCurrentHeight),
+                        (float) -sourceSVG.getBoundsInLocal().getMinY(),
+                        invertX, invertY,
                         (float) finalCurrentWidth,
                         (float) finalCurrentHeight));
     
@@ -193,15 +217,15 @@ public class VectorElement extends GraphicElement{
             
         }else{ // Multiply Y
             
-            float unitHeight = (float) ((wantedWidth - padding * 2) / getRatio());
+            float unitHeight = (float) ((wantedWidth - padding * 2) / ratio);
             float startY = 0;
             while(startY < wantedHeight && unitHeight > 0){
-                path.append(SVGUtils.transformPath(getPath(),
+                newPath.append(SVGUtils.transformPath(path,
                         (float) ((wantedWidth - padding * 2) / finalCurrentWidth),
                         (float) ((unitHeight) / finalCurrentHeight),
-                        (float) -noScaledSvgPath.getBoundsInLocal().getMinX(),
-                        (float) (-noScaledSvgPath.getBoundsInLocal().getMinY() + (isInvertY() ? -1 : 1) * startY/(wantedWidth - padding * 2)*finalCurrentWidth),
-                        isInvertX(), isInvertY(),
+                        (float) -sourceSVG.getBoundsInLocal().getMinX(),
+                        (float) (-sourceSVG.getBoundsInLocal().getMinY() + (invertY ? -1 : 1) * startY/(wantedWidth - padding * 2)*finalCurrentWidth),
+                        invertX, invertY,
                         (float) finalCurrentWidth,
                         (float) finalCurrentHeight));
         
@@ -209,17 +233,23 @@ public class VectorElement extends GraphicElement{
             }
             
         }
-        return path.toString();
+        return newPath.toString();
     }
     
     public double getSVGPadding(){
         return /*STROKE_DEFAULT.getWidths().getTop() +*/ (getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidth()/2d);
+    }
+    public static double getSVGPadding(VectorData vectorData){
+        return /*STROKE_DEFAULT.getWidths().getTop() +*/ (vectorData.getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : vectorData.getStrokeWidth()/2d);
     }
     public double getSVGPaddingScaled(double pageWidth){
         return /*STROKE_DEFAULT.getWidths().getTop() +*/ (getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidthScaled(pageWidth)/2d);
     }
     public double getClipPadding(){
         return (getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : getStrokeWidth();
+    }
+    public static double getClipPadding(VectorData vectorData){
+        return (vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP || vectorData.getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : vectorData.getStrokeWidth();
     }
     public double getClipPaddingScaled(double pageWidth){
         return (getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : getStrokeWidthScaled(pageWidth);
@@ -326,6 +356,24 @@ public class VectorElement extends GraphicElement{
                 isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY());
     }
 
+    // Should be called only once
+    public void setLinkedVectorData(VectorData vectorData){
+        this.linkedVectorData = vectorData;
+        
+        realWidth.addListener((observable, oldValue, newValue) -> linkedVectorData.setWidth(newValue.intValue()));
+        realHeight.addListener((observable, oldValue, newValue) -> linkedVectorData.setHeight(newValue.intValue()));
+        this.repeatMode.addListener((observable, oldValue, newValue) -> linkedVectorData.setRepeatMode(newValue));
+        this.resizeMode.addListener((observable, oldValue, newValue) -> linkedVectorData.setResizeMode(newValue));
+    
+        this.doFill.addListener((observable, oldValue, newValue) -> linkedVectorData.setDoFill(newValue));
+        this.fill.addListener((observable, oldValue, newValue) -> linkedVectorData.setFill(newValue));
+        this.stroke.addListener((observable, oldValue, newValue) -> linkedVectorData.setStroke(newValue));
+        this.strokeWidth.addListener((observable, oldValue, newValue) -> linkedVectorData.setStrokeWidth(newValue.intValue()));
+    
+        this.path.addListener((observable, oldValue, newValue) -> linkedVectorData.setPath(newValue));
+        this.invertX.addListener((observable, oldValue, newValue) -> linkedVectorData.setInvertX(newValue));
+        this.invertY.addListener((observable, oldValue, newValue) -> linkedVectorData.setInvertY(newValue));
+    }
     
     // GETTER / SETTER
     

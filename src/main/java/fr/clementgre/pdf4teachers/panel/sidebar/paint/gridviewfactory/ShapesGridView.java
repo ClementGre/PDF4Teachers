@@ -108,9 +108,12 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     }
     
     public void setItems(List<T> items){
+        setItems(items, true);
+    }
+    public void setItems(List<T> items, boolean updateVisual){
         nonFilteredItems.clear();
         nonFilteredItems.addAll(items);
-        updateItemsFiltered();
+        if(updateVisual) updateItemsFiltered();
     }
     public void addItems(List<T> items){
         nonFilteredItems.addAll(items);

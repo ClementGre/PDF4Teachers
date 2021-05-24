@@ -103,7 +103,7 @@ public class TextElement extends Element{
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
         NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"));
         item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToFavouritesList"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"));
         item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);

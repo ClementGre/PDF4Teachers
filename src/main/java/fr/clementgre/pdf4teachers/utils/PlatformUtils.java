@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 
@@ -51,6 +52,23 @@ public class PlatformUtils{
         
         return toReturn.get();
         
+    }
+    public static void printActionTime(CallBack action, String name){
+        long time = countActionTime(action);
+        System.out.println("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
+    }
+    public static void printActionTimeIfDebug(CallBack action, String name){
+        if(!Main.DEBUG){
+            action.call();
+            return;
+        }
+        long time = countActionTime(action);
+        System.out.println("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
+    }
+    public static long countActionTime(CallBack action){
+        long startTime = System.currentTimeMillis();
+        action.call();
+        return System.currentTimeMillis() - startTime;
     }
     
     public static void openDirectory(String uri){

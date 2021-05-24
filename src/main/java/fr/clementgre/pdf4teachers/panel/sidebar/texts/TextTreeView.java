@@ -250,9 +250,9 @@ public class TextTreeView extends TreeView<String>{
         ContextMenu menu = new ContextMenu();
         NodeMenuItem item1 = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"));
         item1.setToolTip(TR.tr("textTab.listMenu.addNLink.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.delete"));
-        item2.setToolTip(TR.tr("textTab.listMenu.delete.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToFavouritesList"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"));
+        item2.setToolTip(TR.tr("textTab.listMenu.remove.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"));
         item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
         NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"));
         item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
