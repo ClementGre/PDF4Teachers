@@ -108,6 +108,9 @@ public class StyleManager{
         if(MainWindow.mainScreen.hasDocument(false)){
             MainWindow.mainScreen.document.updateBackgrounds();
         }
+        
+        MainWindow.paintTab.favouriteVectors.getList().onThemeChanged();
+        MainWindow.paintTab.lastVectors.getList().onThemeChanged();
     }
     
     public static String getHexAccentColor(){
@@ -135,6 +138,9 @@ public class StyleManager{
     static int i = 0;
     
     public static Color shiftColorWithTheme(Color color){
+        return shiftColorWithTheme(color, 0.8, 0.2);
+    }
+    public static Color shiftColorWithTheme(Color color, double darkMinBrt, double lightMaxBrt){
 /*
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             return Color.color(
@@ -161,7 +167,7 @@ public class StyleManager{
         
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             
-            double minBrt = (int) (255 * 0.8);
+            double minBrt = (int) (255 * darkMinBrt);
             double keepRatioPerOne = .7;
             
             if(brt < minBrt){
@@ -176,7 +182,7 @@ public class StyleManager{
             }else return color;
         }else{
             
-            double maxBrt = (int) (255 * 0.2);
+            double maxBrt = (int) (255 * lightMaxBrt);
             double keepRatioPerOne = .1;
             
             if(brt > maxBrt){

@@ -14,8 +14,11 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
@@ -23,7 +26,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import jfxtras.styles.jmetro.Style;
 import org.controlsfx.control.GridCell;
 
@@ -61,19 +66,15 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         imageView.setTranslateX(PADDING);
         //imageView.setTranslateY(PADDING);
         
-        shadow.setColor(Color.web("#0078d7"));
+        shadow.setColor(null);
         shadow.setSpread(.90);
         shadow.setOffsetY(0);
         shadow.setOffsetX(0);
-        shadow.setRadius(0);
+        shadow.setRadius(2);
         setEffect(shadow);
         
-        setOnMouseEntered((e) -> {
-            shadow.setRadius(2);
-        });
-        setOnMouseExited((e) -> {
-            shadow.setRadius(0);
-        });
+        setOnMouseEntered((e) -> shadow.setColor(Color.web("#0078d7")));
+        setOnMouseExited((e) -> shadow.setColor(null));
     
         menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
         

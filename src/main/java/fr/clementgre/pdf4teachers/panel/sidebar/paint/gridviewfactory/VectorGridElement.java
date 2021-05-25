@@ -3,20 +3,27 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
+import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
-
+import javafx.scene.transform.Scale;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class VectorGridElement{
     
     private SVGPath svgPath = new SVGPath();
-    private int lastRenderWidth = 0;
+    private Scale svgScale = new Scale();
+    private double lastDisplayWidth = 0;
     
     private VectorData vectorData;
+    
+    private static final int RENDER_WIDTH = 75;
+    float width, height = 1;
     
     public VectorGridElement(VectorData vectorData){
         this.vectorData = vectorData;
@@ -26,6 +33,18 @@ public class VectorGridElement{
     private void setup(){
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         svgPath.setFillRule(FillRule.NON_ZERO);
+        
+        AtomicLong lastDisplayChangesTime = new AtomicLong();
+        vectorData.setDisplayChangesCallback(() -> {
+            lastDisplayChangesTime.set(System.currentTimeMillis());
+            PlatformUtils.runLaterOnUIThread(500, () -> {
+                if(lastDisplayChangesTime.get() < System.currentTimeMillis()-490){
+                    renderSvgPath();
+                    layoutSVGPath(lastDisplayWidth);
+                }
+            });
+        });
+        vectorData.setSpecsChangesCallback(this::updateSVGSpecs);
     }
     
     /*public void toggleFavorite(){
@@ -87,46 +106,52 @@ public class VectorGridElement{
     public SVGPath getSvgPath(){
         return svgPath;
     }
-    public int getLastRenderWidth(){
-        return lastRenderWidth;
+    public double getLastDisplayWidth(){
+        return lastDisplayWidth;
     }
     
     // RENDER SVG
-    
-    public void renderSvgPath(int renderWidth){
-        lastRenderWidth = renderWidth;
+    private void renderSvgPath(){
+        
         SVGPath noScaledSVGPath = new SVGPath();
         noScaledSVGPath.setContent(vectorData.getPath());
         
-        float padding = (float) VectorElement.getSVGPadding(vectorData);
+        float padding = 0;
         float ratio = ((float) vectorData.getWidth()) / vectorData.getHeight();
-        float width, height;
     
+        svgPath.getTransforms().setAll(svgScale);
+        
         if(ratio > 1){
-            width = renderWidth;
+            width = RENDER_WIDTH;
             height = Math.max(width/ratio, width/3);
         }else{
-            height = renderWidth;
+            height = RENDER_WIDTH;
             width = Math.max(height*ratio, height/3);
         }
-        
+
         if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
             if(ratio > (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight())){ // Crop Y
-                width = renderWidth * Math.min(ratio, 1);
+                width = RENDER_WIDTH * Math.min(ratio, 1);
                 height = (float) (width / (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight()));
-                System.out.println("Crop y : width=" + width + ", height=" + height + ", renderWidth=" + renderWidth + ", ratio=" + ratio);
             }else{ // Crop X
-                height = renderWidth / Math.min(ratio, 1);
+                height = RENDER_WIDTH / Math.max(ratio, 1);
                 width = (float) (height * (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight()));
-                System.out.println("Crop x : width=" + width + ", height=" + height + ", renderWidth=" + renderWidth + ", ratio=" + ratio);
             }
         }
-        
+
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding*4, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
             }else{
-                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding*4, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
+            }
+    
+            if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
+                if(ratio > (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight())){ // Crop Y
+                    height = width / ratio;
+                }else{ // Crop X
+                    width = height * ratio;
+                }
             }
     
             updateSVGSpecs();
@@ -134,21 +159,46 @@ public class VectorGridElement{
             System.err.println(e.getMessage() + " (List Item)");
         }
     }
+    public void layoutSVGPath(double displayWidth){
+        lastDisplayWidth = displayWidth;
+        if(svgPath.getContent().isEmpty()) renderSvgPath();
+        updateSVGSpecs();
     
-    public void updateSVGSpecs(){
-        svgPath.setStroke(vectorData.getStroke());
-        svgPath.setStrokeWidth(vectorData.getStrokeWidth());
-        svgPath.setStrokeMiterLimit(Math.max(1, vectorData.getStrokeWidth()));
-        svgPath.setFill(vectorData.isDoFill() ? vectorData.getFill() : null);
-    
-        double padding = /*VectorElement.getSVGPadding(vectorData)*/ 0;
+        double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
+        displayWidth = displayWidth - padding*2;
         
-        double clipPadding = /*VectorElement.getClipPadding(vectorData) == 0 ? 0 : */0;
-        Rectangle clip = new Rectangle(-padding - clipPadding, -padding - clipPadding,
-                lastRenderWidth + clipPadding*2, lastRenderWidth + clipPadding*2);
+        // SCALE
+        double scale = displayWidth / RENDER_WIDTH;
+        svgScale.setX(scale);
+        svgScale.setY(scale);
+    
+        // LAYOUT
+        double svgWidth = Math.min(width, RENDER_WIDTH);
+        double svgHeight = Math.min(height, RENDER_WIDTH);
+        
+        double notRectShapeTransformX = (RENDER_WIDTH - svgWidth)/2 * scale;
+        double notRectShapeTransformY = (RENDER_WIDTH - svgHeight)/2 * scale;
+        
+        svgPath.setLayoutX(padding + notRectShapeTransformX);
+        svgPath.setLayoutY(padding + notRectShapeTransformY);
+        
+        // CLIP
+        Rectangle clip = new Rectangle((-padding+1)/scale, (-padding+1)/scale,
+                svgWidth + (2*padding-2)/scale, svgHeight + (2*padding-2)/scale);
         svgPath.setClip(clip);
     
-        svgPath.setLayoutX(padding + (lastRenderWidth - Math.min(svgPath.getLayoutBounds().getWidth(), clip.getWidth()))/2);
-        svgPath.setLayoutY(padding + (lastRenderWidth - Math.min(svgPath.getLayoutBounds().getHeight(), clip.getHeight()))/2);
+    
+    }
+    
+    public void updateSVGSpecs(){
+        svgPath.setStroke(StyleManager.shiftColorWithTheme(vectorData.getStroke(), .3, .8));
+        svgPath.setStrokeWidth(vectorData.getStrokeWidth());
+        svgPath.setStrokeMiterLimit(Math.max(1, vectorData.getStrokeWidth()));
+        if(vectorData.isDoFill()){
+            svgPath.setFill(vectorData.getStrokeWidth() == 0 ? StyleManager.shiftColorWithTheme(vectorData.getFill(), .3, .8) : vectorData.getFill());
+        }else{
+            svgPath.setFill(null);
+        }
+        
     }
 }

@@ -8,6 +8,7 @@ import javafx.scene.effect.DropShadow;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.controlsfx.control.GridCell;
 
 public class VectorGridCell extends GridCell<VectorGridElement>{
@@ -28,8 +29,13 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     
         root.prefWidthProperty().bind(widthProperty().subtract(2*PADDING));
         root.prefHeightProperty().bind(heightProperty().subtract(2*PADDING));
+        root.maxWidthProperty().bind(widthProperty().subtract(2*PADDING));
+        root.maxHeightProperty().bind(heightProperty().subtract(2*PADDING));
         root.setTranslateX(PADDING);
-        root.setTranslateY(PADDING);
+        //root.setTranslateY(PADDING);
+    
+        // Prevent cell from taking the shape of the SVGPath
+        root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         
         shadow.setColor(Color.web("#0078d7"));
         shadow.setSpread(.90);
@@ -57,8 +63,8 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     
             // SETUP SVG
             double svgWidth = gridView.getCellWidth()-2*PADDING;
-            if(item.getLastRenderWidth() != ((int) svgWidth)){
-                item.renderSvgPath((int) svgWidth);
+            if(item.getLastDisplayWidth() != ((int) svgWidth)){
+                item.layoutSVGPath(svgWidth);
             }
             
             // MENU
@@ -77,10 +83,9 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             });
     
             root.getChildren().setAll(item.getSvgPath());
-            setStyle("-fx-background-color: rgba(255, 555, 555, .5);"); // Prevent cell from taking the shape of the SVGPath
+            
             setGraphic(root);
     
-            System.out.println("rootWidt=" + root.getWidth() + ", cellWidth=" + gridView.getCellWidth() + ", currentCellWidth=" + getWidth());
             setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
                     if(e.getClickCount() >= 2){

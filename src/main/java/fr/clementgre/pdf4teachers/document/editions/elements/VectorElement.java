@@ -75,6 +75,9 @@ public class VectorElement extends GraphicElement{
     
         if(checkSize && getRealWidth() == 0 && getRealHeight() == 0){
             defineSizeAuto();
+        }else{
+            checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                    getRealWidth() * getPage().getWidth() / GRID_WIDTH, getRealHeight() * getPage().getHeight() / GRID_HEIGHT, false);
         }
     }
     
@@ -90,27 +93,57 @@ public class VectorElement extends GraphicElement{
     @Override
     protected void setupBindings(){
         super.setupBindings();
-    
+        
         path.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setPath(newValue);
             noScaledSvgPath.setContent(getPath());
             svgPath.setContent(newValue);
             onSizeChanged();
         });
         
-        fill.addListener((observable, oldValue, newValue) -> updateFill());
-        doFill.addListener((observable, oldValue, newValue) -> updateFill());
+        fill.addListener((observable, oldValue, newValue) ->{
+            if(linkedVectorData != null) linkedVectorData.setFill(newValue);
+            updateFill();
+        });
+        doFill.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
+            updateFill();
+        });
         
-        stroke.addListener((observable, oldValue, newValue) -> updateStroke());
+        stroke.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
+            updateStroke();
+        });
         strokeWidth.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
             updateStroke();
             onSizeChanged();
         });
         
-        resizeModeProperty().addListener((o, oldValue, newValue) -> onSizeChanged());
-        repeatModeProperty().addListener((o, oldValue, newValue) -> onSizeChanged());
+        resizeModeProperty().addListener((o, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
+            onSizeChanged();
+        });
+        repeatModeProperty().addListener((o, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
+            onSizeChanged();
+        });
         
-        invertXProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
-        invertYProperty().addListener((observable, oldValue, newValue) -> onSizeChanged());
+        invertXProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
+            onSizeChanged();
+        });
+        invertYProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
+            onSizeChanged();
+        });
+        
+        realWidthProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
+        });
+        realHeightProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
+        });
     }
     
     private void updateFill(){
@@ -356,23 +389,8 @@ public class VectorElement extends GraphicElement{
                 isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY());
     }
 
-    // Should be called only once
     public void setLinkedVectorData(VectorData vectorData){
         this.linkedVectorData = vectorData;
-        
-        realWidth.addListener((observable, oldValue, newValue) -> linkedVectorData.setWidth(newValue.intValue()));
-        realHeight.addListener((observable, oldValue, newValue) -> linkedVectorData.setHeight(newValue.intValue()));
-        this.repeatMode.addListener((observable, oldValue, newValue) -> linkedVectorData.setRepeatMode(newValue));
-        this.resizeMode.addListener((observable, oldValue, newValue) -> linkedVectorData.setResizeMode(newValue));
-    
-        this.doFill.addListener((observable, oldValue, newValue) -> linkedVectorData.setDoFill(newValue));
-        this.fill.addListener((observable, oldValue, newValue) -> linkedVectorData.setFill(newValue));
-        this.stroke.addListener((observable, oldValue, newValue) -> linkedVectorData.setStroke(newValue));
-        this.strokeWidth.addListener((observable, oldValue, newValue) -> linkedVectorData.setStrokeWidth(newValue.intValue()));
-    
-        this.path.addListener((observable, oldValue, newValue) -> linkedVectorData.setPath(newValue));
-        this.invertX.addListener((observable, oldValue, newValue) -> linkedVectorData.setInvertX(newValue));
-        this.invertY.addListener((observable, oldValue, newValue) -> linkedVectorData.setInvertY(newValue));
     }
     
     // GETTER / SETTER

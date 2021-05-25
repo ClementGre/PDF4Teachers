@@ -22,6 +22,8 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         super.setup();
     }
     
+    
+    
     @Override
     protected void sort(String sortType, boolean order){
         int multiple = (order ? 1 : -1);

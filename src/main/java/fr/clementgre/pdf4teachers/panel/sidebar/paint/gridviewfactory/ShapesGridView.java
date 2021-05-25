@@ -15,6 +15,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.GridPane;
+import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.controlsfx.control.GridView;
 
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         zoomSlider.setMajorTickUnit(1);
         zoomSlider.setMinorTickCount(0);
         zoomSlider.setSnapToTicks(true);
-        
+    
+        getStyleClass().add(JMetroStyleClass.BACKGROUND);
     
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             e.consume();

@@ -165,6 +165,9 @@ public class ImageElement extends GraphicElement{
             
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
                 defineSizeAuto();
+            }else{
+                checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                        getRealWidth() * getPage().getWidth() / GRID_WIDTH, getRealHeight() * getPage().getHeight() / GRID_HEIGHT, false);
             }
         });
     }

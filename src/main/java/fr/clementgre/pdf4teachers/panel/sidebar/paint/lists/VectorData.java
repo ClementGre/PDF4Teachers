@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridCell;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
@@ -27,6 +28,9 @@ public class VectorData{
     private boolean invertY;
     private long lastUse;
     private int useCount;
+    
+    private CallBack specsChangesCallback = null;
+    private CallBack displayChangesCallback = null;
     
     public VectorData(int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode,
                       boolean doFill, Color fill, Color stroke, int strokeWidth,
@@ -54,7 +58,7 @@ public class VectorData{
     
     public void addToDocument(boolean link){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        
+    
         VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
                 width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, link ? this : null);
         
@@ -126,17 +130,26 @@ public class VectorData{
         return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, lastUse, useCount);
     }
     
+    public void setSpecsChangesCallback(CallBack specsChangesCallback){
+        this.specsChangesCallback = specsChangesCallback;
+    }
+    public void setDisplayChangesCallback(CallBack displayChangesCallback){
+        this.displayChangesCallback = displayChangesCallback;
+    }
+    
     public int getWidth(){
         return width;
     }
     public void setWidth(int width){
         this.width = width;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public int getHeight(){
         return height;
     }
     public void setHeight(int height){
         this.height = height;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public GraphicElement.RepeatMode getRepeatMode(){
@@ -144,12 +157,14 @@ public class VectorData{
     }
     public void setRepeatMode(GraphicElement.RepeatMode repeatMode){
         this.repeatMode = repeatMode;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public GraphicElement.ResizeMode getResizeMode(){
         return resizeMode;
     }
     public void setResizeMode(GraphicElement.ResizeMode resizeMode){
         this.resizeMode = resizeMode;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public boolean isDoFill(){
@@ -157,12 +172,14 @@ public class VectorData{
     }
     public void setDoFill(boolean doFill){
         this.doFill = doFill;
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     public Color getFill(){
         return fill;
     }
     public void setFill(Color fill){
         this.fill = fill;
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     
     public Color getStroke(){
@@ -170,12 +187,14 @@ public class VectorData{
     }
     public void setStroke(Color stroke){
         this.stroke = stroke;
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     public int getStrokeWidth(){
         return strokeWidth;
     }
     public void setStrokeWidth(int strokeWidth){
         this.strokeWidth = strokeWidth;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public String getPath(){
@@ -183,6 +202,7 @@ public class VectorData{
     }
     public void setPath(String path){
         this.path = path;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public boolean isInvertX(){
@@ -190,12 +210,14 @@ public class VectorData{
     }
     public void setInvertX(boolean invertX){
         this.invertX = invertX;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public boolean isInvertY(){
         return invertY;
     }
     public void setInvertY(boolean invertY){
         this.invertY = invertY;
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public long getLastUse(){

@@ -29,4 +29,8 @@ public class VectorGridView extends ShapesGridView<VectorGridElement>{
     protected List<VectorGridElement> filter(List<VectorGridElement> items){
         return items;
     }
+    
+    public void onThemeChanged(){
+        getItems().forEach(VectorGridElement::updateSVGSpecs);
+    }
 }
