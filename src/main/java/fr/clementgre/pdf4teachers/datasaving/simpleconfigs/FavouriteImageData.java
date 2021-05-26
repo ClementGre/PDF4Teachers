@@ -18,7 +18,7 @@ public class FavouriteImageData extends SimpleConfig{
     
     @Override
     protected void manageLoadedData(Config config){
-    
+        
         ArrayList<ImageData> favouriteImageData = new ArrayList<>();
         for(Object data : config.getList("favorites")){
             if(data instanceof HashMap map){

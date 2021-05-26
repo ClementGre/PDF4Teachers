@@ -17,7 +17,7 @@ public abstract class SimpleConfig{
         UserData.registerSimpleConfig(new SystemFontsData());
     }
     
-    private String filename;
+    private final String filename;
     public SimpleConfig(String fileName){
         this.filename = fileName;
     }
@@ -42,15 +42,12 @@ public abstract class SimpleConfig{
                 Config config = new Config(file);
                 config.load();
             
-                try{
-                    manageLoadedData(config); // Subclass cass
-                }catch(Exception e){
-                    e.printStackTrace();
-                    unableToLoadConfig();
-                }
+                manageLoadedData(config); // Subclass cass
             
-            }catch(IOException e){
+            }catch(Exception e){
                 e.printStackTrace();
+                System.err.println("Unable to load " + filename);
+                unableToLoadConfig();
             }
         }, "SimpleConfigs loader").start();
     }
@@ -62,8 +59,9 @@ public abstract class SimpleConfig{
             addDataToConfig(config); // Subclass cass
             
             config.save();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
+            System.err.println("Unable to save " + filename);
         }
     }
     

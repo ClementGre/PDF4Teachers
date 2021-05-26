@@ -39,9 +39,11 @@ public class Config{
     
     public void load() throws IOException{
         if(file == null) return;
+        
         InputStream input = new FileInputStream(file);
         base = yaml.load(input);
         input.close();
+        
         
         if(base == null) base = new HashMap<>();
     }

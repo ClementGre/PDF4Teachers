@@ -173,8 +173,9 @@ public class Settings{
                 
                 if(!settingsVersion.equals(Main.VERSION)) saveSettings();
             }
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
+            System.err.println("Unable to load settings.yml");
         }
     }
     
@@ -200,8 +201,9 @@ public class Settings{
                 }
                 config.save();
                 
-            }catch(IOException e){
+            }catch(Exception e){
                 e.printStackTrace();
+                System.err.println("Unable to save settings.yml");
             }
         }, "settingsSaver").start();
         

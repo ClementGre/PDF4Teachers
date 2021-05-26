@@ -181,7 +181,8 @@ public class UserData{
     }
     
     public UserData(){
-        SimpleConfig.registerClasses();
+        // if: check the actions wasn't already done in case of app restart.
+        if(simpleConfigs.size() == 0) SimpleConfig.registerClasses();
         if(!userDataSaver.isAlive()) userDataSaver.start();
         
         Platform.runLater(() -> {
@@ -247,8 +248,9 @@ public class UserData{
                         }
                     }
                 }
-            }catch(IOException e){
+            }catch(Exception e){
                 e.printStackTrace();
+                System.err.println("Unable to load userdata.yml");
             }
             
             Platform.runLater(() -> {
@@ -362,8 +364,9 @@ public class UserData{
             }
             
             config.save();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
+            System.err.println("Unable to save userdata.yml");
         }
         
     }

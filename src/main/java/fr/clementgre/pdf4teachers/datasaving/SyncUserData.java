@@ -84,8 +84,9 @@ public class SyncUserData{
                     }
                 }
             }
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
+            System.err.println("Unable to load " + FILE_NAME);
         }
     }
     
@@ -105,8 +106,9 @@ public class SyncUserData{
             }
             
             config.save();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
+            System.err.println("Unable to save " + FILE_NAME);
         }
     }
     
