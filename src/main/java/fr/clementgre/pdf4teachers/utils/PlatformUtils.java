@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
@@ -53,6 +54,25 @@ public class PlatformUtils{
         return toReturn.get();
         
     }
+    public static void startHeapDebug(long printIntervalMs){
+        new Thread(() -> {
+            while(true){
+                System.gc();
+                printHeapStatus();
+                try{
+                    Thread.sleep(printIntervalMs);
+                }catch(InterruptedException e){ e.printStackTrace(); }
+            }
+        }, "Heap debugger").start();
+    }
+    public static void printHeapStatus(){
+        if(MainWindow.twoDigFormat != null)
+            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000)
+                + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory()/1000000) + "MB");
+        else
+            System.out.println("Heap: " + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000
+                    + "MB / " + Runtime.getRuntime().maxMemory()/1000000 + "MB");
+    }
     public static void printActionTime(CallBack action, String name){
         long time = countActionTime(action);
         System.out.println("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
@@ -62,8 +82,7 @@ public class PlatformUtils{
             action.call();
             return;
         }
-        long time = countActionTime(action);
-        System.out.println("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
+        printActionTime(action, name);
     }
     public static long countActionTime(CallBack action){
         long startTime = System.currentTimeMillis();

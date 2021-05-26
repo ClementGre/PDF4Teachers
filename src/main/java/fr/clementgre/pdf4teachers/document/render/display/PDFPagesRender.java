@@ -13,7 +13,6 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -54,14 +53,17 @@ public class PDFPagesRender{
             Graphics2D graphics = renderImage.createGraphics();
             graphics.setBackground(Color.WHITE);
             
+            //document.setResourceCache();
+            
             try{
-                //PDDocument document = PDDocument.load(file);
+                PDDocument document = PDDocument.load(file);
                 PDFRenderer pdfRenderer = new PDFRenderer(document);
                 pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth / pageSize.getWidth(), destWidth / pageSize.getWidth(), RenderDestination.VIEW);
                 //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-                //document.close();
+                document.close();
                 
                 graphics.dispose();
+                
                 Background background = new Background(
                         Collections.singletonList(new BackgroundFill(
                                 javafx.scene.paint.Color.WHITE,
@@ -79,7 +81,8 @@ public class PDFPagesRender{
                 e.printStackTrace();
                 Platform.runLater(() -> callBack.call(null));
             }
-            
+    
+            renderImage.flush();
             System.gc(); // clear unused element in RAM
             render = false;
             
@@ -148,6 +151,7 @@ public class PDFPagesRender{
     
     public void close(){
         try{
+            System.out.println("document closed");
             document.close();
         }catch(IOException e){
             e.printStackTrace();

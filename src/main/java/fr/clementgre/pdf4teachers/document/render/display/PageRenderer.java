@@ -418,6 +418,8 @@ public class PageRenderer extends Pane{
         setOnMouseMoved(null);
         setOnMouseDragged(null);
         
+        
+        setBackground(null);
         setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
     }
     
