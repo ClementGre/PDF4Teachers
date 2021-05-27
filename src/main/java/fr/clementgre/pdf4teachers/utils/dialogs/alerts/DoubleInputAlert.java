@@ -8,8 +8,8 @@ import javafx.scene.layout.HBox;
 
 public class DoubleInputAlert extends CustomAlert{
     
-    private Label beforeText = new Label();
-    private Spinner<Double> input;
+    private final Label beforeText = new Label();
+    private final Spinner<Double> input;
     
     public DoubleInputAlert(double min, double max, double val, double step, String title, String header, String details){
         super(AlertType.CONFIRMATION, title, header, null);

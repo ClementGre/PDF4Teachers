@@ -365,7 +365,8 @@ public class MainScreen extends Pane{
                     return false;
                 }
             }else document.edition.save();
-            
+    
+            MainWindow.gradeTab.treeView.clearElements(false);
             document.stopDocumentSaver();
             document.close();
             document = null;
@@ -421,11 +422,11 @@ public class MainScreen extends Pane{
             
             PageRenderer topPage;
             if(firstTopVisiblePage == null){ // Navigate last page
-                topPage = document.pages.get(document.pages.size()-1);
+                topPage = document.getPages().get(document.getPagesNumber()-1);
             }else if(firstTopVisiblePage.getPage() == 0){ // Navigate begin
                 navigateBegin(); return;
             }else{ // Navigate to page
-                topPage = document.pages.get(firstTopVisiblePage.getPage()-1);
+                topPage = document.getPages().get(firstTopVisiblePage.getPage()-1);
             }
     
             int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());
@@ -438,11 +439,11 @@ public class MainScreen extends Pane{
     
             PageRenderer bottomPage;
             if(firstTopVisiblePage == null){ // Navigate end
-                bottomPage = document.pages.get(document.pages.size()-1);
-            }else if(firstTopVisiblePage.getPage() == document.pages.size()-1){ // Navigate last page
+                bottomPage = document.getPages().get(document.getPagesNumber()-1);
+            }else if(firstTopVisiblePage.getPage() == document.getPagesNumber()-1){ // Navigate last page
                 navigateEnd(); return;
             }else{ // Navigate to page
-                bottomPage = document.pages.get(firstTopVisiblePage.getPage()+1);
+                bottomPage = document.getPage(firstTopVisiblePage.getPage()+1);
             }
             
             int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());

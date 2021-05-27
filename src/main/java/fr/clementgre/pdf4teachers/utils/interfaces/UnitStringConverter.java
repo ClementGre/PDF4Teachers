@@ -4,7 +4,7 @@ import javafx.util.StringConverter;
 
 public class UnitStringConverter extends StringConverter<Double>{
     
-    private String unit;
+    private final String unit;
     
     public UnitStringConverter(String unit){
         this.unit = unit;

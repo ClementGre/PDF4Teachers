@@ -17,8 +17,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
-import java.util.ArrayList;
-
 public abstract class ListPane<T> extends TitledPane{
     
     private final IntegerProperty type = new SimpleIntegerProperty();

@@ -5,7 +5,6 @@ import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -23,17 +22,17 @@ import javafx.stage.Stage;
 
 public abstract class AlternativeWindow<R extends Node> extends Stage{
     
-    private VBox container = new VBox();
-    private VBox header = new VBox();
+    private final VBox container = new VBox();
+    private final VBox header = new VBox();
     public R root;
     public HBox buttonsBox;
     
     protected ScrollPane scrollPane = new ScrollPane(container);
-    private BorderPane borderPane = new BorderPane(scrollPane);
-    private Scene scene = new Scene(borderPane);
+    private final BorderPane borderPane = new BorderPane(scrollPane);
+    private final Scene scene = new Scene(borderPane);
     
-    private Label headerText = new Label();
-    private Label subHeaderText = new Label();
+    private final Label headerText = new Label();
+    private final Label subHeaderText = new Label();
     
     public enum StageWidth{
         NORMAL(545),

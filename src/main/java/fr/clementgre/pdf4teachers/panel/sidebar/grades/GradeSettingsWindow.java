@@ -51,18 +51,18 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox>{
     
     }
     
-    private class TierPane extends VBox{
+    private static class TierPane extends VBox{
 
         private final int tier;
 
-        private FontComboBox fontCombo = new FontComboBox();
-        private ToggleButton boldBtn = new ToggleButton();
-        private ToggleButton itBtn = new ToggleButton();
-        private ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
-        private SyncColorPicker colorPicker = new SyncColorPicker();
-        private CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
-        private CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));
-        private CheckBox hideWhenAllPoints = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGradeWhenAllPoints"));
+        private final FontComboBox fontCombo = new FontComboBox();
+        private final ToggleButton boldBtn = new ToggleButton();
+        private final ToggleButton itBtn = new ToggleButton();
+        private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
+        private final SyncColorPicker colorPicker = new SyncColorPicker();
+        private final CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
+        private final CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));
+        private final CheckBox hideWhenAllPoints = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGradeWhenAllPoints"));
 
         public TierPane(int tier){
             this.tier = tier;

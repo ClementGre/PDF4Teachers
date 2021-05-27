@@ -15,7 +15,7 @@ import java.io.IOException;
 
 public class SVGFileParser{
     
-    private File file;
+    private final File file;
     public SVGFileParser(File file){
         this.file = file;
     }

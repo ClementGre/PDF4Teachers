@@ -5,7 +5,6 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
@@ -22,19 +21,19 @@ import java.util.LinkedHashMap;
 
 public class VectorElement extends GraphicElement{
     
-    private SVGPath noScaledSvgPath = new SVGPath();
+    private final SVGPath noScaledSvgPath = new SVGPath();
     private SVGPath svgPath = new SVGPath();
     
-    private StringProperty path = new SimpleStringProperty();
-    private BooleanProperty doFill = new SimpleBooleanProperty();
-    private ObjectProperty<Color> fill = new SimpleObjectProperty<>();
-    private ObjectProperty<Color> stroke = new SimpleObjectProperty<>();
-    private IntegerProperty strokeWidth = new SimpleIntegerProperty();
+    private final StringProperty path = new SimpleStringProperty();
+    private final BooleanProperty doFill = new SimpleBooleanProperty();
+    private final ObjectProperty<Color> fill = new SimpleObjectProperty<>();
+    private final ObjectProperty<Color> stroke = new SimpleObjectProperty<>();
+    private final IntegerProperty strokeWidth = new SimpleIntegerProperty();
     
-    private BooleanProperty invertX = new SimpleBooleanProperty();
-    private BooleanProperty invertY = new SimpleBooleanProperty();
+    private final BooleanProperty invertX = new SimpleBooleanProperty();
+    private final BooleanProperty invertY = new SimpleBooleanProperty();
     
-    private BooleanProperty isEditMode = new SimpleBooleanProperty(false);
+    private final BooleanProperty isEditMode = new SimpleBooleanProperty(false);
     
     private VectorData linkedVectorData;
     
@@ -302,7 +301,9 @@ public class VectorElement extends GraphicElement{
     
     @Override
     public void removedFromDocument(boolean silent){
-    
+        super.removedFromDocument(silent);
+        prefHeightProperty().unbind();
+        prefWidthProperty().unbind();
     }
     
     // READER AND WRITERS
@@ -323,8 +324,8 @@ public class VectorElement extends GraphicElement{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         VectorElement element = readYAMLDataAndGive(data, true, page);
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     public static VectorElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){

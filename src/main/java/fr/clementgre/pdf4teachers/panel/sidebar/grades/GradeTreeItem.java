@@ -25,7 +25,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -41,10 +40,10 @@ public class GradeTreeItem extends TreeItem<String>{
     public HBox pane;
     
     Region spacer = new Region();
-    private Text name = new Text();
-    private Text value = new Text();
-    private Text slash = new Text("/");
-    private Text total = new Text();
+    private final Text name = new Text();
+    private final Text value = new Text();
+    private final Text slash = new Text("/");
+    private final Text total = new Text();
     
     private Button newGrade;
     
@@ -301,8 +300,7 @@ public class GradeTreeItem extends TreeItem<String>{
     }
     
     public void updateCell(TreeCell<String> cell){
-        
-        if(cell == null) return;
+        if(cell == null || core == null) return;
         if(this.cell != null) this.cell.selectedProperty().removeListener(selectedListener);
         this.cell = cell;
         cell.setGraphic(pane);
@@ -499,15 +497,6 @@ public class GradeTreeItem extends TreeItem<String>{
         
     }
     
-    public void deleteChildren(){
-        while(hasSubGrade()){
-            GradeTreeItem children = (GradeTreeItem) getChildren().get(0);
-            if(children.hasSubGrade()) children.deleteChildren();
-            children.getCore().delete();
-        }
-        
-    }
-    
     public boolean isExistTwice(String name){
         if(isRoot()) return false;
         int k = 0;
@@ -517,6 +506,30 @@ public class GradeTreeItem extends TreeItem<String>{
         }
         
         return k >= 2;
+    }
+    
+    public void delete(boolean removePageElement){
+        this.cell.selectedProperty().removeListener(selectedListener);
+        cell.setContextMenu(null);
+        cell.setOnMouseEntered(null);
+        cell.setOnMouseExited(null);
+        newGrade.disableProperty().unbind();
+        value.textProperty().unbind();
+        name.textProperty().unbind();
+        total.textProperty().unbind();
+        gradeField.textProperty().unbind();
+        nameField.textProperty().unbind();
+        totalField.textProperty().unbind();
+        
+        
+        if(removePageElement) getCore().delete();
+        core = null;
+        if(hasSubGrade()) deleteChildren(removePageElement);
+    }
+    public void deleteChildren(boolean removePageElement){
+        while(hasSubGrade()){
+            ((GradeTreeItem) getChildren().get(0)).delete(true);
+        }
     }
     
     

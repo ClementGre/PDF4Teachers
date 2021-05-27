@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.ListsManager;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;

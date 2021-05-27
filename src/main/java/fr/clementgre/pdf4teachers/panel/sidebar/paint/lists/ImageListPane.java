@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
-import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
@@ -9,10 +8,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridE
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.layout.Priority;

@@ -10,8 +10,8 @@ import jfxtras.styles.jmetro.Style;
 
 public class TextInputAlert extends CustomAlert{
     
-    private Label beforeText = new Label();
-    private TextField input = new TextField();
+    private final Label beforeText = new Label();
+    private final TextField input = new TextField();
     
     public TextInputAlert(String title, String header, String details){
         super(AlertType.CONFIRMATION, title, header, null);

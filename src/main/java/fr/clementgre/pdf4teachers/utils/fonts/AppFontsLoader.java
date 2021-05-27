@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class AppFontsLoader{
     
-    private static HashMap<String, String> loadedFonts = new HashMap<>();
+    private static final HashMap<String, String> loadedFonts = new HashMap<>();
     
     public static final String MARIANNE = "/appFonts/Marianne-Regular.otf";
     public static final String MARIANNE_BOLD = "/appFonts/Marianne-Bold.otf";

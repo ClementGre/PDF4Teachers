@@ -60,12 +60,12 @@ public class LogWindow extends Stage{
         MainWindow.preventWindowOverflowScreen(this);
     }
     
-    private Label text = new Label(logs.toString());
+    private final Label text = new Label(logs.toString());
     private boolean needToStopUpdater = false;
     public void stopUpdater(){
         needToStopUpdater = true;
     }
-    private Thread updater = new Thread(() -> {
+    private final Thread updater = new Thread(() -> {
         needToStopUpdater = false;
         try{
             Thread.sleep(200);

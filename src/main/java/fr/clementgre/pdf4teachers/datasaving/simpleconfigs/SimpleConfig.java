@@ -6,7 +6,6 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
 
 import java.io.File;
-import java.io.IOException;
 
 public abstract class SimpleConfig{
     

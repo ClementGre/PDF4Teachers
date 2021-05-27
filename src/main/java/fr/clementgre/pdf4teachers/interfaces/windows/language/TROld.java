@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 
 public class TROld{
     
-    private static HashMap<String, String> defaultsTranslations = new HashMap<>();
-    private static HashMap<String, String> translations = new HashMap<>();
+    private static final HashMap<String, String> defaultsTranslations = new HashMap<>();
+    private static final HashMap<String, String> translations = new HashMap<>();
     
     // Just a function to ask TranslationFilesGenerator to add a translation line for the text
     public static String ctO(String text){

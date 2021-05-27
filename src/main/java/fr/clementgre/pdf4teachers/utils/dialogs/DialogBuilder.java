@@ -37,7 +37,7 @@ public class DialogBuilder{
     /* TO REMOVE */
     
     public static <T> ChoiceDialog<T> getChoiceDialog(T selected, List<T> values){
-        ChoiceDialog<T> alert = new ChoiceDialog<T>(selected, values);
+        ChoiceDialog<T> alert = new ChoiceDialog<>(selected, values);
         
         if(Main.window != null){
             if(Main.window.getScene() != null) alert.initOwner(Main.window);

@@ -17,8 +17,8 @@ import java.util.HashMap;
 
 public class SortManager{
 
-    private HashMap<Button, BooleanProperty> buttons = new HashMap<>();
-    private ObjectPropertyBase<Button> selectedButton = new SimpleObjectProperty<>();
+    private final HashMap<Button, BooleanProperty> buttons = new HashMap<>();
+    private final ObjectPropertyBase<Button> selectedButton = new SimpleObjectProperty<>();
 
     public String selectedColor = "#0078d7";
     private final String BUTTON_STYLE = "-fx-padding: 0 5";

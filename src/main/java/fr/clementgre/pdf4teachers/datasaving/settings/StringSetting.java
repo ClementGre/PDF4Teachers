@@ -2,12 +2,11 @@ package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 
 public class StringSetting extends Setting<String>{
     
-    private StringProperty value;
+    private final StringProperty value;
     
     public StringSetting(String value, boolean hasEditPane, String icon, String path, String title, String description){
         super(hasEditPane, icon, path, title, description);

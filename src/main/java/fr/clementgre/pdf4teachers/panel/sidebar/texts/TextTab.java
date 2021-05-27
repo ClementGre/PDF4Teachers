@@ -53,19 +53,19 @@ public class TextTab extends SideTab{
     // OPTIONS DE MISE EN PAGE + INPUTS + BOUTONS
     // Séparés par ligne
     
-    private HBox combosBox = new HBox();
+    private final HBox combosBox = new HBox();
     public FontComboBox fontCombo = new FontComboBox();
-    private ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
+    private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
     
-    private HBox colorAndParamsBox = new HBox();
-    private SyncColorPicker colorPicker = new SyncColorPicker();
-    private ToggleButton boldBtn = new ToggleButton("");
-    private ToggleButton itBtn = new ToggleButton("");
+    private final HBox colorAndParamsBox = new HBox();
+    private final SyncColorPicker colorPicker = new SyncColorPicker();
+    private final ToggleButton boldBtn = new ToggleButton("");
+    private final ToggleButton itBtn = new ToggleButton("");
     
     public TextArea txtArea = new TextArea();
     
-    private HBox btnBox = new HBox();
-    private Button deleteBtn = new Button(TR.tr("actions.delete"));
+    private final HBox btnBox = new HBox();
+    private final Button deleteBtn = new Button(TR.tr("actions.delete"));
     public Button newBtn = new Button(TR.tr("actions.new"));
     
     // FIELDS
@@ -162,8 +162,7 @@ public class TextTab extends SideTab{
         MainWindow.mainScreen.selectedProperty().addListener((ObservableValue<? extends Element> observable, Element oldElement, Element newElement) -> {
             isNew = false;
             if(oldElement != null){
-                if(oldElement instanceof TextElement){
-                    TextElement current = (TextElement) oldElement;
+                if(oldElement instanceof TextElement current){
                     current.textProperty().unbind();
                     current.fontProperty().unbind();
                     
@@ -173,9 +172,8 @@ public class TextTab extends SideTab{
                 }
             }
             if(newElement != null){
-                if(newElement instanceof TextElement){
-                    TextElement current = (TextElement) newElement;
-                    
+                if(newElement instanceof TextElement current){
+    
                     txtArea.setText(current.getText());
                     boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
                     itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
@@ -360,8 +358,7 @@ public class TextTab extends SideTab{
     private ScrollBar getHorizontalSB(final TextArea scrollPane){
         Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
         for(final Node node : nodes){
-            if(node instanceof ScrollBar){
-                ScrollBar sb = (ScrollBar) node;
+            if(node instanceof ScrollBar sb){
                 if(sb.getOrientation() == Orientation.HORIZONTAL){
                     return sb;
                 }

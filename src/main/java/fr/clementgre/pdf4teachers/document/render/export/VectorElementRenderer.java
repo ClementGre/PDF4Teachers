@@ -17,7 +17,7 @@ import java.awt.geom.AffineTransform;
 
 public class VectorElementRenderer{
 
-    private PDDocument doc;
+    private final PDDocument doc;
     
     public VectorElementRenderer(PDDocument doc){
         this.doc = doc;

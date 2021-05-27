@@ -17,15 +17,15 @@ public class AlreadyExistDialogManager{
     private boolean alwaysRename = false;
     public CustomAlert alert;
 
-    private ButtonType stopAll;
+    private final ButtonType stopAll;
     private ButtonType skip;
     private ButtonType skipAlways;
-    private ButtonType rename;
+    private final ButtonType rename;
     private ButtonType renameAlways;
-    private ButtonType overwrite;
+    private final ButtonType overwrite;
     private ButtonType overwriteAlways;
 
-    private boolean recursive;
+    private final boolean recursive;
     private int recursions = 0;
 
     public AlreadyExistDialogManager(boolean recursive){

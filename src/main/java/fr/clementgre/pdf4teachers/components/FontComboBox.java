@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;

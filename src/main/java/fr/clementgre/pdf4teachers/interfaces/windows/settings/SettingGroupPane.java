@@ -15,8 +15,8 @@ import javafx.util.Duration;
 
 public class SettingGroupPane extends VBox{
 
-    private Label title;
-    private GridPane container = new GridPane();
+    private final Label title;
+    private final GridPane container = new GridPane();
     
     public SettingGroupPane(String titleKey, Setting<?>... settings){
         

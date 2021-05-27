@@ -4,5 +4,5 @@ public enum ButtonPosition{
     DEFAULT,
     CLOSE,
     OTHER_RIGHT,
-    OTHER_LEFT;
+    OTHER_LEFT
 }

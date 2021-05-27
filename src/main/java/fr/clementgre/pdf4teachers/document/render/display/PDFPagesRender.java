@@ -22,10 +22,10 @@ import java.util.Collections;
 
 public class PDFPagesRender{
     
-    private File file;
+    private final File file;
     
     public PDFPagesEditor editor;
-    private PDDocument document;
+    private final PDDocument document;
     ArrayList<Thread> rendersPage = new ArrayList<>();
     
     public boolean advertisement = false;

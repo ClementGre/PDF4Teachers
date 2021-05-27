@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;

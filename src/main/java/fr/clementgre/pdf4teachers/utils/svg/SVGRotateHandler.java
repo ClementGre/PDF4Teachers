@@ -2,11 +2,11 @@ package fr.clementgre.pdf4teachers.utils.svg;
 
 public class SVGRotateHandler extends SVGTransformHandler{
     
-    private StringBuilder newPath = new StringBuilder();
+    private final StringBuilder newPath = new StringBuilder();
     
-    private float rotate;
-    private float cosA;
-    private float sinA;
+    private final float rotate;
+    private final float cosA;
+    private final float sinA;
     
     // Rotation in Degrees
     public SVGRotateHandler(float rotate, boolean formatNumbers){

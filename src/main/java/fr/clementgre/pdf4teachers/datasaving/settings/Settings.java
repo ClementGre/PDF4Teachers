@@ -11,7 +11,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 public class Settings{

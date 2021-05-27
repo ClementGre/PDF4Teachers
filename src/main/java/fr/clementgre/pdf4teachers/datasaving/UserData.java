@@ -19,7 +19,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -140,7 +139,7 @@ public class UserData{
     @UserDataObject(path = "AutoTipsValidated")
     public List<Object> autoTipsValidated = new ArrayList<>();
     
-    private static Thread userDataSaver = new Thread(() -> {
+    private static final Thread userDataSaver = new Thread(() -> {
         while(true){
             try{
                 Thread.sleep(1000 * 60);
@@ -175,7 +174,7 @@ public class UserData{
         }
     }, "userData AutoSaver");
     
-    private static ArrayList<SimpleConfig> simpleConfigs = new ArrayList<>();
+    private static final ArrayList<SimpleConfig> simpleConfigs = new ArrayList<>();
     public static void registerSimpleConfig(SimpleConfig simpleConfig){
         simpleConfigs.add(simpleConfig);
     }

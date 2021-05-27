@@ -15,7 +15,7 @@ public class CustomPrintStream extends PrintStream{
     private static final String catchText = "GRAVE: GlyphDescription for index";
     private static String actualText = "";
     
-    private StringBuffer text;
+    private final StringBuffer text;
     
     public CustomPrintStream(PrintStream original, StringBuffer out){
         super(new OutputStream(){

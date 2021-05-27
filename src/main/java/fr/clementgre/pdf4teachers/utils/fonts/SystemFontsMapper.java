@@ -26,7 +26,7 @@ import java.util.*;
 public class SystemFontsMapper{
 
     //              Family, Paths
-    private HashMap<String, FontPaths> systemFontMap = new HashMap<>();
+    private final HashMap<String, FontPaths> systemFontMap = new HashMap<>();
     
     public static String[] getSystemFontNames() {
         return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();

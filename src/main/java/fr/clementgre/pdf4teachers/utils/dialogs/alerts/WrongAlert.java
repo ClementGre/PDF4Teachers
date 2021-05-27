@@ -5,7 +5,7 @@ import javafx.scene.control.Alert;
 
 public class WrongAlert extends CustomAlert{
     
-    private boolean continueAsk;
+    private final boolean continueAsk;
     
     public WrongAlert(String header, String details, boolean continueAsk){
         this(AlertType.WARNING, TR.tr("dialog.error.title"), header, details, continueAsk);

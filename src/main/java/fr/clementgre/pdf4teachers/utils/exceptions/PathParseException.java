@@ -4,7 +4,7 @@ import org.apache.batik.parser.ParseException;
 
 public class PathParseException extends Exception{
     
-    private ParseException batikException;
+    private final ParseException batikException;
     
     public PathParseException(ParseException batikException){
         super(batikException.getMessage(), batikException.getCause());

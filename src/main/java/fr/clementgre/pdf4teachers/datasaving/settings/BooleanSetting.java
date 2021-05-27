@@ -2,13 +2,12 @@ package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
 
 public class BooleanSetting extends Setting<Boolean>{
     
-    private BooleanProperty value;
+    private final BooleanProperty value;
     
     public BooleanSetting(Boolean value, boolean hasEditPane, String icon, String path, String title, String description){
         super(hasEditPane, icon, path, title, description);

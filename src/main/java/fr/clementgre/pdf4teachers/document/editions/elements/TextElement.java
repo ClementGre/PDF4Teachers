@@ -21,8 +21,6 @@ import javafx.geometry.VPos;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.paint.Color;
@@ -46,8 +44,8 @@ import java.util.regex.Pattern;
 
 public class TextElement extends Element{
     
-    private ScratchText text = new ScratchText();
-    private ImageView image = new ImageView();
+    private final ScratchText text = new ScratchText();
+    private final ImageView image = new ImageView();
     
     public static final float imageFactor = 2.5f;
     
@@ -136,6 +134,7 @@ public class TextElement extends Element{
     
     @Override
     public void removedFromDocument(boolean silent){
+        super.removedFromDocument(silent);
         if(!silent) MainWindow.textTab.treeView.onFileSection.removeElement(this);
     }
     
@@ -156,8 +155,8 @@ public class TextElement extends Element{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         TextElement element = readYAMLDataAndGive(data, true, page);
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
@@ -196,8 +195,8 @@ public class TextElement extends Element{
     public static void readDataAndCreate(DataInputStream reader) throws IOException{
         TextElement element = readDataAndGive(reader, true);
         element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     // SPECIFIC METHODS

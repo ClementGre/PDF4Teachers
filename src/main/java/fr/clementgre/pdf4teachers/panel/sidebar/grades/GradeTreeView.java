@@ -64,16 +64,12 @@ public class GradeTreeView extends TreeView<String>{
         });
     }
     
-    // Clear without removing elements from pages
-    public void hardClear(){
-        setRoot(null);
-        generateRoot(false);
-    }
-    
-    // Clear and removing element from pages
-    public void clear(){
-        if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
-        generateRoot(false);
+    // Clear elements in tree and in page
+    public void clearElements(boolean regenerateRoot){
+        if(getRoot() != null){
+            ((GradeTreeItem) getRoot()).delete(true);
+        }
+        if(regenerateRoot) generateRoot(false);
     }
     
     public void generateRoot(boolean update){
@@ -81,6 +77,7 @@ public class GradeTreeView extends TreeView<String>{
     }
     
     public void addElement(GradeElement element){
+        System.out.println("Adding tree element " + element.getParentPath() + " --> " + element.getName());
         
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
@@ -97,16 +94,19 @@ public class GradeTreeView extends TreeView<String>{
         }
     }
     
-    public void removeElement(GradeElement element){
+    public void removeElement(GradeElement element, boolean removePageElement){
+        System.out.println("Removing tree element " + element.getParentPath() + " --> " + element.getName());
         
         if(element.getParentPath().isEmpty()){
             // ELEMENT IS ROOT
-            ((GradeTreeItem) getRoot()).deleteChildren();
+            ((GradeTreeItem) getRoot()).delete(removePageElement);
             setRoot(null);
         }else{
             // OTHER
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
-            treeElement.deleteChildren();
+            if(treeElement == null) return;
+            
+            treeElement.delete(removePageElement);
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
             parent.reIndexChildren();
@@ -150,7 +150,7 @@ public class GradeTreeView extends TreeView<String>{
         
         for(int i = 0; i < parent.getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
-            if(children.getCore().equals(element)){
+            if(element.equals(children.getCore())){
                 return children;
             }else if(children.hasSubGrade()){
                 // Si l'élément a des enfants, on refait le test sur ses enfants
@@ -276,8 +276,8 @@ public class GradeTreeView extends TreeView<String>{
         }
         // Drop down all others items in the dropDown array
         for(GradeTreeItem itemToSend : itemsToSend){
-            if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.pages.size() - 1){
-                itemToSend.getCore().switchPage(MainWindow.mainScreen.document.pages.size() - 1);
+            if(itemToSend.getCore().getPageNumber() != MainWindow.mainScreen.document.getPagesNumber() - 1){
+                itemToSend.getCore().switchPage(MainWindow.mainScreen.document.getPagesNumber() - 1);
             }
             itemToSend.getCore().setRealY((int) Element.GRID_HEIGHT);
         }
@@ -305,7 +305,7 @@ public class GradeTreeView extends TreeView<String>{
         
         ArrayList<GradeElement> grades = new ArrayList<>();
         
-        for(PageRenderer page : MainWindow.mainScreen.document.pages){
+        for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
             ArrayList<GradeElement> pageGrades = new ArrayList<>();
             for(Element element : page.getElements()){
                 if(element instanceof GradeElement) pageGrades.add((GradeElement) element);

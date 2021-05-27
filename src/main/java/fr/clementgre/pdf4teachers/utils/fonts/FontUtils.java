@@ -15,12 +15,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class FontUtils{
     
-    private static LinkedHashMap<String, Boolean> DEFAULT_FONTS = (LinkedHashMap<String, Boolean>) Stream.of(
+    private static final LinkedHashMap<String, Boolean> DEFAULT_FONTS = (LinkedHashMap<String, Boolean>) Stream.of(
             "Open Sans", "Jost", "Lato Black", "Lato", "Lato Light", "Roboto Medium", "Roboto", "Roboto Light", "Hind Guntur", "Shanti",
             "Karma", "Noto Serif", "Crimson Text", "Bitter",
             "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno", "Averia Libre", "Indie Flower", "Sriracha", "Arrows")
@@ -28,7 +27,7 @@ public class FontUtils{
     
     public static final ObservableList<Double> sizes = FXCollections.observableArrayList(6d, 8d, 9d, 10d, 11d, 12d, 13d, 14d, 15d, 16d, 17d, 18d, 20d, 22d, 24d, 26d, 28d, 30d, 34d, 38d, 42d, 46d, 50d);
     
-    private static SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
+    private static final SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
     private static boolean loaded = false;
     
     public static void setup(){

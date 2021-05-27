@@ -5,21 +5,10 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.style.Style;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -160,14 +149,13 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
                 UpdateWindow.version = parsedVersion;
                 UpdateWindow.description = parsedDescription;
                 UpdateWindow.newPre = true;
-                return true;
             }else{
                 // User don't have the latest release -> propose it before proposing the pre
                 UpdateWindow.version = parsedLatestVersion;
                 UpdateWindow.description = parsedLatestDescription;
                 UpdateWindow.newVersion = true;
-                return true;
             }
+            return true;
         }catch(IOException e){
             e.printStackTrace();
             error = true;

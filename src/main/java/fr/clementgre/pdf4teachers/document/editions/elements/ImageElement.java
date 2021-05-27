@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -111,7 +110,7 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public void removedFromDocument(boolean silent){
-    
+        super.removedFromDocument(silent);
     }
     
     // READER AND WRITERS
@@ -126,8 +125,8 @@ public class ImageElement extends GraphicElement{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         ImageElement element = readYAMLDataAndGive(data, true, page);
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     public static ImageElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){

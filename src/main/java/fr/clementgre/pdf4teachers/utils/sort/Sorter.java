@@ -14,13 +14,10 @@ public class Sorter{
     public static List<File> sortFilesByName(List<File> files, boolean order){
         
         
-        files.sort(new Comparator<File>(){
-            @Override
-            public int compare(File file1, File file2){
-                if(!order)
-                    return (file1.getName() + file1.getParentFile().getAbsolutePath()).compareToIgnoreCase(file2.getName() + file1.getParentFile().getAbsolutePath()) * -1;
-                return (file1.getName() + file1.getParentFile().getAbsolutePath()).compareToIgnoreCase(file2.getName() + file1.getParentFile().getAbsolutePath());
-            }
+        files.sort((file1, file2) -> {
+            if(!order)
+                return (file1.getName() + file1.getParentFile().getAbsolutePath()).compareToIgnoreCase(file2.getName() + file1.getParentFile().getAbsolutePath()) * -1;
+            return (file1.getName() + file1.getParentFile().getAbsolutePath()).compareToIgnoreCase(file2.getName() + file1.getParentFile().getAbsolutePath());
         });
         return files;
     }

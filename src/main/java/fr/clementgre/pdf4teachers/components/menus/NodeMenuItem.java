@@ -1,9 +1,7 @@
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;

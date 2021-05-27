@@ -21,7 +21,7 @@ public class PageZoneSelector extends Pane{
     
     private PageRenderer page;
     private SelectionZoneType selectionZoneType;
-    private Region selectionZone = new Region();
+    private final Region selectionZone = new Region();
     
     private double startX = 0;
     private double startY = 0;

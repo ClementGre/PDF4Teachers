@@ -3,12 +3,9 @@ package fr.clementgre.pdf4teachers.datasaving.settings;
 import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
-import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
@@ -18,13 +15,13 @@ import org.controlsfx.control.ToggleSwitch;
 
 public class DoubleSetting extends Setting<Double>{
     
-    private DoubleProperty value;
+    private final DoubleProperty value;
     
-    private double min;
-    private double max;
-    private double step;
-    private boolean disableInMinus1;
-    private boolean hasSlider;
+    private final double min;
+    private final double max;
+    private final double step;
+    private final boolean disableInMinus1;
+    private final boolean hasSlider;
     
     public DoubleSetting(Double value, boolean hasEditPane, double min, double max, double step, boolean disableInMinus1, boolean hasSlider, String icon, String path, String title, String description){
         super(hasEditPane, icon, path, title, description);

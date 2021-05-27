@@ -124,7 +124,7 @@ public class FIlesChooserManager{
     public enum SyncVar{
         LAST_OPEN_DIR,
         LAST_CONVERT_SRC_DIR,
-        LAST_GALLERY_OPEN_DIR;
+        LAST_GALLERY_OPEN_DIR
     }
     public static String getPathFromSyncVar(SyncVar syncVar){
         if(syncVar == SyncVar.LAST_OPEN_DIR) return MainWindow.userData.lastOpenDir;

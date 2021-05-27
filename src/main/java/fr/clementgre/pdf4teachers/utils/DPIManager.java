@@ -6,7 +6,7 @@ public class DPIManager{
     // The width of 1 cm
     private double oneCmWidth = 1;
     
-    private int dpi;
+    private final int dpi;
     
     public DPIManager(int dpi){
         this.dpi = dpi;

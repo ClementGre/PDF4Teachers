@@ -20,8 +20,8 @@ import java.io.IOException;
 
 public class ImageElementRenderer{
     
-    private PDDocument doc;
-    private DPIManager dpiManager;
+    private final PDDocument doc;
+    private final DPIManager dpiManager;
     
     public ImageElementRenderer(PDDocument doc, int dpi){
         this.doc = doc;

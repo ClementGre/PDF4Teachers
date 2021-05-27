@@ -3,21 +3,16 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import org.controlsfx.control.PopOver;
 
-import javax.swing.plaf.PanelUI;
 import java.awt.*;
 
 public class AutoTipTooltip extends PopOver{
@@ -27,7 +22,7 @@ public class AutoTipTooltip extends PopOver{
     private String prerequisiteKey;
     private String objectWhereDisplay;
     
-    private Label text = new Label();
+    private final Label text = new Label();
     
     private boolean closedByAutoHide = false;
     

@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
@@ -67,8 +68,8 @@ public class PlatformUtils{
     }
     public static void printHeapStatus(){
         if(MainWindow.twoDigFormat != null)
-            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000)
-                + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory()/1000000) + "MB");
+            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000d)
+                + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory()/1000000d) + "MB");
         else
             System.out.println("Heap: " + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000
                     + "MB / " + Runtime.getRuntime().maxMemory()/1000000 + "MB");

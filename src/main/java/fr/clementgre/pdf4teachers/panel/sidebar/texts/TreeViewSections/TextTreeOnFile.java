@@ -26,10 +26,9 @@ public class TextTreeOnFile extends TextTreeSection{
         
         // GET ALL ELEMENTS In THE DOCUMENT
         if(MainWindow.mainScreen.getStatus() == MainScreen.Status.OPEN){
-            for(PageRenderer page : MainWindow.mainScreen.document.pages){
+            for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
                 for(int i = 0; i < page.getElements().size(); i++){
-                    if(page.getElements().get(i) instanceof TextElement){
-                        TextElement element = (TextElement) page.getElements().get(i);
+                    if(page.getElements().get(i) instanceof TextElement element){
                         getChildren().add(element.toNoDisplayTextElement(ONFILE_TYPE, true));
                     }
                 }

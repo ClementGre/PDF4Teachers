@@ -8,8 +8,8 @@ import java.util.regex.Pattern;
 public class TextWrapper{
     
     private String text;
-    private Font font;
-    private int maxWidth;
+    private final Font font;
+    private final int maxWidth;
     
     private int wordIndex = 0;
     private int charIndex = 0;
@@ -63,12 +63,11 @@ public class TextWrapper{
                 }
                 if(firstWord.isEmpty()){
                     text = text.replaceFirst(Pattern.quote(passedChars), "");
-                    continue;
                 }else{
                     text = text.replaceFirst(Pattern.quote(passedChars + results[0]), "");
-                    continue;
                 }
-                
+                continue;
+    
             }
             
             String[] results = fillLineWithWord(text);

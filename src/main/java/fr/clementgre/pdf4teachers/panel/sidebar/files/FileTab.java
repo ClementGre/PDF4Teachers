@@ -32,10 +32,10 @@ import java.util.stream.Collectors;
 public class FileTab extends SideTab{
     
     public SortManager sortManager;
-    private VBox pane = new VBox();
-    private GridPane options = new GridPane();
+    private final VBox pane = new VBox();
+    private final GridPane options = new GridPane();
     
-    private VBox info = new VBox();
+    private final VBox info = new VBox();
     
     public FileListView files = new FileListView();
     public ArrayList<File> originalFiles = new ArrayList<>();
@@ -73,7 +73,7 @@ public class FileTab extends SideTab{
                 // We need only one good file to accept all. We will do the sorting after.
                 for(File file : db.getFiles()){
                     if(isFilePdf(file) || file.isDirectory()){
-                        File[] files = db.getFiles().toArray(new File[db.getFiles().size()]);
+                        File[] files = db.getFiles().toArray(new File[0]);
                         openFiles(files);
                         if(files.length == 1) MainWindow.mainScreen.openFile(files[0]);
                         e.setDropCompleted(true);
@@ -161,7 +161,7 @@ public class FileTab extends SideTab{
     }
     
     public class DirOpener{
-        private int DEEP_LIMIT = 2;
+        private final int DEEP_LIMIT = 2;
         boolean alreadyAsked = false;
         boolean recursive = false;
         

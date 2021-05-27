@@ -20,13 +20,14 @@ import javafx.scene.control.ButtonType;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
 public class Document{
     
-    private File file;
+    private final File file;
     public Edition edition;
-    public ArrayList<PageRenderer> pages = new ArrayList<>();
+    private final ArrayList<PageRenderer> pages = new ArrayList<>();
     
     private int currentPage = -1;
     public int totalPages;
@@ -126,7 +127,7 @@ public class Document{
             page.clearElements();
         }
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
-        MainWindow.gradeTab.treeView.clear();
+        MainWindow.gradeTab.treeView.clearElements(false);
         this.edition.load();
     }
     
@@ -136,16 +137,6 @@ public class Document{
             if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
-    }
-    
-    public PageRenderer getPreciseMouseCurrentPage(){
-        for(PageRenderer page : pages){
-            double bottomY = page.getBottomY();
-            if(MainWindow.mainScreen.mouseY < bottomY){
-                return page;
-            }
-        }
-        return null;
     }
     
     public boolean save(){
@@ -186,6 +177,51 @@ public class Document{
         return file;
     }
     
+    public int getLastCursorOverPage(){
+        return currentPage;
+    }
+    
+    public void setCurrentPage(int currentPage){
+        this.currentPage = currentPage;
+        MainWindow.footerBar.updateCurrentPage();
+    }
+    public int getPagesNumber(){
+        return pages.size();
+    }
+    
+    // PageRenderer getter
+    
+    
+    public ArrayList<PageRenderer> getPages(){
+        return pages;
+    }
+    public PageRenderer getPage(int page){
+        return page < pages.size() ? pages.get(page) : null;
+    }
+    public PageRenderer getPageNonNull(int page){
+        return page < pages.size() ? pages.get(page) : pages.get(0);
+    }
+    public WeakReference<PageRenderer> getPageWeakReference(int page){
+        return new WeakReference<>(getPageNonNull(page));
+    }
+    
+    public PageRenderer getLastCursorOverPageObject(){
+        return (getLastCursorOverPage() != -1) ? pages.get(getLastCursorOverPage()) : pages.get(0);
+    }
+    public WeakReference<PageRenderer> getLastCursorOverPageWeakReference(){
+        return (getLastCursorOverPage() != -1) ? getPageWeakReference(getLastCursorOverPage()) : getPageWeakReference(0);
+    }
+    
+    public PageRenderer getPreciseMouseCurrentPage(){
+        for(PageRenderer page : pages){
+            double bottomY = page.getBottomY();
+            if(MainWindow.mainScreen.mouseY < bottomY){
+                return page;
+            }
+        }
+        return null;
+    }
+    
     // Return null if there is no top page below the top of MainScreen
     public PageRenderer getFirstTopVisiblePage(){
         
@@ -217,17 +253,5 @@ public class Document{
             }
         }
         return null;
-    }
-    
-    public int getLastCursorOverPage(){
-        return currentPage;
-    }
-    public PageRenderer getLastCursorOverPageObject(){
-        return (getLastCursorOverPage() != -1) ? pages.get(getLastCursorOverPage()) : pages.get(0);
-    }
-    
-    public void setCurrentPage(int currentPage){
-        this.currentPage = currentPage;
-        MainWindow.footerBar.updateCurrentPage();
     }
 }

@@ -17,10 +17,10 @@ import javafx.util.Duration;
 
 public class ZoomOperator{
     
-    private Timeline timeline;
+    private final Timeline timeline;
     private boolean isPlaying = false;
     
-    private Pane pane;
+    private final Pane pane;
     
     public ScrollBar vScrollBar = new ScrollBar();
     public ScrollBar hScrollBar = new ScrollBar();

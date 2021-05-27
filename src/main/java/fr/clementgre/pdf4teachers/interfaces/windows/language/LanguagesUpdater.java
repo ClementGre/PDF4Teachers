@@ -58,8 +58,8 @@ public class LanguagesUpdater{
         });
     }
     
-    public class Language{
-        private HashMap<String, String> urls = new HashMap<>();
+    public static class Language{
+        private final HashMap<String, String> urls = new HashMap<>();
         private String release;
         private int version;
         private String name;
@@ -198,15 +198,9 @@ public class LanguagesUpdater{
                     }else if(indentLevel == 2 && (token == JsonToken.VALUE_STRING || token == JsonToken.VALUE_NUMBER_INT)){
                         assert currentLanguage != null;
                         switch(jsonField){
-                            case "release":
-                                currentLanguage.setRelease(jParser.getText());
-                                break;
-                            case "version":
-                                currentLanguage.setVersion(jParser.getIntValue());
-                                break;
-                            case "name":
-                                currentLanguage.setDisplayName(jParser.getText());
-                                break;
+                            case "release" -> currentLanguage.setRelease(jParser.getText());
+                            case "version" -> currentLanguage.setVersion(jParser.getIntValue());
+                            case "name" -> currentLanguage.setDisplayName(jParser.getText());
                         }
                     }else if(indentLevel == 3 && token == JsonToken.VALUE_STRING){
                         assert currentLanguage != null;
@@ -274,8 +268,7 @@ public class LanguagesUpdater{
         
         if(TR.getLanguagesConfig().containsKey(language.getName())){
             Object existing = TR.getLanguagesConfig().get(language.getName());
-            if(existing instanceof HashMap){
-                HashMap<?, ?> existingLanguage = (HashMap<?, ?>) existing;
+            if(existing instanceof HashMap<?, ?> existingLanguage){
                 return ((int) existingLanguage.get("version")) >= language.getVersion();
             }
         }

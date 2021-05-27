@@ -15,13 +15,13 @@ import org.controlsfx.control.ToggleSwitch;
 
 public class IntSetting extends Setting<Integer>{
     
-    private IntegerProperty value;
+    private final IntegerProperty value;
     
-    private int min;
-    private int max;
-    private int step;
-    private boolean disableInMinus1;
-    private boolean hasSlider;
+    private final int min;
+    private final int max;
+    private final int step;
+    private final boolean disableInMinus1;
+    private final boolean hasSlider;
     
     public IntSetting(Integer value, boolean hasEditPane, int min, int max, int step, boolean disableInMinus1, boolean hasSlider, String icon, String path, String title, String description){
         super(hasEditPane, icon, path, title, description);

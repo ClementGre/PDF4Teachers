@@ -118,7 +118,7 @@ public class TextTreeView extends TreeView<String>{
             menu.getItems().addAll(item3);
             
             item3.setOnAction(e -> {
-                for(PageRenderer page : MainWindow.mainScreen.document.pages){
+                for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
                     page.clearTextElements();
                 }
                 MainWindow.textTab.treeView.onFileSection.updateElementsList();
@@ -160,8 +160,7 @@ public class TextTreeView extends TreeView<String>{
             int totalIndex = 1;
             int i;
             for(i = 0; i < favoritesSection.getChildren().size(); i++){
-                if(favoritesSection.getChildren().get(i) instanceof TextTreeItem){
-                    TextTreeItem item = (TextTreeItem) favoritesSection.getChildren().get(i);
+                if(favoritesSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
@@ -170,8 +169,7 @@ public class TextTreeView extends TreeView<String>{
             totalIndex += i + 1;
             
             for(i = 0; i < lastsSection.getChildren().size(); i++){
-                if(lastsSection.getChildren().get(i) instanceof TextTreeItem){
-                    TextTreeItem item = (TextTreeItem) lastsSection.getChildren().get(i);
+                if(lastsSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
@@ -180,8 +178,7 @@ public class TextTreeView extends TreeView<String>{
             totalIndex += i + 1;
             
             for(i = 0; i < onFileSection.getChildren().size(); i++){
-                if(onFileSection.getChildren().get(i) instanceof TextTreeItem){
-                    TextTreeItem item = (TextTreeItem) onFileSection.getChildren().get(i);
+                if(onFileSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }

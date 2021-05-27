@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -34,11 +33,11 @@ import java.util.stream.Collectors;
 
 public class GradeElement extends Element{
     
-    private ScratchText text = new ScratchText();
+    private final ScratchText text = new ScratchText();
     
-    private StringProperty name;
-    private DoubleProperty value;
-    private DoubleProperty total;
+    private final StringProperty name;
+    private final DoubleProperty value;
+    private final DoubleProperty total;
     private int index;
     private String parentPath;
     private boolean alwaysVisible;
@@ -66,7 +65,7 @@ public class GradeElement extends Element{
         if(hasPage){
             if(getPage() == null){
                 if(MainWindow.mainScreen.hasDocument(false))
-                    this.pageNumber = MainWindow.mainScreen.document.pages.size() - 1;
+                    this.pageNumber = MainWindow.mainScreen.document.getPagesNumber() - 1;
                 else return;
             }
             setupGeneral(true, this.text);
@@ -256,7 +255,9 @@ public class GradeElement extends Element{
     
     @Override
     public void removedFromDocument(boolean silent){
-        MainWindow.gradeTab.treeView.removeElement(this);
+        super.removedFromDocument(silent);
+        System.out.println("removing element " + parentPath + " --> " + name);
+        MainWindow.gradeTab.treeView.removeElement(this, false);
     }
     // READER AND WRITERS
     
@@ -302,8 +303,8 @@ public class GradeElement extends Element{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data){
         GradeElement element = readYAMLDataAndGive(data, true);
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     public static GradeElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException{
@@ -323,8 +324,8 @@ public class GradeElement extends Element{
     public static void readDataAndCreate(DataInputStream reader) throws IOException{
         GradeElement element = readDataAndGive(reader, true);
         element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.pages.size() > element.getPageNumber())
-            MainWindow.mainScreen.document.pages.get(element.getPageNumber()).addElement(element, false);
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     // SPECIFIC METHODS

@@ -16,8 +16,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class VectorGridElement{
     
-    private SVGPath svgPath = new SVGPath();
-    private Scale svgScale = new Scale();
+    private final SVGPath svgPath = new SVGPath();
+    private final Scale svgScale = new Scale();
     private double lastDisplayWidth = 0;
     
     private VectorData vectorData;

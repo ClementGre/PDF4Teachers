@@ -88,7 +88,7 @@ public class GradeCopyGradeScaleDialog{
             File editFile = Edition.getEditFile(file);
             
             Element[] elementsArray = Edition.simpleLoad(editFile);
-            List<GradeElement> gradeElements = new ArrayList<>();
+            ArrayList<GradeElement> gradeElements = new ArrayList<>();
             List<Element> otherElements = new ArrayList<>();
             for(Element element : elementsArray){
                 if(element instanceof GradeElement) gradeElements.add((GradeElement) element);
@@ -120,7 +120,7 @@ public class GradeCopyGradeScaleDialog{
             for(GradeRating rating : ratings){
                 rating.alwaysVisible = copyLocations;
                 
-                GradeElement element = rating.getSamePathIn((ArrayList<GradeElement>) gradeElements);
+                GradeElement element = rating.getSamePathIn(gradeElements);
                 if(element != null){
                     if(copyLocations){
                         otherElements.add(rating.toGradeElement(-1));

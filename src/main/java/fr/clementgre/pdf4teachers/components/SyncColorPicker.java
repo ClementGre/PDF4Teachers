@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 public class SyncColorPicker extends ColorPicker{
     
-    private static ArrayList<ColorPicker> colorPickers = new ArrayList<>();
+    private static final ArrayList<ColorPicker> colorPickers = new ArrayList<>();
     private static ArrayList<Color> customColors = new ArrayList<>();
     
     public SyncColorPicker(){

@@ -39,9 +39,9 @@ public class GradeTab extends SideTab{
     public static HashMap<Integer, TiersFont> fontTiers = new HashMap<>();
     
     public ToggleButton lockGradeScale = new ToggleButton();
-    private Button settings = new Button();
-    private Button link = new Button();
-    private Button export = new Button();
+    private final Button settings = new Button();
+    private final Button link = new Button();
+    private final Button export = new Button();
     
     public GradeTab(){
         super("grades", SVGPathIcons.ON_TWENTY, 29, 0, new int[]{500, 440});
@@ -110,9 +110,7 @@ public class GradeTab extends SideTab{
     
     public GradeElement newGradeElementAuto(GradeTreeItem parent){
         
-        PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-        if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
-            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
         MainWindow.mainScreen.setSelected(null);
         
@@ -134,10 +132,9 @@ public class GradeTab extends SideTab{
     }
     
     public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
+        System.out.println("creating element " + parentPath + " --> " + name);
         
-        PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-        if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
-            page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
         if(update) MainWindow.mainScreen.setSelected(null);
         

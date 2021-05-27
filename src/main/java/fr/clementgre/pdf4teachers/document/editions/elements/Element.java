@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.WeakChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -59,14 +60,14 @@ public abstract class Element extends Region{
         //////////////////////////// EVENTS ///////////////////////////////////
 
         if(setupEvents){
-            MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.mainScreen.selectedProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
                 if(oldValue == this && newValue != this){
                     setBorder(null);
                     menu.hide();
                 }else if(oldValue != this && newValue == this){
                     setBorder(new Border(STROKE_DEFAULT));
                 }
-            });
+            }));
     
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
@@ -186,7 +187,10 @@ public abstract class Element extends Region{
     
     public abstract void addedToDocument(boolean silent);
     
-    public abstract void removedFromDocument(boolean silent);
+    public void removedFromDocument(boolean silent){
+        layoutXProperty().unbind();
+        layoutYProperty().unbind();
+    }
     
     public void delete(){
         if(getPage() != null){
@@ -196,7 +200,7 @@ public abstract class Element extends Region{
     }
     
     public void switchPage(int page){
-        getPage().switchElementPage(this, MainWindow.mainScreen.document.pages.get(page));
+        getPage().switchElementPage(this, MainWindow.mainScreen.document.getPage(page));
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
     }
@@ -204,6 +208,7 @@ public abstract class Element extends Region{
     public void centerOnCoordinatesY(){
         setRealY(getRealY() - getRealHeight() / 2);
     }
+    
     // READER AND WRITERS
     
     public abstract LinkedHashMap<Object, Object> getYAMLData();
@@ -253,8 +258,8 @@ public abstract class Element extends Region{
     
     public PageRenderer getPage(){
         if(MainWindow.mainScreen.document == null) return null;
-        if(MainWindow.mainScreen.document.pages.size() > pageNumber){
-            return MainWindow.mainScreen.document.pages.get(pageNumber);
+        if(MainWindow.mainScreen.document.getPagesNumber() > pageNumber){
+            return MainWindow.mainScreen.document.getPage(pageNumber);
         }
         return null;
     }

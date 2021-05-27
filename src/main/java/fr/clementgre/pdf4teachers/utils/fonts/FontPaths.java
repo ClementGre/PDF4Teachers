@@ -1,8 +1,6 @@
 package fr.clementgre.pdf4teachers.utils.fonts;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
-import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;

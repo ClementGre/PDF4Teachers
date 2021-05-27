@@ -1,10 +1,8 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.datasaving.settings.StringSetting;
 
 import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 

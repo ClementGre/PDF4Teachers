@@ -14,10 +14,10 @@ import java.io.FileNotFoundException;
 
 public class LanguagePane extends HBox{
     
-    private String shortName;
-    private String name;
+    private final String shortName;
+    private final String name;
     private int perMilleCompleted = -1;
-    private int version;
+    private final int version;
     private ImageView image = null;
     
     public LanguagePane(File txtFile){

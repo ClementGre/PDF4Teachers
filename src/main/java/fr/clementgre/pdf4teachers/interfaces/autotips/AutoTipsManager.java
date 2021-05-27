@@ -95,7 +95,7 @@ public class AutoTipsManager{
     private static final String galleryEditSourceDirs = "autoTips.galleryEditSourceDirs";
     
     
-    private static HashMap<String, AutoTipTooltip> uiTips = new HashMap<>();
+    private static final HashMap<String, AutoTipTooltip> uiTips = new HashMap<>();
     
     public static void setup(){
         Main.settings.allowAutoTips.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -107,7 +107,7 @@ public class AutoTipsManager{
         });
     }
     
-    private static Thread autoTipsThread = new Thread(() -> {
+    private static final Thread autoTipsThread = new Thread(() -> {
         while(true){
             try{
                 Thread.sleep(3 * 60 * 1000);

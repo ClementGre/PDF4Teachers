@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers;
 
-import fr.clementgre.pdf4teachers.document.render.display.PDFPagesRender;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
@@ -63,8 +62,6 @@ public class Main extends Application{
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
-    
-        PlatformUtils.startHeapDebug(1000);
         
         // Enable anti aliasing
         //System.setProperty("prism.lcdtext", "false");

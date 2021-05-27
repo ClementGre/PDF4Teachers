@@ -27,9 +27,9 @@ import java.util.regex.Pattern;
 @SuppressWarnings("unchecked")
 public class Edition{
     
-    private File file;
-    private File editFile;
-    private static BooleanProperty isSave = new SimpleBooleanProperty(true);
+    private final File file;
+    private final File editFile;
+    private static final BooleanProperty isSave = new SimpleBooleanProperty(true);
     
     public Document document;
     
@@ -44,7 +44,7 @@ public class Edition{
     // LOAD ORDER: Texts < Images < Vectors < Grades
     public void load(){
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.gradeTab.treeView.hardClear();
+        MainWindow.gradeTab.treeView.clearElements(true);
         
         try{
             if(!editFile.exists()) return; // File does not exist
@@ -93,7 +93,7 @@ public class Edition{
             
             // NON GRADES ELEMENTS
             int counter = 0;
-            for(PageRenderer page : document.pages){
+            for(PageRenderer page : document.getPages()){
                 ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
                 if(pageTextsData != null){
                     texts.put("page" + page.getPage(), pageTextsData);
@@ -192,7 +192,7 @@ public class Edition{
                     elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false));
             }
             
-            return elements.toArray(new Element[elements.size()]);
+            return elements.toArray(new Element[0]);
         }
     }
     
@@ -378,11 +378,11 @@ public class Edition{
     public void clearEdit(boolean confirm){
         if(!confirm || new ConfirmAlert(true, TR.tr("dialog.confirmation.clearEdit.header")).execute()){
             MainWindow.mainScreen.setSelected(null);
-            for(PageRenderer page : document.pages){
+            for(PageRenderer page : document.getPages()){
                 page.clearElements();
             }
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
-            MainWindow.gradeTab.treeView.clear();
+            MainWindow.gradeTab.treeView.clearElements(true);
             Edition.setUnsave();
         }
     }

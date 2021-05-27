@@ -68,15 +68,9 @@ public class ExportRenderer{
             
             // ROTATE PAGES ADAPT
             switch(page.getRotation()){
-                case 90:
-                    contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
-                    break;
-                case 180:
-                    contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
-                    break;
-                case 270:
-                    contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
-                    break;
+                case 90 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
+                case 180 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
+                case 270 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
             }
             
             for(Element element : elements){

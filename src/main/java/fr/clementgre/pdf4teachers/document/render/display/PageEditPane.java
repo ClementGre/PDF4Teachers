@@ -27,7 +27,7 @@ public class PageEditPane extends VBox{
     
     ContextMenu menu = new ContextMenu();
     
-    private PageRenderer page;
+    private final PageRenderer page;
     
     public PageEditPane(PageRenderer page){
         this.page = page;

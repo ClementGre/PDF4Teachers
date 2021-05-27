@@ -12,7 +12,7 @@ public class EmptyMenu extends Menu{
     
     private static final String NAME_STYLE = "-fx-padding: 0 7;";
     
-    private Label name;
+    private final Label name;
     
     public EmptyMenu(String text, MenuBar menuBar){
         super();

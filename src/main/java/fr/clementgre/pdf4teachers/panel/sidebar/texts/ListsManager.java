@@ -10,8 +10,6 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 
 import java.util.ArrayList;

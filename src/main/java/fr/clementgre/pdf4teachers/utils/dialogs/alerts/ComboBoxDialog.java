@@ -8,8 +8,8 @@ import javafx.scene.layout.VBox;
 
 public class ComboBoxDialog<T> extends CustomAlert{
     
-    private Label beforeText = new Label();
-    private ScaledComboBox<T> input = new ScaledComboBox<>();
+    private final Label beforeText = new Label();
+    private final ScaledComboBox<T> input = new ScaledComboBox<>();
     
     public ComboBoxDialog(String title, String header, String details){
         super(AlertType.CONFIRMATION, title, header, null);

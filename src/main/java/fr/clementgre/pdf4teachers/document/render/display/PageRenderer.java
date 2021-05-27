@@ -6,22 +6,21 @@ import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.event.EventTarget;
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
+import javafx.beans.property.Property;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -39,7 +38,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import java.awt.dnd.DragSourceDragEvent;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,8 +55,8 @@ public class PageRenderer extends Pane{
     private double mouseX = 0;
     private double mouseY = 0;
     
-    private ProgressBar loader = new ProgressBar();
-    private ContextMenu menu = new ContextMenu();
+    private final ProgressBar loader = new ProgressBar();
+    private final ContextMenu menu = new ContextMenu();
     
     private int lastShowStatus = 1; // default status is hide (1)
     private double renderedZoomFactor;
@@ -70,13 +69,48 @@ public class PageRenderer extends Pane{
     private double shiftY = 0;
     private double defaultTranslateY = 0;
     
+    public static ArrayList<WeakReference<PageRenderer>> debug_instances = new ArrayList<>();
+    
+    private InvalidationListener mainScreenZoomListener = (observable) -> {
+        if(isEditPagesMode()) setCursor(Cursor.MOVE);
+        else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+        else setCursor(Cursor.DEFAULT);
+    };
+    
+    private InvalidationListener translateYListener = e -> updateShowStatus();
+    
+    private EventHandler<RotateEvent> rotateEvent = e -> {
+        double rotate = e.getTotalAngle()*2;
+        if(rotate > 85) rotate = 90;
+        else if(rotate < -85) rotate = -90;
+        else if(rotate > -3 && rotate < 3) rotate = 0;
+        setVisibleRotate(rotate, false);
+    };
+    private EventHandler<RotateEvent> rotateFinishedEvent = e -> {
+        double rotate = e.getTotalAngle()*2;
+        if(rotate < -45){
+            setVisibleRotate(-90, true, () -> {
+                MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
+                setRotate(0);
+            });
+        }else if(rotate > 45){
+            setVisibleRotate(90, true, () -> {
+                MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
+                setRotate(0);
+            });
+        }else{
+            setVisibleRotate(0, true);
+        }
+    };
+    
     public PageRenderer(int page){
+        //debug_instances.add(new WeakReference<>(this));
         this.page = page;
         setup();
     }
     
     private void setup(){
-        setStyle("-fx-background-color: white;");
+        setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
         
         // LOADER
         loader.setPrefWidth(300);
@@ -99,19 +133,13 @@ public class PageRenderer extends Pane{
             mouseY = e.getY();
         });
         
-        translateYProperty().addListener(e -> {
-            updateShowStatus();
-        });
+        translateYProperty().addListener(translateYListener);
     
         //////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////// ZOOM //////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
-        MainWindow.mainScreen.zoomProperty().addListener((observable, oldValue, newValue) -> {
-            if(isEditPagesMode()) setCursor(Cursor.MOVE);
-            else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
-            else setCursor(Cursor.DEFAULT);
-        });
+        MainWindow.mainScreen.zoomProperty().addListener(new WeakInvalidationListener(mainScreenZoomListener));
         
         //////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////// DRAGGING ////////////////////////////////////////
@@ -241,29 +269,8 @@ public class PageRenderer extends Pane{
         ///////////////////////////////////////// ROTATE /////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
-        setEventHandler(RotateEvent.ROTATE, e -> {
-            double rotate = e.getTotalAngle()*2;
-            if(rotate > 85) rotate = 90;
-            else if(rotate < -85) rotate = -90;
-            else if(rotate > -3 && rotate < 3) rotate = 0;
-            setVisibleRotate(rotate, false);
-        });
-        setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
-            double rotate = e.getTotalAngle()*2;
-            if(rotate < -45){
-                setVisibleRotate(-90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
-                    setRotate(0);
-                });
-            }else if(rotate > 45){
-                setVisibleRotate(90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
-                    setRotate(0);
-                });
-            }else{
-                setVisibleRotate(0, true);
-            }
-        });
+        setEventHandler(RotateEvent.ROTATE, rotateEvent);
+        setEventHandler(RotateEvent.ROTATION_FINISHED, rotateFinishedEvent);
         
     }
     public static boolean isEditPagesMode(){
@@ -358,7 +365,7 @@ public class PageRenderer extends Pane{
         totalHeight = (int) (totalHeight + getHeight() + PAGE_VERTICAL_MARGIN);
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
-            MainWindow.mainScreen.document.pages.get(page + 1).updatePosition(totalHeight, animated);
+            MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, animated);
         }else{
             MainWindow.mainScreen.updateSize(totalHeight);
         }
@@ -407,17 +414,13 @@ public class PageRenderer extends Pane{
     
     public void remove(){
         switchVisibleStatus(2);
-        getChildren().remove(loader);
+        for(Node child : getChildren()){
+            if(child instanceof Element e) e.removedFromDocument(true);
+        }
+        getChildren().clear();
         
-        setOnMouseEntered(null);
-        setOnMouseExited(null);
-        
-        setOnMousePressed(null);
-        setOnMouseReleased(null);
-        setOnMouseClicked(null);
-        setOnMouseMoved(null);
-        setOnMouseDragged(null);
-        
+        loader.translateXProperty().unbind();
+        loader.translateYProperty().unbind();
         
         setBackground(null);
         setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));

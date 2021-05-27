@@ -9,8 +9,8 @@ import javafx.scene.layout.VBox;
 
 public class LoadingAlert extends CustomAlert{
     
-    private Label label = new Label();
-    private ProgressBar loadingBar = new ProgressBar();
+    private final Label label = new Label();
+    private final ProgressBar loadingBar = new ProgressBar();
     
     private String currentTaskText = "";
     private double progress = -1;

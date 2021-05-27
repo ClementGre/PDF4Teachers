@@ -47,8 +47,8 @@ import java.util.stream.Collectors;
 
 public class PDFPagesEditor{
     
-    private PDDocument document;
-    private File file;
+    private final PDDocument document;
+    private final File file;
     
     public PDFPagesEditor(PDDocument document, File file){
         this.document = document;
@@ -77,14 +77,14 @@ public class PDFPagesEditor{
         Document document = MainWindow.mainScreen.document;
         
         // remove page
-        document.pages.remove(page);
-        document.pages.add(page.getPage() + index, page);
+        document.getPages().remove(page);
+        document.getPages().add(page.getPage() + index, page);
         
         // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
-        document.pages.get(0).updatePosition(30, true);
+        document.getPages().get(0).updatePosition(30, true);
         document.updateShowsStatus();
         
         // update current page
@@ -177,8 +177,7 @@ public class PDFPagesEditor{
                 
                 // remove page elements
                 while(page.getElements().size() != 0){
-                    if(page.getElements().get(0) instanceof GradeElement){
-                        GradeElement grade = (GradeElement) page.getElements().get(0);
+                    if(page.getElements().get(0) instanceof GradeElement grade){
                         grade.setValue(-1);
                         grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
                     }else{
@@ -189,14 +188,14 @@ public class PDFPagesEditor{
                 // remove page
                 page.remove();
                 document.totalPages--;
-                document.pages.remove(pageNumber);
+                document.getPages().remove(pageNumber);
                 MainWindow.mainScreen.pane.getChildren().remove(page);
                 
                 // Update pages of all pages
-                for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+                for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
                 
                 // update coordinates of the pages
-                document.pages.get(0).updatePosition(30, true);
+                document.getPage(0).updatePosition(30, true);
                 document.updateShowsStatus();
                 
                 // update current page
@@ -222,15 +221,15 @@ public class PDFPagesEditor{
         Document document = MainWindow.mainScreen.document;
         
         // add page
-        document.pages.add(index, page);
+        document.getPages().add(index, page);
         MainWindow.mainScreen.addPage(page);
         document.totalPages++;
         
         // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.pages.get(i).setPage(i);
+        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
-        document.pages.get(0).updatePosition(30, true);
+        document.getPage(0).updatePosition(30, true);
         document.updateShowsStatus();
         
         // update current page
@@ -267,12 +266,12 @@ public class PDFPagesEditor{
                 }
                 
                 // add page
-                document.pages.add(index, page);
+                document.getPages().add(index, page);
                 MainWindow.mainScreen.addPage(page);
                 document.totalPages++;
                 
                 // Update pages of all pages
-                for(int k = 0; k < document.totalPages; k++) document.pages.get(k).setPage(k);
+                for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
             }
             
             try{
@@ -282,7 +281,7 @@ public class PDFPagesEditor{
             }
             
             // update coordinates of the pages
-            document.pages.get(0).updatePosition(30, true);
+            document.getPage(0).updatePosition(30, true);
             document.updateShowsStatus();
             
             // update current page
@@ -327,12 +326,12 @@ public class PDFPagesEditor{
                     }
                     
                     // add page
-                    document.pages.add(index, page);
+                    document.getPages().add(index, page);
                     MainWindow.mainScreen.addPage(page);
                     document.totalPages++;
                     
                     // Update pages of all pages
-                    for(int k = 0; k < document.totalPages; k++) document.pages.get(k).setPage(k);
+                    for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
                 }
                 
                 try{
@@ -342,7 +341,7 @@ public class PDFPagesEditor{
                 }
                 
                 // update coordinates of the pages
-                document.pages.get(0).updatePosition(30, true);
+                document.getPage(0).updatePosition(30, true);
                 document.updateShowsStatus();
                 
                 // update current page
@@ -400,16 +399,15 @@ public class PDFPagesEditor{
     public void capture(int pageIndex, PositionDimensions dimensions){
         Image pageImage;
         List<Image> images = new ArrayList<>();
+        PageRenderer page;
         if(pageIndex == -1){
-            PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-            pageImage = capturePagePreview(page, null);
-            images.add(capturePagePreview(page, dimensions));
+            page = MainWindow.mainScreen.document.getPage(0);
         }else{
-            PageRenderer page = MainWindow.mainScreen.document.pages.get(pageIndex);
-            pageImage = capturePagePreview(page, null);
-            images.add(capturePagePreview(page, dimensions));
+            page = MainWindow.mainScreen.document.getPage(pageIndex);
         }
-        
+        pageImage = capturePagePreview(page, null);
+        images.add(capturePagePreview(page, dimensions));
+    
         List<String> definitions = ConvertWindow.definitions;
         definitions.set(0, (pageImage.getWidth() * pageImage.getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
         
@@ -435,7 +433,7 @@ public class PDFPagesEditor{
                 @Override
                 public List<Integer> prepare(boolean recursive){
                     if(recursive){
-                        return MainWindow.mainScreen.document.pages.stream().map(PageRenderer::getPage).collect(Collectors.toList());
+                        return MainWindow.mainScreen.document.getPages().stream().map(PageRenderer::getPage).collect(Collectors.toList());
                     }else{
                         return Collections.singletonList(pageIndex);
                     }
@@ -446,7 +444,7 @@ public class PDFPagesEditor{
                     File file;
                     if(!recursive){
                         if(buttonPos == ButtonPosition.DEFAULT){
-                            file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                            file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.getPagesNumber() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
                             if(file == null){
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                             }
@@ -460,7 +458,7 @@ public class PDFPagesEditor{
                             if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }
-                        file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.pages.size() + ").png");
+                        file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.getPagesNumber() + ").png");
                     }
                     if(file.exists() && recursive){
                         AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
@@ -480,7 +478,7 @@ public class PDFPagesEditor{
                 
                 @Override
                 public TwoStepListAction.ProcessResult completeData(Map.Entry<File, Integer> data, boolean recursive){
-                    PageRenderer page = MainWindow.mainScreen.document.pages.get(data.getValue());
+                    PageRenderer page = MainWindow.mainScreen.document.getPage(data.getValue());
                     try{
                         if(buttonPos == ButtonPosition.DEFAULT){
                             BufferedImage image = capturePage(page, dimensions, definition);
@@ -495,7 +493,7 @@ public class PDFPagesEditor{
                                 else return TwoStepListAction.ProcessResult.SKIPPED;
                             }
                         }else{ // clipboard copy
-                            Image image = capturePageInFXImage(page, dimensions, definition);;
+                            Image image = capturePageInFXImage(page, dimensions, definition);
                             PlatformUtils.runAndWait(() -> {
                                 final Clipboard clipboard = Clipboard.getSystemClipboard();
                                 final ClipboardContent content = new ClipboardContent();
@@ -588,7 +586,7 @@ public class PDFPagesEditor{
             int subWidth = (int) (dimensions.getWidth() * factor);
             int subHeight = (int) (dimensions.getHeight() * factor);
             return new WritableImage(fxImage.getPixelReader(),
-                    subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
+                    subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight);
         }
     }
     

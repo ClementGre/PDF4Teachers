@@ -47,16 +47,16 @@ import java.util.regex.Pattern;
 
 public class TextTreeItem extends TreeItem<String>{
     
-    private ObjectProperty<Font> font = new SimpleObjectProperty<>();
+    private final ObjectProperty<Font> font = new SimpleObjectProperty<>();
     private String text;
-    private ObjectProperty<Color> color = new SimpleObjectProperty<>();
+    private final ObjectProperty<Color> color = new SimpleObjectProperty<>();
     
     private int type;
     private long uses;
     private long creationDate;
     
     // Graphics items
-    private HBox spacer = new HBox();
+    private final HBox spacer = new HBox();
     public KeyableHBox pane = new KeyableHBox();
     public Pane namePane = new Pane();
     public ImageView linkImage = ImageUtils.buildImage(getClass().getResource("/img/TextTab/link.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust);
@@ -66,11 +66,11 @@ public class TextTreeItem extends TreeItem<String>{
     
     // Link
     private TextElement core = null;
-    private ChangeListener<String> textChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+    private final ChangeListener<String> textChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
         setText(newValue);
         updateGraphic(true);
     };
-    private ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
+    private final ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
         setColor((Color) newValue);
     };
     
@@ -316,8 +316,7 @@ public class TextTreeItem extends TreeItem<String>{
     @Override
     public boolean equals(Object v){
         
-        if(v instanceof TextTreeItem){
-            TextTreeItem element = (TextTreeItem) v;
+        if(v instanceof TextTreeItem element){
             if(element.type == type && element.text.equals(text) && element.color.hashCode() == color.hashCode()){
                 if(element.font.get().getStyle().equals(font.get().getStyle()) && element.font.get().getSize() == font.get().getSize() && element.getFont().getFamily().equals(font.get().getFamily())){
                     return true;
@@ -390,9 +389,7 @@ public class TextTreeItem extends TreeItem<String>{
     public void addToDocument(boolean link){
         
         if(MainWindow.mainScreen.hasDocument(false)){
-            PageRenderer page = MainWindow.mainScreen.document.pages.get(0);
-            if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1)
-                page = MainWindow.mainScreen.document.pages.get(MainWindow.mainScreen.document.getLastCursorOverPage());
+            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             
             int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
             int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());

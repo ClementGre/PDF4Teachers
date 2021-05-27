@@ -7,22 +7,12 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.style.Style;
-import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.io.File;
 
@@ -77,7 +67,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane>{
     
     }
     
-    class ExportPane extends Tab{
+    static class ExportPane extends Tab{
         
         public int type;
         GradeExportWindow window;
