@@ -16,7 +16,9 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.WeakChangeListener;
 import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -53,6 +55,8 @@ public class GradeTreeItem extends TreeItem<String>{
     
     private ContextMenu pageContextMenu = null;
     
+    private boolean deleted = false;
+    
     // EVENTS
     private EventHandler<MouseEvent> mouseEnteredEvent;
     private EventHandler<MouseEvent> mouseExitedEvent;
@@ -68,6 +72,8 @@ public class GradeTreeItem extends TreeItem<String>{
     public void setupEvents(){
         
         selectedListener = (observable, oldValue, newValue) -> {
+            if(isDeleted()) return;
+            
             if(newValue){ // Est sélectionné
                 newGrade.setVisible(true);
                 //newGrade.setStyle("-fx-background-color: #0078d7");
@@ -88,6 +94,7 @@ public class GradeTreeItem extends TreeItem<String>{
                     }else{
                         pane.getChildren().addAll(name, spacer, gradeField, slash, total, newGrade);
                         Platform.runLater(() -> {
+                            if(isDeleted()) return;
                             gradeField.requestFocus();
                         });
                     }
@@ -95,11 +102,13 @@ public class GradeTreeItem extends TreeItem<String>{
                     if(hasSubGrade()){
                         pane.getChildren().addAll(nameField, spacer, value, slash, total, newGrade);
                         Platform.runLater(() -> {
+                            if(isDeleted()) return;
                             nameField.requestFocus();
                         });
                     }else{
                         pane.getChildren().addAll(nameField, spacer, gradeField, slash, totalField, newGrade);
                         Platform.runLater(() -> {
+                            if(isDeleted()) return;
                             if(name.getText().contains(TR.tr("gradeTab.gradeDefaultName"))) nameField.requestFocus();
                             else if(total.getText().equals("0")) totalField.requestFocus();
                             else gradeField.requestFocus();
@@ -109,10 +118,8 @@ public class GradeTreeItem extends TreeItem<String>{
                 
             }else if(oldValue){ // n'est plus selectionné
                 newGrade.setVisible(false);
-                newGrade.setStyle(null);
-                
-                pane.getChildren().clear();
-                pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
+                //newGrade.setStyle(null);
+                pane.getChildren().setAll(name, spacer, value, slash, total, newGrade);
             }
         };
         
@@ -300,8 +307,15 @@ public class GradeTreeItem extends TreeItem<String>{
     }
     
     public void updateCell(TreeCell<String> cell){
-        if(cell == null || core == null) return;
+        if(cell == null) return;
+        if(core == null){
+            System.err.println("Error: trying to update a GradeTreeItem which should be deleted (core == null).");
+            return;
+        }
+    
+        // Remove listener on old cell
         if(this.cell != null) this.cell.selectedProperty().removeListener(selectedListener);
+        
         this.cell = cell;
         cell.setGraphic(pane);
         cell.setStyle(null);
@@ -509,24 +523,29 @@ public class GradeTreeItem extends TreeItem<String>{
     }
     
     public void delete(boolean removePageElement){
-        this.cell.selectedProperty().removeListener(selectedListener);
+        deleted = true;
+        
+        if(hasSubGrade()) deleteChildren();
+        if(removePageElement) getCore().delete();
+        
+        // Unbinds to prevent leaks
+        core = null;
+        cell.selectedProperty().removeListener(selectedListener);
+        selectedListener = null;
         cell.setContextMenu(null);
         cell.setOnMouseEntered(null);
         cell.setOnMouseExited(null);
         newGrade.disableProperty().unbind();
+        newGrade.setOnAction(null);
         value.textProperty().unbind();
         name.textProperty().unbind();
         total.textProperty().unbind();
-        gradeField.textProperty().unbind();
-        nameField.textProperty().unbind();
-        totalField.textProperty().unbind();
-        
-        
-        if(removePageElement) getCore().delete();
-        core = null;
-        if(hasSubGrade()) deleteChildren(removePageElement);
+        nameField = null;
+        totalField = null;
+        gradeField = null;
     }
-    public void deleteChildren(boolean removePageElement){
+    // This method delete add children of this TreeItem, including pageElements
+    public void deleteChildren(){
         while(hasSubGrade()){
             ((GradeTreeItem) getChildren().get(0)).delete(true);
         }
@@ -658,4 +677,8 @@ public class GradeTreeItem extends TreeItem<String>{
         return field;
     }
     
+    
+    public boolean isDeleted(){
+        return deleted;
+    }
 }

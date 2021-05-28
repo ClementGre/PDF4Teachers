@@ -76,7 +76,7 @@ public class PDFPagesEditor{
         
         Document document = MainWindow.mainScreen.document;
         
-        // remove page
+        // move page
         document.getPages().remove(page);
         document.getPages().add(page.getPage() + index, page);
         
@@ -94,6 +94,7 @@ public class PDFPagesEditor{
     public void rotateLeftPage(PageRenderer page, boolean animated){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() - 90);
         try{
+            document.setAllSecurityToBeRemoved(true);
             document.save(file);
         }catch(IOException e){
             e.printStackTrace();
@@ -114,11 +115,11 @@ public class PDFPagesEditor{
             AtomicBoolean renderFinished = new AtomicBoolean(false);
             timeline.setOnFinished((e) -> {
                 timelineFinished.set(true);
-                if(renderFinished.get()) endRotateAnimation(page);
+                if(renderFinished.get()) endRotateAnimation(page, timeline);
             });
             page.updateRenderAsync(() -> {
                 renderFinished.set(true);
-                if(timelineFinished.get()) endRotateAnimation(page);
+                if(timelineFinished.get()) endRotateAnimation(page, timeline);
             }, false);
         }
         
@@ -128,6 +129,7 @@ public class PDFPagesEditor{
     public void rotateRightPage(PageRenderer page, boolean animated){
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + 90);
         try{
+            document.setAllSecurityToBeRemoved(true);
             document.save(file);
         }catch(IOException e){
             e.printStackTrace();
@@ -147,15 +149,17 @@ public class PDFPagesEditor{
             AtomicBoolean renderFinished = new AtomicBoolean(false);
             timeline.setOnFinished((e) -> {
                 timelineFinished.set(true);
-                if(renderFinished.get()) endRotateAnimation(page);
+                if(renderFinished.get()) endRotateAnimation(page, timeline);
             });
             page.updateRenderAsync(() -> {
                 renderFinished.set(true);
-                if(timelineFinished.get()) endRotateAnimation(page);
+                if(timelineFinished.get()) endRotateAnimation(page, timeline);
             }, false);
         }
     }
-    private void endRotateAnimation(PageRenderer page){
+    private void endRotateAnimation(PageRenderer page, Timeline timeline){
+        timeline.setOnFinished(null);
+        timeline.stop();
         page.setRotate(0);
         page.updatePosition((int) page.getTranslateY(), true);
     }
@@ -168,6 +172,7 @@ public class PDFPagesEditor{
             if(alert.execute()){
                 document.removePage(page.getPage());
                 try{
+                    document.setAllSecurityToBeRemoved(true);
                     document.save(file);
                 }catch(IOException e){
                     e.printStackTrace();
@@ -213,6 +218,7 @@ public class PDFPagesEditor{
         
         addDocumentPage(index, docPage);
         try{
+            document.setAllSecurityToBeRemoved(true);
             document.save(file);
         }catch(IOException e){
             e.printStackTrace();
@@ -260,6 +266,7 @@ public class PDFPagesEditor{
                 moveDocumentPage(this.document.getNumberOfPages() - 1, index);
                 
                 try{
+                    this.document.setAllSecurityToBeRemoved(true);
                     this.document.save(this.file);
                 }catch(IOException e){
                     e.printStackTrace();
@@ -320,6 +327,7 @@ public class PDFPagesEditor{
                     moveDocumentPage(this.document.getNumberOfPages() - 1, index);
                     
                     try{
+                        this.document.setAllSecurityToBeRemoved(true);
                         this.document.save(this.file);
                     }catch(IOException e){
                         e.printStackTrace();

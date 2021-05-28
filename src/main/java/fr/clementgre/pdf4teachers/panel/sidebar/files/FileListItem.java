@@ -33,7 +33,6 @@ public class FileListItem extends ListCell<File>{
     ImageView check = new ImageView();
     ImageView checkLow = new ImageView();
     
-    ContextMenu menu;
     EventHandler<MouseEvent> onClick = e -> {
         if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2)
             MainWindow.mainScreen.openFile(getItem());

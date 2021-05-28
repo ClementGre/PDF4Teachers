@@ -201,8 +201,7 @@ public class GradeElement extends Element{
         item3.setOnAction(e -> {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
-                delete();
-                MainWindow.gradeTab.treeView.generateRoot(true);
+                MainWindow.gradeTab.treeView.clearElements(true);
             }else delete();
         });
         item4.setOnAction(e -> {
@@ -256,8 +255,7 @@ public class GradeElement extends Element{
     @Override
     public void removedFromDocument(boolean silent){
         super.removedFromDocument(silent);
-        System.out.println("removing element " + parentPath + " --> " + name);
-        MainWindow.gradeTab.treeView.removeElement(this, false);
+        MainWindow.gradeTab.treeView.removeElement(this);
     }
     // READER AND WRITERS
     

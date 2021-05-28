@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.WeakChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
@@ -48,6 +49,15 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
+    private final ChangeListener<Element> mainScreenSelectedListener = (observable, oldValue, newValue) -> {
+        if(oldValue == this && newValue != this){
+            setBorder(null);
+            menu.hide();
+        }else if(oldValue != this && newValue == this){
+            setBorder(new Border(STROKE_DEFAULT));
+        }
+    };
+    
     protected void setupGeneral(boolean setupEvents, Node... components){
         getChildren().addAll(components);
         
@@ -60,14 +70,7 @@ public abstract class Element extends Region{
         //////////////////////////// EVENTS ///////////////////////////////////
 
         if(setupEvents){
-            MainWindow.mainScreen.selectedProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
-                if(oldValue == this && newValue != this){
-                    setBorder(null);
-                    menu.hide();
-                }else if(oldValue != this && newValue == this){
-                    setBorder(new Border(STROKE_DEFAULT));
-                }
-            }));
+            MainWindow.mainScreen.selectedProperty().addListener(mainScreenSelectedListener);
     
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
@@ -190,6 +193,7 @@ public abstract class Element extends Region{
     public void removedFromDocument(boolean silent){
         layoutXProperty().unbind();
         layoutYProperty().unbind();
+        MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);
     }
     
     public void delete(){

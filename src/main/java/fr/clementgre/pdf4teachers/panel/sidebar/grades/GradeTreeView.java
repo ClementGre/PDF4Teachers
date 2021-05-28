@@ -62,51 +62,59 @@ public class GradeTreeView extends TreeView<String>{
                 };
             }
         });
+        
     }
     
     // Clear elements in tree and in page
     public void clearElements(boolean regenerateRoot){
         if(getRoot() != null){
-            ((GradeTreeItem) getRoot()).delete(true);
+            getRootTreeItem().delete(true);
         }
         if(regenerateRoot) generateRoot(false);
+        else setRoot(null);
     }
     
-    public void generateRoot(boolean update){
+    private void generateRoot(boolean update){
         MainWindow.gradeTab.newGradeElement(TR.tr("gradeTab.gradeDefaultName.total"), -1, 0, 0, "", update);
     }
     
     public void addElement(GradeElement element){
-        System.out.println("Adding tree element " + element.getParentPath() + " --> " + element.getName());
-        
-        if(element.getParentPath().isEmpty()){
-            // ELEMENT IS ROOT
-            if(getRoot() != null) ((GradeTreeItem) getRoot()).getCore().delete();
+        if(element.getParentPath().isEmpty()){ // ROOT
+            // If is root, we need to delete the old root.
+            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true);
+            
             GradeTreeItem item = element.toGradeTreeItem();
             item.setExpanded(true);
             setRoot(item);
             getSelectionModel().select(getRoot());
-        }else{
-            // OTHER
+            
+        }else{ // CHILD
             GradeTreeItem treeElement = element.toGradeTreeItem();
             addToList(getGradeTreeItemParent(element), treeElement);
             treeElement.setExpanded(true);
         }
     }
     
-    public void removeElement(GradeElement element, boolean removePageElement){
-        System.out.println("Removing tree element " + element.getParentPath() + " --> " + element.getName());
+    // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> GradeTreeView (We cut here with the isDeleted())
+    // When the deletion start from a GradeElement : GradeElement --> GradeTreeView --> GradeTreeItem (We cut here with the removePageElement arg)
+    // GradeElement must always be before this in the stack. That's why this method is only called by GradeElement
+    public void removeElement(GradeElement element){
         
-        if(element.getParentPath().isEmpty()){
-            // ELEMENT IS ROOT
-            ((GradeTreeItem) getRoot()).delete(removePageElement);
+        if(element.getParentPath().isEmpty()){ // ROOT
+            
+            // Delete only if it wasn't already deleted (See comment above).
+            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false);
+            // Remove the item from its parent
             setRoot(null);
-        }else{
-            // OTHER
+            
+        }else{ // CHILD
+            
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
+            // Delete only if it wasn't already deleted (See comment above).
+            if(!treeElement.isDeleted()) treeElement.delete(false);
             
-            treeElement.delete(removePageElement);
+            // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
             parent.reIndexChildren();
@@ -118,13 +126,13 @@ public class GradeTreeView extends TreeView<String>{
         
         // ELEMENT IS SUB-ROOT
         String[] path = StringUtils.cleanArray(element.getParentPath().split(Pattern.quote("\\")));
-        if(path[0].equals(((GradeTreeItem) getRoot()).getCore().getName()) && path.length == 1){
+        if(path[0].equals(getRootTreeItem().getCore().getName()) && path.length == 1){
             return (GradeTreeItem) getRoot();
         }
         
         // OTHER
         path = StringUtils.cleanArray(element.getParentPath()
-                .replaceFirst(Pattern.quote(((GradeTreeItem) getRoot()).getCore().getName()), "")
+                .replaceFirst(Pattern.quote(getRootTreeItem().getCore().getName()), "")
                 .split(Pattern.quote("\\")));
         
         GradeTreeItem parent = (GradeTreeItem) getRoot();
@@ -334,5 +342,10 @@ public class GradeTreeView extends TreeView<String>{
                 item.makeSum(false);
             }
         }
+    }
+    
+    
+    public GradeTreeItem getRootTreeItem(){
+        return (GradeTreeItem) getRoot();
     }
 }

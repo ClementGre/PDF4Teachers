@@ -44,7 +44,7 @@ public class Edition{
     // LOAD ORDER: Texts < Images < Vectors < Grades
     public void load(){
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.gradeTab.treeView.clearElements(true);
+        MainWindow.gradeTab.treeView.clearElements(true); // Generate root in case of no root in edition
         
         try{
             if(!editFile.exists()) return; // File does not exist

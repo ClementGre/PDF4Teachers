@@ -151,7 +151,6 @@ public class PDFPagesRender{
     
     public void close(){
         try{
-            System.out.println("document closed");
             document.close();
         }catch(IOException e){
             e.printStackTrace();

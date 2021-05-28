@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.beans.value.WeakChangeListener;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -27,7 +28,7 @@ public class PageEditPane extends VBox{
     
     ContextMenu menu = new ContextMenu();
     
-    private final PageRenderer page;
+    private PageRenderer page;
     
     public PageEditPane(PageRenderer page){
         this.page = page;
@@ -60,9 +61,9 @@ public class PageEditPane extends VBox{
         
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
     
-        MainWindow.mainScreen.zoomProperty().addListener((observable, oldValue, newValue) -> {
+        MainWindow.mainScreen.zoomProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
             updatePosition();
-        });
+        }));
         
         updateVisibility();
         updatePosition();
@@ -154,6 +155,8 @@ public class PageEditPane extends VBox{
     }
     
     public void updatePosition(){
+        if(this.page == null) return;
+        
         int buttonNumber = 7;
         double factor = StringUtils.clamp(.5 / MainWindow.mainScreen.getZoomFactor(), .5, 6);
         double height = 30 * buttonNumber;
@@ -164,6 +167,19 @@ public class PageEditPane extends VBox{
         
         setScaleX(factor);
         setScaleY(factor);
+    }
+    
+    public void delete(){
+        this.page = null;
+        
+        ascendButton.setOnAction(null);
+        descendButton.setOnAction(null);
+        rotateLeftButton.setOnAction(null);
+        rotateRightButton.setOnAction(null);
+        deleteButton.setOnAction(null);
+        newButton.setOnMouseClicked(null);
+        captureButton.setOnMouseClicked(null);
+        
     }
     
     public void updateVisibility(){

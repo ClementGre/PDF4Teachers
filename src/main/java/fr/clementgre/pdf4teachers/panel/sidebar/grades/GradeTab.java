@@ -131,10 +131,9 @@ public class GradeTab extends SideTab{
         return current;
     }
     
-    public GradeElement newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
-        System.out.println("creating element " + parentPath + " --> " + name);
-        
+    public void newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+        if(page == null) return;
         
         if(update) MainWindow.mainScreen.setSelected(null);
         
@@ -144,8 +143,7 @@ public class GradeTab extends SideTab{
         page.addElement(current, update);
         current.centerOnCoordinatesY();
         if(update) MainWindow.mainScreen.setSelected(current);
-        
-        return current;
+    
     }
     
     public void updateElementsFont(){

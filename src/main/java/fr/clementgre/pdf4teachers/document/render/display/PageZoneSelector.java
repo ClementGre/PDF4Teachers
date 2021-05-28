@@ -121,6 +121,7 @@ public class PageZoneSelector extends Pane{
         setOnMouseDragged(null);
         setOnMouseReleased(null);
         setOnKeyPressed(null);
+        setBackground(null);
         selectionZone.setVisible(false);
         setShow(false);
     }

@@ -19,7 +19,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
 import javafx.beans.WeakInvalidationListener;
-import javafx.beans.property.Property;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -37,8 +36,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +65,6 @@ public class PageRenderer extends Pane{
     
     private double shiftY = 0;
     private double defaultTranslateY = 0;
-    
-    public static ArrayList<WeakReference<PageRenderer>> debug_instances = new ArrayList<>();
     
     private InvalidationListener mainScreenZoomListener = (observable) -> {
         if(isEditPagesMode()) setCursor(Cursor.MOVE);
@@ -104,7 +99,6 @@ public class PageRenderer extends Pane{
     };
     
     public PageRenderer(int page){
-        //debug_instances.add(new WeakReference<>(this));
         this.page = page;
         setup();
     }
@@ -195,8 +189,7 @@ public class PageRenderer extends Pane{
             
         });
         setOnMouseExited(e -> {
-            if(pageEditPane == null) pageEditPane = new PageEditPane(this);
-            pageEditPane.setVisible(false);
+            if(pageEditPane != null) pageEditPane.setVisible(false);
         });
     
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -290,7 +283,11 @@ public class PageRenderer extends Pane{
                     new KeyFrame(Duration.millis(200 * durationFactor), new KeyValue(rotateProperty(), rotate))
             );
             timeline.play();
-            if(finished != null) timeline.setOnFinished(e -> finished.call());
+            if(finished != null) timeline.setOnFinished(e -> {
+                timeline.stop();
+                timeline.setOnFinished(null);
+                finished.call();
+            });
         }else{
             setRotate(rotate);
             if(finished != null) finished.call();
@@ -419,11 +416,15 @@ public class PageRenderer extends Pane{
         }
         getChildren().clear();
         
+        pageCursorRecord = null;
+        if(pageEditPane != null){
+            pageEditPane.delete();
+            pageEditPane = null;
+        }
         loader.translateXProperty().unbind();
         loader.translateYProperty().unbind();
         
         setBackground(null);
-        setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
     }
     
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
