@@ -1,13 +1,19 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 
 import java.io.File;
@@ -21,37 +27,54 @@ public class ImageGridElement extends ImageLambdaData{
     
     private ImageData linkedImageData;
     
-    public ImageGridElement(String imageId){
+    // MENU
+    private final ContextMenu menu = new ContextMenu();
+    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
+    private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
+    private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
+    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
+    
+    public ImageGridElement(String imageId, ImageGridView gridView){
         super(imageId);
         loadExifData();
-        setup();
+        setup(gridView);
     }
-    public ImageGridElement(ImageData linkedImageData){
+    public ImageGridElement(ImageData linkedImageData, ImageGridView gridView){
         super(linkedImageData.getImageId());
         this.linkedImageData = linkedImageData;
         loadExifData();
-        setup();
-    }
-    public ImageGridElement(String imageId, ImageData linkedImageData, Image image){
-        super(imageId);
-        this.linkedImageData = linkedImageData;
-        setImage(image);
-        loadExifData();
-        setup();
-    }
-    public ImageGridElement(String imageId, Image image){
-        super(imageId);
-        setImage(image);
-        loadExifData();
-        setup();
+        setup(gridView);
     }
     
     public void loadExifData(){
         exifData = new ExifUtils.BasicExifData(new File(imageId));
     }
     
-    private void setup(){
+    private void setup(ImageGridView gridView){
+        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
     
+        isFavoriteItem.setSelected(isFavorite());
+        addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
+    
+        isFavoriteItem.setOnAction((event) -> {
+            toggleFavorite();
+        });
+        addItem.setOnAction((event) -> {
+            addToDocument();
+        });
+        openItem.setOnAction((event) -> {
+            PlatformUtils.openDirectory(getImageIdDirectory());
+        });
+        deleteItem.setOnAction((event) -> {
+            if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", getImageIdFileName())).execute()){
+                if(new File(getImageId()).delete()){
+                    gridView.removeItems(Collections.singletonList(this));
+                }else{
+                    System.err.println("Unable to delete file " + getImageId());
+                }
+            }
+        });
+        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
     }
     
     public void toggleFavorite(){
@@ -172,5 +195,9 @@ public class ImageGridElement extends ImageLambdaData{
     }
     public void setLinkedImageData(ImageData linkedImageData){
         this.linkedImageData = linkedImageData;
+    }
+    
+    public ContextMenu getMenu(){
+        return menu;
     }
 }

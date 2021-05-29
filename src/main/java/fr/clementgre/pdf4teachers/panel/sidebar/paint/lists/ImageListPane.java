@@ -77,13 +77,13 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         if(paintTab.galleryWindow != null){
             list.setItems(paintTab.galleryWindow.getListItems());
         }else{
-            list.setItems(GalleryWindow.getImages());
+            list.setItems(GalleryWindow.getImages(list));
         }
     }
     public void reloadFavouritesImageList(ArrayList<ImageData> images, boolean updateVisual){
         list.setItems(images.stream()
                 .filter((imageData) -> new File(imageData.getImageId()).exists())
-                .map(ImageGridElement::new)
+                .map((i) -> new ImageGridElement(i, list))
                 .toList(), updateVisual);
     }
     public ImageData toggleFavoriteImage(ImageElement element){
@@ -96,7 +96,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }
         // Else, create new ImageGrid element
         ImageData linkedImageData = new ImageData(element.getImageId(), element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(), 0, 0);
-        MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(new ImageGridElement(linkedImageData)));
+        MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(new ImageGridElement(linkedImageData, MainWindow.paintTab.favouriteImages.getList())));
         return linkedImageData;
     }
     public boolean isFavoriteImage(ImageElement element){

@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -87,16 +88,6 @@ public abstract class GraphicElement extends Element{
     
     
     protected void setupGeneral(Node... components){
-        // Edit the selected Listener before calling superclass
-        mainScreenSelectedListener = (observable, oldValue, newValue) -> {
-            if(oldValue == this && newValue != this){
-                updateGrabIndicators(false);
-                menu.hide();
-            }else if(oldValue != this && newValue == this){
-                updateGrabIndicators(true);
-            }
-        };
-        
         super.setupGeneral(false, components);
     
         prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
@@ -164,6 +155,16 @@ public abstract class GraphicElement extends Element{
                 simulateReleaseFromResize();
             }
         });
+    }
+    
+    @Override
+    protected void onSelectedElementChanged(Observable observable, Element oldElement, Element newElement){
+        if(oldElement == this && newElement != this){
+            updateGrabIndicators(false);
+            menu.hide();
+        }else if(oldElement != this && newElement == this){
+            updateGrabIndicators(true);
+        }
     }
     
     public void simulateReleaseFromResize(){

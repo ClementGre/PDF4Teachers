@@ -40,12 +40,6 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     private final ImageView imageView;
     private final DropShadow shadow = new DropShadow();
     
-    private final ContextMenu menu = new ContextMenu();
-    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
-    private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
-    private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
-    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
-    
     public static final int PADDING = 2;
     
     private final ImageGridView gridView;
@@ -70,15 +64,13 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         
         setOnMouseEntered((e) -> shadow.setColor(Color.web("#0078d7")));
         setOnMouseExited((e) -> shadow.setColor(null));
-    
-        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
-        
     }
+    
+    
     
     @Override
     protected void updateItem(ImageGridElement item, boolean empty) {
         super.updateItem(item, empty);
-        
         if(empty){
             setGraphic(null);
             setOnMouseClicked(null);
@@ -91,30 +83,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
-            setContextMenu(menu);
-            menu.setOnShowing((e) -> {
-                isFavoriteItem.setSelected(item.isFavorite());
-                addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
-                
-                isFavoriteItem.setOnAction((event) -> {
-                    item.toggleFavorite();
-                });
-                addItem.setOnAction((event) -> {
-                    item.addToDocument();
-                });
-                openItem.setOnAction((event) -> {
-                    PlatformUtils.openDirectory(item.getImageIdDirectory());
-                });
-                deleteItem.setOnAction((event) -> {
-                    if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", item.getImageIdFileName())).execute()){
-                        if(new File(item.getImageId()).delete()){
-                            gridView.removeItems(Collections.singletonList(item));
-                        }else{
-                            System.err.println("Unable to delete file " + item.getImageId());
-                        }
-                    }
-                });
-            });
+            setContextMenu(item.getMenu());
             updateTooltip(item);
             
             setGraphic(imageView);

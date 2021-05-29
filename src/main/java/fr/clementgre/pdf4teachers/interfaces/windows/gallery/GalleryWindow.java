@@ -76,7 +76,6 @@ public class GalleryWindow extends Stage{
             AutoTipsManager.showByAction("opengallery", this);
         });
 
-
     }
     
     private void setupSettings(){
@@ -115,7 +114,7 @@ public class GalleryWindow extends Stage{
         
         reload.setOnAction((e) -> {
             list.setItems(Collections.emptyList());
-            list.addItems(getImages());
+            list.addItems(getImages(list));
             reloadImageList();
             updateComboBoxItems();
         });
@@ -137,7 +136,7 @@ public class GalleryWindow extends Stage{
         
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(settings, list);
-        list.addItems(getImages());
+        list.addItems(getImages(list));
         updateMessage();
     }
     
@@ -168,7 +167,7 @@ public class GalleryWindow extends Stage{
         else filter.getSelectionModel().select(TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
     }
     public void reloadImageList(){
-        list.editImages(getImages());
+        list.editImages(getImages(list));
         if(MainWindow.paintTab.gallery.isLoaded()){
             MainWindow.paintTab.gallery.reloadGalleryImageList();
         }
@@ -181,7 +180,7 @@ public class GalleryWindow extends Stage{
         return list;
     }
     
-    public static List<ImageGridElement> getImages(){
-        return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId())).collect(Collectors.toList());
+    public static List<ImageGridElement> getImages(ImageGridView gridView){
+        return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId(), gridView)).collect(Collectors.toList());
     }
 }

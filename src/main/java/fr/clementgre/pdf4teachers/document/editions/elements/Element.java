@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -49,14 +50,7 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
-    protected ChangeListener<Element> mainScreenSelectedListener = (observable, oldValue, newValue) -> {
-        if(oldValue == this && newValue != this){
-            setBorder(null);
-            menu.hide();
-        }else if(oldValue != this && newValue == this){
-            setBorder(new Border(STROKE_DEFAULT));
-        }
-    };
+    private final ChangeListener<Element> mainScreenSelectedListener = this::onSelectedElementChanged;
     
     protected void setupGeneral(boolean setupEvents, Node... components){
         getChildren().addAll(components);
@@ -68,9 +62,9 @@ public abstract class Element extends Region{
         setCursor(Cursor.MOVE);
         
         //////////////////////////// EVENTS ///////////////////////////////////
-
+    
+        MainWindow.mainScreen.selectedProperty().addListener(mainScreenSelectedListener);
         if(setupEvents){
-            MainWindow.mainScreen.selectedProperty().addListener(mainScreenSelectedListener);
     
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
@@ -134,6 +128,15 @@ public abstract class Element extends Region{
         
         setupBindings();
         setupMenu();
+    }
+    
+    protected void onSelectedElementChanged(Observable observable, Element oldElement, Element newElement){
+        if(oldElement == this && newElement != this){
+            setBorder(null);
+            menu.hide();
+        }else if(oldElement != this && newElement == this){
+            setBorder(new Border(STROKE_DEFAULT));
+        }
     }
     
     protected abstract void setupBindings();

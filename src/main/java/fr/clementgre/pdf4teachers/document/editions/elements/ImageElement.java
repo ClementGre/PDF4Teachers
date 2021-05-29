@@ -83,7 +83,7 @@ public class ImageElement extends GraphicElement{
     protected void setupMenu(){
         super.setupMenu();
         
-        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
+        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
         
         menu.getItems().addAll(isFavoriteItem);
         menu.setOnShowing(e -> {
@@ -111,6 +111,11 @@ public class ImageElement extends GraphicElement{
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
+        prefHeightProperty().unbind();
+        prefWidthProperty().unbind();
+        linkedImageData = null;
+        image = null;
+        setBackground(null);
     }
     
     // READER AND WRITERS
