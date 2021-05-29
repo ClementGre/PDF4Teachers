@@ -337,7 +337,7 @@ public class PaintTab extends SideTab{
     private void deleteSelected(){
         Element element = MainWindow.mainScreen.getSelected();
         if(element != null){
-            element.delete();
+            element.delete(true);
         }
     }
     

@@ -167,7 +167,7 @@ public class TextTab extends SideTab{
                     current.fontProperty().unbind();
                     
                     if(((TextElement) oldElement).getText().isBlank()){
-                        oldElement.delete();
+                        oldElement.delete(true);
                     }
                 }
             }
@@ -182,7 +182,7 @@ public class TextTab extends SideTab{
                     sizeCombo.getSelectionModel().select(current.getFont().getSize());
                     
                     current.fontProperty().bind(Bindings.createObjectBinding(() -> {
-                        Edition.setUnsave();
+                        Edition.setUnsave("TextElement FontChanged");
                         return getFont();
                     }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
                 }
@@ -261,7 +261,7 @@ public class TextTab extends SideTab{
                     Element element = MainWindow.mainScreen.getSelected();
                     if(element != null){
                         MainWindow.mainScreen.setSelected(null);
-                        element.delete();
+                        element.delete(true);
                     }
                 }
             }else if(e.getCode() == KeyCode.TAB){
@@ -290,7 +290,7 @@ public class TextTab extends SideTab{
             if(MainWindow.mainScreen.getSelected() != null){
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement){
                     ((TextElement) MainWindow.mainScreen.getSelected()).setColor(colorPicker.getValue());
-                    Edition.setUnsave();
+                    Edition.setUnsave("TextElement color changed");
                 }
                 
             }
@@ -322,7 +322,7 @@ public class TextTab extends SideTab{
             AutoTipsManager.showByAction("newtextelement");
         });
         deleteBtn.setOnAction(e -> {
-            MainWindow.mainScreen.getSelected().delete();
+            MainWindow.mainScreen.getSelected().delete(true);
             MainWindow.mainScreen.setSelected(null);
         });
     }

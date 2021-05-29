@@ -102,7 +102,7 @@ public abstract class Element extends Region{
             });
             setOnMouseReleased(e -> {
                 if(wasInEditPagesModeWhenMousePressed) return;
-                Edition.setUnsave();
+                Edition.setUnsave("ElementMouseRelease");
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
 
@@ -188,9 +188,9 @@ public abstract class Element extends Region{
         getPage().toFront();
     }
     
-    public abstract void addedToDocument(boolean silent);
+    public abstract void addedToDocument(boolean markAsUnsave);
     
-    public void removedFromDocument(boolean silent){
+    public void removedFromDocument(boolean markAsUnsave){
         // Useless because bound values are stored in a weak reference.
         // But if this element leaks, the PageRenderer will leak too if we do not unbind this.
         layoutXProperty().unbind();
@@ -198,10 +198,10 @@ public abstract class Element extends Region{
         MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);
     }
     
-    public void delete(){
+    public void delete(boolean markAsUnsave){
         if(getPage() != null){
             if(equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
-            getPage().removeElement(this, true);
+            getPage().removeElement(this, markAsUnsave);
         }
     }
     

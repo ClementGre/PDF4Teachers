@@ -59,7 +59,6 @@ public class GradeTreeItem extends TreeItem<String>{
     
     // EVENTS
     private EventHandler<MouseEvent> mouseEnteredEvent;
-    private EventHandler<MouseEvent> mouseExitedEvent;
     private ChangeListener<Boolean> selectedListener;
     
     public GradeTreeItem(GradeElement core){
@@ -133,10 +132,6 @@ public class GradeTreeItem extends TreeItem<String>{
             }
         };
         
-        mouseExitedEvent = event -> {
-            if(!cell.isFocused()) newGrade.setVisible(false);
-        };
-        
         newGrade.setOnAction(event -> {
             setExpanded(true);
             GradeElement element = MainWindow.gradeTab.newGradeElementAuto(this);
@@ -183,8 +178,7 @@ public class GradeTreeItem extends TreeItem<String>{
         PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
         newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
         newGrade.setVisible(false);
-        newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText())));
-        name.textProperty().addListener((observable, oldValue, newValue) -> newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip", name.getText()))));
+        newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip")));
         
         pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
         
@@ -314,7 +308,12 @@ public class GradeTreeItem extends TreeItem<String>{
         }
     
         // Remove listener on old cell
-        if(this.cell != null) this.cell.selectedProperty().removeListener(selectedListener);
+        if(this.cell != null){
+            this.cell.selectedProperty().removeListener(selectedListener);
+            this.cell.setOnMouseExited(null);
+            this.cell.setOnMouseEntered(null);
+            this.cell.setContextMenu(null);
+        }
         
         this.cell = cell;
         cell.setGraphic(pane);
@@ -322,7 +321,9 @@ public class GradeTreeItem extends TreeItem<String>{
         cell.setStyle("-fx-padding: 6 6 6 2;");
         cell.setContextMenu(core.menu);
         cell.setOnMouseEntered(mouseEnteredEvent);
-        cell.setOnMouseExited(mouseExitedEvent);
+        cell.setOnMouseExited(e -> {
+            if(!cell.isFocused()) newGrade.setVisible(false);
+        });
         
         cell.selectedProperty().addListener(selectedListener);
         
@@ -522,29 +523,37 @@ public class GradeTreeItem extends TreeItem<String>{
         return k >= 2;
     }
     
-    public void delete(boolean removePageElement){
+    public void delete(boolean removePageElement, boolean markAsUnsave){
         deleted = true;
         
-        if(hasSubGrade()) deleteChildren();
-        if(removePageElement) getCore().delete();
+        if(hasSubGrade()) deleteChildren(removePageElement, markAsUnsave);
+        if(removePageElement){
+            getCore().delete(markAsUnsave);
+        }
         
         // Unbinds to prevent leaks
         core = null;
+        cell.setContextMenu(null);
+        cell.setOnMouseEntered(null);
+        cell.setOnMouseExited(null);
         cell.selectedProperty().removeListener(selectedListener);
         selectedListener = null;
+        mouseEnteredEvent = null;
         
         // Remove all listeners
         name.textProperty().unbind();
         value.textProperty().unbind();
         total.textProperty().unbind();
+        pane.getChildren().clear();
+        pane = null;
         nameField = null;
         totalField = null;
         gradeField = null;
     }
     // This method delete add children of this TreeItem, including pageElements
-    public void deleteChildren(){
+    public void deleteChildren(boolean removePageElement, boolean markAsUnsave){
         while(hasSubGrade()){
-            ((GradeTreeItem) getChildren().get(0)).delete(true);
+            ((GradeTreeItem) getChildren().get(0)).delete(removePageElement, markAsUnsave);
         }
     }
     
@@ -582,11 +591,11 @@ public class GradeTreeItem extends TreeItem<String>{
         });
         ScratchText meter = new ScratchText();
         meter.setFont(AppFontsLoader.getFontPath(AppFontsLoader.OPEN_SANS, 13));
-        
+
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){ // Enter : Switch to the next grade
                 if(pageContextMenu != null) pageContextMenu.hide();
-                
+
                 GradeTreeItem afterItem = getAfterChildItem();
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> {
@@ -599,7 +608,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 field.setText(oldValue);
                 return;
             }
-            
+
             if(newValue.contains("\u0009")){ // TAB
                 if(core.getTotal() == 0){
                     switch(type){
@@ -615,7 +624,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 field.setText(oldValue);
                 return;
             }
-            
+
             String newText;
             if(type == FieldType.NAME){
                 newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
@@ -625,7 +634,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 String[] splitted = newText.split("[.,]");
                 String integers = splitted.length >= 1 ? splitted[0] : "0";
                 String decimals = splitted.length >= 2 ? splitted[1] : "";
-                
+
                 if(integers.length() > 4){
                     if(splitted.length >= 2) newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
                     else newText = integers.substring(0, 4);
@@ -633,16 +642,16 @@ public class GradeTreeItem extends TreeItem<String>{
                     newText = integers + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + splitted[1].substring(0, 3);
                 }
             }
-            
+
             field.setText(newText);
             meter.setText(newText);
             field.setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             field.setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-            
+
             if(type == FieldType.GRADE && field != gradeField){
                 gradeField.setText(newText);
             }
-            
+
             switch(type){
                 case NAME:
                     core.setName(newText);
@@ -668,7 +677,7 @@ public class GradeTreeItem extends TreeItem<String>{
                     }
                     break;
             }
-            
+
         });
         
         return field;

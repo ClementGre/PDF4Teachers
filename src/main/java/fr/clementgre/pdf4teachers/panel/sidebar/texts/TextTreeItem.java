@@ -115,7 +115,7 @@ public class TextTreeItem extends TreeItem<String>{
             if(e.getButton().equals(MouseButton.PRIMARY)){
                 
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement && e.isShortcutDown()){
-                    oldElement.delete();
+                    oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
                     addToDocument(e.isShiftDown());
@@ -173,7 +173,7 @@ public class TextTreeItem extends TreeItem<String>{
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
-                    oldElement.delete();
+                    oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
                     addToDocument(e.isShiftDown());

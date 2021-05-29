@@ -127,7 +127,7 @@ public class Document{
             page.clearElements();
         }
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
-        MainWindow.gradeTab.treeView.clearElements(false);
+        MainWindow.gradeTab.treeView.clearElements(false, true);
         this.edition.load();
     }
     

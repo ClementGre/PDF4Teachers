@@ -186,7 +186,7 @@ public class PDFPagesEditor{
                         grade.setValue(-1);
                         grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
                     }else{
-                        page.getElements().get(0).delete();
+                        page.getElements().get(0).delete(true);
                     }
                 }
                 Document document = MainWindow.mainScreen.document;
@@ -206,7 +206,7 @@ public class PDFPagesEditor{
                 // update current page
                 document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
                 
-                Edition.setUnsave();
+                Edition.setUnsave("DeletePage");
                 document.edition.save();
             }
         }
@@ -540,12 +540,12 @@ public class PDFPagesEditor{
     }
     
     private Image capturePagePreview(PageRenderer page, PositionDimensions dimensions){
-        if(page.getBackground().getImages().size() == 0)
+        if(!page.hasRenderedImage())
             return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
         if(dimensions == null){
-            return page.getBackground().getImages().get(0).getImage();
+            return page.getRenderedImage();
         }else{
-            Image image = page.getBackground().getImages().get(0).getImage();
+            Image image = page.getRenderedImage();
             double factor = image.getHeight() / page.getHeight();
             
             int subX = (int) (dimensions.getX() * factor);

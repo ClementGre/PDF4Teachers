@@ -44,7 +44,7 @@ public class Edition{
     // LOAD ORDER: Texts < Images < Vectors < Grades
     public void load(){
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.gradeTab.treeView.clearElements(true); // Generate root in case of no root in edition
+        MainWindow.gradeTab.treeView.clearElements(true, false); // Generate root in case of no root in edition
         
         try{
             if(!editFile.exists()) return; // File does not exist
@@ -71,7 +71,8 @@ public class Edition{
         }catch(IOException e){
             e.printStackTrace();
         }
-        
+    
+        isSave.set(true);
         MainWindow.gradeTab.treeView.updateAllSum();
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }
@@ -382,8 +383,8 @@ public class Edition{
                 page.clearElements();
             }
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
-            MainWindow.gradeTab.treeView.clearElements(true);
-            Edition.setUnsave();
+            MainWindow.gradeTab.treeView.clearElements(true, false);
+            Edition.setUnsave("Clear edit");
         }
     }
     
@@ -391,7 +392,9 @@ public class Edition{
         return isSave.get();
     }
     
-    public static void setUnsave(){
+    public static void setUnsave(String sourceDebug){
+        if(false) System.out.println("Unsave Edition from: " + sourceDebug);
+        
         isSave.set(false);
         MainWindow.footerBar.updateStats();
     }

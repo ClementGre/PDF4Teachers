@@ -103,8 +103,8 @@ public class PageZoneSelector extends Pane{
         selectionZone.setPrefWidth(width);
         selectionZone.setPrefHeight(height);
         
-        if(selectionZoneType == SelectionZoneType.PDF_ON_DARK && page.getBackground().getImages().size() >= 1){
-            Image image = page.getBackground().getImages().get(0).getImage();
+        if(selectionZoneType == SelectionZoneType.PDF_ON_DARK && page.hasRenderedImage()){
+            Image image = page.getRenderedImage();
             BackgroundPosition backgroundPosition = new BackgroundPosition(Side.LEFT, -selectionZone.getLayoutX(), false, Side.TOP, -selectionZone.getLayoutY(), false);
             BackgroundSize backgroundSize = new BackgroundSize(page.getWidth(), page.getHeight(), false, false, false, false);
             BackgroundImage background = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, backgroundPosition, backgroundSize);
@@ -156,7 +156,7 @@ public class PageZoneSelector extends Pane{
             setBackground(new Background(new BackgroundFill(Color.rgb(0, 0, 0, 0.8), CornerRadii.EMPTY, Insets.EMPTY)));
             
         }else if(type == SelectionZoneType.PDF_ON_DARK){
-            Image image = page.getBackground().getImages().get(0).getImage();
+            Image image = page.getRenderedImage();
             BackgroundPosition backgroundPosition = new BackgroundPosition(Side.LEFT, -startX, false, Side.TOP, -startY, false);
             BackgroundSize backgroundSize = new BackgroundSize(page.getWidth(), page.getHeight(), false, false, false, false);
             BackgroundImage background = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, backgroundPosition, backgroundSize);

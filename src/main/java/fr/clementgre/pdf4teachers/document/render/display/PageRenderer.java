@@ -26,7 +26,9 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -173,7 +175,7 @@ public class PageRenderer extends Pane{
             
         });
         setOnMouseExited(e -> {
-            if(pageEditPane != null) pageEditPane.setVisible(false);
+            if(pageEditPane != null) pageEditPane.checkMouseExited();
         });
     
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +391,9 @@ public class PageRenderer extends Pane{
         
         int firstTest = getShowStatus();
         switchVisibleStatus(firstTest);
-        if(pageEditPane != null) pageEditPane.updateVisibility();
+        if(pageEditPane != null){
+            pageEditPane.updateVisibility();
+        }
         /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
         });*/
@@ -417,7 +421,7 @@ public class PageRenderer extends Pane{
     public void remove(){
         switchVisibleStatus(2);
         for(Node child : getChildren()){
-            if(child instanceof Element e) e.removedFromDocument(true);
+            if(child instanceof Element e) e.removedFromDocument(false);
         }
         getChildren().clear();
     
@@ -569,26 +573,28 @@ public class PageRenderer extends Pane{
         }
     }
     
-    public void addElement(Element element, boolean update){
+    public void addElement(Element element, boolean markAsUnsave){
         
         if(element != null){
             
             elements.add(element);
             getChildren().add(element);
             
-            if(update) Edition.setUnsave();
-            element.addedToDocument(!update);
+            if(markAsUnsave){
+                Edition.setUnsave("PageRenderer ElementAdded");
+            }
+            element.addedToDocument(markAsUnsave);
         }
     }
     
-    public void removeElement(Element element, boolean update){
+    public void removeElement(Element element, boolean markAsUnsave){
         
         if(element != null){
             elements.remove(element);
             getChildren().remove(element);
-            
-            if(update) Edition.setUnsave();
-            element.removedFromDocument(!update);
+    
+            if(markAsUnsave) Edition.setUnsave("PageRenderer ElementRemoved");
+            element.removedFromDocument(markAsUnsave);
         }
     }
     
@@ -623,7 +629,7 @@ public class PageRenderer extends Pane{
     public void updateElementsPage(){
         for(Element element : elements){
             element.setPage(page);
-            Edition.setUnsave();
+            Edition.setUnsave("PageRenderer updateElementsPage()");
         }
     }
     
@@ -642,5 +648,12 @@ public class PageRenderer extends Pane{
     
     public double getRatio(){
         return getWidth() / getHeight();
+    }
+    
+    public Image getRenderedImage(){
+        return rendered.getImage() == null ? new WritableImage((int) getWidth(), (int) getHeight()) : rendered.getImage();
+    }
+    public boolean hasRenderedImage(){
+        return rendered.getImage() != null;
     }
 }

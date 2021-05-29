@@ -176,4 +176,30 @@ public class NodeMenuItem extends CustomMenuItem{
             }
         }
     }
+    public static void setupMenuNow(MenuButton menu){
+        double maxWidth = 0;
+        int extra = 0;
+        for(MenuItem item : menu.getItems()){
+            if(item instanceof NodeMenuItem nodeItem){
+                if(nodeItem.getNode().getWidth() > maxWidth)
+                    maxWidth = nodeItem.getNode().getWidth();
+            }else if(item instanceof Menu){
+                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                
+                if(item.getStyleableNode() != null){
+                    Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
+                    if(arrow instanceof Region region){
+                        region.setScaleX(Main.settings.zoom.getValue());
+                        region.setScaleY(Main.settings.zoom.getValue());
+                    }
+                }
+            }
+        }
+        for(MenuItem item : menu.getItems()){
+            if(item instanceof NodeMenuItem nodeItem){
+                System.out.println("Detected width: " + maxWidth + extra);
+                nodeItem.getNode().setPrefWidth((maxWidth + extra));
+            }
+        }
+    }
 }

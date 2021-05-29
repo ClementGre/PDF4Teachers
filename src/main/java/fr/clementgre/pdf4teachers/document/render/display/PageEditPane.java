@@ -6,14 +6,9 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
-import javafx.beans.value.WeakChangeListener;
 import javafx.scene.Cursor;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-
 import java.util.ArrayList;
 
 public class PageEditPane extends VBox{
@@ -183,5 +178,12 @@ public class PageEditPane extends VBox{
         ascendButton.setDisable(page.getPage() == 0);
         descendButton.setDisable(page.getPage() == MainWindow.mainScreen.document.totalPages - 1);
         deleteButton.setDisable(MainWindow.mainScreen.document.totalPages == 1);
+    }
+    
+    // Hide pane but only if no menu are visible.
+    public void checkMouseExited(){
+        if(!menu.isShowing()){
+            setVisible(false);
+        }
     }
 }

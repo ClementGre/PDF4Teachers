@@ -106,7 +106,7 @@ public class TextElement extends Element{
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete());
+        item1.setOnAction(e -> delete(true));
         item2.setOnAction(e -> cloneOnDocument());
         item3.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true)));
         item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));
@@ -128,14 +128,14 @@ public class TextElement extends Element{
     }
     
     @Override
-    public void addedToDocument(boolean silent){
-        if(!silent) MainWindow.textTab.treeView.onFileSection.addElement(this);
+    public void addedToDocument(boolean markAsUnsave){
+        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.addElement(this);
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
-        if(!silent) MainWindow.textTab.treeView.onFileSection.removeElement(this);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.removeElement(this);
     }
     
     // READER AND WRITERS

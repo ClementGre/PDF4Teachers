@@ -366,7 +366,7 @@ public class MainScreen extends Pane{
                 }
             }else document.edition.save();
     
-            MainWindow.gradeTab.treeView.clearElements(false);
+            MainWindow.gradeTab.treeView.clearElements(false, false);
             document.stopDocumentSaver();
             document.close();
             document = null;

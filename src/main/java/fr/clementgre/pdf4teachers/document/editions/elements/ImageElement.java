@@ -104,13 +104,13 @@ public class ImageElement extends GraphicElement{
     }
     
     @Override
-    public void addedToDocument(boolean silent){
+    public void addedToDocument(boolean markAsUnsave){
     
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
     }
     
     // READER AND WRITERS

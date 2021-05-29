@@ -95,7 +95,7 @@ public class GradeElement extends Element{
         nameProperty().addListener((observable, oldValue, newValue) -> {
             
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
-            Edition.setUnsave();
+            Edition.setUnsave("GradeNameChanged");
             
             // Check if name is null
             if(newValue.isBlank()){
@@ -118,7 +118,7 @@ public class GradeElement extends Element{
         });
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
-            Edition.setUnsave();
+            Edition.setUnsave("GradeValueChanged");
             if(!isShouldVisible()){
                 setVisible(false);
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
@@ -149,7 +149,7 @@ public class GradeElement extends Element{
             
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
-            Edition.setUnsave();
+            Edition.setUnsave("GradeTotalChanged");
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
@@ -201,8 +201,8 @@ public class GradeElement extends Element{
         item3.setOnAction(e -> {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
-                MainWindow.gradeTab.treeView.clearElements(true);
-            }else delete();
+                MainWindow.gradeTab.treeView.clearElements(true, true);
+            }else delete(true);
         });
         item4.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -241,21 +241,21 @@ public class GradeElement extends Element{
     }
     
     @Override
-    public void delete(){
+    public void delete(boolean markAsUnsave){
         if(getPage() != null){
-            getPage().removeElement(this, !isRoot());
+            getPage().removeElement(this, markAsUnsave);
         }
     }
     
     @Override
-    public void addedToDocument(boolean silent){
+    public void addedToDocument(boolean markAsUnsave){
         MainWindow.gradeTab.treeView.addElement(this);
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
-        MainWindow.gradeTab.treeView.removeElement(this);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        MainWindow.gradeTab.treeView.removeElement(this, markAsUnsave);
     }
     // READER AND WRITERS
     
@@ -431,7 +431,7 @@ public class GradeElement extends Element{
     
     public void setIndex(int index){
         this.index = index;
-        Edition.setUnsave();
+        Edition.setUnsave("GradeIndexChanged");
     }
     
     public String getParentPath(){
@@ -448,7 +448,7 @@ public class GradeElement extends Element{
     
     public void setParentPath(String parentPath){
         this.parentPath = parentPath;
-        Edition.setUnsave();
+        Edition.setUnsave("GradeParentPathChanged");
     }
     
     public boolean isAlwaysVisible(){

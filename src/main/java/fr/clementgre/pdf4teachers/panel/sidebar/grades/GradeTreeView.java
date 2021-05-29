@@ -66,9 +66,9 @@ public class GradeTreeView extends TreeView<String>{
     }
     
     // Clear elements in tree and in page
-    public void clearElements(boolean regenerateRoot){
+    public void clearElements(boolean regenerateRoot, boolean markAsUnsave){
         if(getRoot() != null){
-            getRootTreeItem().delete(true);
+            getRootTreeItem().delete(true, markAsUnsave);
         }
         if(regenerateRoot) generateRoot(false);
         else setRoot(null);
@@ -79,10 +79,11 @@ public class GradeTreeView extends TreeView<String>{
     }
     
     public void addElement(GradeElement element){
+        
         if(element.getParentPath().isEmpty()){ // ROOT
             // If is root, we need to delete the old root.
-            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true);
-            
+            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true, false);
+    
             GradeTreeItem item = element.toGradeTreeItem();
             item.setExpanded(true);
             setRoot(item);
@@ -98,12 +99,12 @@ public class GradeTreeView extends TreeView<String>{
     // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> GradeTreeView (We cut here with the isDeleted())
     // When the deletion start from a GradeElement : GradeElement --> GradeTreeView --> GradeTreeItem (We cut here with the removePageElement arg)
     // GradeElement must always be before this in the stack. That's why this method is only called by GradeElement
-    public void removeElement(GradeElement element){
+    public void removeElement(GradeElement element, boolean markAsUnsave){
         
         if(element.getParentPath().isEmpty()){ // ROOT
             
             // Delete only if it wasn't already deleted (See comment above).
-            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false);
+            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave);
             // Remove the item from its parent
             setRoot(null);
             
@@ -112,13 +113,17 @@ public class GradeTreeView extends TreeView<String>{
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
             // Delete only if it wasn't already deleted (See comment above).
-            if(!treeElement.isDeleted()) treeElement.delete(false);
+            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave);
             
             // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
             parent.getChildren().remove(treeElement);
-            parent.reIndexChildren();
-            parent.makeSum(false);
+            
+            if(markAsUnsave){
+                // These actions are unSaving the edition
+                parent.reIndexChildren();
+                parent.makeSum(false);
+            }
         }
     }
     

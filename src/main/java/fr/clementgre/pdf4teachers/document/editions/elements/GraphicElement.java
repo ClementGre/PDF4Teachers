@@ -105,7 +105,7 @@ public abstract class GraphicElement extends Element{
         
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
-                delete();
+                delete(true);
                 e.consume();
             }
         });
@@ -140,7 +140,7 @@ public abstract class GraphicElement extends Element{
 
         setOnMouseReleased(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
-            Edition.setUnsave();
+            Edition.setUnsave("GraphicElementMouseRelease");
             if(dragType == Cursor.MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
@@ -514,7 +514,7 @@ public abstract class GraphicElement extends Element{
         menu.getItems().addAll(item1, item2, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete());
+        item1.setOnAction(e -> delete(true));
         item2.setOnAction(e -> cloneOnDocument());
     }
     

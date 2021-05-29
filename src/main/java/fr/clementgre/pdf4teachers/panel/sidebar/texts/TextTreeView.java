@@ -122,7 +122,7 @@ public class TextTreeView extends TreeView<String>{
                     page.clearTextElements();
                 }
                 MainWindow.textTab.treeView.onFileSection.updateElementsList();
-                Edition.setUnsave();
+                Edition.setUnsave("Clear onDocument TextElements");
             });
         }else{
             NodeMenuItem item1 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), true);
@@ -283,7 +283,7 @@ public class TextTreeView extends TreeView<String>{
         });
         item2.setOnAction((e) -> {
             if(element.getType() == TextTreeSection.ONFILE_TYPE){
-                element.getCore().delete();
+                element.getCore().delete(true);
             }else{
                 removeSavedElement(element);
             }
