@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;

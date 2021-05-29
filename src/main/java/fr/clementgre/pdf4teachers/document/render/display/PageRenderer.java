@@ -18,8 +18,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.InvalidationListener;
-import javafx.beans.WeakInvalidationListener;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
 import javafx.scene.Cursor;
@@ -28,6 +26,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -52,50 +51,29 @@ public class PageRenderer extends Pane{
     private double mouseX = 0;
     private double mouseY = 0;
     
-    private final ProgressBar loader = new ProgressBar();
-    private final ContextMenu menu = new ContextMenu();
+    private ProgressBar loader = new ProgressBar();
+    private ContextMenu menu = new ContextMenu();
     
     private int lastShowStatus = 1; // default status is hide (1)
     private double renderedZoomFactor;
     
     private PageEditPane pageEditPane;
     private PageZoneSelector pageCursorRecord;
+    private ImageView rendered = new ImageView();
     
     private GraphicElement placingElement = null;
     
     private double shiftY = 0;
     private double defaultTranslateY = 0;
     
-    private InvalidationListener mainScreenZoomListener = (observable) -> {
+    private final InvalidationListener translateYListener = e -> updateShowStatus();
+    
+    private final InvalidationListener mainScreenZoomListener = (observable) -> {
         if(isEditPagesMode()) setCursor(Cursor.MOVE);
         else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         else setCursor(Cursor.DEFAULT);
-    };
     
-    private InvalidationListener translateYListener = e -> updateShowStatus();
-    
-    private EventHandler<RotateEvent> rotateEvent = e -> {
-        double rotate = e.getTotalAngle()*2;
-        if(rotate > 85) rotate = 90;
-        else if(rotate < -85) rotate = -90;
-        else if(rotate > -3 && rotate < 3) rotate = 0;
-        setVisibleRotate(rotate, false);
-    };
-    private EventHandler<RotateEvent> rotateFinishedEvent = e -> {
-        double rotate = e.getTotalAngle()*2;
-        if(rotate < -45){
-            setVisibleRotate(-90, true, () -> {
-                MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
-                setRotate(0);
-            });
-        }else if(rotate > 45){
-            setVisibleRotate(90, true, () -> {
-                MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
-                setRotate(0);
-            });
-        }else{
-            setVisibleRotate(0, true);
-        }
+        if(pageEditPane != null) pageEditPane.updatePosition();
     };
     
     public PageRenderer(int page){
@@ -112,7 +90,13 @@ public class PageRenderer extends Pane{
         loader.translateXProperty().bind(widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
-        getChildren().add(loader);
+        
+        // Image
+        rendered.fitWidthProperty().bind(widthProperty());
+        rendered.fitHeightProperty().bind(heightProperty());
+        rendered.setSmooth(true);
+        rendered.setCache(false);
+        getChildren().addAll(rendered, loader);
         
         // BORDER
         DropShadow ds = new DropShadow();
@@ -133,7 +117,7 @@ public class PageRenderer extends Pane{
         ////////////////////////////////////////// ZOOM //////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
-        MainWindow.mainScreen.zoomProperty().addListener(new WeakInvalidationListener(mainScreenZoomListener));
+        MainWindow.mainScreen.zoomProperty().addListener(mainScreenZoomListener);
         
         //////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////// DRAGGING ////////////////////////////////////////
@@ -262,8 +246,29 @@ public class PageRenderer extends Pane{
         ///////////////////////////////////////// ROTATE /////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
-        setEventHandler(RotateEvent.ROTATE, rotateEvent);
-        setEventHandler(RotateEvent.ROTATION_FINISHED, rotateFinishedEvent);
+        setEventHandler(RotateEvent.ROTATE, e -> {
+            double rotate = e.getTotalAngle()*2;
+            if(rotate > 85) rotate = 90;
+            else if(rotate < -85) rotate = -90;
+            else if(rotate > -3 && rotate < 3) rotate = 0;
+            setVisibleRotate(rotate, false);
+        });
+        setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
+            double rotate = e.getTotalAngle()*2;
+            if(rotate < -45){
+                setVisibleRotate(-90, true, () -> {
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
+                    setRotate(0);
+                });
+            }else if(rotate > 45){
+                setVisibleRotate(90, true, () -> {
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
+                    setRotate(0);
+                });
+            }else{
+                setVisibleRotate(0, true);
+            }
+        });
         
     }
     public static boolean isEditPagesMode(){
@@ -318,7 +323,7 @@ public class PageRenderer extends Pane{
             if(mostUsed.size() > i){
                 TextTreeItem item = mostUsed.get(i);
                 
-                NodeMenuItem menuItem = new NodeMenuItem();
+                NodeMenuItem menuItem = new NodeMenuItem(false);
                 
                 ScratchText name = new ScratchText(new TextWrapper(item.name.getText().replace("\n", ""), null, 175).wrapFirstLine());
                 name.setTextOrigin(VPos.TOP);
@@ -401,11 +406,11 @@ public class PageRenderer extends Pane{
     }
     
     public void updateRender(){
-        setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        rendered.setImage(null);
         render(null);
     }
     public void updateRenderAsync(CallBack callback, boolean clearRender){
-        if(clearRender) setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        if(clearRender) rendered.setImage(null);
         render(callback);
     }
     
@@ -415,16 +420,27 @@ public class PageRenderer extends Pane{
             if(child instanceof Element e) e.removedFromDocument(true);
         }
         getChildren().clear();
+    
+        MainWindow.mainScreen.zoomProperty().removeListener(mainScreenZoomListener);
         
-        pageCursorRecord = null;
         if(pageEditPane != null){
             pageEditPane.delete();
             pageEditPane = null;
+        }if(pageCursorRecord != null){
+            pageCursorRecord.delete();
+            pageCursorRecord = null;
         }
         loader.translateXProperty().unbind();
         loader.translateYProperty().unbind();
+        loader = null;
+    
+        rendered.fitWidthProperty().unbind();
+        rendered.fitHeightProperty().unbind();
+        rendered.setImage(null);
+        rendered = null;
         
-        setBackground(null);
+        menu.getItems().clear();
+        menu = null;
     }
     
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
@@ -468,7 +484,7 @@ public class PageRenderer extends Pane{
             
             // Hard hide, delete render
             if(showStatus == 2){
-                setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+                rendered.setImage(null);
                 status = PageStatus.HIDE;
             }
             
@@ -487,14 +503,14 @@ public class PageRenderer extends Pane{
     private void render(CallBack callBack){
         renderedZoomFactor = getRenderingZoomFactor();
         
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (background) -> {
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (image) -> {
             
-            if(background == null){
+            if(image == null){
                 status = PageStatus.FAIL;
                 return;
             }
             
-            setBackground(background);
+            rendered.setImage(image);
             
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);

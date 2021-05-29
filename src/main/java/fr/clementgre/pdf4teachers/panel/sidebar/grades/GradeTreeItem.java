@@ -193,7 +193,7 @@ public class GradeTreeItem extends TreeItem<String>{
     public MenuItem getEditMenuItem(ContextMenu menu){
         
         HBox pane = new HBox();
-        NodeMenuItem menuItem = new NodeMenuItem(pane);
+        NodeMenuItem menuItem = new NodeMenuItem(pane, false);
         
         Text name = new Text();
         
@@ -297,7 +297,7 @@ public class GradeTreeItem extends TreeItem<String>{
             menuItem.getItems().addAll(getChooseValueMenuItems(min, max, deep, false));
             return menuItem;
         }else{
-            NodeMenuItem menuItem = new NodeMenuItem(new HBox());
+            NodeMenuItem menuItem = new NodeMenuItem(new HBox(), false);
             menuItem.setName(MainWindow.gradesDigFormat.format(value));
             menuItem.setOnAction(e -> {
                 this.gradeField.setText(MainWindow.gradesDigFormat.format(value));
@@ -532,13 +532,10 @@ public class GradeTreeItem extends TreeItem<String>{
         core = null;
         cell.selectedProperty().removeListener(selectedListener);
         selectedListener = null;
-        cell.setContextMenu(null);
-        cell.setOnMouseEntered(null);
-        cell.setOnMouseExited(null);
-        newGrade.disableProperty().unbind();
-        newGrade.setOnAction(null);
-        value.textProperty().unbind();
+        
+        // Remove all listeners
         name.textProperty().unbind();
+        value.textProperty().unbind();
         total.textProperty().unbind();
         nameField = null;
         totalField = null;

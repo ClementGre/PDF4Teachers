@@ -21,14 +21,15 @@ public class PageZoneSelector extends Pane{
     
     private PageRenderer page;
     private SelectionZoneType selectionZoneType;
-    private final Region selectionZone = new Region();
+    private Region selectionZone = new Region();
     
     private double startX = 0;
     private double startY = 0;
-    CallBackArg<PositionDimensions> callBack;
+    private CallBackArg<PositionDimensions> callBack;
     
     public PageZoneSelector(PageRenderer page){
         super();
+        setCache(false);
         this.page = page;
         
         setCursor(Cursor.CROSSHAIR);
@@ -68,6 +69,7 @@ public class PageZoneSelector extends Pane{
         setOnKeyPressed((e) -> {
             if(e.getCode() == KeyCode.ESCAPE){
                 e.consume();
+                this.callBack = null; // so the callback won't be called, considered as exited.
                 end();
             }
         });
@@ -81,6 +83,7 @@ public class PageZoneSelector extends Pane{
     }
     
     private void updateSelectionPositionDimensions(MouseEvent e){
+        e.consume();
         if(startX < 0) startX = 0;
         if(startY < 0) startY = 0;
         
@@ -114,7 +117,7 @@ public class PageZoneSelector extends Pane{
     }
     
     private void end(){
-        if(selectionZone.getWidth() > 10 && selectionZone.getHeight() > 10){
+        if(selectionZone.getWidth() > 10 && selectionZone.getHeight() > 10 && callBack != null){
             callBack.call(getSelectionPositionDimensions());
         }
         setOnMousePressed(null);
@@ -124,6 +127,16 @@ public class PageZoneSelector extends Pane{
         setBackground(null);
         selectionZone.setVisible(false);
         setShow(false);
+        
+        callBack = null;
+    }
+    public void delete(){
+        // In case of leak of this class, the others classes won't be leaked too :
+        getChildren().clear();
+        selectionZone.setBackground(null);
+        selectionZone = null;
+        callBack = null;
+        page = null;
     }
     
     public void setShow(boolean visible){

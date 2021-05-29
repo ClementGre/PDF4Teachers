@@ -26,7 +26,7 @@ public class ImageElement extends GraphicElement{
     private ImageData linkedImageData;
     
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId, ImageData linkedImageData){
-        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
+        super(x, y, pageNumber, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
         if(linkedImageData != null){
@@ -44,7 +44,7 @@ public class ImageElement extends GraphicElement{
         }
     }
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId){
-        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
+        super(x, y, pageNumber, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
         
         if(hasPage && getPage() != null){

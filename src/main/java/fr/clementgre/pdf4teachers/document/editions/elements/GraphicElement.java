@@ -62,7 +62,7 @@ public abstract class GraphicElement extends Element{
     protected ObjectProperty<RepeatMode> repeatMode = new SimpleObjectProperty<>();
     protected ObjectProperty<ResizeMode> resizeMode = new SimpleObjectProperty<>();
     
-    public GraphicElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode){
+    public GraphicElement(int x, int y, int pageNumber, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode){
         super(x, y, pageNumber);
         
         this.repeatMode.set(repeatMode);
@@ -85,21 +85,23 @@ public abstract class GraphicElement extends Element{
     public abstract void incrementUsesAndLastUse();
     public abstract double getRatio();
     
-    protected void setupGeneral(Node... components){
-        super.setupGeneral(false, components);
     
-        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
-        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
-        Platform.runLater(() -> checkLocation(false));
-        
-        MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> {
+    protected void setupGeneral(Node... components){
+        // Edit the selected Listener before calling superclass
+        mainScreenSelectedListener = (observable, oldValue, newValue) -> {
             if(oldValue == this && newValue != this){
                 updateGrabIndicators(false);
                 menu.hide();
             }else if(oldValue != this && newValue == this){
                 updateGrabIndicators(true);
             }
-        });
+        };
+        
+        super.setupGeneral(false, components);
+    
+        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
+        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+        Platform.runLater(() -> checkLocation(false));
         
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
@@ -498,13 +500,13 @@ public abstract class GraphicElement extends Element{
     @Override
     protected void setupMenu(){
         
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.delete"));
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.delete"), false);
         item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"), false);
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
     
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("paintTab.resetRatio"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("paintTab.resetRatio"), false);
         item3.setOnAction(e -> {
             checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth()/getRatio(), false);
         });

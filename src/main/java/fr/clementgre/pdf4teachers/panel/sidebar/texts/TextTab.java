@@ -190,7 +190,7 @@ public class TextTab extends SideTab{
         });
         
         ContextMenu menu = new ContextMenu();
-        MenuItem deleteReturn = new NodeMenuItem(TR.tr("textTab.fieldActions.deleteUselessLineBreak"));
+        MenuItem deleteReturn = new NodeMenuItem(TR.tr("textTab.fieldActions.deleteUselessLineBreak"), true);
         deleteReturn.setOnAction(event -> {
             String wrapped = new TextWrapper(txtArea.getText().replaceAll(Pattern.quote("\n"), " "), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
             if(txtArea.getText().endsWith(" ")) wrapped += " ";

@@ -81,7 +81,7 @@ public class ListsManager{
         
         if(TextTreeSection.lists.size() >= 1){
             for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
-                NodeMenuItem menuItem = new NodeMenuItem(list.getKey());
+                NodeMenuItem menuItem = new NodeMenuItem(list.getKey(), false);
                 loadListBtn.getItems().add(menuItem);
                 menuItem.setOnAction(event -> {
                     
@@ -101,7 +101,7 @@ public class ListsManager{
                 });
             }
         }else{
-            loadListBtn.getItems().add(new NodeMenuItem(TR.tr("textTab.lists.show.none")));
+            loadListBtn.getItems().add(new NodeMenuItem(TR.tr("textTab.lists.show.none"), false));
         }
     }
     

@@ -19,31 +19,33 @@ public class NodeMenuItem extends CustomMenuItem{
     public final Group group = new Group();
     public final HBox root = new HBox(group);
     
-    public NodeMenuItem(HBox node){
-        this(node, null, true);
+    public NodeMenuItem(HBox node, boolean definitiveObject){
+        this(node, null, true, definitiveObject);
     }
-    public NodeMenuItem(){
-        this(new HBox(), null, true);
+    public NodeMenuItem(boolean definitiveObject){
+        this(new HBox(), null, true, definitiveObject);
     }
-    public NodeMenuItem(String text){
-        this(new HBox(), text, true);
+    public NodeMenuItem(String text, boolean definitiveObject){
+        this(new HBox(), text, true, definitiveObject);
     }
-    public NodeMenuItem(HBox node, String text){
-        this(node, text, true);
+    public NodeMenuItem(HBox node, String text, boolean definitiveObject){
+        this(node, text, true, definitiveObject);
     }
-    public NodeMenuItem(HBox node, String text, boolean hideOnClick){
+    // When definitiveObject == true, the scale is bound to the Settings zoom property.
+    // Temporary objects must not be bound to prevent leaks (It's not a binding but a listener).
+    public NodeMenuItem(HBox node, String text, boolean hideOnClick, boolean definitiveObject){
         setContent(root);
         setHideOnClick(hideOnClick);
         
         this.node = node;
         group.getChildren().add(node);
-        setup(text);
+        setup(text, definitiveObject);
     }
     
-    private void setup(String text){
+    private void setup(String text, boolean definitiveObject){
         getStyleClass().add("custom-menu-item");
-        PaneUtils.setupScalingWithoutPadding(node, true);
-    
+        PaneUtils.setupScalingWithoutPadding(node, definitiveObject);
+        
         node.setStyle("-fx-padding: " + 7 + " " + 12 + ";");
         
         Region spacer = new Region();

@@ -161,16 +161,16 @@ public class GradeElement extends Element{
     protected void setupMenu(){
         menu.getItems().clear();
         
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.setMax"));
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.setMax"), false);
         item1.setToolTip(TR.tr("gradeTab.gradeMenu.setMax.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.unFill"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.unFill"), false);
         item2.setToolTip(TR.tr("gradeTab.gradeMenu.unFill.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.delete"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.delete"), false);
         item3.setToolTip(TR.tr("gradeTab.gradeMenu.delete.tooltip"));
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"), false);
         item4.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
-        NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"));
+        NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
         item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilled.tooltip"));
         
         

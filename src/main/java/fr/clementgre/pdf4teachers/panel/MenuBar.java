@@ -485,7 +485,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             return menuItem;
             
         }else{
-            NodeRadioMenuItem menuItem = new NodeRadioMenuItem(text + "      ", autoUpdate);
+            NodeRadioMenuItem menuItem = new NodeRadioMenuItem(text + "      ", autoUpdate, true);
             
             if(image != null){
                 if(image.length() >= 30){
@@ -519,7 +519,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             }
             return menuItem;
         }else{
-            NodeMenuItem menuItem = new NodeMenuItem(text);
+            NodeMenuItem menuItem = new NodeMenuItem(text, true);
             
             if(image != null){
                 if(image.length() >= 30){

@@ -38,7 +38,7 @@ public class Document{
     public void stopDocumentSaver(){
         documentSaverNeedToStop = true;
     }
-    public Thread documentSaver = new Thread(() -> {
+    private final Thread documentSaver = new Thread(() -> {
         documentSaverNeedToStop = false;
         while(!documentSaverNeedToStop){
             if(Main.settings.regularSave.getValue() != -1){

@@ -124,17 +124,17 @@ public class FileListItem extends ListCell<File>{
             
             ContextMenu menu = new ContextMenu();
             
-            NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.open"));
+            NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.open"), false);
             item1.setToolTip(TR.tr("filesTab.fileMenu.open.tooltip"));
-            NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"));
+            NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"), false);
             item2.setToolTip(TR.tr("filesTab.fileMenu.remove.tooltip"));
-            NodeMenuItem item3 = new NodeMenuItem(TR.tr("menuBar.file.deleteEdit"));
+            NodeMenuItem item3 = new NodeMenuItem(TR.tr("menuBar.file.deleteEdit"), false);
             item3.setToolTip(TR.tr("menuBar.file.deleteEdit.tooltip"));
-            NodeMenuItem item4 = new NodeMenuItem(TR.tr("actions.deleteFile"));
+            NodeMenuItem item4 = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
             item4.setToolTip(TR.tr("filesTab.fileMenu.deleteFile.tooltip"));
-            NodeMenuItem item5 = new NodeMenuItem(TR.tr("menuBar.file.export"));
+            NodeMenuItem item5 = new NodeMenuItem(TR.tr("menuBar.file.export"), false);
             item5.setToolTip(TR.tr("menuBar.file.export.tooltip"));
-            NodeMenuItem item6 = new NodeMenuItem(TR.tr("menuBar.file.clearList"));
+            NodeMenuItem item6 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), false);
             item6.setToolTip(TR.tr("menuBar.file.clearList.tooltip"));
             
             menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);

@@ -43,7 +43,7 @@ public class VectorElement extends GraphicElement{
     }
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
                          boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY, VectorData linkedVectorData){
-        super(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode);
+        super(x, y, pageNumber, width, height, repeatMode, resizeMode);
     
         this.path.set(path);
         this.doFill.set(doFill);

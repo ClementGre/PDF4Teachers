@@ -41,10 +41,10 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     private final DropShadow shadow = new DropShadow();
     
     private final ContextMenu menu = new ContextMenu();
-    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
-    private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"));
-    private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"));
-    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"));
+    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
+    private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
+    private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
+    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
     
     public static final int PADDING = 2;
     

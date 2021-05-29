@@ -49,7 +49,7 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
-    private final ChangeListener<Element> mainScreenSelectedListener = (observable, oldValue, newValue) -> {
+    protected ChangeListener<Element> mainScreenSelectedListener = (observable, oldValue, newValue) -> {
         if(oldValue == this && newValue != this){
             setBorder(null);
             menu.hide();
@@ -191,6 +191,8 @@ public abstract class Element extends Region{
     public abstract void addedToDocument(boolean silent);
     
     public void removedFromDocument(boolean silent){
+        // Useless because bound values are stored in a weak reference.
+        // But if this element leaks, the PageRenderer will leak too if we do not unbind this.
         layoutXProperty().unbind();
         layoutYProperty().unbind();
         MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);

@@ -18,15 +18,15 @@ import java.util.ArrayList;
 
 public class PageEditPane extends VBox{
     
-    Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveUp.tooltip"), -90);
-    Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveDown.tooltip"), 90);
-    Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.tr("document.pageActions.rotateLeft.tooltip"));
-    Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("document.pageActions.rotateRight.tooltip"));
-    Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.delete.tooltip"), 45);
-    Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.addPages.tooltip"));
-    Button captureButton = getCustomButton(SVGPathIcons.FULL_SCREEN, TR.tr("document.pageActions.capture.tooltip"));
+    private final Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveUp.tooltip"), -90);
+    private final Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveDown.tooltip"), 90);
+    private final Button rotateLeftButton = getCustomButton(SVGPathIcons.UNDO, TR.tr("document.pageActions.rotateLeft.tooltip"));
+    private final Button rotateRightButton = getCustomButton(SVGPathIcons.REDO, TR.tr("document.pageActions.rotateRight.tooltip"));
+    private final Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.delete.tooltip"), 45);
+    private final Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.addPages.tooltip"));
+    private final Button captureButton = getCustomButton(SVGPathIcons.FULL_SCREEN, TR.tr("document.pageActions.capture.tooltip"));
     
-    ContextMenu menu = new ContextMenu();
+    private ContextMenu menu = new ContextMenu();
     
     private PageRenderer page;
     
@@ -60,10 +60,6 @@ public class PageEditPane extends VBox{
         });
         
         getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
-    
-        MainWindow.mainScreen.zoomProperty().addListener(new WeakChangeListener<>((observable, oldValue, newValue) -> {
-            updatePosition();
-        }));
         
         updateVisibility();
         updatePosition();
@@ -137,7 +133,7 @@ public class PageEditPane extends VBox{
     
     private static MenuItem getMenuItem(String title, boolean vanillaItem){
         if(vanillaItem) return new MenuItem(title);
-        else return new NodeMenuItem(title);
+        else return new NodeMenuItem(title, false);
     }
     
     private Button getCustomButton(String path, String text){
@@ -171,7 +167,8 @@ public class PageEditPane extends VBox{
     
     public void delete(){
         this.page = null;
-        
+        this.menu = null;
+    
         ascendButton.setOnAction(null);
         descendButton.setOnAction(null);
         rotateLeftButton.setOnAction(null);

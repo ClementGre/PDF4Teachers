@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -40,7 +41,7 @@ public class PDFPagesRender{
         render = false;
     }
     
-    public void renderPage(int pageNumber, double size, double width, double height, CallBackArg<Background> callBack){
+    public void renderPage(int pageNumber, double size, double width, double height, CallBackArg<Image> callBack){
         
         Thread renderPage = new Thread(() -> {
             
@@ -64,19 +65,19 @@ public class PDFPagesRender{
                 
                 graphics.dispose();
                 
-                Background background = new Background(
+                /*Background background = new Background(
                         Collections.singletonList(new BackgroundFill(
                                 javafx.scene.paint.Color.WHITE,
                                 CornerRadii.EMPTY,
                                 Insets.EMPTY)),
                         Collections.singletonList(new BackgroundImage(
-                                SwingFXUtils.toFXImage(renderImage, null),
+                                ,
                                 BackgroundRepeat.NO_REPEAT,
                                 BackgroundRepeat.NO_REPEAT,
                                 BackgroundPosition.CENTER,
-                                new BackgroundSize(width, height, false, false, false, true))));
+                                new BackgroundSize(width, height, false, false, false, true))));*/
                 
-                Platform.runLater(() -> callBack.call(background));
+                Platform.runLater(() -> callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
             }catch(Exception e){
                 e.printStackTrace();
                 Platform.runLater(() -> callBack.call(null));

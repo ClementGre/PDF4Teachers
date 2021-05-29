@@ -15,14 +15,16 @@ public class NodeRadioMenuItem extends NodeMenuItem{
     
     private final boolean autoUpdate;
     
-    public NodeRadioMenuItem(String text, boolean autoUpdate){
-        this(new HBox(), text, autoUpdate, false);
+    public NodeRadioMenuItem(String text, boolean autoUpdate, boolean definitiveObject){
+        this(new HBox(), text, autoUpdate, false, definitiveObject);
     }
-    public NodeRadioMenuItem(String text, boolean autoUpdate, boolean hideOnClick){
-        this(new HBox(), text, autoUpdate, hideOnClick);
+    public NodeRadioMenuItem(String text, boolean autoUpdate, boolean hideOnClick, boolean definitiveObject){
+        this(new HBox(), text, autoUpdate, hideOnClick, definitiveObject);
     }
-    public NodeRadioMenuItem(HBox node, String text, boolean autoUpdate, boolean hideOnClick){
-        super(node, text, hideOnClick);
+    // When definitiveObject == true, the scale is bound to the Settings zoom property.
+    // Temporary objects must not be bound to prevent leaks (It's not a binding but a listener).
+    public NodeRadioMenuItem(HBox node, String text, boolean autoUpdate, boolean hideOnClick, boolean definitiveObject){
+        super(node, text, hideOnClick, definitiveObject);
         this.autoUpdate = autoUpdate;
         setup();
     }

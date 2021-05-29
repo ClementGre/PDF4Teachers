@@ -113,7 +113,7 @@ public class TextTreeView extends TreeView<String>{
         
         
         if(section.sectionType == TextTreeSection.ONFILE_TYPE){
-            NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.onDocumentList.menu.clear"));
+            NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.onDocumentList.menu.clear"), true);
             item3.setToolTip(TR.tr("textTab.onDocumentList.menu.clear.tooltip"));
             menu.getItems().addAll(item3);
             
@@ -125,9 +125,9 @@ public class TextTreeView extends TreeView<String>{
                 Edition.setUnsave();
             });
         }else{
-            NodeMenuItem item1 = new NodeMenuItem(TR.tr("menuBar.file.clearList"));
+            NodeMenuItem item1 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), true);
             item1.setToolTip(TR.tr("textTab.listMenu.clear.tooltip"));
-            NodeMenuItem item2 = new NodeMenuItem(TR.tr("textTab.listMenu.clear.resetUseData"));
+            NodeMenuItem item2 = new NodeMenuItem(TR.tr("textTab.listMenu.clear.resetUseData"), true);
             item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
             menu.getItems().addAll(item1, item2);
             
@@ -245,15 +245,15 @@ public class TextTreeView extends TreeView<String>{
     public static ContextMenu getNewMenu(TextTreeItem element){
         
         ContextMenu menu = new ContextMenu();
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"));
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"), false);
         item1.setToolTip(TR.tr("textTab.listMenu.addNLink.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"), false);
         item2.setToolTip(TR.tr("textTab.listMenu.remove.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
         item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
         item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
-        NodeMenuItem item5 = new NodeMenuItem(TR.tr("textTab.listMenu.unlink"));
+        NodeMenuItem item5 = new NodeMenuItem(TR.tr("textTab.listMenu.unlink"), false);
         item5.setToolTip(TR.tr("textTab.listMenu.unlink.tooltip"));
         
         

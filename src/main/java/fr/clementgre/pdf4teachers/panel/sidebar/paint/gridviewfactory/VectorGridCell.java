@@ -17,9 +17,9 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     private final DropShadow shadow = new DropShadow();
     
     private final ContextMenu menu = new ContextMenu();
-    private final NodeMenuItem addNLink = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"));
-    private final NodeMenuItem removeItem = new NodeMenuItem(TR.tr("actions.remove"));
-    private final NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"));
+    private final NodeMenuItem addNLink = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"), false);
+    private final NodeMenuItem removeItem = new NodeMenuItem(TR.tr("actions.remove"), false);
+    private final NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
     
     public static final int PADDING = 2;
     

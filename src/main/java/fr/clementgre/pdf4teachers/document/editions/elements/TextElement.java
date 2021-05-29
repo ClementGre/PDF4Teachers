@@ -94,14 +94,14 @@ public class TextElement extends Element{
     @Override
     protected void setupMenu(){
         
-        NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.delete"));
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.delete"), false);
         item1.setAccelerator(new KeyCodeCombination(KeyCode.DELETE));
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
-        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"), false);
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
         item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
         item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);

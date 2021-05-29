@@ -230,9 +230,9 @@ public class PaintTab extends SideTab{
         ////////// New Image menu //////////
         
         
-        NodeMenuItem browseImage = new NodeMenuItem(TR.tr("file.browse"));
-        NodeMenuItem newImageEmpty = new NodeMenuItem(TR.tr("actions.new.image"));
-        NodeMenuItem openGallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"));
+        NodeMenuItem browseImage = new NodeMenuItem(TR.tr("file.browse"), true);
+        NodeMenuItem newImageEmpty = new NodeMenuItem(TR.tr("actions.new.image"), true);
+        NodeMenuItem openGallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"), true);
         newImage.getItems().addAll(browseImage, newImageEmpty, openGallery);
         //NodeMenuItem.setupMenu(newImage);
             
@@ -264,9 +264,9 @@ public class PaintTab extends SideTab{
     
         ////////// New Vector menu //////////
         
-        NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"));
-        NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"));
-        NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
+        NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"), true);
+        NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"), true);
+        NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), true);
         newVector.getItems().addAll(newVectorDrawing, newVectorEmpty, browseVector);
         //NodeMenuItem.setupMenu(menu);
     
@@ -305,8 +305,8 @@ public class PaintTab extends SideTab{
                 browseImagePath(null);
             }else if(MainWindow.mainScreen.getSelected() instanceof VectorElement element){ // VECTOR
                 ContextMenu menu = new ContextMenu();
-                NodeMenuItem rotate = new NodeMenuItem(TR.tr("paintTab.vectorElements.rotate"));
-                NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"));
+                NodeMenuItem rotate = new NodeMenuItem(TR.tr("paintTab.vectorElements.rotate"), false);
+                NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), false);
                 menu.getItems().addAll(rotate, browse);
                 NodeMenuItem.setupMenu(menu);
     
