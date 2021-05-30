@@ -55,10 +55,10 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox>{
 
         private final int tier;
 
-        private final FontComboBox fontCombo = new FontComboBox();
+        private final FontComboBox fontCombo = new FontComboBox(false);
         private final ToggleButton boldBtn = new ToggleButton();
         private final ToggleButton itBtn = new ToggleButton();
-        private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
+        private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes, false);
         private final SyncColorPicker colorPicker = new SyncColorPicker();
         private final CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
         private final CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));

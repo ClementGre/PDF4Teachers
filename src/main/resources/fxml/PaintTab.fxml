@@ -27,7 +27,9 @@
         <VBox.margin><Insets top="2" bottom="5" left="2" right="2"/></VBox.margin>
 
         <HBox spacing="2" fx:id="commonActionButtons">
-            <NoArrowMenuButton fx:id="newImage"/>
+            <NoArrowMenuButton fx:id="newImage">
+                <style>-fx-padding: 4 4 3 4;</style>
+            </NoArrowMenuButton>
             <NoArrowMenuButton fx:id="newVector"/>
             <Button fx:id="delete">
                 <padding><Insets topRightBottomLeft="4"/></padding>

@@ -66,6 +66,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         
         setTitle("PDF4Teachers - " + title);
         setScene(scene);
+        StyleManager.putStyle(scene, Style.DEFAULT);
         StyleManager.putStyle(borderPane, Style.DEFAULT);
         StyleManager.putCustomStyle(scene, "alternativeWindow.css");
         if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT) StyleManager.putCustomStyle(scene, "alternativeWindow-light.css");

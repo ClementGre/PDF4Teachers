@@ -302,7 +302,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             
             // Definition COLUMN
             VBox definitionColumn = generateInfo(TR.tr("convertWindow.options.definition.title"), false);
-            definition = new ScaledComboBox<>(definitions);
+            definition = new ScaledComboBox<>(definitions, false);
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
@@ -311,7 +311,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             // Format COLUMN
             
             VBox formatColumn = generateInfo(TR.tr("convertWindow.options.format.title"), false);
-            format = new ScaledComboBox<>(formats);
+            format = new ScaledComboBox<>(formats, false);
             format.setEditable(true);
             PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);

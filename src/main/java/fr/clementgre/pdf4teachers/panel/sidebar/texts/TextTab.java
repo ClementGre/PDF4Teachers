@@ -54,8 +54,8 @@ public class TextTab extends SideTab{
     // Séparés par ligne
     
     private final HBox combosBox = new HBox();
-    public FontComboBox fontCombo = new FontComboBox();
-    private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
+    public FontComboBox fontCombo = new FontComboBox(true);
+    private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes, true);
     
     private final HBox colorAndParamsBox = new HBox();
     private final SyncColorPicker colorPicker = new SyncColorPicker();
