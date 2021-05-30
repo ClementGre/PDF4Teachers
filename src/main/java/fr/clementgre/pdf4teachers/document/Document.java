@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageStatus;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import javafx.application.Platform;
@@ -42,14 +43,15 @@ public class Document{
         documentSaverNeedToStop = false;
         while(!documentSaverNeedToStop){
             if(Main.settings.regularSave.getValue() != -1){
-                try{
-                    Thread.sleep(Main.settings.regularSave.getValue() * 60000);
-                }catch(InterruptedException e){ e.printStackTrace(); }
-                if(!documentSaverNeedToStop) if(!Edition.isSave()) Platform.runLater(() -> edition.save());
+    
+                PlatformUtils.sleepThreadMinutes(Main.settings.regularSave.getValue());
+                if(!documentSaverNeedToStop && !Edition.isSave()){
+                    Platform.runLater(() -> edition.save());
+                }
+                
             }else{
-                try{
-                    Thread.sleep(60000);
-                }catch(InterruptedException e){ e.printStackTrace(); }
+                // Should not be too big because it keeps the document as a CG Root Object.
+                PlatformUtils.sleepThreadSeconds(30);
             }
         }
     }, "Document AutoSaver");

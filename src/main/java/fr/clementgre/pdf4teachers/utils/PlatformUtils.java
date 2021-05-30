@@ -13,6 +13,28 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils{
     
+    public static void sleepThread(long millis){
+        try{
+            Thread.sleep(millis);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    public static void sleepThreadSeconds(double seconds){
+        try{
+            Thread.sleep((long) (seconds * 1000));
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    public static void sleepThreadMinutes(double minutes){
+        try{
+            Thread.sleep((long) (minutes * 60000));
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    
     public static void runLaterOnUIThread(int millis, Runnable runnable){
         new Thread(() -> {
             try{

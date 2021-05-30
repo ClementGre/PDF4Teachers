@@ -369,7 +369,7 @@ public class MainScreen extends Pane{
             document = null;
         }
         
-        pane.getChildren().clear();
+        // No need to clear the pane, the PageRenderer are removing themselves in their remove() method.
         
         pane.setScaleX(1);
         pane.setScaleY(1);
@@ -381,7 +381,8 @@ public class MainScreen extends Pane{
         selected.set(null);
         
         repaint();
-        
+    
+        System.gc(); // clear unused element in RAM
         System.runFinalization();
         return true;
     }
