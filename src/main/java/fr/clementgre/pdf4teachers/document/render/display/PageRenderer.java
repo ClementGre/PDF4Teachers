@@ -424,6 +424,8 @@ public class PageRenderer extends Pane{
             if(child instanceof Element e) e.removedFromDocument(false);
         }
         getChildren().clear();
+        elements.clear();
+        elements = null;
     
         MainWindow.mainScreen.zoomProperty().removeListener(mainScreenZoomListener);
         

@@ -106,7 +106,7 @@ public class ListsManager{
     }
     
     public void loadList(ArrayList<TextListItem> items, boolean flush){
-        if(flush) section.clearElements();
+        if(flush) section.clearElements(true);
         for(TextListItem item : items) section.getChildren().add(item.toTextTreeItem(section.sectionType));
         section.sortManager.simulateCall();
     }

@@ -145,12 +145,6 @@ public class TextTreeItem extends TreeItem<String>{
         pane.setAlignment(Pos.CENTER_LEFT);
         pane.setFocusTraversable(false);
         
-        MainWindow.textTab.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
-            });
-        });
-        
         pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue)
@@ -206,9 +200,11 @@ public class TextTreeItem extends TreeItem<String>{
         
         updateIcon();
     }
+    public void onSelected(){
+        pane.requestFocus();
+    }
     
     static long lastKeyPressTime = 0;
-    
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
         if(maxWidth < 0) return;
@@ -423,14 +419,14 @@ public class TextTreeItem extends TreeItem<String>{
         
     }
     
-    public void unLink(){
-        
+    public void unLink(boolean reSetupLayout){
         fontProperty().unbind();
-        core.textProperty().removeListener(textChangeListener);
-        core.fillProperty().removeListener(colorChangeListener);
-        
-        this.core = null;
-        setup();
+        if(core != null){
+            core.textProperty().removeListener(textChangeListener);
+            core.fillProperty().removeListener(colorChangeListener);
+            core = null;
+        }
+        if(reSetupLayout) setup();
     }
     
     public Font getFont(){

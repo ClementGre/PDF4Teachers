@@ -59,6 +59,14 @@ public class TextTreeView extends TreeView<String>{
                 });
             }).start();
         });
+    
+        getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if(newValue instanceof TextTreeItem textTreeItem){
+                    textTreeItem.onSelected();
+                }
+            });
+        });
         
         setCellFactory((TreeView<String> param) -> new TreeCell<>(){
             @Override
@@ -132,7 +140,7 @@ public class TextTreeView extends TreeView<String>{
             menu.getItems().addAll(item1, item2);
             
             item1.setOnAction(e -> {
-                section.clearElements();
+                section.clearElements(true);
             });
             item2.setOnAction(e -> {
                 for(Object element : section.getChildren()){
@@ -300,10 +308,16 @@ public class TextTreeView extends TreeView<String>{
             addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
         });
         item5.setOnAction((e) -> {
-            element.unLink();
+            element.unLink(true);
         });
         return menu;
         
+    }
+    
+    public void onCloseDocument(){
+        favoritesSection.unlinkAll();
+        lastsSection.unlinkAll();
+        onFileSection.clearElements(true);
     }
     
     public static void updateListsGraphic(){

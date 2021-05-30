@@ -75,15 +75,11 @@ public class MainScreen extends Pane{
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
+                }catch(InterruptedException ex){ ex.printStackTrace(); }
             }else{
                 try{
                     Thread.sleep(200);
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
+                }catch(InterruptedException ex){ ex.printStackTrace(); }
             }
             
         }
@@ -367,6 +363,7 @@ public class MainScreen extends Pane{
             }else document.edition.save();
     
             MainWindow.gradeTab.treeView.clearElements(false, false);
+            MainWindow.textTab.treeView.onCloseDocument();
             document.stopDocumentSaver();
             document.close();
             document = null;
