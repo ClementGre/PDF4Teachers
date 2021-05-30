@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -23,31 +24,30 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.util.Collections;
 
-public class FileListItem extends ListCell<File>{
+public class FileListCell extends ListCell<File>{
     
-    VBox pane;
-    HBox nameBox;
-    Label name;
-    Label path;
+    private final VBox pane;
+    private final HBox nameBox;
+    private final Label name;
+    private final Label path;
     
-    ImageView check = new ImageView();
-    ImageView checkLow = new ImageView();
+    private final ImageView check = new ImageView();
+    private final ImageView checkLow = new ImageView();
     
-    EventHandler<MouseEvent> onClick = e -> {
+    private final EventHandler<MouseEvent> onClick = e -> {
         if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2)
             MainWindow.mainScreen.openFile(getItem());
     };
     
-    public FileListItem(){
-        setupGraphic();
-    }
-    
-    public void setupGraphic(){
-        
+    public FileListCell(){
         pane = new VBox();
         nameBox = new HBox();
         name = new Label();
         path = new Label();
+        setupGraphic();
+    }
+    
+    public void setupGraphic(){
         
         HBox.setMargin(checkLow, new Insets(0, 4, 0, 0));
         HBox.setMargin(check, new Insets(0, 4, 0, 0));
@@ -120,7 +120,7 @@ public class FileListItem extends ListCell<File>{
             nameBox.getChildren().add(name);
             setGraphic(pane);
             
-            setOnMouseClicked(onClick);
+            setOnMouseClicked(new WeakEventHandler<>(onClick));
             
             ContextMenu menu = new ContextMenu();
             

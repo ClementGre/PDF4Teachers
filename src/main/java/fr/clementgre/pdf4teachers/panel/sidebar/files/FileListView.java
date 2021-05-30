@@ -16,7 +16,7 @@ public class FileListView extends ListView<File>{
             refresh();
         });
         
-        setCellFactory(param -> new FileListItem());
+        setCellFactory(param -> new FileListCell());
     }
     
 }

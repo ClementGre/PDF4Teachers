@@ -55,7 +55,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         imageView.setTranslateX(PADDING);
         //imageView.setTranslateY(PADDING);
         
-        shadow.setColor(null);
+        shadow.setColor(Color.TRANSPARENT);
         shadow.setSpread(.90);
         shadow.setOffsetY(0);
         shadow.setOffsetX(0);
@@ -63,7 +63,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         setEffect(shadow);
         
         setOnMouseEntered((e) -> shadow.setColor(Color.web("#0078d7")));
-        setOnMouseExited((e) -> shadow.setColor(null));
+        setOnMouseExited((e) -> shadow.setColor(Color.TRANSPARENT));
     }
     
     
@@ -74,6 +74,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         if(empty){
             setGraphic(null);
             setOnMouseClicked(null);
+            imageView.imageProperty().unbind();
+            imageView.setImage(null);
         }else{
             
             if(item.getImage() == null){
