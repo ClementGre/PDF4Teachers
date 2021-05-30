@@ -18,7 +18,7 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new ImageGridCell(this));
+        setCellFactory(param -> new ImageGridCell());
         super.setup();
     }
     

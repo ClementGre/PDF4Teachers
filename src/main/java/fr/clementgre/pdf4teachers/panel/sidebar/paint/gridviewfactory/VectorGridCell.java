@@ -23,9 +23,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     
     public static final int PADDING = 2;
     
-    private final VectorGridView gridView;
-    public VectorGridCell(VectorGridView gridView){
-        this.gridView = gridView;
+    public VectorGridCell(){
     
         root.prefWidthProperty().bind(widthProperty().subtract(2*PADDING));
         root.prefHeightProperty().bind(heightProperty().subtract(2*PADDING));
@@ -56,13 +54,14 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     protected void updateItem(VectorGridElement item, boolean empty) {
         super.updateItem(item, empty);
         
-        if(empty){
+        if(empty || item == null){
             setGraphic(null);
             setOnMouseClicked(null);
+            setContextMenu(null);
         }else{
     
             // SETUP SVG
-            double svgWidth = gridView.getCellWidth()-2*PADDING;
+            double svgWidth = getGridView().getCellWidth()-2*PADDING;
             if(item.getLastDisplayWidth() != ((int) svgWidth)){
                 item.layoutSVGPath(svgWidth);
             }
@@ -78,7 +77,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
                 addNLink.setDisable(!MainWindow.mainScreen.hasDocument(false));
     
                 addNLink.setOnAction((event) -> item.addToDocument(true));
-                removeItem.setOnAction((event) -> item.removeFromList(gridView));
+                removeItem.setOnAction((event) -> item.removeFromList((VectorGridView) getGridView()));
                 if(!item.isFavorite()) addToFavorites.setOnAction((event) -> item.addToFavorite());
             });
     

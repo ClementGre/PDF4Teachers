@@ -11,7 +11,7 @@ public class VectorGridView extends ShapesGridView<VectorGridElement>{
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new VectorGridCell(this));
+        setCellFactory(param -> new VectorGridCell());
         super.setup();
     }
     

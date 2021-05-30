@@ -14,6 +14,9 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -26,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import jfxtras.styles.jmetro.Style;
 import org.controlsfx.control.GridCell;
+import org.controlsfx.control.GridView;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -42,9 +46,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     
     public static final int PADDING = 2;
     
-    private final ImageGridView gridView;
-    public ImageGridCell(ImageGridView gridView){
-        this.gridView = gridView;
+    public ImageGridCell(){
         this.imageView = new ImageView();
         
         imageView.setPreserveRatio(true);
@@ -66,14 +68,13 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         setOnMouseExited((e) -> shadow.setColor(Color.TRANSPARENT));
     }
     
-    
-    
     @Override
     protected void updateItem(ImageGridElement item, boolean empty) {
         super.updateItem(item, empty);
         if(empty){
             setGraphic(null);
             setOnMouseClicked(null);
+            setContextMenu(null);
             imageView.imageProperty().unbind();
             imageView.setImage(null);
         }else{
@@ -81,7 +82,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             if(item.getImage() == null){
                 if(!item.isRendering()){
                     item.setRendering(true);
-                    gridView.getExecutor().submit(() -> loadImage(item, gridView.getImageRenderSize(), () -> item.setRendering(false)));
+                    ((ImageGridView) getGridView()).getExecutor().submit(() -> loadImage(item, ((ImageGridView) getGridView()).getImageRenderSize(), () -> item.setRendering(false)));
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
@@ -100,8 +101,9 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             });
         }
+        
     }
-
+    
     public static void updateGalleryAndFavoritesSort(){
         if(MainWindow.paintTab.galleryWindow != null && MainWindow.paintTab.galleryWindow.isShowing()){
             SortManager gallerySM = MainWindow.paintTab.galleryWindow.getList().getSortManager();

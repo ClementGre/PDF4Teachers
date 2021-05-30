@@ -230,7 +230,7 @@ public class KeyboardShortcuts{
                 if(!MainWindow.mainScreen.hasDocument(false)) return;
                 
                 if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
-                if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size()){
+                if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size() && i != 0){
                     ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false);
                     MainWindow.textTab.selectItem();
                 }
