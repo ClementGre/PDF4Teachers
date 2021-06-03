@@ -93,21 +93,7 @@ public class MainWindow extends Stage{
         keyboardShortcuts = new KeyboardShortcuts(scene);
         
         setOnCloseRequest(e -> {
-            userData.save();
-            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
-                e.consume();
-                return;
-            }
-            
-            Main.params = new ArrayList<>();
-            AutoTipsManager.hideAll();
-            if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
-            
-            LanguagesUpdater.backgroundStats(() -> {
-                System.out.println("Closing PDF4Teachers");
-                System.exit(0);
-            });
-            
+            if(!requestCloseApp()) e.consume();
         });
         
         widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -123,6 +109,28 @@ public class MainWindow extends Stage{
             saveDimensions();
         });
         
+    }
+    
+    public static boolean requestCloseApp(){
+        System.out.println("Received close request");
+        
+        userData.save();
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
+            return false;
+        }
+    
+        // At this point, it is sure the app will close.
+        Main.window.close();
+        if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
+        AutoTipsManager.hideAll();
+        
+    
+        LanguagesUpdater.backgroundStats(() -> {
+            System.out.println("Closing PDF4Teachers");
+            Platform.exit();
+            System.exit(0);
+        });
+        return true;
     }
     
     public void setup(){
@@ -223,10 +231,11 @@ public class MainWindow extends Stage{
     }
     
     public void restart(){
-        TR.updateLocale();
-        
         userData.save();
+        
         if(MainWindow.mainScreen.closeFile(true)){
+            Main.params = new ArrayList<>();
+            TR.updateLocale();
             close();
             Platform.runLater(Main::startMainWindow);
         }

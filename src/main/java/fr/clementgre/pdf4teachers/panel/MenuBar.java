@@ -378,12 +378,18 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 
                 MenuItem hide = tk.createHideMenuItem("");
                 hide.setText(TR.tr("menuBar.osx.hide", Main.APP_NAME));
+                
                 MenuItem hideOthers = tk.createHideOthersMenuItem();
                 hideOthers.setText(TR.tr("menuBar.osx.hideOthers"));
+                
                 MenuItem unhideAll = tk.createUnhideAllMenuItem();
                 unhideAll.setText(TR.tr("menuBar.osx.unhideAll"));
+                
                 MenuItem quit = tk.createQuitMenuItem("");
                 quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
+                quit.setOnAction((e) ->{
+                    if(!MainWindow.requestCloseApp()) e.consume();
+                });
                 
                 Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
                         about, new SeparatorMenuItem(), settings, new SeparatorMenuItem(),

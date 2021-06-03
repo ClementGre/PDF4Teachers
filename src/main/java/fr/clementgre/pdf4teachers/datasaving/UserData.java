@@ -311,7 +311,6 @@ public class UserData{
                 TR.loadLanguagesConfig(languages);
                 
                 LanguagesUpdater.backgroundCheck();
-                
                 AutoTipsManager.load();
                 
             });

@@ -63,7 +63,7 @@ public class TextTreeView extends TreeView<String>{
         getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if(newValue instanceof TextTreeItem textTreeItem){
-                    textTreeItem.onSelected();
+                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue) textTreeItem.onSelected();
                 }
             });
         });

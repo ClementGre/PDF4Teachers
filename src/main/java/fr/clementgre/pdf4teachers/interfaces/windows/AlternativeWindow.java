@@ -15,10 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public abstract class AlternativeWindow<R extends Node> extends Stage{
     
@@ -91,6 +93,12 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
             }
             
             afterShown();
+        });
+        
+        scene.setOnKeyPressed((e) -> {
+            if(e.getCode() == KeyCode.ESCAPE){
+                fireEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
+            }
         });
         
         setup(header, subHeader);
