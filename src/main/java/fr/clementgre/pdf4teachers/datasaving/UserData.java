@@ -267,7 +267,8 @@ public class UserData{
                     }
                 }
                 
-                if(Main.settings.getSettingsVersion().equals("1.2.0")){
+                // In the version 1.2.0, the TextElements were not stored in textelements.yml
+                if(Main.settings.getSettingsVersionCode().equals("1.2.0")){
                     // TEXTS
                     for(Object data : favoritesTextElements){
                         if(data instanceof Map)

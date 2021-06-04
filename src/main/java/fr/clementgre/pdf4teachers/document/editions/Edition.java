@@ -50,12 +50,15 @@ public class Edition{
             if(!editFile.exists()) return; // File does not exist
             Config config = new Config(editFile);
             config.load();
+            int versionID = (int) config.getLong("versionID");
     
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
+            
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
             if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
             
             loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
@@ -65,7 +68,7 @@ public class Edition{
             });
             
             for(Object data : config.getList("grades")){
-                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data);
+                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
             }
             
         }catch(IOException e){
@@ -126,6 +129,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
             
@@ -175,11 +179,14 @@ public class Edition{
         }else{ // file exist
             Config config = new Config(editFile);
             config.load();
+            int versionID = (int) config.getLong("versionID");
+            
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
             
             ArrayList<Element> elements = new ArrayList<>();
     
             loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
@@ -190,14 +197,16 @@ public class Edition{
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map)
-                    elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false));
+                    elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
             }
             
             return elements.toArray(new Element[0]);
         }
     }
     
-    private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){ // Key : Page | Value : Element Data
+    // For each element of a page map, call the callback.
+    // addCallBack : Key : Page | Value : Element Data
+    private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){
         for(Map.Entry<String, Object> pageData : data){
             Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
@@ -255,6 +264,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
             
@@ -270,29 +280,26 @@ public class Edition{
         }else{ // file already exist
             
             double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
-            int text = 0;
-            int allGrades = 0; // All grade element count
-            int grades = 0; // All entered grade
-            int images = 0;
-            int vectors = 0;
+            int allGradesCount = 0; // All grade element count
+            int fillGradeCount = 0; // All entered grade
             
             Config config = new Config(editFile);
             config.load();
             
-            text = countSection(config.getSection("texts"));
-            images = countSection(config.getSection("images"));
-            vectors = countSection(config.getSection("vectors"));
+            int text = countSection(config.getSection("texts"));
+            int images = countSection(config.getSection("images"));
+            int vectors = countSection(config.getSection("vectors"));
             
             for(Object data : config.getList("grades")){
                 if(data instanceof HashMap){
                     double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
                     if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
-                    if(stats[0] != -1) grades++;
-                    allGrades++;
+                    if(stats[0] != -1) fillGradeCount++;
+                    allGradesCount++;
                 }
             }
             
-            return new double[]{text + grades + images + vectors, text, grades, images+vectors, totalGrade[0], totalGrade[1], allGrades};
+            return new double[]{text + fillGradeCount + images + vectors, text, fillGradeCount, images+vectors, totalGrade[0], totalGrade[1], allGradesCount};
         }
     }
 

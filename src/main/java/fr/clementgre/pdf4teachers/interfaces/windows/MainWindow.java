@@ -133,7 +133,7 @@ public class MainWindow extends Stage{
         return true;
     }
     
-    public void setup(){
+    public void setup(boolean openDocumentation){
         
         ConvertWindow.setupTranslations();
         
@@ -194,11 +194,11 @@ public class MainWindow extends Stage{
         }
         filesTab.openFiles(toOpenFiles);
         
-        if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
-            mainScreen.openFile(TR.getDocFile());
+        if(openDocumentation){
+            Platform.runLater(() -> mainScreen.openFile(TR.getDocFile()));
         }else if(toOpenFiles.size() >= 1){
             if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
-                mainScreen.openFile(toOpenFiles.get(0));
+                Platform.runLater(() -> mainScreen.openFile(toOpenFiles.get(0)));
             }
         }
 
@@ -230,14 +230,20 @@ public class MainWindow extends Stage{
         jMetro = StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
     }
     
-    public void restart(){
+    // When replaceDoc == true, the loaded file will be replaced by the new language doc,
+    // if the loaded file path is docFileAbsolutePath
+    public void restart(boolean replaceDoc, String docFileAbsolutePath){
         userData.save();
+        
+        boolean openDoc = replaceDoc
+                && mainScreen.hasDocument(false)
+                && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
         
         if(MainWindow.mainScreen.closeFile(true)){
             Main.params = new ArrayList<>();
             TR.updateLocale();
             close();
-            Platform.runLater(Main::startMainWindow);
+            Platform.runLater(() -> Main.startMainWindow(openDoc));
         }
     }
     

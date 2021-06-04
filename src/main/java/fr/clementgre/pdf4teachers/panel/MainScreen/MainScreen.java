@@ -160,7 +160,10 @@ public class MainScreen extends Pane{
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
-                    if(document != null) document.updateShowsStatus();
+                    if(document != null){
+                        document.updateShowsStatus();
+                        document.updateZoom();
+                    }
                 });
             }
         });

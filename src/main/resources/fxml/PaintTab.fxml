@@ -71,7 +71,7 @@
             <ToggleButton fx:id="doFillButton" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorFillColor" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorStrokeColor" prefHeight="30"/>
-            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true" prefHeight="30" maxWidth="55" minWidth="55"/>
+            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true" prefHeight="30" maxWidth="70" minWidth="70"/>
         </HBox>
     </VBox>
 
@@ -83,28 +83,28 @@
             <GridPane hgap="5" vgap="2">
                 <Label text="x" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Spinner fx:id="spinnerX" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerX" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label text="y" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <Spinner fx:id="spinnerY" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerY" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="0">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label fx:id="widthTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Spinner fx:id="spinnerWidth" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerWidth" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label fx:id="heightTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <Spinner fx:id="spinnerHeight" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerHeight" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>

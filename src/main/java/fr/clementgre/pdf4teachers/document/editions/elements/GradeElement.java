@@ -284,7 +284,7 @@ public class GradeElement extends Element{
         else return new double[]{value};
     }
     
-    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage){
+    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, boolean upscaleGrid){
         
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
@@ -295,36 +295,21 @@ public class GradeElement extends Element{
         double total = Config.getDouble(data, "total");
         boolean alwaysVisible = Config.getBoolean(data, "alwaysVisible");
         String name = Config.getString(data, "name");
+    
+        if(upscaleGrid){ // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
+            x *= 100; y *= 100;
+        }
         
         return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, alwaysVisible);
     }
     
-    public static void readYAMLDataAndCreate(HashMap<String, Object> data){
-        GradeElement element = readYAMLDataAndGive(data, true);
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data, boolean upscaleGrid){
+        GradeElement element = readYAMLDataAndGive(data, true, upscaleGrid);
+
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
-    public static GradeElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException{
-        
-        byte page = reader.readByte();
-        short x = reader.readShort();
-        short y = reader.readShort();
-        int index = reader.readInt();
-        String parentPath = reader.readUTF();
-        double value = reader.readDouble();
-        double total = reader.readDouble();
-        String name = reader.readUTF();
-        
-        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, false);
-    }
-    
-    public static void readDataAndCreate(DataInputStream reader) throws IOException{
-        GradeElement element = readDataAndGive(reader, true);
-        element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
-    }
     
     // SPECIFIC METHODS
     

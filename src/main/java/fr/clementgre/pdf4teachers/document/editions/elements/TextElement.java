@@ -153,13 +153,14 @@ public class TextElement extends Element{
         return data;
     }
     
-    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
-        TextElement element = readYAMLDataAndGive(data, true, page);
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page, boolean upscaleGrid){
+        TextElement element = readYAMLDataAndGive(data, true, page, upscaleGrid);
+        
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
-    public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
+    public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page, boolean upscaleGrid){
         
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
@@ -171,32 +172,12 @@ public class TextElement extends Element{
         String text = Config.getString(data, "text");
         
         Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
+    
+        if(upscaleGrid){ // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
+            x *= 100; y *= 100;
+        }
+        
         return new TextElement(x, y, page, hasPage, text, color, font);
-    }
-    
-    public static TextElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException{
-        
-        byte page = reader.readByte();
-        short x = reader.readShort();
-        short y = reader.readShort();
-        double fontSize = reader.readFloat();
-        boolean isBold = reader.readBoolean();
-        boolean isItalic = reader.readBoolean();
-        String fontName = reader.readUTF();
-        short colorRed = (short) (reader.readByte() + 128);
-        short colorGreen = (short) (reader.readByte() + 128);
-        short colorBlue = (short) (reader.readByte() + 128);
-        String text = reader.readUTF();
-        
-        Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-        return new TextElement(x, y, page, hasPage, text, Color.rgb(colorRed, colorGreen, colorBlue), font);
-    }
-    
-    public static void readDataAndCreate(DataInputStream reader) throws IOException{
-        TextElement element = readDataAndGive(reader, true);
-        element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     // SPECIFIC METHODS

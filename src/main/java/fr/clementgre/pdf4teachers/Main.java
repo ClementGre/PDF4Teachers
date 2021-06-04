@@ -41,6 +41,7 @@ public class Main extends Application{
     public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
     public static final String APP_NAME = "PDF4Teachers";
     public static final String VERSION = "sn1-1.3.0";
+    public static final int VERSION_ID = 1;
     public static final boolean DEBUG = true;
     public static final boolean COPY_CONSOLE = true;
     public static final boolean TRANSLATIONS_IN_CODE = true;
@@ -157,7 +158,7 @@ public class Main extends Application{
         
         if(languageAsk()){
             if(licenceAsk()){
-                startMainWindow();
+                startMainWindowAuto();
             }
         }
     }
@@ -180,14 +181,17 @@ public class Main extends Application{
     public static void showLanguageWindow(boolean firstStartBehaviour){
         LanguageWindow.checkUpdatesAndShow(value -> {
             if(!value.isEmpty() && !value.equals(Main.settings.language.getValue())){
+                String oldDocPath = TR.getDocFile().getAbsolutePath();
+                
                 Main.settings.language.setValue(value);
                 Main.settings.saveSettings();
+                
                 if(!firstStartBehaviour){
-                    Main.window.restart();
+                    Main.window.restart(true, oldDocPath);
                 }else{
                     TR.updateLocale();
                     if(licenceAsk()){
-                        startMainWindow();
+                        startMainWindowAuto();
                     }
                 }
             }
@@ -207,7 +211,7 @@ public class Main extends Application{
         
         if(firstLaunch){
             new LicenseWindow(value -> {
-                startMainWindow();
+                startMainWindowAuto();
             });
             return false;
         }else{
@@ -215,9 +219,13 @@ public class Main extends Application{
         }
     }
     
-    public static void startMainWindow(){
+    public static void startMainWindow(boolean openDocumentation){
         window = new MainWindow();
-        window.setup();
+        window.setup(openDocumentation);
+    }
+    public static void startMainWindowAuto(){
+        window = new MainWindow();
+        window.setup(firstLaunch || settings.hasVersionChanged());
     }
     
     public static boolean isWindows(){

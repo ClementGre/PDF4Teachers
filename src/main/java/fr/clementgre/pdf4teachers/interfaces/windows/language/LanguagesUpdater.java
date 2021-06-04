@@ -32,11 +32,13 @@ public class LanguagesUpdater{
     
     public static void backgroundCheck(){
         Platform.runLater(() -> {
+            String oldDocPath = TR.getDocFile().getAbsolutePath();
+            
             new LanguagesUpdater().update((downloaded) -> {
                 for(Language language : downloaded){
                     if(language.getName().equalsIgnoreCase(Main.settings.language.getValue())){
                         if(language.containsTxtFile()){
-                            Main.window.restart();
+                            Main.window.restart(true, oldDocPath);
                         }
                         break;
                     }

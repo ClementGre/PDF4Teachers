@@ -533,10 +533,12 @@ public class GradeTreeItem extends TreeItem<String>{
         
         // Unbinds to prevent leaks
         core = null;
-        cell.setContextMenu(null);
-        cell.setOnMouseEntered(null);
-        cell.setOnMouseExited(null);
-        cell.selectedProperty().removeListener(selectedListener);
+        if(cell != null){
+            cell.setContextMenu(null);
+            cell.setOnMouseEntered(null);
+            cell.setOnMouseExited(null);
+            cell.selectedProperty().removeListener(selectedListener);
+        }
         selectedListener = null;
         mouseEnteredEvent = null;
         

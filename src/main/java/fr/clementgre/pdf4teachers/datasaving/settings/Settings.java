@@ -15,7 +15,8 @@ import java.lang.reflect.Field;
 
 public class Settings{
     
-    private String settingsVersion = "";
+    private int settingsVersionID = 0;
+    private String settingsVersionCode = "";
     
     
     @SettingObject
@@ -140,7 +141,8 @@ public class Settings{
                 Config config = new Config(settings);
                 config.load();
                 
-                settingsVersion = config.getString("version");
+                settingsVersionID = (int) config.getLong("versionID");
+                settingsVersionCode = config.getString("version");
                 
                 for(Field field : getClass().getDeclaredFields()){
                     if(field.isAnnotationPresent(SettingObject.class)){
@@ -170,7 +172,7 @@ public class Settings{
                     }
                 }
                 
-                if(!settingsVersion.equals(Main.VERSION)) saveSettings();
+                if(settingsVersionID != Main.VERSION_ID) saveSettings();
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -187,6 +189,7 @@ public class Settings{
                 Config config = new Config(settings);
                 
                 config.set("version", Main.VERSION);
+                config.set("versionID", Main.VERSION_ID);
                 
                 for(Field field : getClass().getDeclaredFields()){
                     if(field.isAnnotationPresent(SettingObject.class)){
@@ -208,7 +211,17 @@ public class Settings{
         
     }
     
-    public String getSettingsVersion(){
-        return settingsVersion;
+    public String getSettingsVersionCode(){
+        return settingsVersionCode;
+    }
+    
+    // Return 0 if the versionID is unknown (or settings.yml does not exist).
+    public int getSettingsVersionID(){
+        return settingsVersionID;
+    }
+    // This only works before the settings was re-loaded.
+    // (They can be re-loaded when the user cancel his edits on the SettingWindow.)
+    public boolean hasVersionChanged(){
+        return settingsVersionID != Main.VERSION_ID;
     }
 }

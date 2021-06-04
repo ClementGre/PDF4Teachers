@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -119,8 +120,7 @@ public class EditionExporter{
                                     MainWindow.mainScreen.document.edition.clearEdit(false);
                                 }
                                 
-                                File editFile = Edition.getEditFile(pdfFile);
-                                Config config = new Config(editFile);
+                                Config config = new Config(Edition.getEditFile(pdfFile));
                                 config.setName(fileName);
                                 
                                 HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
@@ -250,6 +250,7 @@ public class EditionExporter{
                 Config config = new Config(editFile);
                 config.load();
                 config.setName(pdfFile.getName());
+                
                 if(onlyGrades){
                     HashMap<String, Object> newBase = new HashMap<>();
                     List<Object> grades = config.getList("grades");

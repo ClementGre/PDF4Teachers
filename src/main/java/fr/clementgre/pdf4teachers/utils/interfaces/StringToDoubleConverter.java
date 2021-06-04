@@ -23,7 +23,6 @@ public class StringToDoubleConverter extends StringConverter<Double>{
             lastValue = Double.parseDouble(string.replace(",", "."));
             return lastValue;
         }catch(NumberFormatException e){
-            e.printStackTrace();
             return lastValue;
         }
     }
