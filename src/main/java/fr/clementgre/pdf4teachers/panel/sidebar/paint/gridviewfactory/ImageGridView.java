@@ -23,7 +23,6 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     }
     
     
-    
     @Override
     protected void sort(String sortType, boolean order){
         int multiple = (order ? 1 : -1);
@@ -71,6 +70,14 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
             if(!actualImages.contains(image)) toAdd.add(image);
         }
         addItems(toAdd);
+    }
+    
+    @Override
+    public void resetUseData(){
+        for(ImageGridElement element : getAllItems()){
+            element.resetUseData();
+        }
+        getSortManager().simulateCall();
     }
     
     public int getImageRenderSize(){

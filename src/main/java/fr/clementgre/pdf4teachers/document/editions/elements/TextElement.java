@@ -353,6 +353,7 @@ public class TextElement extends Element{
     
     @Override
     public Element clone(){
+        AutoTipsManager.showByAction("textclone");
         return new TextElement(getRealX(), getRealY(), pageNumber, true, text.getText(), (Color) text.getFill(), text.getFont());
     }
     

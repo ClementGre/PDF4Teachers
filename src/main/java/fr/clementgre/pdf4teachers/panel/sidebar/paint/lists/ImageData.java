@@ -134,4 +134,8 @@ public class ImageData extends ImageLambdaData{
         this.useCount = useCount;
     }
     
+    public void resetUseData(){
+        lastUse = System.currentTimeMillis();
+        useCount = 0;
+    }
 }

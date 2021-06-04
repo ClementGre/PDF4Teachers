@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.lists;
 
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
@@ -90,6 +91,26 @@ public abstract class ListPane<T> extends TitledPane{
         messageContainer.setAlignment(Pos.CENTER);
         VBox.setVgrow(messageContainer, Priority.ALWAYS);
     }
+    
+    protected void setupMenu(ShapesGridView<T> list){
+        ContextMenu menu = new ContextMenu();
+        
+        NodeMenuItem item1 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), true);
+        item1.setToolTip(TR.tr("textTab.listMenu.clear.tooltip"));
+        NodeMenuItem item2 = new NodeMenuItem(TR.tr("textTab.listMenu.clear.resetUseData"), true);
+        item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
+        menu.getItems().addAll(item1, item2);
+    
+        item1.setOnAction(e -> {
+            list.clear();
+        });
+        item2.setOnAction(e -> {
+            list.resetUseData();
+        });
+        NodeMenuItem.setupMenu(menu);
+        setContextMenu(menu);
+    }
+    
     protected void setEmptyMessage(String text){
         emptyListLabel.setText(text);
     }

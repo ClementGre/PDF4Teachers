@@ -37,6 +37,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
        
         if(isFavouriteImages()){
             list.setupSortManager(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
+            setupMenu(list);
         }else if(isGallery()){
             list.setupSortManager(sortPanel, ShapesGridView.SORT_FILE_EDIT_TIME, ShapesGridView.SORT_FOLDER, ShapesGridView.SORT_FILE_EDIT_TIME);
             Button openGallery = new Button(TR.tr("actions.open"));

@@ -28,6 +28,14 @@ public class VectorGridView extends ShapesGridView<VectorGridElement>{
     }
     
     @Override
+    public void resetUseData(){
+        for(VectorGridElement element : getAllItems()){
+            element.resetUseData();
+        }
+        getSortManager().simulateCall();
+    }
+    
+    @Override
     protected List<VectorGridElement> filter(List<VectorGridElement> items){
         return items;
     }

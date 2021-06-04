@@ -51,10 +51,6 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     private void setup(ImageGridView gridView){
-        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
-    
-        isFavoriteItem.setSelected(isFavorite());
-        addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
     
         isFavoriteItem.setOnAction((event) -> {
             toggleFavorite();
@@ -74,6 +70,13 @@ public class ImageGridElement extends ImageLambdaData{
                 }
             }
         });
+        
+        menu.setOnShowing((e) -> {
+            isFavoriteItem.setSelected(isFavorite());
+            addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
+        });
+        NodeMenuItem.setupMenu(menu);
+        
         menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
     }
     
@@ -159,7 +162,11 @@ public class ImageGridElement extends ImageLambdaData{
         return value;
     }
     
-    
+    public void resetUseData(){
+        if(linkedImageData != null){
+            linkedImageData.resetUseData();
+        }
+    }
     
     // GETTERS / SETTERS
     

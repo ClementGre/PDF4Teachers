@@ -121,6 +121,11 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         nonFilteredItems.removeAll(items);
         updateItemsFiltered();
     }
+    public void clear(){
+        nonFilteredItems.clear();
+        updateItemsFiltered();
+    }
+    
     public List<T> getAllItems(){
         return nonFilteredItems;
     }
@@ -169,4 +174,6 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         this.filterType = filterType;
         updateItemsFiltered();
     }
+    
+    public abstract void resetUseData();
 }

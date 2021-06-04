@@ -289,10 +289,9 @@ public abstract class Element extends Region{
     
     public void cloneOnDocument(){
         Element element = clone();
-        element.setRealX(getRealX() + 50);
-        element.setRealY(getRealY() + 50);
+        element.setRealX((int) (getRealX() + (10 / getPage().getWidth() * GRID_WIDTH)));
+        element.setRealY((int) (getRealY() + (10 / getPage().getHeight() * GRID_HEIGHT)));
         element.getPage().addElement(element, true);
         element.select();
-        AutoTipsManager.showByAction("textclone");
     }
 }

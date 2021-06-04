@@ -51,6 +51,8 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
         setOnMouseExited((e) -> {
             shadow.setRadius(0);
         });
+    
+        NodeMenuItem.setupMenu(menu);
     }
     
     @Override

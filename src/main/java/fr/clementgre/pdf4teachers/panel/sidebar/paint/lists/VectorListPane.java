@@ -23,6 +23,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         super.setupGraphics();
     
         list = new VectorGridView(zoomSlider, isFavouriteVectors());
+        setupMenu(list);
         
         root.getChildren().add(list);
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());

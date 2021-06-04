@@ -203,4 +203,8 @@ public class VectorGridElement{
     public VectorGridElement clone(){
         return new VectorGridElement(vectorData.clone());
     }
+    
+    public void resetUseData(){
+        vectorData.resetUseData();
+    }
 }

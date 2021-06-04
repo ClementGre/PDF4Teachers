@@ -130,6 +130,11 @@ public class VectorData{
         return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, lastUse, useCount);
     }
     
+    public void resetUseData(){
+        lastUse = System.currentTimeMillis();
+        useCount = 0;
+    }
+    
     public void setSpecsChangesCallback(CallBack specsChangesCallback){
         this.specsChangesCallback = specsChangesCallback;
     }
