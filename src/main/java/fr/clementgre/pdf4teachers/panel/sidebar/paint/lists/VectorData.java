@@ -232,4 +232,11 @@ public class VectorData{
     public void setUseCount(int useCount){
         this.useCount = useCount;
     }
+    
+    @Override
+    public VectorData clone(){
+        return new VectorData(width, height, repeatMode, resizeMode,
+                doFill, fill, stroke, strokeWidth, path,
+                invertX, invertY, lastUse, useCount);
+    }
 }

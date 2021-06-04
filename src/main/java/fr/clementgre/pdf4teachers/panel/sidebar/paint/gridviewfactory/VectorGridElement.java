@@ -1,4 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -60,15 +61,15 @@ public class VectorGridElement{
         }
     }*/
     
-    public void addToFavorite(){
-        if(!isFavorite()){
-            vectorData = new VectorData(0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false, 0, 0);
-            
-            MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(this));
-        }
+    public void addToFavorite(VectorGridView gridView){
+        MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(clone()));
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
     }
+    public void addToLast(VectorGridView gridView){
+        MainWindow.paintTab.lastVectors.getList().addItems(Collections.singletonList(clone()));
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
+    }
+    
     public void removeFromList(VectorGridView gridView){
         gridView.removeItems(Collections.singletonList(this));
     }
@@ -78,10 +79,6 @@ public class VectorGridElement{
     }
     public void setAsToPlaceElement(boolean link){
         if(MainWindow.mainScreen.hasDocument(false)) vectorData.setAsToPlaceElement(link);
-    }
-    
-    public boolean isFavorite(){
-        return MainWindow.paintTab.favouriteVectors.getList().getAllItems().contains(this);
     }
     
     public boolean equals(VectorElement element){
@@ -200,5 +197,10 @@ public class VectorGridElement{
             svgPath.setFill(null);
         }
         
+    }
+    
+    @Override
+    public VectorGridElement clone(){
+        return new VectorGridElement(vectorData.clone());
     }
 }

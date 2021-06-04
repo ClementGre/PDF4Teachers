@@ -36,8 +36,6 @@ import org.scilab.forge.jlatexmath.TeXIcon;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
@@ -99,10 +97,10 @@ public class TextElement extends Element{
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
         NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"), false);
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
-        item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+        item3.setToolTip(TR.tr("elementMenu.addToPreviousList.tooltip"));
         NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
-        item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
+        item4.setToolTip(TR.tr("elementMenu.addToFavouritesList.tooltip"));
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);
         

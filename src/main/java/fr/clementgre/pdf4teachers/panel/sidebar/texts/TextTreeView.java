@@ -258,9 +258,9 @@ public class TextTreeView extends TreeView<String>{
         NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"), false);
         item2.setToolTip(TR.tr("textTab.listMenu.remove.tooltip"));
         NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
-        item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
-        item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
+        item3.setToolTip(TR.tr("elementMenu.addToPreviousList.tooltip"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+        item4.setToolTip(TR.tr("elementMenu.addToFavouritesList.tooltip"));
         NodeMenuItem item5 = new NodeMenuItem(TR.tr("textTab.listMenu.unlink"), false);
         item5.setToolTip(TR.tr("textTab.listMenu.unlink.tooltip"));
         
@@ -299,7 +299,7 @@ public class TextTreeView extends TreeView<String>{
         item3.setOnAction((e) -> {
             addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis() / 1000));
             if(element.getType() == TextTreeSection.LAST_TYPE){
-                if(Main.settings.textAutoRemove.getValue()){
+                if(Main.settings.listsMoveAndDontCopy.getValue()){
                     removeSavedElement(element);
                 }
             }

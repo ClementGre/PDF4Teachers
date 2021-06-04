@@ -12,7 +12,7 @@ import java.util.Collections;
 
 public class VectorListPane extends ListPane<VectorGridElement>{
     
-    private final VectorGridView list = new VectorGridView(zoomSlider);
+    private VectorGridView list;
     public VectorListPane(){
         super(MainWindow.paintTab);
     }
@@ -22,6 +22,8 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     protected void setupGraphics(){
         super.setupGraphics();
     
+        list = new VectorGridView(zoomSlider, isFavouriteVectors());
+        
         root.getChildren().add(list);
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());
         VBox.setVgrow(list, Priority.ALWAYS);
@@ -52,19 +54,11 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         list.setItems(vectors.stream().map(VectorGridElement::new).toList(), updateVisual);
     }
     
-    public static VectorData toggleFavoriteVector(VectorElement element){
-        // If vector is already favorite
-        for(VectorGridElement gridElement : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            if(gridElement.equals(element)){
-                gridElement.removeFromList(MainWindow.paintTab.favouriteVectors.getList());
-                return null;
-            }
-        }
-        // Else, create new VectorGrid element
+    public static VectorData addFavoriteVector(VectorElement element){
         VectorData linkedVectorData = new VectorData(element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(),
                 element.isDoFill(), element.getFill(), element.getStroke(), element.getStrokeWidth(),
                 element.getPath(), element.isInvertX(), element.isInvertY(), 0, 0);
-        
+    
         MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(new VectorGridElement(linkedVectorData)));
         return linkedVectorData;
     }

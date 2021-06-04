@@ -5,13 +5,15 @@ import java.util.List;
 
 public class VectorGridView extends ShapesGridView<VectorGridElement>{
     
-    public VectorGridView(Slider zoomSlider){
+    private final boolean favorite;
+    public VectorGridView(Slider zoomSlider, boolean favorite){
         super(true, zoomSlider);
+        this.favorite = favorite;
     }
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new VectorGridCell());
+        setCellFactory(param -> new VectorGridCell(favorite));
         super.setup();
     }
     

@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
@@ -163,16 +164,17 @@ public class VectorElement extends GraphicElement{
     protected void setupMenu(){
         super.setupMenu();
     
-        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
+        NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
+        NodeMenuItem addToLast = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
     
-        menu.getItems().addAll(isFavoriteItem);
-        menu.setOnShowing(e -> {
-            isFavoriteItem.setSelected(MainWindow.paintTab.favouriteVectors.isFavoriteVector(this));
+        addToFavorites.setOnAction((event) -> {
+            linkedVectorData = VectorListPane.addFavoriteVector(this);
+        });
+        addToLast.setOnAction((event) -> {
+            linkedVectorData = VectorListPane.addLastVector(this);
         });
     
-        isFavoriteItem.setOnAction((event) -> {
-            linkedVectorData = VectorListPane.toggleFavoriteVector(this);
-        });
+        menu.getItems().addAll(addToFavorites, addToLast);
     }
     
     private void onSizeChanged(){

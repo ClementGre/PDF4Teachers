@@ -20,10 +20,13 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     private final NodeMenuItem addNLink = new NodeMenuItem(TR.tr("textTab.listMenu.addNLink"), false);
     private final NodeMenuItem removeItem = new NodeMenuItem(TR.tr("actions.remove"), false);
     private final NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
+    private final NodeMenuItem addToLast = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
     
     public static final int PADDING = 2;
     
-    public VectorGridCell(){
+    private final boolean favorite;
+    public VectorGridCell(boolean favorite){
+        this.favorite = favorite;
     
         root.prefWidthProperty().bind(widthProperty().subtract(2*PADDING));
         root.prefHeightProperty().bind(heightProperty().subtract(2*PADDING));
@@ -68,17 +71,18 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             
             // MENU
             setContextMenu(menu);
-            if(item.isFavorite()){
-                menu.getItems().setAll(addNLink, removeItem);
+            if(favorite){
+                menu.getItems().setAll(addNLink, removeItem, addToLast);
             }else{
                 menu.getItems().setAll(addNLink, removeItem, addToFavorites);
             }
             menu.setOnShowing((e) -> {
                 addNLink.setDisable(!MainWindow.mainScreen.hasDocument(false));
-    
                 addNLink.setOnAction((event) -> item.addToDocument(true));
+                
                 removeItem.setOnAction((event) -> item.removeFromList((VectorGridView) getGridView()));
-                if(!item.isFavorite()) addToFavorites.setOnAction((event) -> item.addToFavorite());
+                addToFavorites.setOnAction((event) -> item.addToFavorite((VectorGridView) getGridView()));
+                addToLast.setOnAction((event) -> item.addToLast((VectorGridView) getGridView()));
             });
     
             root.getChildren().setAll(item.getSvgPath());

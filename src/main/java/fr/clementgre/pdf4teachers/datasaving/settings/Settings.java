@@ -55,8 +55,8 @@ public class Settings{
     
     
     @SettingObject
-    public BooleanSetting textAutoRemove = new BooleanSetting(true, true, SVGPathIcons.STAR, "textAutoRemove",
-            "settings.textAutoRemove.title", "settings.textAutoRemove.tooltip");
+    public BooleanSetting listsMoveAndDontCopy = new BooleanSetting(true, true, SVGPathIcons.STAR, "listsMoveAndDontCopy",
+            "settings.listsMoveAndDontCopy.title", "settings.listsMoveAndDontCopy.tooltip");
     @SettingObject
     public BooleanSetting textOnlyStart = new BooleanSetting(true, true, SVGPathIcons.LIST, "textOnlyStart",
             "settings.textOnlyStart.title", "settings.textOnlyStart.tooltip");
@@ -100,8 +100,8 @@ public class Settings{
     @SettingsGroup(title="settings.group.save")
     public Setting<?>[] saveGroup = {autoSave, regularSave};
     
-    @SettingsGroup(title="settings.group.textElements")
-    public Setting<?>[] textElementsGroup = {textAutoRemove, textOnlyStart, textSmall};
+    @SettingsGroup(title= "settings.group.elementsLists")
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
     
     @SettingsGroup(title="menuBar.help")
     public Setting<?>[] helpGroup = {allowAutoTips};
