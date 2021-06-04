@@ -6,11 +6,14 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -215,7 +218,9 @@ public class ImageElement extends GraphicElement{
             try{
                 Image image =  new Image("file:///" + getImageId(), requestedWidth, requestedHeight, false, true);
                 if(image.getWidth() == 0) return null;
-                return image;
+    
+                int rotate = new ExifUtils(new File(getImageId())).getImageExifRotation().getRotateAngle();
+                return ImageUtils.rotateImage(image, rotate);
             }catch(Exception e){
                 e.printStackTrace();
                 return null;

@@ -47,7 +47,7 @@ public class TextElement extends Element{
     private final ScratchText text = new ScratchText();
     private final ImageView image = new ImageView();
     
-    public static final float imageFactor = 2.5f;
+    public static final float imageFactor = 3f;
     
     public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font){
         super(x, y, pageNumber);
