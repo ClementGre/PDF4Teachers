@@ -65,7 +65,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     public static VectorData addFavoriteVector(VectorElement element){
         VectorData linkedVectorData = new VectorData(element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(),
                 element.isDoFill(), element.getFill(), element.getStroke(), element.getStrokeWidth(),
-                element.getPath(), element.isInvertX(), element.isInvertY(), 0, 0);
+                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0);
     
         MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(new VectorGridElement(linkedVectorData)));
         return linkedVectorData;
@@ -73,7 +73,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     public static VectorData addLastVector(VectorElement element){
         VectorData linkedVectorData = new VectorData(element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(),
                 element.isDoFill(), element.getFill(), element.getStroke(), element.getStrokeWidth(),
-                element.getPath(), element.isInvertX(), element.isInvertY(), 0, 0);
+                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0);
         
         MainWindow.paintTab.lastVectors.getList().addItems(Collections.singletonList(new VectorGridElement(linkedVectorData)));
         return linkedVectorData;

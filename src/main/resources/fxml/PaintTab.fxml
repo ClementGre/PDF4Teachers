@@ -77,7 +77,7 @@
 
     <TitledPane fx:id="advancedOptionsPane" expanded="false"> <!-- advanced Options -->
 
-        <VBox>
+        <VBox fx:id="advancedOptionsContent">
             <padding><Insets topRightBottomLeft="3"/></padding>
 
             <GridPane hgap="5" vgap="2">
@@ -108,21 +108,36 @@
                          GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
+
             </GridPane>
 
-            <Label fx:id="repeatModeLabel" style="-fx-font-size: 12px;">
-                <VBox.margin><Insets top="5" /></VBox.margin>
+            <Label fx:id="repeatModeLabel" style="-fx-font-size: 13px;">
+                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
             </Label>
             <ScaledComboBox fx:id="repeatMode">
                 <style>-fx-padding: 0 4;</style>
+                <VBox.margin><Insets left="3"/></VBox.margin>
             </ScaledComboBox>
 
-            <Label fx:id="resizeModeLabel" style="-fx-font-size: 12px;">
-                <VBox.margin><Insets top="5" /></VBox.margin>
+            <Label fx:id="resizeModeLabel" style="-fx-font-size: 13px;">
+                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
             </Label>
             <ScaledComboBox fx:id="resizeMode">
                 <style>-fx-padding: 0 4;</style>
+                <VBox.margin><Insets left="3"/></VBox.margin>
             </ScaledComboBox>
+
+            <HBox fx:id="vectorsAdvancedOptions">
+                <VBox.margin><Insets top="8" left="3"/></VBox.margin>
+
+                <Label fx:id="arrowLengthTitle" prefHeight="27" minWidth="15" style="-fx-font-size: 13px;">
+                    <HBox.margin><Insets right="5" /></HBox.margin>
+                </Label>
+                <Spinner fx:id="spinnerArrowLength" min="0" max="100" initialValue="0" amountToStepBy="5" editable="true">
+                    <style>-fx-padding: 0 4;</style>
+                </Spinner>
+            </HBox>
+
         </VBox>
     </TitledPane>
 

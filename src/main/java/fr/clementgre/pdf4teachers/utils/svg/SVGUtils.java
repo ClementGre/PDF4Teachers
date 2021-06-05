@@ -30,6 +30,20 @@ public class SVGUtils{
         return handler.getTransformedPath();
     }
     
+    public static String addArrowsToPath(String path, float arrowSize) throws PathParseException{
+        
+        PathParser parser = new PathParser();
+        SVGArrowsCreatorHandler handler = new SVGArrowsCreatorHandler(false, arrowSize, 30);
+        parser.setPathHandler(handler);
+        try{
+            parser.parse(path);
+        }catch(ParseException e){
+            throw new PathParseException(e);
+        }
+        
+        return handler.getTransformedPath();
+    }
+    
     public static String rotatePath(String path, float degAngle) throws PathParseException{
         PathParser parser = new PathParser();
         SVGRotateHandler handler = new SVGRotateHandler(degAngle, true);

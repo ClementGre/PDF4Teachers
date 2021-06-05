@@ -26,6 +26,7 @@ public class VectorData{
     private String path;
     private boolean invertX;
     private boolean invertY;
+    private int arrowLength;
     private long lastUse;
     private int useCount;
     
@@ -34,7 +35,7 @@ public class VectorData{
     
     public VectorData(int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode,
                       boolean doFill, Color fill, Color stroke, int strokeWidth,
-                      String path, boolean invertX, boolean invertY, long lastUse, int useCount){
+                      String path, boolean invertX, boolean invertY, int arrowLength, long lastUse, int useCount){
         
         this.width = width;
         this.height = height;
@@ -47,6 +48,7 @@ public class VectorData{
         this.path = path;
         this.invertX = invertX;
         this.invertY = invertY;
+        this.arrowLength = arrowLength;
         this.lastUse = lastUse;
         this.useCount = useCount;
     }
@@ -60,7 +62,7 @@ public class VectorData{
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
-                width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, link ? this : null);
+                width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, link ? this : null);
         
         page.addElement(element, true);
         element.centerOnCoordinatesY();
@@ -71,7 +73,7 @@ public class VectorData{
     public void setAsToPlaceElement(boolean link){
         // if resizeMode == GraphicElement.ResizeMode.SIDE_EDGES, height = vectorData height
         VectorElement element = new VectorElement(0, 0, 0, false, 1, resizeMode == GraphicElement.ResizeMode.SIDE_EDGES ? height : 1,
-                repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, link ? this : null);
+                repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, link ? this : null);
         
         MainWindow.mainScreen.setToPlace(element);
     }
@@ -96,6 +98,8 @@ public class VectorData{
         data.put("path", path);
         data.put("invertX", invertX);
         data.put("invertY", invertY);
+        
+        data.put("arrowLength", arrowLength);
         
         data.put("lastUse", lastUse);
         data.put("useCount", useCount);
@@ -125,10 +129,12 @@ public class VectorData{
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");
     
+        int arrowLength = (int) Config.getLong(data, "arrowLength");
+        
         boolean invertX = Config.getBoolean(data, "invertX");
         boolean invertY = Config.getBoolean(data, "invertY");
         
-        return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, lastUse, useCount);
+        return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, lastUse, useCount);
     }
     
     public void resetUseData(){
@@ -226,6 +232,14 @@ public class VectorData{
         if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
+    public int getArrowLength(){
+        return arrowLength;
+    }
+    public void setArrowLength(int arrowLength){
+        this.arrowLength = arrowLength;
+        if(displayChangesCallback != null) displayChangesCallback.call();
+    }
+    
     public long getLastUse(){
         return lastUse;
     }
@@ -243,6 +257,6 @@ public class VectorData{
     public VectorData clone(){
         return new VectorData(width, height, repeatMode, resizeMode,
                 doFill, fill, stroke, strokeWidth, path,
-                invertX, invertY, lastUse, useCount);
+                invertX, invertY, arrowLength, lastUse, useCount);
     }
 }

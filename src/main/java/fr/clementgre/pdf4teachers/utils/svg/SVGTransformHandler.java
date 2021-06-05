@@ -16,22 +16,22 @@ public abstract class SVGTransformHandler implements PathHandler{
     protected abstract float manageX(float x, float y, boolean rel);
     protected abstract float manageY(float y, float x, boolean rel);
     
-    private float lastX = 0;
-    private float lastY = 0;
+    protected float lastX = 0;
+    protected float lastY = 0;
     
     private final boolean formatNumbers;
     public SVGTransformHandler(boolean formatNumbers){
         this.formatNumbers = formatNumbers;
     }
     
-    private String preManageX(float x, float y, boolean rel){
+    protected String preManageX(float x, float y, boolean rel){
         if(!rel) lastX = x;
         else lastX += x;
         
         if(formatNumbers) return Main.baseFormat.format(manageX(x, y, rel));
         return String.valueOf(manageX(x, y, rel));
     }
-    private String preManageY(float y, float x, boolean rel){
+    protected String preManageY(float y, float x, boolean rel){
         if(!rel) lastY = y;
         else lastY += y;
     

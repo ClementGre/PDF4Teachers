@@ -7,12 +7,14 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.animation.ScaleTransition;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Scale;
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VectorGridElement{
@@ -138,9 +140,9 @@ public class VectorGridElement{
 
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
             }else{
-                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
             }
     
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
@@ -162,6 +164,7 @@ public class VectorGridElement{
         updateSVGSpecs();
     
         double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
+        if(vectorData.getArrowLength() != 0) padding += vectorData.getArrowLength();
         displayWidth = displayWidth - padding*2;
         
         // SCALE

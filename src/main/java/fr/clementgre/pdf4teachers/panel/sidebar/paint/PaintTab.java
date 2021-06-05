@@ -75,12 +75,13 @@ public class PaintTab extends SideTab{
     // advanced Options
 
     public TitledPane advancedOptionsPane;
+    public VBox advancedOptionsContent;
 
-    public Label widthTitle;
-    public Label heightTitle;
-
+    
     public Spinner<Integer> spinnerX;
     public Spinner<Integer> spinnerY;
+    public Label widthTitle;
+    public Label heightTitle;
     public Spinner<Integer> spinnerWidth;
     public Spinner<Integer> spinnerHeight;
     
@@ -88,6 +89,10 @@ public class PaintTab extends SideTab{
     public ScaledComboBox<String> repeatMode;
     public Label resizeModeLabel;
     public ScaledComboBox<String> resizeMode;
+    
+    public HBox vectorsAdvancedOptions;
+    public Label arrowLengthTitle;
+    public Spinner<Integer> spinnerArrowLength;
     
     // Lists
     
@@ -150,8 +155,8 @@ public class PaintTab extends SideTab{
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
-        
-        
+    
+        PaneUtils.setPosition(spinnerArrowLength, 0, 0, 75, 26, true);
         
         translate();
         setup();
@@ -164,7 +169,7 @@ public class PaintTab extends SideTab{
         resizeModeLabel.setText(TR.tr("paintTab.advancedOptions.resizeMode"));
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
-        
+        arrowLengthTitle.setText(TR.tr("paintTab.advancedOptions.arrowLength"));
     }
 
     public void setup(){
@@ -208,6 +213,11 @@ public class PaintTab extends SideTab{
                         break;
                     }
                 }
+            }
+        });
+        spinnerArrowLength.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement element){
+                if(element.getArrowLength() != newValue) element.setArrowLength(newValue);
             }
         });
     
@@ -278,7 +288,7 @@ public class PaintTab extends SideTab{
             VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false);
+                    "", false, false, 0);
     
             
             page.addElement(element, true);
@@ -293,7 +303,7 @@ public class PaintTab extends SideTab{
             VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false);
+                    "", false, false, 0);
     
             page.addElement(element, true);
             element.centerOnCoordinatesY();
@@ -374,7 +384,7 @@ public class PaintTab extends SideTab{
                 VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
-                        parser.getPath(), false, false);
+                        parser.getPath(), false, false, 0);
         
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
@@ -404,6 +414,7 @@ public class PaintTab extends SideTab{
                 element.strokeProperty().unbind();
                 element.doFillProperty().unbind();
                 element.strokeWidthProperty().unbind();
+                element.arrowLengthProperty().unbind();
             }else if(oldValue instanceof ImageElement element){ // Image
                 element.imageIdProperty().unbind();
             }
@@ -425,12 +436,14 @@ public class PaintTab extends SideTab{
                 vectorFillColor.setValue(element.getFill());
                 vectorStrokeWidth.getValueFactory().setValue(element.getStrokeWidth());
                 doFillButton.setSelected(element.isDoFill());
+                spinnerArrowLength.getValueFactory().setValue(element.getArrowLength());
                 
                 element.pathProperty().bind(path.textProperty());
                 element.strokeProperty().bind(vectorStrokeColor.valueProperty());
                 element.fillProperty().bind(vectorFillColor.valueProperty());
                 element.doFillProperty().bind(doFillButton.selectedProperty());
                 element.strokeWidthProperty().bind(vectorStrokeWidth.valueProperty());
+                element.arrowLengthProperty().bind(spinnerArrowLength.valueProperty());
                 
             }else if(newValue instanceof ImageElement element){ // Image
                 setVectorsDisable(true);
@@ -474,6 +487,7 @@ public class PaintTab extends SideTab{
         vectorUndoPath.setDisable(disable);
         setVectorActionButtonsVisible(!disable);
         setVectorOptionPaneVisible(!disable);
+        setVectorAdvancedOptionVisible(!disable);
     }
     public void setVectorActionButtonsVisible(boolean visible){
         if(!visible){ // REMOVE
@@ -488,6 +502,13 @@ public class PaintTab extends SideTab{
             root.getChildren().remove(vectorsOptionPane);
         }else if(!root.getChildren().contains(vectorsOptionPane)){ // ADD
             root.getChildren().add(1, vectorsOptionPane);
+        }
+    }
+    public void setVectorAdvancedOptionVisible(boolean visible){
+        if(!visible){ // REMOVE
+            advancedOptionsContent.getChildren().remove(vectorsAdvancedOptions);
+        }else if(!advancedOptionsContent.getChildren().contains(vectorsAdvancedOptions)){ // ADD
+            advancedOptionsContent.getChildren().add(vectorsAdvancedOptions);
         }
     }
     private boolean advancedOptionsPaneWasOpen = false;
