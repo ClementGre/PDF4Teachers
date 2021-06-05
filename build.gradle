@@ -129,7 +129,7 @@ jlink {
         targetPlatform(platform, jdkPath);
 
     }else{
-        if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.0.36-openj9')
+        if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot')
         else if(os.macOsX) targetPlatform('mac', '/Users/vincent/Library/Java/JavaVirtualMachines/jdk-16/Contents/Home')
         else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
     }
