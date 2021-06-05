@@ -306,7 +306,7 @@ public class TextTab extends SideTab{
             boldBtn.setSelected(MainWindow.userData.textLastFontBold);
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
             
-            TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+            TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                     true, txtArea.getText(), colorPicker.getValue(), getFont());
             
             page.addElement(current, true);

@@ -118,7 +118,7 @@ public class TextTreeItem extends TreeItem<String>{
                     oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
-                    addToDocument(e.isShiftDown());
+                    addToDocument(e.isShiftDown(), true);
                 }
                 
                 // Update the sorting if is sort by utils
@@ -170,7 +170,7 @@ public class TextTreeItem extends TreeItem<String>{
                     oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
-                    addToDocument(e.isShiftDown());
+                    addToDocument(e.isShiftDown(), true);
                     MainWindow.textTab.selectItem();
                 }
                 
@@ -382,13 +382,13 @@ public class TextTreeItem extends TreeItem<String>{
         return new TextListItem(font.get(), text, color.get(), uses, creationDate);
     }
     
-    public void addToDocument(boolean link){
+    public void addToDocument(boolean link, boolean margin){
         
         if(MainWindow.mainScreen.hasDocument(false)){
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             
-            int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
-            int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
+            int y = page.getNewElementYOnGrid();
+            int x = page.getNewElementXOnGrid(margin);
             addToDocument(link, page, x, y, true);
         }
         

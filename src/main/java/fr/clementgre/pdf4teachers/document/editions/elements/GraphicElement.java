@@ -111,8 +111,10 @@ public abstract class GraphicElement extends Element{
             if(wasInEditPagesModeWhenMousePressed) return;
             
             e.consume();
-            setupMousePressVars(e.getX(), e.getY(), null, false);
             requestFocus();
+            
+            setupMousePressVars(e.getX(), e.getY(), null, false, true);
+            
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
@@ -169,7 +171,7 @@ public abstract class GraphicElement extends Element{
     
     public void simulateReleaseFromResize(){
         checkLocation(false);
-        if(getWidth() < 20 && getHeight() < 20){
+        if(getWidth() < 10 && getHeight() < 10){
             checkLocation(getLayoutX(), getLayoutY(),
                     StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
         }
@@ -180,8 +182,8 @@ public abstract class GraphicElement extends Element{
         //              |
         //            - +
         if(dragType == Cursor.SE_RESIZE){
-            double width = Math.min(x + shiftXFromEnd, getPage().getWidth());
-            double height = Math.min(y + shiftYFromEnd, getPage().getHeight());
+            double width = Math.min(x + shiftXFromEnd, getPage().getWidth()-originX);
+            double height = Math.min(y + shiftYFromEnd, getPage().getHeight()-originY);
         
             if(width < 0) invertX(x, y, Cursor.SW_RESIZE);
             else if(height < 0) invertY(x, y, Cursor.NE_RESIZE);
@@ -189,10 +191,10 @@ public abstract class GraphicElement extends Element{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
-                        height = Math.min(width / ratio, getPage().getHeight());
+                        height = Math.min(width / ratio, getPage().getHeight()-originY);
                         width = height * ratio;
                     }else{
-                        width = Math.min(height * ratio, getPage().getWidth());
+                        width = Math.min(height * ratio, getPage().getWidth()-originX);
                         height = width / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
                     }
                 }
@@ -200,11 +202,11 @@ public abstract class GraphicElement extends Element{
             }
         
         }else if(dragType == Cursor.S_RESIZE){
-            double height = Math.min(y + shiftYFromEnd, getPage().getHeight());
+            double height = Math.min(y + shiftYFromEnd, getPage().getHeight()-originY);
         
             if(doKeepRatio(shift, false)){
                 originX = originX + (originWidth - height*ratio)/2;
-                originWidth = Math.min(height * ratio, getPage().getWidth());
+                originWidth = Math.min(height * ratio, getPage().getWidth()-originX);
                 height = originWidth / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
             }
         
@@ -212,11 +214,11 @@ public abstract class GraphicElement extends Element{
             else checkLocation(originX, getLayoutY(), originWidth, height, false);
         
         }else if(dragType == Cursor.E_RESIZE){
-            double width = Math.min(x + shiftXFromEnd, getPage().getWidth());
+            double width = Math.min(x + shiftXFromEnd, getPage().getWidth()-originX);
         
             if(doKeepRatio(shift, false)){
                 originY = originY + (originHeight - width/ratio)/2;
-                originHeight = Math.min(width / ratio, getPage().getHeight());
+                originHeight = Math.min(width / ratio, getPage().getHeight()-originY);
                 width = originHeight * ratio;
             }
         
@@ -227,8 +229,8 @@ public abstract class GraphicElement extends Element{
         //
         //          +
         else if(dragType == Cursor.NE_RESIZE){
-            double width =  Math.min(x + shiftXFromEnd, getPage().getWidth());
-            double newY = getLayoutY() + y - shiftY;
+            double width =  Math.min(x + shiftXFromEnd, getPage().getWidth()-originX);
+            double newY = Math.max(getLayoutY() + y - shiftY, 0);
             double height = Math.min(originHeight + (originY - newY), getPage().getHeight());
         
             if(width < 0) invertX(x, y, Cursor.NW_RESIZE);
@@ -237,20 +239,20 @@ public abstract class GraphicElement extends Element{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
-                        height = Math.min(width / ratio, getPage().getHeight());
+                        height = Math.min(width / ratio, originHeight + originY);
                         width = height * ratio;
-                        newY = originHeight + originY - height;
                     }else{
-                        width = Math.min(height * ratio, getPage().getWidth());
-                        height = width / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
+                        width = Math.min(height * ratio, getPage().getWidth()-originX);
+                        height = width / ratio;
                     }
+                    newY = originHeight + originY - height;
                 }
                 checkLocation(getLayoutX(), newY, width, height, false);
             }
         
         }else if(dragType == Cursor.SW_RESIZE){
-            double height = Math.min(y + shiftYFromEnd, getPage().getHeight());
-            double newX = getLayoutX() + x - shiftX;
+            double height = Math.min(y + shiftYFromEnd, getPage().getHeight()-originY);
+            double newX = Math.max(getLayoutX() + x - shiftX, 0);
             double width = Math.min(originWidth + (originX - newX), getPage().getWidth());
         
             if(width < 0) invertX(x, y, Cursor.SE_RESIZE);
@@ -259,13 +261,13 @@ public abstract class GraphicElement extends Element{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
-                        height = Math.min(width / ratio, getPage().getHeight());
+                        height = Math.min(width / ratio, getPage().getHeight()-originY);
                         width = height * ratio;
                     }else{
-                        width = Math.min(height * ratio, getPage().getWidth());
+                        width = Math.min(height * ratio, originWidth + originX);
                         height = width / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
-                        newX = originWidth + originX - width;
                     }
+                    newX = originWidth + originX - width;
                 }
                 checkLocation(newX, getLayoutY(), width, height, false);
             }
@@ -275,9 +277,9 @@ public abstract class GraphicElement extends Element{
         //          |
         //
         else if(dragType == Cursor.NW_RESIZE){
-            double newX = getLayoutX() + x - shiftX;
+            double newX = Math.max(getLayoutX() + x - shiftX, 0);
             double width = Math.min(originWidth + (originX - newX), getPage().getWidth());
-            double newY = getLayoutY() + y - shiftY;
+            double newY = Math.max(getLayoutY() + y - shiftY, 0);
             double height = Math.min(originHeight + (originY - newY), getPage().getHeight());
         
             if(width < 0) invertX(x, y, Cursor.NE_RESIZE);
@@ -286,24 +288,24 @@ public abstract class GraphicElement extends Element{
                 if(doKeepRatio(shift, true)){
                     double requestedRatio = width / height;
                     if(requestedRatio >= ratio){
-                        height = Math.min(width / ratio, getPage().getHeight());
+                        height = Math.min(width / ratio, originHeight + originY);
                         width = height * ratio;
-                        newY = originHeight + originY - height;
                     }else{
-                        width = Math.min(height * ratio, getPage().getWidth());
+                        width = Math.min(height * ratio, originWidth + originX);
                         height = width / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
-                        newX = originWidth + originX - width;
                     }
+                    newX = originWidth + originX - width;
+                    newY = originHeight + originY - height;
                 }
                 checkLocation(newX, newY, width, height, false);
             }
         }else if(dragType == Cursor.N_RESIZE){
-            double newY = getLayoutY() + y - shiftY;
+            double newY = Math.max(getLayoutY() + y - shiftY, 0);
             double height = Math.min(originHeight + (originY - newY), getPage().getHeight());
         
             if(doKeepRatio(shift, false)){
                 originX = originX + (originWidth - height*ratio)/2;
-                originWidth = Math.min(height * ratio, getPage().getWidth());
+                originWidth = Math.min(height * ratio, getPage().getWidth()-originX);
                 height = originWidth / ratio;
             }
         
@@ -311,43 +313,54 @@ public abstract class GraphicElement extends Element{
             else checkLocation(originX, newY, originWidth, height, false);
         
         }else if(dragType == Cursor.W_RESIZE){
-            double newX = getLayoutX() + x - shiftX;
+            double newX = Math.max(getLayoutX() + x - shiftX, 0);
             double width = Math.min(originWidth + (originX - newX), getPage().getWidth());
         
             if(doKeepRatio(shift, false)){
                 originY = originY + (originHeight - width/ratio)/2;
-                originHeight = Math.min(width / ratio, getPage().getHeight());
+                originHeight = Math.min(width / ratio, getPage().getHeight()-originY);
                 width = originHeight * ratio;
             }
-        
+    
             if(width < 0) invertX(x, y, Cursor.E_RESIZE);
             else checkLocation(newX, originY, width, originHeight, false);
         
         }
     }
     
-    public void setupMousePressVars(double x, double y, Cursor forceDragType, boolean originalRatio){
-        shiftX = (int) x;
-        shiftY = (int) y;
-        shiftXFromEnd = (getWidth() - x);
-        shiftYFromEnd = (getHeight() - y);
-        originWidth = getWidth();
-        originHeight = getHeight();
-        originX = getLayoutX();
-        originY = getLayoutY();
-        menu.hide();
+    public void setupMousePressVars(double x, double y, Cursor forceDragType, boolean originalRatio, boolean dimensionsFromReal){
     
         if(forceDragType != null){
             dragType = forceDragType;
+            
             shiftX = 0;
             shiftY = 0;
         }else{
             dragType = getDragCursorType(x, y);
             if(originalRatio) ratio = getRatio();
             else ratio = originWidth / originHeight;
+            
+            shiftX = x;
+            shiftY = y;
         }
-        setCursor(dragType);
         
+        if(dimensionsFromReal){
+            shiftXFromEnd = (getRealWidth()/GRID_WIDTH*getPage().getWidth() - x);
+            shiftYFromEnd = (getRealHeight()/GRID_HEIGHT*getPage().getHeight() - y);
+            originWidth = getRealWidth()/GRID_WIDTH*getPage().getWidth();
+            originHeight = getRealHeight()/GRID_HEIGHT*getPage().getHeight();
+            originX = getRealX()/GRID_WIDTH*getPage().getWidth();
+            originY = getRealY()/GRID_HEIGHT*getPage().getHeight();
+        }else{
+            shiftXFromEnd = (getWidth() - x);
+            shiftYFromEnd = (getHeight() - y);
+            originWidth = getWidth();
+            originHeight = getHeight();
+            originX = getLayoutX();
+            originY = getLayoutY();
+        }
+        menu.hide();
+        setCursor(dragType);
         select();
     }
     
@@ -454,14 +467,14 @@ public abstract class GraphicElement extends Element{
     }
     
     private void invertX(double x, double y, Cursor forceDragType){
-        setupMousePressVars(x, y, forceDragType, false);
+        setupMousePressVars(x, y, forceDragType, false, true);
         if(this instanceof VectorElement ve){
             ve.setInvertX(!ve.isInvertX());
             updateGrabIndicators(true);
         }
     }
     private void invertY(double x, double y, Cursor forceDragType){
-        setupMousePressVars(x, y, forceDragType, false);
+        setupMousePressVars(x, y, forceDragType, false, true);
         if(this instanceof VectorElement ve){
             ve.setInvertY(!ve.isInvertY());
             updateGrabIndicators(true);

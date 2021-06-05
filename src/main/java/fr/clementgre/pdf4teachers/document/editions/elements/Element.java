@@ -36,8 +36,8 @@ public abstract class Element extends Region{
     protected IntegerProperty realY = new SimpleIntegerProperty();
     
     protected int pageNumber;
-    protected int shiftX = 0;
-    protected int shiftY = 0;
+    protected double shiftX = 0;
+    protected double shiftY = 0;
     protected boolean wasInEditPagesModeWhenMousePressed = false;
     
     public ContextMenu menu = new ContextMenu();
@@ -162,18 +162,18 @@ public abstract class Element extends Region{
         if(itemX < 0) itemX = 0;
         if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
     
-        realX.set((int) (itemX / getPage().getWidth() * Element.GRID_WIDTH));
-        realY.set((int) (itemY / getPage().getHeight() * Element.GRID_HEIGHT));
+        realX.set(getPage().toGridX(itemX));
+        realY.set(getPage().toGridY(itemY));
 
         if(this instanceof GraphicElement){
 
             if(getHeight() != height){
-                int value = (int) (height / getPage().getHeight() * Element.GRID_HEIGHT);
+                int value = getPage().toGridY(height);
                 ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
 
             if(getWidth() != width){
-                int value = (int) (width / getPage().getWidth() * Element.GRID_WIDTH);
+                int value = getPage().toGridX(width);
                 ((GraphicElement) this).setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
             }
         }
@@ -234,7 +234,7 @@ public abstract class Element extends Region{
     public abstract float getAlwaysHeight();
     
     public int getRealHeight(){
-        return (int) (getAlwaysHeight() / getPage().getHeight() * Element.GRID_HEIGHT);
+        return getPage().toGridY(getAlwaysHeight());
     }
     
     // COORDINATES GETTERS AND SETTERS

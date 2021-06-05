@@ -50,7 +50,7 @@ public class KeyboardShortcuts{
                         Element selected = MainWindow.mainScreen.getSelected();
                         if(selected != null){
                             if(selected instanceof TextElement){
-                                selected.setRealX((int) (selected.getPage().getMouseX() * Element.GRID_WIDTH / selected.getPage().getWidth()));
+                                selected.setRealX(selected.getPage().getNewElementXOnGrid(false));
                             }
                         }
                         return;
@@ -231,7 +231,7 @@ public class KeyboardShortcuts{
                 
                 if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
                 if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size() && i != 0){
-                    ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false);
+                    ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false, false);
                     MainWindow.textTab.selectItem();
                 }
             }

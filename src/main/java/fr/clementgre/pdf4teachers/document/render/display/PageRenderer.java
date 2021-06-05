@@ -192,7 +192,16 @@ public class PageRenderer extends Pane{
             
             if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
+                
                 placingElement.initializePage(getPage(), e.getX(), e.getY());
+                
+                if(placingElement instanceof VectorElement vectorElement){
+                    vectorElement.invertInversions();
+                }
+                if(placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES){
+                    placingElement.centerOnCoordinatesY();
+                }
+                
                 addElement(placingElement, true);
                 MainWindow.mainScreen.setSelected(placingElement);
                 placingElement.requestFocus();
@@ -200,7 +209,8 @@ public class PageRenderer extends Pane{
                 
                 int shiftX = (int) placingElement.getLayoutX();
                 int shiftY = (int) placingElement.getLayoutY();
-                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true);
+                
+                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true, true);
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
                 
                 setCursor(Cursor.CROSSHAIR);
@@ -332,7 +342,7 @@ public class PageRenderer extends Pane{
                 
                 menuItem.setLeftData(name);
                 menuItem.setOnAction((e) -> {
-                    item.addToDocument(false);
+                    item.addToDocument(false, false);
                     MainWindow.textTab.selectItem();
                 });
                 menu.getItems().add(menuItem);
@@ -629,9 +639,28 @@ public class PageRenderer extends Pane{
     public double getMouseX(){
         return Math.max(Math.min(mouseX, getWidth()), 0);
     }
-    
     public double getMouseY(){
         return Math.max(Math.min(mouseY, getHeight()), 0);
+    }
+    
+    public int getNewElementYOnGrid(){
+        return toGridY(getMouseY());
+    }
+    public int getNewElementXOnGrid(boolean margin){
+        return toGridX(getMouseX() + (margin ? 30 : 0));
+    }
+    
+    public int toGridX(double x){
+        return (int) (x/getWidth()*Element.GRID_WIDTH);
+    }
+    public int toGridY(double y){
+        return (int) (y/getHeight()*Element.GRID_HEIGHT);
+    }
+    public double fromGridX(double x){
+        return x/Element.GRID_WIDTH*getWidth();
+    }
+    public double fromGridY(double y){
+        return y/Element.GRID_HEIGHT*getHeight();
     }
     
     public double getRealMouseX(){

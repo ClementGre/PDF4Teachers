@@ -121,7 +121,7 @@ public class GradeTab extends SideTab{
             if(!lastName.equals(newName)) name = newName;
         }
         
-        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+        GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name, false);
         
         page.addElement(current, true);
@@ -137,7 +137,7 @@ public class GradeTab extends SideTab{
         
         if(update) MainWindow.mainScreen.setSelected(null);
         
-        GradeElement current = new GradeElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+        GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, value, total, index, parentPath, name, false);
         
         page.addElement(current, update);

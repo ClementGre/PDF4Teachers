@@ -226,6 +226,8 @@ public class PaintTab extends SideTab{
         vectorStrokeWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.vectorsLastStrokeWidth = newValue;
         });
+    
+        path.setContextMenu(null);
         
         ////////// New Image menu //////////
         
@@ -240,7 +242,7 @@ public class PaintTab extends SideTab{
             browseImagePath(path -> {
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
 
-                ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
 
                 page.addElement(element, true);
@@ -251,8 +253,8 @@ public class PaintTab extends SideTab{
         newImageEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
 
-            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
+            ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
 
             page.addElement(element, true);
             element.centerOnCoordinatesY();
@@ -273,8 +275,8 @@ public class PaintTab extends SideTab{
         newVectorDrawing.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
-            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+            VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false);
     
@@ -288,8 +290,8 @@ public class PaintTab extends SideTab{
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
-            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+            VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false);
     
@@ -369,7 +371,7 @@ public class PaintTab extends SideTab{
                 
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
-                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
                         parser.getPath(), false, false);

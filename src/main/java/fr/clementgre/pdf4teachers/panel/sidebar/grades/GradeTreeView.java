@@ -258,7 +258,7 @@ public class GradeTreeView extends TreeView<String>{
                 for(GradeTreeItem itemToSend : itemsToSend){
                     if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber())
                         itemToSend.getCore().switchPage(item.getCore().getPageNumber());
-                    itemToSend.getCore().setRealY((int) ((item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
+                    itemToSend.getCore().setRealY(item.getCore().getPage().toGridY(item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()));
                 }
                 itemsToSend = new ArrayList<>();
             }
@@ -273,7 +273,7 @@ public class GradeTreeView extends TreeView<String>{
                         if(afterItem.getCore().getPageNumber() != item.getCore().getPageNumber()){
                             afterItem.getCore().switchPage(item.getCore().getPageNumber());
                         }
-                        afterItem.getCore().setRealY((int) ((item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()) * Element.GRID_HEIGHT / item.getCore().getPage().getHeight()));
+                        afterItem.getCore().setRealY(item.getCore().getPage().toGridY(item.getCore().getLayoutY() + afterItem.getCore().getLayoutBounds().getHeight()));
                         
                         afterItemHaveToDropDown = false;
                     }else{

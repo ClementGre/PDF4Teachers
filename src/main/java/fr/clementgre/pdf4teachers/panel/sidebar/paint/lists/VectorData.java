@@ -59,7 +59,7 @@ public class VectorData{
     public void addToDocument(boolean link){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
-        VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+        VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, link ? this : null);
         
         page.addElement(element, true);
@@ -69,7 +69,8 @@ public class VectorData{
         incrementUsesAndLastUse();
     }
     public void setAsToPlaceElement(boolean link){
-        VectorElement element = new VectorElement(0, 0, 0, false, 1, 1,
+        // if resizeMode == GraphicElement.ResizeMode.SIDE_EDGES, height = vectorData height
+        VectorElement element = new VectorElement(0, 0, 0, false, 1, resizeMode == GraphicElement.ResizeMode.SIDE_EDGES ? height : 1,
                 repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, link ? this : null);
         
         MainWindow.mainScreen.setToPlace(element);

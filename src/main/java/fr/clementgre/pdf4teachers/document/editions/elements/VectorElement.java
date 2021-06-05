@@ -482,4 +482,9 @@ public class VectorElement extends GraphicElement{
     public SVGPath getNoScaledSvgPath(){
         return noScaledSvgPath;
     }
+    
+    public void invertInversions(){
+        setInvertX(!isInvertX());
+        setInvertY(!isInvertY());
+    }
 }

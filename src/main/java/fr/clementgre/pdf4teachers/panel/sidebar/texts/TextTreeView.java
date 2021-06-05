@@ -277,7 +277,7 @@ public class TextTreeView extends TreeView<String>{
         
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
-            element.addToDocument(true);
+            element.addToDocument(true, true);
             if(element.getType() == TextTreeSection.FAVORITE_TYPE){
                 if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
                     MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();

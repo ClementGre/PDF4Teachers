@@ -128,13 +128,13 @@ public class GradeElement extends Element{
                     if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
                     }
-                    setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
+                    setRealX(getPage().toGridX(getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()));
                     
                     if(nextRealYToUse != 0){
                         setRealY(nextRealYToUse);
                         nextRealYToUse = 0;
                     }else{
-                        setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
+                        setRealY(getPage().getNewElementYOnGrid());
                         centerOnCoordinatesY();
                     }
                 }
