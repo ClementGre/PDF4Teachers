@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -33,7 +34,9 @@ public abstract class ListPane<T> extends TitledPane{
     protected final VBox root = new VBox();
     protected final GridPane sortPanel = new GridPane();
     private final Label emptyListLabel = new Label();
-    private final HBox messageContainer = new HBox(emptyListLabel);
+    private Hyperlink emptyListLink = new Hyperlink();
+    
+    private final VBox messageContainer = new VBox(emptyListLabel, emptyListLink);
     
     protected PaintTab paintTab;
     public ListPane(PaintTab paintTab){
@@ -87,9 +90,12 @@ public abstract class ListPane<T> extends TitledPane{
         // Message setup
         emptyListLabel.setTextAlignment(TextAlignment.CENTER);
         emptyListLabel.setWrapText(true);
+    
+        emptyListLink.setTextAlignment(TextAlignment.CENTER);
+        emptyListLink.setWrapText(true);
+        
         messageContainer.setPadding(new Insets(10));
         messageContainer.setAlignment(Pos.CENTER);
-        VBox.setVgrow(messageContainer, Priority.ALWAYS);
     }
     
     protected void setupMenu(ShapesGridView<T> list){
@@ -113,6 +119,12 @@ public abstract class ListPane<T> extends TitledPane{
     
     protected void setEmptyMessage(String text){
         emptyListLabel.setText(text);
+    }
+    protected void setEmptyLink(String text, CallBack onClick){
+        emptyListLink.setText(text);
+        emptyListLink.setOnAction((e) -> {
+            onClick.call();
+        });
     }
     protected void updateMessage(boolean empty){
         if(empty){

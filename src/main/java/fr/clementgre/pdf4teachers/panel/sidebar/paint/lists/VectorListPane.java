@@ -4,11 +4,13 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.*;
+import fr.clementgre.pdf4teachers.utils.svg.DefaultFavoriteVectors;
 import javafx.beans.InvalidationListener;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class VectorListPane extends ListPane<VectorGridElement>{
     
@@ -37,7 +39,12 @@ public class VectorListPane extends ListPane<VectorGridElement>{
             }
         });
     
-        if(isFavouriteVectors()) setEmptyMessage(TR.tr("paintTab.favouriteVectors.emptyList"));
+        if(isFavouriteVectors()){
+            setEmptyMessage(TR.tr("paintTab.favouriteVectors.emptyList"));
+            setEmptyLink(TR.tr("paintTab.favouriteVectors.loadDefaultVectors"), () -> {
+                list.addItems(DefaultFavoriteVectors.getDefaultFavoriteVectors().stream().map(VectorGridElement::new).toList());
+            });
+        }
         else if(isLastVectors()) setEmptyMessage(TR.tr("paintTab.lastVectors.emptyList"));
         list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
