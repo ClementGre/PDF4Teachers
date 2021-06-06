@@ -43,7 +43,7 @@ public class GalleryWindow extends Stage{
     private final Label emptyGalleryLabel = new Label(TR.tr("galleryWindow.noImagesMessage"));
     private final HBox messageContainer = new HBox(emptyGalleryLabel);
     
-    private final ImageGridView list = new ImageGridView(false,500, zoomSlider);
+    private final ImageGridView list = new ImageGridView(false,500, zoomSlider, true);
     
     public GalleryWindow(){
         

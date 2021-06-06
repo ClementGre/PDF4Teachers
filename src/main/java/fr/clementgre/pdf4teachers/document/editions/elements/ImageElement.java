@@ -163,6 +163,10 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public double getRatio(){
+        if(image == null){
+            if(linkedImageData != null) return ((double) linkedImageData.getWidth()) / linkedImageData.getHeight();
+            return ((double) getRealWidth()) / getRealHeight();
+        }
         return image.getWidth() / image.getHeight();
     }
     

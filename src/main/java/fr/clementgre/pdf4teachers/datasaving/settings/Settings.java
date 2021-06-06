@@ -55,6 +55,15 @@ public class Settings{
     
     
     @SettingObject
+    public IntSetting pagesFastMenuTextsNumber = new IntSetting(8, true, 0, 12, 2, false, false,  SVGPathIcons.TEXT_HEIGHT, "pagesFastMenuTextsNumber",
+            "settings.pagesFastMenuTextsNumber.title", "");
+    
+    @SettingObject
+    public BooleanSetting pagesFastMenuShowImages = new BooleanSetting(false, true, SVGPathIcons.PICTURES, "pagesFastMenuShowImages",
+            "settings.pagesFastMenuShowImages.title", "");
+    
+    
+    @SettingObject
     public BooleanSetting listsMoveAndDontCopy = new BooleanSetting(true, true, SVGPathIcons.STAR, "listsMoveAndDontCopy",
             "settings.listsMoveAndDontCopy.title", "settings.listsMoveAndDontCopy.tooltip");
     @SettingObject
@@ -99,6 +108,9 @@ public class Settings{
     
     @SettingsGroup(title="settings.group.save")
     public Setting<?>[] saveGroup = {autoSave, regularSave};
+    
+    @SettingsGroup(title= "settings.group.pagesContextMenu")
+    public Setting<?>[] pagesContextMenu = {pagesFastMenuTextsNumber, pagesFastMenuShowImages};
     
     @SettingsGroup(title= "settings.group.elementsLists")
     public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};

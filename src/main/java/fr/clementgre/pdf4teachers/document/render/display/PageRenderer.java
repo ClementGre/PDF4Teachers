@@ -9,6 +9,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -329,7 +331,7 @@ public class PageRenderer extends Pane{
     
         List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
     
-        for(int i = 0; i <= 7; i++){
+        for(int i = 0; i < Main.settings.pagesFastMenuTextsNumber.getValue(); i++){
             if(mostUsed.size() > i){
                 TextTreeItem item = mostUsed.get(i);
                 
@@ -348,7 +350,16 @@ public class PageRenderer extends Pane{
                 menu.getItems().add(menuItem);
             }
         }
+        
+        NodeMenuItem vectorsMenuItem = VectorListPane.getPagesMenuItem();
+        if(vectorsMenuItem != null) menu.getItems().add(vectorsMenuItem);
     
+        if(Main.settings.pagesFastMenuShowImages.getValue()){
+            NodeMenuItem imagesMenuItem = ImageListPane.getPagesMenuItem();
+            if(imagesMenuItem != null) menu.getItems().add(imagesMenuItem);
+        }
+        
+        
         NodeMenuItem.setupMenu(menu);
         menu.show(this, screenX, screenY);
     }

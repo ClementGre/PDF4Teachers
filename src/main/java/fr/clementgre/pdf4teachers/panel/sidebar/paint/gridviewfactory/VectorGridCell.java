@@ -25,8 +25,10 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     public static final int PADDING = 2;
     
     private final boolean favorite;
-    public VectorGridCell(boolean favorite){
+    private final boolean hasContextMenu;
+    public VectorGridCell(boolean favorite, boolean hasContextMenu){
         this.favorite = favorite;
+        this.hasContextMenu = hasContextMenu;
     
         root.prefWidthProperty().bind(widthProperty().subtract(2*PADDING));
         root.prefHeightProperty().bind(heightProperty().subtract(2*PADDING));
@@ -37,22 +39,18 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     
         // Prevent cell from taking the shape of the SVGPath
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        
-        shadow.setColor(Color.web("#0078d7"));
+    
+        shadow.setColor(Color.TRANSPARENT);
         shadow.setSpread(.90);
         shadow.setOffsetY(0);
         shadow.setOffsetX(0);
-        shadow.setRadius(0);
+        shadow.setRadius(2);
         setEffect(shadow);
-        
-        setOnMouseEntered((e) -> {
-            shadow.setRadius(2);
-        });
-        setOnMouseExited((e) -> {
-            shadow.setRadius(0);
-        });
     
-        NodeMenuItem.setupMenu(menu);
+        setOnMouseEntered((e) -> shadow.setColor(Color.web("#0078d7")));
+        setOnMouseExited((e) -> shadow.setColor(Color.TRANSPARENT));
+    
+        if(hasContextMenu) NodeMenuItem.setupMenu(menu);
     }
     
     @Override
@@ -72,20 +70,23 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             }
             
             // MENU
-            setContextMenu(menu);
-            if(favorite){
-                menu.getItems().setAll(addNLink, removeItem, addToLast);
-            }else{
-                menu.getItems().setAll(addNLink, removeItem, addToFavorites);
+            if(hasContextMenu){
+                setContextMenu(menu);
+                if(favorite){
+                    menu.getItems().setAll(addNLink, removeItem, addToLast);
+                }else{
+                    menu.getItems().setAll(addNLink, removeItem, addToFavorites);
+                }
+                menu.setOnShowing((e) -> {
+                    addNLink.setDisable(!MainWindow.mainScreen.hasDocument(false));
+                    addNLink.setOnAction((event) -> item.addToDocument(true));
+        
+                    removeItem.setOnAction((event) -> item.removeFromList((VectorGridView) getGridView()));
+                    addToFavorites.setOnAction((event) -> item.addToFavorite((VectorGridView) getGridView()));
+                    addToLast.setOnAction((event) -> item.addToLast((VectorGridView) getGridView()));
+                });
             }
-            menu.setOnShowing((e) -> {
-                addNLink.setDisable(!MainWindow.mainScreen.hasDocument(false));
-                addNLink.setOnAction((event) -> item.addToDocument(true));
-                
-                removeItem.setOnAction((event) -> item.removeFromList((VectorGridView) getGridView()));
-                addToFavorites.setOnAction((event) -> item.addToFavorite((VectorGridView) getGridView()));
-                addToLast.setOnAction((event) -> item.addToLast((VectorGridView) getGridView()));
-            });
+            
     
             root.getChildren().setAll(item.getSvgPath());
             
@@ -94,10 +95,10 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
                     if(e.getClickCount() >= 2){
-                        item.addToDocument(false);
+                        item.addToDocument(e.isShiftDown());
                         updateListsSort();
                     }else if(e.getClickCount() == 1){
-                        item.setAsToPlaceElement(false);
+                        item.setAsToPlaceElement(e.isShiftDown());
                     }
                 }
             });
