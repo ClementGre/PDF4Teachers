@@ -119,6 +119,15 @@ public abstract class GraphicElement extends Element{
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
         });
+    
+        setOnMouseClicked(e -> {
+            if(PageRenderer.isEditPagesMode()) return;
+            e.consume();
+            requestFocus();
+            if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
+                onDoubleCLick();
+            }
+        });
         
         setOnMouseDragged(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
@@ -160,13 +169,14 @@ public abstract class GraphicElement extends Element{
     }
     
     @Override
-    protected void onSelectedElementChanged(Observable observable, Element oldElement, Element newElement){
-        if(oldElement == this && newElement != this){
-            updateGrabIndicators(false);
-            menu.hide();
-        }else if(oldElement != this && newElement == this){
-            updateGrabIndicators(true);
-        }
+    protected void onSelected(){
+        updateGrabIndicators(true);
+    }
+    
+    @Override
+    protected void onDeSelected(){
+        updateGrabIndicators(false);
+        menu.hide();
     }
     
     public void simulateReleaseFromResize(){
@@ -542,7 +552,7 @@ public abstract class GraphicElement extends Element{
     }
     
     @Override
-    public void doubleClick(){
+    public void onDoubleClickAfterSelected(){
     
     }
     

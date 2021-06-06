@@ -1,22 +1,14 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
-import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -29,7 +21,6 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import jfxtras.styles.jmetro.Style;
 import org.controlsfx.control.GridCell;
-import org.controlsfx.control.GridView;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
@@ -37,17 +28,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
 
 public class ImageGridCell extends GridCell<ImageGridElement>{
+    
+    public static final int PADDING = 2;
     
     private final ImageView imageView;
     private final DropShadow shadow = new DropShadow();
     
-    public static final int PADDING = 2;
-    
-    public ImageGridCell(){
+    private final boolean hasContextMenu;
+    public ImageGridCell(boolean hasContextMenu){
         this.imageView = new ImageView();
+        this.hasContextMenu = hasContextMenu;
         
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
@@ -86,7 +78,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
-            setContextMenu(item.getMenu());
+            if(hasContextMenu) setContextMenu(item.getMenu());
             updateTooltip(item);
             
             setGraphic(imageView);

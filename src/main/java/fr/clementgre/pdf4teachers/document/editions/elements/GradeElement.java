@@ -221,6 +221,10 @@ public class GradeElement extends Element{
     protected void onMouseRelease(){
         GradeTreeView.defineNaNLocations();
     }
+    @Override
+    protected void onDoubleCLick(){
+    
+    }
     
     // ACTIONS
     
@@ -231,9 +235,8 @@ public class GradeElement extends Element{
         MainWindow.gradeTab.treeView.getSelectionModel().select(getGradeTreeItem());
         AutoTipsManager.showByAction("gradeselect");
     }
-    
     @Override
-    public void doubleClick(){
+    public void onDoubleClickAfterSelected(){
         if(!getGradeTreeItem().hasSubGrade()){
             setValue(0);
             AutoTipsManager.showByAction("gradereset");

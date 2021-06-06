@@ -56,6 +56,10 @@ public class NodeMenuItem extends CustomMenuItem{
         setName(text);
     }
     
+    public void removePadding(){
+        node.setStyle("-fx-padding: 0;");
+    }
+    
     public void setLeftData(Node data){
         Pane pane = new Pane();
         pane.setStyle("-fx-font-size: 13; -fx-padding: 0 8 0 0;"); // top - right - bottom - left

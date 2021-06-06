@@ -6,15 +6,16 @@ public class SVGScalerHandler extends SVGSimpleTransformHandler{
     
     // Translate Y/X should be relative to original coordinates
     // Width and Height too.
-    public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY){
+    public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY, int decimals){
+        super(decimals);
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         this.translateX = translateX;
         this.translateY = translateY;
     }
     public SVGScalerHandler(float scaleX, float scaleY, float translateX, float translateY,
-                            boolean invertX, boolean invertY, float currentWidth, float currentHeight){
-        
+                            boolean invertX, boolean invertY, float currentWidth, float currentHeight, int decimals){
+        super(decimals);
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         this.translateX = translateX;

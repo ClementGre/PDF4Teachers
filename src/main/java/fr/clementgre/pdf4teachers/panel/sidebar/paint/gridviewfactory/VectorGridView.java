@@ -6,14 +6,16 @@ import java.util.List;
 public class VectorGridView extends ShapesGridView<VectorGridElement>{
     
     private final boolean favorite;
-    public VectorGridView(Slider zoomSlider, boolean favorite){
+    private final boolean hasContextMenu;
+    public VectorGridView(Slider zoomSlider, boolean favorite, boolean hasContextMenu){
         super(true, zoomSlider);
         this.favorite = favorite;
+        this.hasContextMenu = hasContextMenu;
     }
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new VectorGridCell(favorite));
+        setCellFactory(param -> new VectorGridCell(favorite, hasContextMenu));
         super.setup();
     }
     

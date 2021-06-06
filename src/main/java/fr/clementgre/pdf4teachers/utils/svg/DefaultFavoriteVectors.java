@@ -12,7 +12,7 @@ public class DefaultFavoriteVectors{
     private static final Color CYAN_TRANSPARENT = Color.color(34/255d, 176/255d, 222/255d, .5);
     private static final Color YELLOW_TRANSPARENT = Color.color(1, 1, 0, .4);
     
-    private static final VectorData ARROW = new VectorData(20000, 7000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.CORNERS,
+    private static final VectorData ARROW = new VectorData(20000, 7000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.OPPOSITE_CORNERS,
             false, CYAN_TRANSPARENT, Color.DARKBLUE, 2, "M0 1 L1 0", false, false, 20, 0, 0);
     
     private static final VectorData LINE = new VectorData(20000, 20000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.OPPOSITE_CORNERS,
@@ -22,13 +22,13 @@ public class DefaultFavoriteVectors{
             false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M1.5,1 C1.5,2 0,2 0,1 C0,0 1.5,0 1.5,1", false, false, 0, 0, 0);
     
     private static final VectorData RECT = new VectorData(40000, 30000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.CORNERS,
-            false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M0 0 L1 0 M1 0 L1 1 M1 1 L0 1 M0 1 L0 0", false, false, 0, 0, 0);
+            false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M0 0 L1 0 L1 1 L0 1 L0 0 z", false, false, 0, 0, 0);
     
     private static final VectorData RECT_FILL = new VectorData(40000, 30000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.CORNERS,
-            true, CYAN_TRANSPARENT, Color.DARKBLUE, 3, "M0 0 L1 0 M1 0 L1 1 M1 1 L0 1 M0 1 L0 0", false, false, 0, 0, 0);
+            true, CYAN_TRANSPARENT, Color.DARKBLUE, 3, "M0 0 L1 0 L1 1 L0 1 L0 0 z", false, false, 0, 0, 0);
     
     private static final VectorData SQUARE = new VectorData(30000, 30000, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS,
-            false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M0 0 L1 0 M1 0 L1 1 M1 1 L0 1 M0 1 L0 0", false, false, 0, 0, 0);
+            false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M0 0 L1 0 L1 1 L0 1 L0 0 z", false, false, 0, 0, 0);
     
     private static final VectorData WAVES = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
             false, CYAN_TRANSPARENT, Color.DARKRED, 1, "M0 1 L1 0 L2 1 M0 -7", false, false, 0, 0, 0);
@@ -56,6 +56,10 @@ public class DefaultFavoriteVectors{
     
     private static final VectorData FAT_VERTICAL_ARROW = new VectorData(10000, 10259, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS,
             true, CYAN_TRANSPARENT, Color.NAVY, 2, "M-66.9 190.5l22.2 22.2c9.4 9.4 9.4 24.6 -0 33.9L-239 441c-9.4 9.4 -24.6 9.4 -33.9 -0L-467.3 246.6c-9.4 -9.4 -9.4 -24.6 0 -33.9l22.2 -22.2c9.5 -9.5 25 -9.3 34.3 0.4L-296 311.4L-296 24c0 -13.3 10.7 -24 24 -24l32 0c13.3 0 24 10.7 24 24l-0 287.4L-101.2 190.9c9.3 -9.8 24.8 -10 34.3 -0.4z", false, false, 0, 0, 0);
+    
+    private static final VectorData STAR = new VectorData(7000, 7200, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS,
+            true, Color.YELLOW, Color.color(153/255d, 153/255d, 0), 2, "M259.3 17.8L194 150.2 47.9 171.5c-26.2 3.8-36.7 36.1-17.7 54.6l105.7 103-25 145.5c-4.5 26.3 23.2 46 46.4 33.7L288 439.6l130.7 68.7c23.2 12.2 50.9-7.4 46.4-33.7l-25-145.5 105.7-103c19-18.5 8.5-50.8-17.7-54.6L382 150.2 316.7 17.8c-11.7-23.6-45.6-23.9-57.4 0z", false, false, 0, 0, 0);
+    
     
     public static ArrayList<VectorData> getDefaultFavoriteVectors(){
         ArrayList<VectorData> data = new ArrayList<>();

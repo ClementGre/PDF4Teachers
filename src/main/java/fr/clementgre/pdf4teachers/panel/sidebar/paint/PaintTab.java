@@ -23,6 +23,7 @@ import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
+import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -293,7 +294,7 @@ public class PaintTab extends SideTab{
             
             page.addElement(element, true);
             element.centerOnCoordinatesY();
-            element.setIsEditMode(true);
+            element.enterEditMode();
             MainWindow.mainScreen.setSelected(element);
             element.setLinkedVectorData(VectorListPane.addLastVector(element));
         });
@@ -330,7 +331,7 @@ public class PaintTab extends SideTab{
     
                     if(inputAlert.getShowAndWaitIsDefaultButton() && inputAlert.getValue() != null && inputAlert.getValue() != 0){
                         try{
-                            path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue())));
+                            path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue()), 4));
                         }catch(PathParseException ex){
                             System.err.println(ex.getMessage());
                         }
@@ -340,6 +341,19 @@ public class PaintTab extends SideTab{
                 menu.show(browsePath, e.getScreenX(), e.getScreenY());
             }
         });
+        
+        // VectorsButtons
+        
+        vectorCreateCurve.setOnAction((e) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
+                vectorElement.getPage().getVectorElementPageDrawer().onCreateCurve();
+            }
+        });
+        vectorDrawMode.selectedToggleProperty().addListener(this::vectorDrawModeChanged);
+        vectorCreateCurve.disableProperty().bind(vectorModePoint.selectedProperty().not());
+        vectorStraightLineMode.disableProperty().bind(vectorDrawMode.selectedToggleProperty().isNull());
+        
+        // Listeners
         
         MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
         MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
@@ -409,7 +423,7 @@ public class PaintTab extends SideTab{
         // Old element
         if(oldValue instanceof GraphicElement gElement){
             if(oldValue instanceof VectorElement element){ // Vector
-                element.pathProperty().unbind();
+                element.pathProperty().unbindBidirectional(path.textProperty());
                 element.fillProperty().unbind();
                 element.strokeProperty().unbind();
                 element.doFillProperty().unbind();
@@ -438,7 +452,7 @@ public class PaintTab extends SideTab{
                 doFillButton.setSelected(element.isDoFill());
                 spinnerArrowLength.getValueFactory().setValue(element.getArrowLength());
                 
-                element.pathProperty().bind(path.textProperty());
+                element.pathProperty().bindBidirectional(path.textProperty());
                 element.strokeProperty().bind(vectorStrokeColor.valueProperty());
                 element.fillProperty().bind(vectorFillColor.valueProperty());
                 element.doFillProperty().bind(doFillButton.selectedProperty());
@@ -481,6 +495,16 @@ public class PaintTab extends SideTab{
     }
     public void editSpinHeightEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
         if(!spinnerHeight.getValue().equals(newValue)) spinnerHeight.getValueFactory().setValue(newValue.intValue());
+    }
+    
+    private void vectorDrawModeChanged(ObservableValue<? extends Toggle> o, Toggle oldToggle, Toggle newToggle){
+        if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
+            if(newToggle != null){
+                if(oldToggle == null) vectorElement.enterEditMode();
+            }else{
+                vectorElement.quitEditMode();
+            }
+        }
     }
     
     public void setVectorsDisable(boolean disable){

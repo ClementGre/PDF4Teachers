@@ -140,9 +140,11 @@ public class VectorGridElement{
 
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
+                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }else{
-                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
+                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }
     
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
@@ -164,7 +166,8 @@ public class VectorGridElement{
         updateSVGSpecs();
     
         double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
-        if(vectorData.getArrowLength() != 0) padding += vectorData.getArrowLength();
+        double clipPadding = 0;
+        if(vectorData.getArrowLength() != 0) clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
         displayWidth = displayWidth - padding*2;
         
         // SCALE
@@ -183,8 +186,12 @@ public class VectorGridElement{
         svgPath.setLayoutY(padding + notRectShapeTransformY);
         
         // CLIP
-        Rectangle clip = new Rectangle((-padding+1)/scale, (-padding+1)/scale,
-                svgWidth + (2*padding-2)/scale, svgHeight + (2*padding-2)/scale);
+        Rectangle clip = new Rectangle(
+                (-padding+1)/scale -clipPadding,
+                (-padding+1)/scale -clipPadding,
+                svgWidth + (2*padding-2)/scale + 2*clipPadding,
+                svgHeight + (2*padding-2)/scale + 2*clipPadding
+        );
         svgPath.setClip(clip);
     
     
