@@ -386,6 +386,7 @@ public class MainScreen extends Pane{
                 }
             }else document.edition.save();
     
+            setSelected(null);
             MainWindow.gradeTab.treeView.clearElements(false, false);
             MainWindow.textTab.treeView.onCloseDocument();
             document.stopDocumentSaver();
@@ -402,7 +403,6 @@ public class MainScreen extends Pane{
         pane.setPrefWidth(1);
         
         status.set(Status.CLOSED);
-        selected.set(null);
         
         repaint();
     

@@ -2,14 +2,13 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.WeakChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
@@ -22,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class Element extends Region{
     
-    protected static BorderStroke STROKE_DEFAULT = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
+    public static BorderStroke STROKE_DEFAULT = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
             BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, new BorderWidths(1.5));
     
     // Size for A4 - 200dpi (Static)
@@ -50,7 +49,10 @@ public abstract class Element extends Region{
     
     // SETUP / EVENTS CALLBACK
     
-    private final ChangeListener<Element> mainScreenSelectedListener = this::onSelectedElementChanged;
+    private final ChangeListener<Element> mainScreenSelectedListener = (observable, oldElement, newElement) -> {
+        if(oldElement == this && newElement != this) onDeSelected();
+        else if(oldElement != this && newElement == this) onSelected();
+    };
     
     protected void setupGeneral(boolean setupEvents, Node... components){
         getChildren().addAll(components);
@@ -85,7 +87,15 @@ public abstract class Element extends Region{
                     }
                     
                 }else if(e.getClickCount() == 2 && lastClickSelected.get()){
-                    doubleClick();
+                    onDoubleClickAfterSelected();
+                }
+            });
+            setOnMouseClicked(e -> {
+                if(PageRenderer.isEditPagesMode()) return;
+                e.consume();
+                requestFocus();
+                if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
+                    onDoubleCLick();
                 }
             });
             setOnMouseDragged(e -> {
@@ -130,20 +140,20 @@ public abstract class Element extends Region{
         setupMenu();
     }
     
-    protected void onSelectedElementChanged(Observable observable, Element oldElement, Element newElement){
-        if(oldElement == this && newElement != this){
-            setBorder(null);
-            menu.hide();
-        }else if(oldElement != this && newElement == this){
-            setBorder(new Border(STROKE_DEFAULT));
-        }
-    }
-    
     protected abstract void setupBindings();
     
     protected abstract void setupMenu();
     
     protected abstract void onMouseRelease();
+    protected abstract void onDoubleCLick();
+    
+    protected void onSelected(){
+        setBorder(new Border(STROKE_DEFAULT));
+    }
+    protected void onDeSelected(){
+        setBorder(null);
+        menu.hide();
+    }
     
     // CHECKS
     
@@ -183,7 +193,7 @@ public abstract class Element extends Region{
     
     public abstract void select();
     
-    public abstract void doubleClick();
+    public abstract void onDoubleClickAfterSelected();
     
     protected void selectPartial(){
         MainWindow.mainScreen.setSelected(this);

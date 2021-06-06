@@ -119,10 +119,13 @@ public class TextElement extends Element{
         MainWindow.textTab.selectItem();
         AutoTipsManager.showByAction("textselect");
     }
-    
     @Override
-    public void doubleClick(){
+    public void onDoubleClickAfterSelected(){
         cloneOnDocument();
+    }
+    @Override
+    protected void onDoubleCLick(){
+    
     }
     
     @Override

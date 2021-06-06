@@ -66,6 +66,7 @@ public class PageRenderer extends Pane{
     
     private PageEditPane pageEditPane;
     private PageZoneSelector pageCursorRecord;
+    private VectorElementPageDrawer vectorElementPageDrawer;
     
     private GraphicElement placingElement = null;
     
@@ -413,6 +414,9 @@ public class PageRenderer extends Pane{
         if(pageEditPane != null){
             pageEditPane.updateVisibility();
         }
+        if(vectorElementPageDrawer != null){
+            vectorElementPageDrawer.updateVisibility();
+        }
         /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
         });*/
@@ -690,6 +694,7 @@ public class PageRenderer extends Pane{
         if(this.page != page){
             this.page = page;
             if(pageEditPane != null) pageEditPane.updateVisibility();
+            if(vectorElementPageDrawer != null) vectorElementPageDrawer.updateVisibility();
             updateElementsPage();
         }
     }
@@ -712,6 +717,13 @@ public class PageRenderer extends Pane{
     public PageZoneSelector getPageCursorRecord(){
         if(pageCursorRecord == null) pageCursorRecord = new PageZoneSelector(this);
         return pageCursorRecord;
+    }
+    public VectorElementPageDrawer getVectorElementPageDrawer(){
+        if(vectorElementPageDrawer == null) vectorElementPageDrawer = new VectorElementPageDrawer(this);
+        return vectorElementPageDrawer;
+    }
+    public VectorElementPageDrawer getVectorElementPageDrawerNull(){
+        return vectorElementPageDrawer;
     }
     
     public double getRatio(){

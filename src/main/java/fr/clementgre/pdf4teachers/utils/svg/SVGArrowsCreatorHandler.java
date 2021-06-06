@@ -7,8 +7,8 @@ public class SVGArrowsCreatorHandler extends SVGTransformHandler{
     
     private float arrowLength;
     private float angle;
-    public SVGArrowsCreatorHandler(boolean formatNumbers, float arrowLength, float degAngle){
-        super(formatNumbers);
+    public SVGArrowsCreatorHandler(int decimals, float arrowLength, float degAngle){
+        super(decimals);
         this.arrowLength = arrowLength;
         this.angle = (float) Math.toRadians(180-degAngle);
     }

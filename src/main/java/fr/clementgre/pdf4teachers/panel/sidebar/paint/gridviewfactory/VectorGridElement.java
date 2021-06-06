@@ -140,9 +140,11 @@ public class VectorGridElement{
 
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
+                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }else{
-                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength()));
+                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }
     
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){

@@ -81,6 +81,10 @@ public class ImageElement extends GraphicElement{
     protected void onMouseRelease(){
         super.onMouseRelease();
     }
+    @Override
+    protected void onDoubleCLick(){
+    
+    }
     
     @Override
     protected void setupMenu(){
@@ -105,7 +109,6 @@ public class ImageElement extends GraphicElement{
         super.select();
         
     }
-    
     @Override
     public void addedToDocument(boolean markAsUnsave){
     
