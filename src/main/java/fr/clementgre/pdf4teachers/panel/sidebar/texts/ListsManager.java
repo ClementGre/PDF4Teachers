@@ -90,7 +90,7 @@ public class ListsManager{
                     
                     alert.addCancelButton(ButtonPosition.CLOSE);
                     ButtonType load =  alert.addButton(TR.tr("actions.load"), ButtonPosition.DEFAULT);
-                    ButtonType loadReplace = alert.addButton(TR.tr("Vider et charger"), ButtonPosition.OTHER_LEFT);
+                    ButtonType loadReplace = alert.addButton(TR.tr("actions.clearAndLoad"), ButtonPosition.OTHER_LEFT);
                     ButtonType delete = alert.addButton(TR.tr("actions.delete"), ButtonPosition.OTHER_LEFT);
                     
                     ButtonType result = alert.getShowAndWait();

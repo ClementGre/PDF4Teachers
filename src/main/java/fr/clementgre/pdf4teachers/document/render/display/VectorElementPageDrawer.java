@@ -42,7 +42,7 @@ public class VectorElementPageDrawer extends Pane{
         svgPath.setFillRule(FillRule.NON_ZERO);
         
         // MENU
-        NodeMenuItem quitEditMode = new NodeMenuItem("actions.quitEditMode", false);
+        NodeMenuItem quitEditMode = new NodeMenuItem(TR.tr("actions.quitEditMode"), false);
         NodeMenuItem undo = new NodeMenuItem(TR.tr("paintTab.vectorElements.undo"), false);
         
         quitEditMode.setOnAction((e) -> {
