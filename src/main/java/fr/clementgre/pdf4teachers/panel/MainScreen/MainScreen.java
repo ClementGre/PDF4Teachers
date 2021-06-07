@@ -377,6 +377,7 @@ public class MainScreen extends Pane{
     }
     
     public boolean closeFile(boolean confirm){
+        setSelected(null);
         
         if(document != null){
             
@@ -385,8 +386,7 @@ public class MainScreen extends Pane{
                     return false;
                 }
             }else document.edition.save();
-    
-            setSelected(null);
+            
             MainWindow.gradeTab.treeView.clearElements(false, false);
             MainWindow.textTab.treeView.onCloseDocument();
             document.stopDocumentSaver();

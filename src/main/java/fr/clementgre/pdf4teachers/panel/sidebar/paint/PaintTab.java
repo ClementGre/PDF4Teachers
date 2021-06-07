@@ -14,23 +14,28 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PressAndHoldManager;
 import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
-import javafx.beans.Observable;
+import javafx.animation.PauseTransition;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -349,15 +354,25 @@ public class PaintTab extends SideTab{
                 vectorElement.getPage().getVectorElementPageDrawer().onCreateCurve();
             }
         });
+        
         vectorDrawMode.selectedToggleProperty().addListener(this::vectorDrawModeChanged);
         vectorCreateCurve.disableProperty().bind(vectorModePoint.selectedProperty().not());
         vectorStraightLineMode.disableProperty().bind(vectorDrawMode.selectedToggleProperty().isNull());
+        vectorUndoPath.setOnAction((e) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+        });
+        new PressAndHoldManager(vectorUndoPath, 30, () -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+        });
+        
         
         // Listeners
         
         MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
         MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
         updateSelected(null, null, null);
+        
+        
     }
     
     private void deleteSelected(){

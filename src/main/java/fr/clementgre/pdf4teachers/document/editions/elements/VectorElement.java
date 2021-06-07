@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
@@ -354,7 +355,10 @@ public class VectorElement extends GraphicElement{
         VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
         if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
             quitEditMode();
+            drawer.quitEditMode(); // Element is not anymore selected so it will not be done automatically.
         }
+        
+        if(getPath().isBlank()) delete(false);
     }
     
     @Override
@@ -424,15 +428,18 @@ public class VectorElement extends GraphicElement{
     // EDIT MODE
     
     public void enterEditMode(){
-        getPage().getVectorElementPageDrawer().enterEditMode(this);
-        
-        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() == null)
+        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() == null){
             MainWindow.paintTab.vectorModeDraw.setSelected(true);
+        }else{
+            getPage().getVectorElementPageDrawer().enterEditMode(this);
+        }
     }
     public void quitEditMode(){
-        getPage().getVectorElementPageDrawer().quitEditMode();
-        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() != null)
-            MainWindow.paintTab.vectorDrawMode.selectToggle(null);
+        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() != null){
+            MainWindow.paintTab.vectorDrawMode.getSelectedToggle().setSelected(false);
+        }else{
+            getPage().getVectorElementPageDrawer().quitEditMode();
+        }
     }
     
     public void formatNoScaledSvgPathToPage(){
@@ -457,10 +464,24 @@ public class VectorElement extends GraphicElement{
         }
         
         try{
-            setPath(getScaledPath(getPath(), noScaledSvgPath, width, height, padding, isInvertX(), isInvertY(), 0, 1));
+            setPath(getScaledPath(getPath(), noScaledSvgPath, width, height, padding, false, false, 0, 6));
         }catch(PathParseException e){
             e.printStackTrace();
         }
+    }
+    public void undoAuto(){
+        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
+        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
+            drawer.undo();
+        }else{
+            undoOne();
+        }
+    }
+    public void undoOne(){
+        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m", "z", "l", "h", "v", "a", "c", "s", "t", "q"}));
+    }
+    public void undoLastLines(){
+        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m"}));
     }
     
     // SPECIFIC METHODS

@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;

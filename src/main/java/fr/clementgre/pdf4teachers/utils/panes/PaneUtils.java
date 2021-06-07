@@ -1,6 +1,7 @@
-package fr.clementgre.pdf4teachers.utils;
+package fr.clementgre.pdf4teachers.utils.panes;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Insets;
