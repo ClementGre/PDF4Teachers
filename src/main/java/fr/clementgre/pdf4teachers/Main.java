@@ -152,9 +152,9 @@ public class Main extends Application{
         AutoTipsManager.setup();
         ImageUtils.setupListeners();
         FontUtils.setup();
-        AppFontsLoader.loadFont("Marianne-Regular.otf");
-        AppFontsLoader.loadFont("Marianne-Bold.otf");
-        AppFontsLoader.loadFontPath("/fonts/Open Sans/regular.ttf");
+        AppFontsLoader.loadFontPath(AppFontsLoader.LATO);
+        AppFontsLoader.loadFontPath(AppFontsLoader.LATO_BOLD);
+        AppFontsLoader.loadFontPath(AppFontsLoader.OPEN_SANS);
         
         
         if(languageAsk()){

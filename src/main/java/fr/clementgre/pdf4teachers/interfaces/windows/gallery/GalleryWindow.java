@@ -126,7 +126,7 @@ public class GalleryWindow extends Stage{
     private void setup(){
         setupSettings();
     
-        emptyGalleryLabel.setStyle("-fx-font: 18 Marianne;");
+        emptyGalleryLabel.setStyle("-fx-font: 18 Lato;");
         emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
         messageContainer.setAlignment(Pos.CENTER);
         VBox.setVgrow(messageContainer, Priority.ALWAYS);

@@ -5,6 +5,8 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -110,14 +112,14 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         name.getChildren().addAll(fileName);
         
         Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
+        PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
         
-        Slider imagesDPI = new Slider(50, 900, MainWindow.userData.settingsExportImagesDPI);
-        imagesDPI.setMajorTickUnit(200);
-        imagesDPI.setMinorTickCount(0);
-        imagesDPI.setBlockIncrement(10);
-        imagesDPI.setSnapToTicks(true);
+        Spinner<Integer> imagesDPI = new Spinner<>(50, 900, (int) MainWindow.userData.settingsExportImagesDPI, 50);
+        imagesDPI.setEditable(true);
+        imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
+        PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
         imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.userData.settingsExportImagesDPI = newValue.intValue();
+            MainWindow.userData.settingsExportImagesDPI = newValue;
         });
     
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
@@ -133,7 +135,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
             
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    (int) imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
+                    imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
         });
     }
     
@@ -196,14 +198,14 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         onlyEdited.setWrapText(true);
     
         Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
-    
-        Slider imagesDPI = new Slider(50, 900, MainWindow.userData.settingsExportImagesDPI);
-        imagesDPI.setMajorTickUnit(200);
-        imagesDPI.setMinorTickCount(0);
-        imagesDPI.setBlockIncrement(10);
-        imagesDPI.setSnapToTicks(true);
+        PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
+        
+        Spinner<Integer> imagesDPI = new Spinner<>(50, 900, (int) MainWindow.userData.settingsExportImagesDPI, 50);
+        imagesDPI.setEditable(true);
+        imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
+        PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
         imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
-            MainWindow.userData.settingsExportImagesDPI = newValue.intValue();
+            MainWindow.userData.settingsExportImagesDPI = newValue;
         });
     
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
@@ -223,7 +225,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         VBox.setMargin(onlyEdited, new Insets(20, 0, 5, 0));
         
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                (int) imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
+                imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
         
         onlyEdited.selectedProperty().addListener((observable, oldValue, newValue) -> updateMultipleFilesTitle());
         updateMultipleFilesTitle();

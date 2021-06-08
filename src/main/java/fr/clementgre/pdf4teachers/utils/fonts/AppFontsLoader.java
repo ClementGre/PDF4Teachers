@@ -7,8 +7,8 @@ public class AppFontsLoader{
     
     private static final HashMap<String, String> loadedFonts = new HashMap<>();
     
-    public static final String MARIANNE = "/appFonts/Marianne-Regular.otf";
-    public static final String MARIANNE_BOLD = "/appFonts/Marianne-Bold.otf";
+    public static final String LATO = "/fonts/Lato/regular.ttf";
+    public static final String LATO_BOLD = "/fonts/Lato/bold.ttf";
     public static final String OPEN_SANS = "/fonts/Open Sans/regular.ttf";
     
     public static Font getFont(String name, double size){

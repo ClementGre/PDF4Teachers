@@ -119,7 +119,7 @@ public class UserData{
     @UserDataObject(path = "export.settings.tiersExportSlider")
     public long settingsTiersExportSlider = 2;
     @UserDataObject(path = "export.settings.imagesDPI")
-    public long settingsExportImagesDPI = 300;
+    public long settingsExportImagesDPI = 250;
     
     // Convert Params
     @UserDataObject(path = "convert.fields.srcDir")
