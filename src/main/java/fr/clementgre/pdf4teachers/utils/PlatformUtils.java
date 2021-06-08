@@ -6,12 +6,15 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
+import javafx.scene.Cursor;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils{
+    
+    public static final Cursor CURSOR_MOVE = Main.isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
     
     public static void sleepThread(long millis){
         try{

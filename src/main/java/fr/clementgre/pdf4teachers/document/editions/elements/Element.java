@@ -1,8 +1,10 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
@@ -61,7 +63,7 @@ public abstract class Element extends Region{
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
         
         checkLocation(false);
-        setCursor(Cursor.MOVE);
+        setCursor(PlatformUtils.CURSOR_MOVE);
         
         //////////////////////////// EVENTS ///////////////////////////////////
     

@@ -152,8 +152,8 @@ public class Main extends Application{
         AutoTipsManager.setup();
         ImageUtils.setupListeners();
         FontUtils.setup();
-        AppFontsLoader.loadFontPath(AppFontsLoader.LATO);
-        AppFontsLoader.loadFontPath(AppFontsLoader.LATO_BOLD);
+        AppFontsLoader.loadFont(AppFontsLoader.NOTO_SANS_KR);
+        AppFontsLoader.loadFont(AppFontsLoader.NOTO_SANS_KR_BOLD);
         AppFontsLoader.loadFontPath(AppFontsLoader.OPEN_SANS);
         
         

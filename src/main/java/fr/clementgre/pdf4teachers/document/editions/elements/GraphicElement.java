@@ -1,11 +1,13 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.Observable;
@@ -72,7 +74,7 @@ public abstract class GraphicElement extends Element{
         this.realHeight.set(height);
     }
     
-    private Cursor dragType = Cursor.MOVE;
+    private Cursor dragType = PlatformUtils.CURSOR_MOVE;
     protected double shiftXFromEnd = 0;
     protected double shiftYFromEnd = 0;
     protected double originWidth = 0;
@@ -102,7 +104,9 @@ public abstract class GraphicElement extends Element{
         });
         
         setOnMouseMoved(e -> {
-            if(PageRenderer.isEditPagesMode()) setCursor(Cursor.MOVE);
+            if(PageRenderer.isEditPagesMode()){
+                setCursor(PlatformUtils.CURSOR_MOVE);
+            }
             else setCursor(getDragCursorType(e.getX(), e.getY()));
         });
     
@@ -131,7 +135,7 @@ public abstract class GraphicElement extends Element{
         
         setOnMouseDragged(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
-            if(dragType == Cursor.MOVE){
+            if(dragType == PlatformUtils.CURSOR_MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
@@ -143,7 +147,7 @@ public abstract class GraphicElement extends Element{
         setOnMouseReleased(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
             Edition.setUnsave("GraphicElementMouseRelease");
-            if(dragType == Cursor.MOVE){
+            if(dragType == PlatformUtils.CURSOR_MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
 
@@ -375,7 +379,7 @@ public abstract class GraphicElement extends Element{
     }
     
     public Cursor getDragCursorType(double x, double y){
-        if(MainWindow.mainScreen.getSelected() != this) return Cursor.MOVE;
+        if(MainWindow.mainScreen.getSelected() != this) return PlatformUtils.CURSOR_MOVE;
         
         int grabSize = (int) (10 * (1/MainWindow.mainScreen.getCurrentPaneScale()));
         
@@ -434,7 +438,7 @@ public abstract class GraphicElement extends Element{
             }
         }
         
-        return Cursor.MOVE;
+        return PlatformUtils.CURSOR_MOVE;
     }
     
     protected static BorderStroke STROKE_SIDE_EDGES = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),

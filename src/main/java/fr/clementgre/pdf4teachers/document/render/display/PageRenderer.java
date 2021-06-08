@@ -78,7 +78,7 @@ public class PageRenderer extends Pane{
     private final InvalidationListener translateYListener = e -> updateShowStatus();
     
     private final InvalidationListener mainScreenZoomListener = (observable) -> {
-        if(isEditPagesMode()) setCursor(Cursor.MOVE);
+        if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
         else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         else setCursor(Cursor.DEFAULT);
     
@@ -112,6 +112,8 @@ public class PageRenderer extends Pane{
         setOnMouseMoved(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
+    
+            if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         });
         
         translateYProperty().addListener(translateYListener);
@@ -170,7 +172,7 @@ public class PageRenderer extends Pane{
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             else pageEditPane.setVisible(true);
             
-            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
             
@@ -217,7 +219,6 @@ public class PageRenderer extends Pane{
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
                 
                 setCursor(Cursor.CROSSHAIR);
-                
             }else{
                 if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
                 else{
@@ -251,7 +252,7 @@ public class PageRenderer extends Pane{
                 }
                 placingElement = null;
             }
-            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else setCursor(Cursor.DEFAULT);
         });
     
