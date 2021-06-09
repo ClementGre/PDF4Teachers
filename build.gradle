@@ -79,7 +79,8 @@ javafx {
 }
 
 version = "1.3.0"
-description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers functionalities like grading scale, PDF conversion."
+description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers features like marking scale, PDF conversion, vectorial drawing..."
+//frenchDescription=Éditeur PDF en grande quantité. Conçus pour les enseignants, cette application garde en mémoire les dernière annotations, et offre des fonctions de barème, de conversion, de dessin vectoriel...
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
@@ -122,19 +123,22 @@ jlink {
 
     def os = org.gradle.internal.os.OperatingSystem.current()
     String jdkPath = project.findProperty('jdkPath')
+    String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
 
     if(jdkPath != null){ // Use ./gradlew jpackage -PjdkPath=xxx
         System.out.println("Using JDK passed in property: ".concat(jdkPath));
-        String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
-        targetPlatform(platform, jdkPath);
+        javaHome.set(jdkPath);
 
     }else{
-        if(os.windows) targetPlatform('win', 'C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot')
-        else if(os.macOsX) targetPlatform('mac', '/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
-        else if(os.linux) targetPlatform('lin', '/home/clement/bin/AdoptOpenJDK-16/')
+        if(os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot');
+        else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
+        else if(os.linux) javaHome.set('/etc/jdk-16.0.1/')
     }
 
+    targetPlatform(platform, javaHome.get())
+
     jpackage {
+        targetPlatformName = platform
 
         installerType = os.windows ? 'msi' : (os.macOsX ? 'dmg' : 'deb')
         installerOptions = [
@@ -164,8 +168,7 @@ jlink {
             installerOptions += [
                     '--linux-menu-group', 'Education;Office',
                     '--linux-shortcut',
-                    '--file-associations', 'association-lin.properties',
-                    '--icon', 'src/main/resources/logo.png'
+                    '--file-associations', 'association-lin.properties'
             ]
             if(installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
             else if(installerType == 'rpm') installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']

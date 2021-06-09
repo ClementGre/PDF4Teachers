@@ -75,10 +75,11 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            e.consume();
+            
             if(isPointMode()){
             
-            }else{
+            }else if(e.getButton() == MouseButton.PRIMARY){
+                e.consume();
                 moveTo(e.getX(), e.getY());
             }
         });
