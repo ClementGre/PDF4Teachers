@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.scene.Cursor;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -14,8 +15,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class VectorElementPageDrawer extends Pane{
     
-    public static int LINE_MIN_LENGTH = 1;
-    public static double MERGE_LINE_MAX_ANGLE = Math.toRadians(5);
+    public static int LINE_MIN_LENGTH = 2;
+    public static double MERGE_LINE_MAX_ANGLE = Math.toRadians(10);
     
     private PageRenderer page;
     
@@ -34,11 +35,13 @@ public class VectorElementPageDrawer extends Pane{
     private double lastY = 0;
     private double lastLineAngle = 0;
     private boolean hasToMove = true;
+    private boolean lastLineMode = isStraightLineMode();
     private void setup(){
         
         // UI
         setBorder(new Border(new BorderStroke(Color.color(255 / 255.0, 50 / 255.0, 50 / 255.0),
                 BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, new BorderWidths(1.5))));
+        setCursor(Cursor.CROSSHAIR);
         
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         svgPath.setStrokeLineJoin(StrokeLineJoin.ROUND);
@@ -72,6 +75,7 @@ public class VectorElementPageDrawer extends Pane{
                 hasToMove = true;
                 lastClickX = lastX = e.getX();
                 lastClickY = lastY = e.getY();
+                lastLineMode = isStraightLineMode();
             }
         });
         setOnMouseReleased((e) -> {
@@ -84,8 +88,7 @@ public class VectorElementPageDrawer extends Pane{
         });
         
         setOnMouseDragged((e) -> {
-            if(vector == null) return;
-            e.consume();
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
             
             if(isPointMode()){
         
@@ -99,11 +102,30 @@ public class VectorElementPageDrawer extends Pane{
         });
     
         setOnKeyPressed((e) -> {
-            e.consume();
-            if(e.getCode() == KeyCode.ESCAPE){
+            if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.ENTER){
+                e.consume();
                 if(vector != null) vector.quitEditMode();
             }else if(e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE){
+                e.consume();
                 if(vector != null) undo();
+            }else if(e.getCode() == KeyCode.SHIFT){
+                e.consume();
+                MainWindow.paintTab.vectorDrawMode.getToggles().forEach((t) -> t.setSelected(!t.isSelected()));
+                requestFocus();
+            }else if(e.getCode() == KeyCode.L){
+                e.consume();
+                MainWindow.paintTab.vectorStraightLineMode.setSelected(true);
+                requestFocus();
+            }else if(e.getCode() == KeyCode.C){
+                e.consume();
+                onCreateCurve();
+            }
+        });
+        setOnKeyReleased((e) -> {
+            if(e.getCode() == KeyCode.L){
+                e.consume();
+                MainWindow.paintTab.vectorStraightLineMode.setSelected(false);
+                requestFocus();
             }
         });
     }
@@ -144,6 +166,7 @@ public class VectorElementPageDrawer extends Pane{
         getChildren().setAll(svgPath);
         
         lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        lastLineMode = isStraightLineMode();
     }
     public void quitEditMode(){
         getChildren().clear();
@@ -191,12 +214,27 @@ public class VectorElementPageDrawer extends Pane{
         }
         
         if(isStraightLineMode()){
+            if(!lastLineMode){ // Enter line mode
+                lastLineMode = true;
+                lastClickX = lastX = x;
+                lastClickY = lastY = y;
+                appendAction("L", checkX(x), checkY(y));
+                appendAction("L", checkX(x), checkY(y)); // Needs two times because the last one will be edited
+                return;
+            }
             if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) y = lastClickY;
             else x = lastClickX;
             if(lastAction.equalsIgnoreCase("L")){
                 removeLastAction("L");
             }
         }else{
+            if(lastLineMode){ // exit line mode
+                lastLineMode = false;
+                lastClickX = lastX = x;
+                lastClickY = lastY =  y;
+                appendAction("L", checkX(x), checkY(y));
+                return;
+            }
             // Merge with last line if there is a small angle
             if(lastAction.equalsIgnoreCase("L")){
                 double angle = -Math.atan(moveX == 0 ? 0 : (moveY / moveX));

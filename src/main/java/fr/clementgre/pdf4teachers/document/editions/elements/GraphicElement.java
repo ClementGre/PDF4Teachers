@@ -100,6 +100,14 @@ public abstract class GraphicElement extends Element{
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
                 delete(true);
                 e.consume();
+            }else if(this instanceof VectorElement element){
+                if(e.getCode() == KeyCode.ENTER){
+                    e.consume();
+                    element.enterEditMode();
+                }else if(e.getCode() == KeyCode.BACK_SPACE){
+                    e.consume();
+                    element.undoAuto();
+                }
             }
         });
         

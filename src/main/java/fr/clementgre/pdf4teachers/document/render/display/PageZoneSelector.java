@@ -83,7 +83,8 @@ public class PageZoneSelector extends Pane{
     }
     
     private void updateSelectionPositionDimensions(MouseEvent e){
-        e.consume();
+        if(PageRenderer.isEditPagesMode()) return;
+        
         if(startX < 0) startX = 0;
         if(startY < 0) startY = 0;
         
