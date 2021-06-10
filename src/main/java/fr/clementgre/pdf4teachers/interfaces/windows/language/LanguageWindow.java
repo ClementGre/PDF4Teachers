@@ -36,7 +36,7 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>>{
         root.setPrefHeight(500);
         root.setBorder(null);
         
-        root.setStyle("-fx-background-color: #262626;"); // Default background color defined in css
+        if(Main.settings.darkTheme.getValue()) root.setStyle("-fx-background-color: #262626;"); // Default background color defined in css
     
         // Force the root pane to fit all the height
         // (Therefore, there is no scroll with the Alternative Window scrollPane.)

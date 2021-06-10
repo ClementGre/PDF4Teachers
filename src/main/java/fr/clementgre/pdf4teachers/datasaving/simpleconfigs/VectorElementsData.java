@@ -1,10 +1,12 @@
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.svg.DefaultFavoriteVectors;
 import javafx.application.Platform;
 import java.util.*;
 
@@ -38,19 +40,19 @@ public class VectorElementsData extends SimpleConfig{
     
     @Override
     protected void unableToLoadConfig(){
-    
+        if(Main.firstLaunch) MainWindow.paintTab.favouriteVectors.loadVectorsList(DefaultFavoriteVectors.getDefaultFavoriteVectors(), false);
     }
     
     @Override
     protected void addDataToConfig(Config config){
         ArrayList<Object> favorites = new ArrayList<>();
         for(VectorGridElement item : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            favorites.add(item.getVectorData().getYAMLData());
+            if(!item.isFake()) favorites.add(item.getVectorData().getYAMLData());
         }
     
         ArrayList<Object> lasts = new ArrayList<>();
         for(VectorGridElement item : MainWindow.paintTab.lastVectors.getList().getAllItems()){
-            lasts.add(item.getVectorData().getYAMLData());
+            if(!item.isFake()) lasts.add(item.getVectorData().getYAMLData());
         }
     
         config.set("favorites", favorites);

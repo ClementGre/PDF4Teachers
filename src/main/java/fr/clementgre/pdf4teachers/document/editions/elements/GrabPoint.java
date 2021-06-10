@@ -13,7 +13,7 @@ public class GrabPoint extends Region{
     public static final int POINT_OUTER = 3;
     
     public GrabPoint(){
-        setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0), new CornerRadii(1), Insets.EMPTY)));
+        setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0, .8), new CornerRadii(1), Insets.EMPTY)));
         setPrefWidth(POINT_WIDTH);
         setPrefHeight(POINT_WIDTH);
     }

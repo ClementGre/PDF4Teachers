@@ -8,10 +8,10 @@ import javafx.scene.control.ListView;
 
 public class FontComboBox extends ComboBox<String>{
     
-    public FontComboBox(){
+    public FontComboBox(boolean bind){
         super();
         if(FontUtils.isFontsLoaded()) updateFonts();
-        setCellFactory((ListView<String> stringListView) -> new FontCell());
+        setCellFactory((ListView<String> stringListView) -> new FontCell(bind));
     }
     
     public void updateFonts(){
@@ -20,6 +20,19 @@ public class FontComboBox extends ComboBox<String>{
     }
     
     public static class FontCell extends ListCell<String>{
+        
+        private String lastFontName = "";
+        
+        public FontCell(boolean bind){
+            super();
+            
+            if(bind){
+                Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                    setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + lastFontName + "\";");
+                });
+            }
+        }
+        
         @Override
         public void updateItem(String item, boolean empty){
             super.updateItem(item, empty);
@@ -28,16 +41,13 @@ public class FontComboBox extends ComboBox<String>{
                 setText(null);
                 setGraphic(null);
             }else{
+                lastFontName = item;
                 setText(item);
                 if(FontUtils.isDefaultFont(item)){
                     FontUtils.getFont(item, false, false, 14 * Main.settings.zoom.getValue());
                 }
-                
+    
                 setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + item + "\";");
-                Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
-                    setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + item + "\";");
-                });
-                
             }
         }
     }

@@ -44,34 +44,38 @@ public class Edition{
     // LOAD ORDER: Texts < Images < Vectors < Grades
     public void load(){
         new File(Main.dataFolder + "editions").mkdirs();
-        MainWindow.gradeTab.treeView.clearElements(true); // Generate root in case of no root in edition
+        MainWindow.gradeTab.treeView.clearElements(true, false); // Generate root in case of no root in edition
         
         try{
             if(!editFile.exists()) return; // File does not exist
             Config config = new Config(editFile);
             config.load();
+            int versionID = (int) config.getLong("versionID");
     
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
+            
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
             if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
-            
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+    
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
             });
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
             });
             
             for(Object data : config.getList("grades")){
-                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data);
+                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
             }
             
         }catch(IOException e){
             e.printStackTrace();
         }
-        
+    
+        isSave.set(true);
         MainWindow.gradeTab.treeView.updateAllSum();
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }
@@ -94,20 +98,20 @@ public class Edition{
             // NON GRADES ELEMENTS
             int counter = 0;
             for(PageRenderer page : document.getPages()){
-                ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
-                if(pageTextsData != null){
-                    texts.put("page" + page.getPage(), pageTextsData);
-                    counter += pageTextsData.size();
+                ArrayList<Object> pageVectorsData = getPageDataFromElements(page.getElements(), VectorElement.class);
+                if(pageVectorsData != null){
+                    vectors.put("page" + page.getPage(), pageVectorsData);
+                    counter += pageVectorsData.size();
                 }
                 ArrayList<Object> pageImagesData = getPageDataFromElements(page.getElements(), ImageElement.class);
                 if(pageImagesData != null){
                     images.put("page" + page.getPage(), pageImagesData);
                     counter += pageImagesData.size();
                 }
-                ArrayList<Object> pageVectorsData = getPageDataFromElements(page.getElements(), VectorElement.class);
-                if(pageVectorsData != null){
-                    vectors.put("page" + page.getPage(), pageVectorsData);
-                    counter += pageVectorsData.size();
+                ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
+                if(pageTextsData != null){
+                    texts.put("page" + page.getPage(), pageTextsData);
+                    counter += pageTextsData.size();
                 }
             }
             
@@ -125,6 +129,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
             
@@ -174,29 +179,34 @@ public class Edition{
         }else{ // file exist
             Config config = new Config(editFile);
             config.load();
+            int versionID = (int) config.getLong("versionID");
+            
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
             
             ArrayList<Element> elements = new ArrayList<>();
     
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
             });
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
             });
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map)
-                    elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false));
+                    elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
             }
             
             return elements.toArray(new Element[0]);
         }
     }
     
-    private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){ // Key : Page | Value : Element Data
+    // For each element of a page map, call the callback.
+    // addCallBack : Key : Page | Value : Element Data
+    private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){
         for(Map.Entry<String, Object> pageData : data){
             Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
@@ -222,11 +232,11 @@ public class Edition{
             for(Element element : elements){
                 
                 if(!(element instanceof GradeElement)){
-                    if(element instanceof TextElement){
-                        if(texts.containsKey("page" + element.getPageNumber())){
-                            texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                    if(element instanceof VectorElement){
+                        if(vectors.containsKey("page" + element.getPageNumber())){
+                            vectors.get("page" + element.getPageNumber()).add(element.getYAMLData());
                         }else{
-                            texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                            vectors.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
                     }else if(element instanceof ImageElement){
                         if(images.containsKey("page" + element.getPageNumber())){
@@ -234,11 +244,11 @@ public class Edition{
                         }else{
                             images.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
-                    }else if(element instanceof VectorElement){
-                        if(vectors.containsKey("page" + element.getPageNumber())){
-                            vectors.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                    }else if(element instanceof TextElement){
+                        if(texts.containsKey("page" + element.getPageNumber())){
+                            texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
                         }else{
-                            vectors.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                            texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
                     }
                     counter++;
@@ -254,6 +264,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
             
@@ -269,29 +280,26 @@ public class Edition{
         }else{ // file already exist
             
             double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
-            int text = 0;
-            int allGrades = 0; // All grade element count
-            int grades = 0; // All entered grade
-            int images = 0;
-            int vectors = 0;
+            int allGradesCount = 0; // All grade element count
+            int fillGradeCount = 0; // All entered grade
             
             Config config = new Config(editFile);
             config.load();
             
-            text = countSection(config.getSection("texts"));
-            images = countSection(config.getSection("images"));
-            vectors = countSection(config.getSection("vectors"));
+            int text = countSection(config.getSection("texts"));
+            int images = countSection(config.getSection("images"));
+            int vectors = countSection(config.getSection("vectors"));
             
             for(Object data : config.getList("grades")){
                 if(data instanceof HashMap){
                     double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
                     if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
-                    if(stats[0] != -1) grades++;
-                    allGrades++;
+                    if(stats[0] != -1) fillGradeCount++;
+                    allGradesCount++;
                 }
             }
             
-            return new double[]{text + grades + images + vectors, text, grades, images+vectors, totalGrade[0], totalGrade[1], allGrades};
+            return new double[]{text + fillGradeCount + images + vectors, text, fillGradeCount, images+vectors, totalGrade[0], totalGrade[1], allGradesCount};
         }
     }
 
@@ -382,8 +390,8 @@ public class Edition{
                 page.clearElements();
             }
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
-            MainWindow.gradeTab.treeView.clearElements(true);
-            Edition.setUnsave();
+            MainWindow.gradeTab.treeView.clearElements(true, false);
+            Edition.setUnsave("Clear edit");
         }
     }
     
@@ -391,7 +399,9 @@ public class Edition{
         return isSave.get();
     }
     
-    public static void setUnsave(){
+    public static void setUnsave(String sourceDebug){
+        if(false) System.out.println("Unsave Edition from: " + sourceDebug);
+        
         isSave.set(false);
         MainWindow.footerBar.updateStats();
     }

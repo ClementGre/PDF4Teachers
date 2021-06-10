@@ -15,10 +15,10 @@ public class SVGUtils{
     public static final List<String> ACCEPTED_EXTENSIONS = Collections.singletonList("svg");
     
     public static String transformPath(String path, float xFactor, float yFactor, float translateX, float translateY,
-                                       boolean invertX, boolean invertY, float currentWidth, float currentHeight) throws PathParseException{
+                                       boolean invertX, boolean invertY, float currentWidth, float currentHeight, int decimals) throws PathParseException{
         
         PathParser parser = new PathParser();
-        SVGScalerHandler handler = new SVGScalerHandler(xFactor, yFactor, translateX, translateY, invertX, invertY, currentWidth, currentHeight);
+        SVGScalerHandler handler = new SVGScalerHandler(xFactor, yFactor, translateX, translateY, invertX, invertY, currentWidth, currentHeight, decimals);
         parser.setPathHandler(handler);
         try{
             parser.parse(path);
@@ -30,9 +30,23 @@ public class SVGUtils{
         return handler.getTransformedPath();
     }
     
-    public static String rotatePath(String path, float degAngle) throws PathParseException{
+    public static String addArrowsToPath(String path, float arrowSize, int decimals) throws PathParseException{
+        
         PathParser parser = new PathParser();
-        SVGRotateHandler handler = new SVGRotateHandler(degAngle, true);
+        SVGArrowsCreatorHandler handler = new SVGArrowsCreatorHandler(decimals, arrowSize, 30);
+        parser.setPathHandler(handler);
+        try{
+            parser.parse(path);
+        }catch(ParseException e){
+            throw new PathParseException(e);
+        }
+        
+        return handler.getTransformedPath();
+    }
+    
+    public static String rotatePath(String path, float degAngle, int decimals) throws PathParseException{
+        PathParser parser = new PathParser();
+        SVGRotateHandler handler = new SVGRotateHandler(degAngle, decimals);
         parser.setPathHandler(handler);
         try{
             parser.parse(path);

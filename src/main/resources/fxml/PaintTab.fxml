@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Spinner?>
@@ -27,7 +26,9 @@
         <VBox.margin><Insets top="2" bottom="5" left="2" right="2"/></VBox.margin>
 
         <HBox spacing="2" fx:id="commonActionButtons">
-            <NoArrowMenuButton fx:id="newImage"/>
+            <NoArrowMenuButton fx:id="newImage">
+                <style>-fx-padding: 4 4 3 4;</style>
+            </NoArrowMenuButton>
             <NoArrowMenuButton fx:id="newVector"/>
             <Button fx:id="delete">
                 <padding><Insets topRightBottomLeft="4"/></padding>
@@ -70,58 +71,73 @@
             <ToggleButton fx:id="doFillButton" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorFillColor" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorStrokeColor" prefHeight="30"/>
-            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true" prefHeight="30" maxWidth="55" minWidth="55"/>
+            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true" prefHeight="30" maxWidth="70" minWidth="70"/>
         </HBox>
     </VBox>
 
     <TitledPane fx:id="advancedOptionsPane" expanded="false"> <!-- advanced Options -->
 
-        <VBox>
+        <VBox fx:id="advancedOptionsContent">
             <padding><Insets topRightBottomLeft="3"/></padding>
 
             <GridPane hgap="5" vgap="2">
                 <Label text="x" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="0"/>
-                <Spinner fx:id="spinnerX" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerX" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="0">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label text="y" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="0"/>
-                <Spinner fx:id="spinnerY" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerY" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="0">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label fx:id="widthTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="0" GridPane.rowIndex="1"/>
-                <Spinner fx:id="spinnerWidth" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerWidth" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="1" GridPane.rowIndex="1">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
 
                 <Label fx:id="heightTitle" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
                        GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                <Spinner fx:id="spinnerHeight" min="0" initialValue="10" amountToStepBy="10" editable="true"
+                <Spinner fx:id="spinnerHeight" min="0" initialValue="1000" amountToStepBy="1000" editable="true"
                          GridPane.columnIndex="3" GridPane.rowIndex="1">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
+
             </GridPane>
 
-            <Label fx:id="repeatModeLabel" style="-fx-font-size: 12px;">
-                <VBox.margin><Insets top="5" /></VBox.margin>
+            <Label fx:id="repeatModeLabel" style="-fx-font-size: 13px;">
+                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
             </Label>
             <ScaledComboBox fx:id="repeatMode">
                 <style>-fx-padding: 0 4;</style>
+                <VBox.margin><Insets left="3"/></VBox.margin>
             </ScaledComboBox>
 
-            <Label fx:id="resizeModeLabel" style="-fx-font-size: 12px;">
-                <VBox.margin><Insets top="5" /></VBox.margin>
+            <Label fx:id="resizeModeLabel" style="-fx-font-size: 13px;">
+                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
             </Label>
             <ScaledComboBox fx:id="resizeMode">
                 <style>-fx-padding: 0 4;</style>
+                <VBox.margin><Insets left="3"/></VBox.margin>
             </ScaledComboBox>
+
+            <HBox fx:id="vectorsAdvancedOptions">
+                <VBox.margin><Insets top="8" left="3"/></VBox.margin>
+
+                <Label fx:id="arrowLengthTitle" prefHeight="27" minWidth="15" style="-fx-font-size: 13px;">
+                    <HBox.margin><Insets right="5" /></HBox.margin>
+                </Label>
+                <Spinner fx:id="spinnerArrowLength" min="0" max="100" initialValue="0" amountToStepBy="5" editable="true">
+                    <style>-fx-padding: 0 4;</style>
+                </Spinner>
+            </HBox>
+
         </VBox>
     </TitledPane>
 

@@ -25,10 +25,13 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Insets;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
@@ -186,7 +189,7 @@ public class PDFPagesEditor{
                         grade.setValue(-1);
                         grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
                     }else{
-                        page.getElements().get(0).delete();
+                        page.getElements().get(0).delete(true);
                     }
                 }
                 Document document = MainWindow.mainScreen.document;
@@ -206,7 +209,7 @@ public class PDFPagesEditor{
                 // update current page
                 document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
                 
-                Edition.setUnsave();
+                Edition.setUnsave("DeletePage");
                 document.edition.save();
             }
         }
@@ -422,6 +425,13 @@ public class PDFPagesEditor{
         ComboBoxDialog<String> alert = new ComboBoxDialog<>(TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.details"));
         alert.setItems(FXCollections.observableList(definitions));
         alert.setSelected(definitions.get(0));
+    
+        ImageView graphic = new ImageView(images.get(0));
+        graphic.setPreserveRatio(true);
+        graphic.setFitWidth(600);
+        graphic.setFitHeight(250);
+        VBox.setMargin(graphic, new Insets(10, 0, 10, 10));
+        ((VBox) alert.getDialogPane().getContent()).getChildren().add(graphic);
         
         alert.getButtonTypes().clear();
         alert.addDefaultButton(TR.tr("actions.save"));
@@ -540,12 +550,12 @@ public class PDFPagesEditor{
     }
     
     private Image capturePagePreview(PageRenderer page, PositionDimensions dimensions){
-        if(page.getBackground().getImages().size() == 0)
+        if(!page.hasRenderedImage())
             return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
         if(dimensions == null){
-            return page.getBackground().getImages().get(0).getImage();
+            return page.getRenderedImage();
         }else{
-            Image image = page.getBackground().getImages().get(0).getImage();
+            Image image = page.getRenderedImage();
             double factor = image.getHeight() / page.getHeight();
             
             int subX = (int) (dimensions.getX() * factor);

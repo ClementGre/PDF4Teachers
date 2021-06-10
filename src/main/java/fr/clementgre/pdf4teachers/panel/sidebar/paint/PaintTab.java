@@ -14,10 +14,11 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PressAndHoldManager;
 import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
@@ -75,12 +76,13 @@ public class PaintTab extends SideTab{
     // advanced Options
 
     public TitledPane advancedOptionsPane;
+    public VBox advancedOptionsContent;
 
-    public Label widthTitle;
-    public Label heightTitle;
-
+    
     public Spinner<Integer> spinnerX;
     public Spinner<Integer> spinnerY;
+    public Label widthTitle;
+    public Label heightTitle;
     public Spinner<Integer> spinnerWidth;
     public Spinner<Integer> spinnerHeight;
     
@@ -88,6 +90,10 @@ public class PaintTab extends SideTab{
     public ScaledComboBox<String> repeatMode;
     public Label resizeModeLabel;
     public ScaledComboBox<String> resizeMode;
+    
+    public HBox vectorsAdvancedOptions;
+    public Label arrowLengthTitle;
+    public Spinner<Integer> spinnerArrowLength;
     
     // Lists
     
@@ -99,6 +105,8 @@ public class PaintTab extends SideTab{
     // WINDOWS
     
     public GalleryWindow galleryWindow = null;
+    
+    // MENUS
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -150,8 +158,8 @@ public class PaintTab extends SideTab{
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
-        
-        
+    
+        PaneUtils.setPosition(spinnerArrowLength, 0, 0, 75, 26, true);
         
         translate();
         setup();
@@ -164,7 +172,7 @@ public class PaintTab extends SideTab{
         resizeModeLabel.setText(TR.tr("paintTab.advancedOptions.resizeMode"));
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
-        
+        arrowLengthTitle.setText(TR.tr("paintTab.advancedOptions.arrowLength"));
     }
 
     public void setup(){
@@ -210,6 +218,11 @@ public class PaintTab extends SideTab{
                 }
             }
         });
+        spinnerArrowLength.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement element){
+                if(element.getArrowLength() != newValue) element.setArrowLength(newValue);
+            }
+        });
     
         delete.setOnAction(e -> deleteSelected());
     
@@ -226,6 +239,8 @@ public class PaintTab extends SideTab{
         vectorStrokeWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.vectorsLastStrokeWidth = newValue;
         });
+    
+        path.setContextMenu(null);
         
         ////////// New Image menu //////////
         
@@ -240,7 +255,7 @@ public class PaintTab extends SideTab{
             browseImagePath(path -> {
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
 
-                ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
 
                 page.addElement(element, true);
@@ -251,8 +266,8 @@ public class PaintTab extends SideTab{
         newImageEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
 
-            ImageElement element = new ImageElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
+            ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
 
             page.addElement(element, true);
             element.centerOnCoordinatesY();
@@ -263,7 +278,7 @@ public class PaintTab extends SideTab{
         });
     
         ////////// New Vector menu //////////
-        
+    
         NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"), true);
         NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"), true);
         NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), true);
@@ -271,27 +286,15 @@ public class PaintTab extends SideTab{
         //NodeMenuItem.setupMenu(menu);
     
         newVectorDrawing.setOnAction(ae -> {
-            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
-            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false);
-    
-            
-            page.addElement(element, true);
-            element.centerOnCoordinatesY();
-            element.setIsEditMode(true);
-            MainWindow.mainScreen.setSelected(element);
-            element.setLinkedVectorData(VectorListPane.addLastVector(element));
+            newVectorDrawing();
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
-            VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
-                    (int) (100/page.getWidth()*Element.GRID_WIDTH), (int) (100/page.getHeight()*Element.GRID_HEIGHT), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+            VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false);
+                    "", false, false, 0);
     
             page.addElement(element, true);
             element.centerOnCoordinatesY();
@@ -318,7 +321,7 @@ public class PaintTab extends SideTab{
     
                     if(inputAlert.getShowAndWaitIsDefaultButton() && inputAlert.getValue() != null && inputAlert.getValue() != 0){
                         try{
-                            path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue())));
+                            path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue()), 4));
                         }catch(PathParseException ex){
                             System.err.println(ex.getMessage());
                         }
@@ -329,15 +332,54 @@ public class PaintTab extends SideTab{
             }
         });
         
+        // VectorsButtons
+        
+        vectorCreateCurve.setOnAction((e) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
+                vectorElement.getPage().getVectorElementPageDrawer().onCreateCurve();
+            }
+        });
+        
+        vectorDrawMode.selectedToggleProperty().addListener(this::vectorDrawModeChanged);
+        vectorCreateCurve.disableProperty().bind(vectorModePoint.selectedProperty().not());
+        vectorStraightLineMode.disableProperty().bind(vectorDrawMode.selectedToggleProperty().isNull());
+        vectorUndoPath.setOnAction((e) -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+        });
+        new PressAndHoldManager(vectorUndoPath, 30, () -> {
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+        });
+        
+        
+        // Listeners
+        
         MainWindow.mainScreen.selectedProperty().addListener(this::updateSelected);
         MainWindow.mainScreen.statusProperty().addListener(this::updateDocumentStatus);
         updateSelected(null, null, null);
+        
+        
+    }
+    
+    public void newVectorDrawing(){
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+        VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
+                "", false, false, 0);
+    
+    
+        page.addElement(element, true);
+        element.centerOnCoordinatesY();
+        MainWindow.mainScreen.setSelected(element);
+        element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        element.enterEditMode();
     }
     
     private void deleteSelected(){
         Element element = MainWindow.mainScreen.getSelected();
         if(element != null){
-            element.delete();
+            element.delete(true);
         }
     }
     
@@ -369,10 +411,10 @@ public class PaintTab extends SideTab{
                 
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
-                VectorElement element = new VectorElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(), true,
+                VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
-                        parser.getPath(), false, false);
+                        parser.getPath(), false, false, 0);
         
                 page.addElement(element, true);
                 element.centerOnCoordinatesY();
@@ -397,11 +439,12 @@ public class PaintTab extends SideTab{
         // Old element
         if(oldValue instanceof GraphicElement gElement){
             if(oldValue instanceof VectorElement element){ // Vector
-                element.pathProperty().unbind();
+                element.pathProperty().unbindBidirectional(path.textProperty());
                 element.fillProperty().unbind();
                 element.strokeProperty().unbind();
                 element.doFillProperty().unbind();
                 element.strokeWidthProperty().unbind();
+                element.arrowLengthProperty().unbind();
             }else if(oldValue instanceof ImageElement element){ // Image
                 element.imageIdProperty().unbind();
             }
@@ -423,12 +466,14 @@ public class PaintTab extends SideTab{
                 vectorFillColor.setValue(element.getFill());
                 vectorStrokeWidth.getValueFactory().setValue(element.getStrokeWidth());
                 doFillButton.setSelected(element.isDoFill());
+                spinnerArrowLength.getValueFactory().setValue(element.getArrowLength());
                 
-                element.pathProperty().bind(path.textProperty());
+                element.pathProperty().bindBidirectional(path.textProperty());
                 element.strokeProperty().bind(vectorStrokeColor.valueProperty());
                 element.fillProperty().bind(vectorFillColor.valueProperty());
                 element.doFillProperty().bind(doFillButton.selectedProperty());
                 element.strokeWidthProperty().bind(vectorStrokeWidth.valueProperty());
+                element.arrowLengthProperty().bind(spinnerArrowLength.valueProperty());
                 
             }else if(newValue instanceof ImageElement element){ // Image
                 setVectorsDisable(true);
@@ -468,10 +513,21 @@ public class PaintTab extends SideTab{
         if(!spinnerHeight.getValue().equals(newValue)) spinnerHeight.getValueFactory().setValue(newValue.intValue());
     }
     
+    private void vectorDrawModeChanged(ObservableValue<? extends Toggle> o, Toggle oldToggle, Toggle newToggle){
+        if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
+            if(newToggle != null){
+                if(oldToggle == null) vectorElement.enterEditMode();
+            }else{
+                vectorElement.quitEditMode();
+            }
+        }
+    }
+    
     public void setVectorsDisable(boolean disable){
         vectorUndoPath.setDisable(disable);
         setVectorActionButtonsVisible(!disable);
         setVectorOptionPaneVisible(!disable);
+        setVectorAdvancedOptionVisible(!disable);
     }
     public void setVectorActionButtonsVisible(boolean visible){
         if(!visible){ // REMOVE
@@ -486,6 +542,13 @@ public class PaintTab extends SideTab{
             root.getChildren().remove(vectorsOptionPane);
         }else if(!root.getChildren().contains(vectorsOptionPane)){ // ADD
             root.getChildren().add(1, vectorsOptionPane);
+        }
+    }
+    public void setVectorAdvancedOptionVisible(boolean visible){
+        if(!visible){ // REMOVE
+            advancedOptionsContent.getChildren().remove(vectorsAdvancedOptions);
+        }else if(!advancedOptionsContent.getChildren().contains(vectorsAdvancedOptions)){ // ADD
+            advancedOptionsContent.getChildren().add(vectorsAdvancedOptions);
         }
     }
     private boolean advancedOptionsPaneWasOpen = false;

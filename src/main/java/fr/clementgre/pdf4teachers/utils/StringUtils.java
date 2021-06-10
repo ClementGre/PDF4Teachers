@@ -1,7 +1,6 @@
 package fr.clementgre.pdf4teachers.utils;
 
-import java.util.Arrays;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class StringUtils{
@@ -97,6 +96,23 @@ public class StringUtils{
         if(index < string.length()) return string.substring(0, index);
         
         return "";
+    }
+    public static String removeAfterLastRegexIgnoringCase(String string, String[] strs){
+        if(strs.length == 0) return string;
+        
+        HashMap<Integer, String> indices = new HashMap<>();
+        for(String str : strs){
+            int index = string.toLowerCase().lastIndexOf(str.toLowerCase());
+            if(index < string.length() && index != -1){
+                indices.put(index, str);
+            }
+        }
+        
+        Optional<Map.Entry<Integer, String>> first = indices.entrySet().stream().max(Comparator.comparingInt(Entry::getKey));
+        if(first.isPresent()){
+            return string.substring(0, first.get().getKey());
+        }
+        return string;
     }
     
     public static String removeAfter(String string, String rejex){

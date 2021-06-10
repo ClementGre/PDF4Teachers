@@ -36,8 +36,6 @@ import org.scilab.forge.jlatexmath.TeXIcon;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
@@ -47,7 +45,7 @@ public class TextElement extends Element{
     private final ScratchText text = new ScratchText();
     private final ImageView image = new ImageView();
     
-    public static final float imageFactor = 2.5f;
+    public static final float imageFactor = 3f;
     
     public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font){
         super(x, y, pageNumber);
@@ -99,14 +97,14 @@ public class TextElement extends Element{
         item1.setToolTip(TR.tr("elements.delete.tooltip"));
         NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.duplicate"), false);
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
-        NodeMenuItem item3 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
-        item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
+        NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+        item3.setToolTip(TR.tr("elementMenu.addToPreviousList.tooltip"));
         NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
-        item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
+        item4.setToolTip(TR.tr("elementMenu.addToFavouritesList.tooltip"));
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete());
+        item1.setOnAction(e -> delete(true));
         item2.setOnAction(e -> cloneOnDocument());
         item3.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true)));
         item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));
@@ -121,21 +119,24 @@ public class TextElement extends Element{
         MainWindow.textTab.selectItem();
         AutoTipsManager.showByAction("textselect");
     }
-    
     @Override
-    public void doubleClick(){
+    public void onDoubleClickAfterSelected(){
         cloneOnDocument();
     }
-    
     @Override
-    public void addedToDocument(boolean silent){
-        if(!silent) MainWindow.textTab.treeView.onFileSection.addElement(this);
+    protected void onDoubleCLick(){
+    
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
-        if(!silent) MainWindow.textTab.treeView.onFileSection.removeElement(this);
+    public void addedToDocument(boolean markAsUnsave){
+        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.addElement(this);
+    }
+    
+    @Override
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.removeElement(this);
     }
     
     // READER AND WRITERS
@@ -153,13 +154,14 @@ public class TextElement extends Element{
         return data;
     }
     
-    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
-        TextElement element = readYAMLDataAndGive(data, true, page);
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page, boolean upscaleGrid){
+        TextElement element = readYAMLDataAndGive(data, true, page, upscaleGrid);
+        
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
-    public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
+    public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page, boolean upscaleGrid){
         
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
@@ -171,32 +173,12 @@ public class TextElement extends Element{
         String text = Config.getString(data, "text");
         
         Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
+    
+        if(upscaleGrid){ // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
+            x *= 100; y *= 100;
+        }
+        
         return new TextElement(x, y, page, hasPage, text, color, font);
-    }
-    
-    public static TextElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException{
-        
-        byte page = reader.readByte();
-        short x = reader.readShort();
-        short y = reader.readShort();
-        double fontSize = reader.readFloat();
-        boolean isBold = reader.readBoolean();
-        boolean isItalic = reader.readBoolean();
-        String fontName = reader.readUTF();
-        short colorRed = (short) (reader.readByte() + 128);
-        short colorGreen = (short) (reader.readByte() + 128);
-        short colorBlue = (short) (reader.readByte() + 128);
-        String text = reader.readUTF();
-        
-        Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-        return new TextElement(x, y, page, hasPage, text, Color.rgb(colorRed, colorGreen, colorBlue), font);
-    }
-    
-    public static void readDataAndCreate(DataInputStream reader) throws IOException{
-        TextElement element = readDataAndGive(reader, true);
-        element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
     // SPECIFIC METHODS
@@ -374,6 +356,7 @@ public class TextElement extends Element{
     
     @Override
     public Element clone(){
+        AutoTipsManager.showByAction("textclone");
         return new TextElement(getRealX(), getRealY(), pageNumber, true, text.getText(), (Color) text.getFill(), text.getFont());
     }
     

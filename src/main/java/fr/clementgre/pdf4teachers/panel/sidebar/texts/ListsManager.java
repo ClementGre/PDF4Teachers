@@ -5,7 +5,7 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
@@ -90,7 +90,7 @@ public class ListsManager{
                     
                     alert.addCancelButton(ButtonPosition.CLOSE);
                     ButtonType load =  alert.addButton(TR.tr("actions.load"), ButtonPosition.DEFAULT);
-                    ButtonType loadReplace = alert.addButton(TR.tr("Vider et charger"), ButtonPosition.OTHER_LEFT);
+                    ButtonType loadReplace = alert.addButton(TR.tr("actions.clearAndLoad"), ButtonPosition.OTHER_LEFT);
                     ButtonType delete = alert.addButton(TR.tr("actions.delete"), ButtonPosition.OTHER_LEFT);
                     
                     ButtonType result = alert.getShowAndWait();
@@ -106,7 +106,7 @@ public class ListsManager{
     }
     
     public void loadList(ArrayList<TextListItem> items, boolean flush){
-        if(flush) section.clearElements();
+        if(flush) section.clearElements(true);
         for(TextListItem item : items) section.getChildren().add(item.toTextTreeItem(section.sectionType));
         section.sortManager.simulateCall();
     }

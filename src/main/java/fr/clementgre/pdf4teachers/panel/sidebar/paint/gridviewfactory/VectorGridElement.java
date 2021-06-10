@@ -1,4 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -23,11 +24,16 @@ public class VectorGridElement{
     private VectorData vectorData;
     
     private static final int RENDER_WIDTH = 75;
+    private boolean fake = false;
     float width, height = 1;
     
     public VectorGridElement(VectorData vectorData){
         this.vectorData = vectorData;
         setup();
+    }
+    public VectorGridElement(boolean fake){
+        if(!fake) throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
+        this.fake = true;
     }
     
     private void setup(){
@@ -47,28 +53,15 @@ public class VectorGridElement{
         vectorData.setSpecsChangesCallback(this::updateSVGSpecs);
     }
     
-    /*public void toggleFavorite(){
-        if(isFavorite()){
-            MainWindow.paintTab.favouriteVectors.getList().removeItems(Collections.singletonList(this));
-            vectorData = null;
-        }else{
-            vectorData = new VectorData(0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false, 0, 0);
-
-            MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(this));
-        }
-    }*/
-    
-    public void addToFavorite(){
-        if(!isFavorite()){
-            vectorData = new VectorData(0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false, 0, 0);
-            
-            MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(this));
-        }
+    public void addToFavorite(VectorGridView gridView){
+        MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(clone()));
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
     }
+    public void addToLast(VectorGridView gridView){
+        MainWindow.paintTab.lastVectors.getList().addItems(Collections.singletonList(clone()));
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
+    }
+    
     public void removeFromList(VectorGridView gridView){
         gridView.removeItems(Collections.singletonList(this));
     }
@@ -80,10 +73,6 @@ public class VectorGridElement{
         if(MainWindow.mainScreen.hasDocument(false)) vectorData.setAsToPlaceElement(link);
     }
     
-    public boolean isFavorite(){
-        return MainWindow.paintTab.favouriteVectors.getList().getAllItems().contains(this);
-    }
-    
     public boolean equals(VectorElement element){
         return vectorData.equals(element);
     }
@@ -91,9 +80,11 @@ public class VectorGridElement{
     // SORTER
     
     public int compareUseWith(VectorGridElement element){
+        if(isFake()) return -1;
         return element.getVectorData().getUseCount() - vectorData.getUseCount();
     }
     public int compareLastUseTimeWith(VectorGridElement element){
+        if(isFake()) return -1;
         long val = (element.getVectorData().getLastUse() - vectorData.getLastUse());
         return val > 0 ? 1 : (val < 0 ? -1 : 0);
     }
@@ -141,9 +132,11 @@ public class VectorGridElement{
 
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }else{
-                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding, vectorData.isInvertX(), vectorData.isInvertY()));
+                svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
+                        vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }
     
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
@@ -165,6 +158,8 @@ public class VectorGridElement{
         updateSVGSpecs();
     
         double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
+        double clipPadding = 0;
+        if(vectorData.getArrowLength() != 0) clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
         displayWidth = displayWidth - padding*2;
         
         // SCALE
@@ -183,8 +178,12 @@ public class VectorGridElement{
         svgPath.setLayoutY(padding + notRectShapeTransformY);
         
         // CLIP
-        Rectangle clip = new Rectangle((-padding+1)/scale, (-padding+1)/scale,
-                svgWidth + (2*padding-2)/scale, svgHeight + (2*padding-2)/scale);
+        Rectangle clip = new Rectangle(
+                (-padding+1)/scale -clipPadding,
+                (-padding+1)/scale -clipPadding,
+                svgWidth + (2*padding-2)/scale + 2*clipPadding,
+                svgHeight + (2*padding-2)/scale + 2*clipPadding
+        );
         svgPath.setClip(clip);
     
     
@@ -200,5 +199,18 @@ public class VectorGridElement{
             svgPath.setFill(null);
         }
         
+    }
+    
+    @Override
+    public VectorGridElement clone(){
+        return new VectorGridElement(vectorData.clone());
+    }
+    
+    public void resetUseData(){
+        vectorData.resetUseData();
+    }
+    
+    public boolean isFake(){
+        return fake;
     }
 }

@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -15,10 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public abstract class AlternativeWindow<R extends Node> extends Stage{
     
@@ -66,6 +68,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         
         setTitle("PDF4Teachers - " + title);
         setScene(scene);
+        StyleManager.putStyle(scene, Style.DEFAULT);
         StyleManager.putStyle(borderPane, Style.DEFAULT);
         StyleManager.putCustomStyle(scene, "alternativeWindow.css");
         if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT) StyleManager.putCustomStyle(scene, "alternativeWindow-light.css");
@@ -90,6 +93,12 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
             }
             
             afterShown();
+        });
+        
+        scene.setOnKeyPressed((e) -> {
+            if(e.getCode() == KeyCode.ESCAPE){
+                fireEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSE_REQUEST));
+            }
         });
         
         setup(header, subHeader);

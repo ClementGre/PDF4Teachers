@@ -38,12 +38,16 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     private final SortManager sortManager;
     
     private final List<T> nonFilteredItems = new ArrayList<>();
-    
     public ShapesGridView(boolean defineCellSizeAsRowNumber, Slider zoomSlider){
+        this(defineCellSizeAsRowNumber, zoomSlider, false);
+    }
+    public ShapesGridView(boolean defineCellSizeAsRowNumber, Slider zoomSlider, boolean hideScrollBarSpace){
         super();
         this.defineCellSizeAsRowNumber = defineCellSizeAsRowNumber;
         this.zoomSlider = zoomSlider;
         sortManager = new SortManager(this::sort, null);
+        
+        if(hideScrollBarSpace) scrollBarWidth = 14;
         
         setCellSize(getZoomSliderValue());
         zoomSlider.valueProperty().bindBidirectional(cellSizeProperty());
@@ -121,6 +125,11 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         nonFilteredItems.removeAll(items);
         updateItemsFiltered();
     }
+    public void clear(){
+        nonFilteredItems.clear();
+        updateItemsFiltered();
+    }
+    
     public List<T> getAllItems(){
         return nonFilteredItems;
     }
@@ -135,8 +144,9 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         setCellHeight(newCellSize);
     }
     
+    int scrollBarWidth = 14;
     private int getScrollBarWidth(){
-        return 14;
+        return scrollBarWidth;
     }
     
     public void setupSortManager(GridPane parent, String selectedButtonName, String... buttonsName){
@@ -169,4 +179,6 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         this.filterType = filterType;
         updateItemsFiltered();
     }
+    
+    public abstract void resetUseData();
 }

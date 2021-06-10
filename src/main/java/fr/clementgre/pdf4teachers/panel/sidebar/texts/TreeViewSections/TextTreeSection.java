@@ -7,7 +7,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.SortPanelTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
@@ -73,7 +73,7 @@ public abstract class TextTreeSection extends TreeItem<String>{
                     toSort.add((TextTreeItem) getChildren().get(i));
                 }
             }
-            clearElements();
+            clearElements(false); // unlink = false because the element are just reordered, not replaced.
             for(TextTreeItem item : TextTreeView.autoSortList(toSort, sortType, order)) getChildren().add(item);
         }, null);
         
@@ -135,15 +135,18 @@ public abstract class TextTreeSection extends TreeItem<String>{
     
     public void updateChildrenGraphics(){
         for(Object item : getChildren()){
-            if(item instanceof TextTreeItem) ((TextTreeItem) item).updateGraphic(true);
+            if(item instanceof TextTreeItem textTreeItem){
+                textTreeItem.updateGraphic(true);
+            }
         }
     }
     
-    public void clearElements(){
+    public void clearElements(boolean unlink){
         List<TreeItem<String>> items = getChildren();
         for(int i = items.size() - 1; i >= 0; i--){
-            if(items.get(i) instanceof TextTreeItem){
+            if(items.get(i) instanceof TextTreeItem textTreeItem){
                 items.remove(i);
+                if(unlink) textTreeItem.unLink(false);
             }
         }
     }
@@ -157,16 +160,18 @@ public abstract class TextTreeSection extends TreeItem<String>{
     
     public void removeElement(TextTreeItem element){
         getChildren().remove(element);
+        element.unLink(false);
         sortManager.simulateCall();
     }
     
     public void removeElement(TextElement element){
         List<TreeItem<String>> items = getChildren();
         for(TreeItem<String> item : items){
-            if(item instanceof TextTreeItem){
-                if(((TextTreeItem) item).getCore() != null){
-                    if(((TextTreeItem) item).getCore().equals(element)){
+            if(item instanceof TextTreeItem textTreeItem){
+                if(textTreeItem.getCore() != null){
+                    if(textTreeItem.getCore().equals(element)){
                         items.remove(item);
+                        textTreeItem.unLink(false);
                         break;
                     }
                 }
@@ -174,4 +179,11 @@ public abstract class TextTreeSection extends TreeItem<String>{
         }
     }
     
+    public void unlinkAll(){
+        for(TreeItem<String> item : getChildren()){
+            if(item instanceof TextTreeItem textTreeItem){
+                textTreeItem.unLink(true);
+            }
+        }
+    }
 }

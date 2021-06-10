@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -26,7 +27,8 @@ public class PDFPagesRender{
     private final File file;
     
     public PDFPagesEditor editor;
-    private final PDDocument document;
+    private PDDocument document;
+    private PDFRenderer pdfRenderer;
     ArrayList<Thread> rendersPage = new ArrayList<>();
     
     public boolean advertisement = false;
@@ -37,11 +39,12 @@ public class PDFPagesRender{
         
         render = true;
         document = PDDocument.load(file);
+        pdfRenderer = new PDFRenderer(document);
         editor = new PDFPagesEditor(document, file);
         render = false;
     }
     
-    public void renderPage(int pageNumber, double size, double width, double height, CallBackArg<Image> callBack){
+    public void renderPage(int pageNumber, double size, CallBackArg<Image> callBack){
         
         Thread renderPage = new Thread(() -> {
             
@@ -57,25 +60,13 @@ public class PDFPagesRender{
             //document.setResourceCache();
             
             try{
-                PDDocument document = PDDocument.load(file);
-                PDFRenderer pdfRenderer = new PDFRenderer(document);
+                //PDDocument document = PDDocument.load(file);
+                //PDFRenderer pdfRenderer = new PDFRenderer(document);
                 pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth / pageSize.getWidth(), destWidth / pageSize.getWidth(), RenderDestination.VIEW);
                 //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-                document.close();
+                //document.close();
                 
                 graphics.dispose();
-                
-                /*Background background = new Background(
-                        Collections.singletonList(new BackgroundFill(
-                                javafx.scene.paint.Color.WHITE,
-                                CornerRadii.EMPTY,
-                                Insets.EMPTY)),
-                        Collections.singletonList(new BackgroundImage(
-                                ,
-                                BackgroundRepeat.NO_REPEAT,
-                                BackgroundRepeat.NO_REPEAT,
-                                BackgroundPosition.CENTER,
-                                new BackgroundSize(width, height, false, false, false, true))));*/
                 
                 Platform.runLater(() -> callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
             }catch(Exception e){
@@ -126,33 +117,11 @@ public class PDFPagesRender{
         }
     }
     
-    public BufferedImage scale(BufferedImage img, double width){
-        
-        if(img.getWidth() < width){
-            return img;
-        }
-        
-        int destWidth = (int) (width);
-        int destHeight = (int) (img.getHeight() / ((double) img.getWidth()) * width);
-        
-        //créer l'image de destination
-        GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-        BufferedImage newImg = configuration.createCompatibleImage(destWidth, destHeight);
-        
-        Graphics2D graphics = newImg.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        
-        //dessiner l'image de destination
-        graphics.drawImage(img, 0, 0, destWidth, destHeight, 0, 0, img.getWidth(), img.getHeight(), null);
-        graphics.dispose();
-        
-        return newImg;
-    }
-    
     public void close(){
         try{
+            pdfRenderer = null;
             document.close();
+            document = null;
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -185,5 +154,29 @@ public class PDFPagesRender{
         else pageSize = page.getCropBox();
         
         return pageSize;
+    }
+    
+    public BufferedImage scale(BufferedImage img, double width){
+        
+        if(img.getWidth() < width){
+            return img;
+        }
+        
+        int destWidth = (int) (width);
+        int destHeight = (int) (img.getHeight() / ((double) img.getWidth()) * width);
+        
+        //créer l'image de destination
+        GraphicsConfiguration configuration = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
+        BufferedImage newImg = configuration.createCompatibleImage(destWidth, destHeight);
+        
+        Graphics2D graphics = newImg.createGraphics();
+        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        
+        //dessiner l'image de destination
+        graphics.drawImage(img, 0, 0, destWidth, destHeight, 0, 0, img.getWidth(), img.getHeight(), null);
+        graphics.dispose();
+        
+        return newImg;
     }
 }

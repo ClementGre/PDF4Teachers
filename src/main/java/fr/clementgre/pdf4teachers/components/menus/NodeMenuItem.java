@@ -1,7 +1,7 @@
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -54,6 +54,10 @@ public class NodeMenuItem extends CustomMenuItem{
         //                             LeftData    , Image       , Text        , spacer, Accelerator
         getNode().getChildren().addAll(new Region(), new Region(), new Region(), spacer, new Region());
         setName(text);
+    }
+    
+    public void removePadding(){
+        node.setStyle("-fx-padding: 0;");
     }
     
     public void setLeftData(Node data){
@@ -172,6 +176,32 @@ public class NodeMenuItem extends CustomMenuItem{
         }
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
+                nodeItem.getNode().setPrefWidth((maxWidth + extra));
+            }
+        }
+    }
+    public static void setupMenuNow(MenuButton menu){
+        double maxWidth = 0;
+        int extra = 0;
+        for(MenuItem item : menu.getItems()){
+            if(item instanceof NodeMenuItem nodeItem){
+                if(nodeItem.getNode().getWidth() > maxWidth)
+                    maxWidth = nodeItem.getNode().getWidth();
+            }else if(item instanceof Menu){
+                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                
+                if(item.getStyleableNode() != null){
+                    Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
+                    if(arrow instanceof Region region){
+                        region.setScaleX(Main.settings.zoom.getValue());
+                        region.setScaleY(Main.settings.zoom.getValue());
+                    }
+                }
+            }
+        }
+        for(MenuItem item : menu.getItems()){
+            if(item instanceof NodeMenuItem nodeItem){
+                System.out.println("Detected width: " + maxWidth + extra);
                 nodeItem.getNode().setPrefWidth((maxWidth + extra));
             }
         }

@@ -6,12 +6,39 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
+import javafx.scene.Cursor;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils{
+    
+    public static final Cursor CURSOR_MOVE = Main.isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
+    
+    public static void sleepThread(long millis){
+        try{
+            Thread.sleep(millis);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    public static void sleepThreadSeconds(double seconds){
+        try{
+            Thread.sleep((long) (seconds * 1000));
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
+    public static void sleepThreadMinutes(double minutes){
+        try{
+            Thread.sleep((long) (minutes * 60000));
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+    }
     
     public static void runLaterOnUIThread(int millis, Runnable runnable){
         new Thread(() -> {
@@ -95,8 +122,11 @@ public class PlatformUtils{
         
         if(Main.isOSX()){
             try{
-                Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
-            }catch(InterruptedException | IOException e){
+                if(Desktop.isDesktopSupported()){
+                    Desktop.getDesktop().open(new File(uri));
+                }
+                //Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
+            }catch(IOException e){
                 System.out.println("unable to open URI directory");
                 e.printStackTrace();
             }
@@ -110,8 +140,11 @@ public class PlatformUtils{
         
         if(Main.isOSX()){
             try{
-                Runtime.getRuntime().exec("/usr/bin/open -a TextEdit " + uri).waitFor();
-            }catch(InterruptedException | IOException e){
+                if(Desktop.isDesktopSupported()){
+                    Desktop.getDesktop().open(new File(uri));
+                }
+                //Runtime.getRuntime().exec("/usr/bin/open -a TextEdit " + uri).waitFor();
+            }catch(IOException e){
                 System.out.println("unable to open URI file");
                 e.printStackTrace();
             }

@@ -26,7 +26,6 @@ public abstract class SimpleConfig{
     protected abstract void addDataToConfig(Config config);
     
     public final void loadData(){
-        if(Main.settings.getSettingsVersion().equals("1.2.0")) return;
         
         new Thread(() -> {
         

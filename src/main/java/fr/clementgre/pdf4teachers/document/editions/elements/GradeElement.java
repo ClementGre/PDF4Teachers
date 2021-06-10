@@ -95,7 +95,7 @@ public class GradeElement extends Element{
         nameProperty().addListener((observable, oldValue, newValue) -> {
             
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
-            Edition.setUnsave();
+            Edition.setUnsave("GradeNameChanged");
             
             // Check if name is null
             if(newValue.isBlank()){
@@ -118,7 +118,7 @@ public class GradeElement extends Element{
         });
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
-            Edition.setUnsave();
+            Edition.setUnsave("GradeValueChanged");
             if(!isShouldVisible()){
                 setVisible(false);
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
@@ -128,13 +128,13 @@ public class GradeElement extends Element{
                     if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
                     }
-                    setRealX((int) ((getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()) * Element.GRID_WIDTH / getPage().getWidth()));
+                    setRealX(getPage().toGridX(getPage().getMouseX() <= 0 ? 60 : getPage().getMouseX()));
                     
                     if(nextRealYToUse != 0){
                         setRealY(nextRealYToUse);
                         nextRealYToUse = 0;
                     }else{
-                        setRealY((int) (getPage().getMouseY() * Element.GRID_HEIGHT / getPage().getHeight()));
+                        setRealY(getPage().getNewElementYOnGrid());
                         centerOnCoordinatesY();
                     }
                 }
@@ -149,7 +149,7 @@ public class GradeElement extends Element{
             
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
-            Edition.setUnsave();
+            Edition.setUnsave("GradeTotalChanged");
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
@@ -201,8 +201,8 @@ public class GradeElement extends Element{
         item3.setOnAction(e -> {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
-                MainWindow.gradeTab.treeView.clearElements(true);
-            }else delete();
+                MainWindow.gradeTab.treeView.clearElements(true, true);
+            }else delete(true);
         });
         item4.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -221,6 +221,10 @@ public class GradeElement extends Element{
     protected void onMouseRelease(){
         GradeTreeView.defineNaNLocations();
     }
+    @Override
+    protected void onDoubleCLick(){
+    
+    }
     
     // ACTIONS
     
@@ -231,9 +235,8 @@ public class GradeElement extends Element{
         MainWindow.gradeTab.treeView.getSelectionModel().select(getGradeTreeItem());
         AutoTipsManager.showByAction("gradeselect");
     }
-    
     @Override
-    public void doubleClick(){
+    public void onDoubleClickAfterSelected(){
         if(!getGradeTreeItem().hasSubGrade()){
             setValue(0);
             AutoTipsManager.showByAction("gradereset");
@@ -241,21 +244,21 @@ public class GradeElement extends Element{
     }
     
     @Override
-    public void delete(){
+    public void delete(boolean markAsUnsave){
         if(getPage() != null){
-            getPage().removeElement(this, !isRoot());
+            getPage().removeElement(this, markAsUnsave);
         }
     }
     
     @Override
-    public void addedToDocument(boolean silent){
+    public void addedToDocument(boolean markAsUnsave){
         MainWindow.gradeTab.treeView.addElement(this);
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
-        MainWindow.gradeTab.treeView.removeElement(this);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        MainWindow.gradeTab.treeView.removeElement(this, markAsUnsave);
     }
     // READER AND WRITERS
     
@@ -284,7 +287,7 @@ public class GradeElement extends Element{
         else return new double[]{value};
     }
     
-    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage){
+    public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, boolean upscaleGrid){
         
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
@@ -295,36 +298,21 @@ public class GradeElement extends Element{
         double total = Config.getDouble(data, "total");
         boolean alwaysVisible = Config.getBoolean(data, "alwaysVisible");
         String name = Config.getString(data, "name");
+    
+        if(upscaleGrid){ // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
+            x *= 100; y *= 100;
+        }
         
         return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, alwaysVisible);
     }
     
-    public static void readYAMLDataAndCreate(HashMap<String, Object> data){
-        GradeElement element = readYAMLDataAndGive(data, true);
+    public static void readYAMLDataAndCreate(HashMap<String, Object> data, boolean upscaleGrid){
+        GradeElement element = readYAMLDataAndGive(data, true, upscaleGrid);
+
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
     }
     
-    public static GradeElement readDataAndGive(DataInputStream reader, boolean hasPage) throws IOException{
-        
-        byte page = reader.readByte();
-        short x = reader.readShort();
-        short y = reader.readShort();
-        int index = reader.readInt();
-        String parentPath = reader.readUTF();
-        double value = reader.readDouble();
-        double total = reader.readDouble();
-        String name = reader.readUTF();
-        
-        return new GradeElement(x, y, page, hasPage, value, total, index, parentPath, name, false);
-    }
-    
-    public static void readDataAndCreate(DataInputStream reader) throws IOException{
-        GradeElement element = readDataAndGive(reader, true);
-        element.setRealY((int) (element.getRealY() - element.getBaseLineY() / element.getPage().getHeight() * Element.GRID_HEIGHT));
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
-    }
     
     // SPECIFIC METHODS
     
@@ -431,7 +419,7 @@ public class GradeElement extends Element{
     
     public void setIndex(int index){
         this.index = index;
-        Edition.setUnsave();
+        Edition.setUnsave("GradeIndexChanged");
     }
     
     public String getParentPath(){
@@ -448,7 +436,7 @@ public class GradeElement extends Element{
     
     public void setParentPath(String parentPath){
         this.parentPath = parentPath;
-        Edition.setUnsave();
+        Edition.setUnsave("GradeParentPathChanged");
     }
     
     public boolean isAlwaysVisible(){

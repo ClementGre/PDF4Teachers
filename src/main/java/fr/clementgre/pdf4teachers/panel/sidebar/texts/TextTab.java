@@ -2,7 +2,6 @@ package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -16,7 +15,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -54,8 +53,8 @@ public class TextTab extends SideTab{
     // Séparés par ligne
     
     private final HBox combosBox = new HBox();
-    public FontComboBox fontCombo = new FontComboBox();
-    private final ScaledComboBox<Double> sizeCombo = new ScaledComboBox<>(FontUtils.sizes);
+    public FontComboBox fontCombo = new FontComboBox(true);
+    private final Spinner<Double> sizeCombo = new Spinner<>(2d, 999d, 14d, 2d);
     
     private final HBox colorAndParamsBox = new HBox();
     private final SyncColorPicker colorPicker = new SyncColorPicker();
@@ -103,9 +102,8 @@ public class TextTab extends SideTab{
         PaneUtils.setHBoxPosition(sizeCombo, 95, 30, 2.5);
         sizeCombo.setStyle("-fx-font-size: 13");
         sizeCombo.setEditable(true);
-        sizeCombo.getSelectionModel().select(7);
+        sizeCombo.getValueFactory().setConverter(new StringToDoubleConverter(14));
         sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-        sizeCombo.setConverter(new StringToDoubleConverter(sizeCombo.getValue()));
         sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isNew) MainWindow.userData.textLastFontSize = newValue;
         });
@@ -167,7 +165,7 @@ public class TextTab extends SideTab{
                     current.fontProperty().unbind();
                     
                     if(((TextElement) oldElement).getText().isBlank()){
-                        oldElement.delete();
+                        oldElement.delete(true);
                     }
                 }
             }
@@ -179,12 +177,12 @@ public class TextTab extends SideTab{
                     itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
                     colorPicker.setValue(current.getColor());
                     fontCombo.getSelectionModel().select(current.getFont().getFamily());
-                    sizeCombo.getSelectionModel().select(current.getFont().getSize());
+                    sizeCombo.getValueFactory().setValue(current.getFont().getSize());
                     
                     current.fontProperty().bind(Bindings.createObjectBinding(() -> {
-                        Edition.setUnsave();
+                        Edition.setUnsave("TextElement FontChanged");
                         return getFont();
-                    }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.getSelectionModel().selectedItemProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+                    }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.valueProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
                 }
             }
         });
@@ -261,7 +259,7 @@ public class TextTab extends SideTab{
                     Element element = MainWindow.mainScreen.getSelected();
                     if(element != null){
                         MainWindow.mainScreen.setSelected(null);
-                        element.delete();
+                        element.delete(true);
                     }
                 }
             }else if(e.getCode() == KeyCode.TAB){
@@ -290,7 +288,7 @@ public class TextTab extends SideTab{
             if(MainWindow.mainScreen.getSelected() != null){
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement){
                     ((TextElement) MainWindow.mainScreen.getSelected()).setColor(colorPicker.getValue());
-                    Edition.setUnsave();
+                    Edition.setUnsave("TextElement color changed");
                 }
                 
             }
@@ -302,12 +300,12 @@ public class TextTab extends SideTab{
             MainWindow.mainScreen.setSelected(null);
             
             fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
-            sizeCombo.getSelectionModel().select(MainWindow.userData.textLastFontSize);
+            sizeCombo.getValueFactory().setValue(MainWindow.userData.textLastFontSize);
             colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
             boldBtn.setSelected(MainWindow.userData.textLastFontBold);
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
             
-            TextElement current = new TextElement((int) (60 * Element.GRID_WIDTH / page.getWidth()), (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight()), page.getPage(),
+            TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                     true, txtArea.getText(), colorPicker.getValue(), getFont());
             
             page.addElement(current, true);
@@ -322,7 +320,7 @@ public class TextTab extends SideTab{
             AutoTipsManager.showByAction("newtextelement");
         });
         deleteBtn.setOnAction(e -> {
-            MainWindow.mainScreen.getSelected().delete();
+            MainWindow.mainScreen.getSelected().delete(true);
             MainWindow.mainScreen.setSelected(null);
         });
     }
@@ -352,7 +350,7 @@ public class TextTab extends SideTab{
     }
     
     private Font getFont(){
-        return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getSelectionModel().getSelectedItem());
+        return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getValueFactory().getValue());
     }
     
     private ScrollBar getHorizontalSB(final TextArea scrollPane){

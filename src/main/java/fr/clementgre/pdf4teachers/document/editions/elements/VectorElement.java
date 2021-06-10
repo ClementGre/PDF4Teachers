@@ -1,20 +1,21 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.*;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,19 +31,19 @@ public class VectorElement extends GraphicElement{
     private final ObjectProperty<Color> stroke = new SimpleObjectProperty<>();
     private final IntegerProperty strokeWidth = new SimpleIntegerProperty();
     
+    private final IntegerProperty arrowLength = new SimpleIntegerProperty(0);
+    
     private final BooleanProperty invertX = new SimpleBooleanProperty();
     private final BooleanProperty invertY = new SimpleBooleanProperty();
-    
-    private final BooleanProperty isEditMode = new SimpleBooleanProperty(false);
     
     private VectorData linkedVectorData;
     
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
-                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY){
-        this(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, null);
+                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY, int arrowLength){
+        this(x, y, pageNumber, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, null);
     }
     public VectorElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode,
-                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY, VectorData linkedVectorData){
+                         boolean doFill, Color fill, Color stroke, int strokeWidth, String path, boolean invertX, boolean invertY, int arrowLength, VectorData linkedVectorData){
         super(x, y, pageNumber, width, height, repeatMode, resizeMode);
     
         this.path.set(path);
@@ -52,6 +53,7 @@ public class VectorElement extends GraphicElement{
         this.strokeWidth.set(strokeWidth);
         this.invertX.set(invertX);
         this.invertY.set(invertY);
+        this.arrowLength.set(arrowLength);
         noScaledSvgPath.setContent(getPath());
     
         if(linkedVectorData != null) setLinkedVectorData(linkedVectorData);
@@ -69,9 +71,10 @@ public class VectorElement extends GraphicElement{
         
         noScaledSvgPath.setContent(getPath());
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        svgPath.setStrokeLineJoin(StrokeLineJoin.ROUND);
         svgPath.setFillRule(FillRule.NON_ZERO);
         setupGeneral(svgPath);
-    
+        
         if(checkSize && getRealWidth() == 0 && getRealHeight() == 0){
             defineSizeAuto();
         }else{
@@ -98,50 +101,67 @@ public class VectorElement extends GraphicElement{
             noScaledSvgPath.setContent(getPath());
             svgPath.setContent(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         fill.addListener((observable, oldValue, newValue) ->{
             if(linkedVectorData != null) linkedVectorData.setFill(newValue);
             updateFill();
+            Edition.setUnsave("VectorElement changed");
         });
         doFill.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
             updateFill();
+            Edition.setUnsave("VectorElement changed");
         });
         
         stroke.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
             updateStroke();
+            Edition.setUnsave("VectorElement changed");
         });
         strokeWidth.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
             updateStroke();
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         resizeModeProperty().addListener((o, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         repeatModeProperty().addListener((o, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         invertXProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         invertYProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         realWidthProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
         });
         realHeightProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
+        });
+        
+        arrowLength.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
     }
     
@@ -160,19 +180,25 @@ public class VectorElement extends GraphicElement{
     }
     
     @Override
+    protected void onDoubleCLick(){
+        enterEditMode();
+    }
+    
+    @Override
     protected void setupMenu(){
         super.setupMenu();
     
-        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
+        NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
+        NodeMenuItem addToLast = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
     
-        menu.getItems().addAll(isFavoriteItem);
-        menu.setOnShowing(e -> {
-            isFavoriteItem.setSelected(MainWindow.paintTab.favouriteVectors.isFavoriteVector(this));
+        addToFavorites.setOnAction((event) -> {
+            linkedVectorData = VectorListPane.addFavoriteVector(this);
+        });
+        addToLast.setOnAction((event) -> {
+            linkedVectorData = VectorListPane.addLastVector(this);
         });
     
-        isFavoriteItem.setOnAction((event) -> {
-            linkedVectorData = VectorListPane.toggleFavoriteVector(this);
-        });
+        menu.getItems().addAll(addToFavorites, addToLast);
     }
     
     private void onSizeChanged(){
@@ -204,31 +230,45 @@ public class VectorElement extends GraphicElement{
     }
     
     public String getScaledPath(float wantedWidth, float wantedHeight, float padding) throws PathParseException{
-        return getScaledPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY());
+        return getScaledPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY(), arrowLength.get(), -1);
     }
-    public static String getScaledPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY) throws PathParseException{
+    public String getScaledPathScaled(float wantedWidth, float wantedHeight, float padding, double pageWidth) throws PathParseException{
+        return getScaledPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY(), (float) getArrowLengthScaled(pageWidth), -1);
+    }
+    public static String getScaledPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY, float arrowLength, int decimals) throws PathParseException{
         double finalCurrentWidth = Math.max(1d, sourceSVG.getLayoutBounds().getWidth());
         double finalCurrentHeight = Math.max(1d, sourceSVG.getLayoutBounds().getHeight());
         
-        return "M0 0 " + SVGUtils.transformPath(path,
+        String scaledPath = (decimals == -1 ? "M0 0 " : "") + SVGUtils.transformPath(path,
                 (float) ((wantedWidth-padding*2) / finalCurrentWidth),
                 (float) ((wantedHeight-padding*2) / finalCurrentHeight),
                 (float) -sourceSVG.getBoundsInLocal().getMinX(),
                 (float) -sourceSVG.getBoundsInLocal().getMinY(),
                 invertX, invertY,
                 (float) finalCurrentWidth,
-                (float) finalCurrentHeight);
+                (float) finalCurrentHeight,
+                decimals);
+        
+        if(arrowLength > 0){
+            return SVGUtils.addArrowsToPath(scaledPath, arrowLength, decimals);
+        }else{
+            return scaledPath;
+        }
     }
+    public static record ScaledVectorInfo(String path, Bounds withoutArrowBounds){}
     
     public String getRepeatedPath(float wantedWidth, float wantedHeight, float padding) throws PathParseException{
-        return getRepeatedPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY());
+        return getRepeatedPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY(), getArrowLength(), -1);
     }
-    public static String getRepeatedPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY) throws PathParseException{
+    public String getRepeatedPathScaled(float wantedWidth, float wantedHeight, float padding, double pageWidth) throws PathParseException{
+        return getRepeatedPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY(), (float) getArrowLengthScaled(pageWidth), -1);
+    }
+    public static String getRepeatedPath(String path, SVGPath sourceSVG, float wantedWidth, float wantedHeight, float padding, boolean invertX, boolean invertY, float arrowLength, int decimals) throws PathParseException{
         double finalCurrentWidth = Math.max(1d, sourceSVG.getLayoutBounds().getWidth());
         double finalCurrentHeight = Math.max(1d, sourceSVG.getLayoutBounds().getHeight());
         double ratio = sourceSVG.getLayoutBounds().getWidth() / sourceSVG.getLayoutBounds().getHeight();
         
-        StringBuilder newPath = new StringBuilder("M0 0 ");
+        StringBuilder newPath = new StringBuilder(decimals == -1 ? "M0 0 " : "");
         
         if(wantedWidth > wantedHeight*ratio){ // Multiply X
     
@@ -242,7 +282,8 @@ public class VectorElement extends GraphicElement{
                         (float) -sourceSVG.getBoundsInLocal().getMinY(),
                         invertX, invertY,
                         (float) finalCurrentWidth,
-                        (float) finalCurrentHeight));
+                        (float) finalCurrentHeight,
+                        decimals));
     
                 startX += unitWidth;
             }
@@ -259,49 +300,87 @@ public class VectorElement extends GraphicElement{
                         (float) (-sourceSVG.getBoundsInLocal().getMinY() + (invertY ? -1 : 1) * startY/(wantedWidth - padding * 2)*finalCurrentWidth),
                         invertX, invertY,
                         (float) finalCurrentWidth,
-                        (float) finalCurrentHeight));
+                        (float) finalCurrentHeight,
+                        decimals));
         
                 startY += unitHeight;
             }
             
         }
+        if(arrowLength > 0){
+            return SVGUtils.addArrowsToPath(newPath.toString(), arrowLength, decimals);
+        }
         return newPath.toString();
     }
     
     public double getSVGPadding(){
-        return /*STROKE_DEFAULT.getWidths().getTop() +*/ (getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidth()/2d);
+        return getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidth()/2d;
     }
     public static double getSVGPadding(VectorData vectorData){
-        return /*STROKE_DEFAULT.getWidths().getTop() +*/ (vectorData.getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : vectorData.getStrokeWidth()/2d);
+        return vectorData.getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : vectorData.getStrokeWidth()/2d;
     }
     public double getSVGPaddingScaled(double pageWidth){
-        return /*STROKE_DEFAULT.getWidths().getTop() +*/ (getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidthScaled(pageWidth)/2d);
+        return getResizeMode() == ResizeMode.OPPOSITE_CORNERS ? 0 : getStrokeWidthScaled(pageWidth)/2d;
     }
     public double getClipPadding(){
-        return (getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : getStrokeWidth();
+        if(getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY){
+            return 0;
+        }else{
+            double padding = getStrokeWidth();
+            if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+                padding += getArrowLength();
+            }
+            return padding;
+        }
     }
     public static double getClipPadding(VectorData vectorData){
-        return (vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP || vectorData.getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : vectorData.getStrokeWidth();
+        if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP || vectorData.getRepeatMode() == RepeatMode.MULTIPLY){
+            return 0;
+        }else{
+            double padding = vectorData.getStrokeWidth();
+            if(vectorData.getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+                padding += vectorData.getArrowLength();
+            }
+            return padding;
+        }
     }
     public double getClipPaddingScaled(double pageWidth){
-        return (getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY) ? 0 : getStrokeWidthScaled(pageWidth);
+        if(getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY){
+            return 0;
+        }else{
+            double padding = getStrokeWidthScaled(pageWidth);
+            if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+                padding += getArrowLengthScaled(pageWidth);
+            }
+            return padding;
+        }
     }
     
     // ACTIONS
     @Override
     public void select(){
         super.select();
+    }
+    @Override
+    protected void onDeSelected(){
+        super.onDeSelected();
+        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
+        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
+            quitEditMode();
+            drawer.quitEditMode(); // Element is not anymore selected so it will not be done automatically.
+        }
         
+        if(getPath().isBlank()) delete(false);
     }
     
     @Override
-    public void addedToDocument(boolean silent){
+    public void addedToDocument(boolean markAsUnsave){
     
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
         prefHeightProperty().unbind();
         prefWidthProperty().unbind();
     }
@@ -318,6 +397,7 @@ public class VectorElement extends GraphicElement{
         data.put("path", path.get());
         data.put("invertX", invertX.get());
         data.put("invertY", invertY.get());
+        data.put("arrowLength", arrowLength.get());
         
         return data;
     }
@@ -349,15 +429,75 @@ public class VectorElement extends GraphicElement{
         boolean invertX = Config.getBoolean(data, "invertX");
         boolean invertY = Config.getBoolean(data, "invertY");
         
+        int arrowLength = (int) Config.getLong(data, "arrowLength");
+        
         RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
         ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
         
-        return new VectorElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY);
+        return new VectorElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength);
+    }
+    
+    // EDIT MODE
+    
+    public void enterEditMode(){
+        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() == null){
+            MainWindow.paintTab.vectorModeDraw.setSelected(true);
+        }else{
+            getPage().getVectorElementPageDrawer().enterEditMode(this);
+        }
+    }
+    public void quitEditMode(){
+        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() != null){
+            MainWindow.paintTab.vectorDrawMode.getSelectedToggle().setSelected(false);
+        }else{
+            getPage().getVectorElementPageDrawer().quitEditMode();
+        }
+        requestFocus();
+    }
+    
+    public void formatNoScaledSvgPathToPage(){
+        float padding = (float) getSVGPadding();
+        float width = (float) getWidth();
+        float height = (float) getHeight();
+    
+        if(getRepeatMode() == RepeatMode.MULTIPLY){
+            float ratio = (float) (noScaledSvgPath.getLayoutBounds().getWidth() / noScaledSvgPath.getLayoutBounds().getHeight());
+            if(width > height*ratio){ // Multiply X
+                width = (height -2*padding) * ratio + 2*padding;
+            }else{ // Multiply Y
+                height = (width -2*padding) / ratio + 2*padding;
+            }
+        }else if(getRepeatMode() == RepeatMode.CROP){
+            float ratio = (float) (noScaledSvgPath.getLayoutBounds().getWidth() / noScaledSvgPath.getLayoutBounds().getHeight());
+            if(width > height*ratio){ // Crop Y
+                height = (width -2*padding) / ratio + 2*padding;
+            }else{ // Crop X
+                width = (height -2*padding) * ratio + 2*padding;
+            }
+        }
+        
+        try{
+            setPath(getScaledPath(getPath(), noScaledSvgPath, width, height, padding, false, false, 0, 6));
+        }catch(PathParseException e){
+            e.printStackTrace();
+        }
+    }
+    public void undoAuto(){
+        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
+        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
+            drawer.undo();
+        }else{
+            undoOne();
+        }
+    }
+    public void undoOne(){
+        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m", "z", "l", "h", "v", "a", "c", "s", "t", "q"}));
+    }
+    public void undoLastLines(){
+        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), "m"));
     }
     
     // SPECIFIC METHODS
-    
-    
     @Override
     public void incrementUsesAndLastUse(){
     
@@ -387,7 +527,7 @@ public class VectorElement extends GraphicElement{
     @Override
     public Element clone(){
         return new VectorElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(),
-                isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY());
+                isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY(), getArrowLength());
     }
 
     public void setLinkedVectorData(VectorData vectorData){
@@ -395,6 +535,7 @@ public class VectorElement extends GraphicElement{
     }
     
     // GETTER / SETTER
+    
     
     public SVGPath getSvgPath(){
         return svgPath;
@@ -468,16 +609,24 @@ public class VectorElement extends GraphicElement{
     public void setInvertY(boolean invertY){
         this.invertY.set(invertY);
     }
-    public boolean isIsEditMode(){
-        return isEditMode.get();
-    }
-    public BooleanProperty isEditModeProperty(){
-        return isEditMode;
-    }
-    public void setIsEditMode(boolean isEditMode){
-        this.isEditMode.set(isEditMode);
-    }
     public SVGPath getNoScaledSvgPath(){
         return noScaledSvgPath;
+    }
+    public int getArrowLength(){
+        return arrowLength.get();
+    }
+    public double getArrowLengthScaled(double pageWidth){
+        return ((double) arrowLength.get()) / PageRenderer.PAGE_WIDTH * pageWidth;
+    }
+    public IntegerProperty arrowLengthProperty(){
+        return arrowLength;
+    }
+    public void setArrowLength(int arrowLength){
+        this.arrowLength.set(arrowLength);
+    }
+    
+    public void invertInversions(){
+        setInvertX(!isInvertX());
+        setInvertY(!isInvertY());
     }
 }

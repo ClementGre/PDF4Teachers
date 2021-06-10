@@ -18,7 +18,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -93,21 +93,7 @@ public class MainWindow extends Stage{
         keyboardShortcuts = new KeyboardShortcuts(scene);
         
         setOnCloseRequest(e -> {
-            userData.save();
-            if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
-                e.consume();
-                return;
-            }
-            
-            Main.params = new ArrayList<>();
-            AutoTipsManager.hideAll();
-            if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
-            
-            LanguagesUpdater.backgroundStats(() -> {
-                System.out.println("Closing PDF4Teachers");
-                System.exit(0);
-            });
-            
+            if(!requestCloseApp()) e.consume();
         });
         
         widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -125,7 +111,29 @@ public class MainWindow extends Stage{
         
     }
     
-    public void setup(){
+    public static boolean requestCloseApp(){
+        System.out.println("Received close request");
+        
+        userData.save();
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
+            return false;
+        }
+    
+        // At this point, it is sure the app will close.
+        Main.window.close();
+        if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
+        AutoTipsManager.hideAll();
+        
+    
+        LanguagesUpdater.backgroundStats(() -> {
+            System.out.println("Closing PDF4Teachers");
+            Platform.exit();
+            System.exit(0);
+        });
+        return true;
+    }
+    
+    public void setup(boolean openDocumentation){
         
         ConvertWindow.setupTranslations();
         
@@ -186,11 +194,11 @@ public class MainWindow extends Stage{
         }
         filesTab.openFiles(toOpenFiles);
         
-        if(Main.firstLaunch || !Main.settings.getSettingsVersion().equals(Main.VERSION)){
-            mainScreen.openFile(TR.getDocFile());
+        if(openDocumentation){
+            Platform.runLater(() -> mainScreen.openFile(TR.getDocFile()));
         }else if(toOpenFiles.size() >= 1){
             if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
-                mainScreen.openFile(toOpenFiles.get(0));
+                Platform.runLater(() -> mainScreen.openFile(toOpenFiles.get(0)));
             }
         }
 
@@ -222,13 +230,20 @@ public class MainWindow extends Stage{
         jMetro = StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
     }
     
-    public void restart(){
-        TR.updateLocale();
-        
+    // When replaceDoc == true, the loaded file will be replaced by the new language doc,
+    // if the loaded file path is docFileAbsolutePath
+    public void restart(boolean replaceDoc, String docFileAbsolutePath){
         userData.save();
+        
+        boolean openDoc = replaceDoc
+                && mainScreen.hasDocument(false)
+                && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
+        
         if(MainWindow.mainScreen.closeFile(true)){
+            Main.params = new ArrayList<>();
+            TR.updateLocale();
             close();
-            Platform.runLater(Main::startMainWindow);
+            Platform.runLater(() -> Main.startMainWindow(openDoc));
         }
     }
     

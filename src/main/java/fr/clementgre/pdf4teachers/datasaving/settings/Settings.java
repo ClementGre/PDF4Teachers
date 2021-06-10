@@ -15,7 +15,8 @@ import java.lang.reflect.Field;
 
 public class Settings{
     
-    private String settingsVersion = "";
+    private int settingsVersionID = 0;
+    private String settingsVersionCode = "";
     
     
     @SettingObject
@@ -54,8 +55,17 @@ public class Settings{
     
     
     @SettingObject
-    public BooleanSetting textAutoRemove = new BooleanSetting(true, true, SVGPathIcons.STAR, "textAutoRemove",
-            "settings.textAutoRemove.title", "settings.textAutoRemove.tooltip");
+    public IntSetting pagesFastMenuTextsNumber = new IntSetting(8, true, 0, 12, 2, false, false,  SVGPathIcons.TEXT_HEIGHT, "pagesFastMenuTextsNumber",
+            "settings.pagesFastMenuTextsNumber.title", "");
+    
+    @SettingObject
+    public BooleanSetting pagesFastMenuShowImages = new BooleanSetting(false, true, SVGPathIcons.PICTURES, "pagesFastMenuShowImages",
+            "settings.pagesFastMenuShowImages.title", "");
+    
+    
+    @SettingObject
+    public BooleanSetting listsMoveAndDontCopy = new BooleanSetting(true, true, SVGPathIcons.STAR, "listsMoveAndDontCopy",
+            "settings.listsMoveAndDontCopy.title", "settings.listsMoveAndDontCopy.tooltip");
     @SettingObject
     public BooleanSetting textOnlyStart = new BooleanSetting(true, true, SVGPathIcons.LIST, "textOnlyStart",
             "settings.textOnlyStart.title", "settings.textOnlyStart.tooltip");
@@ -99,8 +109,11 @@ public class Settings{
     @SettingsGroup(title="settings.group.save")
     public Setting<?>[] saveGroup = {autoSave, regularSave};
     
-    @SettingsGroup(title="settings.group.textElements")
-    public Setting<?>[] textElementsGroup = {textAutoRemove, textOnlyStart, textSmall};
+    @SettingsGroup(title= "settings.group.pagesContextMenu")
+    public Setting<?>[] pagesContextMenu = {pagesFastMenuTextsNumber, pagesFastMenuShowImages};
+    
+    @SettingsGroup(title= "settings.group.elementsLists")
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
     
     @SettingsGroup(title="menuBar.help")
     public Setting<?>[] helpGroup = {allowAutoTips};
@@ -140,7 +153,8 @@ public class Settings{
                 Config config = new Config(settings);
                 config.load();
                 
-                settingsVersion = config.getString("version");
+                settingsVersionID = (int) config.getLong("versionID");
+                settingsVersionCode = config.getString("version");
                 
                 for(Field field : getClass().getDeclaredFields()){
                     if(field.isAnnotationPresent(SettingObject.class)){
@@ -170,7 +184,7 @@ public class Settings{
                     }
                 }
                 
-                if(!settingsVersion.equals(Main.VERSION)) saveSettings();
+                if(settingsVersionID != Main.VERSION_ID) saveSettings();
             }
         }catch(Exception e){
             e.printStackTrace();
@@ -187,6 +201,7 @@ public class Settings{
                 Config config = new Config(settings);
                 
                 config.set("version", Main.VERSION);
+                config.set("versionID", Main.VERSION_ID);
                 
                 for(Field field : getClass().getDeclaredFields()){
                     if(field.isAnnotationPresent(SettingObject.class)){
@@ -208,7 +223,17 @@ public class Settings{
         
     }
     
-    public String getSettingsVersion(){
-        return settingsVersion;
+    public String getSettingsVersionCode(){
+        return settingsVersionCode;
+    }
+    
+    // Return 0 if the versionID is unknown (or settings.yml does not exist).
+    public int getSettingsVersionID(){
+        return settingsVersionID;
+    }
+    // This only works before the settings was re-loaded.
+    // (They can be re-loaded when the user cancel his edits on the SettingWindow.)
+    public boolean hasVersionChanged(){
+        return settingsVersionID != Main.VERSION_ID;
     }
 }

@@ -1,14 +1,9 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
-import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
@@ -33,25 +28,18 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Collections;
 
 public class ImageGridCell extends GridCell<ImageGridElement>{
+    
+    public static final int PADDING = 2;
     
     private final ImageView imageView;
     private final DropShadow shadow = new DropShadow();
     
-    private final ContextMenu menu = new ContextMenu();
-    private final NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
-    private final NodeMenuItem addItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.addOnCurentDocument"), false);
-    private final NodeMenuItem openItem = new NodeMenuItem(TR.tr("gallery.imageContextMenu.openFileInExplorer"), false);
-    private final NodeMenuItem deleteItem = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
-    
-    public static final int PADDING = 2;
-    
-    private final ImageGridView gridView;
-    public ImageGridCell(ImageGridView gridView){
-        this.gridView = gridView;
+    private final boolean hasContextMenu;
+    public ImageGridCell(boolean hasContextMenu){
         this.imageView = new ImageView();
+        this.hasContextMenu = hasContextMenu;
         
         imageView.setPreserveRatio(true);
         imageView.setSmooth(true);
@@ -61,7 +49,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         imageView.setTranslateX(PADDING);
         //imageView.setTranslateY(PADDING);
         
-        shadow.setColor(null);
+        shadow.setColor(Color.TRANSPARENT);
         shadow.setSpread(.90);
         shadow.setOffsetY(0);
         shadow.setOffsetX(0);
@@ -69,52 +57,28 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         setEffect(shadow);
         
         setOnMouseEntered((e) -> shadow.setColor(Color.web("#0078d7")));
-        setOnMouseExited((e) -> shadow.setColor(null));
-    
-        menu.getItems().setAll(addItem, isFavoriteItem, new SeparatorMenuItem(), openItem, deleteItem);
-        
+        setOnMouseExited((e) -> shadow.setColor(Color.TRANSPARENT));
     }
     
     @Override
     protected void updateItem(ImageGridElement item, boolean empty) {
         super.updateItem(item, empty);
-        
         if(empty){
             setGraphic(null);
             setOnMouseClicked(null);
+            setContextMenu(null);
+            imageView.imageProperty().unbind();
+            imageView.setImage(null);
         }else{
             
             if(item.getImage() == null){
                 if(!item.isRendering()){
                     item.setRendering(true);
-                    gridView.getExecutor().submit(() -> loadImage(item, gridView.getImageRenderSize(), () -> item.setRendering(false)));
+                    ((ImageGridView) getGridView()).getExecutor().submit(() -> loadImage(item, ((ImageGridView) getGridView()).getImageRenderSize(), () -> item.setRendering(false)));
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
-            setContextMenu(menu);
-            menu.setOnShowing((e) -> {
-                isFavoriteItem.setSelected(item.isFavorite());
-                addItem.setDisable(!MainWindow.mainScreen.hasDocument(false));
-                
-                isFavoriteItem.setOnAction((event) -> {
-                    item.toggleFavorite();
-                });
-                addItem.setOnAction((event) -> {
-                    item.addToDocument();
-                });
-                openItem.setOnAction((event) -> {
-                    PlatformUtils.openDirectory(item.getImageIdDirectory());
-                });
-                deleteItem.setOnAction((event) -> {
-                    if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", item.getImageIdFileName())).execute()){
-                        if(new File(item.getImageId()).delete()){
-                            gridView.removeItems(Collections.singletonList(item));
-                        }else{
-                            System.err.println("Unable to delete file " + item.getImageId());
-                        }
-                    }
-                });
-            });
+            if(hasContextMenu) setContextMenu(item.getMenu());
             updateTooltip(item);
             
             setGraphic(imageView);
@@ -129,8 +93,9 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             });
         }
+        
     }
-
+    
     public static void updateGalleryAndFavoritesSort(){
         if(MainWindow.paintTab.galleryWindow != null && MainWindow.paintTab.galleryWindow.isShowing()){
             SortManager gallerySM = MainWindow.paintTab.galleryWindow.getList().getSortManager();

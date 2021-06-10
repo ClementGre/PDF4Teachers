@@ -10,18 +10,19 @@ import java.util.stream.Collectors;
 public class ImageGridView extends ShapesGridView<ImageGridElement>{
     
     private final int imageRenderSize;
+    private final boolean hasContextMenu;
     
-    public ImageGridView(boolean defineCellSizeAsRowNumber, int imageRenderSize, Slider zoomSlider){
+    public ImageGridView(boolean defineCellSizeAsRowNumber, int imageRenderSize, Slider zoomSlider, boolean contextmenu){
         super(defineCellSizeAsRowNumber, zoomSlider);
         this.imageRenderSize = imageRenderSize;
+        this.hasContextMenu = contextmenu;
     }
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new ImageGridCell(this));
+        setCellFactory(param -> new ImageGridCell(hasContextMenu));
         super.setup();
     }
-    
     
     
     @Override
@@ -71,6 +72,14 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
             if(!actualImages.contains(image)) toAdd.add(image);
         }
         addItems(toAdd);
+    }
+    
+    @Override
+    public void resetUseData(){
+        for(ImageGridElement element : getAllItems()){
+            element.resetUseData();
+        }
+        getSortManager().simulateCall();
     }
     
     public int getImageRenderSize(){

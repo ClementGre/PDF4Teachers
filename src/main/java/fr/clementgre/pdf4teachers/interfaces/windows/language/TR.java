@@ -34,11 +34,11 @@ public class TR{
         }
         
         // Delete Old files
-        if(Main.settings.getSettingsVersion().startsWith("1.2") || Main.settings.getSettingsVersion().startsWith("1.1") || Main.settings.getSettingsVersion().startsWith("1.0")){
-            for(File file : new File(Main.dataFolder + "translations").listFiles()) file.delete();
+        if(Main.settings.getSettingsVersionCode().startsWith("1.2") || Main.settings.getSettingsVersionCode().startsWith("1.1") || Main.settings.getSettingsVersionCode().startsWith("1.0")){
+            for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles())) file.delete();
         }
         // Copy files if version has changed
-        copyFiles(!Main.settings.getSettingsVersion().equals(Main.VERSION) || Main.DEBUG);
+        copyFiles(Main.settings.hasVersionChanged() || Main.DEBUG);
         
         // Load locales
         
@@ -245,7 +245,7 @@ public class TR{
     
     public static void loadLanguagesConfig(HashMap<String, Object> data){
         // if the version has changed, keep the default values
-        if(!Main.settings.getSettingsVersion().equals(Main.VERSION)) return;
+        if(Main.settings.hasVersionChanged()) return;
         
         // Add default languages if they were deleted
         for(Map.Entry<String, Object> language : getLanguagesDefaultConfig().entrySet()){

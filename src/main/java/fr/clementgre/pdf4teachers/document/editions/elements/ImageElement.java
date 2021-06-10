@@ -2,15 +2,19 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 
 import java.io.File;
@@ -67,9 +71,14 @@ public class ImageElement extends GraphicElement{
         super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
             updateImage(false);
+            Edition.setUnsave("ImageElement changed");
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
+            Edition.setUnsave("ImageElement changed");
+        });
+        resizeMode.addListener((observable, oldValue, newValue) -> {
+            Edition.setUnsave("ImageElement changed");
         });
         
     }
@@ -78,12 +87,16 @@ public class ImageElement extends GraphicElement{
     protected void onMouseRelease(){
         super.onMouseRelease();
     }
+    @Override
+    protected void onDoubleCLick(){
+    
+    }
     
     @Override
     protected void setupMenu(){
         super.setupMenu();
         
-        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true);
+        NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
         
         menu.getItems().addAll(isFavoriteItem);
         menu.setOnShowing(e -> {
@@ -102,15 +115,19 @@ public class ImageElement extends GraphicElement{
         super.select();
         
     }
-    
     @Override
-    public void addedToDocument(boolean silent){
+    public void addedToDocument(boolean markAsUnsave){
     
     }
     
     @Override
-    public void removedFromDocument(boolean silent){
-        super.removedFromDocument(silent);
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        prefHeightProperty().unbind();
+        prefWidthProperty().unbind();
+        linkedImageData = null;
+        image = null;
+        setBackground(null);
     }
     
     // READER AND WRITERS
@@ -155,6 +172,10 @@ public class ImageElement extends GraphicElement{
     
     @Override
     public double getRatio(){
+        if(image == null){
+            if(linkedImageData != null) return ((double) linkedImageData.getWidth()) / linkedImageData.getHeight();
+            return ((double) getRealWidth()) / getRealHeight();
+        }
         return image.getWidth() / image.getHeight();
     }
     
@@ -210,7 +231,9 @@ public class ImageElement extends GraphicElement{
             try{
                 Image image =  new Image("file:///" + getImageId(), requestedWidth, requestedHeight, false, true);
                 if(image.getWidth() == 0) return null;
-                return image;
+    
+                int rotate = new ExifUtils(new File(getImageId())).getImageExifRotation().getRotateAngle();
+                return ImageUtils.rotateImage(image, rotate);
             }catch(Exception e){
                 e.printStackTrace();
                 return null;

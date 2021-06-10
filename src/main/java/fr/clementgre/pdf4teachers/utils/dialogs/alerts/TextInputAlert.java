@@ -1,6 +1,6 @@
 package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;

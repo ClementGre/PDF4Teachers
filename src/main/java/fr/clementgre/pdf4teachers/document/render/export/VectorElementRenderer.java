@@ -41,9 +41,9 @@ public class VectorElementRenderer{
     
         String path;
         if(element.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
-            path = element.getRepeatedPath(elementWidth, elementHeight, (float) element.getSVGPaddingScaled(pageWidth));
+            path = element.getRepeatedPathScaled(elementWidth, elementHeight, (float) element.getSVGPaddingScaled(pageWidth), pageWidth);
         }else{
-            path = element.getScaledPath(elementWidth, elementHeight, (float) element.getSVGPaddingScaled(pageWidth));
+            path = element.getScaledPathScaled(elementWidth, elementHeight, (float) element.getSVGPaddingScaled(pageWidth), pageWidth);
         }
     
         PdfBoxGraphics2D g = new PdfBoxGraphics2D(doc, (int) Math.ceil(graphicsWidth), (int) Math.ceil(graphicsHeight));
@@ -61,8 +61,8 @@ public class VectorElementRenderer{
             }
             
             // Stroke
-            if(element.getStrokeWidthScaled(pageWidth) > 0){
-                g.setStroke(new BasicStroke((float) element.getStrokeWidthScaled(pageWidth), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, Math.max(1, (float) element.getStrokeWidth())));
+            if(element.getStrokeWidth() > 0){
+                g.setStroke(new BasicStroke((float) element.getStrokeWidthScaled(pageWidth), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, Math.max(1, (float) element.getStrokeWidth())));
                 g.setColor(StyleManager.fxColorToAWT(element.getStroke()));
                 g.draw(shape);
             }

@@ -1,11 +1,18 @@
 package fr.clementgre.pdf4teachers.utils.image;
 
 import fr.clementgre.pdf4teachers.Main;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
@@ -85,6 +92,43 @@ public class ImageUtils{
             imageView.setFitHeight(height);
         }
         return imageView;
+    }
+    
+    // Angle could only be a multiple of 90
+    public static Image rotateImage(Image image, int angle){
+        if(angle == 0) return image;
+        
+        return SwingFXUtils.toFXImage(
+                rotateImage(SwingFXUtils.fromFXImage(image, null), angle),
+                null);
+    }
+    
+    // Angle could only be a multiple of 90
+    public static BufferedImage rotateImage(BufferedImage image, int angle){
+        if(angle == 0) return image;
+        
+        int width = image.getWidth();
+        int height = image.getHeight();
+        if(angle == 90 || angle == -90 || angle == 270 || angle == -270){
+            width = height;
+            height = image.getWidth();
+        }
+        
+        BufferedImage bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = bImg.createGraphics();
+        
+        g.rotate(Math.toRadians(angle), width/2d, height/2d);
+        
+        if(angle == 90 || angle == -90 || angle == 270 || angle == -270){
+            // Translate the diff between width and height size
+            int diff = (image.getWidth() - image.getHeight()) / 2;
+            g.translate(-diff, diff);
+        }
+        
+        g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+        g.dispose();
+        
+        return bImg;
     }
     
     

@@ -25,8 +25,6 @@ public class FontUtils{
             "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno", "Averia Libre", "Indie Flower", "Sriracha", "Arrows")
             .collect(MoreCollectors.toLinkedMap((s) -> s, (s) -> false));
     
-    public static final ObservableList<Double> sizes = FXCollections.observableArrayList(6d, 8d, 9d, 10d, 11d, 12d, 13d, 14d, 15d, 16d, 17d, 18d, 20d, 22d, 24d, 26d, 28d, 30d, 34d, 38d, 42d, 46d, 50d);
-    
     private static final SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
     private static boolean loaded = false;
     

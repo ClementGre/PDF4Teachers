@@ -9,7 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
-import fr.clementgre.pdf4teachers.utils.PaneUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
@@ -43,7 +43,7 @@ public class GalleryWindow extends Stage{
     private final Label emptyGalleryLabel = new Label(TR.tr("galleryWindow.noImagesMessage"));
     private final HBox messageContainer = new HBox(emptyGalleryLabel);
     
-    private final ImageGridView list = new ImageGridView(false,500, zoomSlider);
+    private final ImageGridView list = new ImageGridView(false,500, zoomSlider, true);
     
     public GalleryWindow(){
         
@@ -75,7 +75,6 @@ public class GalleryWindow extends Stage{
         PlatformUtils.runLaterOnUIThread(1000, () -> {
             AutoTipsManager.showByAction("opengallery", this);
         });
-
 
     }
     
@@ -115,7 +114,7 @@ public class GalleryWindow extends Stage{
         
         reload.setOnAction((e) -> {
             list.setItems(Collections.emptyList());
-            list.addItems(getImages());
+            list.addItems(getImages(list));
             reloadImageList();
             updateComboBoxItems();
         });
@@ -127,7 +126,7 @@ public class GalleryWindow extends Stage{
     private void setup(){
         setupSettings();
     
-        emptyGalleryLabel.setStyle("-fx-font: 18 Marianne;");
+        emptyGalleryLabel.setStyle("-fx-font: 18 \"Noto Sans KR\";");
         emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
         messageContainer.setAlignment(Pos.CENTER);
         VBox.setVgrow(messageContainer, Priority.ALWAYS);
@@ -137,7 +136,7 @@ public class GalleryWindow extends Stage{
         
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(settings, list);
-        list.addItems(getImages());
+        list.addItems(getImages(list));
         updateMessage();
     }
     
@@ -168,7 +167,7 @@ public class GalleryWindow extends Stage{
         else filter.getSelectionModel().select(TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
     }
     public void reloadImageList(){
-        list.editImages(getImages());
+        list.editImages(getImages(list));
         if(MainWindow.paintTab.gallery.isLoaded()){
             MainWindow.paintTab.gallery.reloadGalleryImageList();
         }
@@ -181,7 +180,7 @@ public class GalleryWindow extends Stage{
         return list;
     }
     
-    public static List<ImageGridElement> getImages(){
-        return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId())).collect(Collectors.toList());
+    public static List<ImageGridElement> getImages(ImageGridView gridView){
+        return GalleryManager.getImages().stream().map((img) -> new ImageGridElement(img.getImageId(), gridView)).collect(Collectors.toList());
     }
 }

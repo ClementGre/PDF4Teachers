@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
+import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -59,31 +60,39 @@ public class MainScreen extends Pane{
         public static final int ERROR_EDITION = 3;
     }
     
-    private static int dragNScrollFactor = 0;
+    private static int dragNScrollFactorVertical = 0;
+    private static int dragNScrollFactorHorozontal = 0;
     double dragStartX;
     double dragStartY;
     
     private static final Thread dragNScrollThread = new Thread(() -> {
         while(true){
-            if(dragNScrollFactor != 0){
+            if(dragNScrollFactorVertical != 0){
                 Platform.runLater(() -> {
-                    if(dragNScrollFactor < 0){
-                        MainWindow.mainScreen.zoomOperator.scrollUp((dragNScrollFactor + 50) / 2, true, false);
-                    }else if(dragNScrollFactor > 0){
-                        MainWindow.mainScreen.zoomOperator.scrollDown(dragNScrollFactor / 2, true, false);
+                    if(dragNScrollFactorVertical < 0){
+                        MainWindow.mainScreen.zoomOperator.scrollUp((dragNScrollFactorVertical + 50) / 2, true, false);
+                    }else if(dragNScrollFactorVertical > 0){
+                        MainWindow.mainScreen.zoomOperator.scrollDown(dragNScrollFactorVertical / 2, true, false);
                     }
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
+                }catch(InterruptedException ex){ ex.printStackTrace(); }
+            }else if(dragNScrollFactorHorozontal != 0){
+                Platform.runLater(() -> {
+                    if(dragNScrollFactorHorozontal < 0){
+                        MainWindow.mainScreen.zoomOperator.scrollLeft((dragNScrollFactorHorozontal + 50) / 2, true, false);
+                    }else if(dragNScrollFactorHorozontal > 0){
+                        MainWindow.mainScreen.zoomOperator.scrollRight(dragNScrollFactorHorozontal / 2, true, false);
+                    }
+                });
+                try{
+                    Thread.sleep(20);
+                }catch(InterruptedException ex){ ex.printStackTrace(); }
             }else{
                 try{
                     Thread.sleep(200);
-                }catch(InterruptedException ex){
-                    ex.printStackTrace();
-                }
+                }catch(InterruptedException ex){ ex.printStackTrace(); }
             }
             
         }
@@ -164,7 +173,10 @@ public class MainScreen extends Pane{
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
-                    if(document != null) document.updateShowsStatus();
+                    if(document != null){
+                        document.updateShowsStatus();
+                        document.updateZoom();
+                    }
                 });
             }
         });
@@ -224,7 +236,8 @@ public class MainScreen extends Pane{
         });
         
         setOnMouseDragged(e -> {
-            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) && !(e.getTarget() instanceof PageZoneSelector)
+            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)
+                    && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer)
                     && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // GrabNScroll
     
                 double distY = e.getY() - dragStartY;
@@ -244,11 +257,19 @@ public class MainScreen extends Pane{
             }else{ // DragNScroll with an Element
                 double y = Math.max(1, Math.min(getHeight(), e.getY()));
                 if(y < 50){
-                    dragNScrollFactor = (int) (y * -1);
+                    dragNScrollFactorVertical = (int) (y * -1);
                 }else if(getHeight() - y < 50){
-                    dragNScrollFactor = (int) ((getHeight() - y) * -1 + 50);
+                    dragNScrollFactorVertical = (int) ((getHeight() - y) * -1 + 50);
                 }else{
-                    dragNScrollFactor = 0;
+                    dragNScrollFactorVertical = 0;
+                }
+                double x = Math.max(1, Math.min(getWidth(), e.getX()));
+                if(x < 50){
+                    dragNScrollFactorHorozontal = (int) (x * -1);
+                }else if(getWidth() - x < 50){
+                    dragNScrollFactorHorozontal = (int) ((getWidth() - x) * -1 + 50);
+                }else{
+                    dragNScrollFactorHorozontal = 0;
                 }
             }
             
@@ -266,7 +287,8 @@ public class MainScreen extends Pane{
             if(hasDocument(false)) setCursor(Cursor.CLOSED_HAND);
         });
         setOnMouseReleased(e -> {
-            dragNScrollFactor = 0;
+            dragNScrollFactorVertical = 0;
+            dragNScrollFactorHorozontal = 0;
             setCursor(Cursor.DEFAULT);
         });
         setOnMouseMoved(e -> {
@@ -357,6 +379,7 @@ public class MainScreen extends Pane{
     }
     
     public boolean closeFile(boolean confirm){
+        setSelected(null);
         
         if(document != null){
             
@@ -365,14 +388,15 @@ public class MainScreen extends Pane{
                     return false;
                 }
             }else document.edition.save();
-    
-            MainWindow.gradeTab.treeView.clearElements(false);
+            
+            MainWindow.gradeTab.treeView.clearElements(false, false);
+            MainWindow.textTab.treeView.onCloseDocument();
             document.stopDocumentSaver();
             document.close();
             document = null;
         }
         
-        pane.getChildren().clear();
+        // No need to clear the pane, the PageRenderer are removing themselves in their remove() method.
         
         pane.setScaleX(1);
         pane.setScaleY(1);
@@ -381,10 +405,10 @@ public class MainScreen extends Pane{
         pane.setPrefWidth(1);
         
         status.set(Status.CLOSED);
-        selected.set(null);
         
         repaint();
-        
+    
+        System.gc(); // clear unused element in RAM
         System.runFinalization();
         return true;
     }

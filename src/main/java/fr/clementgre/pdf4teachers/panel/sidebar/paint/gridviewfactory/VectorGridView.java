@@ -5,13 +5,17 @@ import java.util.List;
 
 public class VectorGridView extends ShapesGridView<VectorGridElement>{
     
-    public VectorGridView(Slider zoomSlider){
+    private final boolean favorite;
+    private final boolean hasContextMenu;
+    public VectorGridView(Slider zoomSlider, boolean favorite, boolean hasContextMenu){
         super(true, zoomSlider);
+        this.favorite = favorite;
+        this.hasContextMenu = hasContextMenu;
     }
     
     @Override
     protected void setup(){
-        setCellFactory(param -> new VectorGridCell(this));
+        setCellFactory(param -> new VectorGridCell(favorite, hasContextMenu));
         super.setup();
     }
     
@@ -23,6 +27,14 @@ public class VectorGridView extends ShapesGridView<VectorGridElement>{
         }else if(SORT_LAST_USE.equals(sortType)){
             getItems().sort((o1, o2) -> o1.compareLastUseTimeWith(o2) * multiple);
         }
+    }
+    
+    @Override
+    public void resetUseData(){
+        for(VectorGridElement element : getAllItems()){
+            if(!element.isFake()) element.resetUseData();
+        }
+        getSortManager().simulateCall();
     }
     
     @Override

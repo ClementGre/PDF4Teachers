@@ -9,14 +9,18 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -26,16 +30,17 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PageRenderer extends Pane{
@@ -43,6 +48,8 @@ public class PageRenderer extends Pane{
     public static final int PAGE_WIDTH = 596;
     public static final int PAGE_HORIZONTAL_MARGIN = 30;
     public static final int PAGE_VERTICAL_MARGIN = 30;
+    
+    public static Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
     
     private PageStatus status = PageStatus.HIDE;
     
@@ -59,17 +66,19 @@ public class PageRenderer extends Pane{
     
     private PageEditPane pageEditPane;
     private PageZoneSelector pageCursorRecord;
-    private ImageView rendered = new ImageView();
+    private VectorElementPageDrawer vectorElementPageDrawer;
     
     private GraphicElement placingElement = null;
     
     private double shiftY = 0;
     private double defaultTranslateY = 0;
     
+    private boolean removed = false;
+    
     private final InvalidationListener translateYListener = e -> updateShowStatus();
     
     private final InvalidationListener mainScreenZoomListener = (observable) -> {
-        if(isEditPagesMode()) setCursor(Cursor.MOVE);
+        if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
         else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         else setCursor(Cursor.DEFAULT);
     
@@ -82,7 +91,7 @@ public class PageRenderer extends Pane{
     }
     
     private void setup(){
-        setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
+        setBackground(WHITE_BACKGROUND);
         
         // LOADER
         loader.setPrefWidth(300);
@@ -90,13 +99,7 @@ public class PageRenderer extends Pane{
         loader.translateXProperty().bind(widthProperty().divide(2).subtract(loader.widthProperty().divide(2)));
         loader.translateYProperty().bind(heightProperty().divide(2).subtract(loader.heightProperty().divide(2)));
         loader.setVisible(false);
-        
-        // Image
-        rendered.fitWidthProperty().bind(widthProperty());
-        rendered.fitHeightProperty().bind(heightProperty());
-        rendered.setSmooth(true);
-        rendered.setCache(false);
-        getChildren().addAll(rendered, loader);
+        getChildren().add(loader);
         
         // BORDER
         DropShadow ds = new DropShadow();
@@ -109,6 +112,8 @@ public class PageRenderer extends Pane{
         setOnMouseMoved(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
+    
+            if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         });
         
         translateYProperty().addListener(translateYListener);
@@ -167,13 +172,13 @@ public class PageRenderer extends Pane{
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             else pageEditPane.setVisible(true);
             
-            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
             
         });
         setOnMouseExited(e -> {
-            if(pageEditPane != null) pageEditPane.setVisible(false);
+            if(pageEditPane != null) pageEditPane.checkMouseExited();
         });
     
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +197,16 @@ public class PageRenderer extends Pane{
             
             if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
+                
                 placingElement.initializePage(getPage(), e.getX(), e.getY());
+                
+                if(placingElement instanceof VectorElement vectorElement){
+                    vectorElement.invertInversions();
+                }
+                if(placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES){
+                    placingElement.centerOnCoordinatesY();
+                }
+                
                 addElement(placingElement, true);
                 MainWindow.mainScreen.setSelected(placingElement);
                 placingElement.requestFocus();
@@ -200,11 +214,11 @@ public class PageRenderer extends Pane{
                 
                 int shiftX = (int) placingElement.getLayoutX();
                 int shiftY = (int) placingElement.getLayoutY();
-                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true);
+                
+                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true, true);
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
                 
                 setCursor(Cursor.CROSSHAIR);
-                
             }else{
                 if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
                 else{
@@ -238,7 +252,7 @@ public class PageRenderer extends Pane{
                 }
                 placingElement = null;
             }
-            if(isEditPagesMode()) setCursor(Cursor.MOVE);
+            if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else setCursor(Cursor.DEFAULT);
         });
     
@@ -247,6 +261,8 @@ public class PageRenderer extends Pane{
         //////////////////////////////////////////////////////////////////////////////////////////
         
         setEventHandler(RotateEvent.ROTATE, e -> {
+            if(isVectorEditMode()) return;
+            
             double rotate = e.getTotalAngle()*2;
             if(rotate > 85) rotate = 90;
             else if(rotate < -85) rotate = -90;
@@ -254,6 +270,8 @@ public class PageRenderer extends Pane{
             setVisibleRotate(rotate, false);
         });
         setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
+            if(isVectorEditMode()) return;
+            
             double rotate = e.getTotalAngle()*2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
@@ -319,7 +337,7 @@ public class PageRenderer extends Pane{
     
         List<TextTreeItem> mostUsed = TextTreeView.getMostUseElements();
     
-        for(int i = 0; i <= 7; i++){
+        for(int i = 0; i < Main.settings.pagesFastMenuTextsNumber.getValue(); i++){
             if(mostUsed.size() > i){
                 TextTreeItem item = mostUsed.get(i);
                 
@@ -332,13 +350,22 @@ public class PageRenderer extends Pane{
                 
                 menuItem.setLeftData(name);
                 menuItem.setOnAction((e) -> {
-                    item.addToDocument(false);
+                    item.addToDocument(false, false);
                     MainWindow.textTab.selectItem();
                 });
                 menu.getItems().add(menuItem);
             }
         }
+        
+        NodeMenuItem vectorsMenuItem = VectorListPane.getPagesMenuItem();
+        if(vectorsMenuItem != null) menu.getItems().add(vectorsMenuItem);
     
+        if(Main.settings.pagesFastMenuShowImages.getValue()){
+            NodeMenuItem imagesMenuItem = ImageListPane.getPagesMenuItem();
+            if(imagesMenuItem != null) menu.getItems().add(imagesMenuItem);
+        }
+        
+        
         NodeMenuItem.setupMenu(menu);
         menu.show(this, screenX, screenY);
     }
@@ -389,7 +416,12 @@ public class PageRenderer extends Pane{
         
         int firstTest = getShowStatus();
         switchVisibleStatus(firstTest);
-        if(pageEditPane != null) pageEditPane.updateVisibility();
+        if(pageEditPane != null){
+            pageEditPane.updateVisibility();
+        }
+        if(vectorElementPageDrawer != null){
+            vectorElementPageDrawer.updateVisibility();
+        }
         /*Platform.runLater(() -> {
             if(firstTest == getShowStatus()) switchVisibleStatus(firstTest);
         });*/
@@ -405,21 +437,45 @@ public class PageRenderer extends Pane{
         
     }
     
+    public void removeRender(){
+        // If we remove the rendered image while the page is not visible, it will leak.
+        // That's why we need to make the page visible during the replacing of the background.
+        if(!isVisible() && hasRenderedImage()){
+            setVisible(true);
+            setBackground(WHITE_BACKGROUND);
+            setVisible(false);
+        }else{
+            setBackground(WHITE_BACKGROUND);
+        }
+        
+    }
+    
     public void updateRender(){
-        rendered.setImage(null);
+        removeRender();
         render(null);
     }
     public void updateRenderAsync(CallBack callback, boolean clearRender){
-        if(clearRender) rendered.setImage(null);
+        if(clearRender) removeRender();
         render(callback);
     }
     
     public void remove(){
-        switchVisibleStatus(2);
+        removed = true;
+        removeRender();
+        setVisible(false);
+        
+        // Wait a bit before removing the page because else, the render could be leaked
+        // JavaFX Bug : When the parent of the ImageView is removed from its parent too fast, the ImageView (NGImageView) is leaked.
+        PlatformUtils.runLaterOnUIThread(10000, () -> {
+            MainWindow.mainScreen.pane.getChildren().remove(this);
+        });
+        
         for(Node child : getChildren()){
-            if(child instanceof Element e) e.removedFromDocument(true);
+            if(child instanceof Element e) e.removedFromDocument(false);
         }
         getChildren().clear();
+        elements.clear();
+        elements = null;
     
         MainWindow.mainScreen.zoomProperty().removeListener(mainScreenZoomListener);
         
@@ -433,11 +489,6 @@ public class PageRenderer extends Pane{
         loader.translateXProperty().unbind();
         loader.translateYProperty().unbind();
         loader = null;
-    
-        rendered.fitWidthProperty().unbind();
-        rendered.fitHeightProperty().unbind();
-        rendered.setImage(null);
-        rendered = null;
         
         menu.getItems().clear();
         menu = null;
@@ -458,7 +509,7 @@ public class PageRenderer extends Pane{
         }
     }
     
-    private void switchVisibleStatus(int showStatus){
+    private void switchVisibleStatus(int showStatus){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
         lastShowStatus = showStatus;
         if(showStatus == 0){
             setVisible(true);
@@ -480,14 +531,14 @@ public class PageRenderer extends Pane{
                     return;
                 }
             }
-            setVisible(false);
             
             // Hard hide, delete render
             if(showStatus == 2){
-                rendered.setImage(null);
+                removeRender();
                 status = PageStatus.HIDE;
             }
             
+            setVisible(false);
         }
     }
     
@@ -503,14 +554,25 @@ public class PageRenderer extends Pane{
     private void render(CallBack callBack){
         renderedZoomFactor = getRenderingZoomFactor();
         
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, getWidth(), getHeight(), (image) -> {
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, (image) -> {
+            if(removed || status == PageStatus.HIDE) return;
             
             if(image == null){
                 status = PageStatus.FAIL;
                 return;
             }
             
-            rendered.setImage(image);
+            setBackground(new Background(
+                    Collections.singletonList(new BackgroundFill(
+                            javafx.scene.paint.Color.WHITE,
+                            CornerRadii.EMPTY,
+                            Insets.EMPTY)),
+                    Collections.singletonList(new BackgroundImage(
+                            image,
+                            BackgroundRepeat.NO_REPEAT,
+                            BackgroundRepeat.NO_REPEAT,
+                            BackgroundPosition.CENTER,
+                            new BackgroundSize(getWidth(), getHeight(), false, false, false, true)))));
             
             setCursor(Cursor.DEFAULT);
             loader.setVisible(false);
@@ -569,35 +631,56 @@ public class PageRenderer extends Pane{
         }
     }
     
-    public void addElement(Element element, boolean update){
+    public void addElement(Element element, boolean markAsUnsave){
         
         if(element != null){
             
             elements.add(element);
             getChildren().add(element);
             
-            if(update) Edition.setUnsave();
-            element.addedToDocument(!update);
+            if(markAsUnsave){
+                Edition.setUnsave("PageRenderer ElementAdded");
+            }
+            element.addedToDocument(markAsUnsave);
         }
     }
     
-    public void removeElement(Element element, boolean update){
+    public void removeElement(Element element, boolean markAsUnsave){
         
         if(element != null){
             elements.remove(element);
             getChildren().remove(element);
-            
-            if(update) Edition.setUnsave();
-            element.removedFromDocument(!update);
+    
+            if(markAsUnsave) Edition.setUnsave("PageRenderer ElementRemoved");
+            element.removedFromDocument(markAsUnsave);
         }
     }
     
     public double getMouseX(){
         return Math.max(Math.min(mouseX, getWidth()), 0);
     }
-    
     public double getMouseY(){
         return Math.max(Math.min(mouseY, getHeight()), 0);
+    }
+    
+    public int getNewElementYOnGrid(){
+        return toGridY(getMouseY());
+    }
+    public int getNewElementXOnGrid(boolean margin){
+        return toGridX(getMouseX() + (margin ? 30 : 0));
+    }
+    
+    public int toGridX(double x){
+        return (int) (x/getWidth()*Element.GRID_WIDTH);
+    }
+    public int toGridY(double y){
+        return (int) (y/getHeight()*Element.GRID_HEIGHT);
+    }
+    public double fromGridX(double x){
+        return x/Element.GRID_WIDTH*getWidth();
+    }
+    public double fromGridY(double y){
+        return y/Element.GRID_HEIGHT*getHeight();
     }
     
     public double getRealMouseX(){
@@ -616,6 +699,7 @@ public class PageRenderer extends Pane{
         if(this.page != page){
             this.page = page;
             if(pageEditPane != null) pageEditPane.updateVisibility();
+            if(vectorElementPageDrawer != null) vectorElementPageDrawer.updateVisibility();
             updateElementsPage();
         }
     }
@@ -623,7 +707,7 @@ public class PageRenderer extends Pane{
     public void updateElementsPage(){
         for(Element element : elements){
             element.setPage(page);
-            Edition.setUnsave();
+            Edition.setUnsave("PageRenderer updateElementsPage()");
         }
     }
     
@@ -639,8 +723,28 @@ public class PageRenderer extends Pane{
         if(pageCursorRecord == null) pageCursorRecord = new PageZoneSelector(this);
         return pageCursorRecord;
     }
+    public VectorElementPageDrawer getVectorElementPageDrawer(){
+        if(vectorElementPageDrawer == null) vectorElementPageDrawer = new VectorElementPageDrawer(this);
+        return vectorElementPageDrawer;
+    }
+    public VectorElementPageDrawer getVectorElementPageDrawerNull(){
+        return vectorElementPageDrawer;
+    }
+    public boolean isVectorEditMode(){
+        return vectorElementPageDrawer != null && vectorElementPageDrawer.isEditMode();
+    }
     
     public double getRatio(){
         return getWidth() / getHeight();
+    }
+    
+    public Image getRenderedImage(){
+        return hasRenderedImage() ? getBackground().getImages().get(0).getImage() : new WritableImage((int) getWidth(), (int) getHeight());
+    }
+    public boolean hasRenderedImage(){
+        if(getBackground() != null && getBackground().getImages() != null){
+            return !getBackground().getImages().isEmpty();
+        }
+        return false;
     }
 }

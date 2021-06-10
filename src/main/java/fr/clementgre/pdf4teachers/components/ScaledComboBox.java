@@ -9,16 +9,28 @@ import javafx.util.Callback;
 
 public class ScaledComboBox<T> extends ComboBox<T>{
     
+    // Bind by default
     public ScaledComboBox(){
-        setup();
+        setup(true);
     }
     
-    public ScaledComboBox(ObservableList<T> items){
+    public ScaledComboBox(boolean bind){
+        setup(bind);
+    }
+    
+    public ScaledComboBox(ObservableList<T> items, boolean bind){
         super(items);
-        setup();
+        setup(bind);
     }
     
-    private void setup(){
+    private void setup(boolean bind){
+    
+        if(bind){
+            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
+            });
+        }
+        
         setCellFactory(new Callback<>(){
             @Override
             public ListCell<T> call(ListView<T> param){
@@ -29,9 +41,6 @@ public class ScaledComboBox<T> extends ComboBox<T>{
                         if(!empty && item != null){
                             setText(item.toString());
                             setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
-                            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
-                                setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
-                            });
                         }
                     }
                 };

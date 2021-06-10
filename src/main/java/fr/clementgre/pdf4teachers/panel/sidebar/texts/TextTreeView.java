@@ -59,6 +59,14 @@ public class TextTreeView extends TreeView<String>{
                 });
             }).start();
         });
+    
+        getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                if(newValue instanceof TextTreeItem textTreeItem){
+                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue) textTreeItem.onSelected();
+                }
+            });
+        });
         
         setCellFactory((TreeView<String> param) -> new TreeCell<>(){
             @Override
@@ -122,7 +130,7 @@ public class TextTreeView extends TreeView<String>{
                     page.clearTextElements();
                 }
                 MainWindow.textTab.treeView.onFileSection.updateElementsList();
-                Edition.setUnsave();
+                Edition.setUnsave("Clear onDocument TextElements");
             });
         }else{
             NodeMenuItem item1 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), true);
@@ -132,7 +140,7 @@ public class TextTreeView extends TreeView<String>{
             menu.getItems().addAll(item1, item2);
             
             item1.setOnAction(e -> {
-                section.clearElements();
+                section.clearElements(true);
             });
             item2.setOnAction(e -> {
                 for(Object element : section.getChildren()){
@@ -250,9 +258,9 @@ public class TextTreeView extends TreeView<String>{
         NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"), false);
         item2.setToolTip(TR.tr("textTab.listMenu.remove.tooltip"));
         NodeMenuItem item3 = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
-        item3.setToolTip(TR.tr("textTab.elementMenu.addToPreviousList.tooltip"));
-        NodeMenuItem item4 = new NodeMenuItem(TR.tr("textTab.elementMenu.addToPreviousList"), false);
-        item4.setToolTip(TR.tr("textTab.elementMenu.addToFavouritesList.tooltip"));
+        item3.setToolTip(TR.tr("elementMenu.addToPreviousList.tooltip"));
+        NodeMenuItem item4 = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+        item4.setToolTip(TR.tr("elementMenu.addToFavouritesList.tooltip"));
         NodeMenuItem item5 = new NodeMenuItem(TR.tr("textTab.listMenu.unlink"), false);
         item5.setToolTip(TR.tr("textTab.listMenu.unlink.tooltip"));
         
@@ -269,7 +277,7 @@ public class TextTreeView extends TreeView<String>{
         
         // Définis les actions des boutons
         item1.setOnAction((e) -> {
-            element.addToDocument(true);
+            element.addToDocument(true, true);
             if(element.getType() == TextTreeSection.FAVORITE_TYPE){
                 if(MainWindow.textTab.treeView.favoritesSection.sortManager.getSelectedButton().getText().equals(TR.tr("sorting.sortType.use"))){
                     MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
@@ -283,7 +291,7 @@ public class TextTreeView extends TreeView<String>{
         });
         item2.setOnAction((e) -> {
             if(element.getType() == TextTreeSection.ONFILE_TYPE){
-                element.getCore().delete();
+                element.getCore().delete(true);
             }else{
                 removeSavedElement(element);
             }
@@ -291,7 +299,7 @@ public class TextTreeView extends TreeView<String>{
         item3.setOnAction((e) -> {
             addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis() / 1000));
             if(element.getType() == TextTreeSection.LAST_TYPE){
-                if(Main.settings.textAutoRemove.getValue()){
+                if(Main.settings.listsMoveAndDontCopy.getValue()){
                     removeSavedElement(element);
                 }
             }
@@ -300,10 +308,16 @@ public class TextTreeView extends TreeView<String>{
             addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
         });
         item5.setOnAction((e) -> {
-            element.unLink();
+            element.unLink(true);
         });
         return menu;
         
+    }
+    
+    public void onCloseDocument(){
+        favoritesSection.unlinkAll();
+        lastsSection.unlinkAll();
+        onFileSection.clearElements(true);
     }
     
     public static void updateListsGraphic(){

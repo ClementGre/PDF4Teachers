@@ -4,6 +4,8 @@ import fr.clementgre.pdf4teachers.Main;
 import org.apache.batik.parser.ParseException;
 import org.apache.batik.parser.PathHandler;
 
+import java.text.DecimalFormat;
+
 public abstract class SVGTransformHandler implements PathHandler{
     
     protected StringBuilder newPath = new StringBuilder();
@@ -16,26 +18,26 @@ public abstract class SVGTransformHandler implements PathHandler{
     protected abstract float manageX(float x, float y, boolean rel);
     protected abstract float manageY(float y, float x, boolean rel);
     
-    private float lastX = 0;
-    private float lastY = 0;
+    protected float lastX = 0;
+    protected float lastY = 0;
     
-    private final boolean formatNumbers;
-    public SVGTransformHandler(boolean formatNumbers){
-        this.formatNumbers = formatNumbers;
+    private DecimalFormat format;
+    public SVGTransformHandler(int decimals){
+        if(decimals != -1) format = new DecimalFormat("0." + ("#".repeat(decimals)), Main.baseDecimalFormatSymbols);
     }
     
-    private String preManageX(float x, float y, boolean rel){
+    protected String preManageX(float x, float y, boolean rel){
         if(!rel) lastX = x;
         else lastX += x;
         
-        if(formatNumbers) return Main.baseFormat.format(manageX(x, y, rel));
+        if(format != null) return format.format(manageX(x, y, rel));
         return String.valueOf(manageX(x, y, rel));
     }
-    private String preManageY(float y, float x, boolean rel){
+    protected String preManageY(float y, float x, boolean rel){
         if(!rel) lastY = y;
         else lastY += y;
     
-        if(formatNumbers) return Main.baseFormat.format(manageY(y, x, rel));
+        if(format != null) return format.format(manageY(y, x, rel));
         return String.valueOf(manageY(y, x, rel));
     }
     

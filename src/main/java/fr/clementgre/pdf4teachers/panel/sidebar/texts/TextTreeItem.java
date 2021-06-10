@@ -115,10 +115,10 @@ public class TextTreeItem extends TreeItem<String>{
             if(e.getButton().equals(MouseButton.PRIMARY)){
                 
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement && e.isShortcutDown()){
-                    oldElement.delete();
+                    oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
-                    addToDocument(e.isShiftDown());
+                    addToDocument(e.isShiftDown(), true);
                 }
                 
                 // Update the sorting if is sort by utils
@@ -145,12 +145,6 @@ public class TextTreeItem extends TreeItem<String>{
         pane.setAlignment(Pos.CENTER_LEFT);
         pane.setFocusTraversable(false);
         
-        MainWindow.textTab.treeView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
-            });
-        });
-        
         pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue)
@@ -173,10 +167,10 @@ public class TextTreeItem extends TreeItem<String>{
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
-                    oldElement.delete();
+                    oldElement.delete(true);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
-                    addToDocument(e.isShiftDown());
+                    addToDocument(e.isShiftDown(), true);
                     MainWindow.textTab.selectItem();
                 }
                 
@@ -206,9 +200,11 @@ public class TextTreeItem extends TreeItem<String>{
         
         updateIcon();
     }
+    public void onSelected(){
+        pane.requestFocus();
+    }
     
     static long lastKeyPressTime = 0;
-    
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
         if(maxWidth < 0) return;
@@ -386,13 +382,13 @@ public class TextTreeItem extends TreeItem<String>{
         return new TextListItem(font.get(), text, color.get(), uses, creationDate);
     }
     
-    public void addToDocument(boolean link){
+    public void addToDocument(boolean link, boolean margin){
         
         if(MainWindow.mainScreen.hasDocument(false)){
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             
-            int y = (int) (page.getMouseY() * Element.GRID_HEIGHT / page.getHeight());
-            int x = (int) ((page.getMouseX() <= 0 ? 60 : page.getMouseX()) * Element.GRID_WIDTH / page.getWidth());
+            int y = page.getNewElementYOnGrid();
+            int x = page.getNewElementXOnGrid(margin);
             addToDocument(link, page, x, y, true);
         }
         
@@ -423,14 +419,14 @@ public class TextTreeItem extends TreeItem<String>{
         
     }
     
-    public void unLink(){
-        
+    public void unLink(boolean reSetupLayout){
         fontProperty().unbind();
-        core.textProperty().removeListener(textChangeListener);
-        core.fillProperty().removeListener(colorChangeListener);
-        
-        this.core = null;
-        setup();
+        if(core != null){
+            core.textProperty().removeListener(textChangeListener);
+            core.fillProperty().removeListener(colorChangeListener);
+            core = null;
+        }
+        if(reSetupLayout) setup();
     }
     
     public Font getFont(){
