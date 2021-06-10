@@ -88,7 +88,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     
     public boolean isFavoriteVector(VectorElement element){
         for(VectorGridElement gridElement : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            if(gridElement.equals(element)) return true;
+            if(!gridElement.isFake()) if(gridElement.equals(element)) return true;
         }
         return false;
     }
@@ -108,10 +108,11 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         List<VectorGridElement> vectors = MainWindow.paintTab.favouriteVectors.getList().getAllItems();
         if(vectors.size() == 0) return null;
         vectors.sort(VectorGridElement::compareUseWith);
-        vectors = vectors.subList(0, Math.min(8, vectors.size()));
+        vectors = vectors.subList(0, Math.min(7, vectors.size()));
         vectors = vectors.stream().map(VectorGridElement::clone).toList();
         
         list.addItems(vectors);
+        list.addItems(Collections.singletonList(new VectorGridElement(true)));
         HBox root = new HBox(list);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         // 12 is the default cell horizontal padding

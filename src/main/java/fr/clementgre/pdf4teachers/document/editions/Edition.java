@@ -56,15 +56,15 @@ public class Edition{
             
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
             if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
-            
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
+    
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
             });
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
             });
             
             for(Object data : config.getList("grades")){
@@ -98,20 +98,20 @@ public class Edition{
             // NON GRADES ELEMENTS
             int counter = 0;
             for(PageRenderer page : document.getPages()){
-                ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
-                if(pageTextsData != null){
-                    texts.put("page" + page.getPage(), pageTextsData);
-                    counter += pageTextsData.size();
+                ArrayList<Object> pageVectorsData = getPageDataFromElements(page.getElements(), VectorElement.class);
+                if(pageVectorsData != null){
+                    vectors.put("page" + page.getPage(), pageVectorsData);
+                    counter += pageVectorsData.size();
                 }
                 ArrayList<Object> pageImagesData = getPageDataFromElements(page.getElements(), ImageElement.class);
                 if(pageImagesData != null){
                     images.put("page" + page.getPage(), pageImagesData);
                     counter += pageImagesData.size();
                 }
-                ArrayList<Object> pageVectorsData = getPageDataFromElements(page.getElements(), VectorElement.class);
-                if(pageVectorsData != null){
-                    vectors.put("page" + page.getPage(), pageVectorsData);
-                    counter += pageVectorsData.size();
+                ArrayList<Object> pageTextsData = getPageDataFromElements(page.getElements(), TextElement.class);
+                if(pageTextsData != null){
+                    texts.put("page" + page.getPage(), pageTextsData);
+                    counter += pageTextsData.size();
                 }
             }
             
@@ -185,14 +185,14 @@ public class Edition{
             
             ArrayList<Element> elements = new ArrayList<>();
     
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
             });
             loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
                 elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
             });
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
             });
             
             for(Object data : config.getList("grades")){
@@ -232,11 +232,11 @@ public class Edition{
             for(Element element : elements){
                 
                 if(!(element instanceof GradeElement)){
-                    if(element instanceof TextElement){
-                        if(texts.containsKey("page" + element.getPageNumber())){
-                            texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                    if(element instanceof VectorElement){
+                        if(vectors.containsKey("page" + element.getPageNumber())){
+                            vectors.get("page" + element.getPageNumber()).add(element.getYAMLData());
                         }else{
-                            texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                            vectors.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
                     }else if(element instanceof ImageElement){
                         if(images.containsKey("page" + element.getPageNumber())){
@@ -244,11 +244,11 @@ public class Edition{
                         }else{
                             images.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
-                    }else if(element instanceof VectorElement){
-                        if(vectors.containsKey("page" + element.getPageNumber())){
-                            vectors.get("page" + element.getPageNumber()).add(element.getYAMLData());
+                    }else if(element instanceof TextElement){
+                        if(texts.containsKey("page" + element.getPageNumber())){
+                            texts.get("page" + element.getPageNumber()).add(element.getYAMLData());
                         }else{
-                            vectors.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
+                            texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
                     }
                     counter++;

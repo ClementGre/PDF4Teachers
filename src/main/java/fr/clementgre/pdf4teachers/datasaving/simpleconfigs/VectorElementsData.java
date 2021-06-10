@@ -47,12 +47,12 @@ public class VectorElementsData extends SimpleConfig{
     protected void addDataToConfig(Config config){
         ArrayList<Object> favorites = new ArrayList<>();
         for(VectorGridElement item : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            favorites.add(item.getVectorData().getYAMLData());
+            if(!item.isFake()) favorites.add(item.getVectorData().getYAMLData());
         }
     
         ArrayList<Object> lasts = new ArrayList<>();
         for(VectorGridElement item : MainWindow.paintTab.lastVectors.getList().getAllItems()){
-            lasts.add(item.getVectorData().getYAMLData());
+            if(!item.isFake()) lasts.add(item.getVectorData().getYAMLData());
         }
     
         config.set("favorites", favorites);

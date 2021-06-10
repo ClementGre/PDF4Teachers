@@ -7,14 +7,12 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.animation.ScaleTransition;
 import javafx.scene.shape.FillRule;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Scale;
 import java.util.Collections;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class VectorGridElement{
@@ -26,11 +24,16 @@ public class VectorGridElement{
     private VectorData vectorData;
     
     private static final int RENDER_WIDTH = 75;
+    private boolean fake = false;
     float width, height = 1;
     
     public VectorGridElement(VectorData vectorData){
         this.vectorData = vectorData;
         setup();
+    }
+    public VectorGridElement(boolean fake){
+        if(!fake) throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
+        this.fake = true;
     }
     
     private void setup(){
@@ -49,19 +52,6 @@ public class VectorGridElement{
         });
         vectorData.setSpecsChangesCallback(this::updateSVGSpecs);
     }
-    
-    /*public void toggleFavorite(){
-        if(isFavorite()){
-            MainWindow.paintTab.favouriteVectors.getList().removeItems(Collections.singletonList(this));
-            vectorData = null;
-        }else{
-            vectorData = new VectorData(0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false, 0, 0);
-
-            MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(this));
-        }
-    }*/
     
     public void addToFavorite(VectorGridView gridView){
         MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(clone()));
@@ -90,9 +80,11 @@ public class VectorGridElement{
     // SORTER
     
     public int compareUseWith(VectorGridElement element){
+        if(isFake()) return -1;
         return element.getVectorData().getUseCount() - vectorData.getUseCount();
     }
     public int compareLastUseTimeWith(VectorGridElement element){
+        if(isFake()) return -1;
         long val = (element.getVectorData().getLastUse() - vectorData.getLastUse());
         return val > 0 ? 1 : (val < 0 ? -1 : 0);
     }
@@ -216,5 +208,9 @@ public class VectorGridElement{
     
     public void resetUseData(){
         vectorData.resetUseData();
+    }
+    
+    public boolean isFake(){
+        return fake;
     }
 }

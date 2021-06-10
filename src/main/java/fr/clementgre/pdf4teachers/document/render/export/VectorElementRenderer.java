@@ -62,7 +62,7 @@ public class VectorElementRenderer{
             
             // Stroke
             if(element.getStrokeWidth() > 0){
-                g.setStroke(new BasicStroke((float) element.getStrokeWidthScaled(pageWidth), BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, Math.max(1, (float) element.getStrokeWidth())));
+                g.setStroke(new BasicStroke((float) element.getStrokeWidthScaled(pageWidth), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, Math.max(1, (float) element.getStrokeWidth())));
                 g.setColor(StyleManager.fxColorToAWT(element.getStroke()));
                 g.draw(shape);
             }

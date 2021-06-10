@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -70,9 +71,14 @@ public class ImageElement extends GraphicElement{
         super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
             updateImage(false);
+            Edition.setUnsave("ImageElement changed");
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
+            Edition.setUnsave("ImageElement changed");
+        });
+        resizeMode.addListener((observable, oldValue, newValue) -> {
+            Edition.setUnsave("ImageElement changed");
         });
         
     }

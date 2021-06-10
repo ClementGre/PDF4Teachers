@@ -24,18 +24,13 @@ import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
-import javafx.animation.PauseTransition;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -110,6 +105,8 @@ public class PaintTab extends SideTab{
     // WINDOWS
     
     public GalleryWindow galleryWindow = null;
+    
+    // MENUS
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
@@ -281,7 +278,7 @@ public class PaintTab extends SideTab{
         });
     
         ////////// New Vector menu //////////
-        
+    
         NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"), true);
         NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"), true);
         NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), true);
@@ -289,19 +286,7 @@ public class PaintTab extends SideTab{
         //NodeMenuItem.setupMenu(menu);
     
         newVectorDrawing.setOnAction(ae -> {
-            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
-            VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
-                    page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                    false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
-                    "", false, false, 0);
-    
-            
-            page.addElement(element, true);
-            element.centerOnCoordinatesY();
-            element.enterEditMode();
-            MainWindow.mainScreen.setSelected(element);
-            element.setLinkedVectorData(VectorListPane.addLastVector(element));
+            newVectorDrawing();
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
@@ -373,6 +358,22 @@ public class PaintTab extends SideTab{
         updateSelected(null, null, null);
         
         
+    }
+    
+    public void newVectorDrawing(){
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+        VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
+                false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
+                "", false, false, 0);
+    
+    
+        page.addElement(element, true);
+        element.centerOnCoordinatesY();
+        MainWindow.mainScreen.setSelected(element);
+        element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        element.enterEditMode();
     }
     
     private void deleteSelected(){

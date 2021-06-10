@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -14,10 +15,8 @@ import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.FillRule;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.*;
+
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
@@ -72,6 +71,7 @@ public class VectorElement extends GraphicElement{
         
         noScaledSvgPath.setContent(getPath());
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
+        svgPath.setStrokeLineJoin(StrokeLineJoin.ROUND);
         svgPath.setFillRule(FillRule.NON_ZERO);
         setupGeneral(svgPath);
         
@@ -101,55 +101,67 @@ public class VectorElement extends GraphicElement{
             noScaledSvgPath.setContent(getPath());
             svgPath.setContent(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         fill.addListener((observable, oldValue, newValue) ->{
             if(linkedVectorData != null) linkedVectorData.setFill(newValue);
             updateFill();
+            Edition.setUnsave("VectorElement changed");
         });
         doFill.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
             updateFill();
+            Edition.setUnsave("VectorElement changed");
         });
         
         stroke.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
             updateStroke();
+            Edition.setUnsave("VectorElement changed");
         });
         strokeWidth.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
             updateStroke();
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         resizeModeProperty().addListener((o, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         repeatModeProperty().addListener((o, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         invertXProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         invertYProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
         
         realWidthProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
         });
         realHeightProperty().addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
         });
         
         arrowLength.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
             onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
         });
     }
     
@@ -440,6 +452,7 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }
+        requestFocus();
     }
     
     public void formatNoScaledSvgPathToPage(){
@@ -481,7 +494,7 @@ public class VectorElement extends GraphicElement{
         setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m", "z", "l", "h", "v", "a", "c", "s", "t", "q"}));
     }
     public void undoLastLines(){
-        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m"}));
+        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), "m"));
     }
     
     // SPECIFIC METHODS

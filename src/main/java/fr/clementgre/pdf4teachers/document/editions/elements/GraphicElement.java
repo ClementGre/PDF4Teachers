@@ -343,20 +343,6 @@ public abstract class GraphicElement extends Element{
     }
     
     public void setupMousePressVars(double x, double y, Cursor forceDragType, boolean originalRatio, boolean dimensionsFromReal){
-    
-        if(forceDragType != null){
-            dragType = forceDragType;
-            
-            shiftX = 0;
-            shiftY = 0;
-        }else{
-            dragType = getDragCursorType(x, y);
-            if(originalRatio) ratio = getRatio();
-            else ratio = originWidth / originHeight;
-            
-            shiftX = x;
-            shiftY = y;
-        }
         
         if(dimensionsFromReal){
             shiftXFromEnd = (getRealWidth()/GRID_WIDTH*getPage().getWidth() - x);
@@ -373,6 +359,21 @@ public abstract class GraphicElement extends Element{
             originX = getLayoutX();
             originY = getLayoutY();
         }
+    
+        if(forceDragType != null){
+            dragType = forceDragType;
+        
+            shiftX = 0;
+            shiftY = 0;
+        }else{
+            dragType = getDragCursorType(x, y);
+            if(originalRatio) ratio = getRatio();
+            else ratio = originWidth / originHeight;
+        
+            shiftX = x;
+            shiftY = y;
+        }
+        
         menu.hide();
         setCursor(dragType);
         select();

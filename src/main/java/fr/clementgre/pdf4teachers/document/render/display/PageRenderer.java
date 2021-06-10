@@ -261,6 +261,8 @@ public class PageRenderer extends Pane{
         //////////////////////////////////////////////////////////////////////////////////////////
         
         setEventHandler(RotateEvent.ROTATE, e -> {
+            if(isVectorEditMode()) return;
+            
             double rotate = e.getTotalAngle()*2;
             if(rotate > 85) rotate = 90;
             else if(rotate < -85) rotate = -90;
@@ -268,6 +270,8 @@ public class PageRenderer extends Pane{
             setVisibleRotate(rotate, false);
         });
         setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
+            if(isVectorEditMode()) return;
+            
             double rotate = e.getTotalAngle()*2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
@@ -725,6 +729,9 @@ public class PageRenderer extends Pane{
     }
     public VectorElementPageDrawer getVectorElementPageDrawerNull(){
         return vectorElementPageDrawer;
+    }
+    public boolean isVectorEditMode(){
+        return vectorElementPageDrawer != null && vectorElementPageDrawer.isEditMode();
     }
     
     public double getRatio(){

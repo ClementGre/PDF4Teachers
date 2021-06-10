@@ -112,13 +112,12 @@ public class ImageElementRenderer{
             }
         
         }
-        
-        
-        g2d.dispose();
+    
         g2d.setComposite(AlphaComposite.Src);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.dispose();
         
         return multipliedImage;
     }
@@ -132,11 +131,12 @@ public class ImageElementRenderer{
         
         Graphics2D g2d = resizedImage.createGraphics();
         g2d.drawImage(originalImage, 0, 0, width, height, null);
-        g2d.dispose();
+    
         g2d.setComposite(AlphaComposite.Src);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.dispose();
         
         return resizedImage;
 

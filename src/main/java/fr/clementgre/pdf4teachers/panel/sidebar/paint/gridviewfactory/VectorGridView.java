@@ -32,7 +32,7 @@ public class VectorGridView extends ShapesGridView<VectorGridElement>{
     @Override
     public void resetUseData(){
         for(VectorGridElement element : getAllItems()){
-            element.resetUseData();
+            if(!element.isFake()) element.resetUseData();
         }
         getSortManager().simulateCall();
     }
