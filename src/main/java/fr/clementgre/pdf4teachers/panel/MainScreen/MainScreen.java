@@ -136,6 +136,11 @@ public class MainScreen extends Pane{
         }
     }
     
+    private long lastFinishedScrollingTime = 0;
+    private boolean hasScrollStartEndEvents = false;
+    private long lastFinishedZoomingTime = 0;
+    private boolean hasZoomStartEndEvents = false;
+    public static boolean isRotating = false;
     public void setup(){
         
         setStyle("-fx-padding: 0; -fx-background-color: #484848;");
@@ -185,21 +190,49 @@ public class MainScreen extends Pane{
             // Reset toPlace only if the user select something (and not de-select)
             if(newValue != null) setToPlace(null);
         });
-        
+    
+        setOnZoomStarted(event -> {
+            hasZoomStartEndEvents = true;
+        });
+        setOnZoomFinished(event -> {
+            hasZoomStartEndEvents = false;
+            lastFinishedZoomingTime = System.currentTimeMillis();
+        });
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
+            if(isRotating) return;
+            
+            // Trackpad detection, see https://stackoverflow.com/questions/31589678/how-to-detect-if-the-source-of-a-scroll-or-mouse-event-is-a-trackpad-or-a-mouse
+            long timeDiff = System.currentTimeMillis() - lastFinishedZoomingTime;
+            boolean ghostEvent = timeDiff < 1000; // I saw 500-700ms ghost events
+            boolean trackpadZooming = hasZoomStartEndEvents || e.isInertia() || ghostEvent;
+            
             if(getStatus() == Status.OPEN){
-                zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY(), true);
+                zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY(), trackpadZooming);
             }
         });
-        
+    
+        setOnScrollStarted(event -> {
+            hasScrollStartEndEvents = true;
+        });
+        setOnScrollFinished(event -> {
+            hasScrollStartEndEvents = false;
+            lastFinishedScrollingTime = System.currentTimeMillis();
+        });
         addEventFilter(ScrollEvent.SCROLL, e -> {
+            if(isRotating) return;
+            
+            // Trackpad detection, see https://stackoverflow.com/questions/31589678/how-to-detect-if-the-source-of-a-scroll-or-mouse-event-is-a-trackpad-or-a-mouse
+            long timeDiff = System.currentTimeMillis() - lastFinishedScrollingTime;
+            boolean ghostEvent = timeDiff < 1000; // I saw 500-700ms ghost events
+            boolean trackpadScrolling = hasScrollStartEndEvents || e.isInertia() || ghostEvent;
+            
             if(e.isControlDown()){ // ZOOM
                 
                 if(getStatus() == Status.OPEN){
                     if(e.getDeltaY() < 0){
-                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), true);
+                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), trackpadScrolling);
                     }else if(e.getDeltaY() > 0){
-                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), true);
+                        zoomOperator.zoom(1 + e.getDeltaY() / 200, e.getSceneX(), e.getSceneY(), trackpadScrolling);
                     }
                 }
             }else{ // SCROLL
@@ -208,25 +241,23 @@ public class MainScreen extends Pane{
                     
                     if(e.getDeltaX() != 0){
                         if(e.getDeltaX() > 0){
-                            zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false, true);
+                            zoomOperator.scrollLeft((int) (e.getDeltaX() * 2.5), false, trackpadScrolling);
                         }else{
-                            zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false, true);
+                            zoomOperator.scrollRight((int) (-e.getDeltaX() * 2.5), false, trackpadScrolling);
                         }
                     }
                 }
                 
                 if(e.getDeltaY() != 0){
                     if(e.getDeltaY() > 0){
-                        zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false, true);
+                        zoomOperator.scrollUp((int) (e.getDeltaY() * 2.5), false, trackpadScrolling);
                     }else{
-                        zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5), false, true);
+                        zoomOperator.scrollDown((int) (-e.getDeltaY() * 2.5), false, trackpadScrolling);
                     }
                 }
-                
-                
             }
-            
         });
+    
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
@@ -362,6 +393,7 @@ public class MainScreen extends Pane{
         }
     
         repaint();
+        isRotating = false; // In case of a bug, it stayed to true
         
         double scrollValue = zoomOperator.vScrollBar.getValue();
         zoomOperator.fitWidth(true);

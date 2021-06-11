@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
@@ -268,8 +269,10 @@ public class PageRenderer extends Pane{
             else if(rotate < -85) rotate = -90;
             else if(rotate > -3 && rotate < 3) rotate = 0;
             setVisibleRotate(rotate, false);
+            MainScreen.isRotating = true;
         });
         setEventHandler(RotateEvent.ROTATION_FINISHED, e -> {
+            MainScreen.isRotating = false;
             if(isVectorEditMode()) return;
             
             double rotate = e.getTotalAngle()*2;
