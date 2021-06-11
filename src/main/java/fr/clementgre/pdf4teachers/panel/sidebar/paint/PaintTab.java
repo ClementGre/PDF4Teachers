@@ -237,9 +237,15 @@ public class PaintTab extends SideTab{
         });
         vectorStrokeColor.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.vectorsLastStroke = newValue;
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement element && element.isEditMode()){ // Edit mode
+                MainWindow.userData.drawVectorsLastStroke = newValue;
+            }
         });
         vectorStrokeWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.vectorsLastStrokeWidth = newValue;
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement element && element.isEditMode()){ // Edit mode
+                MainWindow.userData.drawVectorsLastStrokeWidth = newValue;
+            }
         });
     
         path.setContextMenu(null);
@@ -367,7 +373,7 @@ public class PaintTab extends SideTab{
     
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
-                false, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth == 0 ? 4 : (int) MainWindow.userData.vectorsLastStrokeWidth,
+                false, MainWindow.userData.vectorsLastFill, MainWindow.userData.drawVectorsLastStroke, (int) MainWindow.userData.drawVectorsLastStrokeWidth == 0 ? 2 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                 "", false, false, 0);
     
     

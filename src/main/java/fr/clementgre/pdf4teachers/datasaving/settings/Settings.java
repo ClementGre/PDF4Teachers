@@ -31,9 +31,6 @@ public class Settings{
     public BooleanSetting animations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "animations",
             "settings.animations.title", "settings.animations.tooltip");
     @SettingObject
-    public BooleanSetting trackpadMode = new BooleanSetting(Main.isOSX(), true, SVGPathIcons.LAYERS, "trackpadMode",
-            "settings.trackpadMode.title", "settings.trackpadMode.tooltip");
-    @SettingObject
     public BooleanSetting restoreLastSession = new BooleanSetting(true, true, SVGPathIcons.REDO, "restoreLastSession",
             "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
     
@@ -101,7 +98,7 @@ public class Settings{
     public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
     
     @SettingsGroup(title="settings.group.ergonomics")
-    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations, trackpadMode};
+    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations};
     
     @SettingsGroup(title="settings.group.network")
     public Setting<?>[] networkGroup = {checkUpdates, sendStats};

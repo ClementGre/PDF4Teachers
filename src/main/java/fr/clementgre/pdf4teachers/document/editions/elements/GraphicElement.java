@@ -82,6 +82,7 @@ public abstract class GraphicElement extends Element{
     protected double originX = 0;
     protected double originY = 0;
     protected double ratio = 0;
+    private boolean selectedWhenClicked = false;
     
     public abstract void initializePage(int page, double x, double y);
     public abstract void defineSizeAuto();
@@ -114,15 +115,23 @@ public abstract class GraphicElement extends Element{
         setOnMouseMoved(e -> {
             if(PageRenderer.isEditPagesMode()){
                 setCursor(PlatformUtils.CURSOR_MOVE);
+            }else{
+                if(this instanceof VectorElement && !isSelected()){
+                    // Vector element can't be moved/resized directly after being selected (Security for hand made drawings)
+                    setCursor(Cursor.HAND);
+                }else{
+                    setCursor(getDragCursorType(e.getX(), e.getY()));
+                }
+                
             }
-            else setCursor(getDragCursorType(e.getX(), e.getY()));
         });
     
         setOnMousePressed(e -> {
             wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
             if(wasInEditPagesModeWhenMousePressed) return;
-            
             e.consume();
+    
+            selectedWhenClicked = isSelected();
             requestFocus();
             
             setupMousePressVars(e.getX(), e.getY(), null, false, true);
@@ -143,6 +152,10 @@ public abstract class GraphicElement extends Element{
         
         setOnMouseDragged(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
+    
+            // Vector element can't be moved/resized directly after being selected (Security for hand made drawings)
+            if(this instanceof VectorElement && !selectedWhenClicked) return;
+            
             if(dragType == PlatformUtils.CURSOR_MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
@@ -155,6 +168,10 @@ public abstract class GraphicElement extends Element{
         setOnMouseReleased(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
             Edition.setUnsave("GraphicElementMouseRelease");
+    
+            // Vector element can't be moved/resized directly after being selected (Security for hand made drawings)
+            if(this instanceof VectorElement && !selectedWhenClicked) return;
+            
             if(dragType == PlatformUtils.CURSOR_MOVE){
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;

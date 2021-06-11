@@ -456,7 +456,11 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }
-        requestFocus();
+        if(path.isEmpty().get()) delete(true);
+        else requestFocus();
+    }
+    public boolean isEditMode(){
+        return getPage().isVectorEditMode() && getPage().getVectorElementPageDrawer().getVectorElement() == this;
     }
     
     public void formatNoScaledSvgPathToPage(){

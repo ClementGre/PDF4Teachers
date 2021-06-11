@@ -87,7 +87,11 @@ public class UserData{
     @UserDataObject(path = "paintTab.vectors.lastStrokeColor")
     public Color vectorsLastStroke = Color.BLACK;
     @UserDataObject(path = "paintTab.vectors.lastStrokeWidth")
-    public long vectorsLastStrokeWidth = 5;
+    public long vectorsLastStrokeWidth = 4;
+    @UserDataObject(path = "paintTab.vectors.drawLastStrokeColor")
+    public Color drawVectorsLastStroke = Color.BLACK;
+    @UserDataObject(path = "paintTab.vectors.drawLastStrokeWidth")
+    public long drawVectorsLastStrokeWidth = 2;
     
     // GradesExport Params & PdfExport Params
     @UserDataObject(path = "export.fields.fileName")

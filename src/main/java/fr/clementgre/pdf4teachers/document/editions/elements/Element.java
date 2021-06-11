@@ -141,6 +141,9 @@ public abstract class Element extends Region{
         setupBindings();
         setupMenu();
     }
+    public boolean isSelected(){
+        return MainWindow.mainScreen.getSelected() == this;
+    }
     
     protected abstract void setupBindings();
     

@@ -36,6 +36,7 @@ public class VectorElementPageDrawer extends Pane{
     private double lastLineAngle = 0;
     private boolean hasToMove = true;
     private boolean lastLineMode = isPerpendicularLineMode();
+    private boolean spaceDown = false;
     private void setup(){
         
         // UI
@@ -99,7 +100,7 @@ public class VectorElementPageDrawer extends Pane{
         setOnMouseMoved((e) -> {
             if(vector == null || PageRenderer.isEditPagesMode()) return;
             
-            if(e.isControlDown()) appendPoint(e.getX(), e.getY(), false);
+            if(spaceDown) appendPoint(e.getX(), e.getY(), false);
             else{
                 lastX = e.getX();
                 lastY = e.getY();
@@ -129,8 +130,9 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
                 requestFocus();
-            }else if(e.getCode() == KeyCode.CONTROL){
+            }else if(e.getCode() == KeyCode.SPACE){
                 e.consume();
+                spaceDown = true;
                 initSegment(lastX, lastY);
             }
         });
@@ -143,8 +145,10 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(false);
                 requestFocus();
+            }else if(e.getCode() == KeyCode.SPACE){
+                e.consume();
+                spaceDown = false;
             }
-            
         });
     }
     
@@ -199,6 +203,7 @@ public class VectorElementPageDrawer extends Pane{
         getChildren().setAll(svgPath);
         
         lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        spaceDown = false;
         lastLineMode = isPerpendicularLineMode();
     }
     public void quitEditMode(){
