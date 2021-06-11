@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.JMetroStyleClass;
@@ -62,6 +63,22 @@ public class StyleManager{
         putStyle(parent, style, true);
     }
     
+    public static JMetro putStyle(Parent parent, Style style, JMetro jMetro){
+        jfxtras.styles.jmetro.Style toApplyStyle;
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
+    
+        if(jMetro == null){
+            jMetro = new JMetro(parent, toApplyStyle);
+            parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
+        }else jMetro.setStyle(toApplyStyle);
+        
+        putCustomStyle(parent, "base.css");
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
+        else putCustomStyle(parent, "base-light.css");
+        return jMetro;
+    }
     public static void putStyle(Parent parent, Style style, boolean jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
@@ -209,5 +226,4 @@ public class StyleManager{
                 (float) color.getBlue(),
                 (float) color.getOpacity());
     }
-    
 }

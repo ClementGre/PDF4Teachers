@@ -52,11 +52,9 @@ public class PaintTab extends SideTab{
     public Button delete;
     
     public HBox vectorsActonButtons;
-    public Button vectorCreateCurve;
     public ToggleButton vectorStraightLineMode;
-    public ToggleGroup vectorDrawMode;
-    public ToggleButton vectorModeDraw;
-    public ToggleButton vectorModePoint;
+    public ToggleButton vectorPerpendicularLineMode;
+    public ToggleButton vectorEditMode;
 
     // common settings
 
@@ -120,11 +118,10 @@ public class PaintTab extends SideTab{
         newImage.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PICTURES, "darkgreen", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         newVector.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.VECTOR_SQUARE, "darkblue", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-
-        vectorCreateCurve.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.CURVE, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        vectorModeDraw.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PAINT_BRUSH, "black", 0, 21, 21, ImageUtils.defaultDarkColorAdjust));
-        vectorModePoint.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
+        
+        vectorPerpendicularLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
+        vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULE, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
+        vectorEditMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 21, 21, ImageUtils.defaultDarkColorAdjust));
 
         vectorUndoPath.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.UNDO, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
         doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
@@ -173,6 +170,11 @@ public class PaintTab extends SideTab{
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
         arrowLengthTitle.setText(TR.tr("paintTab.advancedOptions.arrowLength"));
+    
+        vectorUndoPath.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.undo.tooltip")));
+        vectorPerpendicularLineMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.perpendicularLineMode.tooltip")));
+        vectorStraightLineMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.straightLineMode.tooltip")));
+        vectorEditMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.tooltip")));
     }
 
     public void setup(){
@@ -334,15 +336,15 @@ public class PaintTab extends SideTab{
         
         // VectorsButtons
         
-        vectorCreateCurve.setOnAction((e) -> {
+        vectorStraightLineMode.setOnAction((e) -> {
             if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
                 vectorElement.getPage().getVectorElementPageDrawer().onCreateCurve();
             }
         });
         
-        vectorDrawMode.selectedToggleProperty().addListener(this::vectorDrawModeChanged);
-        vectorCreateCurve.disableProperty().bind(vectorModePoint.selectedProperty().not());
-        vectorStraightLineMode.disableProperty().bind(vectorDrawMode.selectedToggleProperty().isNull());
+        vectorEditMode.selectedProperty().addListener(this::vectorDrawModeChanged);
+        vectorStraightLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
+        vectorPerpendicularLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorUndoPath.setOnAction((e) -> {
             if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
         });
@@ -372,7 +374,8 @@ public class PaintTab extends SideTab{
         page.addElement(element, true);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
-        element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        // Drawing elements are not added to previous elements by default
+        //element.setLinkedVectorData(VectorListPane.addLastVector(element));
         element.enterEditMode();
     }
     
@@ -513,10 +516,10 @@ public class PaintTab extends SideTab{
         if(!spinnerHeight.getValue().equals(newValue)) spinnerHeight.getValueFactory().setValue(newValue.intValue());
     }
     
-    private void vectorDrawModeChanged(ObservableValue<? extends Toggle> o, Toggle oldToggle, Toggle newToggle){
+    private void vectorDrawModeChanged(ObservableValue<? extends Boolean> o, Boolean oldValue, Boolean newValue){
         if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
-            if(newToggle != null){
-                if(oldToggle == null) vectorElement.enterEditMode();
+            if(!oldValue){
+                if(newValue) vectorElement.enterEditMode();
             }else{
                 vectorElement.quitEditMode();
             }

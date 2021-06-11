@@ -5,12 +5,14 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
 import javafx.beans.property.*;
 import javafx.geometry.Bounds;
@@ -190,15 +192,14 @@ public class VectorElement extends GraphicElement{
     
         NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
         NodeMenuItem addToLast = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+        NodeMenuItem enterEditMode = new NodeMenuItem(TR.tr("paintTab.vectorsEditMode"), false);
+        enterEditMode.setToolTip(TR.tr("paintTab.vectorsEditMode.tooltip"));
+        
+        addToFavorites.setOnAction((event) -> linkedVectorData = VectorListPane.addFavoriteVector(this));
+        addToLast.setOnAction((event) -> linkedVectorData = VectorListPane.addLastVector(this));
+        enterEditMode.setOnAction((e) -> enterEditMode());
     
-        addToFavorites.setOnAction((event) -> {
-            linkedVectorData = VectorListPane.addFavoriteVector(this);
-        });
-        addToLast.setOnAction((event) -> {
-            linkedVectorData = VectorListPane.addLastVector(this);
-        });
-    
-        menu.getItems().addAll(addToFavorites, addToLast);
+        menu.getItems().addAll(addToFavorites, addToLast, enterEditMode);
     }
     
     private void onSizeChanged(){
@@ -440,15 +441,18 @@ public class VectorElement extends GraphicElement{
     // EDIT MODE
     
     public void enterEditMode(){
-        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() == null){
-            MainWindow.paintTab.vectorModeDraw.setSelected(true);
+        // In case button is still not selected in PaintTab, we select it, and then, this method will be re-called.
+        if(!MainWindow.paintTab.vectorEditMode.isSelected()){
+            MainWindow.paintTab.vectorEditMode.setSelected(true);
         }else{
+            AutoTipsManager.showByAction("enterVectorEditMode");
             getPage().getVectorElementPageDrawer().enterEditMode(this);
         }
     }
     public void quitEditMode(){
-        if(MainWindow.paintTab.vectorDrawMode.getSelectedToggle() != null){
-            MainWindow.paintTab.vectorDrawMode.getSelectedToggle().setSelected(false);
+        // In case button is still selected in PaintTab, we de-select it, and then, this method will be re-called.
+        if(MainWindow.paintTab.vectorEditMode.isSelected()){
+            MainWindow.paintTab.vectorEditMode.setSelected(false);
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }

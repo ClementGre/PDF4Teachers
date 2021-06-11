@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
+import jfxtras.styles.jmetro.JMetro;
 import org.controlsfx.control.PopOver;
 
 import java.awt.*;
@@ -25,6 +26,7 @@ public class AutoTipTooltip extends PopOver{
     private final Label text = new Label();
     
     private boolean closedByAutoHide = false;
+    private JMetro jMetro;
     
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
         String contentText = Main.isOSX()
@@ -61,7 +63,6 @@ public class AutoTipTooltip extends PopOver{
                 AutoTipsManager.removeTip(name);
             }
         });
-        
     }
     
     
@@ -70,8 +71,9 @@ public class AutoTipTooltip extends PopOver{
         if(!owner.isFocused()) return;
         if(isShowing()) return;
         closedByAutoHide = false;
-        StyleManager.putStyle(getRoot(), Style.DEFAULT);
-        getRoot().getTransforms().add(new Scale(Main.settings.zoom.getValue(), Main.settings.zoom.getValue(), 0, 0));
+    
+        jMetro = StyleManager.putStyle(getRoot(), Style.DEFAULT, jMetro);
+        getRoot().getTransforms().setAll(new Scale(Main.settings.zoom.getValue(), Main.settings.zoom.getValue(), 0, 0));
         
         if(objectWhereDisplay.isEmpty()){
             
@@ -82,13 +84,21 @@ public class AutoTipTooltip extends PopOver{
         }else if(objectWhereDisplay.equals("auto")){
             show(owner.getScene().getFocusOwner());
         }else{
-            setArrowSize(0);
             switch(objectWhereDisplay){
-                case "mainscreen" -> showOnPane(MainWindow.mainScreen, owner);
-                case "leftbar" -> showOnPane(MainWindow.leftBar, owner);
+                case "mainscreen" -> {
+                    setArrowSize(0);
+                    showOnPane(MainWindow.mainScreen, owner);
+                }
+                case "leftbar" -> {
+                    setArrowSize(0);
+                    showOnPane(MainWindow.leftBar, owner);
+                }
                 case "gallerycombobox" -> {
-                    setArrowSize(12); setArrowLocation(ArrowLocation.TOP_CENTER);
+                    setArrowLocation(ArrowLocation.TOP_CENTER);
                     show(MainWindow.paintTab.galleryWindow.filter);
+                }
+                case "vectorEditModeButton" -> {
+                    show(MainWindow.paintTab.vectorEditMode);
                 }
             }
         }

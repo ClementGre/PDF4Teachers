@@ -747,4 +747,8 @@ public class PageRenderer extends Pane{
         }
         return false;
     }
+    
+    public void quitVectorEditMode(){
+        if(isVectorEditMode()) vectorElementPageDrawer.getVectorElement().quitEditMode();
+    }
 }

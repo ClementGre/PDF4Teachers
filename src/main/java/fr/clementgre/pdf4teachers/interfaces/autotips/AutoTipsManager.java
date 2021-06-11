@@ -89,6 +89,9 @@ public class AutoTipsManager{
     @ToolTipVar(actionKey = "useSystemFont", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String textUseSystemFont = "autoTips.textUseSystemFont";
     
+    @ToolTipVar(actionKey = "enterVectorEditMode", prerequisiteKey = "", objectWhereDisplay = "vectorEditModeButton")
+    private static final String vectorEditMode = "autoTips.vectorEditMode";
+    
     // GALLERY
     
     @ToolTipVar(actionKey = "opengallery", prerequisiteKey = "", objectWhereDisplay = "gallerycombobox")
@@ -152,6 +155,7 @@ public class AutoTipsManager{
     }
     
     public static void hideAll(){
+        System.out.println("HIDE ALL");
         for(AutoTipTooltip uiTip : uiTips.values()){
             uiTip.hide(Duration.ZERO);
         }

@@ -47,7 +47,6 @@ public class PDFPagesRender{
     public void renderPage(int pageNumber, double size, CallBackArg<Image> callBack){
         
         Thread renderPage = new Thread(() -> {
-            
             PDRectangle pageSize = getPageSize(pageNumber);
             
             int destWidth = (int) (595 * 1.4 * size); // *1=595 | *1.5=892 |*2=1190

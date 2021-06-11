@@ -35,7 +35,7 @@ public class VectorElementPageDrawer extends Pane{
     private double lastY = 0;
     private double lastLineAngle = 0;
     private boolean hasToMove = true;
-    private boolean lastLineMode = isStraightLineMode();
+    private boolean lastLineMode = isPerpendicularLineMode();
     private void setup(){
         
         // UI
@@ -69,35 +69,40 @@ public class VectorElementPageDrawer extends Pane{
         // Events
         setOnMousePressed((e) -> {
             if(vector == null) return;
-            if(e.getClickCount() == 1){
+            if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1){
                 e.consume();
-                requestFocus();
-                hasToMove = true;
-                lastClickX = lastX = e.getX();
-                lastClickY = lastY = e.getY();
-                lastLineMode = isStraightLineMode();
+                // Draw only one point
+                initSegment(e.getX(), e.getY());
+                //moveTo(lastX, lastY);
+                //lineTo(e.getX()+.1, e.getY()+.1, true);
+            }else if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
+                // Cancel point
+                removeLastAction("M");
             }
         });
         setOnMouseReleased((e) -> {
             if(vector == null) return;
-            if(e.getClickCount() == 1){
+            if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
-                if(hasToMove) return;
-                lineTo(e.getX(), e.getY(), true);
+                if((lastX != e.getX() && lastY != e.getY()) || hasToMove)
+                    appendPoint(e.getX(), e.getY(), true);
             }
         });
-        
+        /*addEventHandler(MouseDragEvent.DRAG_DETECTED, (e) -> {
+            initSegment(e.getX(), e.getY());
+        });*/
         setOnMouseDragged((e) -> {
             if(vector == null || PageRenderer.isEditPagesMode()) return;
             
-            if(isPointMode()){
-        
-            }else{
-                if(hasToMove){
-                    moveTo(lastX, lastY);
-                    hasToMove = false;
-                }
-                lineTo(e.getX(), e.getY(), false);
+            if(e.getButton() == MouseButton.PRIMARY) appendPoint(e.getX(), e.getY(), false);
+        });
+        setOnMouseMoved((e) -> {
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            
+            if(e.isControlDown()) appendPoint(e.getX(), e.getY(), false);
+            else{
+                lastX = e.getX();
+                lastY = e.getY();
             }
         });
     
@@ -108,17 +113,25 @@ public class VectorElementPageDrawer extends Pane{
             }else if(e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE){
                 e.consume();
                 if(vector != null) undo();
-            }else if(e.getCode() == KeyCode.SHIFT){
-                e.consume();
-                MainWindow.paintTab.vectorDrawMode.getToggles().forEach((t) -> t.setSelected(!t.isSelected()));
-                requestFocus();
             }else if(e.getCode() == KeyCode.L){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(true);
                 requestFocus();
-            }else if(e.getCode() == KeyCode.C){
+            }else if(e.getCode() == KeyCode.P){
                 e.consume();
-                onCreateCurve();
+                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(true);
+                requestFocus();
+            }else if(e.getCode() == KeyCode.SHIFT){
+                e.consume();
+                MainWindow.paintTab.vectorStraightLineMode.setSelected(!MainWindow.paintTab.vectorStraightLineMode.isSelected());
+                requestFocus();
+            }else if(e.getCode() == KeyCode.ALT){
+                e.consume();
+                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
+                requestFocus();
+            }else if(e.getCode() == KeyCode.CONTROL){
+                e.consume();
+                initSegment(lastX, lastY);
             }
         });
         setOnKeyReleased((e) -> {
@@ -126,8 +139,28 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(false);
                 requestFocus();
+            }else if(e.getCode() == KeyCode.P){
+                e.consume();
+                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(false);
+                requestFocus();
             }
+            
         });
+    }
+    
+    private void initSegment(double x, double y){
+        requestFocus();
+        hasToMove = true;
+        lastClickX = lastX = x;
+        lastClickY = lastY = y;
+        lastLineMode = isPerpendicularLineMode();
+    }
+    private void appendPoint(double x, double y, boolean force){
+        if(hasToMove){
+            moveTo(lastX, lastY);
+            hasToMove = false;
+        }
+        lineTo(x, y, force);
     }
     
     public void delete(){
@@ -166,7 +199,7 @@ public class VectorElementPageDrawer extends Pane{
         getChildren().setAll(svgPath);
         
         lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
-        lastLineMode = isStraightLineMode();
+        lastLineMode = isPerpendicularLineMode();
     }
     public void quitEditMode(){
         getChildren().clear();
@@ -206,15 +239,10 @@ public class VectorElementPageDrawer extends Pane{
     public void lineTo(double x, double y, boolean force){
         double moveX = x - lastX;
         double moveY = y - lastY;
-    
-        // Do the line only if it has a min length
-        if(!force){
-            double dist = Math.sqrt(Math.pow(moveX, 2) + Math.pow(moveY, 2));
-            if(dist < LINE_MIN_LENGTH) return;
-        }
         
-        if(isStraightLineMode()){
-            if(!lastLineMode){ // Enter line mode
+        if(isStraightLineMode() || isPerpendicularLineMode()){
+            
+            if(!lastLineMode){ // Enter straight line mode
                 lastLineMode = true;
                 lastClickX = lastX = x;
                 lastClickY = lastY = y;
@@ -222,13 +250,29 @@ public class VectorElementPageDrawer extends Pane{
                 appendAction("L", checkX(x), checkY(y)); // Needs two times because the last one will be edited
                 return;
             }
-            if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) y = lastClickY;
-            else x = lastClickX;
-            if(lastAction.equalsIgnoreCase("L")){
-                removeLastAction("L");
+            
+            if(isPerpendicularLineMode()){
+                
+                if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) y = lastClickY;
+                else x = lastClickX;
+                if(lastAction.equalsIgnoreCase("L")){
+                    removeLastAction("L");
+                }
+                
+            }else{ // straightLineMode
+                if(lastAction.equalsIgnoreCase("L")){
+                    removeLastAction("L");
+                }
             }
-        }else{
-            if(lastLineMode){ // exit line mode
+        }else{ // Basic drawing
+    
+            // Do the line only if it has a min length
+            if(!force){
+                double dist = Math.sqrt(Math.pow(moveX, 2) + Math.pow(moveY, 2));
+                if(dist < LINE_MIN_LENGTH) return;
+            }
+            
+            if(lastLineMode){ // exit straight line mode
                 lastLineMode = false;
                 lastClickX = lastX = x;
                 lastClickY = lastY =  y;
@@ -243,6 +287,7 @@ public class VectorElementPageDrawer extends Pane{
                 if(Math.abs(angle - lastLineAngle) < MERGE_LINE_MAX_ANGLE) removeLastAction("L");
                 else lastLineAngle = angle;
             }
+            
         }
     
         lastX = x; lastY = y;
@@ -301,11 +346,11 @@ public class VectorElementPageDrawer extends Pane{
     public boolean isEditMode(){
         return page.getChildren().contains(this);
     }
-    private boolean isPointMode(){
-        return MainWindow.paintTab.vectorModePoint.isSelected();
-    }
     private boolean isStraightLineMode(){
         return MainWindow.paintTab.vectorStraightLineMode.isSelected();
+    }
+    private boolean isPerpendicularLineMode(){
+        return MainWindow.paintTab.vectorPerpendicularLineMode.isSelected();
     }
     
     public VectorElement getVectorElement(){

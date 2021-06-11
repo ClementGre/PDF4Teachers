@@ -12,5 +12,6 @@ public @interface ToolTipVar{
     
     String prerequisiteKey();
     
+    // "": Mouse location | "auto": currently focuses node
     String objectWhereDisplay();
 }

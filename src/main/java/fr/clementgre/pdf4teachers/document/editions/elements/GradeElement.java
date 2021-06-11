@@ -125,6 +125,7 @@ public class GradeElement extends Element{
             }else{
                 if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
                     
+                    select();
                     if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
                     }

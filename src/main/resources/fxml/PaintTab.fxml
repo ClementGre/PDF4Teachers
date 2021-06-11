@@ -36,22 +36,18 @@
             <Region HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
             <HBox fx:id="vectorsActonButtons">
-                <Button fx:id="vectorCreateCurve">
-                    <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
-                </Button>
-                <ToggleButton fx:id="vectorStraightLineMode">
-                    <padding><Insets topRightBottomLeft="4"/></padding>
-                </ToggleButton>
 
                 <fx:define>
-                    <ToggleGroup fx:id="vectorDrawMode" />
+                    <ToggleGroup fx:id="vectorDrawOptions" />
                 </fx:define>
-
-                <ToggleButton fx:id="vectorModeDraw" toggleGroup="$vectorDrawMode">
+                <ToggleButton fx:id="vectorPerpendicularLineMode" toggleGroup="$vectorDrawOptions">
                     <padding><Insets topRightBottomLeft="4"/></padding>
                 </ToggleButton>
-                <ToggleButton fx:id="vectorModePoint" toggleGroup="$vectorDrawMode">
-                    <padding><Insets topRightBottomLeft="4"/></padding>
+                <ToggleButton fx:id="vectorStraightLineMode" toggleGroup="$vectorDrawOptions">
+                    <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
+                </ToggleButton>
+                <ToggleButton fx:id="vectorEditMode">
+                    <padding><Insets top="4" bottom="5" left="4" right="4"/></padding>
                 </ToggleButton>
             </HBox>
         </HBox>

@@ -55,6 +55,11 @@ public class KeyboardShortcuts{
                         }
                         return;
                         
+                    }else if(e.getCode() == KeyCode.D){
+                        SideBar.selectTab(MainWindow.paintTab);
+                        MainWindow.paintTab.newVectorDrawing();
+                        return;
+    
                     }else if(e.getCode() == KeyCode.N){
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
                         

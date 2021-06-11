@@ -98,6 +98,7 @@ public class PageEditPane extends VBox{
         MenuItem capturePage = getMenuItem(TR.tr("document.pageActions.capture.allPage"), vanillaMenu);
         menus.add(capturePage);
         capturePage.setOnAction(ignored -> {
+            page.quitVectorEditMode();
             MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), null);
         });
         
@@ -105,6 +106,7 @@ public class PageEditPane extends VBox{
         MenuItem captureSelection = getMenuItem(TR.tr("document.pageActions.capture.selectArea"), vanillaMenu);
         menus.add(captureSelection);
         captureSelection.setOnAction(ignored -> {
+            page.quitVectorEditMode();
             PageZoneSelector recorder = page.getPageCursorRecord();
             recorder.setSelectionZoneType(PageZoneSelector.SelectionZoneType.PDF_ON_DARK);
             recorder.setupSelectionZoneOnce(positionDimensions -> {
@@ -119,6 +121,7 @@ public class PageEditPane extends VBox{
             menus.add(captureDocument);
             
             captureDocument.setOnAction(ignored -> {
+                page.quitVectorEditMode();
                 MainWindow.mainScreen.document.pdfPagesRender.editor.capture(-1, null);
             });
         }

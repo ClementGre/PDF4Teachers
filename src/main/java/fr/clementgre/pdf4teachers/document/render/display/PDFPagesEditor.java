@@ -59,10 +59,12 @@ public class PDFPagesEditor{
     }
     
     public void ascendPage(PageRenderer page){
+        page.quitVectorEditMode();
         movePage(page, -1);
     }
     
     public void descendPage(PageRenderer page){
+        page.quitVectorEditMode();
         movePage(page, +1);
     }
     public void movePage(PageRenderer page, int index){
@@ -95,6 +97,7 @@ public class PDFPagesEditor{
     }
     
     public void rotateLeftPage(PageRenderer page, boolean animated){
+        page.quitVectorEditMode();
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() - 90);
         try{
             document.setAllSecurityToBeRemoved(true);
@@ -130,6 +133,7 @@ public class PDFPagesEditor{
     }
     
     public void rotateRightPage(PageRenderer page, boolean animated){
+        page.quitVectorEditMode();
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + 90);
         try{
             document.setAllSecurityToBeRemoved(true);
@@ -168,7 +172,7 @@ public class PDFPagesEditor{
     }
     
     public void deletePage(PageRenderer page){
-        
+        page.quitVectorEditMode();
         if(MainWindow.mainScreen.document.save() && Edition.isSave()){
             ConfirmAlert alert = new ConfirmAlert(true, TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
             
@@ -416,6 +420,7 @@ public class PDFPagesEditor{
         }else{
             page = MainWindow.mainScreen.document.getPage(pageIndex);
         }
+        page.quitVectorEditMode();
         pageImage = capturePagePreview(page, null);
         images.add(capturePagePreview(page, dimensions));
     

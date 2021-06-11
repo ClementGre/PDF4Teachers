@@ -239,7 +239,7 @@ public class MainScreen extends Pane{
             if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)
                     && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer)
                     && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // GrabNScroll
-    
+                
                 double distY = e.getY() - dragStartY;
                 double distX = e.getX() - dragStartX;
                 
