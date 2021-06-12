@@ -124,11 +124,14 @@ public class ImageElement extends GraphicElement{
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
-        prefHeightProperty().unbind();
-        prefWidthProperty().unbind();
         linkedImageData = null;
         image = null;
         setBackground(null);
+    }
+    @Override
+    public void restoredToDocument(){
+        super.restoredToDocument();
+        updateImage(false);
     }
     
     // READER AND WRITERS

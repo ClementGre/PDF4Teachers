@@ -380,13 +380,6 @@ public class VectorElement extends GraphicElement{
     
     }
     
-    @Override
-    public void removedFromDocument(boolean markAsUnsave){
-        super.removedFromDocument(markAsUnsave);
-        prefHeightProperty().unbind();
-        prefWidthProperty().unbind();
-    }
-    
     // READER AND WRITERS
     
     @Override

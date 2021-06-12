@@ -59,7 +59,7 @@ public abstract class Element extends Region{
     };
     
     protected void setupGeneral(boolean setupEvents, Node... components){
-        getChildren().addAll(components);
+        if(components != null) getChildren().setAll(components);
         
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
@@ -216,6 +216,12 @@ public abstract class Element extends Region{
         layoutXProperty().unbind();
         layoutYProperty().unbind();
         MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);
+    }
+    // Called when element was restored (With Undo/Redo system)
+    public void restoredToDocument(){
+        layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
+        layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
+        MainWindow.mainScreen.selectedProperty().addListener(mainScreenSelectedListener);
     }
     
     public void delete(boolean markAsUnsave, UType undoType){

@@ -22,8 +22,6 @@ public class CreateDeleteUndoAction extends UndoAction{
         if(element != null){
             if(deleted){
                 System.out.println("Undo: restore " + element.getClass().getSimpleName());
-                // Old element is in a deleted state so we can't reuse it.
-                element = element.clone();
                 restoreElement(element);
             }else{
                 System.out.println("Undo: delete " + element.getClass().getSimpleName());
@@ -44,8 +42,13 @@ public class CreateDeleteUndoAction extends UndoAction{
             page = MainWindow.mainScreen.document.getPagesNumber() - 1;
             element.setPage(page);
         }
+    
+        // Do not add the element if it already has a parent.
+        if(MainWindow.mainScreen.document.getPage(page).getElements().contains(element) || element.getParent() != null) return;
+        
         
         MainWindow.mainScreen.document.getPage(page).addElement(element, true, UType.NO_UNDO);
+        element.restoredToDocument();
         
         // if it is a GradeElement, we need to re-index the list
         if(element instanceof GradeElement){
@@ -55,7 +58,6 @@ public class CreateDeleteUndoAction extends UndoAction{
                 item.makeSum(false);
             }
         }
-    
         element.select();
         
     }

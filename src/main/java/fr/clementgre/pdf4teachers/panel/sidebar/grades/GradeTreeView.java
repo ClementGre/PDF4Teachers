@@ -110,7 +110,7 @@ public class GradeTreeView extends TreeView<String>{
             setRoot(null);
             
         }else{ // CHILD
-            
+            System.out.println("remove " + element.getName());
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
             // Delete only if it wasn't already deleted (See comment above).

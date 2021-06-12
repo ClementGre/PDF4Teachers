@@ -256,7 +256,6 @@ public class GradeElement extends Element{
     public void addedToDocument(boolean markAsUnsave){
         MainWindow.gradeTab.treeView.addElement(this);
     }
-    
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);

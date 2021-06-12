@@ -601,6 +601,20 @@ public abstract class GraphicElement extends Element{
         prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
     }
     
+    @Override
+    public void removedFromDocument(boolean markAsUnsave){
+        super.removedFromDocument(markAsUnsave);
+        prefHeightProperty().unbind();
+        prefWidthProperty().unbind();
+    }
+    
+    @Override
+    public void restoredToDocument(){
+        super.restoredToDocument();
+        prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
+        prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+    }
+    
     // READERS AND WRITERS
     
     protected LinkedHashMap<Object, Object> getYAMLPartialData(){
