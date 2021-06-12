@@ -524,9 +524,10 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
-        
+        System.out.println("Delete one children");
         if(hasSubGrade()) deleteChildren(removePageElement, markAsUnsave, undoType);
         if(removePageElement){
+            System.out.println("delete core");
             getCore().delete(markAsUnsave, undoType);
         }
         
