@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
-
-<?import javafx.geometry.Insets?>
-
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.interfaces.windows.AboutWindow"
@@ -36,7 +34,7 @@
         <Label fx:id="designerLabel"/>
         <Hyperlink id="https://github.com/grensv" text="Vincent Grennerat"/>
     </HBox>
-    <Label fx:id="translatorText"/>
+    <Label fx:id="translatorText" textAlignment="CENTER"/>
     <HBox>
         <VBox.margin><Insets bottom="7" top="7"/></VBox.margin>
         <Hyperlink id="https://pdf4teachers.org" text="https://pdf4teachers.org">
@@ -65,16 +63,19 @@
     <HBox styleClass="dependencies">
         <VBox.margin><Insets bottom="15"/></VBox.margin>
         <VBox fx:id="dependenciesLeft">
-            <Hyperlink text="Java FX 15" id="https://openjfx.io/"/>
-            <Hyperlink text="Apache PDFBox 2.0.21" id="https://pdfbox.apache.org/"/>
-            <Hyperlink text="JMetro 11.6.14" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
+            <Hyperlink text="Java FX" id="https://openjfx.io/"/>
+            <Hyperlink text="Apache PDFBox" id="https://pdfbox.apache.org/"/>
+            <Hyperlink text="JMetro" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
+            <Hyperlink text="Metadata-Extractor" id="https://drewnoakes.com/code/exif/"/>
             <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
         </VBox>
         <VBox fx:id="dependenciesRight">
-            <Hyperlink text="JLatexMath 1.0.7" id="https://github.com/opencollab/jlatexmath"/>
-            <Hyperlink text="SnakeYAML 1.26" id="https://bitbucket.org/asomov/snakeyaml/src/master/"/>
-            <Hyperlink text="Jackson Streaming API 2.10.3" id="https://github.com/FasterXML/jackson-core"/>
-            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>
+            <Hyperlink text="JLatexMath" id="https://github.com/opencollab/jlatexmath"/>
+            <Hyperlink text="SnakeYAML" id="https://bitbucket.org/asomov/snakeyaml/src/master/"/>
+            <Hyperlink text="Jackson Streaming API" id="https://github.com/FasterXML/jackson-core"/>
+<!--            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>-->
+            <Hyperlink text="Batik Parser" id="https://xmlgraphics.apache.org/batik/using/parsers.html"/>
+            <Hyperlink text="PDFBox Graphics2D" id="https://github.com/rototor/pdfbox-graphics2d"/>
         </VBox>
     </HBox>
 
