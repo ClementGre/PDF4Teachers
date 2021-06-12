@@ -3,6 +3,8 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.CreateDeleteUndoAction;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -216,10 +218,10 @@ public abstract class Element extends Region{
         MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);
     }
     
-    public void delete(boolean markAsUnsave){
+    public void delete(boolean markAsUnsave, UType undoType){
         if(getPage() != null){
             if(equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
-            getPage().removeElement(this, markAsUnsave);
+            getPage().removeElement(this, markAsUnsave, undoType);
         }
     }
     
@@ -306,7 +308,7 @@ public abstract class Element extends Region{
         Element element = clone();
         element.setRealX((int) (getRealX() + (10 / getPage().getWidth() * GRID_WIDTH)));
         element.setRealY((int) (getRealY() + (10 / getPage().getHeight() * GRID_HEIGHT)));
-        element.getPage().addElement(element, true);
+        element.getPage().addElement(element, true, UType.UNDO);
         element.select();
     }
 }

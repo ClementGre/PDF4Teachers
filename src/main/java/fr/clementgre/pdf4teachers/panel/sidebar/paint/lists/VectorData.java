@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridCell;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
@@ -64,7 +65,7 @@ public class VectorData{
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, link ? this : null);
         
-        page.addElement(element, true);
+        page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         

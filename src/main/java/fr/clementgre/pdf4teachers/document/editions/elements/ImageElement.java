@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -143,7 +144,7 @@ public class ImageElement extends GraphicElement{
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         ImageElement element = readYAMLDataAndGive(data, true, page);
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
     }
     
     public static ImageElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){

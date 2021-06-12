@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -193,7 +194,7 @@ public class PDFPagesEditor{
                         grade.setValue(-1);
                         grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
                     }else{
-                        page.getElements().get(0).delete(true);
+                        page.getElements().get(0).delete(true, UType.NO_UNDO);
                     }
                 }
                 Document document = MainWindow.mainScreen.document;

@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -371,7 +372,7 @@ public class VectorElement extends GraphicElement{
             drawer.quitEditMode(); // Element is not anymore selected so it will not be done automatically.
         }
         
-        if(getPath().isBlank()) delete(false);
+        if(getPath().isBlank()) delete(false, UType.NO_COUNT);
     }
     
     @Override
@@ -406,7 +407,7 @@ public class VectorElement extends GraphicElement{
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         VectorElement element = readYAMLDataAndGive(data, true, page);
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
     }
     
     public static VectorElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
@@ -456,7 +457,7 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }
-        if(path.isEmpty().get()) delete(true);
+        if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
         else requestFocus();
     }
     public boolean isEditMode(){

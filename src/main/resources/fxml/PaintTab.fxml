@@ -6,7 +6,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Spinner?>
 <?import fr.clementgre.pdf4teachers.components.SyncColorPicker?>
 <?import javafx.scene.control.ToggleGroup?>
@@ -16,6 +15,7 @@
 <?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
 <?import fr.clementgre.pdf4teachers.components.ScaledComboBox?>
 <?import fr.clementgre.pdf4teachers.components.NoArrowMenuButton?>
+<?import fr.clementgre.pdf4teachers.components.UndoTextField?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -53,7 +53,7 @@
         </HBox>
 
         <HBox spacing="2">
-            <TextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28" style="-right-button-visible: false;"/>
+            <UndoTextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28" style="-right-button-visible: false;"/>
             <Button fx:id="vectorUndoPath" prefHeight="28"/>
             <Button fx:id="browsePath" text="..." prefHeight="28"/>
         </HBox>

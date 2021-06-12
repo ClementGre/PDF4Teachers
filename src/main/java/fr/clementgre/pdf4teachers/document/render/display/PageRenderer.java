@@ -5,6 +5,8 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.CreateDeleteUndoAction;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
@@ -208,7 +210,7 @@ public class PageRenderer extends Pane{
                     placingElement.centerOnCoordinatesY();
                 }
                 
-                addElement(placingElement, true);
+                addElement(placingElement, true, UType.UNDO);
                 MainWindow.mainScreen.setSelected(placingElement);
                 placingElement.requestFocus();
                 placingElement.incrementUsesAndLastUse();
@@ -634,7 +636,7 @@ public class PageRenderer extends Pane{
         }
     }
     
-    public void addElement(Element element, boolean markAsUnsave){
+    public void addElement(Element element, boolean markAsUnsave, UType undoType){
         
         if(element != null){
             
@@ -645,10 +647,12 @@ public class PageRenderer extends Pane{
                 Edition.setUnsave("PageRenderer ElementAdded");
             }
             element.addedToDocument(markAsUnsave);
+    
+            MainWindow.mainScreen.registerNewAction(new CreateDeleteUndoAction(element, false, undoType));
         }
     }
     
-    public void removeElement(Element element, boolean markAsUnsave){
+    public void removeElement(Element element, boolean markAsUnsave, UType undoType){
         
         if(element != null){
             elements.remove(element);
@@ -656,6 +660,8 @@ public class PageRenderer extends Pane{
     
             if(markAsUnsave) Edition.setUnsave("PageRenderer ElementRemoved");
             element.removedFromDocument(markAsUnsave);
+    
+            MainWindow.mainScreen.registerNewAction(new CreateDeleteUndoAction(element, true, undoType));
         }
     }
     

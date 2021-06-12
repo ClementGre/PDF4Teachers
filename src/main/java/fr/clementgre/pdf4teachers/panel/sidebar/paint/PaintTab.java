@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
@@ -266,7 +267,7 @@ public class PaintTab extends SideTab{
                 ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
 
-                page.addElement(element, true);
+                page.addElement(element, true, UType.UNDO);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
             });
@@ -277,7 +278,7 @@ public class PaintTab extends SideTab{
             ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
 
-            page.addElement(element, true);
+            page.addElement(element, true, UType.UNDO);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
         });
@@ -304,7 +305,7 @@ public class PaintTab extends SideTab{
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false, 0);
     
-            page.addElement(element, true);
+            page.addElement(element, true, UType.UNDO);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
             element.setLinkedVectorData(VectorListPane.addLastVector(element));
@@ -377,7 +378,7 @@ public class PaintTab extends SideTab{
                 "", false, false, 0);
     
     
-        page.addElement(element, true);
+        page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         // Drawing elements are not added to previous elements by default
@@ -388,7 +389,7 @@ public class PaintTab extends SideTab{
     private void deleteSelected(){
         Element element = MainWindow.mainScreen.getSelected();
         if(element != null){
-            element.delete(true);
+            element.delete(true, UType.UNDO);
         }
     }
     
@@ -425,7 +426,7 @@ public class PaintTab extends SideTab{
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
                         parser.getPath(), false, false, 0);
         
-                page.addElement(element, true);
+                page.addElement(element, true, UType.UNDO);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
                 element.setLinkedVectorData(VectorListPane.addLastVector(element));

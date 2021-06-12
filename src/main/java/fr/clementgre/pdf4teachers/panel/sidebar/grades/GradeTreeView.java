@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -68,7 +69,7 @@ public class GradeTreeView extends TreeView<String>{
     // Clear elements in tree and in page
     public void clearElements(boolean regenerateRoot, boolean markAsUnsave){
         if(getRoot() != null){
-            getRootTreeItem().delete(true, markAsUnsave);
+            getRootTreeItem().delete(true, markAsUnsave, markAsUnsave ? UType.UNDO : UType.NO_UNDO);
         }
         if(regenerateRoot) generateRoot(false);
         else setRoot(null);
@@ -82,7 +83,7 @@ public class GradeTreeView extends TreeView<String>{
         
         if(element.getParentPath().isEmpty()){ // ROOT
             // If is root, we need to delete the old root.
-            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true, false);
+            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true, false, UType.NO_UNDO);
     
             GradeTreeItem item = element.toGradeTreeItem();
             item.setExpanded(true);
@@ -104,7 +105,7 @@ public class GradeTreeView extends TreeView<String>{
         if(element.getParentPath().isEmpty()){ // ROOT
             
             // Delete only if it wasn't already deleted (See comment above).
-            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave);
+            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.NO_UNDO);
             // Remove the item from its parent
             setRoot(null);
             
@@ -113,7 +114,7 @@ public class GradeTreeView extends TreeView<String>{
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
             // Delete only if it wasn't already deleted (See comment above).
-            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave);
+            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.NO_UNDO);
             
             // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();

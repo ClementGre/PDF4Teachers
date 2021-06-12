@@ -3,12 +3,15 @@ package fr.clementgre.pdf4teachers.panel.MainScreen;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.UndoEngine;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageZoneSelector;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UndoAction;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -599,5 +602,22 @@ public class MainScreen extends Pane{
             MainWindow.textTab.newBtn.fire();
             MainWindow.textTab.txtArea.setText(text);
         }
+    }
+    
+    public UndoEngine getUndoEngine(){
+        if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
+        return null;
+    }
+    public void registerNewAction(UndoAction action){
+        if(action.getUndoType() == UType.NO_UNDO) return;
+        if(getUndoEngine() != null){
+            getUndoEngine().registerNewAction(action);
+        }
+    }
+    public void undo(){
+        if(getUndoEngine() != null) getUndoEngine().undo();
+    }
+    public void redo(){
+        if(getUndoEngine() != null) getUndoEngine().redo();
     }
 }

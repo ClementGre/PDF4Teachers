@@ -1,12 +1,14 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.UndoTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -61,7 +63,7 @@ public class TextTab extends SideTab{
     private final ToggleButton boldBtn = new ToggleButton("");
     private final ToggleButton itBtn = new ToggleButton("");
     
-    public TextArea txtArea = new TextArea();
+    public TextArea txtArea = new UndoTextArea();
     
     private final HBox btnBox = new HBox();
     private final Button deleteBtn = new Button(TR.tr("actions.delete"));
@@ -165,7 +167,7 @@ public class TextTab extends SideTab{
                     current.fontProperty().unbind();
                     
                     if(((TextElement) oldElement).getText().isBlank()){
-                        oldElement.delete(true);
+                        oldElement.delete(true, UType.NO_COUNT);
                     }
                 }
             }
@@ -259,7 +261,7 @@ public class TextTab extends SideTab{
                     Element element = MainWindow.mainScreen.getSelected();
                     if(element != null){
                         MainWindow.mainScreen.setSelected(null);
-                        element.delete(true);
+                        element.delete(true, UType.UNDO);
                     }
                 }
             }else if(e.getCode() == KeyCode.TAB){
@@ -308,7 +310,7 @@ public class TextTab extends SideTab{
             TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                     true, txtArea.getText(), colorPicker.getValue(), getFont());
             
-            page.addElement(current, true);
+            page.addElement(current, true, UType.UNDO);
             current.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(current);
             isNew = true;
@@ -320,7 +322,7 @@ public class TextTab extends SideTab{
             AutoTipsManager.showByAction("newtextelement");
         });
         deleteBtn.setOnAction(e -> {
-            MainWindow.mainScreen.getSelected().delete(true);
+            MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
             MainWindow.mainScreen.setSelected(null);
         });
     }

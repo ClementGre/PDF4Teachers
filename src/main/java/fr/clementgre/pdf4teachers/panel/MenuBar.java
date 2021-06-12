@@ -117,17 +117,23 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     MenuItem tools6ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
             TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
     
-    MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
+    MenuItem tools8Undo = createMenuItem(TR.tr("actions.undo"), SVGPathIcons.UNDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.tools.undo.tooltip"), true, false, false);
+    
+    MenuItem tools9Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.tools.redo.tooltip"), true, false, false);
+    
+    MenuItem tools10FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
             TR.tr("menuBar.tools.fullScreenMode.tooltip"));
     
-    Menu tools9Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
+    Menu tools10Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
             TR.tr("menuBar.tools.debug.tooltip"), false);
     
-    MenuItem tools9Debug1OpenConsole = createMenuItem(TR.tr("menuBar.tools.debug.openPrintStream") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    MenuItem tools10Debug1OpenConsole = createMenuItem(TR.tr("menuBar.tools.debug.openPrintStream") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.tools.debug.openPrintStream.tooltip"), false, false, false);
-    MenuItem tools9Debug2OpenAppFolder = createMenuItem(TR.tr("menuBar.tools.debug.openDataFolder"), null, null,
+    MenuItem tools10Debug2OpenAppFolder = createMenuItem(TR.tr("menuBar.tools.debug.openDataFolder"), null, null,
             TR.tr("menuBar.tools.debug.openDataFolder.tooltip"), false, false, false);
-    MenuItem tools9Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
+    MenuItem tools10Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
             TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false);
     
     ////////// HELP //////////
@@ -164,9 +170,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools3AddPages.getItems().add(new MenuItem(""));
         tools6ExportImportEdition.getItems().addAll(tools6ExportEdition1All, tools6ExportEdition2Grades, tools6ImportEdition1All, tools6ImportEdition2Grades);
         tools5SameNameEditions.getItems().add(tools5SameNameEditionsNull);
-        tools9Debug.getItems().addAll(tools9Debug1OpenConsole, tools9Debug2OpenAppFolder, tools9Debug3OpenEditionFile);
+        tools10Debug.getItems().addAll(tools10Debug1OpenConsole, tools10Debug2OpenAppFolder, tools10Debug3OpenEditionFile);
         
-        tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition, new SeparatorMenuItem(), tools8FullScreen, new SeparatorMenuItem(), tools9Debug);
+        tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages,
+                new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition,
+                new SeparatorMenuItem(), tools10FullScreen,
+                new SeparatorMenuItem(), tools10Debug,
+                new SeparatorMenuItem(), tools8Undo, tools9Redo);
         
         
         ////////// HELP //////////
@@ -178,7 +188,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         NodeMenuItem.setupMenu(file);
         NodeMenuItem.setupMenu(tools);
         NodeMenuItem.setupMenu(tools6ExportImportEdition);
-        NodeMenuItem.setupMenu(tools9Debug);
+        NodeMenuItem.setupMenu(tools10Debug);
         NodeMenuItem.setupMenu(help);
         
         ////////// FILE //////////
@@ -334,13 +344,14 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools6ImportEdition1All.setOnAction((e) -> EditionExporter.showImportDialog(false));
         tools6ImportEdition2Grades.setOnAction((e) -> EditionExporter.showImportDialog(true));
         
-        tools8FullScreen.setOnAction((e) -> {
-            Main.window.setFullScreen(!Main.window.isFullScreen());
-        });
+        tools8Undo.setOnAction(e -> MainWindow.mainScreen.undo());
+        tools9Redo.setOnAction(e -> MainWindow.mainScreen.redo());
         
-        tools9Debug1OpenConsole.setOnAction((e) -> new LogWindow());
-        tools9Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
-        tools9Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
+        tools10FullScreen.setOnAction((e) -> Main.window.setFullScreen(!Main.window.isFullScreen()));
+        
+        tools10Debug1OpenConsole.setOnAction((e) -> new LogWindow());
+        tools10Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
+        tools10Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
     
         ////////// ABOUT / HELP //////////
         

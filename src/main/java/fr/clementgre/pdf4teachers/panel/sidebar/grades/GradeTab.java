@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -123,7 +124,7 @@ public class GradeTab extends SideTab{
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name, false);
         
-        page.addElement(current, true);
+        page.addElement(current, true, UType.UNDO);
         current.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(current);
         
@@ -139,7 +140,7 @@ public class GradeTab extends SideTab{
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, value, total, index, parentPath, name, false);
         
-        page.addElement(current, update);
+        page.addElement(current, update, UType.NO_UNDO);
         current.centerOnCoordinatesY();
         if(update) MainWindow.mainScreen.setSelected(current);
     

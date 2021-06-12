@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
@@ -99,7 +100,7 @@ public abstract class GraphicElement extends Element{
         
         setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
-                delete(true);
+                delete(true, UType.UNDO);
                 e.consume();
             }else if(this instanceof VectorElement element){
                 if(e.getCode() == KeyCode.ENTER){
@@ -568,7 +569,7 @@ public abstract class GraphicElement extends Element{
         menu.getItems().addAll(item1, item2, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete(true));
+        item1.setOnAction(e -> delete(true, UType.UNDO));
         item2.setOnAction(e -> cloneOnDocument());
     }
     

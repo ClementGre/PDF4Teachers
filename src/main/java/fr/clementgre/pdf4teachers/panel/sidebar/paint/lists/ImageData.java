@@ -6,6 +6,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridCell;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -39,7 +40,7 @@ public class ImageData extends ImageLambdaData{
         ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, imageId, linkedImage);
     
-        page.addElement(element, true);
+        page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         Main.window.requestFocus();

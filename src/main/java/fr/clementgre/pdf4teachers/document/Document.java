@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.document;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.UndoEngine;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
@@ -34,6 +35,7 @@ public class Document{
     public int totalPages;
     
     public PDFPagesRender pdfPagesRender;
+    private UndoEngine undoEngine;
 
     private boolean documentSaverNeedToStop = false;
     public void stopDocumentSaver(){
@@ -96,6 +98,7 @@ public class Document{
     public void loadEdition(){
         this.edition = new Edition(file, this);
         if(!documentSaver.isAlive()) documentSaver.start();
+        this.undoEngine = new UndoEngine();
     }
     public double getCurrentScrollValue(){
         return MainWindow.mainScreen.zoomOperator.vScrollBar.getValue();
@@ -129,8 +132,9 @@ public class Document{
             page.clearElements();
         }
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
-        MainWindow.gradeTab.treeView.clearElements(false, true);
+        MainWindow.gradeTab.treeView.clearElements(false, false);
         this.edition.load();
+        this.undoEngine = new UndoEngine();
     }
     
     public void close(){
@@ -139,6 +143,7 @@ public class Document{
             if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
+        this.undoEngine = null;
     }
     
     public boolean save(){
@@ -171,6 +176,13 @@ public class Document{
         
     }
     
+    public UndoEngine getUndoEngine(){
+        return undoEngine;
+    }
+    public boolean hasUndoEngine(){
+        return undoEngine != null;
+    }
+    
     public String getFileName(){
         return file.getName();
     }
@@ -192,7 +204,6 @@ public class Document{
     }
     
     // PageRenderer getter
-    
     
     public ArrayList<PageRenderer> getPages(){
         return pages;

@@ -7,6 +7,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
@@ -115,7 +116,7 @@ public class TextTreeItem extends TreeItem<String>{
             if(e.getButton().equals(MouseButton.PRIMARY)){
                 
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement && e.isShortcutDown()){
-                    oldElement.delete(true);
+                    oldElement.delete(true, UType.NO_COUNT);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
                     addToDocument(e.isShiftDown(), true);
@@ -167,7 +168,7 @@ public class TextTreeItem extends TreeItem<String>{
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
-                    oldElement.delete(true);
+                    oldElement.delete(true, UType.NO_COUNT);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
                 }else{
                     addToDocument(e.isShiftDown(), true);
@@ -412,7 +413,7 @@ public class TextTreeItem extends TreeItem<String>{
                 setup();
             }
             
-            page.addElement(realElement, true);
+            page.addElement(realElement, true, UType.UNDO);
             if(centerOnY) realElement.centerOnCoordinatesY();
             MainWindow.mainScreen.selectedProperty().setValue(realElement);
         }

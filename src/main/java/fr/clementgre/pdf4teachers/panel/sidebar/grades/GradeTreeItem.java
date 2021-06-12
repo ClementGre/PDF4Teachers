@@ -2,10 +2,12 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.UndoTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -20,8 +22,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -521,12 +522,12 @@ public class GradeTreeItem extends TreeItem<String>{
         return k >= 2;
     }
     
-    public void delete(boolean removePageElement, boolean markAsUnsave){
+    public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
         
-        if(hasSubGrade()) deleteChildren(removePageElement, markAsUnsave);
+        if(hasSubGrade()) deleteChildren(removePageElement, markAsUnsave, undoType);
         if(removePageElement){
-            getCore().delete(markAsUnsave);
+            getCore().delete(markAsUnsave, undoType);
         }
         
         // Unbinds to prevent leaks
@@ -551,9 +552,10 @@ public class GradeTreeItem extends TreeItem<String>{
         gradeField = null;
     }
     // This method delete add children of this TreeItem, including pageElements
-    public void deleteChildren(boolean removePageElement, boolean markAsUnsave){
+    public void deleteChildren(boolean removePageElement, boolean markAsUnsave, UType undoType){
+        undoType = undoType == UType.NO_UNDO ? UType.NO_UNDO : UType.NO_COUNT;
         while(hasSubGrade()){
-            ((GradeTreeItem) getChildren().get(0)).delete(removePageElement, markAsUnsave);
+            ((GradeTreeItem) getChildren().get(0)).delete(removePageElement, markAsUnsave, undoType);
         }
     }
     
@@ -566,7 +568,7 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public TextArea getField(FieldType type, boolean contextMenu){
         
-        TextArea field = new TextArea("😉😉😉");
+        TextArea field = new UndoTextArea("😉😉😉");
         
         field.setStyle("-fx-font-size: 13;");
         field.setMinHeight(29);

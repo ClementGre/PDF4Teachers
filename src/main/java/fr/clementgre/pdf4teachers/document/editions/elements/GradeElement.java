@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -125,7 +126,6 @@ public class GradeElement extends Element{
             }else{
                 if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
                     
-                    select();
                     if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
                     }
@@ -137,6 +137,7 @@ public class GradeElement extends Element{
                     }else{
                         setRealY(getPage().getNewElementYOnGrid());
                         centerOnCoordinatesY();
+                        select();
                     }
                 }
                 setVisible(true);
@@ -203,7 +204,7 @@ public class GradeElement extends Element{
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 MainWindow.gradeTab.treeView.clearElements(true, true);
-            }else delete(true);
+            }else delete(true, UType.UNDO);
         });
         item4.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -245,9 +246,9 @@ public class GradeElement extends Element{
     }
     
     @Override
-    public void delete(boolean markAsUnsave){
+    public void delete(boolean markAsUnsave, UType undoType){
         if(getPage() != null){
-            getPage().removeElement(this, markAsUnsave);
+            getPage().removeElement(this, markAsUnsave, undoType);
         }
     }
     
@@ -311,7 +312,7 @@ public class GradeElement extends Element{
         GradeElement element = readYAMLDataAndGive(data, true, upscaleGrid);
 
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
     }
     
     

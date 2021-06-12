@@ -4,6 +4,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -104,7 +105,7 @@ public class TextElement extends Element{
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete(true));
+        item1.setOnAction(e -> delete(true, UType.UNDO));
         item2.setOnAction(e -> cloneOnDocument());
         item3.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true)));
         item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));
@@ -158,7 +159,7 @@ public class TextElement extends Element{
         TextElement element = readYAMLDataAndGive(data, true, page, upscaleGrid);
         
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
-            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false);
+            MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
     }
     
     public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page, boolean upscaleGrid){
