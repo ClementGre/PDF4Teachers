@@ -16,7 +16,7 @@
   <a href="https://pdf4teachers.org">https://pdf4teachers.org</a>
 </h3>
 <p align="center">
-  <a href="#presentation-en">Presentation</a> | <a href="#the-dependencies">The dependencies</a> | <a href="https://github.com/ClementGre/PDF4Teachers/tree/master/src/main/java/fr/clementgre/pdf4teachers">Code organization</a><br/>
+  <a href="#presentation-en">Presentation</a> | <a href="#the-dependencies-130">The dependencies</a> | <a href="https://github.com/ClementGre/PDF4Teachers/tree/master/src/main/java/fr/clementgre/pdf4teachers">Code organization</a><br/>
   PDF editing software in large quantities designed for teachers.<br/><br/>
   <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/images/banner-flat.png" alt="Logo" width="690"/><br/>
 </p>
@@ -69,14 +69,17 @@ PDF4Teachers est conforme au RGPD de l'Union européenne : toutes les éditions 
 The application was developed with JavaFX framework, with Java SE 16 (1.3.0). The version 1.2.1 uses Java 15 (and 14 on Windows).
 
 ### Java dependencies
-- **[JavaFx 15](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
-- **[Apache PDF BOX 2.0.22](https://pdfbox.apache.org/)** : used to all the interactions with PDF : it generates images from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, **Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.
-- **[JMetro 11.6.14](https://pixelduke.com/java-javafx-theme-jmetro/)** : JavaFX theme. It offers you a nicer interface, including the dark mode.
+- **[JavaFx 16](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
+- **[Apache PDF BOX 2.0.24](https://pdfbox.apache.org/)** : used to all the interactions with PDF : it generates images from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, **Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.
+- **[JMetro 11.6.15](https://pixelduke.com/java-javafx-theme-jmetro/)** : JavaFX theme. It offers you a nicer interface, including the dark mode.
 - **[ControlsFX 11.1.0](https://controlsfx.github.io/)** : JavaFX new inputs and custom panes
 - **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (LaTeX text elements feature in 1.2.0)
-- **[SnakeYAML 1.28](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
-- **[Jackson Streaming API 2.12.2](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to send requests to GitHub to check if a new release is available.
-- **[Metadata-Extractor](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so PDF4Teachers can take in account the rotation of images
+- **[SnakeYAML 1.29](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
+- **[Jackson Streaming API 2.12.3](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to send requests to GitHub to check if a new release is available.
+- **[Metadata-Extractor 2.16.0](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so PDF4Teachers can take in account the rotation of images
+- **[Batik Parser 1.14](https://xmlgraphics.apache.org/batik/using/parsers.html)** : Allow me to parse SVG easily, with custom handlers.
+- **[PdfBox Graphics2D 0.29](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
+
 
 ### Gradle plugins
 The dependencies of the application are managed by [Gradle](https://gradle.org/) 7 (rc-2), therefore, you can execute ``./gradlew run`` (bash) or ``gradlew.bat run`` (batch) in a command prompt to run the application using only the downloaded code, and the Java JDK 16 (should be in the environment variable ``JAVA_HOME``). Gradle is using some plugins to manage dependencies :

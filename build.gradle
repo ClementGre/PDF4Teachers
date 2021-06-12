@@ -1,9 +1,9 @@
 plugins {
     id 'application'
-    id 'org.beryx.jlink' version '2.23.6'
+    id 'org.beryx.jlink' version '2.24.0'
     id 'idea'
     id 'com.dua3.javafxgradle7plugin' version '0.0.9'
-    id "de.jjohannes.extra-java-module-info" version "0.6"
+    id "de.jjohannes.extra-java-module-info" version "0.8"
 }
 repositories{
     mavenCentral()
@@ -19,7 +19,7 @@ extraJavaModuleInfo {
 
     automaticModule("xmpcore-6.0.6.jar", "xmpcore")
 
-    automaticModule("metadata-extractor-2.15.0.jar", "metadata.extractor")
+    automaticModule("metadata-extractor-2.16.0.jar", "metadata.extractor")
 
     automaticModule("commons-logging-1.2.jar", "commons.logging")
 
@@ -27,20 +27,16 @@ extraJavaModuleInfo {
     automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
 
     automaticModule("batik-parser-1.14.jar", "batik.parser")
-    automaticModule("graphics2d-0.23.jar", "de.rototor.graphics2d")
 }
 
 dependencies{
 
     // JAVA FX //
-    implementation (group: 'org.jfxtras', name: 'jmetro', version: '11.6.14'){
+    implementation (group: 'org.jfxtras', name: 'jmetro', version: '11.6.15'){
         exclude group: 'org.openjfx'
     }
     // ControlsFX
     implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.0'
-
-    // PDF BOX
-
 
     // Support special images format when render a PDF
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
@@ -51,12 +47,12 @@ dependencies{
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
     // Image IO - EXIF
-    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.15.0';
+    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0';
 
     // JSON requests
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.2'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.3'
     // YAML
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.28'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
 
@@ -67,9 +63,10 @@ dependencies{
 
     // SVG
     implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
-    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.23'
+    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.29'
 
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.23'
+    // PDF Box
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
 
 }
 
