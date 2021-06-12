@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 
 public class CreateDeleteUndoAction extends UndoAction{
@@ -10,11 +11,13 @@ public class CreateDeleteUndoAction extends UndoAction{
     // No weak references, otherwise, deleted elements would be loss
     private final Element element;
     private boolean deleted;
+    private final boolean originallyDeteted;
     
     public CreateDeleteUndoAction(Element element, boolean deleted, UType undoType){
         super(undoType);
         this.element = element;
         this.deleted = deleted;
+        this.originallyDeteted = deleted;
     }
     
     @Override
@@ -57,6 +60,15 @@ public class CreateDeleteUndoAction extends UndoAction{
             }
         }
         element.select();
+        
+    }
+    
+    public String toString(){
+        if(originallyDeteted){
+            return TR.tr("actions.delete") + " " + element.getElementName(false);
+        }else{
+            return TR.tr("actions.create") + " " + element.getElementName(false);
+        }
         
     }
     

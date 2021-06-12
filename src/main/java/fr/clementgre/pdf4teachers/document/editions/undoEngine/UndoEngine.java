@@ -40,6 +40,19 @@ public class UndoEngine{
         }
     }
     
+    public String getUndoNextName(){
+        if(undoList.size() > 0){
+            return undoList.get(0).toString();
+        }
+        return null;
+    }
+    public String getRedoNextName(){
+        if(redoList.size() > 0){
+            return redoList.get(0).toString();
+        }
+        return null;
+    }
+    
     private void checkUndoStackLength(){
         if(undoList.size() > MAX_STACK_LENGTH){
             undoList.clear();

@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 
 public class ResizeUndoAction extends MoveUndoAction{
     
@@ -32,5 +33,11 @@ public class ResizeUndoAction extends MoveUndoAction{
             return true;
         }
         return false;
+    }
+    
+    public String toString(){
+        if(element.get() == null) return null;
+        
+        return TR.tr("actions.resize") + " " + element.get().getElementName(false);
     }
 }

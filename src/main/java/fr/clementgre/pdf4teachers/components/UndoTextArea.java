@@ -2,6 +2,7 @@ package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.NonLeakingEventHandler;
+import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
@@ -15,10 +16,12 @@ public class UndoTextArea extends TextArea{
     public static final KeyCombination keyCombRedo = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
     
     public UndoTextArea(){
+        setOnContextMenuRequested(Event::consume);
         setupAntiCtrlZFilter(this);
     }
     public UndoTextArea(String text){
         super(text);
+        setOnContextMenuRequested(Event::consume);
         setupAntiCtrlZFilter(this);
     }
     

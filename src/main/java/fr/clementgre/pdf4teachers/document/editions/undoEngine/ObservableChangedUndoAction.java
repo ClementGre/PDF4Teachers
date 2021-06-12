@@ -28,4 +28,9 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
         }
         return false;
     }
+    
+    @Override
+    public String toString(){
+        return "d";
+    }
 }

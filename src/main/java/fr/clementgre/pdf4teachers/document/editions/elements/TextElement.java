@@ -318,6 +318,15 @@ public class TextElement extends Element{
     
     // ELEMENT DATA GETTERS AND SETTERS
     
+    @Override
+    public String getElementName(boolean plural){
+        return getElementNameStatic(plural);
+    }
+    public static String getElementNameStatic(boolean plural){
+        if(plural) return TR.tr("elements.name.texts");
+        else return TR.tr("elements.name.texts");
+    }
+    
     public String getText(){
         return text.getText();
     }

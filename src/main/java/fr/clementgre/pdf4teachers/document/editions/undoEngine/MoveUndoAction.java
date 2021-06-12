@@ -1,6 +1,7 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 
 import java.lang.ref.WeakReference;
 
@@ -43,4 +44,11 @@ public class MoveUndoAction extends UndoAction{
         
         return false;
     }
+    
+    public String toString(){
+        if(element.get() == null) return null;
+    
+        return TR.tr("actions.move") + " " + element.get().getElementName(false);
+    }
+    
 }

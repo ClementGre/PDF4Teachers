@@ -10,4 +10,9 @@ public class SymbolicUndoAction extends UndoAction{
     public boolean undoAndInvert(){
         return true;
     }
+    
+    @Override
+    public String toString(){
+        return null;
+    }
 }

@@ -2,6 +2,8 @@ package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -11,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
+
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class NodeMenuItem extends CustomMenuItem{
@@ -85,6 +88,7 @@ public class NodeMenuItem extends CustomMenuItem{
     public void setName(String text){
         if(text != null && !text.isEmpty()){
             Label textLabel = new Label(text);
+            textLabel.setWrapText(true);
             textLabel.setStyle("-fx-font-size: 13; -fx-padding: 0 5 0 0;"); // top - right - bottom - left
             getNode().getChildren().set(2, textLabel);
         }
@@ -116,24 +120,44 @@ public class NodeMenuItem extends CustomMenuItem{
     public static void setupMenu(Menu menu){
         
         AtomicBoolean firstRun = new AtomicBoolean(true);
-        menu.setOnShown(e -> {
-            if(firstRun.get()){
-                setupMenuNow(menu);
-                firstRun.set(false);
+        menu.addEventHandler(Menu.ON_SHOWN, new EventHandler<>(){
+            @Override
+            public void handle(Event event){
+                
+                if(firstRun.get()){
+                    setupMenuNow(menu);
+                    firstRun.set(false);
+                    menu.removeEventHandler(Menu.ON_SHOWN, this);
+                }
+                
             }
+        });
+    }
+    // Menu will be re-setup everytime it is shown
+    public static void setupDynamicMenu(Menu menu){
+        menu.addEventHandler(Menu.ON_SHOWING, (e) -> {
+            // reset
+            for(MenuItem item : menu.getItems()){
+                if(item instanceof NodeMenuItem nodeItem){
+                    nodeItem.getNode().setPrefWidth(-1);
+                }
+            }
+        });
+        menu.addEventHandler(Menu.ON_SHOWN, e -> {
+            setupMenuNow(menu);
         });
     }
     public static void setupMenuNow(Menu menu){
         
-        double maxWidth = 0;
+        double itemMaxWidth = 0;
+        double menuMaxWidth = 0;
         int extra = 0;
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                if(nodeItem.getNode().getWidth() > maxWidth)
-                    maxWidth = nodeItem.getNode().getWidth();
+                if(nodeItem.getNode().getWidth() > itemMaxWidth)
+                    itemMaxWidth = nodeItem.getNode().getWidth();
             }else if(item instanceof Menu){
-                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
-                
+    
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
                     if(arrow instanceof Region region){
@@ -141,11 +165,23 @@ public class NodeMenuItem extends CustomMenuItem{
                         region.setScaleY(Main.settings.zoom.getValue());
                     }
                 }
+    
+                if(item instanceof NodeMenu nodeItem){
+                    if(nodeItem.getNode().getWidth() > menuMaxWidth)
+                        menuMaxWidth = nodeItem.getNode().getWidth();
+                    extra = (int) (50*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                }else{
+                    extra = (int) (25*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                }
+                
             }
         }
+        double width = Math.max(itemMaxWidth, menuMaxWidth+extra);
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                nodeItem.getNode().setPrefWidth((maxWidth + extra));
+                nodeItem.getNode().setPrefWidth(width);
+            }else if(item instanceof NodeMenu nodeItem){
+                nodeItem.getNode().setPrefWidth(width - extra);
             }
         }
     }

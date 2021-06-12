@@ -543,6 +543,15 @@ public class VectorElement extends GraphicElement{
     // GETTER / SETTER
     
     
+    @Override
+    public String getElementName(boolean plural){
+        return getElementNameStatic(plural);
+    }
+    public static String getElementNameStatic(boolean plural){
+        if(plural) return TR.tr("elements.name.vectors");
+        else return TR.tr("elements.name.vector");
+    }
+    
     public SVGPath getSvgPath(){
         return svgPath;
     }

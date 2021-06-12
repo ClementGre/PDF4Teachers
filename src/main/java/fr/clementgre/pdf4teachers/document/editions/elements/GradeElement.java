@@ -372,6 +372,15 @@ public class GradeElement extends Element{
     
     // ELEMENT DATA GETTERS AND SETTERS
     
+    @Override
+    public String getElementName(boolean plural){
+        return getElementNameStatic(plural);
+    }
+    public static String getElementNameStatic(boolean plural){
+        if(plural) return TR.tr("elements.name.grades");
+        else return TR.tr("elements.name.grade");
+    }
+    
     public String getName(){
         return name.get();
     }

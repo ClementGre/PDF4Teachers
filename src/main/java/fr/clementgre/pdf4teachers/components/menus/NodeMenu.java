@@ -68,6 +68,10 @@ public class NodeMenu extends Menu{
         Tooltip.install(root, toolTipUI);
     }
     
+    public HBox getNode(){
+        return node;
+    }
+    
     public void hideAll(){
         hideParent(this);
     }

@@ -259,6 +259,7 @@ public abstract class Element extends Region{
     
     // GETTERS AND SETTERS
     
+    public abstract String getElementName(boolean plural);
     public abstract float getAlwaysHeight();
     
     public int getRealHeight(){

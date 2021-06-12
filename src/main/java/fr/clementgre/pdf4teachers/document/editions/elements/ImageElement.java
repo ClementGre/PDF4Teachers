@@ -260,6 +260,15 @@ public class ImageElement extends GraphicElement{
     
     // GETTER/SETTER
     
+    @Override
+    public String getElementName(boolean plural){
+        return getElementNameStatic(plural);
+    }
+    public static String getElementNameStatic(boolean plural){
+        if(plural) return TR.tr("elements.name.images");
+        else return TR.tr("elements.name.image");
+    }
+    
     public String getImageId(){
         return imageId.get();
     }

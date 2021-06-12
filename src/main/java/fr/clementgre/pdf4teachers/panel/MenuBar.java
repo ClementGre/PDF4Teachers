@@ -12,9 +12,9 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageEditPane;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -24,27 +24,27 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("serial")
@@ -243,6 +243,23 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         ////////// TOOLS //////////
         
+        tools.addEventHandler(Menu.ON_SHOWING, (e) -> {
+            String nextUndo = null;
+            String nextRedo = null;
+            if(MainWindow.mainScreen.getUndoEngine() != null){
+                nextUndo = MainWindow.mainScreen.getUndoEngine().getUndoNextName();
+                nextRedo = MainWindow.mainScreen.getUndoEngine().getRedoNextName();
+            }
+            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
+            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
+    
+            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
+            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
+            
+            if(tools8Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
+            if(tools9Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
+        });
+        
         tools1Convert.setOnAction(e -> {
             new ConvertDocument();
         });
@@ -411,6 +428,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         }else{
             settings.setOnClick(e -> new SettingsWindow());
             about.setOnClick(e -> Main.showAboutWindow());
+    
+            // tools is edited dynamic
+            NodeMenuItem.setupDynamicMenu(tools);
             
             getMenus().addAll(file, tools, help, settings, about);
     
