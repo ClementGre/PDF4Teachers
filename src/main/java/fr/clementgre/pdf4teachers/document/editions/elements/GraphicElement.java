@@ -1,17 +1,17 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -23,6 +23,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+
 import java.util.LinkedHashMap;
 
 public abstract class GraphicElement extends Element{
@@ -132,6 +133,7 @@ public abstract class GraphicElement extends Element{
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
     
+            dragAlreadyDetected = false;
             selectedWhenClicked = isSelected();
             requestFocus();
             
@@ -153,15 +155,25 @@ public abstract class GraphicElement extends Element{
         
         setOnMouseDragged(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
-    
+            
             // Vector element can't be moved/resized directly after being selected (Security for hand made drawings)
             if(this instanceof VectorElement && !selectedWhenClicked) return;
             
             if(dragType == PlatformUtils.CURSOR_MOVE){
+                if(!dragAlreadyDetected){ // UNDO system
+                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
+                    dragAlreadyDetected = true;
+                }
+                
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
             }else{
+                if(!dragAlreadyDetected){ // UNDO system
+                    MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.UNDO, this));
+                    dragAlreadyDetected = true;
+                }
+                
                 simulateDragToResize(e.getX(), e.getY(), e.isShiftDown());
             }
         });

@@ -17,7 +17,7 @@ public class NonLeakingListener<L, T> implements ChangeListener<L>{
     @Override
     public void changed(ObservableValue<? extends L> observable, L oldValue, L newValue){
         if(element.get() != null) {
-            onChanged.call(new ChangeEvent<L, T>(observable, oldValue, newValue, element.get()));
+            onChanged.call(new ChangeEvent<>(observable, oldValue, newValue, element.get()));
         }
     }
     

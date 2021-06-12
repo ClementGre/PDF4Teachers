@@ -1,8 +1,8 @@
-package fr.clementgre.pdf4teachers.document.render.undoEngine;
+package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 public abstract class UndoAction{
     
-    private UType undoType;
+    private final UType undoType;
     
     public UndoAction(UType undoType){
         this.undoType = undoType;

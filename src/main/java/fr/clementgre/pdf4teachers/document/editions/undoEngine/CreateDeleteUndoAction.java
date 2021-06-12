@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.document.render.undoEngine;
+package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -8,7 +8,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 public class CreateDeleteUndoAction extends UndoAction{
     
     // No weak references, otherwise, deleted elements would be loss
-    private Element element;
+    private final Element element;
     private boolean deleted;
     
     public CreateDeleteUndoAction(Element element, boolean deleted, UType undoType){
@@ -21,10 +21,8 @@ public class CreateDeleteUndoAction extends UndoAction{
     public boolean undoAndInvert(){
         if(element != null){
             if(deleted){
-                System.out.println("Undo: restore " + element.getClass().getSimpleName());
                 restoreElement(element);
             }else{
-                System.out.println("Undo: delete " + element.getClass().getSimpleName());
                 element.delete(true, UType.NO_UNDO);
             }
             

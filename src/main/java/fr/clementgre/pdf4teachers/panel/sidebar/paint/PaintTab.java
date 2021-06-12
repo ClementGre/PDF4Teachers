@@ -3,10 +3,12 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
-import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
@@ -15,16 +17,19 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
+import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.DoubleInputAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PressAndHoldManager;
 import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
-import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -439,11 +444,7 @@ public class PaintTab extends SideTab{
     }
     
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
-        if(newValue.intValue() == MainScreen.Status.OPEN){
-            setAllDisable(false);
-        }else{
-            setAllDisable(true);
-        }
+        setAllDisable(newValue.intValue() != MainScreen.Status.OPEN);
     }
     public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
         // Old element

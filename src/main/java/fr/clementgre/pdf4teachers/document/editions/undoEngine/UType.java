@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.document.render.undoEngine;
+package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 public enum UType{
     // This action will be placed in the undo stack

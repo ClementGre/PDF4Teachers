@@ -1,21 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.control.Button?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.control.Spinner?>
-<?import fr.clementgre.pdf4teachers.components.SyncColorPicker?>
-<?import javafx.scene.control.ToggleGroup?>
-
-<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
+<?import fr.clementgre.pdf4teachers.components.*?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
-<?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
-<?import fr.clementgre.pdf4teachers.components.ScaledComboBox?>
-<?import fr.clementgre.pdf4teachers.components.NoArrowMenuButton?>
-<?import fr.clementgre.pdf4teachers.components.UndoTextField?>
+<?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <VBox xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
       fx:controller="fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab"
@@ -141,11 +131,11 @@
         <VectorListPane fx:id="favouriteVectors" type="0">
         </VectorListPane>
 
-        <ImageListPane fx:id="favouriteImages" type="1">
-        </ImageListPane>
-
         <VectorListPane fx:id="lastVectors" type="2">
         </VectorListPane>
+
+        <ImageListPane fx:id="favouriteImages" type="1">
+        </ImageListPane>
 
         <ImageListPane fx:id="gallery" type="3">
         </ImageListPane>

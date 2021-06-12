@@ -1,9 +1,8 @@
-package fr.clementgre.pdf4teachers.document.render.undoEngine;
+package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import javafx.beans.property.Property;
 
 import java.lang.ref.WeakReference;
-import java.util.Objects;
 
 public class ObservableChangedUndoAction<T> extends UndoAction{
     

@@ -1,4 +1,4 @@
-package fr.clementgre.pdf4teachers.document.render.undoEngine;
+package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 public class SymbolicUndoAction extends UndoAction{
     

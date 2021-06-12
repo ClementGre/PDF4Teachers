@@ -1,19 +1,15 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.CreateDeleteUndoAction;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseButton;
@@ -58,6 +54,7 @@ public abstract class Element extends Region{
         else if(oldElement != this && newElement == this) onSelected();
     };
     
+    boolean dragAlreadyDetected = false;
     protected void setupGeneral(boolean setupEvents, Node... components){
         if(components != null) getChildren().setAll(components);
         
@@ -77,6 +74,7 @@ public abstract class Element extends Region{
                 wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
                 if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
+                dragAlreadyDetected = false;
     
                 if(e.getClickCount() == 1){
                     lastClickSelected.set(MainWindow.mainScreen.getSelected() == this);
@@ -104,6 +102,12 @@ public abstract class Element extends Region{
             });
             setOnMouseDragged(e -> {
                 if(wasInEditPagesModeWhenMousePressed) return;
+                
+                if(!dragAlreadyDetected){
+                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
+                    dragAlreadyDetected = true;
+                }
+                
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
                 checkLocation(itemX, itemY, true);
@@ -111,6 +115,7 @@ public abstract class Element extends Region{
             setOnMouseReleased(e -> {
                 if(wasInEditPagesModeWhenMousePressed) return;
                 Edition.setUnsave("ElementMouseRelease");
+                
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
 

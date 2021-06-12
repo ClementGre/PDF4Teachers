@@ -2,8 +2,8 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -97,24 +97,23 @@ public class GradeTreeView extends TreeView<String>{
         }
     }
     
-    // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> GradeTreeView (We cut here with the isDeleted())
-    // When the deletion start from a GradeElement : GradeElement --> GradeTreeView --> GradeTreeItem (We cut here with the removePageElement arg)
+    // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> THIS (We cut here with the isDeleted())
+    // When the deletion start from a GradeElement : GradeElement --> THIS --> GradeTreeItem (We cut here with the removePageElement arg)
     // GradeElement must always be before this in the stack. That's why this method is only called by GradeElement
     public void removeElement(GradeElement element, boolean markAsUnsave){
         
         if(element.getParentPath().isEmpty()){ // ROOT
             
             // Delete only if it wasn't already deleted (See comment above).
-            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.NO_UNDO);
+            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.UNDO);
             // Remove the item from its parent
             setRoot(null);
             
         }else{ // CHILD
-            System.out.println("remove " + element.getName());
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
             // Delete only if it wasn't already deleted (See comment above).
-            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.NO_UNDO);
+            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.UNDO);
             
             // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();

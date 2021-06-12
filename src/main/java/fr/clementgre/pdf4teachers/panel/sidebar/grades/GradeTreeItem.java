@@ -2,19 +2,19 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.components.UndoTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
-import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.document.render.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -22,7 +22,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -244,6 +245,14 @@ public class GradeTreeItem extends TreeItem<String>{
                 }
             });
         }
+        
+        menu.setOnHiding((e) -> {
+            name.textProperty().unbind();
+            value.textProperty().unbind();
+            total.textProperty().unbind();
+            pane.setOnMouseEntered(null);
+            pane.setOnMouseClicked(null);
+        });
         
         return menuItem;
     }
@@ -524,10 +533,8 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
-        System.out.println("Delete one children");
-        if(hasSubGrade()) deleteChildren(removePageElement, markAsUnsave, undoType);
+        if(hasSubGrade()) deleteChildren(markAsUnsave, undoType);
         if(removePageElement){
-            System.out.println("delete core");
             getCore().delete(markAsUnsave, undoType);
         }
         
@@ -553,10 +560,11 @@ public class GradeTreeItem extends TreeItem<String>{
         gradeField = null;
     }
     // This method delete add children of this TreeItem, including pageElements
-    public void deleteChildren(boolean removePageElement, boolean markAsUnsave, UType undoType){
-        undoType = undoType == UType.NO_UNDO ? UType.NO_UNDO : UType.NO_COUNT;
+    public void deleteChildren(boolean markAsUnsave, UType undoType){
+        undoType = (undoType == UType.NO_UNDO) ? UType.NO_UNDO : UType.NO_COUNT;
         while(hasSubGrade()){
-            ((GradeTreeItem) getChildren().get(0)).delete(removePageElement, markAsUnsave, undoType);
+            // Since we start the delete from here, the children have to has removePageElement = true.
+            ((GradeTreeItem) getChildren().get(0)).delete(true, markAsUnsave, undoType);
         }
     }
     
