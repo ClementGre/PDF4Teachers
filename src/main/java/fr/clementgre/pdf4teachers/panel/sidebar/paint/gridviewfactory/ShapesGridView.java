@@ -21,12 +21,21 @@ import java.util.concurrent.Executors;
 
 public abstract class ShapesGridView<T> extends GridView<T>{
     
-    public static final String SORT_USE = TR.tr("sorting.sortType.use");
-    public static final String SORT_LAST_USE = TR.tr("sorting.sortType.lastUseDate");
-    public static final String SORT_FILE_EDIT_TIME = TR.tr("sorting.sortType.fileEditTime");
-    public static final String SORT_NAME = TR.tr("sorting.sortType.name");
-    public static final String SORT_FOLDER = TR.tr("sorting.sortType.folder");
-    public static final String SORT_SIZE = TR.tr("sorting.sortType.fileSize");
+    public static String SORT_USE;
+    public static String SORT_LAST_USE;
+    public static String SORT_FILE_EDIT_TIME;
+    public static String SORT_NAME;
+    public static String SORT_FOLDER;
+    public static String SORT_SIZE;
+    
+    public static void setupTranslations(){
+        SORT_USE = TR.tr("sorting.sortType.use");
+        SORT_LAST_USE = TR.tr("sorting.sortType.lastUseDate");
+        SORT_FILE_EDIT_TIME = TR.tr("sorting.sortType.fileEditTime");
+        SORT_NAME = TR.tr("sorting.sortType.name");
+        SORT_FOLDER = TR.tr("sorting.sortType.folder");
+        SORT_SIZE = TR.tr("sorting.sortType.fileSize");
+    }
     
     private final ExecutorService executor = Executors.newFixedThreadPool(10);
     

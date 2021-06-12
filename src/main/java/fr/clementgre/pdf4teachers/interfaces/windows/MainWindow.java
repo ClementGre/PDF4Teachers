@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.files.FileTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -134,7 +135,8 @@ public class MainWindow extends Stage{
     }
     
     public void setup(boolean openDocumentation){
-        
+    
+        ShapesGridView.setupTranslations();
         ConvertWindow.setupTranslations();
         
         //		SETUPS
@@ -240,6 +242,7 @@ public class MainWindow extends Stage{
                 && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
         
         if(MainWindow.mainScreen.closeFile(true)){
+            if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
             Main.params = new ArrayList<>();
             TR.updateLocale();
             close();
