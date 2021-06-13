@@ -23,13 +23,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.geometry.VPos;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -37,6 +37,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -195,7 +196,30 @@ public class TextTreeItem extends TreeItem<String>{
             }
         });
         
+        pane.setOnDragDetected(e -> {
+            Dragboard dragboard = pane.startDragAndDrop(TransferMode.COPY);
+            Image snapshot = snapshot();
+            dragboard.setDragView(snapshot, 0, snapshot.getHeight()/2);
+    
+            ClipboardContent clipboardContent = new ClipboardContent();
+            clipboardContent.put(Main.INTERNAL_FORMAT, TextTab.TEXT_TREE_ITEM_DRAG_KEY);
+            dragboard.setContent(clipboardContent);
+    
+            TextTab.draggingItem = this;
+            e.consume();
+        });
+        
         updateIcon();
+    }
+    public Image snapshot(){
+        SnapshotParameters sn = new SnapshotParameters();
+        sn.setFill(Color.TRANSPARENT);
+        Text text = new ScratchText(getText());
+        text.setFill(color.get());
+        text.setFont(FontUtils.getFont(getFont().getFamily(),
+                FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC,
+                FontUtils.getFontWeight(getFont()) == FontWeight.BOLD, name.getFont().getSize() * Main.settings.zoom.getValue()));
+        return text.snapshot(sn, null);
     }
     public void onSelected(){
         pane.requestFocus();
@@ -371,7 +395,7 @@ public class TextTreeItem extends TreeItem<String>{
         
     }
     
-    public void addToDocument(boolean link, PageRenderer page, int x, int y, boolean centerOnY){
+    public TextElement addToDocument(boolean link, PageRenderer page, int x, int y, boolean centerOnY){
         
         if(MainWindow.mainScreen.hasDocument(false)){
             uses++;
@@ -392,7 +416,9 @@ public class TextTreeItem extends TreeItem<String>{
             page.addElement(realElement, true, UType.UNDO);
             if(centerOnY) realElement.centerOnCoordinatesY();
             MainWindow.mainScreen.selectedProperty().setValue(realElement);
+            return realElement;
         }
+        return null;
         
     }
     

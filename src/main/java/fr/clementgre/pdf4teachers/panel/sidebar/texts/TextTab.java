@@ -69,6 +69,10 @@ public class TextTab extends SideTab{
     private final Button deleteBtn = new Button(TR.tr("actions.delete"));
     public Button newBtn = new Button(TR.tr("actions.new"));
     
+    public static final String TEXT_TREE_ITEM_DRAG_KEY = "TextTreeItemDrag";
+    public static TextTreeItem draggingItem = null;
+    public static TextElement draggingElement = null;
+    
     // FIELDS
     
     public boolean isNew = false;
@@ -83,6 +87,8 @@ public class TextTab extends SideTab{
     public TextTab(){
         super("text", SVGPathIcons.TEXT_LETTER, 0, 28, new int[]{460, 500});
         
+        draggingItem = null;
+        draggingElement = null;
         setContent(pane);
         setup();
         

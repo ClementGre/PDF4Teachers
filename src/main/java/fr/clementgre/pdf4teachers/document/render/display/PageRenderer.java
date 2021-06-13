@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
+import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -34,8 +35,10 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.RotateEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -163,6 +166,60 @@ public class PageRenderer extends Pane{
                 }
             }
             
+        });
+    
+        //////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////// DRAG'N DROP ///////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////
+        
+        setOnDragEntered(e -> {
+            final Dragboard dragboard = e.getDragboard();
+            if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag TextElement
+                if(TextTab.draggingItem != null){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+                    
+                    if(TextTab.draggingElement == null){ // Add to document
+                        TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
+                    }else{
+                        TextTab.draggingElement.checkLocation(e.getX(), e.getY(), false);
+                    }
+                }
+            }
+        });
+        setOnDragOver(e -> {
+            final Dragboard dragboard = e.getDragboard();
+            if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag TextElement
+                if(TextTab.draggingItem != null){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+            
+                    if(TextTab.draggingElement != null){ // Move element
+                        TextTab.draggingElement.checkLocation(e.getX(), e.getY() - TextTab.draggingElement.getHeight()/2, false);
+                    }
+                }
+            }
+        });
+        setOnDragExited(e -> {
+            final Dragboard dragboard = e.getDragboard();
+            if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag TextElement
+                if(TextTab.draggingItem != null){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+            
+                    if(TextTab.draggingElement != null){ // Remove from document
+                        TextTab.draggingElement.delete(false, UType.NO_UNDO);
+                        TextTab.draggingElement = null;
+                    }
+                }
+            }
+        });
+        setOnDragDropped(e -> {
+            final Dragboard dragboard = e.getDragboard();
+            if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
+                TextTab.draggingItem = null;
+                TextTab.draggingElement = null;
+            }
         });
     
         //////////////////////////////////////////////////////////////////////////////////////////
