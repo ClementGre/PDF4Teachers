@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
@@ -633,6 +634,9 @@ public class MainScreen extends Pane{
         if(hasDocument(false)){
             MainWindow.textTab.newBtn.fire();
             MainWindow.textTab.txtArea.setText(text);
+            if(getSelected() instanceof TextElement element){
+                element.checkLocation(element.getPage().getMouseX(), element.getLayoutY(), false);
+            }
         }
     }
     
