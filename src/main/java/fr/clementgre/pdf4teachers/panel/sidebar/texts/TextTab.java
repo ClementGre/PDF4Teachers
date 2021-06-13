@@ -162,31 +162,29 @@ public class TextTab extends SideTab{
         
         MainWindow.mainScreen.selectedProperty().addListener((ObservableValue<? extends Element> observable, Element oldElement, Element newElement) -> {
             isNew = false;
-            if(oldElement != null){
-                if(oldElement instanceof TextElement current){
-                    current.textProperty().unbind();
-                    current.fontProperty().unbind();
-                    
-                    if(((TextElement) oldElement).getText().isBlank()){
-                        oldElement.delete(true, UType.NO_COUNT);
-                    }
+            if(oldElement instanceof TextElement current){
+                current.textProperty().unbind();
+                current.fontProperty().unbind();
+                
+                if(((TextElement) oldElement).getText().isBlank()){
+                    oldElement.delete(true, UType.NO_COUNT);
                 }
+                
+                if(!(newElement instanceof TextElement)) txtArea.clear();
             }
-            if(newElement != null){
-                if(newElement instanceof TextElement current){
-    
-                    txtArea.setText(current.getText());
-                    boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
-                    itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
-                    colorPicker.setValue(current.getColor());
-                    fontCombo.getSelectionModel().select(current.getFont().getFamily());
-                    sizeSpinner.getValueFactory().setValue(current.getFont().getSize());
-                    
-                    current.fontProperty().bind(Bindings.createObjectBinding(() -> {
-                        Edition.setUnsave("TextElement FontChanged");
-                        return getFont();
-                    }, fontCombo.getSelectionModel().selectedItemProperty(), sizeSpinner.valueProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
-                }
+            if(newElement instanceof TextElement current){
+
+                txtArea.setText(current.getText());
+                boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
+                itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
+                colorPicker.setValue(current.getColor());
+                fontCombo.getSelectionModel().select(current.getFont().getFamily());
+                sizeSpinner.getValueFactory().setValue(current.getFont().getSize());
+                
+                current.fontProperty().bind(Bindings.createObjectBinding(() -> {
+                    Edition.setUnsave("TextElement FontChanged");
+                    return getFont();
+                }, fontCombo.getSelectionModel().selectedItemProperty(), sizeSpinner.valueProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
             }
         });
         
@@ -216,32 +214,34 @@ public class TextTab extends SideTab{
                 return;
             }
             
-            if(!TextElement.isLatex(newValue)){
-                // WRAP TEXT
-                if(MainWindow.mainScreen.getSelected() == null) return;
-                Platform.runLater(() -> {
-                    if(MainWindow.mainScreen.getSelected() == null) return;
-                    String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-                    if(newValue.endsWith(" ")) wrapped += " ";
-                    
-                    if(!wrapped.equals(newValue)){
-                        int positionCaret = txtArea.getCaretPosition();
-                        txtArea.setText(wrapped);
-                        txtArea.positionCaret(positionCaret);
-                    }
-                    Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
-                });
+            if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
+                if(!TextElement.isLatex(newValue)){
+                    // WRAP TEXT
+                    Platform.runLater(() -> {
+                        if(MainWindow.mainScreen.getSelected() instanceof TextElement){
+                            String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+                            if(newValue.endsWith(" ")) wrapped += " ";
+    
+                            if(!wrapped.equals(newValue)){
+                                int positionCaret = txtArea.getCaretPosition();
+                                txtArea.setText(wrapped);
+                                txtArea.positionCaret(positionCaret);
+                            }
+                            Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
+                        }
+                    });
+                }
+    
+                treeView.updateAutoComplete();
+    
+                updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
+                if(!txtAreaScrollBarListenerIsSetup){
+                    getHorizontalSB(txtArea).visibleProperty().addListener((ObservableValue<? extends Boolean> observableTxt, Boolean oldTxtValue, Boolean newTxtValue) -> updateHeightAndYLocations(newTxtValue));
+                    txtAreaScrollBarListenerIsSetup = true;
+                }
+                element.setText(newValue);
+                if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
             }
-            
-            treeView.updateAutoComplete();
-            
-            updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
-            if(!txtAreaScrollBarListenerIsSetup){
-                getHorizontalSB(txtArea).visibleProperty().addListener((ObservableValue<? extends Boolean> observableTxt, Boolean oldTxtValue, Boolean newTxtValue) -> updateHeightAndYLocations(newTxtValue));
-                txtAreaScrollBarListenerIsSetup = true;
-            }
-            ((TextElement) MainWindow.mainScreen.getSelected()).setText(newValue);
-            if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
         });
         sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
             if(!((TextElement) MainWindow.mainScreen.getSelected()).isLatex()){

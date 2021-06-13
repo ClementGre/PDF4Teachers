@@ -550,7 +550,7 @@ public class MainScreen extends Pane{
         return selected;
     }
     public void setSelected(Element selected){
-        System.out.println("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
+        //System.out.println("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
         this.selected.set(selected);
     }
     

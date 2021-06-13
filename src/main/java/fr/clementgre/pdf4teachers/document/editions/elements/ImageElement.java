@@ -40,11 +40,21 @@ public class ImageElement extends GraphicElement{
         
         if(linkedImageData != null){
             this.linkedImageData = linkedImageData;
-            realWidth.addListener((observable, oldValue, newValue) -> linkedImageData.setWidth(newValue.intValue()));
-            realHeight.addListener((observable, oldValue, newValue) -> linkedImageData.setHeight(newValue.intValue()));
-            this.repeatMode.addListener((observable, oldValue, newValue) -> linkedImageData.setRepeatMode(newValue));
-            this.resizeMode.addListener((observable, oldValue, newValue) -> linkedImageData.setResizeMode(newValue));
-            this.imageId.addListener((observable, oldValue, newValue) -> linkedImageData.setImageId(newValue));
+            realWidth.addListener((observable, oldValue, newValue) -> {
+                if(this.linkedImageData != null) this.linkedImageData.setWidth(newValue.intValue());
+            });
+            realHeight.addListener((observable, oldValue, newValue) -> {
+                if(this.linkedImageData != null) this.linkedImageData.setHeight(newValue.intValue());
+            });
+            this.repeatMode.addListener((observable, oldValue, newValue) -> {
+                if(this.linkedImageData != null) this.linkedImageData.setRepeatMode(newValue);
+            });
+            this.resizeMode.addListener((observable, oldValue, newValue) -> {
+                if(this.linkedImageData != null) this.linkedImageData.setResizeMode(newValue);
+            });
+            this.imageId.addListener((observable, oldValue, newValue) -> {
+                this.linkedImageData = null;
+            });
         }
         
         if(hasPage && getPage() != null){

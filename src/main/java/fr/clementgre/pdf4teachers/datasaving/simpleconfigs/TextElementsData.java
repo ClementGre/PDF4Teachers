@@ -7,7 +7,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import javafx.application.Platform;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TextElementsData extends SimpleConfig{
     
@@ -20,13 +24,18 @@ public class TextElementsData extends SimpleConfig{
         Platform.runLater(() -> {
             // TEXTS
             for(Object data : config.getList("favorites")){
-                if(data instanceof Map)
-                    MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
+                if(data instanceof Map){
+                    TextTreeItem item = TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE);
+                    if(!item.getText().isBlank()) MainWindow.textTab.treeView.favoritesSection.getChildren().add(item);
+                }
+                
             }
         
             for(Object data : config.getList("lasts")){
-                if(data instanceof Map)
-                    MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
+                if(data instanceof Map){
+                    TextTreeItem item = TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE);
+                    if(!item.getText().isBlank()) MainWindow.textTab.treeView.lastsSection.getChildren().add(item);
+                }
             }
         
             for(Map.Entry<String, Object> list : config.getSection("lists").entrySet()){
@@ -35,6 +44,7 @@ public class TextElementsData extends SimpleConfig{
                     for(Object data : ((List<?>) list.getValue())){
                         listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
                     }
+                    listTexts = new ArrayList<>(listTexts.stream().filter((listItem) -> !listItem.getText().isBlank()).toList());
                     TextTreeSection.lists.put(list.getKey(), listTexts);
                 }
             }

@@ -18,7 +18,7 @@ public class UndoEngine{
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO || isUndoingThings) return;
     
-        System.out.println("Adding action to undo stack: " + action);
+        //System.out.println("Adding action to undo stack: " + action);
         undoList.add(0, action);
         checkUndoStackLength();
     
@@ -28,7 +28,7 @@ public class UndoEngine{
     }
     
     public void undo(){
-        System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
+        //System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
         
         isUndoingThings = true;
         while(!undoLastAction());
@@ -42,7 +42,7 @@ public class UndoEngine{
     }
     
     public void redo(){
-        System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
+        //System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
         
         isUndoingThings = true;
     

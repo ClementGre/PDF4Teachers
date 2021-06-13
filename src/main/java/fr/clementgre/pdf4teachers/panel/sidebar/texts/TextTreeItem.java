@@ -38,8 +38,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
@@ -341,25 +339,7 @@ public class TextTreeItem extends TreeItem<String>{
         return new TextElement(x, y, page, true, text, color.get(), font.get());
     }
     
-    public static TextTreeItem readDataAndGive(DataInputStream reader, int type) throws IOException{
-        
-        double fontSize = reader.readFloat();
-        boolean isBold = reader.readBoolean();
-        boolean isItalic = reader.readBoolean();
-        String fontName = reader.readUTF();
-        short colorRed = (short) (reader.readByte() + 128);
-        short colorGreen = (short) (reader.readByte() + 128);
-        short colorBlue = (short) (reader.readByte() + 128);
-        long uses = reader.readLong();
-        long creationDate = reader.readLong();
-        String text = reader.readUTF();
-        
-        Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-        
-        return new TextTreeItem(font, text, Color.rgb(colorRed, colorGreen, colorBlue), type, uses, creationDate);
-    }
-    
-    public static TreeItem<String> readYAMLDataAndGive(HashMap<String, Object> data, int type){
+    public static TextTreeItem readYAMLDataAndGive(HashMap<String, Object> data, int type){
         
         double fontSize = Config.getDouble(data, "size");
         boolean isBold = Config.getBoolean(data, "bold");

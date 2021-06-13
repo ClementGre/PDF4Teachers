@@ -394,7 +394,6 @@ public class VectorElement extends GraphicElement{
         }
         
         if(getPath().isBlank()){
-            System.out.println("delete by de selected");
             delete(false, UType.NO_COUNT);
         }
     }
