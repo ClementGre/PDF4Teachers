@@ -32,7 +32,7 @@ public class ImageData extends ImageLambdaData{
         this.useCount = useCount;
     }
     
-    public void addToDocument(boolean link){
+    public ImageElement addToDocument(boolean link){
         ImageData linkedImage = link ? this : null;
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
@@ -45,6 +45,7 @@ public class ImageData extends ImageLambdaData{
         Main.window.requestFocus();
         
         incrementUsesAndLastUse();
+        return element;
     }
     public void setAsToPlaceElement(boolean link){
         ImageData linkedImage = link ? this : null;

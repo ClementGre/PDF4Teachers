@@ -543,11 +543,20 @@ public class VectorElement extends GraphicElement{
     
     @Override
     public void defineSizeAuto(){
-        double imgWidth = noScaledSvgPath.getLayoutBounds().getWidth();
-        double imgHeight = noScaledSvgPath.getLayoutBounds().getHeight();
-        double width = Math.min(getPage().getWidth()/3, imgWidth);
-        double height = imgHeight * width/imgWidth;
-    
+        double width;
+        double height;
+        
+        if(getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES){
+            height = getHeight() < 5 ? 10 : getHeight();
+            width = 50;
+            
+        }else{
+            double imgWidth = noScaledSvgPath.getLayoutBounds().getWidth();
+            double imgHeight = noScaledSvgPath.getLayoutBounds().getHeight();
+            width = StringUtils.clamp(imgWidth, 50, getPage().getWidth()/3);
+            height = imgHeight * width/imgWidth;
+        }
+        
         checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
                 width, height, false);
     }

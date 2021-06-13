@@ -12,6 +12,9 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
@@ -24,6 +27,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.geometry.VPos;
@@ -181,8 +185,23 @@ public class PageRenderer extends Pane{
                     
                     if(TextTab.draggingElement == null){ // Add to document
                         TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
-                    }else{
-                        TextTab.draggingElement.checkLocation(e.getX(), e.getY(), false);
+                    }
+                }
+            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag GraphicElement
+                if(PaintTab.draggingItem instanceof ImageGridElement item){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+        
+                    if(PaintTab.draggingElement == null){ // Add to document
+                        PaintTab.draggingElement = item.addToDocument();
+                        PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth()/2, e.getY() - PaintTab.draggingElement.getHeight()/2, false);
+                    }
+                }else if(PaintTab.draggingItem instanceof VectorGridElement item){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+                    if(PaintTab.draggingElement == null){ // Add to document
+                        PaintTab.draggingElement = item.addToDocument(false);
+                        PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth()/2, e.getY() - PaintTab.draggingElement.getHeight()/2, false);
                     }
                 }
             }
@@ -192,10 +211,18 @@ public class PageRenderer extends Pane{
             if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag TextElement
                 if(TextTab.draggingItem != null){
                     e.acceptTransferModes(TransferMode.ANY);
-                    e.consume();
             
                     if(TextTab.draggingElement != null){ // Move element
                         TextTab.draggingElement.checkLocation(e.getX(), e.getY() - TextTab.draggingElement.getHeight()/2, false);
+                    }
+                }
+            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag GraphicElement
+                if(PaintTab.draggingItem instanceof ImageGridElement || PaintTab.draggingItem instanceof VectorGridElement){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+                    
+                    if(PaintTab.draggingElement != null){ // Move element
+                        PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth()/2, e.getY() - PaintTab.draggingElement.getHeight()/2, false);
                     }
                 }
             }
@@ -212,13 +239,30 @@ public class PageRenderer extends Pane{
                         TextTab.draggingElement = null;
                     }
                 }
+            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag GraphicElement
+                if(PaintTab.draggingItem instanceof ImageGridElement || PaintTab.draggingItem instanceof VectorGridElement){
+                    e.acceptTransferModes(TransferMode.ANY);
+                    e.consume();
+    
+                    if(PaintTab.draggingElement != null){ // Remove from document
+                        PaintTab.draggingElement.delete(false, UType.NO_UNDO);
+                        PaintTab.draggingElement = null;
+                    }
+                }
             }
         });
         setOnDragDropped(e -> {
             final Dragboard dragboard = e.getDragboard();
             if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
+                e.setDropCompleted(true);
+                if(TextTab.draggingElement != null) TextTab.draggingElement.select();
                 TextTab.draggingItem = null;
                 TextTab.draggingElement = null;
+            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
+                e.setDropCompleted(true);
+                if(PaintTab.draggingElement != null) PaintTab.draggingElement.select();
+                PaintTab.draggingItem = null;
+                PaintTab.draggingElement = null;
             }
         });
     
@@ -259,7 +303,7 @@ public class PageRenderer extends Pane{
                 
                 placingElement.initializePage(getPage(), e.getX(), e.getY());
                 
-                if(placingElement instanceof VectorElement vectorElement){
+                if(placingElement instanceof VectorElement vectorElement && vectorElement.getResizeMode() != GraphicElement.ResizeMode.SIDE_EDGES){
                     vectorElement.invertInversions();
                 }
                 if(placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES){
@@ -267,15 +311,18 @@ public class PageRenderer extends Pane{
                 }
                 
                 addElement(placingElement, true, UType.UNDO);
-                MainWindow.mainScreen.setSelected(placingElement);
-                placingElement.requestFocus();
+                placingElement.select();
                 placingElement.incrementUsesAndLastUse();
                 
                 int shiftX = (int) placingElement.getLayoutX();
                 int shiftY = (int) placingElement.getLayoutY();
                 
-                placingElement.setupMousePressVars(e.getX()-shiftX, e.getY()-shiftY, null, true, true);
+                placingElement.setupMousePressVars(e.getX()-shiftX -1, e.getY()-shiftY -1, null, true, true);
                 placingElement.simulateDragToResize(e.getX()-placingElement.getLayoutX(), e.getY()-placingElement.getLayoutY(), e.isShiftDown());
+    
+                Platform.runLater(() -> {
+                    placingElement.select();
+                });
                 
                 setCursor(Cursor.CROSSHAIR);
             }else{
@@ -303,7 +350,8 @@ public class PageRenderer extends Pane{
             
             if(placingElement != null && !isEditPagesMode()){
                 e.consume();
-                if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10){
+                if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10
+                    || (placingElement.getWidth() < 10 && placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES)){
                     placingElement.simulateReleaseFromResize();
                     placingElement.defineSizeAuto();
                 }else{

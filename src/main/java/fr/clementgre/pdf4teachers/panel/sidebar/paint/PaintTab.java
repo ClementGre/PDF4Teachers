@@ -111,7 +111,10 @@ public class PaintTab extends SideTab{
     
     public GalleryWindow galleryWindow = null;
     
-    // MENUS
+    // DRAG'N DROP
+    public static final String PAINT_ITEM_DRAG_KEY = "PaintItemDrag";
+    public static Object draggingItem = null; // Could be either ImageGridElement or VectorGridElement
+    public static GraphicElement draggingElement = null;
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);

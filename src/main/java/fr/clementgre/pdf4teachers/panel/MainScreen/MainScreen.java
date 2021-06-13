@@ -313,6 +313,36 @@ public class MainScreen extends Pane{
             mouseY = e.getY();
             mouseX = e.getX();
         });
+        setOnDragOver(e -> {
+            if(e.isAccepted()){
+                double y = Math.max(1, Math.min(getHeight(), e.getY()));
+                if(y < 50){
+                    dragNScrollFactorVertical = (int) (y * -1);
+                }else if(getHeight() - y < 50){
+                    dragNScrollFactorVertical = (int) ((getHeight() - y) * -1 + 50);
+                }else{
+                    dragNScrollFactorVertical = 0;
+                }
+                double x = Math.max(1, Math.min(getWidth(), e.getX()));
+                if(x < 50){
+                    dragNScrollFactorHorozontal = (int) (x * -1);
+                }else if(getWidth() - x < 50){
+                    dragNScrollFactorHorozontal = (int) ((getWidth() - x) * -1 + 50);
+                }else{
+                    dragNScrollFactorHorozontal = 0;
+                }
+    
+                dragStartY = e.getY();
+                dragStartX = e.getX();
+    
+                mouseY = e.getY();
+                mouseX = e.getX();
+            }
+        });
+        setOnDragExited(e -> {
+            dragNScrollFactorVertical = 0;
+            dragNScrollFactorHorozontal = 0;
+        });
         setOnMousePressed(e -> {
             requestFocus();
             dragStartX = e.getX();

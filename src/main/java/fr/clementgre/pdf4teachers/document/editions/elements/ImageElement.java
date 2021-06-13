@@ -254,13 +254,16 @@ public class ImageElement extends GraphicElement{
         }, "ImageElement Renderer").start();
     }
     public Image renderImage(int requestedWidth, int requestedHeight){
-        File file = new File(getImageId());
+        return renderImage(getImageId(), requestedWidth, requestedHeight);
+    }
+    public static Image renderImage(String imageID, int requestedWidth, int requestedHeight){
+        File file = new File(imageID);
         if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
             try{
-                Image image =  new Image("file:///" + getImageId(), requestedWidth, requestedHeight, false, true);
+                Image image =  new Image("file:///" + imageID, requestedWidth, requestedHeight == -1 ? 999999 : requestedHeight, requestedHeight == -1, true);
                 if(image.getWidth() == 0) return null;
-    
-                int rotate = new ExifUtils(new File(getImageId())).getImageExifRotation().getRotateAngle();
+                
+                int rotate = new ExifUtils(new File(imageID)).getImageExifRotation().getRotateAngle();
                 return ImageUtils.rotateImage(image, rotate);
             }catch(Exception e){
                 e.printStackTrace();

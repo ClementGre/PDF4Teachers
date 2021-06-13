@@ -1,21 +1,27 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 import com.drew.imaging.ImageProcessingException;
+import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Tooltip;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -66,6 +72,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         if(empty){
             setGraphic(null);
             setOnMouseClicked(null);
+            setOnDragDetected(null);
             setContextMenu(null);
             imageView.imageProperty().unbind();
             imageView.setImage(null);
@@ -91,6 +98,19 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                         item.setAsToPlaceElement();
                     }
                 }
+            });
+            setOnDragDetected(e -> {
+                Dragboard dragboard = startDragAndDrop(TransferMode.COPY);
+                
+                Image image = ImageElement.renderImage(item.getImageId(), 100, -1);
+                if(image != null) dragboard.setDragView(image, image.getWidth()/2, image.getHeight()/2);
+        
+                ClipboardContent clipboardContent = new ClipboardContent();
+                clipboardContent.put(Main.INTERNAL_FORMAT, PaintTab.PAINT_ITEM_DRAG_KEY);
+                dragboard.setContent(clipboardContent);
+                
+                PaintTab.draggingItem = item;
+                e.consume();
             });
         }
         

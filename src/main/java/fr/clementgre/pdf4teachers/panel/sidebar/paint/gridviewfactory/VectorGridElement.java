@@ -1,4 +1,5 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
+
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
@@ -12,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Scale;
+
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -66,8 +68,9 @@ public class VectorGridElement{
         gridView.removeItems(Collections.singletonList(this));
     }
     
-    public void addToDocument(boolean link){
-        if(MainWindow.mainScreen.hasDocument(false)) vectorData.addToDocument(link);
+    public VectorElement addToDocument(boolean link){
+        if(MainWindow.mainScreen.hasDocument(false)) return vectorData.addToDocument(link);
+        return null;
     }
     public void setAsToPlaceElement(boolean link){
         if(MainWindow.mainScreen.hasDocument(false)) vectorData.setAsToPlaceElement(link);

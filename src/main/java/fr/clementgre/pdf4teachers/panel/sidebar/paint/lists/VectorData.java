@@ -58,7 +58,7 @@ public class VectorData{
                 && fill.toString().equals(element.getFill().toString()) && stroke.toString().equals(element.getStroke().toString()) && path.equals(element.getPath());
     }
     
-    public void addToDocument(boolean link){
+    public VectorElement addToDocument(boolean link){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
     
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
@@ -69,6 +69,7 @@ public class VectorData{
         MainWindow.mainScreen.setSelected(element);
         
         incrementUsesAndLastUse();
+        return element;
     }
     public void setAsToPlaceElement(boolean link){
         // if resizeMode == GraphicElement.ResizeMode.SIDE_EDGES, height = vectorData height

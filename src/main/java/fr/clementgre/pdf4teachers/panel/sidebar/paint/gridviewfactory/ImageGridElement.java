@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
@@ -95,8 +96,9 @@ public class ImageGridElement extends ImageLambdaData{
         }
     }
     
-    public void addToDocument(){
-        if(MainWindow.mainScreen.hasDocument(false)) getImageData().addToDocument(hasLinkedImageData());
+    public ImageElement addToDocument(){
+        if(MainWindow.mainScreen.hasDocument(false)) return getImageData().addToDocument(hasLinkedImageData());
+        return null;
     }
     public void setAsToPlaceElement(){
         if(MainWindow.mainScreen.hasDocument(false)) getImageData().setAsToPlaceElement(hasLinkedImageData());
