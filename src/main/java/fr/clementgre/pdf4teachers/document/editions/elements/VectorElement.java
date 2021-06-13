@@ -3,7 +3,10 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -104,40 +107,53 @@ public class VectorElement extends GraphicElement{
             svgPath.setContent(newValue);
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
+    
+            // New move added OR this is the first registration of this action/property.
+            if(StringUtils.count(oldValue.toLowerCase(), 'm') != StringUtils.count(newValue.toLowerCase(), 'm')
+                    || !UndoEngine.isNextUndoActionProperty(path)){
+        
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), UType.UNDO));
+            }
         });
         
         fill.addListener((observable, oldValue, newValue) ->{
             if(linkedVectorData != null) linkedVectorData.setFill(newValue);
             updateFill();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, fill, oldValue, UType.UNDO));
         });
         doFill.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
             updateFill();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, doFill, oldValue, UType.UNDO));
         });
         
         stroke.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
             updateStroke();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, stroke, oldValue, UType.UNDO));
         });
         strokeWidth.addListener((observable, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
             updateStroke();
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, strokeWidth, oldValue, UType.UNDO));
         });
-        
-        resizeModeProperty().addListener((o, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-        });
+    
         repeatModeProperty().addListener((o, oldValue, newValue) -> {
             if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.UNDO));
+        });
+        resizeModeProperty().addListener((o, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
         });
         
         invertXProperty().addListener((observable, oldValue, newValue) -> {
@@ -164,6 +180,7 @@ public class VectorElement extends GraphicElement{
             if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, arrowLength, oldValue, UType.UNDO));
         });
     }
     
@@ -367,11 +384,19 @@ public class VectorElement extends GraphicElement{
         super.onDeSelected();
         VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
         if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
-            quitEditMode();
-            drawer.quitEditMode(); // Element is not anymore selected so it will not be done automatically.
+            // Element is not anymore selected so it will not be done automatically.
+            drawer.quitEditMode();
+            
+            getPage().getVectorElementPageDrawer().quitEditMode();
+            if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
+            else requestFocus();
+            MainWindow.paintTab.vectorEditMode.setSelected(false);
         }
         
-        if(getPath().isBlank()) delete(false, UType.NO_COUNT);
+        if(getPath().isBlank()){
+            System.out.println("delete by de selected");
+            delete(false, UType.NO_COUNT);
+        }
     }
     
     @Override
@@ -445,6 +470,9 @@ public class VectorElement extends GraphicElement{
         }else{
             AutoTipsManager.showByAction("enterVectorEditMode");
             getPage().getVectorElementPageDrawer().enterEditMode(this);
+    
+            // ElementPageDrawer is resizing and moving the element when exiting
+            MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, this));
         }
     }
     public void quitEditMode(){

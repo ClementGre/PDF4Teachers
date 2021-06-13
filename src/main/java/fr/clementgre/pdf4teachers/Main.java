@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers;
 
-import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -10,6 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -43,7 +43,7 @@ public class Main extends Application{
     public static final String VERSION = "sn1-1.3.0";
     public static final int VERSION_ID = 1;
     public static final boolean DEBUG = true;
-    public static final boolean COPY_CONSOLE = true;
+    public static final boolean COPY_CONSOLE = false;
     public static final boolean TRANSLATIONS_IN_CODE = true;
     
     public static boolean firstLaunch;

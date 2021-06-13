@@ -19,9 +19,9 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -36,7 +36,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -116,7 +116,7 @@ public class MainWindow extends Stage{
         System.out.println("Received close request");
         
         userData.save();
-        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue())){
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)){
             return false;
         }
     
@@ -241,7 +241,7 @@ public class MainWindow extends Stage{
                 && mainScreen.hasDocument(false)
                 && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
         
-        if(MainWindow.mainScreen.closeFile(true)){
+        if(MainWindow.mainScreen.closeFile(true, false)){
             if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
             Main.params = new ArrayList<>();
             TR.updateLocale();

@@ -48,6 +48,9 @@ open module fr.clementgre.pdf4teachers {
     
     requires org.jetbrains.annotations;
     
+    // Utils
+    requires google.diffmatchpatch;
+    
     // EXPORTS
 
     exports fr.clementgre.pdf4teachers;

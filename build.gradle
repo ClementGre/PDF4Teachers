@@ -7,6 +7,7 @@ plugins {
 }
 repositories{
     mavenCentral()
+    maven { url "https://clojars.org/repo" }
 }
 
 extraJavaModuleInfo {
@@ -27,6 +28,8 @@ extraJavaModuleInfo {
     automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
 
     automaticModule("batik-parser-1.14.jar", "batik.parser")
+
+    automaticModule("google-diff-match-patch-0.1.jar", "google.diffmatchpatch")
 }
 
 dependencies{
@@ -47,7 +50,7 @@ dependencies{
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
     // Image IO - EXIF
-    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0';
+    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0'
 
     // JSON requests
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.3'
@@ -67,6 +70,9 @@ dependencies{
 
     // PDF Box
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
+
+    // Text Google diff / match / patch
+    implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
 
 }
 
@@ -123,11 +129,11 @@ jlink {
     String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
 
     if(jdkPath != null){ // Use ./gradlew jpackage -PjdkPath=xxx
-        System.out.println("Using JDK passed in property: ".concat(jdkPath));
-        javaHome.set(jdkPath);
+        System.out.println("Using JDK passed in property: ".concat(jdkPath))
+        javaHome.set(jdkPath)
 
     }else{
-        if(os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot');
+        if(os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot')
         else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
         else if(os.linux) javaHome.set('/etc/jdk-16.0.1/')
     }

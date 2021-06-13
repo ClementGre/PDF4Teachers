@@ -6,14 +6,17 @@ import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.WeakEventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -150,7 +153,7 @@ public class FileListCell extends ListCell<File>{
                 if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName())).execute()){
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                            MainWindow.mainScreen.closeFile(false);
+                            MainWindow.mainScreen.closeFile(false, false);
                         }
                     }
                     MainWindow.filesTab.removeFile(file);

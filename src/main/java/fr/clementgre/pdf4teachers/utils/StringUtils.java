@@ -1,5 +1,8 @@
 package fr.clementgre.pdf4teachers.utils;
 
+import javafx.scene.control.TextArea;
+import name.fraser.neil.plaintext.diff_match_patch;
+
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -67,6 +70,27 @@ public class StringUtils{
         return name;
     }
     
+    
+    public static long countSpaces(String str){
+        return str.codePoints().filter(c -> c == ' ').count();
+    }
+    public static long count(String str, char toCount){
+        return str.codePoints().filter(c -> c == toCount).count();
+    }
+    
+    public static void editTextArea(TextArea area, String newText){
+        List<diff_match_patch.Diff> diffs = new diff_match_patch().diff_main(area.getText(), newText);
+        
+        int index = 0;
+        for(diff_match_patch.Diff diff : diffs){
+            if(diff.operation == diff_match_patch.Operation.INSERT){
+                area.insertText(index, diff.text);
+            }else if(diff.operation == diff_match_patch.Operation.DELETE){
+                area.deleteText(index, Math.min(index + diff.text.length(), area.getText().length()));
+            }
+            index += diff.text.length();
+        }
+    }
     
     public static String removeBeforeLastRegex(String string, String rejex){
         if(rejex.isEmpty()) return string;

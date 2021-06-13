@@ -48,7 +48,7 @@ public class MoveUndoAction extends UndoAction{
     public String toString(){
         if(element.get() == null) return null;
     
-        return TR.tr("actions.move") + " " + element.get().getElementName(false);
+        return TR.tr("actions.move") + " " + element.get().getElementName(false).toLowerCase();
     }
     
 }

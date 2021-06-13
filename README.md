@@ -79,7 +79,7 @@ The application was developed with JavaFX framework, with Java SE 16 (1.3.0). Th
 - **[Metadata-Extractor 2.16.0](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so PDF4Teachers can take in account the rotation of images
 - **[Batik Parser 1.14](https://xmlgraphics.apache.org/batik/using/parsers.html)** : Allow me to parse SVG easily, with custom handlers.
 - **[PdfBox Graphics2D 0.29](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
-
+- **[Google Diff-Match-Patch 0.1](https://github.com/google/diff-match-patch)** : Allow me to perform some actions on strings..
 
 ### Gradle plugins
 The dependencies of the application are managed by [Gradle](https://gradle.org/) 7 (rc-2), therefore, you can execute ``./gradlew run`` (bash) or ``gradlew.bat run`` (batch) in a command prompt to run the application using only the downloaded code, and the Java JDK 16 (should be in the environment variable ``JAVA_HOME``). Gradle is using some plugins to manage dependencies :

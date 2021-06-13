@@ -46,7 +46,7 @@ public class ConvertDocument{
                 
                 if(MainWindow.mainScreen.hasDocument(false)){
                     if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.file.getAbsolutePath())){
-                        if(!MainWindow.mainScreen.closeFile(true)) continue;
+                        if(!MainWindow.mainScreen.closeFile(true, false)) continue;
                     }
                 }
                 

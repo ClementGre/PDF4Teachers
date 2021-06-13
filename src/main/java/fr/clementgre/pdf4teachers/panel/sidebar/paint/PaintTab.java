@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.components.UndoTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
@@ -133,6 +134,7 @@ public class PaintTab extends SideTab{
         doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
 
         vectorStrokeWidth.getValueFactory().setConverter(new StringToIntConverter(0));
+        UndoTextArea.setupAntiCtrlZFilter(vectorStrokeWidth);
 
         PaneUtils.setPosition(spinnerX, 0, 0, -1, 26, true);
         PaneUtils.setPosition(spinnerY, 0, 0, -1, 26, true);
@@ -310,9 +312,9 @@ public class PaintTab extends SideTab{
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false, 0);
     
+            MainWindow.mainScreen.setSelected(element);
             page.addElement(element, true, UType.UNDO);
             element.centerOnCoordinatesY();
-            MainWindow.mainScreen.setSelected(element);
             element.setLinkedVectorData(VectorListPane.addLastVector(element));
         });
         browseVector.setOnAction(ae -> browseSVGPath(null));
@@ -386,8 +388,9 @@ public class PaintTab extends SideTab{
         page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
+    
         // Drawing elements are not added to previous elements by default
-        //element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        // element.setLinkedVectorData(VectorListPane.addLastVector(element));
         element.enterEditMode();
     }
     
@@ -457,7 +460,7 @@ public class PaintTab extends SideTab{
                 element.strokeWidthProperty().unbind();
                 element.arrowLengthProperty().unbind();
             }else if(oldValue instanceof ImageElement element){ // Image
-                element.imageIdProperty().unbind();
+                element.imageIdProperty().unbindBidirectional(path.textProperty());
             }
             gElement.realXProperty().removeListener(this::editSpinXEvent);
             gElement.realYProperty().removeListener(this::editSpinYEvent);
@@ -489,7 +492,7 @@ public class PaintTab extends SideTab{
             }else if(newValue instanceof ImageElement element){ // Image
                 setVectorsDisable(true);
                 path.setText(element.getImageId());
-                element.imageIdProperty().bind(path.textProperty());
+                element.imageIdProperty().bindBidirectional(path.textProperty());
             }
             
             path.positionCaret(path.getText().length());
@@ -527,8 +530,8 @@ public class PaintTab extends SideTab{
     private void vectorDrawModeChanged(ObservableValue<? extends Boolean> o, Boolean oldValue, Boolean newValue){
         if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
             if(!oldValue){
-                if(newValue) vectorElement.enterEditMode();
-            }else{
+                if(newValue && !vectorElement.isEditMode()) vectorElement.enterEditMode();
+            }else if(vectorElement.isEditMode()){
                 vectorElement.quitEditMode();
             }
         }

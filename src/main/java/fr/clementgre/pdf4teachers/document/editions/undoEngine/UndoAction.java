@@ -17,5 +17,4 @@ public abstract class UndoAction{
     public UType getUndoType(){
         return undoType;
     }
-    
 }

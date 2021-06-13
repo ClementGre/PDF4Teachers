@@ -4,7 +4,9 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -12,6 +14,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
@@ -74,12 +77,27 @@ public class TextElement extends Element{
         this.text.textProperty().addListener((observable, oldValue, newValue) -> {
             updateLaTeX();
             this.text.setUnderline(isURL());
+    
+            if(isSelected() && !MainWindow.textTab.txtArea.getText().equals(newValue)){ // Edit textArea from Element
+                StringUtils.editTextArea(MainWindow.textTab.txtArea, newValue);
+                return;
+            }
+            
+            // New word added OR this is the first registration of this action/property.
+            if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
+                    || !UndoEngine.isNextUndoActionProperty(this.text.textProperty())){
+                
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.textProperty(), oldValue.trim(), UType.UNDO));
+            }
+            
         });
         this.text.fillProperty().addListener((observable, oldValue, newValue) -> {
             updateLaTeX();
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.fillProperty(), oldValue, UType.UNDO));
         });
         this.text.fontProperty().addListener((observable, oldValue, newValue) -> {
             updateLaTeX();
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.fontProperty(), oldValue, UType.UNDO));
         });
         widthProperty().addListener((observable, oldValue, newValue) -> {
             checkLocation(getLayoutX(), getLayoutY(), false);
@@ -324,7 +342,7 @@ public class TextElement extends Element{
     }
     public static String getElementNameStatic(boolean plural){
         if(plural) return TR.tr("elements.name.texts");
-        else return TR.tr("elements.name.texts");
+        else return TR.tr("elements.name.text");
     }
     
     public String getText(){

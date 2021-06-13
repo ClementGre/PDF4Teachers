@@ -18,7 +18,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.paint.Color;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
@@ -37,17 +38,15 @@ public class Edition{
         this.document = document;
         this.file = file;
         this.editFile = getEditFile(file);
-        
-        load();
     }
     
     // LOAD ORDER: Texts < Images < Vectors < Grades
-    public void load(){
+    public boolean load(){
         new File(Main.dataFolder + "editions").mkdirs();
         MainWindow.gradeTab.treeView.clearElements(true, false); // Generate root in case of no root in edition
         
         try{
-            if(!editFile.exists()) return; // File does not exist
+            if(!editFile.exists()) return true; // File does not exist
             Config config = new Config(editFile);
             config.load();
             int versionID = (int) config.getLong("versionID");
@@ -70,14 +69,16 @@ public class Edition{
             for(Object data : config.getList("grades")){
                 if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
             }
+    
+            isSave.set(true);
+            MainWindow.gradeTab.treeView.updateAllSum();
+            MainWindow.textTab.treeView.onFileSection.updateElementsList();
             
+            return true;
         }catch(IOException e){
             e.printStackTrace();
+            return false;
         }
-    
-        isSave.set(true);
-        MainWindow.gradeTab.treeView.updateAllSum();
-        MainWindow.textTab.treeView.onFileSection.updateElementsList();
     }
     
     public void save(){
@@ -152,7 +153,7 @@ public class Edition{
             config.base.put("lastScrollValue", document.getCurrentScrollValue());
             
             config.save();
-        }catch(IOException e){
+        }catch(Exception e){
             e.printStackTrace();
         }
     }

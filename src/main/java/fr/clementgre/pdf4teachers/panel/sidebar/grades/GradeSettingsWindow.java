@@ -1,14 +1,14 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
+import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -57,7 +57,7 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox>{
         private final FontComboBox fontCombo = new FontComboBox(false);
         private final ToggleButton boldBtn = new ToggleButton();
         private final ToggleButton itBtn = new ToggleButton();
-        private final Spinner<Double> sizeCombo = new Spinner<>(2d, 999d, 14d, 2d);
+        private final Spinner<Double> sizeSpinner = new Spinner<>(2d, 999d, 14d, 2d);
         private final SyncColorPicker colorPicker = new SyncColorPicker();
         private final CheckBox showName = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.showGradeName"));
         private final CheckBox hide = new CheckBox(TR.tr("gradeTab.gradeFormatWindow.options.hideGrade"));
@@ -95,15 +95,15 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox>{
             itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            PaneUtils.setVBoxPosition(sizeCombo, 0, 30, 0);
-            sizeCombo.setStyle("-fx-font-size: 13");
-            sizeCombo.setMaxWidth(165);
-            sizeCombo.setEditable(true);
-            sizeCombo.getValueFactory().setConverter(new StringToDoubleConverter(font.getSize()));
-            sizeCombo.getValueFactory().setValue(font.getSize());
-            sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
+            PaneUtils.setVBoxPosition(sizeSpinner, 0, 30, 0);
+            sizeSpinner.setStyle("-fx-font-size: 13");
+            sizeSpinner.setMaxWidth(165);
+            sizeSpinner.setEditable(true);
+            sizeSpinner.getValueFactory().setConverter(new StringToDoubleConverter(font.getSize()));
+            sizeSpinner.getValueFactory().setValue(font.getSize());
+            sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> updateFont());
 
-            fontSpecs.getChildren().addAll(boldBtn, itBtn, sizeCombo);
+            fontSpecs.getChildren().addAll(boldBtn, itBtn, sizeSpinner);
 
             PaneUtils.setVBoxPosition(colorPicker, 0, 30, 2.5);
             colorPicker.setStyle("-fx-font-size: 13");
@@ -143,7 +143,7 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox>{
         private void updateFont(){
 
             GradeTab.fontTiers.put(tier, new TiersFont(
-                    FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getValue()),
+                    FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeSpinner.getValue()),
                     colorPicker.getValue(), showName.isSelected(), hide.isSelected(), hideWhenAllPoints.isSelected())); // Color + ShowName
             MainWindow.gradeTab.updateElementsFont();
 

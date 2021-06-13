@@ -8,7 +8,9 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.svg.DefaultFavoriteVectors;
 import javafx.application.Platform;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
 public class VectorElementsData extends SimpleConfig{
@@ -25,10 +27,16 @@ public class VectorElementsData extends SimpleConfig{
             ArrayList<VectorData> lastVectorsData = new ArrayList<>();
     
             for(Object data : config.getList("favorites")){
-                if(data instanceof HashMap map) favouriteVectorsData.add(VectorData.readYAMLDataAndGive(map));
+                if(data instanceof HashMap map){
+                    VectorData vectorData = VectorData.readYAMLDataAndGive(map);
+                    if(!vectorData.getPath().isEmpty()) favouriteVectorsData.add(vectorData);
+                }
             }
             for(Object data : config.getList("lasts")){
-                if(data instanceof HashMap map) lastVectorsData.add(VectorData.readYAMLDataAndGive(map));
+                if(data instanceof HashMap map){
+                    VectorData vectorData = VectorData.readYAMLDataAndGive(map);
+                    if(!vectorData.getPath().isEmpty()) lastVectorsData.add(vectorData);
+                }
             }
             
             PlatformUtils.printActionTimeIfDebug(() -> {

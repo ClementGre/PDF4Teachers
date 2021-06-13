@@ -49,9 +49,9 @@ public class GradeTreeItem extends TreeItem<String>{
     
     private Button newGrade;
     
-    private TextArea nameField;
+    public TextArea nameField;
     public TextArea gradeField;
-    private TextArea totalField;
+    public TextArea totalField;
     
     private ContextMenu pageContextMenu = null;
     
@@ -408,33 +408,35 @@ public class GradeTreeItem extends TreeItem<String>{
     }
     
     public void makeSum(int previousPage, int previousRealY){
-        boolean hasValue = false;
-        double value = 0;
-        double total = 0;
+        if(!deleted){
+            boolean hasValue = false;
+            double value = 0;
+            double total = 0;
+    
+            for(int i = 0; i < getChildren().size(); i++){
+                GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
         
-        for(int i = 0; i < getChildren().size(); i++){
-            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
-            
-            // Don't count the "Bonus" children in the Total
-            if(!children.getCore().isBonus()){
-                total += children.getCore().getTotal(); // count total
+                // Don't count the "Bonus" children in the Total
+                if(!children.getCore().isBonus()){
+                    total += children.getCore().getTotal(); // count total
+                }
+        
+                if(children.getCore().getValue() >= 0){
+                    hasValue = true;
+                    value += children.getCore().getValue();
+                }
             }
-            
-            if(children.getCore().getValue() >= 0){
-                hasValue = true;
-                value += children.getCore().getValue();
-            }
+    
+            if(hasValue){
+                if(!core.isFilled() && previousPage != -1){
+                    if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
+                    core.nextRealYToUse = previousRealY - core.getRealHeight();
+                }
+                core.setValue(value);
+            }else core.setValue(-1);
+    
+            core.setTotal(total);
         }
-        
-        if(hasValue){
-            if(!core.isFilled() && previousPage != -1){
-                if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
-                core.nextRealYToUse = previousRealY - core.getRealHeight();
-            }
-            core.setValue(value);
-        }else core.setValue(-1);
-        
-        core.setTotal(total);
         
         if(getParent() != null){
             ((GradeTreeItem) getParent()).makeSum(core.getPageNumber(), core.getRealY());
@@ -471,10 +473,10 @@ public class GradeTreeItem extends TreeItem<String>{
         }
     }
     
-    public void setChildrenAlwaysVisibleToFalse(){
+    public void setChildrenAlwaysVisible(boolean visible, boolean registerUndo){
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
-            children.getCore().setAlwaysVisible(false);
+            children.getCore().setAlwaysVisible(visible, registerUndo);
         }
     }
     
@@ -533,6 +535,12 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
+    
+        // Remove all listeners
+        name.textProperty().unbind();
+        value.textProperty().unbind();
+        total.textProperty().unbind();
+        
         if(hasSubGrade()) deleteChildren(markAsUnsave, undoType);
         if(removePageElement){
             getCore().delete(markAsUnsave, undoType);
@@ -549,10 +557,6 @@ public class GradeTreeItem extends TreeItem<String>{
         selectedListener = null;
         mouseEnteredEvent = null;
         
-        // Remove all listeners
-        name.textProperty().unbind();
-        value.textProperty().unbind();
-        total.textProperty().unbind();
         pane.getChildren().clear();
         pane = null;
         nameField = null;

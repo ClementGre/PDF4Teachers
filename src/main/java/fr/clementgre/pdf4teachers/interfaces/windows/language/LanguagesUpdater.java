@@ -110,7 +110,7 @@ public class LanguagesUpdater{
         @Override
         public String toString(){
             return "Language{" +
-                    "urls=" + urls.toString() +
+                    "urls=" + urls +
                     ", release=" + release +
                     ", version=" + version +
                     ", name='" + name + '\'' +
@@ -298,7 +298,7 @@ public class LanguagesUpdater{
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(target.getAbsolutePath())){
                             closed = MainWindow.mainScreen.document.getFile();
-                            Platform.runLater(() -> MainWindow.mainScreen.closeFile(false));
+                            Platform.runLater(() -> MainWindow.mainScreen.closeFile(false, false));
                             Thread.sleep(500);
                         }
                     }

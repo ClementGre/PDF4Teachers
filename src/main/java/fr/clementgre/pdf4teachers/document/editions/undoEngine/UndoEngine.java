@@ -1,45 +1,99 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import javafx.beans.property.Property;
+
 import java.util.ArrayList;
 
 public class UndoEngine{
     
     private final static int MAX_STACK_LENGTH = 200;
     
-    private final ArrayList<UndoAction> undoList = new ArrayList<>();
-    private final ArrayList<UndoAction> redoList = new ArrayList<>();
+    private ArrayList<UndoAction> undoList = new ArrayList<>();
+    private ArrayList<UndoAction> redoList = new ArrayList<>();
+    
+    // Prevent adding actions while reversing an action.
+    public static boolean isUndoingThings = false;
     
     public void registerNewAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO) return;
-        
+        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings) return;
+    
+        System.out.println("Adding action to undo stack: " + action);
         undoList.add(0, action);
         checkUndoStackLength();
     
         // Since actions are not dependant each other, clearing redo stack is not necessarily necessary.
         // But, it can be easier to the user, even if he will not be able to redo after editing.
         redoList.clear();
-        
     }
     
     public void undo(){
         System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
-        if(undoList.size() > 0){
-            undoList.get(0).undoAndInvert();
-            redoList.add(0, undoList.get(0));
-            checkRedoStackLength();
-            undoList.remove(0);
+        
+        isUndoingThings = true;
+        while(!undoLastAction());
+        // After having undoing last action, undo all next NO_COUNT actions
+        while(undoList.size() != 0 && undoList.get(0).getUndoType() == UType.NO_COUNT){
+            undoLastAction();
         }
-    }
-    public void redo(){
-        System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
-        if(redoList.size() > 0){
-            redoList.get(0).undoAndInvert();
-            undoList.add(0, redoList.get(0));
-            checkUndoStackLength();
-            redoList.remove(0);
-        }
+        
+        checkRedoStackLength();
+        isUndoingThings = false;
     }
     
+    public void redo(){
+        System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
+        
+        isUndoingThings = true;
+    
+        while(!redoLastAction());
+        // After having undoing last action, undo all next NO_COUNT actions
+        while(redoList.size() != 0 && redoList.get(0).getUndoType() == UType.NO_COUNT){
+            redoLastAction();
+        }
+        
+        checkUndoStackLength();
+        isUndoingThings = false;
+    }
+    private boolean undoLastAction(){
+        if(undoList.size() == 0) return true;
+    
+        UndoAction action = undoList.get(0);
+        undoList.remove(0);
+        boolean completed = action.undoAndInvert();
+        redoList.add(0, action);
+    
+        return completed && action.getUndoType() == UType.UNDO;
+    }
+    private boolean redoLastAction(){
+        if(redoList.size() == 0) return true;
+    
+        UndoAction action = redoList.get(0);
+        redoList.remove(0);
+        boolean completed = action.undoAndInvert();
+        undoList.add(0, action);
+    
+        return completed && action.getUndoType() == UType.UNDO;
+    }
+    
+    
+    
+    private boolean computeAction(ArrayList<UndoAction> redoList, ArrayList<UndoAction> undoList){
+        if(redoList.size() == 0) return true;
+        
+        UndoAction action = redoList.get(0);
+        boolean completed = action.undoAndInvert();
+        undoList.add(0, action);
+        redoList.remove(0);
+        
+        return completed && action.getUndoType() == UType.UNDO;
+    }
+    public UndoAction getUndoNextAction(){
+        if(undoList.size() > 0){
+            return undoList.get(0);
+        }
+        return null;
+    }
     public String getUndoNextName(){
         if(undoList.size() > 0){
             return undoList.get(0).toString();
@@ -55,14 +109,21 @@ public class UndoEngine{
     
     private void checkUndoStackLength(){
         if(undoList.size() > MAX_STACK_LENGTH){
-            undoList.clear();
-            undoList.addAll(undoList.subList(0, MAX_STACK_LENGTH));
+            undoList = new ArrayList<>(undoList.stream().limit(MAX_STACK_LENGTH).toList());
         }
     }
     private void checkRedoStackLength(){
         if(redoList.size() > MAX_STACK_LENGTH){
-            redoList.clear();
-            redoList.addAll(redoList.subList(0, MAX_STACK_LENGTH));
+            redoList = new ArrayList<>(redoList.stream().limit(MAX_STACK_LENGTH).toList());
         }
+    }
+    
+    public static <T> boolean isNextUndoActionProperty(Property<T> property){
+        if(MainWindow.mainScreen.getUndoEngine() != null
+            && MainWindow.mainScreen.getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
+            
+            return action.getObservableValue() == property;
+        }
+        return false;
     }
 }

@@ -38,6 +38,6 @@ public class ResizeUndoAction extends MoveUndoAction{
     public String toString(){
         if(element.get() == null) return null;
         
-        return TR.tr("actions.resize") + " " + element.get().getElementName(false);
+        return TR.tr("actions.resize") + " " + element.get().getElementName(false).toLowerCase();
     }
 }

@@ -4,7 +4,9 @@ import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -39,7 +41,7 @@ public class GradeElement extends Element{
     private final DoubleProperty total;
     private int index;
     private String parentPath;
-    private boolean alwaysVisible;
+    private final BooleanProperty alwaysVisible;
     
     public int nextRealYToUse = 0;
     
@@ -53,7 +55,7 @@ public class GradeElement extends Element{
         this.total = new SimpleDoubleProperty(total);
         this.index = index;
         this.parentPath = parentPath;
-        this.alwaysVisible = alwaysVisible;
+        this.alwaysVisible = new SimpleBooleanProperty(alwaysVisible);
         
         text.setBoundsType(TextBoundsType.LOGICAL);
         text.setTextOrigin(VPos.TOP);
@@ -92,7 +94,6 @@ public class GradeElement extends Element{
             checkLocation(false);
         });
         nameProperty().addListener((observable, oldValue, newValue) -> {
-            
             text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             Edition.setUnsave("GradeNameChanged");
             
@@ -103,8 +104,10 @@ public class GradeElement extends Element{
             }
             // Check if exist twice
             GradeTreeItem treeItemElement = getGradeTreeItem();
-            if(!treeItemElement.isRoot() && ((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName()))
+            if(!treeItemElement.isRoot() && ((GradeTreeItem) treeItemElement.getParent()).isExistTwice(getName())){
                 setName(getName() + "(1)");
+                return;
+            }
             
             // Redefine children parentPath
             if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
@@ -114,6 +117,22 @@ public class GradeElement extends Element{
                 if(treeItemElement.hasSubGrade() && getValue() == -1) treeItemElement.resetChildrenValues();
                 else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(false);
             }
+    
+            // When this is called due to a undo action, need to update GradeTreeItem
+            if(UndoEngine.isUndoingThings){
+                GradeTreeItem treeItem = getGradeTreeItem();
+                if(treeItem != null){
+                    treeItem.nameField.setText(newValue);
+                }
+                return;
+            }else{
+                // New word added OR this is the first registration of this action/property.
+                if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
+                        || !UndoEngine.isNextUndoActionProperty(nameProperty())){
+        
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, nameProperty(), oldValue.trim(), UType.UNDO));
+                }
+            }
         });
         // make sum when value or total change
         valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -122,7 +141,7 @@ public class GradeElement extends Element{
                 setVisible(false);
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             }else{
-                if(oldValue.intValue() == -1 && !alwaysVisible){ // Deviens visible
+                if(oldValue.intValue() == -1 && !isAlwaysVisible()){ // Deviens visible
                     
                     if(MainWindow.mainScreen.document.getLastCursorOverPage() != -1 && MainWindow.mainScreen.document.getLastCursorOverPage() != getPage().getPage()){
                         switchPage(MainWindow.mainScreen.document.getLastCursorOverPage());
@@ -142,11 +161,20 @@ public class GradeElement extends Element{
                 text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "") + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue())) + "/" + MainWindow.gradesDigFormat.format(getTotal()));
             }
             
-            GradeTreeItem treeItemElement = getGradeTreeItem();
-            if(treeItemElement.hasSubGrade() && newValue.intValue() == -1) treeItemElement.resetChildrenValues();
-            else if(!treeItemElement.isRoot())
-                ((GradeTreeItem) treeItemElement.getParent()).makeSum(getPageNumber(), getRealY());
-            
+            GradeTreeItem treeItem = getGradeTreeItem();
+            if(treeItem.hasSubGrade() && newValue.intValue() == -1) treeItem.resetChildrenValues();
+            else if(!treeItem.isRoot())
+                ((GradeTreeItem) treeItem.getParent()).makeSum(getPageNumber(), getRealY());
+    
+            // When this is called due to a undo action, need to update GradeTreeItem
+            if(UndoEngine.isUndoingThings){
+                treeItem.gradeField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
+            }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined value so otherwise, this is useless
+                // This is the first registration of this action/property.
+                if(!UndoEngine.isNextUndoActionProperty(nameProperty())){
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, valueProperty(), oldValue, UType.UNDO));
+                }
+            }
         });
         totalProperty().addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave("GradeTotalChanged");
@@ -154,6 +182,28 @@ public class GradeElement extends Element{
             
             if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
             ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
+    
+            
+            
+            // When this is called due to a undo action, need to update GradeTreeItem
+            if(UndoEngine.isUndoingThings){
+                GradeTreeItem treeItem = getGradeTreeItem();
+                if(treeItem != null) treeItem.totalField.setText(MainWindow.gradesDigFormat.format(newValue));
+                
+            }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined total so otherwise, this is useless
+                // This is the first registration of this action/property.
+                if(!UndoEngine.isNextUndoActionProperty(nameProperty())){
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, totalProperty(), oldValue, UType.UNDO));
+                }
+            }
+        });
+        
+        alwaysVisible.addListener((observable, oldValue, newValue) -> {
+            updateFont();
+            setupMenu();
+            getGradeTreeItem().setChildrenAlwaysVisible(isAlwaysVisible(), false);
+            
+            // The undo system is in the setter method to prevent multiple undo for only one action.
         });
     }
     
@@ -186,7 +236,7 @@ public class GradeElement extends Element{
         });
         
         menu.getItems().addAll(item1, item4, item2, item3);
-        if(alwaysVisible && getValue() == -1) menu.getItems().add(item5);
+        if(isAlwaysVisible() && getValue() == -1) menu.getItems().add(item5);
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -213,7 +263,7 @@ public class GradeElement extends Element{
             }
         });
         item5.setOnAction(e -> {
-            setAlwaysVisible(false);
+            setAlwaysVisible(false, true);
         });
     }
     
@@ -270,7 +320,7 @@ public class GradeElement extends Element{
         data.put("value", value.getValue());
         data.put("total", total.getValue());
         data.put("name", name.getValue());
-        data.put("alwaysVisible", alwaysVisible);
+        data.put("alwaysVisible", alwaysVisible.get());
         
         return data;
     }
@@ -316,11 +366,11 @@ public class GradeElement extends Element{
     // SPECIFIC METHODS
     
     public boolean isFilled(){
-        return getValue() != -1 || alwaysVisible;
+        return getValue() != -1 || isAlwaysVisible();
     }
     
     public boolean isShouldVisible(){
-        return isShouldVisibleOnExport() || alwaysVisible;
+        return isShouldVisibleOnExport() || isAlwaysVisible();
     }
     
     public boolean isShouldVisibleOnExport(){
@@ -448,17 +498,12 @@ public class GradeElement extends Element{
     }
     
     public boolean isAlwaysVisible(){
-        return alwaysVisible;
+        return alwaysVisible.get();
     }
     
-    public void setAlwaysVisible(boolean alwaysVisible){
-        this.alwaysVisible = alwaysVisible;
-        updateFont();
-        setupMenu();
-        if(!alwaysVisible){
-            GradeTreeItem treeItemElement = getGradeTreeItem();
-            treeItemElement.setChildrenAlwaysVisibleToFalse();
-        }
+    public void setAlwaysVisible(boolean alwaysVisible, boolean registerUndo){
+        if(registerUndo) MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.alwaysVisible, this.alwaysVisible.get(), UType.UNDO));
+        this.alwaysVisible.set(alwaysVisible);
     }
     
     // shortcuts
@@ -502,11 +547,11 @@ public class GradeElement extends Element{
     
     @Override
     public Element clone(){
-        return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), index, parentPath, name.getValue(), alwaysVisible);
+        return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), index, parentPath, name.getValue(), alwaysVisible.get());
     }
     
     public GradeRating toGradeRating(){
-        return new GradeRating(total.get(), name.get(), index, parentPath, alwaysVisible, getRealX(), getRealY(), pageNumber);
+        return new GradeRating(total.get(), name.get(), index, parentPath, alwaysVisible.get(), getRealX(), getRealY(), pageNumber);
     }
     
     public GradeTreeItem toGradeTreeItem(){

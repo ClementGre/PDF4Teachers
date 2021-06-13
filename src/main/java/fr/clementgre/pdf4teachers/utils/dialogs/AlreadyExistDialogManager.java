@@ -38,13 +38,13 @@ public class AlreadyExistDialogManager{
         if(recursive){
             skip = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.DEFAULT);
             skipAlways = alert.getButton(TR.tr("dialog.actionError.skipAlways"), ButtonPosition.OTHER_RIGHT);
-            rename = alert.getButton(TR.tr("dialog.actionError.rename"), ButtonPosition.OTHER_RIGHT);
+            rename = alert.getButton(TR.tr("actions.rename"), ButtonPosition.OTHER_RIGHT);
             renameAlways = alert.getButton(TR.tr("dialog.actionError.renameAlways"), ButtonPosition.OTHER_RIGHT);
             overwriteAlways = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
 
             alert.getButtonTypes().setAll(overwrite, rename, skip, stopAll);
         }else{
-            rename = alert.getButton(TR.tr("dialog.actionError.rename"), ButtonPosition.DEFAULT);
+            rename = alert.getButton(TR.tr("actions.rename"), ButtonPosition.DEFAULT);
             
             alert.getButtonTypes().setAll(overwrite, rename, stopAll);
         }

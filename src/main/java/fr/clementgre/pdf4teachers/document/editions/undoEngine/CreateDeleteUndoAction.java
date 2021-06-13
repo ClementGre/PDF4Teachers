@@ -5,6 +5,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
+import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 
 public class CreateDeleteUndoAction extends UndoAction{
     
@@ -26,7 +27,13 @@ public class CreateDeleteUndoAction extends UndoAction{
             if(deleted){
                 restoreElement(element);
             }else{
-                element.delete(true, UType.NO_UNDO);
+                // Regenerate Root if grade is Root
+                if(element instanceof GradeElement grade
+                        && (GradeTreeView.getTotal()).getCore().equals(grade)){
+                    MainWindow.gradeTab.treeView.clearElements(true, false); // markAsUnsave == false so the action will be NO_UNDO
+                }else{
+                    element.delete(true, UType.NO_UNDO);
+                }
             }
             
             // invert
@@ -65,9 +72,9 @@ public class CreateDeleteUndoAction extends UndoAction{
     
     public String toString(){
         if(originallyDeteted){
-            return TR.tr("actions.delete") + " " + element.getElementName(false);
+            return TR.tr("actions.delete") + " " + element.getElementName(false).toLowerCase();
         }else{
-            return TR.tr("actions.create") + " " + element.getElementName(false);
+            return TR.tr("actions.create") + " " + element.getElementName(false).toLowerCase();
         }
         
     }

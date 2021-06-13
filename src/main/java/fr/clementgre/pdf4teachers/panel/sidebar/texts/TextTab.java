@@ -56,7 +56,7 @@ public class TextTab extends SideTab{
     
     private final HBox combosBox = new HBox();
     public FontComboBox fontCombo = new FontComboBox(true);
-    private final Spinner<Double> sizeCombo = new Spinner<>(2d, 999d, 14d, 2d);
+    private final Spinner<Double> sizeSpinner = new Spinner<>(2d, 999d, 14d, 2d);
     
     private final HBox colorAndParamsBox = new HBox();
     private final SyncColorPicker colorPicker = new SyncColorPicker();
@@ -101,12 +101,13 @@ public class TextTab extends SideTab{
             if(isNew) MainWindow.userData.textLastFontName = newValue;
         });
         
-        PaneUtils.setHBoxPosition(sizeCombo, 95, 30, 2.5);
-        sizeCombo.setStyle("-fx-font-size: 13");
-        sizeCombo.setEditable(true);
-        sizeCombo.getValueFactory().setConverter(new StringToDoubleConverter(14));
-        sizeCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-        sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+        PaneUtils.setHBoxPosition(sizeSpinner, 95, 30, 2.5);
+        UndoTextArea.setupAntiCtrlZFilter(sizeSpinner);
+        sizeSpinner.setStyle("-fx-font-size: 13");
+        sizeSpinner.setEditable(true);
+        sizeSpinner.getValueFactory().setConverter(new StringToDoubleConverter(14));
+        sizeSpinner.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
+        sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isNew) MainWindow.userData.textLastFontSize = newValue;
         });
         
@@ -148,7 +149,7 @@ public class TextTab extends SideTab{
         PaneUtils.setHBoxPosition(newBtn, -1, 30, 2.5);
         newBtn.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         
-        combosBox.getChildren().addAll(fontCombo, sizeCombo);
+        combosBox.getChildren().addAll(fontCombo, sizeSpinner);
         colorAndParamsBox.getChildren().addAll(colorPicker, boldBtn, itBtn);
         btnBox.getChildren().addAll(deleteBtn, newBtn);
         
@@ -179,12 +180,12 @@ public class TextTab extends SideTab{
                     itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
                     colorPicker.setValue(current.getColor());
                     fontCombo.getSelectionModel().select(current.getFont().getFamily());
-                    sizeCombo.getValueFactory().setValue(current.getFont().getSize());
+                    sizeSpinner.getValueFactory().setValue(current.getFont().getSize());
                     
                     current.fontProperty().bind(Bindings.createObjectBinding(() -> {
                         Edition.setUnsave("TextElement FontChanged");
                         return getFont();
-                    }, fontCombo.getSelectionModel().selectedItemProperty(), sizeCombo.valueProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
+                    }, fontCombo.getSelectionModel().selectedItemProperty(), sizeSpinner.valueProperty(), itBtn.selectedProperty(), boldBtn.selectedProperty()));
                 }
             }
         });
@@ -242,7 +243,7 @@ public class TextTab extends SideTab{
             ((TextElement) MainWindow.mainScreen.getSelected()).setText(newValue);
             if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
         });
-        sizeCombo.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+        sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
             if(!((TextElement) MainWindow.mainScreen.getSelected()).isLatex()){
                 String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
                 if(txtArea.getText().endsWith(" ")) wrapped += " ";
@@ -302,7 +303,7 @@ public class TextTab extends SideTab{
             MainWindow.mainScreen.setSelected(null);
             
             fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
-            sizeCombo.getValueFactory().setValue(MainWindow.userData.textLastFontSize);
+            sizeSpinner.getValueFactory().setValue(MainWindow.userData.textLastFontSize);
             colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
             boldBtn.setSelected(MainWindow.userData.textLastFontBold);
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
@@ -352,7 +353,7 @@ public class TextTab extends SideTab{
     }
     
     private Font getFont(){
-        return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeCombo.getValueFactory().getValue());
+        return FontUtils.getFont(fontCombo.getSelectionModel().getSelectedItem(), itBtn.isSelected(), boldBtn.isSelected(), sizeSpinner.getValueFactory().getValue());
     }
     
     private ScrollBar getHorizontalSB(final TextArea scrollPane){

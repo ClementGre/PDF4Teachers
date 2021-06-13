@@ -68,14 +68,16 @@
             <Hyperlink text="JMetro" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
             <Hyperlink text="Metadata-Extractor" id="https://drewnoakes.com/code/exif/"/>
             <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
+            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>
         </VBox>
         <VBox fx:id="dependenciesRight">
             <Hyperlink text="JLatexMath" id="https://github.com/opencollab/jlatexmath"/>
             <Hyperlink text="SnakeYAML" id="https://bitbucket.org/asomov/snakeyaml/src/master/"/>
             <Hyperlink text="Jackson Streaming API" id="https://github.com/FasterXML/jackson-core"/>
-<!--            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>-->
             <Hyperlink text="Batik Parser" id="https://xmlgraphics.apache.org/batik/using/parsers.html"/>
             <Hyperlink text="PDFBox Graphics2D" id="https://github.com/rototor/pdfbox-graphics2d"/>
+            <Hyperlink text="Google Diff-Match-Patch" id="https://github.com/google/diff-match-patch"/>
+
         </VBox>
     </HBox>
 

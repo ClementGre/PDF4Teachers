@@ -3,11 +3,14 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
@@ -74,13 +77,22 @@ public class ImageElement extends GraphicElement{
         imageId.addListener((observable, oldValue, newValue) -> {
             updateImage(false);
             Edition.setUnsave("ImageElement changed");
+    
+            // New word added OR this is the first registration of this action/property.
+            if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
+                    || !UndoEngine.isNextUndoActionProperty(imageId)){
+        
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.UNDO));
+            }
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
             Edition.setUnsave("ImageElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.UNDO));
         });
         resizeMode.addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave("ImageElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
         });
         
     }

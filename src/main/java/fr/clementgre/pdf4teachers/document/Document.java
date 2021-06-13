@@ -95,10 +95,14 @@ public class Document{
         updateShowsStatus();
     }
     
-    public void loadEdition(){
+    public boolean loadEdition(){
         this.edition = new Edition(file, this);
-        if(!documentSaver.isAlive()) documentSaver.start();
-        this.undoEngine = new UndoEngine();
+        if(edition.load()){
+            if(!documentSaver.isAlive()) documentSaver.start();
+            this.undoEngine = new UndoEngine();
+            return true;
+        }
+        return false;
     }
     public double getCurrentScrollValue(){
         return MainWindow.mainScreen.zoomOperator.vScrollBar.getValue();

@@ -2,84 +2,111 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.geometry.Insets;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
-import javafx.scene.layout.*;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.rendering.RenderDestination;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class PDFPagesRender{
     
-    private final File file;
+    private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack){}
     
+    private final File file;
     public PDFPagesEditor editor;
     private PDDocument document;
     private PDFRenderer pdfRenderer;
-    ArrayList<Thread> rendersPage = new ArrayList<>();
+    
+    private final ArrayList<RenderPending> rendersPending = new ArrayList<>();
     
     public boolean advertisement = false;
-    private boolean render = false;
+    private boolean closed = false;
     
     public PDFPagesRender(File file) throws IOException{
         this.file = file;
         
-        render = true;
         document = PDDocument.load(file);
         pdfRenderer = new PDFRenderer(document);
         editor = new PDFPagesEditor(document, file);
-        render = false;
+        
+        setupThread();
+    }
+    private void setupThread(){
+
+        new Thread(() -> {
+        
+            while(!closed){ // not closed
+            
+                if(rendersPending.size() != 0){ // Render
+                    renderPage(rendersPending.get(0));
+                    rendersPending.remove(0);
+                
+                }else{ // Wait
+                    PlatformUtils.sleepThread(100);
+                }
+            }
+            
+            // Close
+            pdfRenderer = null;
+            try{
+                document.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+            document = null;
+        
+        }, "Page Renderer").start();
+    }
+    
+    private void renderPage(RenderPending renderPending){
+        PDRectangle pageSize = getPageSize(renderPending.pageNumber);
+    
+        BufferedImage renderImage = new BufferedImage(renderPending.width, (int) (pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphics = renderImage.createGraphics();
+        graphics.setBackground(Color.WHITE);
+    
+        //document.setResourceCache();
+    
+        try{
+            //PDDocument document = PDDocument.load(file);
+            //PDFRenderer pdfRenderer = new PDFRenderer(document);
+            pdfRenderer.renderPageToGraphics(renderPending.pageNumber, graphics,
+                    (float) renderPending.width / pageSize.getWidth(),
+                    (float) renderPending.width / pageSize.getWidth(),
+                    RenderDestination.VIEW);
+            
+            if(document == null) Platform.runLater(() -> renderPending.callBack.call(null));
+            //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+            //document.close();
+        
+            graphics.dispose();
+        
+            Platform.runLater(() -> renderPending.callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
+        }catch(Exception e){
+            e.printStackTrace();
+            Platform.runLater(() -> renderPending.callBack.call(null));
+        }
+    
+        renderImage.flush();
+        System.gc(); // clear unused element in RAM
     }
     
     public void renderPage(int pageNumber, double size, CallBackArg<Image> callBack){
-        
-        Thread renderPage = new Thread(() -> {
-            PDRectangle pageSize = getPageSize(pageNumber);
-            
-            int destWidth = (int) (595 * 1.4 * size); // *1=595 | *1.5=892 |*2=1190
-            int destHeight = (int) (pageSize.getHeight() / pageSize.getWidth() * ((double) destWidth));
-            
-            BufferedImage renderImage = new BufferedImage(destWidth, destHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = renderImage.createGraphics();
-            graphics.setBackground(Color.WHITE);
-            
-            //document.setResourceCache();
-            
-            try{
-                //PDDocument document = PDDocument.load(file);
-                //PDFRenderer pdfRenderer = new PDFRenderer(document);
-                pdfRenderer.renderPageToGraphics(pageNumber, graphics, destWidth / pageSize.getWidth(), destWidth / pageSize.getWidth(), RenderDestination.VIEW);
-                //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-                //document.close();
-                
-                graphics.dispose();
-                
-                Platform.runLater(() -> callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
-            }catch(Exception e){
-                e.printStackTrace();
-                Platform.runLater(() -> callBack.call(null));
-            }
-    
-            renderImage.flush();
-            System.gc(); // clear unused element in RAM
-            render = false;
-            
-        }, "Render page " + pageNumber);
-        renderPage.start();
-        rendersPage.add(renderPage);
+        // *1=595 | *1.5=892 |*2=1190
+        rendersPending.add(new RenderPending(pageNumber, (int) (595 * 1.4 * size), callBack));
     }
     
     public BufferedImage renderPageBasic(int pageNumber, int width, int height){
@@ -94,7 +121,7 @@ public class PDFPagesRender{
             PDDocument document = PDDocument.load(file);
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             pdfRenderer.renderPageToGraphics(pageNumber, graphics, width / pageSize.getWidth(), width / pageSize.getWidth(), RenderDestination.VIEW);
-            //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
+            scale(pdfRenderer.renderImage(pageNumber, 3, ImageType.RGB), 1800);
             document.close();
             graphics.dispose();
             
@@ -117,13 +144,7 @@ public class PDFPagesRender{
     }
     
     public void close(){
-        try{
-            pdfRenderer = null;
-            document.close();
-            document = null;
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+        closed = true;
     }
     
     public PDDocument getDocument(){

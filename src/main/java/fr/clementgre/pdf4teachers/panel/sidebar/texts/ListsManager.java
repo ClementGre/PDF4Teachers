@@ -5,12 +5,15 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.scene.control.*;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.MenuButton;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -51,7 +54,7 @@ public class ListsManager{
                     CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("textTab.lists.save.alreadyExistDialog.title"),
                             TR.tr("textTab.lists.save.alreadyExistDialog.header"));
                     
-                    alert.addButton(TR.tr("dialog.actionError.rename"), ButtonPosition.CLOSE);
+                    alert.addButton(TR.tr("actions.rename"), ButtonPosition.CLOSE);
                     alert.addButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.DEFAULT);
                     
                     if(alert.getShowAndWaitIsCancelButton()){

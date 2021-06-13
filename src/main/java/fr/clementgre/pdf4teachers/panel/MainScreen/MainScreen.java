@@ -364,7 +364,7 @@ public class MainScreen extends Pane{
     
     public void openFile(File file){
         
-        if(!closeFile(!Main.settings.autoSave.getValue())){
+        if(!closeFile(!Main.settings.autoSave.getValue(), false)){
             return;
         }
         
@@ -387,11 +387,13 @@ public class MainScreen extends Pane{
         }catch(Exception e){
             System.err.println("Error: Unable to load the edit file.");
             e.printStackTrace();
-            document = null;
-            closeFile(false);
+            closeFile(false, true);
+            
             failedEditFile = Edition.getEditFile(file).getAbsolutePath();
             status.set(Status.ERROR_EDITION);
             repaint();
+            
+            
             return;
         }
     
@@ -413,16 +415,15 @@ public class MainScreen extends Pane{
         repaint();
     }
     
-    public boolean closeFile(boolean confirm){
+    public boolean closeFile(boolean confirm, boolean forceNotToSave){
         setSelected(null);
         
         if(document != null){
-            
             if(confirm){
                 if(!document.save()){
                     return false;
                 }
-            }else document.edition.save();
+            }else if(!forceNotToSave) document.edition.save();
             
             MainWindow.gradeTab.treeView.clearElements(false, false);
             MainWindow.textTab.treeView.onCloseDocument();
@@ -549,6 +550,7 @@ public class MainScreen extends Pane{
         return selected;
     }
     public void setSelected(Element selected){
+        System.out.println("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
         this.selected.set(selected);
     }
     

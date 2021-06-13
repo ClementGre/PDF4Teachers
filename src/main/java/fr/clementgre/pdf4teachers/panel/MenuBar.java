@@ -174,9 +174,8 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages,
                 new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition,
-                new SeparatorMenuItem(), tools10FullScreen,
-                new SeparatorMenuItem(), tools10Debug,
-                new SeparatorMenuItem(), tools8Undo, tools9Redo);
+                new SeparatorMenuItem(), tools10FullScreen, tools8Undo, tools9Redo,
+                new SeparatorMenuItem(), tools10Debug);
         
         
         ////////// HELP //////////
@@ -225,7 +224,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         file6Close.setOnAction((ActionEvent e) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
-                MainWindow.mainScreen.closeFile(true);
+                MainWindow.mainScreen.closeFile(true, false);
             }
         });
         file7Export.setOnAction((ActionEvent actionEvent) -> {
@@ -368,7 +367,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         tools10Debug1OpenConsole.setOnAction((e) -> new LogWindow());
         tools10Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
-        tools10Debug3OpenEditionFile.setOnAction((e) -> PlatformUtils.openFile(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath()));
+        tools10Debug3OpenEditionFile.setOnAction((e) -> {
+            File file = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
+            if(!file.exists()){
+                try{ file.createNewFile(); }catch(IOException ioException){ ioException.printStackTrace(); }
+            }
+            PlatformUtils.openFile(file.getAbsolutePath());
+        });
     
         ////////// ABOUT / HELP //////////
         
