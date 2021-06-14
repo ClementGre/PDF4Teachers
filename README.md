@@ -66,7 +66,7 @@ PDF4Teachers est conforme au RGPD de l'Union européenne : toutes les éditions 
 ![Preview](https://raw.githubusercontent.com/clementgre/PDF4Teachers/master/images/preview.png)
 
 # The dependencies (1.3.0)
-The application was developed with JavaFX framework, with Java SE 16 (1.3.0). The version 1.2.1 uses Java 15 (and 14 on Windows).
+The application was developed with JavaFX framework, with Java SE 16 (1.3.0).
 
 ### Java dependencies
 - **[JavaFx 16](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.

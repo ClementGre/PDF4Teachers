@@ -199,7 +199,7 @@ public class VectorElement extends GraphicElement{
     }
     
     @Override
-    protected void onDoubleCLick(){
+    public void onDoubleClick(){
         enterEditMode();
     }
     

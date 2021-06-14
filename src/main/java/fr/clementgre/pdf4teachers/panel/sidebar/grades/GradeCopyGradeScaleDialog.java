@@ -118,18 +118,17 @@ public class GradeCopyGradeScaleDialog{
             }
             
             for(GradeRating rating : ratings){
-                rating.alwaysVisible = copyLocations;
                 
                 GradeElement element = rating.getSamePathIn(gradeElements);
                 if(element != null){
-                    if(copyLocations){
-                        otherElements.add(rating.toGradeElement(-1));
-                    }else{
-                        otherElements.add(rating.toGradeElement(element.getValue(), element.getRealX(), element.getRealY(), element.getPageNumber()));
+                    if(copyLocations && rating.isEligibleForAlwaysVisible()){ // alwaysVisible == true, use source grade position
+                        otherElements.add(rating.toGradeElement(element.getValue(), true));
+                    }else{ // alwaysVisible == false, use destination grade position and value
+                        otherElements.add(rating.toGradeElement(element.getValue(), false, element.getRealX(), element.getRealY(), element.getPageNumber()));
                     }
                     gradeElements.remove(element);
                 }else{
-                    otherElements.add(rating.toGradeElement(-1));
+                    otherElements.add(rating.toGradeElement(-1, copyLocations && rating.isEligibleForAlwaysVisible()));
                 }
             }
             

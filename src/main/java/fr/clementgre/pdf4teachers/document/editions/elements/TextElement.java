@@ -143,7 +143,7 @@ public class TextElement extends Element{
         cloneOnDocument();
     }
     @Override
-    protected void onDoubleCLick(){
+    public void onDoubleClick(){
     
     }
     

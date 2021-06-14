@@ -271,10 +271,7 @@ public class GradeElement extends Element{
     protected void onMouseRelease(){
         GradeTreeView.defineNaNLocations();
     }
-    @Override
-    protected void onDoubleCLick(){
     
-    }
     
     // ACTIONS
     
@@ -287,6 +284,10 @@ public class GradeElement extends Element{
     }
     @Override
     public void onDoubleClickAfterSelected(){
+    
+    }
+    @Override
+    public void onDoubleClick(){
         if(!getGradeTreeItem().hasSubGrade()){
             setValue(0);
             AutoTipsManager.showByAction("gradereset");
@@ -551,7 +552,7 @@ public class GradeElement extends Element{
     }
     
     public GradeRating toGradeRating(){
-        return new GradeRating(total.get(), name.get(), index, parentPath, alwaysVisible.get(), getRealX(), getRealY(), pageNumber);
+        return new GradeRating(value.get(), total.get(), name.get(), index, parentPath, isAlwaysVisible(), getRealX(), getRealY(), pageNumber);
     }
     
     public GradeTreeItem toGradeTreeItem(){

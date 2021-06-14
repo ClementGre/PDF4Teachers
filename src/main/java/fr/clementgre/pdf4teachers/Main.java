@@ -43,8 +43,8 @@ public class Main extends Application{
     
     public static final String VERSION = "1.3.0-pre1";
     public static final int VERSION_ID = 1;
-    public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = true;
+    public static final boolean IS_PRE_RELEASE = true;
+    public static final boolean DEBUG = false;
     public static final boolean COPY_CONSOLE = true;
     public static final boolean TRANSLATIONS_IN_CODE = false;
     
@@ -122,7 +122,7 @@ public class Main extends Application{
                 if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()){
                     copyDirToNewOSXLocation(new File(System.getProperty("user.home") + "/.PDF4Teachers/"), new File(dataFolder));
                     PlatformUtils.runLaterOnUIThread(5000, () -> {
-                        MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("osx.moveDataFolderNotification"), 10);
+                        MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("osx.moveDataFolderNotification"), -1);
                         new File(System.getProperty("user.home") + "/.PDF4Teachers/").delete();
                     });
                 }

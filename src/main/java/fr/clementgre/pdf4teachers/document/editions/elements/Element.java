@@ -88,16 +88,16 @@ public abstract class Element extends Region{
                         menu.show(getPage(), e.getScreenX(), e.getScreenY());
                     }
                     
-                }else if(e.getClickCount() == 2 && lastClickSelected.get()){
-                    onDoubleClickAfterSelected();
                 }
             });
             setOnMouseClicked(e -> {
                 if(PageRenderer.isEditPagesMode()) return;
                 e.consume();
-                requestFocus();
-                if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
-                    onDoubleCLick();
+                if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
+                    onDoubleClick();
+                    if(lastClickSelected.get()){
+                        onDoubleClickAfterSelected();
+                    }
                 }
             });
             setOnMouseDragged(e -> {
@@ -138,11 +138,6 @@ public abstract class Element extends Region{
             });
         }
         
-        setOnMouseClicked(e -> {
-            if(PageRenderer.isEditPagesMode()) return;
-            e.consume();
-        });
-        
         /////////////////////////////////////////////////////////////////////////
         
         setupBindings();
@@ -157,7 +152,6 @@ public abstract class Element extends Region{
     protected abstract void setupMenu();
     
     protected abstract void onMouseRelease();
-    protected abstract void onDoubleCLick();
     
     protected void onSelected(){
         setBorder(new Border(STROKE_DEFAULT));
@@ -206,6 +200,7 @@ public abstract class Element extends Region{
     public abstract void select();
     
     public abstract void onDoubleClickAfterSelected();
+    public abstract void onDoubleClick();
     
     protected void selectPartial(){
         MainWindow.mainScreen.setSelected(this);

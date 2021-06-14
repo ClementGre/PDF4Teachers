@@ -51,7 +51,7 @@ public class Edition{
             config.load();
             int versionID = (int) config.getLong("versionID");
     
-            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
             
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
             if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
@@ -182,7 +182,7 @@ public class Edition{
             config.load();
             int versionID = (int) config.getLong("versionID");
             
-            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 10
+            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
             
             ArrayList<Element> elements = new ArrayList<>();
     

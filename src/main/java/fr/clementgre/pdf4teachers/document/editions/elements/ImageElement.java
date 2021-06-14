@@ -112,7 +112,7 @@ public class ImageElement extends GraphicElement{
         super.onMouseRelease();
     }
     @Override
-    protected void onDoubleCLick(){
+    public void onDoubleClick(){
     
     }
     

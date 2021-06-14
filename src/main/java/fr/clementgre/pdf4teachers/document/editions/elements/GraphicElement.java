@@ -136,12 +136,13 @@ public abstract class GraphicElement extends Element{
             }
         });
     
+        
         setOnMouseClicked(e -> {
             if(PageRenderer.isEditPagesMode()) return;
             e.consume();
             requestFocus();
-            if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
-                onDoubleCLick();
+            if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
+                onDoubleClick();
             }
         });
         
@@ -582,6 +583,10 @@ public abstract class GraphicElement extends Element{
     
     @Override
     public void onDoubleClickAfterSelected(){
+        // This method is not available with GraphicElements, listeners are not coded to detect clicks after selecting.
+    }
+    @Override
+    public void onDoubleClick(){
     
     }
     

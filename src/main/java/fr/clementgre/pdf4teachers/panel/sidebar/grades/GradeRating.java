@@ -6,36 +6,42 @@ import java.util.ArrayList;
 
 public class GradeRating{
 
+    public double originalValue;
     public double total;
     public String name;
     public int index;
     public String parentPath;
-    public boolean alwaysVisible;
+    public boolean originalAlwaysVisible;
     public int x;
     public int y;
     public int page;
 
-    public GradeRating(double total, String name, int index, String parentPath, boolean alwaysVisible, int x, int y, int page){
+    public GradeRating(double originalValue, double total, String name, int index, String parentPath, boolean originalAlwaysVisible, int x, int y, int page){
+        this.originalValue = originalValue;
         this.total = total;
         this.name = name;
         this.index = index;
         this.parentPath = parentPath;
-        this.alwaysVisible = alwaysVisible;
+        this.originalAlwaysVisible = originalAlwaysVisible;
         this.x = x;
         this.y = y;
         this.page = page;
     }
 
-    public GradeElement toGradeElement(double value, int x, int y, int page){
+    public GradeElement toGradeElement(double value, boolean alwaysVisible, int x, int y, int page){
         return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
     }
 
-    public GradeElement toGradeElement(double value){
+    public GradeElement toGradeElement(double value, boolean  alwaysVisible){
         return new GradeElement(x, y, page, false, value, total, index, parentPath, name, alwaysVisible);
     }
 
     public boolean equals(GradeRating gradeRating){
         return total == gradeRating.total && name.equals(gradeRating.name) && index == gradeRating.index && parentPath.equals(gradeRating.parentPath);
+    }
+    
+    public boolean isEligibleForAlwaysVisible(){
+        return originalValue != -1 || originalAlwaysVisible;
     }
 
     public boolean containsIn(ArrayList<GradeRating> array){
