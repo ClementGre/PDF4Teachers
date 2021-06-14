@@ -8,8 +8,8 @@ public class AppFontsLoader{
     
     private static final HashMap<String, String> loadedFonts = new HashMap<>();
     
-    public static final String NOTO_SANS_KR = "TitilliumWeb-Regular.otf";
-    public static final String NOTO_SANS_KR_BOLD = "TitilliumWeb-Bold.otf";
+    public static final String LATO_BOLD = "Lato-Bold.ttf";
+    public static final String LATO = "Lato-Regular.ttf";
     public static final String OPEN_SANS = "/fonts/Open Sans/regular.ttf";
     
     public static Font getFont(String name, double size){

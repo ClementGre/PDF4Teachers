@@ -3,14 +3,14 @@
 
 }
 .header .headerText{
-    -fx-font: 35 "Noto Sans KR";
+    -fx-font: 35 "Open Sans";
     -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
 }
 .header .subHeaderText{
-    -fx-font: 16 "Noto Sans KR";
-    -fx-font-weight: 400;
+    -fx-font: 16 "Lato";
+    -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
 }
@@ -20,7 +20,8 @@
     -fx-padding: 15;
 }
 .rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner, .tooltip{
-    -fx-font: 14 "Noto Sans KR";
+    -fx-font: 14 "Lato";
+    -fx-font-weight: 400;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
 }
@@ -41,6 +42,7 @@
     -fx-alignment: CENTER_RIGHT;
 }
 .buttonBox .button{
-    -fx-font: 14 "Noto Sans KR";
+    -fx-font: 14 "Lato";
+    -fx-font-weight: 400;
     -fx-font-smoothing-type: gray;
 }
