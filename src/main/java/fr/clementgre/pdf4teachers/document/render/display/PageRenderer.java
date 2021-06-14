@@ -539,6 +539,7 @@ public class PageRenderer extends Pane{
     public void updateZoom(){
         if(lastShowStatus != 0) return; // Verify that the page is visible
         if(status != PageStatus.RENDERED) return; // Verify that the page is rendered
+        
         if(Math.abs(renderedZoomFactor - getRenderingZoomFactor()) > 0.2){
             status = PageStatus.RENDERING;
             render(null);

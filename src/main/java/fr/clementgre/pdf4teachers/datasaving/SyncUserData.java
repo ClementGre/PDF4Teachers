@@ -18,9 +18,9 @@ public class SyncUserData{
     public List<String> rightBarOrganization = Collections.emptyList();
     
     @UserDataObject(path = "mainWindowSize.width")
-    public long mainWindowWidth = 1200;
+    public long mainWindowWidth = 1300;
     @UserDataObject(path = "mainWindowSize.height")
-    public long mainWindowHeight = 675;
+    public long mainWindowHeight = 800;
     @UserDataObject(path = "mainWindowSize.x")
     public long mainWindowX = -1;
     @UserDataObject(path = "mainWindowSize.y")

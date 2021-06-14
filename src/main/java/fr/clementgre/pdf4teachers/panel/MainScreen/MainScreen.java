@@ -145,6 +145,8 @@ public class MainScreen extends Pane{
     private long lastFinishedZoomingTime = 0;
     private boolean hasZoomStartEndEvents = false;
     public static boolean isRotating = false;
+    
+    private long lastScaleChangedMs = 0;
     public void setup(){
         
         setStyle("-fx-padding: 0; -fx-background-color: #484848;");
@@ -181,10 +183,14 @@ public class MainScreen extends Pane{
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
-                Platform.runLater(() -> {
-                    if(document != null){
-                        document.updateShowsStatus();
-                        document.updateZoom();
+                lastScaleChangedMs = System.currentTimeMillis();
+                PlatformUtils.runLaterOnUIThread(100, () -> {
+                    if(System.currentTimeMillis() - lastScaleChangedMs >= 95){
+                        lastScaleChangedMs = Long.MAX_VALUE; // Prevent other events to update zoom.
+                        if(document != null){
+                            document.updateShowsStatus();
+                            document.updateZoom();
+                        }
                     }
                 });
             }

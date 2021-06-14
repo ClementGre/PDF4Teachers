@@ -8,7 +8,9 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
+
 import java.lang.reflect.Field;
 
 public class SettingsWindow extends AlternativeWindow<VBox>{
@@ -51,7 +53,7 @@ public class SettingsWindow extends AlternativeWindow<VBox>{
     
     private void setupBtns(){
         Button cancel = new Button(TR.tr("actions.cancel"));
-        Button save = new Button(TR.tr("actions.save"));
+        Button save = new Button(TR.tr("actions.apply"));
     
         cancel.setOnAction(event -> {
             close();

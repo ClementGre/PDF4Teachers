@@ -226,6 +226,11 @@ public class MainWindow extends Stage{
             }
         }).start();
         
+        // Pre-release
+        if(Main.IS_PRE_RELEASE){
+            showNotification(AlertIconType.INFORMATION, TR.tr("pre-release.startInfo"), 30);
+        }
+        
     }
 
     public void updateStyle(){

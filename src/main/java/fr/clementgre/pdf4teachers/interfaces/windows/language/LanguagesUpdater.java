@@ -37,7 +37,7 @@ public class LanguagesUpdater{
             new LanguagesUpdater().update((downloaded) -> {
                 for(Language language : downloaded){
                     if(language.getName().equalsIgnoreCase(Main.settings.language.getValue())){
-                        if(language.containsTxtFile()){
+                        if(language.containsPropertiesFile()){
                             Main.window.restart(true, oldDocPath);
                         }
                         break;
@@ -118,9 +118,9 @@ public class LanguagesUpdater{
                     '}';
         }
         
-        public boolean containsTxtFile(){
+        public boolean containsPropertiesFile(){
             for(String fileName : urls.keySet()){
-                if(fileName.endsWith(".txt")) return true;
+                if(fileName.endsWith(".properties")) return true;
             }
             return false;
         }

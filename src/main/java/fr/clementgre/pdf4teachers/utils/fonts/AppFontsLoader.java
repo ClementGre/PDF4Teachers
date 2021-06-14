@@ -1,14 +1,15 @@
 package fr.clementgre.pdf4teachers.utils.fonts;
 
 import javafx.scene.text.Font;
+
 import java.util.HashMap;
 
 public class AppFontsLoader{
     
     private static final HashMap<String, String> loadedFonts = new HashMap<>();
     
-    public static final String NOTO_SANS_KR = "NotoSansKR-Regular.otf";
-    public static final String NOTO_SANS_KR_BOLD = "NotoSansKR-Bold.otf";
+    public static final String NOTO_SANS_KR = "TitilliumWeb-Regular.otf";
+    public static final String NOTO_SANS_KR_BOLD = "TitilliumWeb-Bold.otf";
     public static final String OPEN_SANS = "/fonts/Open Sans/regular.ttf";
     
     public static Font getFont(String name, double size){

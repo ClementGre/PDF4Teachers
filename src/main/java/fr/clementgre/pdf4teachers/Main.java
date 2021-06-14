@@ -40,11 +40,13 @@ public class Main extends Application{
     
     public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
     public static final String APP_NAME = "PDF4Teachers";
-    public static final String VERSION = "sn1-1.3.0";
+    
+    public static final String VERSION = "1.3.0-pre1";
     public static final int VERSION_ID = 1;
+    public static final boolean IS_PRE_RELEASE = false;
     public static final boolean DEBUG = true;
-    public static final boolean COPY_CONSOLE = false;
-    public static final boolean TRANSLATIONS_IN_CODE = true;
+    public static final boolean COPY_CONSOLE = true;
+    public static final boolean TRANSLATIONS_IN_CODE = false;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();

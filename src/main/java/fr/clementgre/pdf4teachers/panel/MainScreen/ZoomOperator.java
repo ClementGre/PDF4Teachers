@@ -62,15 +62,15 @@ public class ZoomOperator{
         
         
         // Actualise la longeur des curseur de scroll lors du zoom
-        pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
-            hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth() * newValue.doubleValue()));
-            vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight() * newValue.doubleValue()));
+        pane.scaleXProperty().addListener((observable) -> {
+            hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth() * pane.getScaleX()));
+            vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight() * pane.getScaleX()));
         });
         
         // Vérifie si pane peut rentrer entièrement dans MainScreen quand MainScreen est recardé.
         // Vérifie aussi si pane ne pourait plus rentrer dans MainScreen et vérifie les translations dans ce cas
-        mainScreen.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double scrollableHeight = pane.getHeight() * pane.getScaleX() - (hScrollBar.isVisible() ? newValue.doubleValue() - hScrollBar.getHeight() : newValue.doubleValue());
+        mainScreen.heightProperty().addListener((observable) -> {
+            double scrollableHeight = pane.getHeight() * pane.getScaleX() - (hScrollBar.isVisible() ? mainScreen.getHeight() - hScrollBar.getHeight() : mainScreen.getHeight());
             
             if(scrollableHeight <= 0){
                 vScrollBar.setVisible(false);
@@ -92,8 +92,8 @@ public class ZoomOperator{
             vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight() * pane.getScaleX()));
             
         });
-        mainScreen.widthProperty().addListener((observable, oldValue, newValue) -> {
-            double scrollableWidth = pane.getWidth() * pane.getScaleX() - (vScrollBar.isVisible() ? newValue.doubleValue() - vScrollBar.getWidth() : newValue.doubleValue());
+        mainScreen.widthProperty().addListener((observable) -> {
+            double scrollableWidth = pane.getWidth() * pane.getScaleX() - (vScrollBar.isVisible() ? mainScreen.getWidth() - vScrollBar.getWidth() : mainScreen.getWidth());
             
             if(scrollableWidth <= 0){
                 hScrollBar.setVisible(false);
@@ -117,9 +117,9 @@ public class ZoomOperator{
         });
         
         // Modifie translateY lorsque la valeur de la scrollBar est modifié.
-        vScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+        vScrollBar.valueProperty().addListener((observable) -> {
             
-            double translateY = -newValue.doubleValue() * getScrollableHeight() + getPaneShiftY();
+            double translateY = -vScrollBar.getValue() * getScrollableHeight() + getPaneShiftY();
             if(((int) translateY) != ((int) pane.getTranslateY())){
                 pane.setTranslateY(translateY);
                 aimTranslateY = pane.getTranslateY();
@@ -131,20 +131,20 @@ public class ZoomOperator{
         });
         
         // Modifie translateX lorsque la valeur de la scrollBar est modifié.
-        hScrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+        hScrollBar.valueProperty().addListener((observable) -> {
             
-            double translateX = -newValue.doubleValue() * getScrollableWidth() + getPaneShiftX();
+            double translateX = -hScrollBar.getValue() * getScrollableWidth() + getPaneShiftX();
             if(((int) translateX) != ((int) pane.getTranslateX())){
                 pane.setTranslateX(translateX);
                 aimTranslateX = pane.getTranslateX();
             }
         });
         // Modifie la valeur de la scrollBar lorsque translateX est modifié.
-        pane.translateXProperty().addListener((observable, oldValue, newValue) -> {
+        pane.translateXProperty().addListener((observable) -> {
             updateHScrollBar();
         });
         
-        pane.heightProperty().addListener((observable, oldValue, newValue) -> {
+        pane.heightProperty().addListener((observable) -> {
             updatePaneHeight(vScrollBar.getValue(), hScrollBar.getValue());
         });
         
