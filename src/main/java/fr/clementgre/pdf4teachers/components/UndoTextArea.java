@@ -33,10 +33,10 @@ public class UndoTextArea extends TextArea{
         KeyEvent e = event.getEvent();
         if(keyCombUndo.match(e)){
             e.consume();
-            if(e.getEventType() == KeyEvent.KEY_PRESSED) MainWindow.mainScreen.undo();
+            // consume is enough : the event will be detected by the menu bar
         }else if(keyCombRedo.match(e)){
             e.consume();
-            if(e.getEventType() == KeyEvent.KEY_PRESSED) MainWindow.mainScreen.redo();
+            // consume is enough : the event will be detected by the menu bar
         }
     }
     

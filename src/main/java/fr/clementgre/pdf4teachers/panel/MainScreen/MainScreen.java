@@ -277,9 +277,10 @@ public class MainScreen extends Pane{
         });
         
         setOnMouseDragged(e -> {
-            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element)
-                    && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer)
-                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // GrabNScroll
+            // GrabNScroll
+            if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) // Not an element
+                    && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer) // Not a page filter
+                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // Not in edit pages mode
                 
                 double distY = e.getY() - dragStartY;
                 double distX = e.getX() - dragStartX;

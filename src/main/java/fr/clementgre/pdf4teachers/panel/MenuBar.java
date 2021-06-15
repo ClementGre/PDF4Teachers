@@ -256,7 +256,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
             
             if(tools8Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
+            else tools8Undo.setText(nextUndo);
             if(tools9Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
+            else tools9Redo.setText(nextRedo);
         });
         
         tools1Convert.setOnAction(e -> {

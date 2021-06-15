@@ -74,8 +74,6 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 // Draw only one point
                 initSegment(e.getX(), e.getY());
-                //moveTo(lastX, lastY);
-                //lineTo(e.getX()+.1, e.getY()+.1, true);
             }else if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
                 // Cancel point
                 removeLastAction("M");
@@ -95,6 +93,7 @@ public class VectorElementPageDrawer extends Pane{
         setOnMouseDragged((e) -> {
             if(vector == null || PageRenderer.isEditPagesMode()) return;
             
+            e.consume();
             if(e.getButton() == MouseButton.PRIMARY) appendPoint(e.getX(), e.getY(), false);
         });
         setOnMouseMoved((e) -> {
@@ -132,8 +131,10 @@ public class VectorElementPageDrawer extends Pane{
                 requestFocus();
             }else if(e.getCode() == KeyCode.SPACE){
                 e.consume();
-                spaceDown = true;
-                initSegment(lastX, lastY);
+                if(!spaceDown){
+                    spaceDown = true;
+                    initSegment(lastX, lastY);
+                }
             }
         });
         setOnKeyReleased((e) -> {

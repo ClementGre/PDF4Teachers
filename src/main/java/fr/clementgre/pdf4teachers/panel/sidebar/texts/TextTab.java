@@ -219,7 +219,6 @@ public class TextTab extends SideTab{
                 txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
                 return;
             }
-            
             if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
                 if(!TextElement.isLatex(newValue)){
                     // WRAP TEXT

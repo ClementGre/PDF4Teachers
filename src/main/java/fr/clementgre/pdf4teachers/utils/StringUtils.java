@@ -84,9 +84,9 @@ public class StringUtils{
         int index = 0;
         for(diff_match_patch.Diff diff : diffs){
             if(diff.operation == diff_match_patch.Operation.INSERT){
-                area.insertText(index, diff.text);
+                area.insertText(Math.min(index, area.getText().length()), diff.text);
             }else if(diff.operation == diff_match_patch.Operation.DELETE){
-                area.deleteText(index, Math.min(index + diff.text.length(), area.getText().length()));
+                area.deleteText(Math.min(index, area.getText().length()), Math.min(index + diff.text.length(), area.getText().length()));
             }
             index += diff.text.length();
         }
