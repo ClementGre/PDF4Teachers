@@ -404,7 +404,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         
         edit1Undo.setOnAction(e -> {
-            System.out.println("MenuItem undo pressed");
             MainWindow.mainScreen.undo();
         });
         edit2Redo.setOnAction(e -> MainWindow.mainScreen.redo());
