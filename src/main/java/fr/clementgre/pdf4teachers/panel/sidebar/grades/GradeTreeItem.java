@@ -3,7 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.ScratchText;
-import fr.clementgre.pdf4teachers.components.UndoTextArea;
+import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -581,7 +581,7 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public TextArea getField(FieldType type, boolean contextMenu){
         
-        TextArea field = new UndoTextArea("😉😉😉");
+        TextArea field = new ShortcutsTextArea("😉😉😉");
         
         field.setStyle("-fx-font-size: 13;");
         field.setMinHeight(29);

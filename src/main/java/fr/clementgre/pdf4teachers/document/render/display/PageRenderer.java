@@ -182,6 +182,7 @@ public class PageRenderer extends Pane{
                 if(TextTab.draggingItem != null){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
+                    menu.hide();
                     
                     if(TextTab.draggingElement == null){ // Add to document
                         TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
@@ -191,6 +192,7 @@ public class PageRenderer extends Pane{
                 if(PaintTab.draggingItem instanceof ImageGridElement item){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
+                    menu.hide();
         
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument();
@@ -199,6 +201,8 @@ public class PageRenderer extends Pane{
                 }else if(PaintTab.draggingItem instanceof VectorGridElement item){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
+                    menu.hide();
+                    
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument(false);
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth()/2, e.getY() - PaintTab.draggingElement.getHeight()/2, false);

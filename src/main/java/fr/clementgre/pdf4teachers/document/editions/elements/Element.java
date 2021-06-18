@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
@@ -12,6 +13,8 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -53,6 +56,9 @@ public abstract class Element extends Region{
         if(oldElement == this && newElement != this) onDeSelected();
         else if(oldElement != this && newElement == this) onSelected();
     };
+    
+    public static final String ELEMENT_CLIPBOARD_KEY = "ElementsClipboard";
+    public static Element elementClipboard = null;
     
     boolean dragAlreadyDetected = false;
     protected void setupGeneral(boolean setupEvents, Node... components){
@@ -143,6 +149,39 @@ public abstract class Element extends Region{
         setupBindings();
         setupMenu();
     }
+    
+    public static void copy(Element element){
+        if(element instanceof GradeElement) return;
+        
+        final ClipboardContent clipboardContent = new ClipboardContent();
+        clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);
+        elementClipboard = element;
+    
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        clipboard.setContent(clipboardContent);
+    }
+    public static boolean paste(){
+        if(!MainWindow.mainScreen.hasDocument(false)) return false;
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+    
+        if(ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && elementClipboard != null){
+            if(elementClipboard.getPage() != null){
+                Element element = elementClipboard.clone();
+            
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+                element.setPage(page);
+                page.addElement(element, true, UType.UNDO);
+                element.checkLocation(page.getMouseX(), page.getMouseY(), false);
+                element.centerOnCoordinatesY();
+                if(element instanceof GraphicElement) element.centerOnCoordinatesX();
+                element.select();
+                
+                return true;
+            }
+        }
+        return false;
+    }
+    
     public boolean isSelected(){
         return MainWindow.mainScreen.getSelected() == this;
     }
@@ -240,6 +279,9 @@ public abstract class Element extends Region{
     public void centerOnCoordinatesY(){
         setRealY(getRealY() - getRealHeight() / 2);
     }
+    public void centerOnCoordinatesX(){
+        setRealX(getRealX() - getRealWidth() / 2);
+    }
     
     // READER AND WRITERS
     
@@ -259,6 +301,9 @@ public abstract class Element extends Region{
     
     public int getRealHeight(){
         return getPage().toGridY(getAlwaysHeight());
+    }
+    public int getRealWidth(){
+        return getPage().toGridY(getWidth());
     }
     
     // COORDINATES GETTERS AND SETTERS

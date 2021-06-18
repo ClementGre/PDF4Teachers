@@ -562,11 +562,6 @@ public class VectorElement extends GraphicElement{
     }
     
     @Override
-    public float getAlwaysHeight(){
-        return 0;
-    }
-    
-    @Override
     public Element clone(){
         return new VectorElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(),
                 isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY(), getArrowLength());

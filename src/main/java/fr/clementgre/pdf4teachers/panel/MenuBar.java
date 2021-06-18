@@ -8,6 +8,8 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.components.menus.NodeRadioMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.EditionExporter;
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.display.PageEditPane;
 import fr.clementgre.pdf4teachers.document.render.export.ExportWindow;
@@ -33,6 +35,7 @@ import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -61,88 +64,101 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     ////////// FILE //////////
     
-    Menu file = new Menu(TR.tr("menuBar.file"));
-    public MenuItem file1Open = createMenuItem(TR.tr("menuBar.file.openFiles"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
+    private final Menu file = new Menu(TR.tr("menuBar.file"));
+    public final MenuItem file1Open = createMenuItem(TR.tr("menuBar.file.openFiles"), SVGPathIcons.PDF_FILE, new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.openFiles.tooltip"));
     
-    public MenuItem file2OpenDir = createMenuItem(TR.tr("menuBar.file.openDir"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    public final MenuItem file2OpenDir = createMenuItem(TR.tr("menuBar.file.openDir"), SVGPathIcons.FOLDER, new KeyCodeCombination(KeyCode.O, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.openDir.tooltip"));
     
-    MenuItem file3Clear = createMenuItem(TR.tr("menuBar.file.clearList"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file3Clear = createMenuItem(TR.tr("menuBar.file.clearList"), SVGPathIcons.LIST, new KeyCodeCombination(KeyCode.W, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.clearList.tooltip"), false, true, false);
     
-    MenuItem file4Save = createMenuItem(TR.tr("menuBar.file.saveEdit"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file4Save = createMenuItem(TR.tr("menuBar.file.saveEdit"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.saveEdit.tooltip"), true, false, false);
     
-    MenuItem file5Delete = createMenuItem(TR.tr("menuBar.file.deleteEdit"), SVGPathIcons.TRASH, null,
+    private final MenuItem file5Delete = createMenuItem(TR.tr("menuBar.file.deleteEdit"), SVGPathIcons.TRASH, null,
             TR.tr("menuBar.file.deleteEdit.tooltip"), true, false, false);
     
-    MenuItem file6Close = createMenuItem(TR.tr("menuBar.file.closeDocument"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file6Close = createMenuItem(TR.tr("menuBar.file.closeDocument"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.closeDocument.tooltip"), true, false, false);
     
-    MenuItem file7Export = createMenuItem(TR.tr("menuBar.file.export"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file7Export = createMenuItem(TR.tr("menuBar.file.export"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.export.tooltip"), true, false, false);
     
-    MenuItem file8ExportAll = createMenuItem(TR.tr("menuBar.file.exportAll"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file8ExportAll = createMenuItem(TR.tr("menuBar.file.exportAll"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.exportAll.tooltip"), false, true, false);
     
     
     ////////// TOOLS //////////
     
-    public Menu tools = new Menu(TR.tr("menuBar.tools"));
+    public final Menu tools = new Menu(TR.tr("menuBar.tools"));
     
-    MenuItem tools1Convert = createMenuItem(TR.tr("menuBar.tools.convertImages"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem tools1Convert = createMenuItem(TR.tr("menuBar.tools.convertImages"), SVGPathIcons.PICTURES, new KeyCodeCombination(KeyCode.C, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.tools.convertImages.tooltip"), false, false, false);
     
-    Menu tools3AddPages = createSubMenu(TR.tr("menuBar.tools.addPages"), SVGPathIcons.PLUS,
+    private final Menu tools3AddPages = createSubMenu(TR.tr("menuBar.tools.addPages"), SVGPathIcons.PLUS,
             TR.tr("menuBar.tools.addPages.tooltip"), true);
     
-    MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
+    private final MenuItem tools4DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
             TR.tr("menuBar.tools.deleteAllEdits.tooltip"));
     
-    Menu tools5SameNameEditions = createSubMenu(TR.tr("menuBar.tools.sameNameEdits"), SVGPathIcons.EXCHANGE,
+    private final Menu tools5SameNameEditions = createSubMenu(TR.tr("menuBar.tools.sameNameEdits"), SVGPathIcons.EXCHANGE,
             TR.tr("menuBar.tools.sameNameEdits.tooltip"), true);
-    MenuItem tools5SameNameEditionsNull = createMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"), null);
+    private final MenuItem tools5SameNameEditionsNull = createMenuItem(TR.tr("menuBar.tools.sameNameEdits.noEditFounded"), null);
     
-    Menu tools6ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
+    private final Menu tools6ExportImportEdition = createSubMenu(TR.tr("menuBar.tools.exportOrImportEditOrGradeScale"), SVGPathIcons.EXPORT,
             TR.tr("menuBar.tools.exportOrImportEditOrGradeScale.tooltip"), true);
     
-    MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("menuBar.tools.exportEdit"), null, null,
+    private final MenuItem tools6ExportEdition1All = createMenuItem(TR.tr("menuBar.tools.exportEdit"), null, null,
             TR.tr("menuBar.tools.exportEdit.tooltip"), true, false, false);
-    MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.exportGradeScale"), null, null,
+    private final MenuItem tools6ExportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.exportGradeScale"), null, null,
             TR.tr("menuBar.tools.exportGradeScale.tooltip"), true, false, false);
     
-    MenuItem tools6ImportEdition1All = createMenuItem(TR.tr("menuBar.tools.importEdit"), null, null,
+    private final MenuItem tools6ImportEdition1All = createMenuItem(TR.tr("menuBar.tools.importEdit"), null, null,
             TR.tr("menuBar.tools.importEdit.tooltip"), true, false, false);
-    MenuItem tools6ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
+    private final MenuItem tools6ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
             TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
     
-    MenuItem tools8Undo = createMenuItem(TR.tr("actions.undo"), SVGPathIcons.UNDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN),
-            TR.tr("menuBar.tools.undo.tooltip"), true, false, false);
-    
-    MenuItem tools9Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
-            TR.tr("menuBar.tools.redo.tooltip"), true, false, false);
-    
-    MenuItem tools10FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
+    private final MenuItem tools10FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
             TR.tr("menuBar.tools.fullScreenMode.tooltip"));
     
-    Menu tools10Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
+    private final Menu tools10Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
             TR.tr("menuBar.tools.debug.tooltip"), false);
     
-    MenuItem tools10Debug1OpenConsole = createMenuItem(TR.tr("menuBar.tools.debug.openPrintStream") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem tools10Debug1OpenConsole = createMenuItem(TR.tr("menuBar.tools.debug.openPrintStream") + " (" + (Main.COPY_CONSOLE ? "Activée" : "Désactivée") + ")", null, new KeyCodeCombination(KeyCode.C, KeyCombination.ALT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.tools.debug.openPrintStream.tooltip"), false, false, false);
-    MenuItem tools10Debug2OpenAppFolder = createMenuItem(TR.tr("menuBar.tools.debug.openDataFolder"), null, null,
+    private final MenuItem tools10Debug2OpenAppFolder = createMenuItem(TR.tr("menuBar.tools.debug.openDataFolder"), null, null,
             TR.tr("menuBar.tools.debug.openDataFolder.tooltip"), false, false, false);
-    MenuItem tools10Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
+    private final MenuItem tools10Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
             TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false);
+    
+    ////////// EDIT //////////
+    
+    public final Menu edit = new Menu(TR.tr("menuBar.edit"));
+    
+    private final MenuItem edit1Undo = createMenuItem(TR.tr("actions.undo"), SVGPathIcons.UNDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.edit.undo.tooltip"), true, false, false);
+    
+    private final MenuItem edit2Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.edit.redo.tooltip"), true, false, false);
+    
+    public final MenuItem edit3Cut = createMenuItem(TR.tr("actions.cut"), SVGPathIcons.CUT, new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN),
+            null, true, false, false);
+    
+    public final MenuItem edit4Copy = createMenuItem(TR.tr("actions.copy"), SVGPathIcons.COPY, new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN),
+            null, true, false, false);
+    
+    public final MenuItem edit5Paste = createMenuItem(TR.tr("actions.paste"), SVGPathIcons.PASTE, new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN),
+            null, true, false, false);
     
     ////////// HELP //////////
     
-    Menu help = new Menu(TR.tr("menuBar.help"));
-    MenuItem help1LoadDoc = createMenuItem(TR.tr("menuBar.help.loadDocumentation"), SVGPathIcons.INFO);
-    MenuItem help2GitHubIssue = createMenuItem(TR.tr("menuBar.help.gitHubIssue"), SVGPathIcons.GITHUB);
-    MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);
-    MenuItem help4Website = createMenuItem(TR.tr("menuBar.help.website"), SVGPathIcons.GLOBE);
+    private final Menu help = new Menu(TR.tr("menuBar.help"));
+    private final MenuItem help1LoadDoc = createMenuItem(TR.tr("menuBar.help.loadDocumentation"), SVGPathIcons.INFO);
+    private final MenuItem help2GitHubIssue = createMenuItem(TR.tr("menuBar.help.gitHubIssue"), SVGPathIcons.GITHUB);
+    private final MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);
+    private final MenuItem help4Website = createMenuItem(TR.tr("menuBar.help.website"), SVGPathIcons.GLOBE);
     
     ////////// EMPTY MENUS SETTINGS //////////
     
@@ -174,9 +190,12 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages,
                 new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition,
-                new SeparatorMenuItem(), tools10FullScreen, tools8Undo, tools9Redo,
+                new SeparatorMenuItem(), tools10FullScreen,
                 new SeparatorMenuItem(), tools10Debug);
-        
+    
+        ////////// EDIT //////////
+    
+        edit.getItems().addAll(edit1Undo, edit2Redo, new SeparatorMenuItem(), edit3Cut, edit4Copy, edit5Paste);
         
         ////////// HELP //////////
         
@@ -188,6 +207,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         NodeMenuItem.setupMenu(tools);
         NodeMenuItem.setupMenu(tools6ExportImportEdition);
         NodeMenuItem.setupMenu(tools10Debug);
+        NodeMenuItem.setupMenu(edit);
         NodeMenuItem.setupMenu(help);
         
         ////////// FILE //////////
@@ -241,25 +261,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         
         ////////// TOOLS //////////
-        
-        tools.addEventHandler(Menu.ON_SHOWING, (e) -> {
-            String nextUndo = null;
-            String nextRedo = null;
-            if(MainWindow.mainScreen.getUndoEngine() != null){
-                nextUndo = MainWindow.mainScreen.getUndoEngine().getUndoNextName();
-                nextRedo = MainWindow.mainScreen.getUndoEngine().getRedoNextName();
-            }
-            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
-            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
-    
-            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
-            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
-            
-            if(tools8Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
-            else tools8Undo.setText(nextUndo);
-            if(tools9Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
-            else tools9Redo.setText(nextRedo);
-        });
         
         tools1Convert.setOnAction(e -> {
             new ConvertDocument();
@@ -362,9 +363,6 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools6ImportEdition1All.setOnAction((e) -> EditionExporter.showImportDialog(false));
         tools6ImportEdition2Grades.setOnAction((e) -> EditionExporter.showImportDialog(true));
         
-        tools8Undo.setOnAction(e -> MainWindow.mainScreen.undo());
-        tools9Redo.setOnAction(e -> MainWindow.mainScreen.redo());
-        
         tools10FullScreen.setOnAction((e) -> Main.window.setFullScreen(!Main.window.isFullScreen()));
         
         tools10Debug1OpenConsole.setOnAction((e) -> new LogWindow());
@@ -377,6 +375,68 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             PlatformUtils.openFile(file.getAbsolutePath());
         });
     
+        ////////// EDIT //////////
+    
+        edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
+            String nextUndo = null;
+            String nextRedo = null;
+            if(MainWindow.mainScreen.getUndoEngine() != null){
+                nextUndo = MainWindow.mainScreen.getUndoEngine().getUndoNextName();
+                nextRedo = MainWindow.mainScreen.getUndoEngine().getRedoNextName();
+            }
+            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
+            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
+        
+            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
+            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
+        
+            if(edit1Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
+            else edit1Undo.setText(nextUndo);
+            if(edit2Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
+            else edit2Redo.setText(nextRedo);
+    
+            String pasteSuffix = "";
+            if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
+                pasteSuffix = " (" + Element.elementClipboard.getElementName(false) + ")";
+            }
+            if(edit5Paste instanceof NodeMenuItem menu) menu.setName(TR.tr("actions.paste") + pasteSuffix);
+            else edit5Paste.setText(TR.tr("actions.paste") + pasteSuffix);
+        });
+        
+        edit1Undo.setOnAction(e -> {
+            System.out.println("MenuItem undo pressed");
+            MainWindow.mainScreen.undo();
+        });
+        edit2Redo.setOnAction(e -> MainWindow.mainScreen.redo());
+        
+        edit3Cut.setOnAction(e -> {
+            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
+                Element.copy(MainWindow.mainScreen.getSelected());
+                MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
+            }
+        });
+        edit4Copy.setOnAction(e -> {
+            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
+                Element.copy(MainWindow.mainScreen.getSelected());
+            }
+        });
+        edit5Paste.setOnAction(e -> {
+            final Clipboard clipboard = Clipboard.getSystemClipboard();
+    
+            if(Element.ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
+                // ELEMENT PASTE
+                if(Element.paste()) return;
+            }
+            
+            String string = clipboard.getString();
+            if(string == null) string = clipboard.getRtf();
+            if(string == null) string = clipboard.getUrl();
+            if(string == null) string = clipboard.getHtml();
+            if(string != null){
+                MainWindow.mainScreen.pasteText(string);
+            }
+        });
+        
         ////////// ABOUT / HELP //////////
         
         help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(TR.getDocFile()));
@@ -399,7 +459,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         if(isSystemMenuBarSupported()){
     
             if(Main.isOSX()){
-                getMenus().addAll(file, tools, help);
+                getMenus().addAll(file, tools, edit, help);
     
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
                 
@@ -436,10 +496,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             settings.setOnClick(e -> new SettingsWindow());
             about.setOnClick(e -> Main.showAboutWindow());
     
-            // tools is edited dynamic
-            NodeMenuItem.setupDynamicMenu(tools);
+            // edit is edited dynamic
+            NodeMenuItem.setupDynamicMenu(edit);
             
-            getMenus().addAll(file, tools, help, settings, about);
+            getMenus().addAll(file, tools, edit, help, settings, about);
     
             setupMenus();
             Main.settings.menuForceOpenDelay.valueProperty().addListener((observable, oldValue, newValue) -> {

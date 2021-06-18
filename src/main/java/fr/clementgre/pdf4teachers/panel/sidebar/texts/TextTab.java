@@ -2,8 +2,8 @@ package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.FontComboBox;
+import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
-import fr.clementgre.pdf4teachers.components.UndoTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -63,7 +63,7 @@ public class TextTab extends SideTab{
     private final ToggleButton boldBtn = new ToggleButton("");
     private final ToggleButton itBtn = new ToggleButton("");
     
-    public TextArea txtArea = new UndoTextArea();
+    public TextArea txtArea = new ShortcutsTextArea();
     
     private final HBox btnBox = new HBox();
     private final Button deleteBtn = new Button(TR.tr("actions.delete"));
@@ -108,7 +108,7 @@ public class TextTab extends SideTab{
         });
         
         PaneUtils.setHBoxPosition(sizeSpinner, 95, 30, 2.5);
-        UndoTextArea.setupAntiCtrlZFilter(sizeSpinner);
+        ShortcutsTextArea.setupFilter(sizeSpinner);
         sizeSpinner.setStyle("-fx-font-size: 13");
         sizeSpinner.setEditable(true);
         sizeSpinner.getValueFactory().setConverter(new StringToDoubleConverter(14));

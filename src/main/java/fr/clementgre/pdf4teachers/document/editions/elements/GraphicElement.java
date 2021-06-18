@@ -135,7 +135,6 @@ public abstract class GraphicElement extends Element{
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
             }
         });
-    
         
         setOnMouseClicked(e -> {
             if(PageRenderer.isEditPagesMode()) return;

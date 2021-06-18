@@ -158,6 +158,7 @@ jlink {
                     '--win-dir-chooser',
                     '--win-menu',
                     '--win-shortcut',
+                    '--win-menu-group', '',
                     '--file-associations', 'association-win.properties'
             ]
         }else if(os.macOsX){ // MAC

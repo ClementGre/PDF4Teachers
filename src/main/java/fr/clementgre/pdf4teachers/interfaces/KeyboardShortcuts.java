@@ -6,18 +6,19 @@ import fr.clementgre.pdf4teachers.components.KeyableHBox;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.Slider;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
 
@@ -192,20 +193,7 @@ public class KeyboardShortcuts{
                 MainWindow.mainScreen.navigateRight();
             }
         }else{ // SHORTCUT PRESSED
-            
-            if(e.getCode() == KeyCode.V){
-                e.consume();
-                
-                final Clipboard clipboard = Clipboard.getSystemClipboard();
-                String string = clipboard.getString();
-                if(string == null) string = clipboard.getRtf();
-                if(string == null) string = clipboard.getUrl();
-                if(string == null) string = clipboard.getHtml();
-                if(string != null){
-                    MainWindow.mainScreen.pasteText(string);
-                }
-            }
-            
+        
         }
     }
     

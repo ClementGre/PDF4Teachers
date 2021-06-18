@@ -3,16 +3,16 @@ package fr.clementgre.pdf4teachers.components;
 import javafx.event.Event;
 import javafx.scene.control.TextField;
 
-public class UndoTextField extends TextField{
+public class ShortcutsTextField extends TextField{
     
-    public UndoTextField(){
+    public ShortcutsTextField(){
         setOnContextMenuRequested(Event::consume);
-        UndoTextArea.setupAntiCtrlZFilter(this);
+        ShortcutsTextArea.setupFilter(this);
     }
-    public UndoTextField(String text){
+    public ShortcutsTextField(String text){
         super(text);
         setOnContextMenuRequested(Event::consume);
-        UndoTextArea.setupAntiCtrlZFilter(this);
+        ShortcutsTextArea.setupFilter(this);
     }
     
 }

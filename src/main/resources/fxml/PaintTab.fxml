@@ -43,7 +43,7 @@
         </HBox>
 
         <HBox spacing="2">
-            <UndoTextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28" style="-right-button-visible: false;"/>
+            <ShortcutsTextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28" style="-right-button-visible: false;"/>
             <Button fx:id="vectorUndoPath" prefHeight="28"/>
             <Button fx:id="browsePath" text="..." prefHeight="28"/>
         </HBox>
