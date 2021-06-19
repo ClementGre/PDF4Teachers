@@ -108,6 +108,7 @@ public class VectorElementPageDrawer extends Pane{
         });
     
         setOnKeyPressed((e) -> {
+            
             if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(vector != null) vector.quitEditMode();
@@ -122,13 +123,13 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(true);
                 requestFocus();
+            }else if(e.getCode() == KeyCode.M){
+                e.consume();
+                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
+                requestFocus();
             }else if(e.getCode() == KeyCode.SHIFT){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(!MainWindow.paintTab.vectorStraightLineMode.isSelected());
-                requestFocus();
-            }else if(e.getCode() == KeyCode.ALT){
-                e.consume();
-                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
                 requestFocus();
             }else if(e.getCode() == KeyCode.SPACE){
                 e.consume();
