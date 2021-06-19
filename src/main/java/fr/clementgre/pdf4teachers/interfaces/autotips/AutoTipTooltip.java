@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import org.controlsfx.control.PopOver;
 
-import java.awt.*;
+import java.awt.MouseInfo;
 
 public class AutoTipTooltip extends PopOver{
     
@@ -44,6 +44,7 @@ public class AutoTipTooltip extends PopOver{
         setHeaderAlwaysVisible(true);
         setArrowIndent(0);
         setCornerRadius(10);
+        setConsumeAutoHidingEvents(false); // When click on stage, the click event will not be consumed and can cause issues. (see #98)
         
         setTitle(TR.tr("autoTips.title"));
         text.setMaxWidth(300);

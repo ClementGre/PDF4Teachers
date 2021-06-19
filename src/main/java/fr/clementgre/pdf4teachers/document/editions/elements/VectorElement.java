@@ -17,6 +17,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
+import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
@@ -467,8 +468,8 @@ public class VectorElement extends GraphicElement{
         if(!MainWindow.paintTab.vectorEditMode.isSelected()){
             MainWindow.paintTab.vectorEditMode.setSelected(true);
         }else{
-            AutoTipsManager.showByAction("enterVectorEditMode");
             getPage().getVectorElementPageDrawer().enterEditMode(this);
+            Platform.runLater(() -> AutoTipsManager.showByAction("enterVectorEditMode"));
     
             // ElementPageDrawer is resizing and moving the element when exiting
             MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, this));

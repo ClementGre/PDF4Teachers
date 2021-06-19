@@ -5,7 +5,8 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Cursor;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
@@ -21,7 +22,7 @@ public class VectorElementPageDrawer extends Pane{
     private PageRenderer page;
     
     private VectorElement vector;
-    private SVGPath svgPath = new SVGPath();
+    private final SVGPath svgPath = new SVGPath();
     
     public VectorElementPageDrawer(PageRenderer page){
         this.page = page;
@@ -204,6 +205,7 @@ public class VectorElementPageDrawer extends Pane{
         getChildren().setAll(svgPath);
         
         lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        hasToMove = true; // Anyway, we will need to move. This can also prevent some bugs where the first move is missing.
         spaceDown = false;
         lastLineMode = isPerpendicularLineMode();
     }
