@@ -637,14 +637,16 @@ public class MainScreen extends Pane{
         pane.setPrefHeight(totalHeight);
     }
     
-    public void pasteText(String text){
+    public boolean pasteText(String text){
         if(hasDocument(false)){
             MainWindow.textTab.newBtn.fire();
             MainWindow.textTab.txtArea.setText(text);
             if(getSelected() instanceof TextElement element){
                 element.checkLocation(element.getPage().getMouseX(), element.getLayoutY(), false);
             }
+            return true;
         }
+        return false;
     }
     
     public UndoEngine getUndoEngine(){
