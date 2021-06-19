@@ -2,7 +2,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
-import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
+import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -137,7 +137,7 @@ public class PaintTab extends SideTab{
         doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
 
         vectorStrokeWidth.getValueFactory().setConverter(new StringToIntConverter(0));
-        ShortcutsTextArea.setupFilter(vectorStrokeWidth);
+        ShortcutsTextField.registerNewInput(vectorStrokeWidth);
 
         PaneUtils.setPosition(spinnerX, 0, 0, -1, 26, true);
         PaneUtils.setPosition(spinnerY, 0, 0, -1, 26, true);

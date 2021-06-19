@@ -156,6 +156,7 @@ public class AutoTipsManager{
     
     public static void hideAll(){
         for(AutoTipTooltip uiTip : uiTips.values()){
+            uiTip.setAnimated(false);
             uiTip.hide(Duration.ZERO);
         }
     }

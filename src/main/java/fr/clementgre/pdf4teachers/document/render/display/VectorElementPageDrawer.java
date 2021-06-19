@@ -5,7 +5,8 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Cursor;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.FillRule;
@@ -21,7 +22,7 @@ public class VectorElementPageDrawer extends Pane{
     private PageRenderer page;
     
     private VectorElement vector;
-    private SVGPath svgPath = new SVGPath();
+    private final SVGPath svgPath = new SVGPath();
     
     public VectorElementPageDrawer(PageRenderer page){
         this.page = page;
@@ -107,6 +108,7 @@ public class VectorElementPageDrawer extends Pane{
         });
     
         setOnKeyPressed((e) -> {
+            
             if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(vector != null) vector.quitEditMode();
@@ -121,13 +123,13 @@ public class VectorElementPageDrawer extends Pane{
                 e.consume();
                 MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(true);
                 requestFocus();
+            }else if(e.getCode() == KeyCode.M){
+                e.consume();
+                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
+                requestFocus();
             }else if(e.getCode() == KeyCode.SHIFT){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(!MainWindow.paintTab.vectorStraightLineMode.isSelected());
-                requestFocus();
-            }else if(e.getCode() == KeyCode.ALT){
-                e.consume();
-                MainWindow.paintTab.vectorPerpendicularLineMode.setSelected(!MainWindow.paintTab.vectorPerpendicularLineMode.isSelected());
                 requestFocus();
             }else if(e.getCode() == KeyCode.SPACE){
                 e.consume();
@@ -204,6 +206,7 @@ public class VectorElementPageDrawer extends Pane{
         getChildren().setAll(svgPath);
         
         lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        hasToMove = true; // Anyway, we will need to move. This can also prevent some bugs where the first move is missing.
         spaceDown = false;
         lastLineMode = isPerpendicularLineMode();
     }

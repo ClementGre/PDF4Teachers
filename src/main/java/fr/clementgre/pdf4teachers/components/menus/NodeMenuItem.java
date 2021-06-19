@@ -14,8 +14,6 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class NodeMenuItem extends CustomMenuItem{
     
     public final HBox node;
@@ -119,17 +117,11 @@ public class NodeMenuItem extends CustomMenuItem{
     
     public static void setupMenu(Menu menu){
         
-        AtomicBoolean firstRun = new AtomicBoolean(true);
         menu.addEventHandler(Menu.ON_SHOWN, new EventHandler<>(){
             @Override
             public void handle(Event event){
-                
-                if(firstRun.get()){
-                    setupMenuNow(menu);
-                    firstRun.set(false);
-                    menu.removeEventHandler(Menu.ON_SHOWN, this);
-                }
-                
+                setupMenuNow(menu);
+                menu.removeEventHandler(Menu.ON_SHOWN, this);
             }
         });
     }

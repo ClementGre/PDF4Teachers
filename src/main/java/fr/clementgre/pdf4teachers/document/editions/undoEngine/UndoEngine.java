@@ -2,11 +2,16 @@ package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import javafx.beans.property.Property;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 import java.util.ArrayList;
 
 public class UndoEngine{
     
+    public static final KeyCombination KEY_COMB_UNDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
+    public static final KeyCombination KEY_COMB_REDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
     private final static int MAX_STACK_LENGTH = 200;
     
     private ArrayList<UndoAction> undoList = new ArrayList<>();

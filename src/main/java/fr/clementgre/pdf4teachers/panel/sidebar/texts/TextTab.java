@@ -3,6 +3,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
+import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -108,7 +109,7 @@ public class TextTab extends SideTab{
         });
         
         PaneUtils.setHBoxPosition(sizeSpinner, 95, 30, 2.5);
-        ShortcutsTextArea.setupFilter(sizeSpinner);
+        ShortcutsTextField.registerNewInput(sizeSpinner);
         sizeSpinner.setStyle("-fx-font-size: 13");
         sizeSpinner.setEditable(true);
         sizeSpinner.getValueFactory().setConverter(new StringToDoubleConverter(14));
