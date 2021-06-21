@@ -120,7 +120,8 @@ jlink {
     launcher {
         name = 'PDF4Teachers'
         jvmArgs = [
-                '-Xdock:icon=src/main/resources/logo.icns',
+                // The dock icon works only when app is in /Applications
+                '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
         ]
@@ -161,20 +162,19 @@ jlink {
                     '--win-menu',
                     '--win-shortcut',
                     '--win-menu-group', '',
-                    '--file-associations', 'association-win.properties'
+                    '--file-associations', 'distribution/windows/association-win.properties'
             ]
         }else if(os.macOsX){ // MAC
             imageOptions += ['--icon', 'src/main/resources/logo.icns']
             installerOptions += [
-                    "--mac-package-name", "PDF4Teachers",
-                    '--file-associations', 'association-osx.properties'
+                    "--mac-package-name", "PDF4Teachers"
             ]
         }else if(os.linux){ // LINUX
             imageOptions += ['--icon', 'src/main/resources/logo.png']
             installerOptions += [
                     '--linux-menu-group', 'Education;Office',
                     '--linux-shortcut',
-                    '--file-associations', 'association-lin.properties'
+                    '--file-associations', 'distribution/linux/association-lin.properties'
             ]
             if(installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
             else if(installerType == 'rpm') installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
