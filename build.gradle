@@ -104,6 +104,7 @@ application {
 
 run {
     jvmArgs = [
+            '-Xdock:icon=src/main/resources/logo.icns',
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
             '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
     ]
@@ -119,6 +120,7 @@ jlink {
     launcher {
         name = 'PDF4Teachers'
         jvmArgs = [
+                '-Xdock:icon=src/main/resources/logo.icns',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
         ]
