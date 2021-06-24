@@ -155,7 +155,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
     
     ////////// HELP //////////
     
-    private final Menu help = new Menu("_" + TR.tr("menuBar.help"));
+    private final Menu help = new Menu(TR.tr("menuBar.help"));
     private final MenuItem help1LoadDoc = createMenuItem(TR.tr("menuBar.help.loadDocumentation"), SVGPathIcons.INFO);
     private final MenuItem help2GitHubIssue = createMenuItem(TR.tr("menuBar.help.gitHubIssue"), SVGPathIcons.GITHUB);
     private final MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);

@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 
@@ -30,6 +31,8 @@ public class ResizeUndoAction extends MoveUndoAction{
             // invert
             realWidth = oldRealWidth;
             realHeight = oldRealHeight;
+    
+            Edition.setUnsave("ResizeUndoAction");
             return true;
         }
         return false;

@@ -44,9 +44,9 @@ public class Main extends Application{
     public static final String VERSION = "1.3.0";
     public static final int VERSION_ID = 1;
     public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final boolean COPY_CONSOLE = true;
-    public static final boolean TRANSLATIONS_IN_CODE = true;
+    public static final boolean TRANSLATIONS_IN_CODE = false;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -58,8 +58,8 @@ public class Main extends Application{
     static{
         baseDecimalFormatSymbols.setDecimalSeparator('.');
     }
-    public static DecimalFormat baseFormat = new DecimalFormat("0.####", baseDecimalFormatSymbols);
-    public static DecimalFormat oneDigFormat = new DecimalFormat("0.#", baseDecimalFormatSymbols);
+    public static DecimalFormat fourDigENFormat = new DecimalFormat("0.####", baseDecimalFormatSymbols);
+    public static DecimalFormat oneDigENFormat = new DecimalFormat("0.#", baseDecimalFormatSymbols);
     
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     

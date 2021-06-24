@@ -5,10 +5,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
@@ -27,6 +28,8 @@ public class AutoTipTooltip extends PopOver{
     
     private boolean closedByAutoHide = false;
     private JMetro jMetro;
+    
+    private static final int WIDTH = 300;
     
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
         String contentText = Main.isOSX()
@@ -47,7 +50,7 @@ public class AutoTipTooltip extends PopOver{
         setConsumeAutoHidingEvents(false); // When click on stage, the click event will not be consumed and can cause issues. (see #98)
         
         setTitle(TR.tr("autoTips.title"));
-        text.setMaxWidth(300);
+        text.setMaxWidth(WIDTH);
         text.setWrapText(true);
         
         HBox graphic = new HBox();
@@ -88,11 +91,24 @@ public class AutoTipTooltip extends PopOver{
             switch(objectWhereDisplay){
                 case "mainscreen" -> {
                     setArrowSize(0);
-                    showOnPane(MainWindow.mainScreen, owner);
+                    showOnNode(MainWindow.mainScreen, owner);
                 }
-                case "leftbar" -> {
+                case "textTab" -> {
                     setArrowSize(0);
-                    showOnPane(MainWindow.leftBar, owner);
+                    showOnNode(MainWindow.textTab.getContent(), owner);
+                }
+                case "gradesTab" -> {
+                    setArrowSize(0);
+                    showOnNode(MainWindow.gradeTab.getContent(), owner);
+                }
+                case "firstTabGraphic" -> {
+                    if(!MainWindow.leftBar.getTabs().isEmpty()){
+                        setArrowLocation(ArrowLocation.TOP_LEFT);
+                        show(MainWindow.leftBar.getSelectionModel().getSelectedItem().getGraphic());
+                    }else if(!MainWindow.rightBar.getTabs().isEmpty()){
+                        setArrowLocation(ArrowLocation.TOP_RIGHT);
+                        show(MainWindow.rightBar.getSelectionModel().getSelectedItem().getGraphic());
+                    }
                 }
                 case "gallerycombobox" -> {
                     setArrowLocation(ArrowLocation.TOP_CENTER);
@@ -105,12 +121,13 @@ public class AutoTipTooltip extends PopOver{
         }
     }
     
-    private void showOnPane(Region region, Stage owner){
-        if(region == null) return;
-        final Scene scene = region.getScene();
+    private void showOnNode(Node node, Stage owner){
+        if(node == null) return;
+        final Scene scene = node.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
         
-        super.show(region, owner.getX()*Main.settings.zoom.getValue() + region.getWidth() / 2, owner.getY()*Main.settings.zoom.getValue() + region.getHeight() / 2);
+        Point2D origin = node.localToScreen(node.getLayoutBounds().getWidth() /2 - WIDTH/2d, node.getLayoutBounds().getHeight()/2);
+        super.show(node, origin.getX(), origin.getY());
     }
     
     public String getName(){

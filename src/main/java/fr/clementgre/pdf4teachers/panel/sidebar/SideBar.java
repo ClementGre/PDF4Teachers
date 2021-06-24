@@ -6,7 +6,9 @@ import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
-import javafx.scene.control.*;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 
@@ -130,6 +132,11 @@ public class SideBar extends TabPane{
             });
         });
         
+    }
+    
+    public static SideBar getTabSideBar(SideTab tab){
+        if(isIntoLeftBar(tab)) return MainWindow.leftBar;
+        else return MainWindow.rightBar;
     }
     
     public void setWidthByEditingDivider(double width){

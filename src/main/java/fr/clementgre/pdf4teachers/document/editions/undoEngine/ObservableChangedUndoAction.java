@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -39,7 +40,8 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
             value = oldValue;
     
             if(!(value instanceof String)) MainWindow.mainScreen.setSelected(selected);
-            
+    
+            Edition.setUnsave("ObservableChangedUndoAction");
             return true;
         }
         return false;

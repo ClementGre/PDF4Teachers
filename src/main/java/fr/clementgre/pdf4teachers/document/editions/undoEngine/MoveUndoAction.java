@@ -1,5 +1,6 @@
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 
@@ -39,6 +40,8 @@ public class MoveUndoAction extends UndoAction{
             realX = oldRealX;
             realY = oldRealY;
             page = oldPage;
+    
+            Edition.setUnsave("MoveUndoAction");
             return true;
         }
         

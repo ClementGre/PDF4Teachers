@@ -229,7 +229,6 @@ public class NodeMenuItem extends CustomMenuItem{
         }
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                System.out.println("Detected width: " + maxWidth + extra);
                 nodeItem.getNode().setPrefWidth((maxWidth + extra));
             }
         }

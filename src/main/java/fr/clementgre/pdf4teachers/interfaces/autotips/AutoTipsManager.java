@@ -19,29 +19,32 @@ public class AutoTipsManager{
     @ToolTipVar(actionKey = "", prerequisiteKey = "document", objectWhereDisplay = "mainscreen")
     private static final String documentZoom = "autoTips.documentZoom";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "textTab")
     private static final String textElementsLists = "autoTips.textElementsLists";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "textTab")
     private static final String textElementsSort = "autoTips.textElementsSort";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "textTab")
     private static final String textAddLink = "autoTips.textAddLink";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "textTab")
     private static final String textKeyboardShortcutAddFavorite = "autoTips.textKeyboardShortcutAddFavorite";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "texttabselected", objectWhereDisplay = "textTab")
     private static final String textSettingsMenuBar = "autoTips.textSettingsMenuBar";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "gradesTab")
     private static final String gradeCustomFont = "autoTips.gradeCustomFont";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "gradesTab")
     private static final String gradeExportCsv = "autoTips.gradeExportCsv";
     
-    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "leftbar")
+    @ToolTipVar(actionKey = "", prerequisiteKey = "gradetabselected", objectWhereDisplay = "gradesTab")
     private static final String gradeCopyGradeScale = "autoTips.gradeCopyGradeScale";
+    
+    @ToolTipVar(actionKey = "", prerequisiteKey = "", objectWhereDisplay = "firstTabGraphic")
+    private static final String dragNDropTabs = "autoTips.dragNDropTabs";
     
     
     @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
@@ -113,7 +116,7 @@ public class AutoTipsManager{
     private static final Thread autoTipsThread = new Thread(() -> {
         while(true){
             try{
-                Thread.sleep(3 * 60 * 1000);
+                Thread.sleep(/*3 * 60*/5 * 1000);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }

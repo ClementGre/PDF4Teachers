@@ -325,9 +325,9 @@ public class VectorElementPageDrawer extends Pane{
         lastAction = name;
         vector.setPath(vector.getPath()
                 + name
-                + Main.oneDigFormat.format(x)
+                + Main.oneDigENFormat.format(x)
                 + " "
-                + Main.oneDigFormat.format(y));
+                + Main.oneDigENFormat.format(y));
     }
     
     public void undo(){

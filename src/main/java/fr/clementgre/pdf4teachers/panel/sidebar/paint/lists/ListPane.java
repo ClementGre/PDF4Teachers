@@ -5,9 +5,9 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
@@ -16,7 +16,10 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 
 public abstract class ListPane<T> extends TitledPane{
@@ -34,7 +37,7 @@ public abstract class ListPane<T> extends TitledPane{
     protected final VBox root = new VBox();
     protected final GridPane sortPanel = new GridPane();
     private final Label emptyListLabel = new Label();
-    private Hyperlink emptyListLink = new Hyperlink();
+    private final Hyperlink emptyListLink = new Hyperlink();
     
     private final VBox messageContainer = new VBox(emptyListLabel, emptyListLink);
     
@@ -90,11 +93,12 @@ public abstract class ListPane<T> extends TitledPane{
         // Message setup
         emptyListLabel.setTextAlignment(TextAlignment.CENTER);
         emptyListLabel.setWrapText(true);
-    
+        VBox.setMargin(emptyListLabel, new Insets(10));
+        
         emptyListLink.setTextAlignment(TextAlignment.CENTER);
         emptyListLink.setWrapText(true);
+        VBox.setMargin(emptyListLink, new Insets(10));
         
-        messageContainer.setPadding(new Insets(10));
         messageContainer.setAlignment(Pos.CENTER);
     }
     
@@ -164,7 +168,7 @@ public abstract class ListPane<T> extends TitledPane{
         if(type == 1) return paintTab.favouriteImages;
         if(type == 2) return paintTab.lastVectors;
         if(type == 3) return paintTab.gallery;
-        throw new RuntimeException("type " + type + " is not between 0 and 3");
+        throw new IllegalArgumentException("type " + type + " is not between 0 and 3");
     }
     public boolean isFavouriteVectors(){
         return getType() == 0;
