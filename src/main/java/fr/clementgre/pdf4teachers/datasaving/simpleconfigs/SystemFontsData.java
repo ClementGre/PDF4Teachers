@@ -13,7 +13,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class SystemFontsData extends SimpleConfig{
     
-    int realSysFontsCount = 0;
+    private final int realSysFontsCount = SystemFontsMapper.getSystemFontNames().length;
     
     public SystemFontsData(){
         super("sysfonts_cache");
@@ -23,8 +23,6 @@ public class SystemFontsData extends SimpleConfig{
     protected void manageLoadedData(Config config){
         
         long fontsCount = config.getLong("systemFontsCount");
-        realSysFontsCount = SystemFontsMapper.getSystemFontNames().length;
-        
         if(fontsCount != realSysFontsCount){
             System.out.println("Updating system fonts indexing because fonts list length changed.");
             FontUtils.getSystemFontsMapper().loadFontsFromSystemFiles();

@@ -7,7 +7,8 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.util.Objects;
@@ -49,7 +50,7 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>>{
     private void setupButtons(){
         Button contribute = new Button(TR.tr("language.chooseLanguageWindow.contributeButton"));
         Button cancel = new Button(TR.tr("actions.cancel"));
-        Button apply = new Button(TR.tr("actions.applyAndRestart"));
+        Button apply = new Button(Main.window == null ? TR.tr("actions.apply") : TR.tr("actions.applyAndRestart"));
     
         contribute.setOnAction((ActionEvent event) -> Main.hostServices.showDocument("https://pdf4teachers.org/Contribute/"));
         cancel.setOnAction((e) -> close());

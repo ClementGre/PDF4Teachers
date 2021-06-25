@@ -26,7 +26,7 @@ public class LanguagePane extends HBox{
         version = TR.getLanguageVersion(shortName);
         
         if(!shortName.equals("fr_fr")){
-            int[] stats = TROld.getTranslationFileStats(txtFile);
+            int[] stats = TR.getTranslationFileStats(txtFile);
             if(stats[0] != 0){
                 perMilleCompleted = (int) (stats[1] / ((double) stats[0]) * 1000d);
             }

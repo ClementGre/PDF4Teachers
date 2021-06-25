@@ -38,7 +38,6 @@ public class TextTreeView extends TreeView<String>{
     @SuppressWarnings("unchecked")
     public TextTreeView(Pane pane){
         
-        setMaxWidth(400);
         setShowRoot(false);
         setEditable(true);
         setRoot(treeViewRoot);

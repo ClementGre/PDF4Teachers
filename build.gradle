@@ -81,6 +81,8 @@ javafx {
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
+def os = org.gradle.internal.os.OperatingSystem.current()
+
 version = "1.3.0"
 description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers features like marking scale, PDF conversion, vectorial drawing..."
 //frenchDescription=Éditeur PDF en grande quantité. Conçus pour les enseignants, cette application garde en mémoire les dernière annotations, et offre des fonctions de barème, de conversion, de dessin vectoriel...
@@ -104,10 +106,13 @@ application {
 
 run {
     jvmArgs = [
-            '-Xdock:icon=src/main/resources/logo.icns',
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
             '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
     ]
+    if(os.macOsX){
+        // The dock icon works only when app is in /Applications
+        jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+    }
 }
 
 jlink {
@@ -120,14 +125,15 @@ jlink {
     launcher {
         name = 'PDF4Teachers'
         jvmArgs = [
-                // The dock icon works only when app is in /Applications
-                '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
         ]
+        if(os.macOsX){
+            // The dock icon works only when app is in /Applications
+            jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+        }
     }
 
-    def os = org.gradle.internal.os.OperatingSystem.current()
     String jdkPath = project.findProperty('jdkPath')
     String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
 

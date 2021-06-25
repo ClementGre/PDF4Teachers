@@ -8,7 +8,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -219,18 +220,20 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
     }
     
     public void generateDescription(VBox root){
-        String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
+        final String currentLanguageAcronym = Main.settings.language.getValue().split("-")[0];
+    
+        final String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
         String englishText = "";
         String langText = "";
-        String currentLanguageAcronym = Main.settings.language.getValue().split("-")[0];
+        
         for(String languageText : languagesTexts){
             if(languageText.startsWith("# ")) languageText = languageText.replaceFirst(Pattern.quote("# "), "");
-            String langAcronym = languageText.substring(0, languageText.indexOf(' '));
+            final String langAcronym = languageText.substring(0, languageText.indexOf(' '));
             
             final String futureLanguageText = languageText.substring(languageText.indexOf("\r\n") + 2);
             if(langAcronym.equals(currentLanguageAcronym)){
                 langText = futureLanguageText;
-            }else if(langAcronym.equals("en") && !currentLanguageAcronym.equals("en")){
+            }else if(langAcronym.equals("en")){
                 englishText = futureLanguageText;
             }
         }
@@ -240,20 +243,14 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
         boolean first = true;
         for(String line : langText.split(Pattern.quote("## \uD83C\uDF10"))[0].split(Pattern.quote("\r\n"))){
             if(first && line.isBlank()) continue;
-            if(line.startsWith("- ")){
-                Label label = new Label(line);
-                label.setWrapText(true);
-                label.setMaxWidth(530);
-                label.setStyle("-fx-padding: 0 0 0 30; -fx-font-size: 13;");
-                root.getChildren().add(label);
-            }else{
+            else{
                 
                 if(line.startsWith("##")){
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
                     label.setMaxWidth(530);
-                    if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 15; -fx-font-weight: 900;");
-                    else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 15; -fx-font-weight: 900;");
+                    if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
+                    else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
                     root.getChildren().add(label);
                 }else if(line.isEmpty()){
                     Region spacer = new Region();
@@ -263,7 +260,13 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
                     label.setMaxWidth(530);
-                    label.setStyle("-fx-padding: 0 0 0 15; -fx-font-size: 13;");
+    
+                    if(line.startsWith("- ")){
+                        label.setStyle("-fx-padding: 0 0 0 30;");
+                    }else{
+                        label.setStyle("-fx-padding: 0 0 0 15;");
+                    }
+                    
                     root.getChildren().add(label);
                 }
             }

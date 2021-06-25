@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
+
 import java.io.File;
 import java.lang.reflect.Field;
 
@@ -20,7 +21,7 @@ public class Settings{
     
     
     @SettingObject
-    public StringSetting language = new StringSetting("en_us", false, SVGPathIcons.GLOBE, "language",
+    public StringSetting language = new StringSetting("", false, SVGPathIcons.GLOBE, "language",
             "settings.language.title", "");
     
     

@@ -2,9 +2,9 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
@@ -17,7 +17,10 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -83,8 +86,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
             setMaxWidth(width.getWidth()*2 * Main.settings.zoom.getValue());
     
             if(getHeight() > 1.5*getWidth()) setHeight(1.5*getWidth());
-            
-            Main.window.centerWindowIntoMe(this);
+    
+            if(Main.window != null) Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);
             
             if(toRequestFocus != null){
@@ -104,7 +107,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         setup(header, subHeader);
         Platform.runLater(() -> {
             setupSubClass();
-            Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
+            if(Main.window != null) Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
             show();
         });
         

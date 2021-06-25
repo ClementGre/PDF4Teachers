@@ -112,9 +112,12 @@ public class VectorElementPageDrawer extends Pane{
             if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(vector != null) vector.quitEditMode();
-            }else if(e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE){
+            }else if(e.getCode() == KeyCode.BACK_SPACE){
                 e.consume();
-                if(vector != null) undo();
+                if(vector != null) vector.undoLastAction();
+            }else if(e.getCode() == KeyCode.DELETE){
+                e.consume();
+                if(vector != null) vector.undoLastLines();
             }else if(e.getCode() == KeyCode.L){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(true);
@@ -330,9 +333,6 @@ public class VectorElementPageDrawer extends Pane{
                 + Main.oneDigENFormat.format(y));
     }
     
-    public void undo(){
-        vector.undoLastLines();
-    }
     public double getVectorShiftX(){
         return vector.getLayoutX() + vector.getSVGPadding();
     }

@@ -516,15 +516,7 @@ public class VectorElement extends GraphicElement{
             e.printStackTrace();
         }
     }
-    public void undoAuto(){
-        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
-        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
-            drawer.undo();
-        }else{
-            undoOne();
-        }
-    }
-    public void undoOne(){
+    public void undoLastAction(){
         setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m", "z", "l", "h", "v", "a", "c", "s", "t", "q"}));
     }
     public void undoLastLines(){

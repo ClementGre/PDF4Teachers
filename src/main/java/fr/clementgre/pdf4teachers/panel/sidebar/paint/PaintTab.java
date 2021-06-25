@@ -363,10 +363,10 @@ public class PaintTab extends SideTab{
         vectorStraightLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorPerpendicularLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorUndoPath.setOnAction((e) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoLastAction();
         });
         new PressAndHoldManager(vectorUndoPath, 30, () -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoAuto();
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoLastAction();
         });
         
         

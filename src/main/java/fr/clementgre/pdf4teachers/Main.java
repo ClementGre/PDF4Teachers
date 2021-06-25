@@ -169,6 +169,7 @@ public class Main extends Application{
     public boolean languageAsk(){
         if(settings.language.getValue().isEmpty()){
             String language = TR.getLanguageFromComputerLanguage();
+            
             if(language != null){
                 Main.settings.language.setValue(language);
                 Main.settings.saveSettings();

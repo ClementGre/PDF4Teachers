@@ -2,14 +2,14 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -98,15 +98,9 @@ public class TR{
         String language = System.getProperty("user.language").toLowerCase();
         //String country = System.getProperty("user.country").toLowerCase();
         switch(language){
-            case "fr" -> {
-                return "fr_fr";
-            }
-            case "en" -> {
-                return "en_us";
-            }
-            case "it" -> {
-                return "it_it";
-            }
+            case "fr" -> { return "fr_fr"; }
+            case "en" -> { return "en_us"; }
+            case "it" -> { return "it_it"; }
         }
         return null;
     }
@@ -272,5 +266,51 @@ public class TR{
     public static void addLanguageToConfig(String name, String displayName, int version){
         Config.set(languages, name + ".version", version);
         Config.set(languages, name + ".name", displayName);
+    }
+    
+    // Return numbers :
+    // 1 : total translations
+    // 2 : translated translations
+    public static int[] getTranslationFileStats(File file){
+        
+        try{
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader inputStream = new InputStreamReader(fileInputStream, StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(inputStream);
+            
+            int total = 0;
+            int translated = 0;
+            
+            String line;
+            while((line = reader.readLine()) != null){
+                
+                if(!line.isBlank()){
+                    if(line.startsWith("#")) continue;
+                    
+                    String key = line.split(Pattern.quote("="))[0];
+                    String value = StringUtils.removeBeforeNotEscaped(line, "=");
+                    
+                    if(key != null){
+                        if(!key.isBlank()){
+                            total++;
+                            if(!value.isBlank()){
+                                translated++;
+                            }
+                        }
+                    }
+                    
+                }
+            }
+            reader.close();
+            inputStream.close();
+            fileInputStream.close();
+            
+            return new int[]{total, translated};
+            
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        return new int[]{0, 0};
+        
     }
 }

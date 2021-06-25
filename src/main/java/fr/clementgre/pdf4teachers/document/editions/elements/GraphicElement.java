@@ -108,7 +108,7 @@ public abstract class GraphicElement extends Element{
                     element.enterEditMode();
                 }else if(e.getCode() == KeyCode.BACK_SPACE){
                     e.consume();
-                    element.undoAuto();
+                    element.undoLastAction();
                 }
             }
         });
