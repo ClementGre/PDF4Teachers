@@ -517,10 +517,35 @@ public class VectorElement extends GraphicElement{
         }
     }
     public void undoLastAction(){
-        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), new String[]{"m", "z", "l", "h", "v", "a", "c", "s", "t", "q"}));
+        undo("m", "z", "l", "h", "v", "a", "c", "s", "t", "q");
     }
     public void undoLastLines(){
-        setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), "m"));
+        undo("m");
+    }
+    
+    public void undo(String... toUndoActions){
+        
+        Bounds beforeBounds = noScaledSvgPath.getLayoutBounds();
+        if(toUndoActions.length == 1){ // Optimize code when length == 1
+            setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), toUndoActions[0]));
+        }else{
+            setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), toUndoActions));
+        }
+        
+        
+        // correct element dimensions
+        if(!isEditMode()){
+            Bounds afterBounds = noScaledSvgPath.getLayoutBounds();
+            
+            double xShift = afterBounds.getMinX() - beforeBounds.getMinX();
+            double yShift = afterBounds.getMinY() - beforeBounds.getMinY();
+            double wShift = afterBounds.getWidth() - beforeBounds.getWidth();
+            double hShift = afterBounds.getHeight() - beforeBounds.getHeight();
+    
+            checkLocation(getLayoutX() + xShift, getLayoutY() + yShift,
+                    getWidth() + wShift, getHeight() + hShift, false);
+        }
+        
     }
     
     // SPECIFIC METHODS
