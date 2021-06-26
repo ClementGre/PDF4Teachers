@@ -1,6 +1,5 @@
 package fr.clementgre.pdf4teachers.document.editions;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -10,7 +9,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeCopyGradeScaleDialog
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
@@ -20,7 +19,10 @@ import javafx.scene.control.CheckBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class EditionExporter{
@@ -45,9 +47,9 @@ public class EditionExporter{
         if(MainWindow.mainScreen.hasDocument(true)){
             if(MainWindow.mainScreen.document.save()){
                 if(option == ButtonPosition.DEFAULT){
-                    file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+                    file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
                 }else if(option == ButtonPosition.OTHER_RIGHT){
-                    file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+                    file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
                     recursive = true;
                 }
             }
@@ -214,9 +216,9 @@ public class EditionExporter{
         if(MainWindow.mainScreen.hasDocument(true)){
             if(MainWindow.mainScreen.document.save()){
                 if(option.getButtonData().isDefaultButton() || option == yesAll){
-                    directory = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
+                    directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
                 }else if(option == yesAllOneFile){
-                    File file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, "edits.yml", "YAML", ".yml");
+                    File file = FilesChooserManager.showSaveDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, "edits.yml", "YAML", ".yml");
                     if(file != null){
                         oneFileConfig.setFile(file);
                         directory = new File(file.getParent());

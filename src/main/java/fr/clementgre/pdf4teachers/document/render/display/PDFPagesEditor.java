@@ -13,7 +13,7 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ComboBoxDialog;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
@@ -468,7 +468,7 @@ public class PDFPagesEditor{
                     File file;
                     if(!recursive){
                         if(buttonPos == ButtonPosition.DEFAULT){
-                            file = FIlesChooserManager.showSaveDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.getPagesNumber() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
+                            file = FilesChooserManager.showSaveDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.getPagesNumber() + ").png", TR.tr("dialog.file.extensionType.png"), ".png");
                             if(file == null){
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                             }
@@ -478,7 +478,7 @@ public class PDFPagesEditor{
                         }
                     }else{
                         if(exportDir == null){
-                            exportDir = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR);
+                            exportDir = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR);
                             if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
                         }

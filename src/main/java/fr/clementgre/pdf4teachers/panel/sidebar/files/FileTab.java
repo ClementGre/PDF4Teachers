@@ -1,32 +1,37 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
-import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class FileTab extends SideTab{
@@ -52,22 +57,8 @@ public class FileTab extends SideTab{
         
         files.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         files.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
-        
-        MainWindow.root.setOnDragOver((DragEvent e) -> {
-            Dragboard db = e.getDragboard();
-            if(db.hasFiles()){
-                for(File file : db.getFiles()){
-                    if(isFilePdf(file) || file.isDirectory() || ConvertRenderer.isGoodFormat(file)){
-                        e.acceptTransferModes(TransferMode.ANY);
-                        SideBar.selectTab(MainWindow.filesTab);
-                        e.consume();
-                        return;
-                    }
-                }
-            }
-            e.consume();
-        });
-        MainWindow.root.setOnDragDropped((DragEvent e) -> {
+    
+        getContent().setOnDragDropped((DragEvent e) -> {
             Dragboard db = e.getDragboard();
             if(db.hasFiles()){
                 // We need only one good file to accept all. We will do the sorting after.
@@ -75,7 +66,7 @@ public class FileTab extends SideTab{
                     if(isFilePdf(file) || file.isDirectory()){
                         File[] files = db.getFiles().toArray(new File[0]);
                         openFiles(files);
-                        if(files.length == 1) MainWindow.mainScreen.openFile(files[0]);
+                        if(files.length == 1 && isFilePdf(file)) MainWindow.mainScreen.openFile(file);
                         e.setDropCompleted(true);
                         e.consume();
                         break;
@@ -89,18 +80,20 @@ public class FileTab extends SideTab{
                     }
                 }
                 if(toConvertFiles.size() != 0){
-                    
+                
                     ConvertDocument converter = new ConvertDocument();
-                    for(File file : toConvertFiles){
-                        converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
-                    }
                     converter.convertWindow.root.getSelectionModel().select(1);
-                    
+                    Platform.runLater(() -> {
+                        for(File file : toConvertFiles){
+                            converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
+                        }
+                    });
+                
                     e.setDropCompleted(true);
                     e.consume();
                 }
+                e.consume();
             }
-            e.consume();
         });
         
         sortManager = new SortManager((sortType, order) -> {
@@ -246,7 +239,7 @@ public class FileTab extends SideTab{
         originalFiles.remove(file);
     }
     
-    private boolean isFilePdf(File file){
+    public static boolean isFilePdf(File file){
         String fileName = file.getName();
         String ext = "";
         if(fileName.lastIndexOf(".") != -1)

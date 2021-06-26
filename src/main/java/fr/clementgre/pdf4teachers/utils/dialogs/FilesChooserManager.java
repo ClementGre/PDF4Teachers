@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class FIlesChooserManager{
+public class FilesChooserManager{
     
     /***************************************************************************
     ************************ OPEN FILE(s) DIALOG *******************************

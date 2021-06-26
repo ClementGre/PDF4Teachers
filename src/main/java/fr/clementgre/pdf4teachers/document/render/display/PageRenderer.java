@@ -8,6 +8,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.CreateDeleteUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
@@ -20,6 +21,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
@@ -48,6 +50,7 @@ import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -229,6 +232,15 @@ public class PageRenderer extends Pane{
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth()/2, e.getY() - PaintTab.draggingElement.getHeight()/2, false);
                     }
                 }
+            }else if(dragboard.hasFiles()){ // Image/SVG drag'n drop
+                for(File file : dragboard.getFiles()){
+                    if(GalleryManager.isAcceptableImage(file.getName())){
+                        e.acceptTransferModes(TransferMode.COPY);
+                    }else if(FilesUtils.getExtension(file.getName()).equalsIgnoreCase("svg")){
+                        e.acceptTransferModes(TransferMode.COPY);
+                    }
+                }
+                e.consume();
             }
         });
         setOnDragExited(e -> {
@@ -267,6 +279,27 @@ public class PageRenderer extends Pane{
                 if(PaintTab.draggingElement != null) PaintTab.draggingElement.select();
                 PaintTab.draggingItem = null;
                 PaintTab.draggingElement = null;
+            }else if(dragboard.hasFiles()){ // Image/SVG drag'n drop
+                for(File file : dragboard.getFiles()){
+                    MainWindow.mainScreen.setSelected(null);
+                    GraphicElement element = null;
+                    if(GalleryManager.isAcceptableImage(file.getName())){
+                        element = MainWindow.paintTab.newImageElementFromPath(file.getAbsolutePath());
+                    }else if(FilesUtils.getExtension(file.getName()).equalsIgnoreCase("svg")){
+                        element = MainWindow.paintTab.openSVGFile(file, null);
+                    }
+                    if(element != null){
+                        if(element.getPageNumber() != getPage()) element.switchPage(getPage());
+                        element.setRealX(toGridX(e.getX()));
+                        element.setRealY(toGridX(e.getY()));
+                        element.centerOnCoordinatesX();
+                        element.centerOnCoordinatesY();
+                        element.checkLocation(element.getLayoutX(), element.getLayoutY(), false);
+                    }
+                }
+                MainWindow.mainScreen.setSelected(null); // prevent some dimensions issues
+                e.consume();
+                e.setDropCompleted(true);
             }
         });
     

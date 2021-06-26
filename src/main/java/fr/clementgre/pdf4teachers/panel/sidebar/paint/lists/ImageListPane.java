@@ -5,7 +5,9 @@ import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.*;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
@@ -58,6 +60,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
                     list.updateItemsFiltered();
                 }
                 setLoaded(true);
+                updateMessage();
             }
         });
         

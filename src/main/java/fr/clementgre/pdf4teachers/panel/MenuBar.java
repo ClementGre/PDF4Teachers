@@ -21,7 +21,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
@@ -206,7 +206,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         
         file1Open.setOnAction((ActionEvent actionEvent) -> {
             
-            File[] files = FIlesChooserManager.showPDFFilesDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
+            File[] files = FilesChooserManager.showPDFFilesDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(files != null){
                 MainWindow.filesTab.openFiles(files);
                 if(files.length == 1){
@@ -216,7 +216,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         });
         file2OpenDir.setOnAction((ActionEvent actionEvent) -> {
             
-            File directory = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR);
+            File directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
             if(directory != null){
                 MainWindow.filesTab.openFiles(new File[]{directory});
             }

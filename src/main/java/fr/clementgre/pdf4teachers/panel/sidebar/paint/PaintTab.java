@@ -18,7 +18,7 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.DoubleInputAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
@@ -271,16 +271,7 @@ public class PaintTab extends SideTab{
         //NodeMenuItem.setupMenu(newImage);
             
         browseImage.setOnAction(ae -> {
-            browseImagePath(path -> {
-                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-
-                ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
-                        0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
-
-                page.addElement(element, true, UType.UNDO);
-                element.centerOnCoordinatesY();
-                MainWindow.mainScreen.setSelected(element);
-            });
+            browseImagePath(this::newImageElementFromPath);
         });
         newImageEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
@@ -404,8 +395,22 @@ public class PaintTab extends SideTab{
         }
     }
     
+    public ImageElement newImageElementFromPath(String path){
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+        ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+                0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
+    
+        page.addElement(element, true, UType.UNDO);
+        element.centerOnCoordinatesY();
+        MainWindow.mainScreen.setSelected(element);
+        
+        return element;
+    }
+    
+    // When callback == null, edit path instead of returning absolute path
     private void browseImagePath(CallBackArg<String> callBack){
-        File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
+        File file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
                 ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
         if(file != null){
             if(callBack == null) path.setText(file.getAbsolutePath());
@@ -413,40 +418,50 @@ public class PaintTab extends SideTab{
         }
     }
     private void browseSVGPath(CallBackArg<String> callBack){
-        File file = FIlesChooserManager.showFileDialog(FIlesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.svg"),
-                SVGUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
+        openSVGFile(
+                FilesChooserManager.showFileDialog(
+                        FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.svg"),
+                                SVGUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0])
+                ), callBack
+        );
+    }
+    // When callback != null, return path instead of creating element
+    public VectorElement openSVGFile(File file, CallBackArg<String> callBack){
         if(file != null){
             try{
                 SVGFileParser parser = new SVGFileParser(file);
                 parser.load();
-                
+            
                 if(callBack != null){
                     callBack.call(parser.getPath());
-                    return;
+                    return null;
                 }
-                
+            
                 Color fillColor = parser.getFillColor();
                 Color strokeColor = parser.getStrokeColor();
                 int strokeWidth = parser.getStrokeWidth();
                 if((strokeWidth == 0 || strokeColor == null) && fillColor == null) fillColor = MainWindow.userData.vectorsLastFill;
-                
+            
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        
+            
                 VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
                         parser.getPath(), false, false, 0);
-        
+            
                 page.addElement(element, true, UType.UNDO);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
                 element.setLinkedVectorData(VectorListPane.addLastVector(element));
-        
+                
+                return element;
+            
             }catch(ParserConfigurationException | XPathExpressionException | IOException | SAXException ex){
                 new ErrorAlert(TR.tr("paintTab.vectorElements.browseSVG.error"), ex.getMessage(), false).show();
                 ex.printStackTrace();
             }
         }
+        return null;
     }
     
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){

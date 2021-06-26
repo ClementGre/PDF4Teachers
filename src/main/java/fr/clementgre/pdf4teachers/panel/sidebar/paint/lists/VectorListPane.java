@@ -4,7 +4,9 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.*;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridView;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.DefaultFavoriteVectors;
 import javafx.beans.InvalidationListener;
@@ -43,6 +45,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
             if(newValue && !isLoaded()){
                 setLoaded(true);
                 list.updateItemsFiltered();
+                updateMessage();
             }
         });
     

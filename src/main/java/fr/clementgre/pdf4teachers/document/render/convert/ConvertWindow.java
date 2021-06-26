@@ -1,29 +1,32 @@
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
-import fr.clementgre.pdf4teachers.utils.dialogs.FIlesChooserManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.LoadingAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
 import java.io.File;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 public class ConvertWindow extends AlternativeWindow<TabPane>{
@@ -183,7 +186,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 HBox filePathBox = new HBox();
                 
-                srcDir = new TextField(FIlesChooserManager.pathToExistingPath(null, FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
+                srcDir = new TextField(FilesChooserManager.pathToExistingPath(null, FilesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
                         MainWindow.filesTab.getCurrentDirAlways().getAbsolutePath()));
                 
                 PaneUtils.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
@@ -200,7 +203,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 root.getChildren().addAll(info, filePathBox);
                 
                 changePath.setOnAction(event -> {
-                    File file = FIlesChooserManager.showDirectoryDialog(FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR);
+                    File file = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR);
                     if(file != null) srcDir.setText(file.getAbsolutePath() + File.separator);
                 });
                 
@@ -224,7 +227,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 root.getChildren().addAll(info, filePathBox);
     
                 changePath.setOnAction(event -> {
-                    File[] files = FIlesChooserManager.showFilesDialog(FIlesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
+                    File[] files = FilesChooserManager.showFilesDialog(FilesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
                             TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
                     
                     if(files != null){
@@ -261,7 +264,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 HBox filePathBox = new HBox();
                 
-                outDir = new TextField(FIlesChooserManager.pathToExistingPath(MainWindow.filesTab.getCurrentDirAlways().getAbsolutePath(), MainWindow.userData.lastConvertSrcDir));
+                outDir = new TextField(FilesChooserManager.pathToExistingPath(MainWindow.filesTab.getCurrentDirAlways().getAbsolutePath(), MainWindow.userData.lastConvertSrcDir));
                 
                 PaneUtils.setHBoxPosition(outDir, -1, 30, 0, 2.5);
                 
@@ -273,7 +276,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 root.getChildren().addAll(info, filePathBox);
     
                 changePath.setOnAction(event -> {
-                    File file = FIlesChooserManager.showDirectoryDialog(outDir.getText(), MainWindow.userData.lastConvertSrcDir);
+                    File file = FilesChooserManager.showDirectoryDialog(outDir.getText(), MainWindow.userData.lastConvertSrcDir);
                     if(file != null) outDir.setText(file.getAbsolutePath() + File.separator);
                 });
             }else{

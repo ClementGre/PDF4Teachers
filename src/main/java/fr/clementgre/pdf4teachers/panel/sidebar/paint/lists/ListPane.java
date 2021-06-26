@@ -93,11 +93,11 @@ public abstract class ListPane<T> extends TitledPane{
         // Message setup
         emptyListLabel.setTextAlignment(TextAlignment.CENTER);
         emptyListLabel.setWrapText(true);
-        VBox.setMargin(emptyListLabel, new Insets(10));
+        VBox.setMargin(emptyListLabel, new Insets(0, 10, 0, 10));
         
         emptyListLink.setTextAlignment(TextAlignment.CENTER);
         emptyListLink.setWrapText(true);
-        VBox.setMargin(emptyListLink, new Insets(10));
+        VBox.setMargin(emptyListLink, new Insets(5, 10, 0, 10));
         
         messageContainer.setAlignment(Pos.CENTER);
     }
@@ -132,8 +132,16 @@ public abstract class ListPane<T> extends TitledPane{
     }
     protected void updateMessage(boolean empty){
         if(empty){
-            root.getChildren().add(messageContainer);
+            if(isLoaded){
+                sortToggleBtn.setSelected(false);
+                sortToggleBtn.setDisable(true);
+            }
+    
+            if(!root.getChildren().contains(messageContainer))
+                root.getChildren().add(messageContainer);
         }else{
+            sortToggleBtn.setDisable(false);
+    
             root.getChildren().remove(messageContainer);
         }
     }
