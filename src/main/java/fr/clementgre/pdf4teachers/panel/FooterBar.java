@@ -5,11 +5,11 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
@@ -48,7 +48,7 @@ public class FooterBar extends StackPane{
     private final Region spacer = new Region();
     
     private int oldWidth = 0;
-    private final int widthLimit = 1000;
+    private final int widthLimit = 1200;
     
     public FooterBar(){
         StyleManager.putStyle(this, Style.ACCENT);

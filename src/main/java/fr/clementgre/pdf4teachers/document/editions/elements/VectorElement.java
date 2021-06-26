@@ -535,17 +535,20 @@ public class VectorElement extends GraphicElement{
         
         // correct element dimensions
         if(!isEditMode()){
-            Bounds afterBounds = noScaledSvgPath.getLayoutBounds();
-            
-            double xShift = afterBounds.getMinX() - beforeBounds.getMinX();
-            double yShift = afterBounds.getMinY() - beforeBounds.getMinY();
-            double wShift = afterBounds.getWidth() - beforeBounds.getWidth();
-            double hShift = afterBounds.getHeight() - beforeBounds.getHeight();
-    
-            checkLocation(getLayoutX() + xShift, getLayoutY() + yShift,
-                    getWidth() + wShift, getHeight() + hShift, false);
+            correctDimensions(beforeBounds);
         }
-        
+    }
+    
+    public void correctDimensions(Bounds beforeBounds){
+        Bounds afterBounds = noScaledSvgPath.getLayoutBounds();
+    
+        double xShift = afterBounds.getMinX() - beforeBounds.getMinX();
+        double yShift = afterBounds.getMinY() - beforeBounds.getMinY();
+        double wShift = afterBounds.getWidth() - beforeBounds.getWidth();
+        double hShift = afterBounds.getHeight() - beforeBounds.getHeight();
+    
+        checkLocation(getLayoutX() + xShift, getLayoutY() + yShift,
+                getWidth() + wShift, getHeight() + hShift, false);
     }
     
     // SPECIFIC METHODS

@@ -3,9 +3,11 @@ package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.beans.property.Property;
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -31,15 +33,22 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
             // De-select and re-select element to update values in side panes
             // Strings does not provoke this update in order to keep the carret position.
             Element selected = MainWindow.mainScreen.getSelected();
+            Bounds vectorElementBeforeBounds = null;
             if(!(value instanceof String)){
                 MainWindow.mainScreen.setSelected(null);
+            }else if(element.get() instanceof VectorElement element && observable.get() == element.pathProperty()){ // VectorElement path
+                vectorElementBeforeBounds = element.getNoScaledSvgPath().getLayoutBounds();
             }
             
             T oldValue = observable.get().getValue();
             observable.get().setValue(value);
             value = oldValue;
     
-            if(!(value instanceof String)) MainWindow.mainScreen.setSelected(selected);
+            if(!(value instanceof String)){
+                MainWindow.mainScreen.setSelected(selected);
+            }else if(element.get() instanceof VectorElement element && observable.get() == element.pathProperty()){ // VectorElement path
+                if(vectorElementBeforeBounds != null) element.correctDimensions(vectorElementBeforeBounds);
+            }
     
             Edition.setUnsave("ObservableChangedUndoAction");
             return true;
