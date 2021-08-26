@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
@@ -34,7 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class FileTab extends SideTab{
+public class FileTab extends SideTab {
     
     public SortManager sortManager;
     private final VBox pane = new VBox();
@@ -57,7 +62,7 @@ public class FileTab extends SideTab{
         
         files.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         files.addEventFilter(MouseEvent.MOUSE_PRESSED, Event::consume);
-    
+        
         getContent().setOnDragDropped((DragEvent e) -> {
             Dragboard db = e.getDragboard();
             if(db.hasFiles()){
@@ -80,7 +85,7 @@ public class FileTab extends SideTab{
                     }
                 }
                 if(toConvertFiles.size() != 0){
-                
+                    
                     ConvertDocument converter = new ConvertDocument();
                     converter.convertWindow.root.getSelectionModel().select(1);
                     Platform.runLater(() -> {
@@ -88,7 +93,7 @@ public class FileTab extends SideTab{
                             converter.convertWindow.convertFiles.srcFiles.appendText(file.getAbsolutePath() + "\n");
                         }
                     });
-                
+                    
                     e.setDropCompleted(true);
                     e.consume();
                 }
@@ -153,7 +158,7 @@ public class FileTab extends SideTab{
         
     }
     
-    public class DirOpener{
+    public class DirOpener {
         private final int DEEP_LIMIT = 2;
         boolean alreadyAsked = false;
         boolean recursive = false;
@@ -252,7 +257,7 @@ public class FileTab extends SideTab{
         originalFiles.clear();
         originalFiles.addAll(MainWindow.filesTab.files.getItems());
     }
-
+    
     @SuppressWarnings("unchecked")
     public void backOpenFilesList(boolean reverse){
         files.getItems().clear();
@@ -287,23 +292,22 @@ public class FileTab extends SideTab{
             MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.beginningOfList"), 15);
             return;
         }
-    
-        File toOpen = files.getItems().get(selected-1);
+        
+        File toOpen = files.getItems().get(selected - 1);
         if(toOpen == null) return;
         MainWindow.mainScreen.openFile(toOpen);
     }
     public void loadNextFile(){
         int selected = files.getSelectionModel().getSelectedIndex();
-        if(selected == files.getItems().size()-1){
+        if(selected == files.getItems().size() - 1){
             MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("filesTab.navigation.endOfList"), 15);
             return;
         }
-    
-        File toOpen = files.getItems().get(selected+1);
+        
+        File toOpen = files.getItems().get(selected + 1);
         if(toOpen == null) return;
         MainWindow.mainScreen.openFile(toOpen);
     }
-    
     
     
     public void refresh(){

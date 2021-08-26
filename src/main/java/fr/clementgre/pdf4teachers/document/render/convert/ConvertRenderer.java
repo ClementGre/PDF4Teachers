@@ -1,6 +1,12 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -10,7 +16,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class ConvertRenderer{
+public class ConvertRenderer {
     
     
     ArrayList<ConvertedFile> convertedFiles = new ArrayList<>();
@@ -47,7 +54,7 @@ public class ConvertRenderer{
                     documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
                     convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
-                    String imgName = StringUtils.removeBeforeLastRegex(dir.getName(), ".");
+                    String imgName = StringUtils.removeAfterLastRegex(dir.getName(), ".");
                     documentCallBack.call(Map.entry(imgName + ".pdf", -1d));
                     convertFile(new File[]{dir}, new File(out + imgName + ".pdf"));
                 }
@@ -63,7 +70,7 @@ public class ConvertRenderer{
             convertFile(files, new File(out + StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
         documentCallBack.call(Map.entry("", 0d));
-    
+        
         if(shouldStop){
             closeAll();
             return new ArrayList<>();
@@ -75,7 +82,7 @@ public class ConvertRenderer{
         for(ConvertedFile file : convertedFiles){
             try{
                 file.document.close();
-            }catch(IOException e){ e.printStackTrace(); }
+            }catch(IOException e){e.printStackTrace();}
         }
     }
     
@@ -176,7 +183,7 @@ public class ConvertRenderer{
     }
     
     public static boolean isGoodFormat(File file){
-        String ext = StringUtils.removeBeforeLastRegex(file.getName(), ".");
+        String ext = FilesUtils.getExtension(file);
         if(!file.exists()) ext = "";
         return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext);
     }

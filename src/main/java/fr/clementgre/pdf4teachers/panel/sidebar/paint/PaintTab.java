@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
@@ -47,10 +52,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class PaintTab extends SideTab{
-
+public class PaintTab extends SideTab {
+    
     public VBox root;
-
+    
     // actions buttons
     public HBox commonActionButtons;
     
@@ -62,27 +67,27 @@ public class PaintTab extends SideTab{
     public ToggleButton vectorStraightLineMode;
     public ToggleButton vectorPerpendicularLineMode;
     public ToggleButton vectorEditMode;
-
+    
     // common settings
-
+    
     public TextField path;
     public Button vectorUndoPath;
     public Button browsePath;
-
+    
     // vector Settings
-
+    
     public VBox vectorsOptionPane;
-
+    
     public ToggleButton doFillButton;
     public SyncColorPicker vectorFillColor;
     public SyncColorPicker vectorStrokeColor;
     public Spinner<Integer> vectorStrokeWidth;
-
+    
     // advanced Options
-
+    
     public TitledPane advancedOptionsPane;
     public VBox advancedOptionsContent;
-
+    
     
     public Spinner<Integer> spinnerX;
     public Spinner<Integer> spinnerY;
@@ -120,7 +125,7 @@ public class PaintTab extends SideTab{
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
         MainWindow.paintTab = this;
     }
-
+    
     @FXML
     public void initialize(){
         setContent(root);
@@ -132,29 +137,29 @@ public class PaintTab extends SideTab{
         vectorPerpendicularLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULE, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
         vectorEditMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 21, 21, ImageUtils.defaultDarkColorAdjust));
-
+        
         vectorUndoPath.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.UNDO, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
         doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
-
+        
         vectorStrokeWidth.getValueFactory().setConverter(new StringToIntConverter(0));
         ShortcutsTextField.registerNewInput(vectorStrokeWidth);
-
+        
         PaneUtils.setPosition(spinnerX, 0, 0, -1, 26, true);
         PaneUtils.setPosition(spinnerY, 0, 0, -1, 26, true);
         PaneUtils.setPosition(spinnerWidth, 0, 0, -1, 26, true);
         PaneUtils.setPosition(spinnerHeight, 0, 0, -1, 26, true);
-
+        
         spinnerX.getValueFactory().setConverter(new StringToIntConverter(0));
         spinnerY.getValueFactory().setConverter(new StringToIntConverter(0));
         spinnerWidth.getValueFactory().setConverter(new StringToIntConverter(0));
         spinnerHeight.getValueFactory().setConverter(new StringToIntConverter(0));
-
+        
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerX.getValueFactory()).setMax((int) Element.GRID_WIDTH);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMax(Integer.MAX_VALUE);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerY.getValueFactory()).setMin(Integer.MIN_VALUE);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerWidth.getValueFactory()).setMax((int) Element.GRID_WIDTH);
         ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinnerHeight.getValueFactory()).setMax((int) Element.GRID_HEIGHT);
-
+        
         PaneUtils.setHBoxPosition(path, 0, 30, 0);
         PaneUtils.setHBoxPosition(vectorUndoPath, 30, 30, 0);
         PaneUtils.setHBoxPosition(browsePath, 0, 30, 0);
@@ -162,11 +167,11 @@ public class PaintTab extends SideTab{
         repeatMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.RepeatMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         repeatMode.getSelectionModel().select(0);
-    
+        
         resizeMode.setItems(FXCollections.observableArrayList(Arrays.stream(GraphicElement.ResizeMode.values())
                 .map((o) -> TR.tr(o.getKey())).collect(Collectors.toList())));
         resizeMode.getSelectionModel().select(0);
-    
+        
         PaneUtils.setPosition(spinnerArrowLength, 0, 0, 75, 26, true);
         
         translate();
@@ -181,13 +186,13 @@ public class PaintTab extends SideTab{
         widthTitle.setText(TR.tr("letter.width"));
         heightTitle.setText(TR.tr("letter.height"));
         arrowLengthTitle.setText(TR.tr("paintTab.advancedOptions.arrowLength"));
-    
+        
         vectorUndoPath.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.undo.tooltip")));
         vectorPerpendicularLineMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.perpendicularLineMode.tooltip")));
         vectorStraightLineMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.straightLineMode.tooltip")));
         vectorEditMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("paintTab.vectorsEditMode.tooltip")));
     }
-
+    
     public void setup(){
         
         // Advances options listeners / updaters
@@ -236,9 +241,9 @@ public class PaintTab extends SideTab{
                 if(element.getArrowLength() != newValue) element.setArrowLength(newValue);
             }
         });
-    
+        
         delete.setOnAction(e -> deleteSelected());
-    
+        
         vectorFillColor.valueProperty().addListener((observable, oldValue, newValue) -> {
             doFillButton.setSelected(true);
             MainWindow.userData.vectorsLastFill = newValue;
@@ -258,7 +263,7 @@ public class PaintTab extends SideTab{
                 MainWindow.userData.drawVectorsLastStrokeWidth = newValue;
             }
         });
-    
+        
         path.setContextMenu(null);
         
         ////////// New Image menu //////////
@@ -269,16 +274,16 @@ public class PaintTab extends SideTab{
         NodeMenuItem openGallery = new NodeMenuItem(TR.tr("paintTab.gallery.openGallery"), true);
         newImage.getItems().addAll(browseImage, newImageEmpty, openGallery);
         //NodeMenuItem.setupMenu(newImage);
-            
+        
         browseImage.setOnAction(ae -> {
             browseImagePath(this::newImageElementFromPath);
         });
         newImageEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-
+            
             ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
-
+            
             page.addElement(element, true, UType.UNDO);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
@@ -286,26 +291,26 @@ public class PaintTab extends SideTab{
         openGallery.setOnAction(ae -> {
             openGallery();
         });
-    
+        
         ////////// New Vector menu //////////
-    
+        
         NodeMenuItem newVectorDrawing = new NodeMenuItem(TR.tr("paintTab.vectorElements.newDrawing"), true);
         NodeMenuItem newVectorEmpty = new NodeMenuItem(TR.tr("paintTab.vectorElements.newEmpty"), true);
         NodeMenuItem browseVector = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), true);
         newVector.getItems().addAll(newVectorDrawing, newVectorEmpty, browseVector);
         //NodeMenuItem.setupMenu(menu);
-    
+        
         newVectorDrawing.setOnAction(ae -> {
             newVectorDrawing();
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
+            
             VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                     MainWindow.userData.vectorsLastDoFIll, MainWindow.userData.vectorsLastFill, MainWindow.userData.vectorsLastStroke, (int) MainWindow.userData.vectorsLastStrokeWidth,
                     "", false, false, 0);
-    
+            
             MainWindow.mainScreen.setSelected(element);
             page.addElement(element, true, UType.UNDO);
             element.centerOnCoordinatesY();
@@ -322,13 +327,13 @@ public class PaintTab extends SideTab{
                 NodeMenuItem browse = new NodeMenuItem(TR.tr("paintTab.vectorElements.browseSVG"), false);
                 menu.getItems().addAll(rotate, browse);
                 NodeMenuItem.setupMenu(menu);
-    
+                
                 rotate.setOnAction(ae -> {
                     DoubleInputAlert inputAlert = new DoubleInputAlert(-360, 360, 90, 90,
                             TR.tr("paintTab.vectorElements.rotate"), TR.tr("paintTab.vectorElements.rotate.dialog.header"), TR.tr("paintTab.vectorElements.rotate.dialog.details"));
                     inputAlert.addApplyButton(ButtonPosition.DEFAULT);
                     inputAlert.addCancelButton(ButtonPosition.CLOSE);
-    
+                    
                     if(inputAlert.getShowAndWaitIsDefaultButton() && inputAlert.getValue() != null && inputAlert.getValue() != 0){
                         try{
                             path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue()), 4));
@@ -354,10 +359,12 @@ public class PaintTab extends SideTab{
         vectorStraightLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorPerpendicularLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorUndoPath.setOnAction((e) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoLastAction();
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement)
+                vectorElement.undoLastAction();
         });
         new PressAndHoldManager(vectorUndoPath, 30, () -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) vectorElement.undoLastAction();
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement)
+                vectorElement.undoLastAction();
         });
         
         
@@ -372,17 +379,17 @@ public class PaintTab extends SideTab{
     
     public void newVectorDrawing(){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
+        
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                 false, MainWindow.userData.vectorsLastFill, MainWindow.userData.drawVectorsLastStroke, (int) MainWindow.userData.drawVectorsLastStrokeWidth == 0 ? 2 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                 "", false, false, 0);
-    
-    
+        
+        
         page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
-    
+        
         // Drawing elements are not added to previous elements by default
         // element.setLinkedVectorData(VectorListPane.addLastVector(element));
         element.enterEditMode();
@@ -397,10 +404,10 @@ public class PaintTab extends SideTab{
     
     public ImageElement newImageElementFromPath(String path){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
+        
         ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
-    
+        
         page.addElement(element, true, UType.UNDO);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
@@ -421,7 +428,7 @@ public class PaintTab extends SideTab{
         openSVGFile(
                 FilesChooserManager.showFileDialog(
                         FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.svg"),
-                                SVGUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0])
+                        SVGUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0])
                 ), callBack
         );
     }
@@ -431,31 +438,32 @@ public class PaintTab extends SideTab{
             try{
                 SVGFileParser parser = new SVGFileParser(file);
                 parser.load();
-            
+                
                 if(callBack != null){
                     callBack.call(parser.getPath());
                     return null;
                 }
-            
+                
                 Color fillColor = parser.getFillColor();
                 Color strokeColor = parser.getStrokeColor();
                 int strokeWidth = parser.getStrokeWidth();
-                if((strokeWidth == 0 || strokeColor == null) && fillColor == null) fillColor = MainWindow.userData.vectorsLastFill;
-            
+                if((strokeWidth == 0 || strokeColor == null) && fillColor == null)
+                    fillColor = MainWindow.userData.vectorsLastFill;
+                
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-            
+                
                 VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                         0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
                         parser.getPath(), false, false, 0);
-            
+                
                 page.addElement(element, true, UType.UNDO);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
                 element.setLinkedVectorData(VectorListPane.addLastVector(element));
                 
                 return element;
-            
+                
             }catch(ParserConfigurationException | XPathExpressionException | IOException | SAXException ex){
                 new ErrorAlert(TR.tr("paintTab.vectorElements.browseSVG.error"), ex.getMessage(), false).show();
                 ex.printStackTrace();
@@ -489,7 +497,7 @@ public class PaintTab extends SideTab{
         // Disable/Enable nodes
         if(newValue instanceof GraphicElement gElement){
             setGlobalDisable(false);
-    
+            
             if(newValue instanceof VectorElement element){ // Vector
                 setVectorsDisable(false);
                 

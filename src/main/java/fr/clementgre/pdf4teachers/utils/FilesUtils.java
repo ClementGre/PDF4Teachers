@@ -1,10 +1,17 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class FilesUtils{
+public class FilesUtils {
     
     public static File HOME_DIR = new File(System.getProperty("user.home"));
     
@@ -30,11 +37,14 @@ public class FilesUtils{
         return (float) (octet / 1000) / 1000f;
         
     }
-    
+    public static String getExtension(File file){
+        return getExtension(file.getName());
+    }
+    // Always return lower case extension without the dot.
     public static String getExtension(String fileName){
         String[] splitted = fileName.split(Pattern.quote("."));
         if(splitted.length == 0 || splitted.length == 1) return "";
-        return splitted[splitted.length - 1];
+        return splitted[splitted.length - 1].toLowerCase();
     }
     
     public static boolean isInSameDir(File file1, File file2){

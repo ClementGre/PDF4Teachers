@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
@@ -29,7 +34,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-public class ConvertWindow extends AlternativeWindow<TabPane>{
+public class ConvertWindow extends AlternativeWindow<TabPane> {
     
     public static ObservableList<String> definitions;
     
@@ -44,7 +49,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 "3.868000Mpix (A4, 200dpi, ~450kB)",
                 "8.699840Mpix (A4, 300dpi, ~800kB)",
                 "34.81200Mpix (A4, 600dpi, 1.2MB)");
-    
+        
         formats = FXCollections.observableArrayList(
                 TR.tr("convertWindow.options.format.fitToImage"),
                 "594:841 (A4 " + TR.tr("convertWindow.options.format.portrait") + ")",
@@ -77,9 +82,9 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
     public void setupSubClass(){
         root.setStyle("-fx-padding: 0;");
         df.setMaximumFractionDigits(340);
-    
+        
         // HEADER
-    
+        
         if(defaultSize == null) setSubHeaderText(TR.tr("convertWindow.convertMode.toPDF"));
         else{
             setSubHeaderText(TR.tr("convertWindow.convertMode.toPDFPages"));
@@ -89,12 +94,12 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             //definitions.add(0, df.format(defaultSize.getWidth() * defaultSize.getHeight() / 1000000) + "Mp (" + TR.tr("Ce document") + ")");
             formats.add(1, widthFactor + ":" + heightFactor + " (" + TR.tr("convertWindow.options.format.currentPDFFormat") + ")");
         }
-    
+        
         // PANES
-    
+        
         convertDirs = new ConvertPane(this, TR.tr("convertWindow.convertMode.toPDF.convertDirs.tabName"), true);
         convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("convertWindow.convertMode.toPDF.convertFiles.tabName") : TR.tr("convertWindow.convertMode.toPDFPages.tabName"), false);
-    
+        
         if(defaultSize == null) root.getTabs().add(convertDirs);
         root.getTabs().add(convertFiles);
         setupBtns();
@@ -119,7 +124,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
         setButtons(cancel, export);
     }
     
-    public class ConvertPane extends Tab{
+    public class ConvertPane extends Tab {
         
         public boolean convertDirs;
         ConvertWindow window;
@@ -162,7 +167,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             if(convertDirs){
                 desc.setText(TR.tr("convertWindow.convertMode.toPDF.convertDirs.title") + "\n" +
                         String.join("\n", Arrays.stream(TR.tr("convertWindow.convertMode.toPDF.convertDirs.description")
-                                .split(Pattern.quote("\n")))
+                                        .split(Pattern.quote("\n")))
                                 .map((str) -> "   " + str)
                                 .toArray(String[]::new)));
             }else{
@@ -225,7 +230,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 
                 filePathBox.getChildren().addAll(srcFiles, changePath);
                 root.getChildren().addAll(info, filePathBox);
-    
+                
                 changePath.setOnAction(event -> {
                     File[] files = FilesChooserManager.showFilesDialog(FilesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR,
                             TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
@@ -274,7 +279,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
                 filePathBox.getChildren().addAll(outDir, changePath);
                 
                 root.getChildren().addAll(info, filePathBox);
-    
+                
                 changePath.setOnAction(event -> {
                     File file = FilesChooserManager.showDirectoryDialog(outDir.getText(), MainWindow.userData.lastConvertSrcDir);
                     if(file != null) outDir.setText(file.getAbsolutePath() + File.separator);
@@ -309,7 +314,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             definition.setEditable(true);
             PaneUtils.setHBoxPosition(definition, -1, 30, 2.5);
             definitionColumn.getChildren().add(definition);
-
+            
             
             // Format COLUMN
             
@@ -318,13 +323,13 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             format.setEditable(true);
             PaneUtils.setHBoxPosition(format, -1, 30, 2.5);
             formatColumn.getChildren().add(format);
-
+            
             // LISTENERS
             
             definition.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 updateDefaultValues();
                 definition.applyCss(); // Prevent the black text on black bg bug
-
+                
                 String data = StringUtils.removeAfterLastRegex(newValue, "Mp");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
@@ -335,7 +340,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             format.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
                 updateDefaultValues();
                 format.applyCss(); // Prevent the black text on black bg bug
-
+                
                 String data = StringUtils.removeAfterLastRegex(newValue, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
@@ -435,7 +440,6 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
         }
         
         
-        
         public VBox generateInfo(String text, boolean topBar){
             
             VBox box = new VBox();
@@ -478,18 +482,19 @@ public class ConvertWindow extends AlternativeWindow<TabPane>{
             
             loadingAlert = new LoadingAlert(true, TR.tr("convertWindow.dialog.loading.title"), TR.tr("convertWindow.dialog.loading.title"));
             converted = 0;
-    
+            
             ConvertRenderer renderer = new ConvertRenderer(this);
             loadingAlert.showAsync(() -> {
-                shouldStop = true; renderer.stop();
+                shouldStop = true;
+                renderer.stop();
             });
-           
+            
             new Thread(() -> {
                 try{
                     loadingAlert.setTotal(renderer.getFilesLength());
                     
                     // entry : String current document name | Double document internal advancement (range 0 ; 1)
-                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement-> {
+                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement -> {
                         Platform.runLater(() -> {
                             if(documentAndAdvancement.getKey().isBlank()){
                                 loadingAlert.setProgress(-1);

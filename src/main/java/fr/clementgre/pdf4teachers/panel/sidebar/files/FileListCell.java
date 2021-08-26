@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
@@ -27,7 +32,7 @@ import javafx.scene.layout.VBox;
 import java.io.File;
 import java.util.Collections;
 
-public class FileListCell extends ListCell<File>{
+public class FileListCell extends ListCell<File> {
     
     private final VBox pane;
     private final HBox nameBox;
@@ -73,7 +78,10 @@ public class FileListCell extends ListCell<File>{
         }else{
             
             if(!file.exists()){
-                MainWindow.filesTab.removeFile(file);
+                // Can't remove item in an update item event -> runLater
+                Platform.runLater(() -> {
+                    MainWindow.filesTab.removeFile(file);
+                });
                 return;
             }
             
