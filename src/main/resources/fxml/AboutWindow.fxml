@@ -89,7 +89,7 @@
             <Hyperlink text="JMetro" id="https://pixelduke.com/java-javafx-theme-jmetro/"/>
             <Hyperlink text="Metadata-Extractor" id="https://drewnoakes.com/code/exif/"/>
             <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
-            <Hyperlink text="TranslationFileGenerator" id="https://github.com/ClementGre/TranslationFileGenerator"/>
+            <Hyperlink text="i18nDotPropertiesGUI" id="https://github.com/ClementGre/i18nDotPropertiesGUI"/>
         </VBox>
         <VBox fx:id="dependenciesRight">
             <Hyperlink text="JLatexMath" id="https://github.com/opencollab/jlatexmath"/>

@@ -33,6 +33,7 @@ public class SideBar extends TabPane {
     private static final String STYLE = "-fx-tab-max-width: 22px;";
     
     private final boolean left;
+    private boolean loaded = false;
     
     public SideBar(boolean left){
         this.left = left;
@@ -56,12 +57,16 @@ public class SideBar extends TabPane {
                 }
             }else if(c.wasAdded() && getTabs().size() == 1){ // The tab is the first added
                 hideDragSpace();
-                Platform.runLater(() -> {
-                    setMaxWidth(MAX_WIDTH);
-                    if(getWidth() <= 50){
-                        setWidthByEditingDivider(DEFAULT_WIDTH);
-                    }
-                });
+                
+                if(loaded){ // prevent editing max width when not completely loaded yet
+                    Platform.runLater(() -> {
+                        setMaxWidth(MAX_WIDTH);
+                        if(getWidth() <= 50){
+                            setWidthByEditingDivider(DEFAULT_WIDTH);
+                        }
+                    });
+                }
+                
             }
             
             // prevent layout bugs
@@ -223,10 +228,6 @@ public class SideBar extends TabPane {
         return MainWindow.rightBar.getTabs().contains(tab);
     }
     
-    public static void setupDividers(SplitPane mainPane){
-    
-    }
-    
     public static void showDragSpaces(){
         MainWindow.leftBar.showDragSpace();
         MainWindow.rightBar.showDragSpace();
@@ -274,6 +275,10 @@ public class SideBar extends TabPane {
             }
         }
         hideDragSpace();
+        loaded = true;
+        PlatformUtils.runLaterOnUIThread(3000, () -> {
+            setMaxWidth(MAX_WIDTH); // restore normal max width
+        });
     }
     
     public static void saveBarsOrganization(){

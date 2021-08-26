@@ -175,7 +175,7 @@ public class FileListCell extends ListCell<File> {
                     
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
-                            MainWindow.mainScreen.document.save();
+                            MainWindow.mainScreen.document.save(true);
                         }
                     }
                     

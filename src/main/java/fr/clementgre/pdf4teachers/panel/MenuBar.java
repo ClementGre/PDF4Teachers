@@ -246,13 +246,15 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         file7Export.setOnAction((ActionEvent actionEvent) -> {
             
-            MainWindow.mainScreen.document.save();
+            if(!MainWindow.mainScreen.document.save(true)) return;
             new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
             
         });
         file8ExportAll.setOnAction((ActionEvent actionEvent) -> {
             
-            if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
+            if(MainWindow.mainScreen.hasDocument(false)){
+                if(!MainWindow.mainScreen.document.save(true)) return;
+            }
             new ExportWindow(MainWindow.filesTab.files.getItems());
             
         });

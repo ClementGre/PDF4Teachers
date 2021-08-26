@@ -109,14 +109,11 @@ public class MainScreen extends Pane {
     }, "DragNScroll");
     
     public MainScreen(){
-        
-        //if(Main.isOSX()) PageRenderer.PAGE_HORIZONTAL_MARGIN = 15;
-        
         setPrefWidth(Double.MAX_VALUE);
+        setMaxWidth(Double.MAX_VALUE);
         
         setup();
         repaint();
-        
     }
     
     public void repaint(){
@@ -463,7 +460,7 @@ public class MainScreen extends Pane {
         
         if(document != null){
             if(confirm){
-                if(!document.save()){
+                if(!document.save(false)){
                     return false;
                 }
             }else if(!forceNotToSave) document.edition.save();

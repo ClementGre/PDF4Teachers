@@ -179,7 +179,7 @@ public class PDFPagesEditor {
     
     public void deletePage(PageRenderer page){
         page.quitVectorEditMode();
-        if(MainWindow.mainScreen.document.save() && Edition.isSave()){
+        if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
             ConfirmAlert alert = new ConfirmAlert(true, TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
             
             if(alert.execute()){

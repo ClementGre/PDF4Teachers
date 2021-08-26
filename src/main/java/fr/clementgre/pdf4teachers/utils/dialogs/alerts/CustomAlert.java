@@ -193,5 +193,8 @@ public class CustomAlert extends Alert {
     public ButtonType addConfirmButton(ButtonPosition pos){
         return addButton(TR.tr("actions.confirm"), pos);
     }
+    public ButtonType addContinueButton(ButtonPosition pos){
+        return addButton(TR.tr("dialog.actionError.continue"), pos);
+    }
     
 }

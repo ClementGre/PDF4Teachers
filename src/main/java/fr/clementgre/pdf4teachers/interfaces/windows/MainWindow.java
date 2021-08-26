@@ -10,7 +10,6 @@ import fr.clementgre.pdf4teachers.datasaving.UserData;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertWindow;
 import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
 import fr.clementgre.pdf4teachers.interfaces.KeyboardShortcuts;
-import fr.clementgre.pdf4teachers.interfaces.OSXTouchBarManager;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -76,7 +75,6 @@ public class MainWindow extends Stage {
     public static DecimalFormat gradesDigFormat;
     public static DecimalFormat twoDigFormat;
     
-    public OSXTouchBarManager osxTouchBarManager;
     public JMetro jMetro;
     
     public MainWindow(){
@@ -172,8 +170,6 @@ public class MainWindow extends Stage {
         requestFocus();
         
         mainPane.getItems().addAll(leftBar, mainScreen, rightBar);
-        SideBar.setupDividers(mainPane);
-        SideBar.loadBarsOrganization();
         
         root.setCenter(mainPane);
         root.setTop(menuBar);
@@ -189,7 +185,6 @@ public class MainWindow extends Stage {
         setupDesktopEvents();
         updateStyle();
         mainScreen.repaint();
-        //osxTouchBarManager = new OSXTouchBarManager(this);
 
 //      OPEN DOC WITH PARAMS OR Auto Documentation
         
@@ -209,6 +204,9 @@ public class MainWindow extends Stage {
             }
         }
 
+//      LOAD TABS
+        
+        SideBar.loadBarsOrganization();
 
 //      CHECK UPDATES
         new Thread(() -> {

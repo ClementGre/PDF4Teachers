@@ -51,7 +51,7 @@ public class EditionExporter {
         File file = null;
         boolean recursive = false;
         if(MainWindow.mainScreen.hasDocument(true)){
-            if(MainWindow.mainScreen.document.save()){
+            if(MainWindow.mainScreen.document.save(true)){
                 if(option == ButtonPosition.DEFAULT){
                     file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
                 }else if(option == ButtonPosition.OTHER_RIGHT){
@@ -220,7 +220,7 @@ public class EditionExporter {
         final Config oneFileConfig = new Config();
         
         if(MainWindow.mainScreen.hasDocument(true)){
-            if(MainWindow.mainScreen.document.save()){
+            if(MainWindow.mainScreen.document.save(true)){
                 if(option.getButtonData().isDefaultButton() || option == yesAll){
                     directory = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR);
                 }else if(option == yesAllOneFile){

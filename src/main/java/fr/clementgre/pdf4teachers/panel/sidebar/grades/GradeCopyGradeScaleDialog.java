@@ -72,7 +72,7 @@ public class GradeCopyGradeScaleDialog {
     }
     
     public void prepareCopyEditions(){
-        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
+        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save(true);
         File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
         
         try{

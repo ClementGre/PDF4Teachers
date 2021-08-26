@@ -20,6 +20,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WarningAlert;
 import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
@@ -154,8 +155,13 @@ public class Document {
         pages.clear();
         this.undoEngine = null;
     }
-    
-    public boolean save(){
+    /**
+     * Save the edition of this document
+     *
+     * @param ignoreWarning if user click on "Ignore", the WarningAlert for editing/exporting an edition that is not saved will be displayed.
+     * @return false if action has been cancelled, true otherwise, whatever saved or ignored.
+     */
+    public boolean save(boolean ignoreWarning){
         
         if(Edition.isSave()){
             edition.saveLastScrollValue();
@@ -171,16 +177,27 @@ public class Document {
         CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.unsavedEdit.title"), TR.tr("dialog.unsavedEdit.header"), TR.tr("dialog.unsavedEdit.details"));
         alert.addCancelButton(ButtonPosition.CLOSE);
         alert.addButton(TR.tr("actions.save"), ButtonPosition.DEFAULT);
-        alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
+        ButtonType ignore = alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
         
         ButtonType option = alert.getShowAndWait();
         if(option == null) return false; // Window close button (null)
         if(option.getButtonData().isDefaultButton()){ // Save button (Default)
             edition.save();
             return true;
-        }else{
+            
+        }else if(option.getButtonData().isCancelButton()){ // cancel button
+            return false;
+            
+        }else{ // Ignore button or OS close
+            if(option == ignore && ignoreWarning){
+                boolean exportAnyway = new WarningAlert(TR.tr("dialog.unsavedEdit.title"),
+                        TR.tr("dialog.unsavedEdit.ignoreWarningDialog.header"),
+                        TR.tr("dialog.unsavedEdit.ignoreWarningDialog.details"))
+                        .execute();
+                if(!exportAnyway) return false;
+            }
             edition.saveLastScrollValue();
-            return !option.getButtonData().isCancelButton(); // Close button OR Ignore button
+            return true;
         }
         
     }

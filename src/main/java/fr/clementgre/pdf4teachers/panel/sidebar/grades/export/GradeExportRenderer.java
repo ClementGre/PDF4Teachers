@@ -40,7 +40,7 @@ public class GradeExportRenderer {
         this.pane = pane;
         this.exportTier = (int) pane.settingsTiersExportSlider.getValue();
         
-        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save();
+        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save(true);
         
     }
     
