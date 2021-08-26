@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ImageElementRenderer{
+public class ImageElementRenderer {
     
     private final PDDocument doc;
     private final DPIManager dpiManager;
@@ -45,25 +45,25 @@ public class ImageElementRenderer{
             
             int showWidth = dpiManager.getPixelsLength(element.getRealWidth() / Element.GRID_WIDTH * pageWidth);
             int showHeight = dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
-    
+            
             javafx.scene.image.Image fxImage = element.renderImage(0, 0);
             if(fxImage == null) return;
             image = SwingFXUtils.fromFXImage(fxImage, null);
             double imageRatio = ((double) image.getWidth()) / image.getHeight();
-    
+            
             if(element.getRepeatMode() == GraphicElement.RepeatMode.CROP){
-                if(showWidth > showHeight*imageRatio){ // Crop Y
-                    image = resizeImage(image, showWidth, (int) (showWidth/imageRatio)).getSubimage(0, 0, showWidth, showHeight);
+                if(showWidth > showHeight * imageRatio){ // Crop Y
+                    image = resizeImage(image, showWidth, (int) (showWidth / imageRatio)).getSubimage(0, 0, showWidth, showHeight);
                 }else{ // Crop X
-                    image = resizeImage(image, (int) (showHeight*imageRatio), showHeight).getSubimage(0, 0, showWidth, showHeight);
+                    image = resizeImage(image, (int) (showHeight * imageRatio), showHeight).getSubimage(0, 0, showWidth, showHeight);
                 }
-        
+                
             }else{ // MULTIPLY
-                if(showWidth > showHeight*imageRatio){ // Multiply X
-                    image = resizeImage(image, (int) (showHeight*imageRatio), showHeight);
+                if(showWidth > showHeight * imageRatio){ // Multiply X
+                    image = resizeImage(image, (int) (showHeight * imageRatio), showHeight);
                     image = multiplyImage(image, true, showWidth, showHeight, imageRatio);
                 }else{ // Multiply Y
-                    image = resizeImage(image, showWidth, (int) (showWidth/imageRatio));
+                    image = resizeImage(image, showWidth, (int) (showWidth / imageRatio));
                     image = multiplyImage(image, false, showWidth, showHeight, imageRatio);
                 }
             }
@@ -95,30 +95,30 @@ public class ImageElementRenderer{
         
         int type = ((image.getType() == 0) ? BufferedImage.TYPE_INT_ARGB : image.getType());
         BufferedImage multipliedImage = new BufferedImage(width, height, type);
-    
+        
         Graphics2D g2d = multipliedImage.createGraphics();
         
         if(horizontal){
-            int imagesWidth = (int) (height * ratio)+1;
+            int imagesWidth = (int) (height * ratio) + 1;
             int currentX = 0;
             
             while(currentX < width){
                 g2d.drawImage(image, currentX, 0, imagesWidth, height, null);
                 currentX += imagesWidth;
             }
-        
+            
         }else{ // vertical
-    
-            int imagesHeight = (int) (width / ratio)+1;
+            
+            int imagesHeight = (int) (width / ratio) + 1;
             int currentY = 0;
-    
+            
             while(currentY < height){
                 g2d.drawImage(image, 0, currentY, width, imagesHeight, null);
                 currentY += imagesHeight;
             }
-        
+            
         }
-    
+        
         g2d.setComposite(AlphaComposite.Src);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -137,7 +137,7 @@ public class ImageElementRenderer{
         
         Graphics2D g2d = resizedImage.createGraphics();
         g2d.drawImage(originalImage, 0, 0, width, height, null);
-    
+        
         g2d.setComposite(AlphaComposite.Src);
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
@@ -145,6 +145,6 @@ public class ImageElementRenderer{
         g2d.dispose();
         
         return resizedImage;
-
+        
     }
 }

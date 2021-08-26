@@ -27,7 +27,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import java.io.File;
 import java.util.List;
 
-public class DialogBuilder{
+public class DialogBuilder {
     
     /* OPEN DIR ALERT */
     
@@ -66,22 +66,23 @@ public class DialogBuilder{
             pane.widthProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             pane.heightProperty().addListener((observable, oldValue, newValue) -> updateScalePadding(pane, dialog.getDialogPane().getScene()));
             
-            pane.setMaxWidth(700*Main.settings.zoom.getValue());
+            pane.setMaxWidth(700 * Main.settings.zoom.getValue());
             pane.setMaxHeight(Double.MAX_VALUE);
             
-        }else throw new RuntimeException("Dialog Parent is not an instance of DialogPane, can't apply scaling... (class: " + dialog.getDialogPane().getScene().getRoot() + ")");
+        }else
+            throw new RuntimeException("Dialog Parent is not an instance of DialogPane, can't apply scaling... (class: " + dialog.getDialogPane().getScene().getRoot() + ")");
         
         // prevent being too small on some linux distributions AND when scaling dialog
         if(Main.DEBUG) dialog.setResizable(true);
         dialog.setOnShowing(e -> new Thread(() -> {
             while(!dialog.isShowing()){
-                try{ Thread.sleep(10); }catch(InterruptedException ex){ ex.printStackTrace(); }
+                try{Thread.sleep(10);}catch(InterruptedException ex){ex.printStackTrace();}
             }
             Platform.runLater(() -> {
-                dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30*Main.settings.zoom.getValue());
-                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 40*Main.settings.zoom.getValue());
+                dialog.getDialogPane().getScene().getWindow().setWidth(pane.getLayoutBounds().getWidth() + 30 * Main.settings.zoom.getValue());
+                dialog.getDialogPane().getScene().getWindow().setHeight(pane.getLayoutBounds().getHeight() + 40 * Main.settings.zoom.getValue());
             });
-
+            
         }, "AlertResizer").start());
     }
     

@@ -15,14 +15,15 @@ import javafx.scene.layout.GridPane;
 
 import java.io.File;
 
-public class ErrorAlert extends WrongAlert{
+public class ErrorAlert extends WrongAlert {
     
     
     public ErrorAlert(String header, String error, boolean continueAsk){
         super(Alert.AlertType.ERROR, TR.tr("dialog.error.title"), header == null ? TR.tr("dialog.error.title") : header, TR.tr("dialog.error.details"), continueAsk);
-
+        
         TextArea textArea = new TextArea(error);
-        textArea.setEditable(false); textArea.setWrapText(true);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
         
         GridPane expContent = new GridPane();
         expContent.setMaxWidth(Double.MAX_VALUE);

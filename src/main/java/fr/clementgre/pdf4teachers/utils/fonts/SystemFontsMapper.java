@@ -30,31 +30,31 @@ import java.util.List;
  * (Apache 2.0 license)
  * Edited by Clement Grennerat
  */
-public class SystemFontsMapper{
-
+public class SystemFontsMapper {
+    
     //              Family, Paths
     private final HashMap<String, FontPaths> systemFontMap = new HashMap<>();
     
-    public static String[] getSystemFontNames() {
+    public static String[] getSystemFontNames(){
         return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     }
     
-    private String[] getSystemFontsDirs() {
+    private String[] getSystemFontsDirs(){
         String[] result;
-        if (Main.isWindows()){
+        if(Main.isWindows()){
             result = new String[2];
             result[0] = System.getenv("WINDIR") + File.separator + "Fonts";
             result[1] = System.getenv("LOCALAPPDATA") + File.separator + "Microsoft\\Windows\\Fonts";
             return result;
             
-        }else if (Main.isOSX()){
+        }else if(Main.isOSX()){
             result = new String[3];
             result[0] = System.getProperty("user.home") + File.separator + "Library/Fonts";
             result[1] = "/Library/Fonts";
             result[2] = "/System/Library/Fonts";
             return result;
             
-        }else if (Main.isLinux()){
+        }else if(Main.isLinux()){
             String[] pathsToCheck = {
                     System.getProperty("user.home") + File.separator + ".fonts",
                     "/usr/share/fonts/truetype",
@@ -62,10 +62,10 @@ public class SystemFontsMapper{
             };
             ArrayList<String> resultList = new ArrayList<>();
             
-            for (int i = pathsToCheck.length - 1; i >= 0; i--) {
+            for(int i = pathsToCheck.length - 1; i >= 0; i--){
                 String path = pathsToCheck[i];
                 File tmp = new File(path);
-                if (tmp.exists() && tmp.isDirectory() && tmp.canRead()) {
+                if(tmp.exists() && tmp.isDirectory() && tmp.canRead()){
                     resultList.add(path);
                 }
             }
@@ -81,12 +81,12 @@ public class SystemFontsMapper{
         }
         return null;
     }
-    public List<File> getAllSystemFontFiles() {
+    public List<File> getAllSystemFontFiles(){
         // only retrieving ttf files
         String[] extensions = new String[]{"ttf", "otf", "ttc"};
         String[] paths = getSystemFontsDirs();
         ArrayList<File> files = new ArrayList<>();
-    
+        
         for(String path : paths){
             File fontDirectory = new File(path);
             if(fontDirectory.exists()) files.addAll(FilesUtils.listFiles(fontDirectory, extensions, true));
@@ -110,11 +110,12 @@ public class SystemFontsMapper{
                     for(Font font : fonts){
                         if(StringUtils.contains(systemFonts, font.getFamily())){
                             if(!addFontToMap(font, file.getAbsolutePath())){
-                                pdfBoxErrors++; break;
+                                pdfBoxErrors++;
+                                break;
                             }
                         }
                     }
-                }catch(IOException e){ e.printStackTrace(); }
+                }catch(IOException e){e.printStackTrace();}
             }
             
             double ping = (System.currentTimeMillis() - time) / 1000d;
@@ -140,10 +141,10 @@ public class SystemFontsMapper{
         }catch(IOException e){
             try{
                 doc.close();
-            }catch(IOException ioException){ ioException.printStackTrace(); }
+            }catch(IOException ioException){ioException.printStackTrace();}
             return false;
         }
-    
+        
         FontPaths paths;
         if(systemFontMap.containsKey(font.getFamily())){
             paths = systemFontMap.get(font.getFamily());
@@ -155,13 +156,13 @@ public class SystemFontsMapper{
         return true;
     }
     
-    public FontPaths getFontPathsFromName(String fontFamily) {
+    public FontPaths getFontPathsFromName(String fontFamily){
         return systemFontMap.get(fontFamily);
     }
-    public HashMap<String, FontPaths> getFonts() {
+    public HashMap<String, FontPaths> getFonts(){
         return systemFontMap;
     }
-    public boolean hasFont(String fontFamily) {
+    public boolean hasFont(String fontFamily){
         return systemFontMap.containsKey(fontFamily);
     }
 }

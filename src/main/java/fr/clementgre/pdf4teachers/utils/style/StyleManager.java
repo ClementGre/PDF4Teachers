@@ -16,7 +16,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.util.Objects;
 
-public class StyleManager{
+public class StyleManager {
     
     public static jfxtras.styles.jmetro.Style DEFAULT_STYLE = jfxtras.styles.jmetro.Style.LIGHT;
     public static jfxtras.styles.jmetro.Style ACCENT_STYLE = jfxtras.styles.jmetro.Style.DARK;
@@ -41,7 +41,7 @@ public class StyleManager{
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
-
+        
         if(jMetro == null) jMetro = new JMetro(scene, toApplyStyle);
         else jMetro.setStyle(toApplyStyle);
         
@@ -72,7 +72,7 @@ public class StyleManager{
         if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
         else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
         else toApplyStyle = DEFAULT_STYLE;
-    
+        
         if(jMetro == null){
             jMetro = new JMetro(parent, toApplyStyle);
             parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
@@ -114,7 +114,7 @@ public class StyleManager{
     private static void putStylesAuto(){
         if(MainWindow.paintTab.galleryWindow != null) MainWindow.paintTab.galleryWindow.updateStyle();
         Main.window.updateStyle();
-
+        
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
         MainWindow.textTab.treeView.favoritesSection.updateGraphics();
         MainWindow.textTab.treeView.onFileSection.updateGraphics();

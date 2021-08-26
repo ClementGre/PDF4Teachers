@@ -9,7 +9,7 @@ import javafx.scene.control.Slider;
 
 import java.util.List;
 
-public class VectorGridView extends ShapesGridView<VectorGridElement>{
+public class VectorGridView extends ShapesGridView<VectorGridElement> {
     
     private final boolean favorite;
     private final boolean hasContextMenu;

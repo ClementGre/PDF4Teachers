@@ -25,7 +25,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 
 import java.util.Optional;
 
-public class CustomAlert extends Alert{
+public class CustomAlert extends Alert {
     
     public CustomAlert(AlertType type, String title, String header, String details){
         super(type);
@@ -33,7 +33,7 @@ public class CustomAlert extends Alert{
         setHeaderText(header);
         if(details != null) setContentText(details);
         getButtonTypes().clear();
-    
+        
         // OWNER
         if(Main.window != null){
             if(Main.window.getScene() != null) initOwner(Main.window);
@@ -46,7 +46,7 @@ public class CustomAlert extends Alert{
         ((Stage) getDialogPane().getScene().getWindow()).getIcons().add(new Image(PaneUtils.class.getResource("/logo.png") + ""));
         StyleManager.putStyle(getDialogPane().getScene(), Style.DEFAULT);
         getDialogPane().getStyleClass().add(JMetroStyleClass.BACKGROUND);
-    
+        
         // SCALING
         if(Main.settings.zoom.getValue() != 1){
             getDialogPane().getScene().setFill(Color.web("#252525"));

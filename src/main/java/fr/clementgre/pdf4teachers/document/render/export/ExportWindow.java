@@ -32,7 +32,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ExportWindow extends AlternativeWindow<VBox>{
+public class ExportWindow extends AlternativeWindow<VBox> {
     
     private final List<File> files;
     
@@ -51,7 +51,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
     
     @Override
     public void setupSubClass(){
-    
+        
         // DIRECTORY INPUTS
         HBox filePathPane = new HBox();
         filePath.setText(MainWindow.filesTab.getCurrentDir() != null ? MainWindow.filesTab.getCurrentDir().getAbsolutePath() : System.getProperty("user.home"));
@@ -66,13 +66,13 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         PaneUtils.setHBoxPosition(changePath, 0, 30, new Insets(5, 0, 0, 0));
         changePath.setPadding(new Insets(0, 5, 0, 5));
         path.getChildren().addAll(filePathPane, changePath);
-    
-        changePath.setOnAction(event -> {
         
+        changePath.setOnAction(event -> {
+            
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
             chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
-        
+            
             File file = chooser.showDialog(Main.window);
             if(file != null){
                 filePath.setText(file.getAbsolutePath() + File.separator);
@@ -93,7 +93,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         export = new Button(TR.tr("actions.export"));
         Button cancel = new Button(TR.tr("actions.cancel"));
         cancel.setOnAction(event -> close());
-    
+        
         setButtons(cancel, export);
         
         if(files.size() == 1) setupSimplePanel();
@@ -125,9 +125,9 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.settingsExportImagesDPI = newValue;
         });
-    
+        
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
-    
+        
         VBox settings = new VBox(10, dpiSettings);
         
         root.getChildren().addAll(name, path, types, settings);
@@ -191,16 +191,15 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         byInput.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileNameBy = newValue);
         
         replace.getChildren().addAll(replaceText, replaceInput, byText, byInput);
-    
+        
         
         // SETTINGS
-        
         
         
         onlyEdited = new CheckBox(TR.tr("exportWindow.options.onlyEdited"));
         onlyEdited.setSelected(true);
         onlyEdited.setWrapText(true);
-    
+        
         Label dpiLabel = new Label(TR.tr("exportWindow.options.dpi"));
         PaneUtils.setHBoxPosition(dpiLabel, 0, 25, 0);
         
@@ -211,7 +210,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.settingsExportImagesDPI = newValue;
         });
-    
+        
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
         VBox settings = new VBox(10, onlyEdited, dpiSettings);
         
@@ -236,7 +235,8 @@ public class ExportWindow extends AlternativeWindow<VBox>{
     }
     private void updateMultipleFilesTitle(){
         String title;
-        if(onlyEdited.isSelected()) title = TR.tr("exportWindow.title.multipleFiles", files.stream().filter((f) -> Edition.getEditFile(f).exists()).toArray().length);
+        if(onlyEdited.isSelected())
+            title = TR.tr("exportWindow.title.multipleFiles", files.stream().filter((f) -> Edition.getEditFile(f).exists()).toArray().length);
         else title = TR.tr("exportWindow.title.multipleFiles", files.size());
         setHeaderText(title);
         setTitle(title);
@@ -248,7 +248,7 @@ public class ExportWindow extends AlternativeWindow<VBox>{
         directory.mkdirs();
         
         AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(customName.isEmpty());
-        new TwoStepListAction<>(true, customName.isEmpty(), new TwoStepListInterface<File, Map.Entry<File, File>>(){
+        new TwoStepListAction<>(true, customName.isEmpty(), new TwoStepListInterface<File, Map.Entry<File, File>>() {
             @Override
             public List<File> prepare(boolean recursive){
                 return files;
@@ -281,7 +281,8 @@ public class ExportWindow extends AlternativeWindow<VBox>{
                         return Map.entry(Map.entry(new File(""), new File("")), 2);
                     else if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialogManager.ResultType.RENAME) toFile = AlreadyExistDialogManager.rename(toFile);
+                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                        toFile = AlreadyExistDialogManager.rename(toFile);
                 }
                 
                 return Map.entry(Map.entry(pdfFile, toFile), TwoStepListAction.CODE_OK);
