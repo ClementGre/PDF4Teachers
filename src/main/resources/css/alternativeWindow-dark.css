@@ -1,10 +1,16 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 /* HEADER */
-.header, .buttonBoxContainer{
+.header, .buttonBoxContainer {
     -fx-background-color: #212121;
 }
 
 /* CONTENT */
-.rootPane{
+.rootPane {
     -fx-background-color: #262626;
 }
+
 /* BUTTONS */

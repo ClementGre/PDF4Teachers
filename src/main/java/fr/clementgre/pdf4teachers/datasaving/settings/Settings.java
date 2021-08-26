@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import de.jangassen.MenuToolkit;
@@ -14,7 +19,7 @@ import javafx.scene.layout.HBox;
 import java.io.File;
 import java.lang.reflect.Field;
 
-public class Settings{
+public class Settings {
     
     private int settingsVersionID = 0;
     private String settingsVersionCode = "";
@@ -53,7 +58,7 @@ public class Settings{
     
     
     @SettingObject
-    public IntSetting pagesFastMenuTextsNumber = new IntSetting(8, true, 0, 12, 2, false, false,  SVGPathIcons.TEXT_HEIGHT, "pagesFastMenuTextsNumber",
+    public IntSetting pagesFastMenuTextsNumber = new IntSetting(8, true, 0, 12, 2, false, false, SVGPathIcons.TEXT_HEIGHT, "pagesFastMenuTextsNumber",
             "settings.pagesFastMenuTextsNumber.title", "");
     
     @SettingObject
@@ -95,28 +100,28 @@ public class Settings{
     
     ////////// GROUPS //////////
     
-    @SettingsGroup(title="settings.group.accessibility")
+    @SettingsGroup(title = "settings.group.accessibility")
     public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
     
-    @SettingsGroup(title="settings.group.ergonomics")
+    @SettingsGroup(title = "settings.group.ergonomics")
     public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations};
     
-    @SettingsGroup(title="settings.group.network")
+    @SettingsGroup(title = "settings.group.network")
     public Setting<?>[] networkGroup = {checkUpdates, sendStats};
     
-    @SettingsGroup(title="settings.group.save")
+    @SettingsGroup(title = "settings.group.save")
     public Setting<?>[] saveGroup = {autoSave, regularSave};
     
-    @SettingsGroup(title= "settings.group.pagesContextMenu")
+    @SettingsGroup(title = "settings.group.pagesContextMenu")
     public Setting<?>[] pagesContextMenu = {pagesFastMenuTextsNumber, pagesFastMenuShowImages};
     
-    @SettingsGroup(title= "settings.group.elementsLists")
+    @SettingsGroup(title = "settings.group.elementsLists")
     public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
     
-    @SettingsGroup(title="menuBar.help")
+    @SettingsGroup(title = "menuBar.help")
     public Setting<?>[] helpGroup = {allowAutoTips};
     
-    @SettingsGroup(title="menuBar.tools.debug")
+    @SettingsGroup(title = "menuBar.tools.debug")
     public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpenDelay}; // menu popup force
     
     public Settings(){

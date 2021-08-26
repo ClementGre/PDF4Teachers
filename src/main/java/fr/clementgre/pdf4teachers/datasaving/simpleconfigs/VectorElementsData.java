@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -13,7 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
-public class VectorElementsData extends SimpleConfig{
+public class VectorElementsData extends SimpleConfig {
     
     public VectorElementsData(){
         super("vectorelements");
@@ -22,10 +27,10 @@ public class VectorElementsData extends SimpleConfig{
     @Override
     protected void manageLoadedData(Config config){
         Platform.runLater(() -> {
-    
+            
             ArrayList<VectorData> favouriteVectorsData = new ArrayList<>();
             ArrayList<VectorData> lastVectorsData = new ArrayList<>();
-    
+            
             for(Object data : config.getList("favorites")){
                 if(data instanceof HashMap map){
                     VectorData vectorData = VectorData.readYAMLDataAndGive(map);
@@ -48,7 +53,8 @@ public class VectorElementsData extends SimpleConfig{
     
     @Override
     protected void unableToLoadConfig(){
-        if(Main.firstLaunch || Main.settings.hasVersionChanged()) MainWindow.paintTab.favouriteVectors.loadVectorsList(DefaultFavoriteVectors.getDefaultFavoriteVectors(), false);
+        if(Main.firstLaunch || Main.settings.hasVersionChanged())
+            MainWindow.paintTab.favouriteVectors.loadVectorsList(DefaultFavoriteVectors.getDefaultFavoriteVectors(), false);
     }
     
     @Override
@@ -57,12 +63,12 @@ public class VectorElementsData extends SimpleConfig{
         for(VectorGridElement item : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
             if(!item.isFake()) favorites.add(item.getVectorData().getYAMLData());
         }
-    
+        
         ArrayList<Object> lasts = new ArrayList<>();
         for(VectorGridElement item : MainWindow.paintTab.lastVectors.getList().getAllItems()){
             if(!item.isFake()) lasts.add(item.getVectorData().getYAMLData());
         }
-    
+        
         config.set("favorites", favorites);
         config.set("lasts", lasts);
     }

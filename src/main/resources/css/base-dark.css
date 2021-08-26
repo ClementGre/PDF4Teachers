@@ -1,18 +1,26 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 /*******************************************************************************
  *                                                                             *
  * Auto Tip Tooltip                                                           *
  *                                                                             *
  ******************************************************************************/
 
-.tooltip-autotip-pane > Label{
+.tooltip-autotip-pane > Label {
     -fx-text-fill: #c7c7c7 !important;
 }
-.popover > .content Label{
+
+.popover > .content Label {
     -fx-text-fill: #c7c7c7 !important;
 }
+
 .popover > .content {
     -fx-background-color: #252525 !important;
 }
+
 .popover > .border {
-	-fx-fill: #252525 !important;
+    -fx-fill: #252525 !important;
 }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -16,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class SideBar extends TabPane{
+public class SideBar extends TabPane {
     
     public static final String TAB_DRAG_KEY = "SideBarTabDrag";
     
@@ -70,16 +75,16 @@ public class SideBar extends TabPane{
         setOnDragOver(e -> {
             final Dragboard dragboard = e.getDragboard();
             if(TAB_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){
-
+                
                 if(draggingTab != null){
-
+                    
                     e.acceptTransferModes(TransferMode.MOVE);
                     e.consume();
-
+                    
                     if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tabPane
                         int actualIndex = getTabs().indexOf(draggingTab);
                         int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
-
+                        
                         if(actualIndex != targetIndex){
                             getTabs().remove(draggingTab);
                             getTabs().add(targetIndex, draggingTab);
@@ -166,7 +171,7 @@ public class SideBar extends TabPane{
             }else{ // Only one tab in mainPane -> divider n°0
                 return MainWindow.mainPane.getWidth() - (MainWindow.mainPane.getDividerPositions()[0] * MainWindow.mainPane.getWidth());
             }
-        
+            
         }
     }
     
@@ -177,10 +182,9 @@ public class SideBar extends TabPane{
                 double rightWidth = MainWindow.rightBar.getWidthByDivider();
                 
                 MainWindow.mainPane.getItems().add(0, this);
-    
+                
                 MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
-            }
-            else MainWindow.mainPane.getItems().add(this);
+            }else MainWindow.mainPane.getItems().add(this);
         }
     }
     private void removeToPane(){
@@ -188,9 +192,9 @@ public class SideBar extends TabPane{
             if(left){
                 // Right width must be updated to stay the same
                 double rightWidth = MainWindow.rightBar.getWidthByDivider();
-        
+                
                 MainWindow.mainPane.getItems().remove(this);
-        
+                
                 MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
             }else{
                 MainWindow.mainPane.getItems().remove(this);

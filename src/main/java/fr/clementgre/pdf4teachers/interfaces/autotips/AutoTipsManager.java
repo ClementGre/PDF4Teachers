@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.autotips;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -11,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class AutoTipsManager{
+public class AutoTipsManager {
     
     @ToolTipVar(actionKey = "", prerequisiteKey = "document", objectWhereDisplay = "mainscreen")
     private static final String documentContextMenu = "autoTips.documentContextMenu";
@@ -214,7 +219,8 @@ public class AutoTipsManager{
     public static boolean showByName(String name, Stage stage){
         if(uiTips.containsKey(name)){
             return showByObject(uiTips.get(name), stage);
-        }return false;
+        }
+        return false;
     }
     
     private static boolean showByObject(AutoTipTooltip uiTip, Stage window){

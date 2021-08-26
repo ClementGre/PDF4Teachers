@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
@@ -10,7 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 
-public class ShortcutsTextField extends TextField{
+public class ShortcutsTextField extends TextField {
     
     public ShortcutsTextField(){
         setOnContextMenuRequested(Event::consume);

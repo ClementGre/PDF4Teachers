@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -16,7 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.regex.Pattern;
 
-public class UpdateWindow extends AlternativeWindow<VBox>{
+public class UpdateWindow extends AlternativeWindow<VBox> {
     
     public static String version = "";
     public static String description = "";
@@ -184,7 +189,7 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
         
         VBox description = new VBox();
         generateDescription(description);
-    
+        
         root.getChildren().addAll(info, description);
         
         setupButtons();
@@ -220,8 +225,8 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
     }
     
     public void generateDescription(VBox root){
-        final String currentLanguageAcronym = Main.settings.language.getValue().split("-")[0];
-    
+        final String currentLanguageAcronym = Main.settings.language.getValue().split("_")[0];
+        
         final String[] languagesTexts = description.split(Pattern.quote("\r\n\r\n# "));
         String englishText = "";
         String langText = "";
@@ -260,7 +265,7 @@ public class UpdateWindow extends AlternativeWindow<VBox>{
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
                     label.setMaxWidth(530);
-    
+                    
                     if(line.startsWith("- ")){
                         label.setStyle("-fx-padding: 0 0 0 30;");
                     }else{

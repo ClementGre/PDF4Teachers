@@ -1,17 +1,26 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.layout.VBox;
+
 import java.util.ArrayList;
 
-public class PageEditPane extends VBox{
+public class PageEditPane extends VBox {
     
     private final Button ascendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveUp.tooltip"), -90);
     private final Button descendButton = getCustomButton(SVGPathIcons.FORWARD_ARROWS, TR.tr("document.pageActions.moveDown.tooltip"), 90);
@@ -155,7 +164,7 @@ public class PageEditPane extends VBox{
         double factor = StringUtils.clamp(.5 / MainWindow.mainScreen.getZoomFactor(), .5, 6);
         double height = 30 * buttonNumber;
         double width = 30;
-    
+        
         setLayoutY((height * factor - height) / 2d);
         setLayoutX(page.getWidth() + (width * factor - width) / 2d);
         
@@ -166,7 +175,7 @@ public class PageEditPane extends VBox{
     public void delete(){
         this.page = null;
         this.menu = null;
-    
+        
         ascendButton.setOnAction(null);
         descendButton.setOnAction(null);
         rotateLeftButton.setOnAction(null);

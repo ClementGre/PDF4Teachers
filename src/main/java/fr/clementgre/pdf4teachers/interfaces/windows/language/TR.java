@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -13,7 +18,7 @@ import java.util.regex.Pattern;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
-public class TR{
+public class TR {
     
     public static Locale locale;
     public static ResourceBundle bundle;
@@ -35,7 +40,8 @@ public class TR{
         
         // Delete Old files
         if(Main.settings.getSettingsVersionCode().startsWith("1.2") || Main.settings.getSettingsVersionCode().startsWith("1.1") || Main.settings.getSettingsVersionCode().startsWith("1.0")){
-            for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles())) file.delete();
+            for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles()))
+                file.delete();
         }
         // Copy files if version has changed
         copyFiles(Main.settings.hasVersionChanged() || Main.DEBUG);
@@ -79,7 +85,7 @@ public class TR{
                 return getBundleByLocale(ENLocale);
             }else{
                 System.err.println("Return empty ressourceBundle...");
-                return new ResourceBundle(){
+                return new ResourceBundle() {
                     @Override
                     protected Object handleGetObject(String key){
                         return null;
@@ -98,9 +104,9 @@ public class TR{
         String language = System.getProperty("user.language").toLowerCase();
         //String country = System.getProperty("user.country").toLowerCase();
         switch(language){
-            case "fr" -> { return "fr_fr"; }
-            case "en" -> { return "en_us"; }
-            case "it" -> { return "it_it"; }
+            case "fr" -> {return "fr_fr";}
+            case "en" -> {return "en_us";}
+            case "it" -> {return "it_it";}
         }
         return null;
     }

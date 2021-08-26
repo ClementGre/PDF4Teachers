@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -29,7 +34,7 @@ import javafx.scene.text.Font;
 import java.util.HashMap;
 
 @SuppressWarnings("serial")
-public class GradeTab extends SideTab{
+public class GradeTab extends SideTab {
     
     public VBox pane = new VBox();
     public HBox optionPane = new HBox();
@@ -143,7 +148,7 @@ public class GradeTab extends SideTab{
         page.addElement(current, update, UType.NO_UNDO);
         current.centerOnCoordinatesY();
         if(update) MainWindow.mainScreen.setSelected(current);
-    
+        
     }
     
     public void updateElementsFont(){

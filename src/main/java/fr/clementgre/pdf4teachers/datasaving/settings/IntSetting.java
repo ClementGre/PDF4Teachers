@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
@@ -13,7 +18,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
 
-public class IntSetting extends Setting<Integer>{
+public class IntSetting extends Setting<Integer> {
     
     private final IntegerProperty value;
     
@@ -47,11 +52,11 @@ public class IntSetting extends Setting<Integer>{
             });
             slider.setMinorTickCount(0);
             slider.setMajorTickUnit(step);
-    
+            
             slider.setPrefWidth(80);
             slider.setMinWidth(80);
             root.getChildren().add(slider);
-    
+            
             Label valueDisplay = new Label(getValueOrEmpty());
             valueDisplay.textProperty().bind(Bindings.createStringBinding(this::getValueOrEmpty, valueProperty()));
             if(disableInMinus1) valueDisplay.visibleProperty().bind(valueProperty().isNotEqualTo(-1));
@@ -64,7 +69,7 @@ public class IntSetting extends Setting<Integer>{
             spinner.setEditable(true);
             spinner.getValueFactory().setConverter(new StringToIntConverter(getValueOrStep()));
             ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).setAmountToStepBy(step);
-    
+            
             spinner.setMinWidth(80);
             spinner.setPrefWidth(80);
             root.getChildren().addAll(spinner);
@@ -75,13 +80,13 @@ public class IntSetting extends Setting<Integer>{
             toggle.setSelected(getValue() != -1);
             ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
                 if(!newValue) setValue(-1);
-            
+                
                 if(slider != null) slider.setDisable(!newValue);
                 else if(spinner != null) spinner.setDisable(!newValue);
             };
             listener.changed(null, getValue() == -1, getValue() != -1);
             toggle.selectedProperty().addListener(listener);
-        
+            
             root.getChildren().add(toggle);
         }
         

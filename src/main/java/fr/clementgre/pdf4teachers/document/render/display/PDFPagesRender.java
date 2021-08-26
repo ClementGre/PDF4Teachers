@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -21,9 +26,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PDFPagesRender{
+public class PDFPagesRender {
     
-    private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack){}
+    private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack) {}
     
     private final File file;
     public PDFPagesEditor editor;
@@ -45,15 +50,15 @@ public class PDFPagesRender{
         setupThread();
     }
     private void setupThread(){
-
-        new Thread(() -> {
         
-            while(!closed){ // not closed
+        new Thread(() -> {
             
+            while(!closed){ // not closed
+                
                 if(rendersPending.size() != 0){ // Render
                     renderPage(rendersPending.get(0));
                     rendersPending.remove(0);
-                
+                    
                 }else{ // Wait
                     PlatformUtils.sleepThread(100);
                 }
@@ -67,19 +72,19 @@ public class PDFPagesRender{
                 e.printStackTrace();
             }
             document = null;
-        
+            
         }, "Page Renderer").start();
     }
     
     private void renderPage(RenderPending renderPending){
         PDRectangle pageSize = getPageSize(renderPending.pageNumber);
-    
+        
         BufferedImage renderImage = new BufferedImage(renderPending.width, (int) (pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = renderImage.createGraphics();
         graphics.setBackground(Color.WHITE);
-    
+        
         //document.setResourceCache();
-    
+        
         try{
             //PDDocument document = PDDocument.load(file);
             //PDFRenderer pdfRenderer = new PDFRenderer(document);
@@ -91,15 +96,15 @@ public class PDFPagesRender{
             if(document == null) Platform.runLater(() -> renderPending.callBack.call(null));
             //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
             //document.close();
-        
+            
             graphics.dispose();
-        
+            
             Platform.runLater(() -> renderPending.callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
         }catch(Exception e){
             e.printStackTrace();
             Platform.runLater(() -> renderPending.callBack.call(null));
         }
-    
+        
         renderImage.flush();
         System.gc(); // clear unused element in RAM
     }

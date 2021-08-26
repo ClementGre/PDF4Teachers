@@ -1,26 +1,33 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils.panes;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.WeakChangeListener;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Tooltip;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
-public class PaneUtils{
+public class PaneUtils {
     
     public static void printParentStructure(Parent parent, int depth){
         for(Node children : parent.getChildrenUnmodifiable()){
             
-            System.out.println("   " + "|   ".repeat(Math.max(0, depth-1)) + (depth == 0 ? "-" : "|- ")  +
+            System.out.println("   " + "|   ".repeat(Math.max(0, depth - 1)) + (depth == 0 ? "-" : "|- ") +
                     children.getClass().getSimpleName() + " [" + children.getStyleClass().toString() + "]");
             
             if(children instanceof Parent newParent){
-                printParentStructure(newParent, depth+1);
+                printParentStructure(newParent, depth + 1);
             }
         }
     }
@@ -96,11 +103,11 @@ public class PaneUtils{
     }
     
     public static Tooltip genWrappedToolTip(String text){
-        return genToolTip(new TextWrapper(text, new Font(14*Main.settings.zoom.getValue()), (int) (350*Main.settings.zoom.getValue())).wrap());
+        return genToolTip(new TextWrapper(text, new Font(14 * Main.settings.zoom.getValue()), (int) (350 * Main.settings.zoom.getValue())).wrap());
     }
     public static Tooltip genToolTip(String text){
         Tooltip tooltip = new Tooltip(text);
-        tooltip.setStyle("-fx-font-size: " + (14*Main.settings.zoom.getValue()) + ";");
+        tooltip.setStyle("-fx-font-size: " + (14 * Main.settings.zoom.getValue()) + ";");
         return tooltip;
     }
     public static void setupScaling(Region pane, boolean listeners, boolean bind){
@@ -139,12 +146,12 @@ public class PaneUtils{
         
         // -1 to avoid small white borders on sides sometimes
         // Calcul: (ScaledWidth - ShouldBeVisibleWidth)/2 - 1
-        double horizontal = (pane.getWidth() - pane.getWidth()/scale)/2  -1;
-        double vertical = (pane.getHeight() - pane.getHeight()/scale)/2  -1;
+        double horizontal = (pane.getWidth() - pane.getWidth() / scale) / 2 - 1;
+        double vertical = (pane.getHeight() - pane.getHeight() / scale) / 2 - 1;
         if(paddingAround){
             pane.setPadding(new Insets(vertical, horizontal, vertical, horizontal));
         }else{
-            pane.setPadding(new Insets(vertical*2, 0, 0, horizontal*2));
+            pane.setPadding(new Insets(vertical * 2, 0, 0, horizontal * 2));
         }
         
     }

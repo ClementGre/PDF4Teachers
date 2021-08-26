@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.settings;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -13,7 +18,7 @@ import javafx.scene.layout.VBox;
 
 import java.lang.reflect.Field;
 
-public class SettingsWindow extends AlternativeWindow<VBox>{
+public class SettingsWindow extends AlternativeWindow<VBox> {
     
     public SettingsWindow(){
         super(new VBox(), StageWidth.NORMAL, TR.tr("settingsWindow.title"));
@@ -22,7 +27,7 @@ public class SettingsWindow extends AlternativeWindow<VBox>{
     @Override
     public void setupSubClass(){
         setSubHeaderText(TR.tr("settingsWindow.description"));
-    
+        
         int i = 0;
         for(Field field : Main.settings.getClass().getDeclaredFields()){
             if(field.isAnnotationPresent(SettingsGroup.class)){
@@ -35,7 +40,7 @@ public class SettingsWindow extends AlternativeWindow<VBox>{
                     }
                     root.getChildren().add(groupPane);
                     i++;
-                }catch(IllegalAccessException e){ e.printStackTrace(); }
+                }catch(IllegalAccessException e){e.printStackTrace();}
             }
         }
         
@@ -54,7 +59,7 @@ public class SettingsWindow extends AlternativeWindow<VBox>{
     private void setupBtns(){
         Button cancel = new Button(TR.tr("actions.cancel"));
         Button save = new Button(TR.tr("actions.apply"));
-    
+        
         cancel.setOnAction(event -> {
             close();
             Main.settings.loadSettings();
@@ -71,7 +76,6 @@ public class SettingsWindow extends AlternativeWindow<VBox>{
         
         setButtons(cancel, save);
     }
-    
     
     
     @Override

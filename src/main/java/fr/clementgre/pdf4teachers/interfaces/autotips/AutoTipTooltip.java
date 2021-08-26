@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.autotips;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -17,7 +22,7 @@ import org.controlsfx.control.PopOver;
 
 import java.awt.MouseInfo;
 
-public class AutoTipTooltip extends PopOver{
+public class AutoTipTooltip extends PopOver {
     
     private String name;
     private String actionKey;
@@ -58,7 +63,7 @@ public class AutoTipTooltip extends PopOver{
         setContentNode(graphic);
         graphic.getStyleClass().addAll("tooltip-autotip-pane", "content-pane");
         getStyleClass().add("tooltip-autotip");
-    
+        
         setOnAutoHide((e) -> {
             closedByAutoHide = true;
         });
@@ -75,7 +80,7 @@ public class AutoTipTooltip extends PopOver{
         if(!owner.isFocused()) return;
         if(isShowing()) return;
         closedByAutoHide = false;
-    
+        
         jMetro = StyleManager.putStyle(getRoot(), Style.DEFAULT, jMetro);
         getRoot().getTransforms().setAll(new Scale(Main.settings.zoom.getValue(), Main.settings.zoom.getValue(), 0, 0));
         
@@ -126,7 +131,7 @@ public class AutoTipTooltip extends PopOver{
         final Scene scene = node.getScene();
         if((scene == null) || (scene.getWindow() == null)) return;
         
-        Point2D origin = node.localToScreen(node.getLayoutBounds().getWidth() /2 - WIDTH/2d, node.getLayoutBounds().getHeight()/2);
+        Point2D origin = node.localToScreen(node.getLayoutBounds().getWidth() / 2 - WIDTH / 2d, node.getLayoutBounds().getHeight() / 2);
         super.show(node, origin.getX(), origin.getY());
     }
     

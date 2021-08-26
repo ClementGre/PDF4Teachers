@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -12,7 +17,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unchecked")
-public class Config{
+public class Config {
     
     public HashMap<String, Object> base = new HashMap<>();
     
@@ -98,7 +103,7 @@ public class Config{
         if(list instanceof List) return (ArrayList<Object>) list;
         return new ArrayList<>();
     }
-
+    
     public static HashMap<String, Object> castSection(Object list){
         if(list instanceof Map) return (HashMap<String, Object>) list;
         return new HashMap<>();

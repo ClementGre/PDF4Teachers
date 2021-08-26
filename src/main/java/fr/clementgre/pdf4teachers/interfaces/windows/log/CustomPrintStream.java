@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.log;
 
 import fr.clementgre.pdf4teachers.document.render.display.PDFPagesRender;
@@ -7,7 +12,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Locale;
 
-public class CustomPrintStream extends PrintStream{
+public class CustomPrintStream extends PrintStream {
     
     private static final String newLine = System.getProperty("line.separator");
     private final PrintStream original;
@@ -18,7 +23,7 @@ public class CustomPrintStream extends PrintStream{
     private final StringBuffer text;
     
     public CustomPrintStream(PrintStream original, StringBuffer out){
-        super(new OutputStream(){
+        super(new OutputStream() {
             @Override
             public void write(int b){
                 original.write(b);

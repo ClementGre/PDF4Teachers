@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
@@ -18,7 +23,7 @@ import javafx.scene.control.MenuButton;
 import java.util.ArrayList;
 import java.util.Map;
 
-public class ListsManager{
+public class ListsManager {
     
     public final MenuButton loadListBtn = new NoArrowMenuButton();
     public final Button saveListBtn = new Button();
@@ -92,7 +97,7 @@ public class ListsManager{
                             TR.tr("textTab.lists.actionDialog.header"), TR.tr("textTab.lists.actionDialog.details"));
                     
                     alert.addCancelButton(ButtonPosition.CLOSE);
-                    ButtonType load =  alert.addButton(TR.tr("actions.load"), ButtonPosition.DEFAULT);
+                    ButtonType load = alert.addButton(TR.tr("actions.load"), ButtonPosition.DEFAULT);
                     ButtonType loadReplace = alert.addButton(TR.tr("actions.clearAndLoad"), ButtonPosition.OTHER_LEFT);
                     ButtonType delete = alert.addButton(TR.tr("actions.delete"), ButtonPosition.OTHER_LEFT);
                     

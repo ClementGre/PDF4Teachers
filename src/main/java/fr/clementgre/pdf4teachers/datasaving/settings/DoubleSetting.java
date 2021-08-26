@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
@@ -13,7 +18,7 @@ import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
 
-public class DoubleSetting extends Setting<Double>{
+public class DoubleSetting extends Setting<Double> {
     
     private final DoubleProperty value;
     

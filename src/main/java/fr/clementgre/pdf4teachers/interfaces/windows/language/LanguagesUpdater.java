@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -22,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class LanguagesUpdater{
+public class LanguagesUpdater {
     
     private final LoadingAlert loadingAlert = new LoadingAlert(false, TR.tr("language.downloadingDialog.title"), TR.tr("language.downloadingDialog.title") + "...");
     
@@ -60,7 +65,7 @@ public class LanguagesUpdater{
         });
     }
     
-    public static class Language{
+    public static class Language {
         private final HashMap<String, String> urls = new HashMap<>();
         private String release;
         private int version;

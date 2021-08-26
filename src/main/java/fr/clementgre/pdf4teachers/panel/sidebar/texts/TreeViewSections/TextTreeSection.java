@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
@@ -7,11 +12,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.SortPanelTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Pos;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ToggleButton;
@@ -25,8 +30,9 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
 @SuppressWarnings("unchecked")
-public abstract class TextTreeSection extends TreeItem<String>{
+public abstract class TextTreeSection extends TreeItem<String> {
     
     public static final int FAVORITE_TYPE = 1;
     public static final int LAST_TYPE = 2;
@@ -52,8 +58,8 @@ public abstract class TextTreeSection extends TreeItem<String>{
         
         setup();
     }
-
-
+    
+    
     public void setup(){
         
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {

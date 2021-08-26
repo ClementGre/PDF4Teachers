@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -21,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
-public class GradeTreeView extends TreeView<String>{
+public class GradeTreeView extends TreeView<String> {
     
     
     public GradeTreeView(GradeTab gradeTab){
@@ -31,10 +36,10 @@ public class GradeTreeView extends TreeView<String>{
         prefHeightProperty().bind(gradeTab.pane.heightProperty().subtract(layoutYProperty()));
         prefWidthProperty().bind(gradeTab.pane.widthProperty());
         
-        setCellFactory(new Callback<>(){
+        setCellFactory(new Callback<>() {
             @Override
             public TreeCell<String> call(TreeView<String> param){
-                return new TreeCell<>(){
+                return new TreeCell<>() {
                     @Override
                     protected void updateItem(String item, boolean empty){
                         super.updateItem(item, empty);
@@ -83,8 +88,9 @@ public class GradeTreeView extends TreeView<String>{
         
         if(element.getParentPath().isEmpty()){ // ROOT
             // If is root, we need to delete the old root.
-            if(getRoot() != null && getRootTreeItem().getCore() != null) getRootTreeItem().delete(true, false, UType.NO_UNDO);
-    
+            if(getRoot() != null && getRootTreeItem().getCore() != null)
+                getRootTreeItem().delete(true, false, UType.NO_UNDO);
+            
             GradeTreeItem item = element.toGradeTreeItem();
             item.setExpanded(true);
             setRoot(item);
@@ -192,7 +198,7 @@ public class GradeTreeView extends TreeView<String>{
     public static GradeElement getNextGrade(int page, int y){
         
         ArrayList<GradeElement> items = getGradesArrayByCoordinates();
-
+        
         GradeElement before = null;
         GradeElement after = items.size() >= 2 ? items.get(1) : null;
         

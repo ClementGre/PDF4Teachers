@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces;
 
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -23,10 +28,10 @@ import org.controlsfx.control.NotificationPane;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AutoHideNotificationPane extends NotificationPane{
+public class AutoHideNotificationPane extends NotificationPane {
     
     
-    private static class Notification{
+    private static class Notification {
         public String text;
         public AlertIconType iconType;
         public TextField input;
@@ -55,7 +60,7 @@ public class AutoHideNotificationPane extends NotificationPane{
         final EventHandler<Event> onHideEvent = e -> checkPending();
         addEventHandler(NotificationPane.ON_HIDDEN, onHideEvent);
         setShowFromTop(false);
-    
+        
         PaneUtils.setupScaling(this, true, true);
     }
     
@@ -167,7 +172,7 @@ public class AutoHideNotificationPane extends NotificationPane{
     
     private void hideAndThen(final Runnable r){
         if(isShowing()){
-            final EventHandler<Event> eventHandler = new EventHandler<>(){
+            final EventHandler<Event> eventHandler = new EventHandler<>() {
                 @Override
                 public void handle(Event e){
                     r.run();

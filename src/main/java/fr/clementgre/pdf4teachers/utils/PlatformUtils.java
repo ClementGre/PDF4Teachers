@@ -1,7 +1,11 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
@@ -14,7 +18,7 @@ import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class PlatformUtils{
+public class PlatformUtils {
     
     public static final Cursor CURSOR_MOVE = Main.isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
     
@@ -89,17 +93,17 @@ public class PlatformUtils{
                 printHeapStatus();
                 try{
                     Thread.sleep(printIntervalMs);
-                }catch(InterruptedException e){ e.printStackTrace(); }
+                }catch(InterruptedException e){e.printStackTrace();}
             }
         }, "Heap debugger").start();
     }
     public static void printHeapStatus(){
         if(MainWindow.twoDigFormat != null)
-            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000d)
-                + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory()/1000000d) + "MB");
+            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000d)
+                    + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory() / 1000000d) + "MB");
         else
-            System.out.println("Heap: " + (Runtime.getRuntime().totalMemory()-Runtime.getRuntime().freeMemory())/1000000
-                    + "MB / " + Runtime.getRuntime().maxMemory()/1000000 + "MB");
+            System.out.println("Heap: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000
+                    + "MB / " + Runtime.getRuntime().maxMemory() / 1000000 + "MB");
     }
     public static void printActionTime(CallBack action, String name){
         long time = countActionTime(action);

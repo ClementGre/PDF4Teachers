@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -36,7 +41,7 @@ import javafx.scene.text.TextAlignment;
 import java.io.File;
 import java.io.IOException;
 
-public class MainScreen extends Pane{
+public class MainScreen extends Pane {
     
     public Pane pane = new Pane();
     public ZoomOperator zoomOperator;
@@ -57,7 +62,7 @@ public class MainScreen extends Pane{
     private final Label info = new Label();
     private final Hyperlink infoLink = new Hyperlink();
     
-    public static class Status{
+    public static class Status {
         public static final int CLOSED = 0;
         public static final int OPEN = 1;
         public static final int ERROR = 2;
@@ -81,7 +86,7 @@ public class MainScreen extends Pane{
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){ ex.printStackTrace(); }
+                }catch(InterruptedException ex){ex.printStackTrace();}
             }else if(dragNScrollFactorHorozontal != 0){
                 Platform.runLater(() -> {
                     if(dragNScrollFactorHorozontal < 0){
@@ -92,11 +97,11 @@ public class MainScreen extends Pane{
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){ ex.printStackTrace(); }
+                }catch(InterruptedException ex){ex.printStackTrace();}
             }else{
                 try{
                     Thread.sleep(200);
-                }catch(InterruptedException ex){ ex.printStackTrace(); }
+                }catch(InterruptedException ex){ex.printStackTrace();}
             }
             
         }
@@ -200,7 +205,7 @@ public class MainScreen extends Pane{
             // Reset toPlace only if the user select something (and not de-select)
             if(newValue != null) setToPlace(null);
         });
-    
+        
         setOnZoomStarted(event -> {
             hasZoomStartEndEvents = true;
         });
@@ -220,7 +225,7 @@ public class MainScreen extends Pane{
                 zoomOperator.zoom(e.getZoomFactor(), e.getSceneX(), e.getSceneY(), trackpadZooming);
             }
         });
-    
+        
         setOnScrollStarted(event -> {
             hasScrollStartEndEvents = true;
         });
@@ -267,7 +272,7 @@ public class MainScreen extends Pane{
                 }
             }
         });
-    
+        
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
@@ -339,10 +344,10 @@ public class MainScreen extends Pane{
                 }else{
                     dragNScrollFactorHorozontal = 0;
                 }
-    
+                
                 dragStartY = e.getY();
                 dragStartX = e.getX();
-    
+                
                 mouseY = e.getY();
                 mouseX = e.getX();
             }
@@ -417,7 +422,7 @@ public class MainScreen extends Pane{
         }
         status.set(Status.OPEN);
         MainWindow.filesTab.files.getSelectionModel().select(file);
-    
+        
         zoomOperator.vScrollBar.setValue(0);
         document.showPages();
         try{
@@ -434,7 +439,7 @@ public class MainScreen extends Pane{
             
             return;
         }
-    
+        
         repaint();
         isRotating = false; // In case of a bug, it stayed to true
         
@@ -481,7 +486,7 @@ public class MainScreen extends Pane{
         status.set(Status.CLOSED);
         
         repaint();
-    
+        
         System.gc(); // clear unused element in RAM
         System.runFinalization();
         return true;
@@ -520,31 +525,33 @@ public class MainScreen extends Pane{
             
             PageRenderer topPage;
             if(firstTopVisiblePage == null){ // Navigate last page
-                topPage = document.getPages().get(document.getPagesNumber()-1);
+                topPage = document.getPages().get(document.getPagesNumber() - 1);
             }else if(firstTopVisiblePage.getPage() == 0){ // Navigate begin
-                navigateBegin(); return;
+                navigateBegin();
+                return;
             }else{ // Navigate to page
-                topPage = document.getPages().get(firstTopVisiblePage.getPage()-1);
+                topPage = document.getPages().get(firstTopVisiblePage.getPage() - 1);
             }
-    
-            int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());
+            
+            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN + 5) * pane.getScaleX());
             zoomOperator.scroll(toScroll, false, false);
         }
     }
     public void pageDown(){
         if(hasDocument(false)){
             PageRenderer firstTopVisiblePage = document.getFirstTopVisiblePage();
-    
+            
             PageRenderer bottomPage;
             if(firstTopVisiblePage == null){ // Navigate end
-                bottomPage = document.getPages().get(document.getPagesNumber()-1);
-            }else if(firstTopVisiblePage.getPage() == document.getPagesNumber()-1){ // Navigate last page
-                navigateEnd(); return;
+                bottomPage = document.getPages().get(document.getPagesNumber() - 1);
+            }else if(firstTopVisiblePage.getPage() == document.getPagesNumber() - 1){ // Navigate last page
+                navigateEnd();
+                return;
             }else{ // Navigate to page
-                bottomPage = document.getPage(firstTopVisiblePage.getPage()+1);
+                bottomPage = document.getPage(firstTopVisiblePage.getPage() + 1);
             }
             
-            int toScroll = (int) ((pane.getTranslateY()-zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN+5)*pane.getScaleX());
+            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN + 5) * pane.getScaleX());
             zoomOperator.scroll(toScroll, false, false);
         }
     }

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -6,10 +11,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridE
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 @SuppressWarnings("unchecked")
-public class FavouriteImageData extends SimpleConfig{
+public class FavouriteImageData extends SimpleConfig {
     
     public FavouriteImageData(){
         super("imageelements");

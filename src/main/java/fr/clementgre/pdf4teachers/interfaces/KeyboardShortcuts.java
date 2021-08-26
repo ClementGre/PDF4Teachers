@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces;
 
 
@@ -22,12 +27,12 @@ import javafx.scene.input.KeyEvent;
 
 import java.util.ArrayList;
 
-public class KeyboardShortcuts{
+public class KeyboardShortcuts {
     
     public KeyboardShortcuts(Scene main){
         
         main.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-    
+            
             if(e.isShortcutDown()){
                 String keyName = e.getText();
                 if(!e.isAltDown()){
@@ -60,7 +65,7 @@ public class KeyboardShortcuts{
                         SideBar.selectTab(MainWindow.paintTab);
                         MainWindow.paintTab.newVectorDrawing();
                         return;
-    
+                        
                     }else if(e.getCode() == KeyCode.N){
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
                         
@@ -103,11 +108,11 @@ public class KeyboardShortcuts{
                         return;
                     }catch(NumberFormatException ignored){}
                     try{
-                        int i = Integer.parseInt(keyName) ;
+                        int i = Integer.parseInt(keyName);
                         numberPressed(i, true, true);
                         return;
                     }catch(NumberFormatException ignored){}
-    
+                    
                     if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP){
                         e.consume();
                         MainWindow.mainScreen.pageUp();
@@ -148,7 +153,7 @@ public class KeyboardShortcuts{
                     return;
                 }
             }
-    
+            
             if(Main.window.getScene().getFocusOwner() instanceof SideBar
                     || Main.window.getScene().getFocusOwner() instanceof Slider
                     || Main.window.getScene().getFocusOwner() instanceof Button
@@ -168,7 +173,7 @@ public class KeyboardShortcuts{
     
     public void reportKeyPressedForMultipleUsesKeys(KeyEvent e){
         if(!e.isShortcutDown()){ // NO SHORTCUT PRESSED
-    
+            
             if(e.getCode() == KeyCode.TAB){
                 
                 if(!MainWindow.textTab.isSelected()){
@@ -178,7 +183,7 @@ public class KeyboardShortcuts{
                     MainWindow.paintTab.select();
                     e.consume();
                 }
-        
+                
             }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP){
                 e.consume();
                 MainWindow.mainScreen.navigateUp();
@@ -198,7 +203,7 @@ public class KeyboardShortcuts{
     }
     
     private void numberPressed(int i, boolean shortcut, boolean alt){
-    
+        
         if(shortcut){
             if(alt){
                 if(!MainWindow.mainScreen.hasDocument(false)) return;
@@ -229,7 +234,7 @@ public class KeyboardShortcuts{
                 }
             }
         }
-       
+        
     }
     
 }

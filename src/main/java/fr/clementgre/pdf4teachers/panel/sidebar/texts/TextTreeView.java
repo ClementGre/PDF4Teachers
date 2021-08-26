@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -27,7 +32,7 @@ import javafx.scene.paint.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextTreeView extends TreeView<String>{
+public class TextTreeView extends TreeView<String> {
     
     public TreeItem<String> treeViewRoot = new TreeItem<>();
     
@@ -62,16 +67,17 @@ public class TextTreeView extends TreeView<String>{
                 });
             }).start();
         });
-    
+        
         getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if(newValue instanceof TextTreeItem textTreeItem){
-                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue) textTreeItem.onSelected();
+                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue)
+                        textTreeItem.onSelected();
                 }
             });
         });
         
-        setCellFactory((TreeView<String> param) -> new TreeCell<>(){
+        setCellFactory((TreeView<String> param) -> new TreeCell<>() {
             @Override
             protected void updateItem(String item, boolean empty){
                 

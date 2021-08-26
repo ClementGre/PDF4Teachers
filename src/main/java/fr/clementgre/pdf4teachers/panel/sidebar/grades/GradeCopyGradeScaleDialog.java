@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
@@ -17,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class GradeCopyGradeScaleDialog{
+public class GradeCopyGradeScaleDialog {
     
     public ArrayList<GradeRating> ratings = new ArrayList<>();
     
@@ -98,15 +103,15 @@ public class GradeCopyGradeScaleDialog{
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.title"),
                         TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.header", file.getName()), TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.details"));
-    
+                
                 ButtonType ignore = alert.getButton(TR.tr("dialog.actionError.continue"), ButtonPosition.DEFAULT);
                 ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.continueAlways"), ButtonPosition.OTHER_RIGHT);
                 ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
                 ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
-    
+                
                 if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else alert.getButtonTypes().setAll(ignore, stop);
-    
+                
                 ButtonType option = alert.getShowAndWait();
                 if(option == stop){
                     return 1;
@@ -137,7 +142,7 @@ public class GradeCopyGradeScaleDialog{
                 for(GradeElement grade : gradeElements){
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.gradesDigFormat.format(grade.getTotal()) + ")";
                 }
-    
+                
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"),
                         TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
                 
@@ -145,10 +150,10 @@ public class GradeCopyGradeScaleDialog{
                 ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
                 ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
                 ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
-    
+                
                 if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
                 else alert.getButtonTypes().setAll(ignore, stop);
-    
+                
                 ButtonType option = alert.getShowAndWait();
                 if(option == stop) return 1;
                 else if(option == stopAll) return 2;

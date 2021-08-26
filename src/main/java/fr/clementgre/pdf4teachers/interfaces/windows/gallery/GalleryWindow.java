@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -36,7 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class GalleryWindow extends Stage{
+public class GalleryWindow extends Stage {
     
     private final VBox root = new VBox();
     
@@ -48,17 +53,17 @@ public class GalleryWindow extends Stage{
     private final Label emptyGalleryLabel = new Label(TR.tr("galleryWindow.noImagesMessage"));
     private final HBox messageContainer = new HBox(emptyGalleryLabel);
     
-    private final ImageGridView list = new ImageGridView(false,500, zoomSlider, true);
+    private final ImageGridView list = new ImageGridView(false, 500, zoomSlider, true);
     
     public GalleryWindow(){
         
         Scene scene = new Scene(root);
-    
+        
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
-        setWidth(1200*Main.settings.zoom.getValue());
-        setHeight(800*Main.settings.zoom.getValue());
-        setMinWidth(700*Main.settings.zoom.getValue());
-        setMinHeight(400*Main.settings.zoom.getValue());
+        setWidth(1200 * Main.settings.zoom.getValue());
+        setHeight(800 * Main.settings.zoom.getValue());
+        setMinWidth(700 * Main.settings.zoom.getValue());
+        setMinHeight(400 * Main.settings.zoom.getValue());
         Main.window.centerWindowIntoMe(this);
         setTitle(TR.tr("galleryWindow.title"));
         setScene(scene);
@@ -80,7 +85,7 @@ public class GalleryWindow extends Stage{
         PlatformUtils.runLaterOnUIThread(1000, () -> {
             AutoTipsManager.showByAction("opengallery", this);
         });
-
+        
     }
     
     private void setupSettings(){
@@ -93,28 +98,28 @@ public class GalleryWindow extends Stage{
         filter.setVisibleRowCount(10);
         updateComboBoxItems();
         filter.getSelectionModel().select(0);
-
+        
         filter.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null) return;
             if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton")) && !newValue.equals(oldValue)){
                 filter.getSelectionModel().select(oldValue);
                 return;
             }
-
+            
             if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.everywhere"))){
                 list.setFilterType(null);
             }else{
                 list.setFilterType(newValue);
             }
-
+            
         });
         filter.setStyle("-fx-padding: 0 5;");
-
+        
         PaneUtils.setHBoxPosition(sortPanel, 0, 26, 0);
         PaneUtils.setHBoxPosition(zoomSlider, 0, 26, 0);
         PaneUtils.setHBoxPosition(filter, 0, 26, 0);
         PaneUtils.setHBoxPosition(reload, 26, 26, 0);
-        reload.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.REDO, "black", 0, 16, 16,  ImageUtils.defaultDarkColorAdjust));
+        reload.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.REDO, "black", 0, 16, 16, ImageUtils.defaultDarkColorAdjust));
         reload.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("galleryWindow.reloadButton.tooltip")));
         
         reload.setOnAction((e) -> {
@@ -130,7 +135,7 @@ public class GalleryWindow extends Stage{
     }
     private void setup(){
         setupSettings();
-    
+        
         emptyGalleryLabel.setStyle("-fx-font: 18 \"Open Sans\";");
         emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
         messageContainer.setAlignment(Pos.CENTER);
@@ -177,7 +182,7 @@ public class GalleryWindow extends Stage{
             MainWindow.paintTab.gallery.reloadGalleryImageList();
         }
     }
-
+    
     public List<ImageGridElement> getListItems(){
         return list.getAllItems();
     }

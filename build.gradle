@@ -86,7 +86,7 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 version = "1.3.0"
 description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers features like marking scale, PDF conversion, vectorial drawing..."
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2019-2021. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 

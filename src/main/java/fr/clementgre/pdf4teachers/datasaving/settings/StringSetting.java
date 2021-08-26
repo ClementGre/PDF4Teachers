@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.scene.layout.HBox;
 
-public class StringSetting extends Setting<String>{
+public class StringSetting extends Setting<String> {
     
     private final StringProperty value;
     

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -45,7 +50,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainWindow extends Stage{
+public class MainWindow extends Stage {
     
     public static UserData userData;
     
@@ -86,8 +91,8 @@ public class MainWindow extends Stage{
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
-        setMinWidth(700*Main.settings.zoom.getValue());
-        setMinHeight(393*Main.settings.zoom.getValue());
+        setMinWidth(700 * Main.settings.zoom.getValue());
+        setMinHeight(393 * Main.settings.zoom.getValue());
         setResizable(true);
         setScene(scene);
         
@@ -119,13 +124,13 @@ public class MainWindow extends Stage{
         if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)){
             return false;
         }
-    
+        
         // At this point, it is sure the app will close.
         Main.window.close();
         if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
         AutoTipsManager.hideAll();
         
-    
+        
         LanguagesUpdater.backgroundStats(() -> {
             System.out.println("Closing PDF4Teachers");
             Platform.exit();
@@ -135,7 +140,7 @@ public class MainWindow extends Stage{
     }
     
     public void setup(boolean openDocumentation){
-    
+        
         ShapesGridView.setupTranslations();
         ConvertWindow.setupTranslations();
         
@@ -232,7 +237,7 @@ public class MainWindow extends Stage{
         }
         
     }
-
+    
     public void updateStyle(){
         jMetro = StyleManager.putStyle(getScene(), Style.DEFAULT, jMetro);
     }
@@ -258,7 +263,7 @@ public class MainWindow extends Stage{
     public void loadDimensions(){
         
         setMaximized(Main.syncUserData.mainWindowMaximized);
-
+        
         if(Main.syncUserData.mainWindowX != -1) setX(Main.syncUserData.mainWindowX);
         if(Main.syncUserData.mainWindowY != -1) setY(Main.syncUserData.mainWindowY);
         setWidth(Main.syncUserData.mainWindowWidth);
@@ -306,7 +311,7 @@ public class MainWindow extends Stage{
         double h = window.getHeight();
         double x = window.getX();
         double y = window.getY();
-    
+        
         double sw = Main.SCREEN_VISUAL_BOUNDS.getWidth();
         double sh = Main.SCREEN_VISUAL_BOUNDS.getHeight();
         if(w > sw) w = sw;
@@ -324,8 +329,8 @@ public class MainWindow extends Stage{
     }
     
     /*
-    * @Param autoHide in seconds
-    */
+     * @Param autoHide in seconds
+     */
     public static void showNotification(AlertIconType type, String text, int autoHide){
         notificationPane.addToPending(text, type, autoHide);
     }

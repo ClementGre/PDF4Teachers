@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -9,14 +14,15 @@ import javafx.scene.text.FontWeight;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.*;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GradeElementRenderer{
+public class GradeElementRenderer {
     
     HashMap<Map.Entry<String, String>, PDFont> fonts = new HashMap<>();
     
@@ -50,7 +56,7 @@ public class GradeElementRenderer{
         
         if(!fonts.containsKey(entry)){
             InputStream is = FontUtils.getFontFile(element.getFont().getFamily(), italic, bold);
-            PDType0Font font =  PDType0Font.load(doc, is);
+            PDType0Font font = PDType0Font.load(doc, is);
             contentStream.setFont(font, (float) element.getFont().getSize());
             fonts.put(entry, font);
             

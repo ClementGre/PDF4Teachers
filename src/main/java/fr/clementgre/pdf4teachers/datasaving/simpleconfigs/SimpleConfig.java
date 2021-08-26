@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 
@@ -7,7 +12,7 @@ import fr.clementgre.pdf4teachers.datasaving.UserData;
 
 import java.io.File;
 
-public abstract class SimpleConfig{
+public abstract class SimpleConfig {
     
     public static void registerClasses(){
         UserData.registerSimpleConfig(new FavouriteImageData());
@@ -28,7 +33,7 @@ public abstract class SimpleConfig{
     public final void loadData(){
         
         new Thread(() -> {
-        
+            
             try{
                 new File(Main.dataFolder).mkdirs();
                 File file = new File(Main.dataFolder + filename + ".yml");
@@ -36,12 +41,12 @@ public abstract class SimpleConfig{
                     unableToLoadConfig();
                     return; // File does not exist or can't create it
                 }
-            
+                
                 Config config = new Config(file);
                 config.load();
-            
+                
                 manageLoadedData(config); // Subclass cass
-            
+                
             }catch(Exception e){
                 e.printStackTrace();
                 System.err.println("Unable to load " + filename);

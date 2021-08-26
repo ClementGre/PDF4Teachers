@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.settings;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -13,8 +18,8 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.*;
 import javafx.util.Duration;
 
-public class SettingGroupPane extends VBox{
-
+public class SettingGroupPane extends VBox {
+    
     private final Label title;
     private final GridPane container = new GridPane();
     
@@ -52,7 +57,7 @@ public class SettingGroupPane extends VBox{
         
         Label label = new Label(TR.tr(setting.getTitle()));
         label.setWrapText(true);
-    
+        
         HBox box = new HBox(label);
         box.setAlignment(Pos.CENTER_LEFT);
         box.setMinHeight(25);
@@ -65,7 +70,7 @@ public class SettingGroupPane extends VBox{
         box.setPrefHeight(25);
         box.setSpacing(10);
         box.setAlignment(Pos.CENTER_RIGHT);
-    
+        
         if(!setting.getDescription().isBlank()){
             String color = Main.settings.darkTheme.getValue() ? "#ff8989" : "#ff8989";
             Region icon = SVGPathIcons.generateImage(SVGPathIcons.INFO, color, 0, 15, 15);
@@ -73,16 +78,16 @@ public class SettingGroupPane extends VBox{
             iconContainer.setMinSize(15, 15);
             iconContainer.setMaxSize(15, 15);
             HBox.setMargin(iconContainer, new Insets(5, 0, 5, 0));
-        
+            
             Tooltip tooltip = PaneUtils.genWrappedToolTip(TR.tr(setting.getDescription()));
             tooltip.setShowDelay(Duration.ZERO);
             tooltip.setShowDuration(Duration.INDEFINITE);
             Tooltip.install(iconContainer, tooltip);
-        
+            
             box.getChildren().add(0, iconContainer);
         }
         
         return box;
     }
-
+    
 }

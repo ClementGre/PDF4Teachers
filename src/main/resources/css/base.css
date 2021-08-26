@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 /*******************************************************************************
  *                                                                             *
  * PANES                                                                       *
@@ -5,21 +10,24 @@
  ******************************************************************************/
 
 .text, .label, Label, Text, .tab-label, .menu-bar, .list-cell, .table-cell, .titled-pane > .title > .text,
-.text-area, .text-field, .tooltip{
+.text-area, .text-field, .tooltip {
     -fx-font-family: "Open Sans";
 }
 
-.notification-bar > .pane .close-button:hover{
+.notification-bar > .pane .close-button:hover {
     -fx-background-color: #464646;
 }
-.notification-bar > .pane .close-button{
+
+.notification-bar > .pane .close-button {
     -fx-pref-height: 20px;
     -fx-pref-width: 20px;
 }
-.notification-bar > .pane .label{
+
+.notification-bar > .pane .label {
     -fx-wrap-text: true;
 }
-.notification-bar > .pane{
+
+.notification-bar > .pane {
     -fx-padding: 5;
 }
 
@@ -29,19 +37,23 @@
 
 /* Paint Tab */
 
-.titled-pane{
+.titled-pane {
     title_background_hover_color: title_background_color;
 }
-.paint-tab-titled-pane .content{
+
+.paint-tab-titled-pane .content {
     -fx-padding: 0;
 }
-.paint-tab-titled-pane .content VBox{
+
+.paint-tab-titled-pane .content VBox {
     -fx-padding: 0;
 }
-.paint-tab-titled-pane .title{
+
+.paint-tab-titled-pane .title {
     -fx-padding: 1 8;
 }
-.paint-tab-titled-pane .title Label{
+
+.paint-tab-titled-pane .title Label {
     -fx-font-size: 13;
 }
 
@@ -50,13 +62,15 @@
  * Text & Label                                                                *
  *                                                                             *
  ******************************************************************************/
-.label{
+.label {
     -fx-font-size: 14;
 }
-Text{
+
+Text {
     -fx-font-size: 14;
 }
-Hyperlink{
+
+Hyperlink {
     -fx-font-size: 14;
 }
 
@@ -69,10 +83,12 @@ Hyperlink{
     -fx-padding: 0;
     -fx-max-width: 0;
 }
+
 .noArrowMenuButton {
     -fx-padding: 4px;
 }
-.noArrowMenuButton .label{
+
+.noArrowMenuButton .label {
     -fx-padding: 0;
 }
 
@@ -82,22 +98,23 @@ Hyperlink{
  *                                                                             *
  ******************************************************************************/
 
-.menu, .menu .label{
+.menu, .menu .label {
     -fx-font-size: 12px;
 }
-.menu-item .label, .menu-item{
+
+.menu-item .label, .menu-item {
     -fx-font-size: 13px;
 }
 
- /*******************************************************************************
-  *                                                                             *
-  * Inputs                                                                      *
-  *                                                                             *
-  ******************************************************************************/
+/*******************************************************************************
+ *                                                                             *
+ * Inputs                                                                      *
+ *                                                                             *
+ ******************************************************************************/
 
 /* Text field */
 #no-vertical-scroll-bar .scroll-pane {
-    -fx-vbar-policy : never;
+    -fx-vbar-policy: never;
 }
 
 /* Check Box */
@@ -106,9 +123,10 @@ CheckBox {
 }
 
 /* Footer slider */
-.slider-without-popup  {
+.slider-without-popup {
     -show-value-on-interaction: false;
 }
+
 .slider .thumb {
     -fx-padding: 9 3;
 }
@@ -124,7 +142,8 @@ CheckBox {
     /*remove menu padding*/
     -fx-padding: 0;
 }
-.menu > .right-container{
+
+.menu > .right-container {
     /*add some right padding for Menus (for the arrow)*/
     -fx-padding: 0 12 0 0;
 }
@@ -135,19 +154,22 @@ CheckBox {
  *                                                                             *
  ******************************************************************************/
 
-.popover .content-pane{
+.popover .content-pane {
     -fx-padding: 10px;
 }
+
 .popover > .border {
-	-fx-stroke: linear-gradient(to bottom, rgba(0,0,0, .3), rgba(0, 0, 0, .7)) !important;
-	-fx-stroke-width: 1 !important;
-	-fx-fill: #252525 !important;
-	-fx-effect: dropshadow(gaussian, rgba(0,0,0,.2), 10.0, 0.5, 2.0, 2.0) !important;
+    -fx-stroke: linear-gradient(to bottom, rgba(0, 0, 0, .3), rgba(0, 0, 0, .7)) !important;
+    -fx-stroke-width: 1 !important;
+    -fx-fill: #252525 !important;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, .2), 10.0, 0.5, 2.0, 2.0) !important;
 }
+
 .popover > .content {
     -fx-cursor: default !important;
 }
-.popover .icon .graphics{
+
+.popover .icon .graphics {
     -fx-cursor: hand !important;
 }
 
@@ -199,9 +221,9 @@ CheckBox {
 }
 
 .dialog-pane > .button-bar > .container > .details-button {
-  -fx-alignment: baseline-left;
-  -fx-focus-traversable: false;
-  -fx-padding: 0.416em; /* 5px */
+    -fx-alignment: baseline-left;
+    -fx-focus-traversable: false;
+    -fx-padding: 0.416em; /* 5px */
 }
 
 .dialog-pane > .button-bar > .container > .details-button.more {

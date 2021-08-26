@@ -1,12 +1,17 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -16,7 +21,7 @@ import javafx.stage.DirectoryChooser;
 
 import java.io.File;
 
-public class GradeExportWindow extends AlternativeWindow<TabPane>{
+public class GradeExportWindow extends AlternativeWindow<TabPane> {
     
     ExportPane exportAllTab = new ExportPane(this, TR.tr("gradeTab.gradeExportWindow.exportMode.together.name"), 0, false, true, true, false);
     ExportPane exportAllSplitTab = new ExportPane(this, TR.tr("gradeTab.gradeExportWindow.exportMode.separately.name"), 1, true, true, true, true);
@@ -38,7 +43,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane>{
     private void setupButtons(){
         Button cancel = new Button(TR.tr("actions.cancel"));
         Button export = new Button(TR.tr("actions.export"));
-    
+        
         export.setOnAction(event -> {
             ExportPane pane = (ExportPane) root.getSelectionModel().getSelectedItem();
             end(new GradeExportRenderer(pane).start(), pane);
@@ -46,7 +51,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane>{
         cancel.setOnAction(event -> {
             close();
         });
-    
+        
         setButtons(cancel, export);
     }
     
@@ -67,7 +72,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane>{
     
     }
     
-    static class ExportPane extends Tab{
+    static class ExportPane extends Tab {
         
         public int type;
         GradeExportWindow window;

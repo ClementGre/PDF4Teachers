@@ -1,13 +1,19 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 /* HEADER */
-.header, .buttonBoxContainer{
+.header, .buttonBoxContainer {
     -fx-background-color: #f8f8f8;
 }
-.header .headerText, .header .subHeaderText{
+
+.header .headerText, .header .subHeaderText {
     -fx-text-fill: #494949;
 }
 
 /* CONTENT */
-.rootPane, ListView{
+.rootPane, ListView {
     -fx-background-color: white;
 }
 

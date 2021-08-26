@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -49,7 +54,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-public class PDFPagesEditor{
+public class PDFPagesEditor {
     
     private final PDDocument document;
     private final File file;
@@ -424,14 +429,14 @@ public class PDFPagesEditor{
         page.quitVectorEditMode();
         pageImage = capturePagePreview(page, null);
         images.add(capturePagePreview(page, dimensions));
-    
+        
         List<String> definitions = ConvertWindow.definitions;
         definitions.set(0, (pageImage.getWidth() * pageImage.getHeight()) / 1000000d + "Mp (" + TR.tr("document.pageActions.capture.dialog.definitionComboBox.thisDocumentDisplayDefinition") + ")");
         
         ComboBoxDialog<String> alert = new ComboBoxDialog<>(TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.details"));
         alert.setItems(FXCollections.observableList(definitions));
         alert.setSelected(definitions.get(0));
-    
+        
         ImageView graphic = new ImageView(images.get(0));
         graphic.setPreserveRatio(true);
         graphic.setFitWidth(600);
@@ -451,7 +456,7 @@ public class PDFPagesEditor{
             int definition = (int) (Double.parseDouble(choosed.split("Mp")[0]) * 1000000);
             
             AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(pageIndex == -1);
-            new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>(){
+            new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
                 File exportDir = null;
                 
                 @Override
@@ -490,7 +495,8 @@ public class PDFPagesEditor{
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_SKIP_1);
                         if(result == AlreadyExistDialogManager.ResultType.STOP)
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_STOP);
-                        if(result == AlreadyExistDialogManager.ResultType.RENAME) file = AlreadyExistDialogManager.rename(file);
+                        if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                            file = AlreadyExistDialogManager.rename(file);
                     }
                     return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_OK);
                 }
@@ -506,7 +512,7 @@ public class PDFPagesEditor{
                     try{
                         if(buttonPos == ButtonPosition.DEFAULT){
                             BufferedImage image = capturePage(page, dimensions, definition);
-                        
+                            
                             try{
                                 ImageIO.write(image, "png", data.getKey());
                             }catch(IOException e){
@@ -521,7 +527,7 @@ public class PDFPagesEditor{
                             PlatformUtils.runAndWait(() -> {
                                 final Clipboard clipboard = Clipboard.getSystemClipboard();
                                 final ClipboardContent content = new ClipboardContent();
-    
+                                
                                 content.putImage(image);
                                 clipboard.setContent(content);
                                 return null;

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 
@@ -11,7 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @SuppressWarnings("unchecked")
-public class SystemFontsData extends SimpleConfig{
+public class SystemFontsData extends SimpleConfig {
     
     private final int realSysFontsCount = SystemFontsMapper.getSystemFontNames().length;
     

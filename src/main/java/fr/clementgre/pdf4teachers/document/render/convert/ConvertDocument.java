@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -8,7 +13,7 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import java.io.File;
 import java.io.IOException;
 
-public class ConvertDocument{
+public class ConvertDocument {
     
     public ConvertWindow convertWindow;
     
@@ -61,7 +66,7 @@ public class ConvertDocument{
                 MainWindow.filesTab.openFiles(new File[]{file.file});
                 converted++;
             }
-    
+            
             OKAlert alert = new OKAlert(TR.tr("convertWindow.dialog.completed.title"));
             
             if(converted == 0) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.noDocument"));

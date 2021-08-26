@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!--
+  ~ Copyright (c) 2021. Clément Grennerat
+  ~ All rights reserved. You must refer to the licence Apache 2.
+  -->
+
 <?import fr.clementgre.pdf4teachers.components.*?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
@@ -13,7 +18,9 @@
 
     <!--  -->
     <VBox spacing="5"> <!-- Common options -->
-        <VBox.margin><Insets top="2" bottom="5" left="2" right="2"/></VBox.margin>
+        <VBox.margin>
+            <Insets top="2" bottom="5" left="2" right="2"/>
+        </VBox.margin>
 
         <HBox spacing="2" fx:id="commonActionButtons">
             <NoArrowMenuButton fx:id="newImage">
@@ -21,29 +28,38 @@
             </NoArrowMenuButton>
             <NoArrowMenuButton fx:id="newVector"/>
             <Button fx:id="delete">
-                <padding><Insets topRightBottomLeft="4"/></padding>
+                <padding>
+                    <Insets topRightBottomLeft="4"/>
+                </padding>
             </Button>
             <Region HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
 
             <HBox fx:id="vectorsActonButtons">
 
                 <fx:define>
-                    <ToggleGroup fx:id="vectorDrawOptions" />
+                    <ToggleGroup fx:id="vectorDrawOptions"/>
                 </fx:define>
                 <ToggleButton fx:id="vectorPerpendicularLineMode" toggleGroup="$vectorDrawOptions">
-                    <padding><Insets topRightBottomLeft="4"/></padding>
+                    <padding>
+                        <Insets topRightBottomLeft="4"/>
+                    </padding>
                 </ToggleButton>
                 <ToggleButton fx:id="vectorStraightLineMode" toggleGroup="$vectorDrawOptions">
-                    <padding><Insets top="4" bottom="3" left="4" right="4"/></padding>
+                    <padding>
+                        <Insets top="4" bottom="3" left="4" right="4"/>
+                    </padding>
                 </ToggleButton>
                 <ToggleButton fx:id="vectorEditMode">
-                    <padding><Insets top="4" bottom="5" left="4" right="4"/></padding>
+                    <padding>
+                        <Insets top="4" bottom="5" left="4" right="4"/>
+                    </padding>
                 </ToggleButton>
             </HBox>
         </HBox>
 
         <HBox spacing="2">
-            <ShortcutsTextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28" style="-right-button-visible: false;"/>
+            <ShortcutsTextField fx:id="path" HBox.hgrow="ALWAYS" maxWidth="Infinity" prefHeight="28"
+                                style="-right-button-visible: false;"/>
             <Button fx:id="vectorUndoPath" prefHeight="28"/>
             <Button fx:id="browsePath" text="..." prefHeight="28"/>
         </HBox>
@@ -51,20 +67,25 @@
     </VBox>
 
     <VBox fx:id="vectorsOptionPane" spacing="5"> <!-- vector options -->
-        <VBox.margin><Insets bottom="5" left="2" right="2"/></VBox.margin>
+        <VBox.margin>
+            <Insets bottom="5" left="2" right="2"/>
+        </VBox.margin>
 
         <HBox spacing="2">
             <ToggleButton fx:id="doFillButton" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorFillColor" prefHeight="30"/>
             <SyncColorPicker fx:id="vectorStrokeColor" prefHeight="30"/>
-            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true" prefHeight="30" maxWidth="70" minWidth="70"/>
+            <Spinner fx:id="vectorStrokeWidth" min="0" max="50" initialValue="0" amountToStepBy="1" editable="true"
+                     prefHeight="30" maxWidth="70" minWidth="70"/>
         </HBox>
     </VBox>
 
     <TitledPane fx:id="advancedOptionsPane" expanded="false"> <!-- advanced Options -->
 
         <VBox fx:id="advancedOptionsContent">
-            <padding><Insets topRightBottomLeft="3"/></padding>
+            <padding>
+                <Insets topRightBottomLeft="3"/>
+            </padding>
 
             <GridPane hgap="5" vgap="2">
                 <Label text="x" prefHeight="27" minWidth="15" alignment="CENTER_RIGHT"
@@ -98,28 +119,41 @@
             </GridPane>
 
             <Label fx:id="repeatModeLabel" style="-fx-font-size: 13px;">
-                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
+                <VBox.margin>
+                    <Insets top="5" left="3"/>
+                </VBox.margin>
             </Label>
             <ScaledComboBox fx:id="repeatMode">
                 <style>-fx-padding: 0 4;</style>
-                <VBox.margin><Insets left="3"/></VBox.margin>
+                <VBox.margin>
+                    <Insets left="3"/>
+                </VBox.margin>
             </ScaledComboBox>
 
             <Label fx:id="resizeModeLabel" style="-fx-font-size: 13px;">
-                <VBox.margin><Insets top="5" left="3"/></VBox.margin>
+                <VBox.margin>
+                    <Insets top="5" left="3"/>
+                </VBox.margin>
             </Label>
             <ScaledComboBox fx:id="resizeMode">
                 <style>-fx-padding: 0 4;</style>
-                <VBox.margin><Insets left="3"/></VBox.margin>
+                <VBox.margin>
+                    <Insets left="3"/>
+                </VBox.margin>
             </ScaledComboBox>
 
             <HBox fx:id="vectorsAdvancedOptions">
-                <VBox.margin><Insets top="8" left="3"/></VBox.margin>
+                <VBox.margin>
+                    <Insets top="8" left="3"/>
+                </VBox.margin>
 
                 <Label fx:id="arrowLengthTitle" prefHeight="27" minWidth="15" style="-fx-font-size: 13px;">
-                    <HBox.margin><Insets right="5" /></HBox.margin>
+                    <HBox.margin>
+                        <Insets right="5"/>
+                    </HBox.margin>
                 </Label>
-                <Spinner fx:id="spinnerArrowLength" min="0" max="100" initialValue="0" amountToStepBy="5" editable="true">
+                <Spinner fx:id="spinnerArrowLength" min="0" max="100" initialValue="0" amountToStepBy="5"
+                         editable="true">
                     <style>-fx-padding: 0 4;</style>
                 </Spinner>
             </HBox>

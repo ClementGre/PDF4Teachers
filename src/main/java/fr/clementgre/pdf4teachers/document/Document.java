@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -25,7 +30,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class Document{
+public class Document {
     
     private final File file;
     public Edition edition;
@@ -36,7 +41,7 @@ public class Document{
     
     public PDFPagesRender pdfPagesRender;
     private UndoEngine undoEngine;
-
+    
     private boolean documentSaverNeedToStop = false;
     public void stopDocumentSaver(){
         documentSaverNeedToStop = true;
@@ -45,7 +50,7 @@ public class Document{
         documentSaverNeedToStop = false;
         while(!documentSaverNeedToStop){
             if(Main.settings.regularSave.getValue() != -1){
-    
+                
                 PlatformUtils.sleepThreadMinutes(Main.settings.regularSave.getValue());
                 if(!documentSaverNeedToStop && !Edition.isSave()){
                     Platform.runLater(() -> edition.save());
@@ -262,7 +267,7 @@ public class Document{
         
         int iMax = pages.size();
         for(int i = 1; i <= iMax; i++){
-            PageRenderer page = pages.get(iMax-i);
+            PageRenderer page = pages.get(iMax - i);
             
             Bounds boundsInScene = MainWindow.mainScreen.pane.localToScene(page.getBoundsInParent());
             if(boundsInScene.getMaxY() < mainScreenBoundsInScene.getMaxY()){

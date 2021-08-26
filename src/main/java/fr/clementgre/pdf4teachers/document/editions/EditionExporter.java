@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.editions;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -25,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class EditionExporter{
+public class EditionExporter {
     
     public static void showImportDialog(boolean onlyGrades){
         CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
@@ -34,10 +39,11 @@ public class EditionExporter{
         
         CheckBox copyLocations = new CheckBox(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.copyLocations"));
         if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
-    
+        
         dialog.addCancelButton(ButtonPosition.CLOSE);
         dialog.addButton(TR.tr("dialog.importEdit.confirm.YesOneFile"), ButtonPosition.DEFAULT);
-        if(!onlyGrades) dialog.addButton(TR.tr("dialog.importEdit.confirm.YesMultipleFiles"), ButtonPosition.OTHER_RIGHT);
+        if(!onlyGrades)
+            dialog.addButton(TR.tr("dialog.importEdit.confirm.YesMultipleFiles"), ButtonPosition.OTHER_RIGHT);
         
         ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
         if(option == ButtonPosition.CLOSE) return;
@@ -82,7 +88,7 @@ public class EditionExporter{
                 Config loadedConfig = new Config(file);
                 loadedConfig.load();
                 
-                new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>(){
+                new TwoStepListAction<>(false, recursive, new TwoStepListInterface<String, Config>() {
                     @Override
                     public List<String> prepare(boolean recursive){
                         if(!recursive){
@@ -194,7 +200,7 @@ public class EditionExporter{
         
         dialog.addCancelButton(ButtonPosition.CLOSE);
         dialog.addButton(TR.tr("dialog.exportEdit.confirm.YesThisFile"), ButtonPosition.DEFAULT);
-    
+        
         ButtonType yesAll = null;
         ButtonType yesAllOneFile = null;
         if(!onlyGrades){
@@ -230,7 +236,7 @@ public class EditionExporter{
         
         final File finalDirectory = directory;
         AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(recursive);
-        new TwoStepListAction<>(false, recursive, new TwoStepListInterface<File, Config>(){
+        new TwoStepListAction<>(false, recursive, new TwoStepListInterface<File, Config>() {
             @Override
             public List<File> prepare(boolean recursive){
                 if(recursive){
@@ -239,7 +245,7 @@ public class EditionExporter{
                     return Collections.singletonList(MainWindow.mainScreen.document.getFile());
                 }
             }
-
+            
             @SuppressWarnings("unchecked")
             @Override
             public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -7,7 +12,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
-public class NodeRadioMenuItem extends NodeMenuItem{
+public class NodeRadioMenuItem extends NodeMenuItem {
     
     private final BooleanProperty selected = new SimpleBooleanProperty(false);
     private final ImageView SELECTED_IMAGE = ImageUtils.buildImage(NodeRadioMenuItem.class.getResource("/img/MenuBar/yes.png") + "", 16, 16);

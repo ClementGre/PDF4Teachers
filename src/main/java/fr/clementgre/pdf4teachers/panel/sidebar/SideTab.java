@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -17,7 +22,7 @@ import javafx.scene.paint.Color;
 
 import java.io.File;
 
-public class SideTab extends Tab{
+public class SideTab extends Tab {
     
     private final String name;
     

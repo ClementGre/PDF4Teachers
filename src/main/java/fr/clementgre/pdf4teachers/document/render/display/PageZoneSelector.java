@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -12,9 +17,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-public class PageZoneSelector extends Pane{
+public class PageZoneSelector extends Pane {
     
-    public enum SelectionZoneType{
+    public enum SelectionZoneType {
         LIGHT_ON_DARK,
         PDF_ON_DARK
     }

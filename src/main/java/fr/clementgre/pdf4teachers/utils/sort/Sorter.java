@@ -1,13 +1,17 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils.sort;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 
 import java.io.File;
-import java.util.Comparator;
 import java.util.List;
 
-public class Sorter{
+public class Sorter {
     
     // FILES SORTING
     

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades.export;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
@@ -16,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class GradeExportRenderer{
+public class GradeExportRenderer {
     
     String text = "";
     
@@ -272,7 +277,8 @@ public class GradeExportRenderer{
             AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
             if(result == AlreadyExistDialogManager.ResultType.SKIP) return true;
             else if(result == AlreadyExistDialogManager.ResultType.STOP) return false;
-            else if(result == AlreadyExistDialogManager.ResultType.RENAME) file = AlreadyExistDialogManager.rename(file);
+            else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                file = AlreadyExistDialogManager.rename(file);
         }
         
         file.createNewFile();

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -25,7 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-public abstract class AlternativeWindow<R extends Node> extends Stage{
+public abstract class AlternativeWindow<R extends Node> extends Stage {
     
     private final VBox container = new VBox();
     private final VBox header = new VBox();
@@ -39,7 +44,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
     private final Label headerText = new Label();
     private final Label subHeaderText = new Label();
     
-    public enum StageWidth{
+    public enum StageWidth {
         NORMAL(545),
         LARGE(700),
         ULTRA_LARGE(1000),
@@ -74,19 +79,20 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         StyleManager.putStyle(scene, Style.DEFAULT);
         StyleManager.putStyle(borderPane, Style.DEFAULT);
         StyleManager.putCustomStyle(scene, "alternativeWindow.css");
-        if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT) StyleManager.putCustomStyle(scene, "alternativeWindow-light.css");
+        if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT)
+            StyleManager.putCustomStyle(scene, "alternativeWindow-light.css");
         else StyleManager.putCustomStyle(scene, "alternativeWindow-dark.css");
         PaneUtils.setupScaling(borderPane, true, false);
-    
+        
         setOnShown(e -> {
             StagesUtils.resizeStageAccordingToAppScale(this, scene);
-    
+            
             setContentMinWidth(400, true);
             setMinHeight(300 * Main.settings.zoom.getValue());
-            setMaxWidth(width.getWidth()*2 * Main.settings.zoom.getValue());
-    
-            if(getHeight() > 1.5*getWidth()) setHeight(1.5*getWidth());
-    
+            setMaxWidth(width.getWidth() * 2 * Main.settings.zoom.getValue());
+            
+            if(getHeight() > 1.5 * getWidth()) setHeight(1.5 * getWidth());
+            
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);
             
@@ -107,7 +113,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         setup(header, subHeader);
         Platform.runLater(() -> {
             setupSubClass();
-            if(Main.window != null) Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
+            if(Main.window != null)
+                Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
             show();
         });
         
@@ -119,7 +126,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
                 double hValue = scrollPane.getHvalue() + e.getDeltaY() * 2 / (scrollPane.getWidth() - container.getWidth());
                 scrollPane.setHvalue(StringUtils.clamp(hValue, scrollPane.getHmin(), scrollPane.getHmax()));
             }
-    
+            
             double vValue = scrollPane.getVvalue() + e.getDeltaY() * 2 / (scrollPane.getHeight() - container.getHeight());
             scrollPane.setVvalue(StringUtils.clamp(vValue, scrollPane.getVmin(), scrollPane.getVmax()));
             
@@ -141,7 +148,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
         setHeaderText(header);
         setSubHeaderText(subHeader);
         this.header.getChildren().addAll(headerText, subHeaderText);
-    
+        
         container.getChildren().addAll(this.header, root);
         scrollPane.setFitToWidth(true);
     }
@@ -168,12 +175,12 @@ public abstract class AlternativeWindow<R extends Node> extends Stage{
     // Should be called only once
     public void setButtons(Button... buttons){
         setupButtonsBox();
-        toRequestFocus = buttons[buttons.length-1];
+        toRequestFocus = buttons[buttons.length - 1];
         buttonsBox.getChildren().addAll(buttons);
     }
     
     public void setContentMinWidth(int width, boolean affectWindow){
-        if(affectWindow) setMinWidth((width+20+16) * Main.settings.zoom.getValue());
+        if(affectWindow) setMinWidth((width + 20 + 16) * Main.settings.zoom.getValue());
         else container.setMinWidth(width * Main.settings.zoom.getValue());
     }
     

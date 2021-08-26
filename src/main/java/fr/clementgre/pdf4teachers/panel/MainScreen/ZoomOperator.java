@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -15,7 +20,7 @@ import javafx.scene.control.ScrollBar;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
 
-public class ZoomOperator{
+public class ZoomOperator {
     
     private final Timeline timeline;
     private boolean isPlaying = false;
@@ -220,13 +225,13 @@ public class ZoomOperator{
     
     // x and y should be relative to Scene because MainScreen is bigger than the visible part (e.getX()/Y couldn't work)
     public void zoom(double factor, double x, double y, boolean trackpad){
-    
+        
         // determine offset that we will have to move the node
         // Since we are relative to Scene, we have to apply the current Scale transformation
         Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
         double dx = (x - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
         double dy = (y - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
-    
+        
         double scale = Math.min(5, Math.max(aimScale * factor, 0.05));
         double f = (scale / pane.getScaleX()) - 1;
         
@@ -243,14 +248,14 @@ public class ZoomOperator{
         Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
         // Find the middle coordinates of MainScreen relative to scene (To zoom center);
         Bounds mainScreenBounds = MainWindow.mainScreen.localToScene(MainWindow.mainScreen.getLayoutBounds());
-        double mainScreenMiddleXInScene = (mainScreenBounds.getMinX() + mainScreenBounds.getWidth()/2);
-        double mainScreenMiddleYInScene = (mainScreenBounds.getMinY() + mainScreenBounds.getHeight()/2);
-    
+        double mainScreenMiddleXInScene = (mainScreenBounds.getMinX() + mainScreenBounds.getWidth() / 2);
+        double mainScreenMiddleYInScene = (mainScreenBounds.getMinY() + mainScreenBounds.getHeight() / 2);
+        
         // determine offset that we will have to move the node
         // Since we are relative to Scene, we have to apply the current Scale transformation
         double dx = (mainScreenMiddleXInScene - (bounds.getWidth() / 2 + bounds.getMinX())) / Main.settings.zoom.getValue();
         double dy = (mainScreenMiddleYInScene - (bounds.getHeight() / 2 + bounds.getMinY())) / Main.settings.zoom.getValue();
-    
+        
         double f = (scale / pane.getScaleX()) - 1;
         
         zoom(removeTransitions, scale, dx, dy, f);
@@ -263,7 +268,7 @@ public class ZoomOperator{
             aimTranslateX = pane.getTranslateX();
             aimScale = pane.getScaleX();
         }
-    
+        
         
         double newTranslateX;
         double newTranslateY;
@@ -285,7 +290,7 @@ public class ZoomOperator{
             // Vérifie les limites des translations
             hScrollBar.setVisible(true);
             newTranslateX = StringUtils.clamp(pane.getTranslateX() - translateFactor * horizontal,
-                    paneShiftX-scrollableWidth, paneShiftX);
+                    paneShiftX - scrollableWidth, paneShiftX);
         }
         // Y
         if(scrollableHeight <= 0){
@@ -299,7 +304,7 @@ public class ZoomOperator{
                     paneShiftY - scrollableHeight, paneShiftY);
             
         }
-    
+        
         aimTranslateY = newTranslateY;
         aimTranslateX = newTranslateX;
         aimScale = scale;
@@ -338,7 +343,7 @@ public class ZoomOperator{
     
     public void fitWidth(boolean removeTransition){
         
-        double pageWidth = PageRenderer.PAGE_WIDTH + 2*PageRenderer.PAGE_HORIZONTAL_MARGIN;
+        double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.PAGE_HORIZONTAL_MARGIN;
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
         
         double targetScale = (availableWidth / pageWidth);

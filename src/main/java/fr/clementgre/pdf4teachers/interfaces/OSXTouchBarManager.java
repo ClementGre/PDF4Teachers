@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces;
 
 import fr.clementgre.pdf4teachers.Main;
 import javafx.stage.Window;
 
-public class OSXTouchBarManager{
+public class OSXTouchBarManager {
     
     static{
         String libPath = System.getProperty("java.library.path");

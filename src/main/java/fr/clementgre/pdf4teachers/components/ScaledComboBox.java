@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -7,7 +12,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
-public class ScaledComboBox<T> extends ComboBox<T>{
+public class ScaledComboBox<T> extends ComboBox<T> {
     
     // Bind by default
     public ScaledComboBox(){
@@ -24,17 +29,17 @@ public class ScaledComboBox<T> extends ComboBox<T>{
     }
     
     private void setup(boolean bind){
-    
+        
         if(bind){
             Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
                 setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
             });
         }
         
-        setCellFactory(new Callback<>(){
+        setCellFactory(new Callback<>() {
             @Override
             public ListCell<T> call(ListView<T> param){
-                return new ListCell<>(){
+                return new ListCell<>() {
                     @Override
                     protected void updateItem(T item, boolean empty){
                         super.updateItem(item, empty);

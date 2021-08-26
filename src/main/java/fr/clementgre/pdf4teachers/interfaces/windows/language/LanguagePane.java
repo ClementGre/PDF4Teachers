@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -12,7 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public class LanguagePane extends HBox{
+public class LanguagePane extends HBox {
     
     private final String shortName;
     private final String name;
@@ -45,23 +50,23 @@ public class LanguagePane extends HBox{
     
     private void composePane(){
         setStyle("-fx-padding: -5;");
-    
+        
         Label name = new Label(getName());
         if(getPerMilleCompleted() != -1 && getPerMilleCompleted() != 1000)
             name.setText(name.getText() + " (" + TR.tr("language.chooseLanguageWindow.translationPercentageInfo", String.valueOf(getPerMilleCompleted() / 10d)) + ")");
-    
+        
         name.setPrefHeight(50);
         HBox.setMargin(name, new Insets(0, 5, 0, 10));
-    
+        
         Label shortName = new Label(getShortName());
         shortName.setPrefHeight(50);
         shortName.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
         HBox.setMargin(shortName, new Insets(0, 3, 0, 0));
-    
+        
         Label version = new Label("v" + getVersion());
         version.setPrefHeight(50);
         version.setStyle("-fx-text-fill: gray; -fx-font-size: 12;");
-    
+        
         if(getImage() != null){
             getChildren().addAll(getImage(), name, shortName, version);
         }else{

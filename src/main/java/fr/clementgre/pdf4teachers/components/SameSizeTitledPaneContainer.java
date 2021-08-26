@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import javafx.collections.ListChangeListener;
@@ -8,12 +13,12 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
-public class SameSizeTitledPaneContainer extends VBox{
-
+public class SameSizeTitledPaneContainer extends VBox {
+    
     public SameSizeTitledPaneContainer(){
         setMaxHeight(Double.MAX_VALUE);
         VBox.setVgrow(this, Priority.ALWAYS);
-    
+        
         heightProperty().addListener((observable, oldValue, newValue) -> updateTitledPanesSizes());
         
         getChildren().addListener((ListChangeListener<Node>) c -> {
@@ -29,7 +34,7 @@ public class SameSizeTitledPaneContainer extends VBox{
     
     private void updateTitledPanesSizes(){
         long opened = getListPanes().stream().filter(TitledPane::isExpanded).count();
-        double eachOpenedSize = (getHeight() - (4-opened)*28) / opened;
+        double eachOpenedSize = (getHeight() - (4 - opened) * 28) / opened;
         
         for(TitledPane listPane : getListPanes()){
             if(listPane.isExpanded()){

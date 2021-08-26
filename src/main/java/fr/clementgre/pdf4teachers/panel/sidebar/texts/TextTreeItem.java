@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -43,7 +48,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
-public class TextTreeItem extends TreeItem<String>{
+public class TextTreeItem extends TreeItem<String> {
     
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>();
     private String text;
@@ -199,12 +204,12 @@ public class TextTreeItem extends TreeItem<String>{
         pane.setOnDragDetected(e -> {
             Dragboard dragboard = pane.startDragAndDrop(TransferMode.COPY);
             Image snapshot = snapshot();
-            dragboard.setDragView(snapshot, 0, snapshot.getHeight()/2);
-    
+            dragboard.setDragView(snapshot, 0, snapshot.getHeight() / 2);
+            
             ClipboardContent clipboardContent = new ClipboardContent();
             clipboardContent.put(Main.INTERNAL_FORMAT, TextTab.TEXT_TREE_ITEM_DRAG_KEY);
             dragboard.setContent(clipboardContent);
-    
+            
             TextTab.draggingItem = this;
             e.consume();
         });
@@ -229,7 +234,7 @@ public class TextTreeItem extends TreeItem<String>{
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
         if(maxWidth < 0) return;
-    
+        
         Font font = getListFont();
         String wrappedText = "";
         final String[] splitText = getText().split(Pattern.quote("\n"));
@@ -322,7 +327,7 @@ public class TextTreeItem extends TreeItem<String>{
         cell.setStyle("-fx-padding: 0 0 0 -38;"); // top - right - bottom - left
         cell.setContextMenu(menu);
         cell.setOnMouseClicked(onMouseCLick);
-    
+        
         if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
     }
     

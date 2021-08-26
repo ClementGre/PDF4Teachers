@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -17,7 +22,7 @@ import javafx.scene.layout.Region;
 
 import java.io.File;
 
-public class DirFilterListCell extends ListCell<String>{
+public class DirFilterListCell extends ListCell<String> {
     
     private final GalleryWindow gallery;
     public DirFilterListCell(GalleryWindow galleryWindow){
@@ -26,7 +31,7 @@ public class DirFilterListCell extends ListCell<String>{
     
     @Override
     protected void updateItem(String item, boolean empty){
-    
+        
         super.updateItem(item, empty);
         if(empty || item == null){
             setGraphic(null);
@@ -36,13 +41,13 @@ public class DirFilterListCell extends ListCell<String>{
             // FAVORITES AND
             setGraphic(null);
             setText(item);
-            setStyle("-fx-font-size: "+ (12 * Main.settings.zoom.getValue()) + ";");
+            setStyle("-fx-font-size: " + (12 * Main.settings.zoom.getValue()) + ";");
             
         }else if(item.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"))){
             // ADD BUTTON
             Button add = new Button(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
             PaneUtils.setHBoxPosition(add, 0, 30, 10, 2);
-    
+            
             add.setOnMousePressed((e) -> {
                 PlatformUtils.runLaterOnUIThread(100, () -> {
                     File dir = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, gallery);
@@ -55,10 +60,10 @@ public class DirFilterListCell extends ListCell<String>{
                     }
                 });
             });
-    
+            
             HBox root = new HBox();
             root.getChildren().addAll(new HBoxSpacer(), add, new HBoxSpacer());
-    
+            
             if(Main.settings.zoom.getValue() != 1){
                 PaneUtils.setupScaling(root, true, false);
             }
@@ -76,25 +81,25 @@ public class DirFilterListCell extends ListCell<String>{
             delete.setStyle("-fx-background-color: transparent;");
             delete.setOnMouseEntered((e) -> delete.setStyle(null));
             delete.setOnMouseExited((e) -> delete.setStyle("-fx-background-color: transparent;"));
-    
+            
             delete.setOnMousePressed((e) -> {
                 e.consume();
                 GalleryManager.removeSavePath(item);
                 gallery.filter.getItems().remove(item);
                 gallery.reloadImageList();
-        
+                
                 // Force ComboBox to reopen after 50 to 500 ms (after the click was released)
                 for(int i = 50; i <= 500; i += 50){
                     PlatformUtils.runLaterOnUIThread(i, gallery.filter::show);
                 }
             });
-    
+            
             if(Main.settings.zoom.getValue() == 1) root.setStyle("-fx-padding: -4 0;");
             else PaneUtils.setupScaling(root, true, false);
             
             PaneUtils.setHBoxPosition(text, 0, 26, 0);
             PaneUtils.setHBoxPosition(delete, 26, 26, new Insets(0, 5, 0, 5));
-    
+            
             Region spacer = new HBoxSpacer();
             root.getChildren().addAll(text, spacer, delete);
             

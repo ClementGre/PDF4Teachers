@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
@@ -23,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-public class TextElementRenderer{
+public class TextElementRenderer {
     
     public HashMap<Map.Entry<String, String>, PDType0Font> fonts = new HashMap<>();
     

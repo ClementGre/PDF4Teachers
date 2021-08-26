@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.components.ScratchText;
@@ -5,7 +10,7 @@ import javafx.scene.text.Font;
 
 import java.util.regex.Pattern;
 
-public class TextWrapper{
+public class TextWrapper {
     
     private String text;
     private final Font font;
@@ -67,7 +72,7 @@ public class TextWrapper{
                     text = text.replaceFirst(Pattern.quote(passedChars + results[0]), "");
                 }
                 continue;
-    
+                
             }
             
             String[] results = fillLineWithWord(text);

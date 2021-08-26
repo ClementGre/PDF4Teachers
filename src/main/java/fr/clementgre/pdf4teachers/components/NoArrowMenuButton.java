@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import javafx.scene.Node;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 
-public class NoArrowMenuButton extends MenuButton{
+public class NoArrowMenuButton extends MenuButton {
     
     private static final String STYLE_CLASS = "noArrowMenuButton";
     

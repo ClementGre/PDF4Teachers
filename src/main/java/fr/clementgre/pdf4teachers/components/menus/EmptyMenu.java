@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
@@ -8,7 +13,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.input.MouseEvent;
 
-public class EmptyMenu extends Menu{
+public class EmptyMenu extends Menu {
     
     private static final String NAME_STYLE = "-fx-padding: 0 7;";
     
@@ -16,8 +21,8 @@ public class EmptyMenu extends Menu{
     
     public EmptyMenu(String text, MenuBar menuBar){
         super();
-    
-    
+        
+        
         name = new Label(text);
         name.setAlignment(Pos.CENTER);
         name.setOnMouseClicked(e -> new SettingsWindow());

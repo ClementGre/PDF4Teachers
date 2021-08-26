@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel;
 
 import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
@@ -23,7 +28,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
-public class FooterBar extends StackPane{
+public class FooterBar extends StackPane {
     
     private final StackPane messagePane = new StackPane();
     private final Label message = new Label();
@@ -58,7 +63,7 @@ public class FooterBar extends StackPane{
     }
     
     public void setup(){
-    
+        
         zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
@@ -69,7 +74,7 @@ public class FooterBar extends StackPane{
                 if(scale < 1){
                     val = scale * 20;
                 }else if(scale > 1){
-                    val = 20 + (20 * (scale-1)) / 4;
+                    val = 20 + (20 * (scale - 1)) / 4;
                 }
                 zoomController.setValue(val);
             }
@@ -83,7 +88,7 @@ public class FooterBar extends StackPane{
             if(val < 20){
                 scale = val / 20;
             }else if(val > 20){
-                scale = 1 + (4 * (val-20)) / 20;
+                scale = 1 + (4 * (val - 20)) / 20;
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
@@ -221,7 +226,8 @@ public class FooterBar extends StackPane{
             overviewZoom.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
-            }else this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
+            }else
+                this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
             
         }else{
             zoomController.setDisable(true);

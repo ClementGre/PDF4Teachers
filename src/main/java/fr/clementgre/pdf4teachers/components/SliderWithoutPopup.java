@@ -1,10 +1,15 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
-public class SliderWithoutPopup extends Slider{
+public class SliderWithoutPopup extends Slider {
     
     public SliderWithoutPopup(){
         setup();
@@ -17,7 +22,7 @@ public class SliderWithoutPopup extends Slider{
     
     private void setup(){
         getStyleClass().add("slider-without-popup");
-    
+        
         // Prevent sliders (footer slider) to move while using these specials keys.
         addEventFilter(KeyEvent.KEY_RELEASED, e -> {
             if(e.getCode() == KeyCode.BEGIN || e.getCode() == KeyCode.HOME || e.getCode() == KeyCode.END){

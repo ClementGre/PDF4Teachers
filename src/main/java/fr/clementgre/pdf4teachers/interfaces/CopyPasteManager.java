@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -9,13 +14,13 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.*;
 
-public class CopyPasteManager{
+public class CopyPasteManager {
     
     public static final KeyCombination KEY_COMB_CUT = new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN);
     public static final KeyCombination KEY_COMB_COPY = new KeyCodeCombination(KeyCode.C, KeyCombination.SHORTCUT_DOWN);
     public static final KeyCombination KEY_COMB_PASTE = new KeyCodeCombination(KeyCode.V, KeyCombination.SHORTCUT_DOWN);
     
-    public enum CopyPasteType{ CUT, COPY, PASTE }
+    public enum CopyPasteType {CUT, COPY, PASTE}
     
     public static CopyPasteType getCopyPasteTypeByKeyEvent(KeyEvent e){
         if(KEY_COMB_CUT.match(e)) return CopyPasteType.CUT;

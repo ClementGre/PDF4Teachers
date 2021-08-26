@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel;
 
 import de.jangassen.MenuToolkit;
@@ -52,7 +57,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @SuppressWarnings("serial")
-public class MenuBar extends javafx.scene.control.MenuBar{
+public class MenuBar extends javafx.scene.control.MenuBar {
     
     ////////// ICONS COLOR //////////
     
@@ -193,9 +198,9 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 new SeparatorMenuItem(), tools4DeleteAllEdits, tools5SameNameEditions, tools6ExportImportEdition,
                 new SeparatorMenuItem(), tools10FullScreen,
                 new SeparatorMenuItem(), tools10Debug);
-    
+        
         ////////// EDIT //////////
-    
+        
         edit.getItems().addAll(edit1Undo, edit2Redo, new SeparatorMenuItem(), edit3Cut, edit4Copy, edit5Paste);
         
         ////////// HELP //////////
@@ -362,13 +367,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         tools10Debug3OpenEditionFile.setOnAction((e) -> {
             File file = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
             if(!file.exists()){
-                try{ file.createNewFile(); }catch(IOException ioException){ ioException.printStackTrace(); }
+                try{file.createNewFile();}catch(IOException ioException){ioException.printStackTrace();}
             }
             PlatformUtils.openFile(file.getAbsolutePath());
         });
-    
+        
         ////////// EDIT //////////
-    
+        
         edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
             String nextUndo = null;
             String nextRedo = null;
@@ -378,16 +383,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             }
             if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
             else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
-        
+            
             if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
             else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
-        
+            
             if(edit1Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
             else edit1Undo.setText(nextUndo);
             if(edit2Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
             else edit2Redo.setText(nextRedo);
-    
-    
+            
+            
             String cut = TR.tr("actions.cut");
             String copy = TR.tr("actions.copy");
             if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.COPY)){
@@ -448,16 +453,16 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         StyleManager.putStyle(this, Style.ACCENT);
         
         if(isSystemMenuBarSupported()){
-    
+            
             if(Main.isOSX()){
                 getMenus().addAll(file, tools, edit, help);
-    
+                
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
                 
                 MenuItem about = tk.createAboutMenuItem("");
                 about.setText(TR.tr("menuBar.osx.about", Main.APP_NAME));
                 about.setOnAction((e) -> Main.showAboutWindow());
-    
+                
                 MenuItem settings = tk.createAboutMenuItem("", (e) -> new SettingsWindow());
                 settings.setText(TR.tr("menuBar.settings"));
                 settings.setAccelerator(new KeyCodeCombination(KeyCode.COMMA, KeyCombination.META_DOWN));
@@ -473,7 +478,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 
                 MenuItem quit = tk.createQuitMenuItem("");
                 quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
-                quit.setOnAction((e) ->{
+                quit.setOnAction((e) -> {
                     if(!MainWindow.requestCloseApp()) e.consume();
                 });
                 
@@ -486,7 +491,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
         }else{
             settings.setOnClick(e -> new SettingsWindow());
             about.setOnClick(e -> Main.showAboutWindow());
-    
+            
             NodeMenuItem.setupMenu(file);
             NodeMenuItem.setupMenu(tools);
             NodeMenuItem.setupMenu(tools6ExportImportEdition);
@@ -496,7 +501,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
             NodeMenuItem.setupDynamicMenu(edit);
             
             getMenus().addAll(file, tools, edit, help, settings, about);
-    
+            
             setupMenus();
             Main.settings.menuForceOpenDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
                 setupMenus();
@@ -515,7 +520,7 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                     });
                 }else if(Main.settings.menuForceOpenDelay.getValue() == 1){
                     menu.setOnShowing((e) -> {
-                        for(int i = 50; i <= 500; i+=50){
+                        for(int i = 50; i <= 500; i += 50){
                             PlatformUtils.runLaterOnUIThread(i, () -> {
                                 for(Menu m : getMenus()){
                                     if(m.isShowing()) return;
@@ -534,14 +539,13 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                         });
                     });
                 }
-            }
-            else menu.setStyle("-fx-padding: 0;");
+            }else menu.setStyle("-fx-padding: 0;");
         }
     }
     
     
     public static Menu createSubMenu(String name, String image, String toolTip, boolean disableIfNoDoc){
-    
+        
         Menu menu;
         if(isSystemMenuBarSupported()){
             menu = new Menu(name);
@@ -552,13 +556,15 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 if(image.length() >= 30){
                     ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
-                    else ((NodeMenu) menu).setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
+                        System.err.println("MenuBar image " + image + " does not exist");
+                    else
+                        ((NodeMenu) menu).setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
             }
             if(toolTip != null && !toolTip.isBlank()) ((NodeMenu) menu).setToolTip(toolTip);
         }
-    
+        
         if(disableIfNoDoc){
             menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
         }
@@ -625,8 +631,10 @@ public class MenuBar extends javafx.scene.control.MenuBar{
                 if(image.length() >= 30){
                     menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) System.err.println("MenuBar image " + image + " does not exist");
-                    else menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
+                        System.err.println("MenuBar image " + image + " does not exist");
+                    else
+                        menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
                 
             }

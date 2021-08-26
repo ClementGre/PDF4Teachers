@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -12,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class GalleryManager{
+public class GalleryManager {
     
     // PATHS
     
@@ -24,7 +29,8 @@ public class GalleryManager{
             try{
                 return new File(str).isDirectory();
             }catch(SecurityException e){
-                e.printStackTrace(); return false;
+                e.printStackTrace();
+                return false;
             }
         }).distinct().collect(Collectors.toList());
     }
@@ -69,7 +75,6 @@ public class GalleryManager{
     public static ArrayList<ImageData> getFavoritesImages(){
         return null;
     }
-    
     
     
     public static boolean isAcceptableImage(String name){

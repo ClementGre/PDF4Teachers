@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -22,8 +27,9 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+
 @SuppressWarnings("unchecked")
-public class UserData{
+public class UserData {
     
     @UserDataObject(path = "lastOpenDir")
     public String lastOpenDir = System.getProperty("user.home");

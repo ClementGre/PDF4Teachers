@@ -1,23 +1,24 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils.image;
 
 import fr.clementgre.pdf4teachers.Main;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.paint.Color;
 
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.util.Arrays;
 import java.util.List;
 
-public class ImageUtils{
+public class ImageUtils {
     
     public static final List<String> ACCEPTED_EXTENSIONS = Arrays.asList("png", "jpeg", "jpg", "tiff", "gif", "bmp");
     
@@ -47,7 +48,7 @@ public class ImageUtils{
     
     public static ImageView buildImage(Image image, int width, int height){
         ImageView imageView = new ImageView(image);
-    
+        
         return getImageView(width, height, imageView);
     }
     
@@ -69,7 +70,7 @@ public class ImageUtils{
         }
         
         if(effect != null) imageView.setEffect(effect);
-    
+        
         return getImageView(width, height, imageView);
     }
     public static ImageView buildImage(FileInputStream file, int width, int height){
@@ -117,7 +118,7 @@ public class ImageUtils{
         BufferedImage bImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bImg.createGraphics();
         
-        g.rotate(Math.toRadians(angle), width/2d, height/2d);
+        g.rotate(Math.toRadians(angle), width / 2d, height / 2d);
         
         if(angle == 90 || angle == -90 || angle == 270 || angle == -270){
             // Translate the diff between width and height size

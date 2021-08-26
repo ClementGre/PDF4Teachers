@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -12,7 +17,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
-public class NodeMenu extends Menu{
+public class NodeMenu extends Menu {
     
     public final HBox node;
     public final Group group = new Group();
@@ -84,5 +89,5 @@ public class NodeMenu extends Menu{
             item.hide();
         }
     }
-
+    
 }

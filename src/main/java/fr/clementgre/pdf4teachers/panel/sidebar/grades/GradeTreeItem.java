@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -33,7 +38,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-public class GradeTreeItem extends TreeItem<String>{
+public class GradeTreeItem extends TreeItem<String> {
     
     private GradeElement core;
     
@@ -230,7 +235,7 @@ public class GradeTreeItem extends TreeItem<String>{
             gradeField.requestFocus();
             MainWindow.gradeTab.treeView.getSelectionModel().select(this);
         });
-    
+        
         if(!hasSubGrade()){
             pane.setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
@@ -240,7 +245,7 @@ public class GradeTreeItem extends TreeItem<String>{
                     ContextMenu contextMenu = new ContextMenu();
                     contextMenu.getItems().addAll(getChooseValueMenuItemsAuto());
                     NodeMenuItem.setupMenu(contextMenu);
-            
+                    
                     contextMenu.show(Main.window, e.getScreenX(), e.getScreenY());
                 }
             });
@@ -268,25 +273,25 @@ public class GradeTreeItem extends TreeItem<String>{
         double finalInterval = 100;
         
         for(double interval : intervalsToTest){
-            int divisions = (int) ((max-min) / interval);
+            int divisions = (int) ((max - min) / interval);
             if(divisions < maxDivisions){
                 finalInterval = interval;
                 break;
             }
         }
-    
+        
         double actualValue = min;
         while(actualValue < max){
-            items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue+finalInterval), deep+1));
+            items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue + finalInterval), deep + 1));
             actualValue += finalInterval;
         }
-        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, deep+1));
+        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, deep + 1));
         
         return items;
     }
     private MenuItem getChooseValueMenuItem(double value, double min, double max, int deep){
         
-        if(max-min > .25 && deep < 3){
+        if(max - min > .25 && deep < 3){
             NodeMenu menuItem = new NodeMenu(new HBox());
             menuItem.setName(MainWindow.gradesDigFormat.format(value));
             menuItem.setOnAction(e -> {
@@ -314,7 +319,7 @@ public class GradeTreeItem extends TreeItem<String>{
             System.err.println("Error: trying to update a GradeTreeItem which should be deleted (core == null).");
             return;
         }
-    
+        
         // Remove listener on old cell
         if(this.cell != null){
             this.cell.selectedProperty().removeListener(selectedListener);
@@ -412,21 +417,21 @@ public class GradeTreeItem extends TreeItem<String>{
             boolean hasValue = false;
             double value = 0;
             double total = 0;
-    
+            
             for(int i = 0; i < getChildren().size(); i++){
                 GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
-        
+                
                 // Don't count the "Bonus" children in the Total
                 if(!children.getCore().isBonus()){
                     total += children.getCore().getTotal(); // count total
                 }
-        
+                
                 if(children.getCore().getValue() >= 0){
                     hasValue = true;
                     value += children.getCore().getValue();
                 }
             }
-    
+            
             if(hasValue){
                 if(!core.isFilled() && previousPage != -1){
                     if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
@@ -434,7 +439,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 }
                 core.setValue(value);
             }else core.setValue(-1);
-    
+            
             core.setTotal(total);
         }
         
@@ -535,7 +540,7 @@ public class GradeTreeItem extends TreeItem<String>{
     
     public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
-    
+        
         // Remove all listeners
         name.textProperty().unbind();
         value.textProperty().unbind();
@@ -573,7 +578,7 @@ public class GradeTreeItem extends TreeItem<String>{
     }
     
     
-    public enum FieldType{
+    public enum FieldType {
         NAME,
         GRADE,
         TOTAL
@@ -606,11 +611,11 @@ public class GradeTreeItem extends TreeItem<String>{
         });
         ScratchText meter = new ScratchText();
         meter.setFont(AppFontsLoader.getFontPath(AppFontsLoader.OPEN_SANS, 13));
-
+        
         field.textProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.contains("\n")){ // Enter : Switch to the next grade
                 if(pageContextMenu != null) pageContextMenu.hide();
-
+                
                 GradeTreeItem afterItem = getAfterChildItem();
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
                 if(afterItem != null) Platform.runLater(() -> {
@@ -623,7 +628,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 field.setText(oldValue);
                 return;
             }
-
+            
             if(newValue.contains("\u0009")){ // TAB
                 if(core.getTotal() == 0){
                     switch(type){
@@ -639,7 +644,7 @@ public class GradeTreeItem extends TreeItem<String>{
                 field.setText(oldValue);
                 return;
             }
-
+            
             String newText;
             if(type == FieldType.NAME){
                 newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
@@ -649,24 +654,26 @@ public class GradeTreeItem extends TreeItem<String>{
                 String[] splitted = newText.split("[.,]");
                 String integers = splitted.length >= 1 ? splitted[0] : "0";
                 String decimals = splitted.length >= 2 ? splitted[1] : "";
-
+                
                 if(integers.length() > 4){
-                    if(splitted.length >= 2) newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
+                    if(splitted.length >= 2)
+                        newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
                     else newText = integers.substring(0, 4);
-                }if(decimals.length() > 3){
+                }
+                if(decimals.length() > 3){
                     newText = integers + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + splitted[1].substring(0, 3);
                 }
             }
-
+            
             field.setText(newText);
             meter.setText(newText);
             field.setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             field.setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-
+            
             if(type == FieldType.GRADE && field != gradeField){
                 gradeField.setText(newText);
             }
-
+            
             switch(type){
                 case NAME:
                     core.setName(newText);
@@ -692,7 +699,7 @@ public class GradeTreeItem extends TreeItem<String>{
                     }
                     break;
             }
-
+            
         });
         
         return field;

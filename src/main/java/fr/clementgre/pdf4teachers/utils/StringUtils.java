@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.utils;
 
 import javafx.scene.control.TextArea;
@@ -6,7 +11,7 @@ import name.fraser.neil.plaintext.diff_match_patch;
 import java.util.*;
 import java.util.Map.Entry;
 
-public class StringUtils{
+public class StringUtils {
     
     public static String removeBefore(String string, String rejex){
         if(rejex.isEmpty()) return string;
@@ -232,21 +237,20 @@ public class StringUtils{
         }
     }
     
-    public static <T> boolean contains(final T[] array, final T v) {
-        if (v == null) {
-            for (final T e : array)
-                if (e == null)
+    public static <T> boolean contains(final T[] array, final T v){
+        if(v == null){
+            for(final T e : array)
+                if(e == null)
                     return true;
-        }
-        else {
-            for (final T e : array)
-                if (e == v || v.equals(e))
+        }else{
+            for(final T e : array)
+                if(e == v || v.equals(e))
                     return true;
         }
         
         return false;
     }
-    public static boolean endsIn(final String[] array, String v, boolean kase) {
+    public static boolean endsIn(final String[] array, String v, boolean kase){
         if(!kase) v = v.toLowerCase();
         for(final String e : array){
             if(kase){
@@ -258,7 +262,7 @@ public class StringUtils{
         }
         return false;
     }
-    public static  boolean contains(final String[] array, final String v, boolean kase){
+    public static boolean contains(final String[] array, final String v, boolean kase){
         for(final String e : array){
             if(kase){
                 if(e != null && e.endsWith(v)) return true;
@@ -277,7 +281,7 @@ public class StringUtils{
             }else{
                 if(e != null && e.toLowerCase().startsWith(v)) return true;
             }
-        
+            
         }
         return false;
     }

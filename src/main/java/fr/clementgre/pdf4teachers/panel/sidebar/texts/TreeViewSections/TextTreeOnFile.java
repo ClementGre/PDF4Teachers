@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
@@ -6,7 +11,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 
-public class TextTreeOnFile extends TextTreeSection{
+public class TextTreeOnFile extends TextTreeSection {
     
     public TextTreeOnFile(){
         super(TR.tr("textTab.onDocumentList.name"), ONFILE_TYPE);

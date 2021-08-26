@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -13,7 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TextElementsData extends SimpleConfig{
+public class TextElementsData extends SimpleConfig {
     
     public TextElementsData(){
         super("textelements");
@@ -30,14 +35,14 @@ public class TextElementsData extends SimpleConfig{
                 }
                 
             }
-        
+            
             for(Object data : config.getList("lasts")){
                 if(data instanceof Map){
                     TextTreeItem item = TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE);
                     if(!item.getText().isBlank()) MainWindow.textTab.treeView.lastsSection.getChildren().add(item);
                 }
             }
-        
+            
             for(Map.Entry<String, Object> list : config.getSection("lists").entrySet()){
                 if(list.getValue() instanceof List){
                     ArrayList<TextListItem> listTexts = new ArrayList<>();
@@ -48,7 +53,7 @@ public class TextElementsData extends SimpleConfig{
                     TextTreeSection.lists.put(list.getKey(), listTexts);
                 }
             }
-        
+            
             MainWindow.textTab.treeView.favoritesSection.sortManager.simulateCall();
             MainWindow.textTab.treeView.lastsSection.sortManager.simulateCall();
             ListsManager.setupMenus();
@@ -66,19 +71,19 @@ public class TextElementsData extends SimpleConfig{
         for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
             if(item instanceof TextTreeItem) favorites.add(((TextTreeItem) item).getYAMLData());
         }
-    
+        
         ArrayList<Object> lasts = new ArrayList<>();
         for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
             if(item instanceof TextTreeItem) lasts.add(((TextTreeItem) item).getYAMLData());
         }
-    
+        
         LinkedHashMap<String, Object> lists = new LinkedHashMap<>();
         for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
             List<Object> listTexts = new ArrayList<>();
             for(TextListItem item : list.getValue()) listTexts.add(item.getYAMLData());
             lists.put(list.getKey(), listTexts);
         }
-    
+        
         config.set("favorites", favorites);
         config.set("lasts", lasts);
         config.set("lists", lists);

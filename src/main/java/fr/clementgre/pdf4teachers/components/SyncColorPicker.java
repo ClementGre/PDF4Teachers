@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.utils.interfaces.NonLeakingListener;
@@ -10,7 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class SyncColorPicker extends ColorPicker{
+public class SyncColorPicker extends ColorPicker {
     
     private static final ArrayList<WeakReference<ColorPicker>> colorPickers = new ArrayList<>();
     private static ArrayList<Color> customColors = new ArrayList<>();
@@ -48,7 +53,7 @@ public class SyncColorPicker extends ColorPicker{
             }
             return Color.BLACK;
         }).collect(Collectors.toCollection(ArrayList::new));
-    
+        
         updateColorPickersFavorites();
     }
     

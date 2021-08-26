@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -5,16 +10,15 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
-import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;

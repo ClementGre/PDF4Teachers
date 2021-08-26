@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import javafx.beans.property.BooleanProperty;
@@ -5,7 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.ToggleSwitch;
 
-public class BooleanSetting extends Setting<Boolean>{
+public class BooleanSetting extends Setting<Boolean> {
     
     private final BooleanProperty value;
     

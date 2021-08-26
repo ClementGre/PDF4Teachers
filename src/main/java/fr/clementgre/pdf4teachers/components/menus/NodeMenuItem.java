@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components.menus;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -14,7 +19,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
 
-public class NodeMenuItem extends CustomMenuItem{
+public class NodeMenuItem extends CustomMenuItem {
     
     public final HBox node;
     public final Group group = new Group();
@@ -71,7 +76,7 @@ public class NodeMenuItem extends CustomMenuItem{
     
     public void setFalseLeftData(){
         Region spacer = new Region();
-        spacer.setPrefWidth(16+5);
+        spacer.setPrefWidth(16 + 5);
         getNode().getChildren().set(0, spacer);
     }
     
@@ -117,7 +122,7 @@ public class NodeMenuItem extends CustomMenuItem{
     
     public static void setupMenu(Menu menu){
         
-        menu.addEventHandler(Menu.ON_SHOWN, new EventHandler<>(){
+        menu.addEventHandler(Menu.ON_SHOWN, new EventHandler<>() {
             @Override
             public void handle(Event event){
                 setupMenuNow(menu);
@@ -149,7 +154,7 @@ public class NodeMenuItem extends CustomMenuItem{
                 if(nodeItem.getNode().getWidth() > itemMaxWidth)
                     itemMaxWidth = nodeItem.getNode().getWidth();
             }else if(item instanceof Menu){
-    
+                
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
                     if(arrow instanceof Region region){
@@ -157,18 +162,18 @@ public class NodeMenuItem extends CustomMenuItem{
                         region.setScaleY(Main.settings.zoom.getValue());
                     }
                 }
-    
+                
                 if(item instanceof NodeMenu nodeItem){
                     if(nodeItem.getNode().getWidth() > menuMaxWidth)
                         menuMaxWidth = nodeItem.getNode().getWidth();
-                    extra = (int) (50*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                    extra = (int) (50 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 }else{
-                    extra = (int) (25*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                    extra = (int) (25 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 }
                 
             }
         }
-        double width = Math.max(itemMaxWidth, menuMaxWidth+extra);
+        double width = Math.max(itemMaxWidth, menuMaxWidth + extra);
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
                 nodeItem.getNode().setPrefWidth(width);
@@ -191,8 +196,8 @@ public class NodeMenuItem extends CustomMenuItem{
                 if(nodeItem.getNode().getWidth() > maxWidth)
                     maxWidth = nodeItem.getNode().getWidth();
             }else if(item instanceof Menu){
-                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
-            
+                extra = (int) (20 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");
                     if(arrow instanceof Region region){
@@ -216,7 +221,7 @@ public class NodeMenuItem extends CustomMenuItem{
                 if(nodeItem.getNode().getWidth() > maxWidth)
                     maxWidth = nodeItem.getNode().getWidth();
             }else if(item instanceof Menu){
-                extra = (int) (20*Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
+                extra = (int) (20 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 
                 if(item.getStyleableNode() != null){
                     Node arrow = item.getStyleableNode().lookup(".right-container > .arrow");

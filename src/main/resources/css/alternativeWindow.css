@@ -1,14 +1,21 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 /* HEADER */
-.header{
+.header {
 
 }
-.header .headerText{
+
+.header .headerText {
     -fx-font: 35 "Open Sans";
     -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
 }
-.header .subHeaderText{
+
+.header .subHeaderText {
     -fx-font: 16 "Lato";
     -fx-font-weight: 700;
     -fx-wrap-text: true;
@@ -16,32 +23,36 @@
 }
 
 /* CONTENT */
-.rootPane{
+.rootPane {
     -fx-padding: 15;
 }
-.rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner, .tooltip{
+
+.rootPane .label, .rootPane .text, .rootPane .check-box, .rootPane .text-field, .rootPane .tab-header-area, .rootPane .button, .rootPane .spinner, .tooltip {
     -fx-font: 14 "Lato";
     -fx-font-weight: 400;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
 }
-.rootPane .check-box > .box{
+
+.rootPane .check-box > .box {
     -fx-pref-width: 20px;
     -fx-pref-height: 20px;
 }
 
 /* BUTTONS */
-.buttonBoxContainer{
+.buttonBoxContainer {
     -fx-border-width: 1 0 0 0;
     -fx-border-color: grey;
     -fx-padding: 10;
     -fx-alignment: CENTER_RIGHT;
 }
-.buttonBox{
+
+.buttonBox {
     -fx-spacing: 10;
     -fx-alignment: CENTER_RIGHT;
 }
-.buttonBox .button{
+
+.buttonBox .button {
     -fx-font: 14 "Lato";
     -fx-font-weight: 400;
     -fx-font-smoothing-type: gray;

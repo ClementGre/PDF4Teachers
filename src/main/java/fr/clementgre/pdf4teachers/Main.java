@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2019-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers;
 
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
@@ -29,7 +34,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Main extends Application{
+public class Main extends Application {
     
     public static MainWindow window;
     
@@ -41,13 +46,14 @@ public class Main extends Application{
     public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
     public static final String APP_NAME = "PDF4Teachers";
     
-    // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.1
+    // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1
+    
     public static final int VERSION_ID = 2;
-    public static final String VERSION = "1.3.0";
+    public static final String VERSION = "1.3.1-sn1";
     public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = false;
-    public static final boolean COPY_CONSOLE = true;
-    public static final boolean TRANSLATIONS_IN_CODE = false;
+    public static final boolean DEBUG = true;
+    public static final boolean COPY_CONSOLE = false;
+    public static final boolean TRANSLATIONS_IN_CODE = true;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -92,18 +98,18 @@ public class Main extends Application{
         }
         source.delete();
     }
-    private void copyFileUsingStream(File source, File dest) throws IOException {
+    private void copyFileUsingStream(File source, File dest) throws IOException{
         InputStream is = null;
         OutputStream os = null;
-        try {
+        try{
             is = new FileInputStream(source);
             os = new FileOutputStream(dest);
             byte[] buffer = new byte[1024];
             int length;
-            while ((length = is.read(buffer)) > 0) {
+            while((length = is.read(buffer)) > 0){
                 os.write(buffer, 0, length);
             }
-        } finally {
+        }finally{
             is.close();
             os.close();
         }
@@ -117,7 +123,7 @@ public class Main extends Application{
         else if(isOSX()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
             systemShortcut = "Cmd";
-    
+            
             // OSX PDF4Teachers directory moved
             try{
                 if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()){
@@ -182,7 +188,7 @@ public class Main extends Application{
         }
         return true;
     }
-
+    
     public static void showLanguageWindow(boolean firstStartBehaviour){
         LanguageWindow.checkUpdatesAndShow(value -> {
             if(!value.isEmpty() && !value.equals(Main.settings.language.getValue())){
@@ -202,11 +208,11 @@ public class Main extends Application{
             }
         });
     }
-
+    
     public static void showAboutWindow(){
         try{
             FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/fxml/AboutWindow.fxml")));
-        }catch(IOException e){ e.printStackTrace(); }
+        }catch(IOException e){e.printStackTrace();}
     }
     
     public static boolean licenceAsk(){

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces.windows.log;
 
 import fr.clementgre.pdf4teachers.Main;
@@ -20,7 +25,7 @@ import jfxtras.styles.jmetro.Style;
 
 import java.io.PrintStream;
 
-public class LogWindow extends Stage{
+public class LogWindow extends Stage {
     
     public static StringBuffer logs = new StringBuffer();
     
@@ -53,7 +58,7 @@ public class LogWindow extends Stage{
         pane.minHeightProperty().bind(text.heightProperty());
         root.getChildren().add(scrollPane);
         setupUi(pane);
-    
+        
         Main.window.centerWindowIntoMe(this);
         show();
         Main.window.centerWindowIntoMe(this);
@@ -69,12 +74,12 @@ public class LogWindow extends Stage{
         needToStopUpdater = false;
         try{
             Thread.sleep(200);
-        }catch(InterruptedException e){ e.printStackTrace(); }
+        }catch(InterruptedException e){e.printStackTrace();}
         while(!needToStopUpdater){
             Platform.runLater(() -> text.setText(logs.toString()));
             try{
                 Thread.sleep(200);
-            }catch(InterruptedException e){ e.printStackTrace(); }
+            }catch(InterruptedException e){e.printStackTrace();}
         }
     });
     
@@ -87,7 +92,7 @@ public class LogWindow extends Stage{
         
         root.getChildren().add(text);
         root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
-
+        
         updater.start();
     }
     

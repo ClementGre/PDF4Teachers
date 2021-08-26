@@ -1,9 +1,14 @@
+/*
+ * Copyright (c) 2020-2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.scene.layout.HBox;
 
-public abstract class Setting<T>{
+public abstract class Setting<T> {
     
     private String path;
     String icon;
