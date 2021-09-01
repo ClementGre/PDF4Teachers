@@ -27,7 +27,7 @@ import javafx.scene.paint.Color;
 import java.util.LinkedHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public abstract class Element extends Region{
+public abstract class Element extends Region {
     
     public static BorderStroke STROKE_DEFAULT = new BorderStroke(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0),
             BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, new BorderWidths(1.5));
@@ -76,25 +76,25 @@ public abstract class Element extends Region{
         setCursor(PlatformUtils.CURSOR_MOVE);
         
         //////////////////////////// EVENTS ///////////////////////////////////
-    
+        
         MainWindow.mainScreen.selectedProperty().addListener(mainScreenSelectedListener);
         if(setupEvents){
-    
+            
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
                 wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
                 if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
                 dragAlreadyDetected = false;
-    
+                
                 if(e.getClickCount() == 1){
                     lastClickSelected.set(MainWindow.mainScreen.getSelected() == this);
-    
+                    
                     shiftX = (int) e.getX();
                     shiftY = (int) e.getY();
                     menu.hide();
                     select();
-    
+                    
                     if(e.getButton() == MouseButton.SECONDARY){
                         menu.show(getPage(), e.getScreenX(), e.getScreenY());
                     }
@@ -129,18 +129,18 @@ public abstract class Element extends Region{
                 
                 double itemX = getLayoutX() + e.getX() - shiftX;
                 double itemY = getLayoutY() + e.getY() - shiftY;
-
+                
                 checkLocation(itemX, itemY, true);
-
+                
                 PageRenderer newPage = MainWindow.mainScreen.document.getPreciseMouseCurrentPage();
                 if(newPage != null){
                     if(newPage.getPage() != getPageNumber()){
                         MainWindow.mainScreen.setSelected(null);
-
+                        
                         switchPage(newPage.getPage());
                         itemY = newPage.getPreciseMouseY() - shiftY;
                         checkLocation(itemX, itemY, true);
-
+                        
                         MainWindow.mainScreen.setSelected(this);
                     }
                 }
@@ -161,18 +161,18 @@ public abstract class Element extends Region{
         final ClipboardContent clipboardContent = new ClipboardContent();
         clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);
         elementClipboard = element;
-    
+        
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         clipboard.setContent(clipboardContent);
     }
     public static boolean paste(){
         if(!MainWindow.mainScreen.hasDocument(false)) return false;
         final Clipboard clipboard = Clipboard.getSystemClipboard();
-    
+        
         if(ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && elementClipboard != null){
             if(elementClipboard.getPage() != null){
                 Element element = elementClipboard.clone();
-            
+                
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
                 element.setPage(page);
                 page.addElement(element, true, UType.UNDO);
@@ -214,24 +214,24 @@ public abstract class Element extends Region{
         checkLocation(itemX, itemY, getWidth(), getHeight(), allowSwitchPage);
     }
     public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
-    
+        
         if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
         if(getPageNumber() == MainWindow.mainScreen.document.totalPages - 1 || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
-
+        
         if(itemX < 0) itemX = 0;
         if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
-    
+        
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));
-
+        
         if(this instanceof GraphicElement){
-
+            
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
                 ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
-
+            
             if(getWidth() != width){
                 int value = getPage().toGridX(width);
                 ((GraphicElement) this).setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
@@ -302,10 +302,10 @@ public abstract class Element extends Region{
     // GETTERS AND SETTERS
     
     public abstract String getElementName(boolean plural);
-    public abstract float getAlwaysHeight();
+    public abstract float getBoundsHeight();
     
     public int getRealHeight(){
-        return getPage().toGridY(getAlwaysHeight());
+        return getPage().toGridY(getBoundsHeight());
     }
     public int getRealWidth(){
         return getPage().toGridY(getWidth());

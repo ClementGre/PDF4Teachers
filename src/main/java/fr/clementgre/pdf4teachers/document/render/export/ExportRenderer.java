@@ -41,8 +41,9 @@ public class ExportRenderer {
         new PDStream(doc, new FileInputStream(pdfFile), COSName.FLATE_DECODE);
         doc.getDocumentInformation().setModificationDate(Calendar.getInstance());
         
-        TextElementRenderer textElementRenderer = new TextElementRenderer(doc);
-        GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc);
+        TextRenderer textRenderer = new TextRenderer(doc);
+        TextElementRenderer textElementRenderer = new TextElementRenderer(doc, textRenderer);
+        GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc, textRenderer);
         ImageElementRenderer imageElementRenderer = new ImageElementRenderer(doc, imagesDPI);
         VectorElementRenderer vectorElementRenderer = new VectorElementRenderer(doc);
         
@@ -77,6 +78,7 @@ public class ExportRenderer {
                 case 180 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
                 case 270 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
             }
+            PageSpecs pageSpecs = new PageSpecs(pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
             
             for(Element element : elements){
                 
@@ -84,10 +86,10 @@ public class ExportRenderer {
                 
                 if(element instanceof TextElement tElement){
                     if(textElements)
-                        textElementRenderer.renderElement(tElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                        textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs);
                 }else if(element instanceof GradeElement gElement){
                     if(gradesElements)
-                        gradeElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                        gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs);
                 }else if(element instanceof ImageElement gElement){
                     if(drawElements)
                         imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);

@@ -50,7 +50,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
-public class TextElement extends Element{
+public class TextElement extends Element {
     
     private final ScratchText text = new ScratchText();
     private final ImageView image = new ImageView();
@@ -82,7 +82,7 @@ public class TextElement extends Element{
         this.text.textProperty().addListener((observable, oldValue, newValue) -> {
             updateLaTeX();
             this.text.setUnderline(isURL());
-    
+            
             if(isSelected() && !MainWindow.textTab.txtArea.getText().equals(newValue)){ // Edit textArea from Element
                 StringUtils.editTextArea(MainWindow.textTab.txtArea, newValue);
                 return;
@@ -197,9 +197,10 @@ public class TextElement extends Element{
         String text = Config.getString(data, "text");
         
         Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
-    
+        
         if(upscaleGrid){ // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
-            x *= 100; y *= 100;
+            x *= 100;
+            y *= 100;
         }
         
         return new TextElement(x, y, page, hasPage, text, color, font);
@@ -212,11 +213,11 @@ public class TextElement extends Element{
     }
     
     @Override
-    public float getAlwaysHeight(){
+    public float getBoundsHeight(){
         return (float) text.getLayoutBounds().getHeight();
     }
     
-    public float getAlwaysWidth(){
+    public float getBoundsWidth(){
         return (float) text.getLayoutBounds().getWidth();
     }
     

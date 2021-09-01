@@ -445,8 +445,12 @@ public class GradeElement extends Element {
     }
     
     @Override
-    public float getAlwaysHeight(){
+    public float getBoundsHeight(){
         return (float) text.getLayoutBounds().getHeight();
+    }
+    
+    public float getBoundsWidth(){
+        return (float) text.getLayoutBounds().getWidth();
     }
     
     // ELEMENT DATA GETTERS AND SETTERS
@@ -568,6 +572,13 @@ public class GradeElement extends Element {
     
     public Color getColor(){
         return (Color) text.getFill();
+    }
+    
+    public java.awt.Color getAwtColor(){
+        return new java.awt.Color((float) getColor().getRed(),
+                (float) getColor().getGreen(),
+                (float) getColor().getBlue(),
+                (float) getColor().getOpacity());
     }
     
     public void setFont(Font font){
