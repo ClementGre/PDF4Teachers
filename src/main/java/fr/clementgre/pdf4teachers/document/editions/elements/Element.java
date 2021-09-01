@@ -337,6 +337,15 @@ public abstract class Element extends Region {
         this.realY.set(y);
     }
     
+    // compare pages and coordinates
+    public int compareTo(Element element){
+        if(getPageNumber() != element.getPageNumber()){
+            return getPageNumber() - element.getPageNumber();
+        }else{
+            return getRealY() - element.getRealY();
+        }
+    }
+    
     // PAGE GETTERS AND SETTERS
     
     public PageRenderer getPage(){

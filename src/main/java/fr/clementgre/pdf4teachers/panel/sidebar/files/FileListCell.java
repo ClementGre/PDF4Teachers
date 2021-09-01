@@ -97,14 +97,14 @@ public class FileListCell extends ListCell<File> {
                 double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
                 
                 if(elementsCount.length > 0){ // has edit file
-                    String grade = (elementsCount[4] == -1 ? "?" : MainWindow.gradesDigFormat.format(elementsCount[4])) + "/" + MainWindow.gradesDigFormat.format(elementsCount[5]);
+                    String grade = (elementsCount[4] == -1 ? "?" : MainWindow.twoDigFormat.format(elementsCount[4])) + "/" + MainWindow.twoDigFormat.format(elementsCount[5]);
                     
                     if(elementsCount[0] > 0){ // Has Elements
                         
                         name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
                         
-                        path.setText(path.getText() + " | " + MainWindow.fourDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade);
-                        setTooltip(PaneUtils.genToolTip(MainWindow.fourDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade + "\n" + MainWindow.fourDigFormat.format(elementsCount[1]) + " " + TR.tr("elements.name.texts") + "\n" + MainWindow.fourDigFormat.format(elementsCount[2]) + "/" + MainWindow.fourDigFormat.format(elementsCount[6]) + " " + TR.tr("elements.name.grades") + "\n" + MainWindow.fourDigFormat.format(elementsCount[3]) + " " + TR.tr("elements.name.paints")));
+                        path.setText(path.getText() + " | " + MainWindow.twoDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade);
+                        setTooltip(PaneUtils.genToolTip(MainWindow.twoDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade + "\n" + MainWindow.twoDigFormat.format(elementsCount[1]) + " " + TR.tr("elements.name.texts") + "\n" + MainWindow.twoDigFormat.format(elementsCount[2]) + "/" + MainWindow.twoDigFormat.format(elementsCount[6]) + " " + TR.tr("elements.name.grades") + "\n" + MainWindow.fourDigFormat.format(elementsCount[3]) + " " + TR.tr("elements.name.paints")));
                         
                         if(elementsCount[2] == elementsCount[6]){ // Edition completed : Green check
                             if(check.getImage() == null)

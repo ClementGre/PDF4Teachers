@@ -472,4 +472,10 @@ public class GradeTreeItem extends TreeItem<String> {
     public GradeTreeItemPanel getPanel(){
         return panel;
     }
+    public GradeTreeItemPanel getOutOfPanel(){
+        return outOfPanel;
+    }
+    public boolean hasOutOfPanel(){
+        return outOfPanel != null;
+    }
 }

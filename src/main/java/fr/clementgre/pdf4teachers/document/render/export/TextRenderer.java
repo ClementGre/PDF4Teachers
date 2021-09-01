@@ -30,8 +30,7 @@ public class TextRenderer {
     }
     
     public static record TextSpecs(float boundsHeight, float boundsWidth, float bottomMargin, float baseLineY,
-                                   float realX, float realY,
-                                   String text) {}
+                                   float realX, float realY, String text) {}
     
     public void drawText(PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
         

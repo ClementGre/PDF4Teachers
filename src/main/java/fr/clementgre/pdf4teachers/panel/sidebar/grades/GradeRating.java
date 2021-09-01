@@ -47,6 +47,10 @@ public class GradeRating {
         return total == gradeRating.total && name.equals(gradeRating.name) && index == gradeRating.index && parentPath.equals(gradeRating.parentPath);
     }
     
+    public boolean isRoot(){
+        return parentPath.isEmpty();
+    }
+    
     public boolean isEligibleForAlwaysVisible(){
         return originalValue != -1 || originalAlwaysVisible;
     }

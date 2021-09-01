@@ -159,7 +159,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
                     try{
                         treeItem.getCore().setOutOfTotal(Double.parseDouble(newText.replaceAll(Pattern.quote(","), ".")));
                     }catch(NumberFormatException e){
-                        treeItem.getCore().setOutOfTotal(0);
+                        treeItem.getCore().setOutOfTotal(-1);
                     }
                 }
             }

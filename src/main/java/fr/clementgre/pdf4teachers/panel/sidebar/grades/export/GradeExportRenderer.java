@@ -18,8 +18,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GradeExportRenderer {
     
@@ -30,8 +31,6 @@ public class GradeExportRenderer {
     int exportTier;
     
     int exported = 0;
-    boolean mkdirs = true;
-    boolean erase = false;
     
     GradeExportWindow.ExportPane pane;
     AlreadyExistDialogManager alreadyExistDialogManager;
@@ -105,6 +104,10 @@ public class GradeExportRenderer {
         text += TR.tr("gradeTab.gradeExportWindow.csv.titles.parts");
         
         for(GradeRating rating : gradeScale){
+            if(rating.isRoot() && rating.outOfTotal > 0){
+                if(includeGradeScale) text += ";" + rating.name + " /" + rating.outOfTotal;
+                else text += ";" + rating.name + " (/" + rating.outOfTotal + ")";
+            }
             text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
         }
         text += "\n";
@@ -115,6 +118,9 @@ public class GradeExportRenderer {
         text += TR.tr("gradeTab.gradeExportWindow.csv.titles.gradeScale");
         
         for(GradeRating rating : gradeScale){
+            if(rating.isRoot() && rating.outOfTotal > 0){
+                text += ";" + rating.outOfTotal;
+            }
             text += ";" + rating.total;
         }
         text += "\n";
@@ -130,6 +136,10 @@ public class GradeExportRenderer {
         text += TR.tr("gradeTab.gradeExportWindow.csv.titles.average");
         
         for(GradeRating rating : gradeScale){
+            if(rating.isRoot() && rating.outOfTotal > 0){
+                text += ";=" + TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
+                x++;
+            }
             text += ";=" + TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
             x++;
         }
@@ -144,70 +154,96 @@ public class GradeExportRenderer {
             text += StringUtils.removeAfterLastRegex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
         }
         
-        for(GradeElement grade : file.grades){
-            text += ";" + (grade.getValue() == -1 ? "" : grade.getValue());
+        boolean hasOutOfColumn = false;
+        for(GradeElement rating : file.grades){
+            if(rating.isRoot() && rating.getOutOfTotal() > 0){
+                hasOutOfColumn = true;
+                text += ";" + (rating.getValue() == -1 ? "" :
+                        MainWindow.twoDigFormat.format(rating.getValue() / rating.getTotal() * rating.getOutOfTotal())
+                                .replaceAll(",", "."));
+            }
+            text += ";" + (rating.getValue() == -1 ? "" : rating.getValue());
         }
         text += "\n";
         
         if(pane.settingsWithTxtElements.isSelected()){
-            generateCommentsLines(file);
+            generateCommentsLines(file, hasOutOfColumn);
         }
     }
     
-    public void generateCommentsLines(ExportFile file){
+    
+    public void generateCommentsLines(ExportFile file, boolean hasOutOfColumn){
         
         text += TR.tr("gradeTab.gradeExportWindow.csv.titles.comments");
         
         if(file.comments.size() >= 1){
-            ArrayList<String> lines = new ArrayList<>();
             
-            file.comments.sort((element1, element2) ->
-                    (element2.getPageNumber() - 9999 + "" + (element2.getRealY() - 9999) + "" + (element2.getRealX() - 9999))
-                            .compareToIgnoreCase(element1.getPageNumber() - 9999 + "" + (element1.getRealY() - 9999) + "" + (element1.getRealX() - 9999)));
+            // Sort text elements (top to bottom)
+            file.comments.sort((e1, e2) -> e2.compareTo(e1));
             
-            for(int i = 1; i < file.grades.size(); i++){
-                GradeElement grade = file.grades.get(i);
-                int maxPage = grade.getPageNumber();
-                int maxY = grade.getRealY();
+            // Sort grades (bottom to top) and put them in a HashMap
+            LinkedHashMap<GradeElement, ArrayList<String>> matches = new LinkedHashMap<>();
+            for(GradeElement grade : file.grades.stream().sorted((e1, e2) -> e2.compareTo(e1)).toList()){
+                matches.put(grade, new ArrayList<>());
+            }
+            
+            GradeElement lastGrade = null;
+            for(Map.Entry<GradeElement, ArrayList<String>> match : matches.entrySet()){
+                lastGrade = match.getKey();
+                ArrayList<String> comments = match.getValue();
+                int minPage = lastGrade.getPageNumber();
+                int minY = lastGrade.getRealY();
                 
+                // For each element of this document, if they are after the grade, add them to the ArrayList
                 TextElement element = file.comments.size() > 0 ? file.comments.get(0) : null;
-                int k = -1;
                 while(element != null){
-                    
-                    if(element.getPageNumber() == maxPage && element.getRealY() < maxY || element.getPageNumber() < maxPage){
-                        k++;
-                        if(lines.size() > k){
-                            lines.set(k, lines.get(k) + ";" + element.getText().replaceAll(Pattern.quote("\n"), " "));
-                        }else{
-                            lines.add(";" + element.getText().replaceAll(Pattern.quote("\n"), ""));
-                        }
-                        
+                    if(element.getPageNumber() == minPage && element.getRealY() > minY || element.getPageNumber() > minPage){
+                        comments.add(element.getText());
                         file.comments.remove(0);
                         element = file.comments.size() > 0 ? file.comments.get(0) : null;
                     }else{
                         element = null;
                     }
                 }
-                for(k++; k < 20; k++){
-                    if(lines.size() > k){
-                        lines.set(k, lines.get(k) + ";");
-                    }else{
-                        lines.add(";");
-                    }
-                }
             }
-            int k = 0;
-            for(TextElement element : file.comments){
-                if(lines.size() > k){
-                    lines.set(k, lines.get(k) + ";" + element.getText().replaceAll(Pattern.quote("\n"), " "));
-                }else{
-                    lines.add(";" + element.getText().replaceAll(Pattern.quote("\n"), ""));
-                }
-                k++;
+            // Adding all others comments
+            while(file.comments.size() > 0 && lastGrade != null){
+                matches.get(lastGrade).add(file.comments.get(0).getText());
+                file.comments.remove(0);
             }
             
-            for(String line : lines){
-                text += line + "\n";
+            // At this point, the HashMap is sorted by the grades position in the document.
+            // This part is sorting comments into rows (and no more columns).
+            ArrayList<String> rows = new ArrayList<>();
+            
+            for(GradeElement grade : file.grades){
+                // Foe each comment of this grade
+                int rowNumber = 0;
+                Collectors.collectingAndThen(Collectors.toList(), list -> {
+                    Collections.reverse(list);
+                    return list.stream();
+                });
+                
+                // Comments are (bottom to top) so one have to reverse the order.
+                List<String> reversedComments = matches.get(grade);
+                Collections.reverse(reversedComments);
+                
+                for(String comment : reversedComments){
+                    if(rows.size() <= rowNumber) rows.add(";" + comment);
+                    else rows.set(rowNumber, rows.get(rowNumber) + ";" + comment);
+                    rowNumber++;
+                }
+                // Fill rows until rowNumber == 100 (it is needed to add semicolon even for void cells)
+                while(rowNumber < 100){
+                    if(rows.size() <= rowNumber) rows.add(";");
+                    else rows.set(rowNumber, rows.get(rowNumber) + ";");
+                    rowNumber++;
+                }
+            }
+            
+            // Filling rows
+            for(String line : rows){
+                text += (hasOutOfColumn ? ";" : "") + line + "\n";
             }
         }else text += "\n";
     }
@@ -216,6 +252,7 @@ public class GradeExportRenderer {
     
     public boolean getFiles(){
         
+        // Add the file from which we are exporting
         try{
             ExportFile defaultFile = new ExportFile(MainWindow.mainScreen.document.getFile(), exportTier, pane.settingsWithTxtElements.isSelected());
             gradeScale = defaultFile.generateGradeScale();

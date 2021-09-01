@@ -177,7 +177,7 @@ public class GradeElement extends Element {
                 treeItem.getPanel().gradeField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined value so otherwise, this is useless
                 // This is the first registration of this action/property.
-                if(!UndoEngine.isNextUndoActionProperty(nameProperty())){
+                if(!UndoEngine.isNextUndoActionProperty(valueProperty())){
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, valueProperty(), oldValue, UType.UNDO));
                 }
             }
@@ -190,7 +190,7 @@ public class GradeElement extends Element {
             ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
             
             
-            // When this is called due to a undo action, need to update GradeTreeItem
+            // When this is called due to an undo action, need to update GradeTreeItem
             if(UndoEngine.isUndoingThings){
                 GradeTreeItem treeItem = getGradeTreeItem();
                 if(treeItem != null)
@@ -198,8 +198,26 @@ public class GradeElement extends Element {
                 
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined total so otherwise, this is useless
                 // This is the first registration of this action/property.
-                if(!UndoEngine.isNextUndoActionProperty(nameProperty())){
+                if(!UndoEngine.isNextUndoActionProperty(totalProperty())){
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, totalProperty(), oldValue, UType.UNDO));
+                }
+            }
+        });
+        
+        outOfTotalProperty().addListener((observable, oldValue, newValue) -> {
+            Edition.setUnsave("GradeOutOfTotalChanged");
+            updateText();
+            
+            // When this is called due to an undo action, need to update GradeTreeItem
+            if(UndoEngine.isUndoingThings){
+                GradeTreeItem treeItem = getGradeTreeItem();
+                if(treeItem != null && treeItem.hasOutOfPanel())
+                    treeItem.getOutOfPanel().totalField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
+                
+            }else{
+                // This is the first registration of this action/property.
+                if(!UndoEngine.isNextUndoActionProperty(outOfTotalProperty())){
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, outOfTotalProperty(), oldValue, UType.UNDO));
                 }
             }
         });
@@ -340,7 +358,10 @@ public class GradeElement extends Element {
         double total = Config.getDouble(data, "total");
         double outOfTotal = Config.getDouble(data, "outOfTotal");
         if(outOfTotal > 0){
-            value = value / total * outOfTotal;
+            if(total > 0){
+                if(value >= 0) value = value / total * outOfTotal;
+            }else value = 0;
+            
             total = outOfTotal;
         }
         
@@ -383,7 +404,7 @@ public class GradeElement extends Element {
     public void updateText(){
         String outOfText = "";
         if(isRoot() && getOutOfTotal() > 0){
-            outOfText = "\n->";
+            outOfText = "\n-=> ";
             if(getTotal() <= 0) outOfText += "0/";
             else outOfText += MainWindow.twoDigFormat.format(getValue() / getTotal() * getOutOfTotal()) + "/";
             outOfText += MainWindow.twoDigFormat.format(getOutOfTotal());

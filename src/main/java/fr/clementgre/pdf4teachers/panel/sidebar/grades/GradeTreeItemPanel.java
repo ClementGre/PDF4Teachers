@@ -31,7 +31,6 @@ public class GradeTreeItemPanel extends HBox {
     private final Text total = new Text();
     
     public Button newGrade = new Button();
-    ;
     
     public TextArea nameField;
     public TextArea gradeField;
@@ -122,7 +121,7 @@ public class GradeTreeItemPanel extends HBox {
         // CUSTOM OUT OF PANEL
         if(outOfPanel){
             getChildren().setAll(name, spacer, value, slash, totalField, newGrade);
-            totalField.setText(MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
+            totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
             Platform.runLater(() -> totalField.requestFocus());
             return;
         }

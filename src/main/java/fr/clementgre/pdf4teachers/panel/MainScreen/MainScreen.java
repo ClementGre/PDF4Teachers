@@ -21,6 +21,7 @@ import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawe
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
@@ -282,7 +283,8 @@ public class MainScreen extends Pane {
             // GrabNScroll
             if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) // Not an element
                     && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer) // Not a page filter
-                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer))){ // Not in edit pages mode
+                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer)) // Not in edit pages mode
+                    && PaintTab.draggingElement == null){ // No dragging element
                 
                 double distY = e.getY() - dragStartY;
                 double distX = e.getX() - dragStartX;

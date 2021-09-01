@@ -127,8 +127,8 @@ public class Sorter {
         elements.sort((element1, element2) -> {
             
             if(!order)
-                return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 9999)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 9999));
-            return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 9999)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 9999)) * -1;
+                return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 233900)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 233900));
+            return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 233900)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 233900)) * -1;
             
         });
         return elements;
