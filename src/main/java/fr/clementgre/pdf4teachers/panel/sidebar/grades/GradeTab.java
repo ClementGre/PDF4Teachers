@@ -127,7 +127,7 @@ public class GradeTab extends SideTab {
         }
         
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                true, -1, 0, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name, false);
+                true, -1, 0, -1, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name, false);
         
         page.addElement(current, true, UType.UNDO);
         current.centerOnCoordinatesY();
@@ -143,7 +143,7 @@ public class GradeTab extends SideTab {
         if(update) MainWindow.mainScreen.setSelected(null);
         
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                true, value, total, index, parentPath, name, false);
+                true, value, total, -1, index, parentPath, name, false);
         
         page.addElement(current, update, UType.NO_UNDO);
         current.centerOnCoordinatesY();

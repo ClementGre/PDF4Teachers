@@ -7,18 +7,13 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.components.ScratchText;
-import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
-import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -30,37 +25,30 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 public class GradeTreeItem extends TreeItem<String> {
     
+    public enum FieldType {
+        NAME,
+        GRADE,
+        TOTAL,
+        OUT_OF_TOTAL
+    }
+    
     private GradeElement core;
-    
-    // JavaFX
-    private TreeCell<String> cell;
-    public HBox pane;
-    
-    Region spacer = new Region();
-    private final Text name = new Text();
-    private final Text value = new Text();
-    private final Text slash = new Text("/");
-    private final Text total = new Text();
-    
-    private Button newGrade;
-    
-    public TextArea nameField;
-    public TextArea gradeField;
-    public TextArea totalField;
-    
     private ContextMenu pageContextMenu = null;
-    
     private boolean deleted = false;
+    
+    // UI
+    private TreeCell<String> cell;
+    private VBox root = new VBox();
+    private GradeTreeItemPanel outOfPanel;
+    private GradeTreeItemPanel panel;
     
     // EVENTS
     private EventHandler<MouseEvent> mouseEnteredEvent;
@@ -69,66 +57,28 @@ public class GradeTreeItem extends TreeItem<String> {
     public GradeTreeItem(GradeElement core){
         this.core = core;
         
-        setupGraphic();
-        setupEvents();
-    }
-    
-    public void setupEvents(){
+        if(isRoot()){
+            outOfPanel = new GradeTreeItemPanel(this, true);
+            root.getChildren().add(outOfPanel);
+        }
+        panel = new GradeTreeItemPanel(this, false);
+        root.getChildren().add(panel);
         
         selectedListener = (observable, oldValue, newValue) -> {
             if(isDeleted()) return;
             
-            if(newValue){ // Est sélectionné
-                newGrade.setVisible(true);
-                //newGrade.setStyle("-fx-background-color: #0078d7");
-                
-                nameField.setText(core.getName());
-                if(!isRoot() && getParent() != null){
-                    if(((GradeTreeItem) getParent()).isExistTwice(core.getName()))
-                        core.setName(core.getName() + "(1)");
-                }
-                
-                gradeField.setText(core.getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(core.getValue()));
-                totalField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
-                pane.getChildren().clear();
-                
-                if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-                    if(hasSubGrade()){
-                        pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
-                    }else{
-                        pane.getChildren().addAll(name, spacer, gradeField, slash, total, newGrade);
-                        Platform.runLater(() -> {
-                            if(isDeleted()) return;
-                            gradeField.requestFocus();
-                        });
-                    }
-                }else{
-                    if(hasSubGrade()){
-                        pane.getChildren().addAll(nameField, spacer, value, slash, total, newGrade);
-                        Platform.runLater(() -> {
-                            if(isDeleted()) return;
-                            nameField.requestFocus();
-                        });
-                    }else{
-                        pane.getChildren().addAll(nameField, spacer, gradeField, slash, totalField, newGrade);
-                        Platform.runLater(() -> {
-                            if(isDeleted()) return;
-                            if(name.getText().contains(TR.tr("gradeTab.gradeDefaultName"))) nameField.requestFocus();
-                            else if(total.getText().equals("0")) totalField.requestFocus();
-                            else gradeField.requestFocus();
-                        });
-                    }
-                }
+            if(newValue){ // Est selectionné
+                panel.onSelected();
+                if(outOfPanel != null) outOfPanel.onSelected();
                 
             }else if(oldValue){ // n'est plus selectionné
-                newGrade.setVisible(false);
-                //newGrade.setStyle(null);
-                pane.getChildren().setAll(name, spacer, value, slash, total, newGrade);
+                panel.onDeselected();
+                if(outOfPanel != null) outOfPanel.onDeselected();
             }
         };
         
         mouseEnteredEvent = event -> {
-            if(!cell.isFocused()) newGrade.setVisible(true);
+            if(!cell.isFocused()) panel.onMouseOver();
             if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
                 if(cell.getTooltip() == null)
                     cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
@@ -137,57 +87,51 @@ public class GradeTreeItem extends TreeItem<String> {
             }
         };
         
-        newGrade.setOnAction(event -> {
-            setExpanded(true);
-            GradeElement element = MainWindow.gradeTab.newGradeElementAuto(this);
-            element.select();
-            
-            // Update total (Fix the bug when a total is predefined (with no children))
-            makeSum(false);
-            AutoTipsManager.showByAction("gradecreate");
+    }
+    
+    public void updateCell(TreeCell<String> cell){
+        if(cell == null) return;
+        if(core == null){
+            System.err.println("Error: trying to update a GradeTreeItem which should be deleted (core == null).");
+            return;
+        }
+        
+        // Remove listener on old cell
+        if(this.cell != null){
+            this.cell.selectedProperty().removeListener(selectedListener);
+            this.cell.setOnMouseExited(null);
+            this.cell.setOnMouseEntered(null);
+            this.cell.setContextMenu(null);
+        }
+        
+        this.cell = cell;
+        cell.setGraphic(root);
+        cell.setStyle(null);
+        cell.setStyle("-fx-padding: 6 6 6 2;");
+        cell.setContextMenu(core.menu);
+        cell.setOnMouseEntered(mouseEnteredEvent);
+        cell.setOnMouseExited(e -> {
+            if(!cell.isFocused()) panel.onMouseOut();
         });
+        
+        cell.selectedProperty().addListener(selectedListener);
+        
+        if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
+            if(cell.getTooltip() == null)
+                cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
+        }else if(cell.getTooltip() != null){
+            cell.setTooltip(null);
+        }
+        
+        // DEBUG
+        if(Main.DEBUG)
+            cell.setTooltip(PaneUtils.genToolTip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
         
     }
     
-    public void setupGraphic(){
-        
-        pane = new HBox();
-        pane.setAlignment(Pos.CENTER);
-        pane.setPrefHeight(18);
-        pane.setStyle("-fx-padding: -6 -6 -6 -5;"); // top - right - bottom - left
-        
-        // TEXTS
-        
-        HBox.setMargin(name, new Insets(0, 10, 0, 5));
-        name.textProperty().bind(core.nameProperty());
-        
-        HBox.setMargin(value, new Insets(0, 0, 0, 5));
-        value.textProperty().bind(Bindings.createStringBinding(() -> (core.getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(core.getValue())), core.valueProperty()));
-        
-        HBox.setMargin(total, new Insets(0, 5, 0, 0));
-        total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.gradesDigFormat.format(core.getTotal()), core.totalProperty()));
-        
-        // FIELDS
-        
-        nameField = getField(FieldType.NAME, true);
-        gradeField = getField(FieldType.GRADE, true);
-        totalField = getField(FieldType.TOTAL, true);
-        
-        // OTHER
-        
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
-        newGrade = new Button();
-        newGrade.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/more.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
-        
-        PaneUtils.setPosition(newGrade, 0, 0, 30, 30, true);
-        newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
-        newGrade.setVisible(false);
-        newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip")));
-        
-        pane.getChildren().addAll(name, spacer, value, slash, total, newGrade);
-        
-    }
+    /////////////////////////////////////
+    /////////////// MENUS ///////////////
+    /////////////////////////////////////
     
     public MenuItem getEditMenuItem(ContextMenu menu){
         
@@ -213,12 +157,12 @@ public class GradeTreeItem extends TreeItem<String> {
         
         // SETUP
         
-        TextArea gradeField = getField(FieldType.GRADE, false);
+        TextArea gradeField = new GradeTreeItemField(this, panel, FieldType.GRADE, false);
         HBox.setMargin(gradeField, new Insets(-7, 0, -7, 0));
         
         gradeField.setText(core.getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(core.getValue()));
         if(!isRoot() && getParent() != null){
-            if(((GradeTreeItem) getParent()).isExistTwice(core.getName())) core.setName(core.getName() + "(1)");
+            if(((GradeTreeItem) getParent()).doExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
         
         if(hasSubGrade()){
@@ -239,7 +183,7 @@ public class GradeTreeItem extends TreeItem<String> {
         if(!hasSubGrade()){
             pane.setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
-                    this.gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
+                    panel.gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
                     setChildrenValuesToMax();
                 }else{
                     ContextMenu contextMenu = new ContextMenu();
@@ -261,7 +205,6 @@ public class GradeTreeItem extends TreeItem<String> {
         
         return menuItem;
     }
-    
     public ArrayList<MenuItem> getChooseValueMenuItemsAuto(){
         return getChooseValueMenuItems(0, getCore().getTotal(), 0, true);
     }
@@ -295,7 +238,7 @@ public class GradeTreeItem extends TreeItem<String> {
             NodeMenu menuItem = new NodeMenu(new HBox());
             menuItem.setName(MainWindow.gradesDigFormat.format(value));
             menuItem.setOnAction(e -> {
-                this.gradeField.setText(MainWindow.gradesDigFormat.format(value));
+                panel.gradeField.setText(MainWindow.gradesDigFormat.format(value));
                 menuItem.hideAll();
             });
             menuItem.setOnShown(e -> {
@@ -307,51 +250,15 @@ public class GradeTreeItem extends TreeItem<String> {
             NodeMenuItem menuItem = new NodeMenuItem(new HBox(), false);
             menuItem.setName(MainWindow.gradesDigFormat.format(value));
             menuItem.setOnAction(e -> {
-                this.gradeField.setText(MainWindow.gradesDigFormat.format(value));
+                panel.gradeField.setText(MainWindow.gradesDigFormat.format(value));
             });
             return menuItem;
         }
     }
     
-    public void updateCell(TreeCell<String> cell){
-        if(cell == null) return;
-        if(core == null){
-            System.err.println("Error: trying to update a GradeTreeItem which should be deleted (core == null).");
-            return;
-        }
-        
-        // Remove listener on old cell
-        if(this.cell != null){
-            this.cell.selectedProperty().removeListener(selectedListener);
-            this.cell.setOnMouseExited(null);
-            this.cell.setOnMouseEntered(null);
-            this.cell.setContextMenu(null);
-        }
-        
-        this.cell = cell;
-        cell.setGraphic(pane);
-        cell.setStyle(null);
-        cell.setStyle("-fx-padding: 6 6 6 2;");
-        cell.setContextMenu(core.menu);
-        cell.setOnMouseEntered(mouseEnteredEvent);
-        cell.setOnMouseExited(e -> {
-            if(!cell.isFocused()) newGrade.setVisible(false);
-        });
-        
-        cell.selectedProperty().addListener(selectedListener);
-        
-        if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-            if(cell.getTooltip() == null)
-                cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
-        }else if(cell.getTooltip() != null){
-            cell.setTooltip(null);
-        }
-        
-        // DEBUG
-        if(Main.DEBUG)
-            cell.setTooltip(PaneUtils.genToolTip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
-        
-    }
+    //////////////////////////////////////
+    //////////// "NAVIGATION" ////////////
+    //////////////////////////////////////
     
     public GradeTreeItem getBeforeItem(){
         if(isRoot()) return null;
@@ -367,7 +274,6 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         return newParent;
     }
-    
     public GradeTreeItem getAfterItem(){
         
         if(hasSubGrade()) return (GradeTreeItem) getChildren().get(0);
@@ -384,7 +290,6 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         return (GradeTreeItem) parent.getChildren().get(children.getCore().getIndex() + 1);
     }
-    
     public GradeTreeItem getBeforeChildItem(){
         GradeTreeItem beforeItem = getBeforeItem();
         while(beforeItem != null){
@@ -395,7 +300,6 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         return null;
     }
-    
     public GradeTreeItem getAfterChildItem(){
         GradeTreeItem afterItem = getAfterItem();
         while(afterItem != null){
@@ -407,11 +311,14 @@ public class GradeTreeItem extends TreeItem<String> {
         return null;
     }
     
+    ////////////////////////////////////////
+    /////////////// CHILDREN ///////////////
+    ////////////////////////////////////////
+    
     public void makeSum(boolean updateLocation){
         if(!updateLocation) makeSum(-1, 0);
         else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
-    
     public void makeSum(int previousPage, int previousRealY){
         if(!deleted){
             boolean hasValue = false;
@@ -455,7 +362,6 @@ public class GradeTreeItem extends TreeItem<String> {
             children.resetChildrenValues();
         }
     }
-    
     public void setChildrenValuesTo0(){
         if(hasSubGrade()){
             for(int i = 0; i < getChildren().size(); i++){
@@ -466,7 +372,6 @@ public class GradeTreeItem extends TreeItem<String> {
             getCore().setValue(0);
         }
     }
-    
     public void setChildrenValuesToMax(){
         if(hasSubGrade()){
             for(int i = 0; i < getChildren().size(); i++){
@@ -477,48 +382,20 @@ public class GradeTreeItem extends TreeItem<String> {
             getCore().setValue(getCore().getTotal());
         }
     }
-    
     public void setChildrenAlwaysVisible(boolean visible, boolean registerUndo){
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setAlwaysVisible(visible, registerUndo);
         }
     }
-    
-    public boolean hasSubGrade(){
-        return getChildren().size() != 0;
-    }
-    
-    public boolean isRoot(){
-        return StringUtils.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
-        //return Main.gradeTab.treeView.getRoot().equals(this);
-    }
-    
-    public GradeElement getCore(){
-        return core;
-    }
-    
-    public void setCore(GradeElement core){
-        this.core = core;
-    }
-    
-    public TreeCell<String> getCell(){
-        return cell;
-    }
-    
     public void reIndexChildren(){
-        
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setIndex(i);
         }
-        
     }
-    
     public void resetParentPathChildren(){
-        
         String path = GradeTreeView.getElementPath(this);
-        
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setParentPath(path);
@@ -527,24 +404,23 @@ public class GradeTreeItem extends TreeItem<String> {
         
     }
     
-    public boolean isExistTwice(String name){
+    public boolean doExistTwice(String name){
         if(isRoot()) return false;
         int k = 0;
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             if(children.getCore().getName().equals(name)) k++;
         }
-        
         return k >= 2;
     }
+    
+    /////////////// DELETE ///////////////
     
     public void delete(boolean removePageElement, boolean markAsUnsave, UType undoType){
         deleted = true;
         
-        // Remove all listeners
-        name.textProperty().unbind();
-        value.textProperty().unbind();
-        total.textProperty().unbind();
+        panel.delete();
+        panel = null;
         
         if(hasSubGrade()) deleteChildren(markAsUnsave, undoType);
         if(removePageElement){
@@ -561,12 +437,6 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         selectedListener = null;
         mouseEnteredEvent = null;
-        
-        pane.getChildren().clear();
-        pane = null;
-        nameField = null;
-        totalField = null;
-        gradeField = null;
     }
     // This method delete add children of this TreeItem, including pageElements
     public void deleteChildren(boolean markAsUnsave, UType undoType){
@@ -576,137 +446,30 @@ public class GradeTreeItem extends TreeItem<String> {
             ((GradeTreeItem) getChildren().get(0)).delete(true, markAsUnsave, undoType);
         }
     }
-    
-    
-    public enum FieldType {
-        NAME,
-        GRADE,
-        TOTAL
-    }
-    
-    public TextArea getField(FieldType type, boolean contextMenu){
-        
-        TextArea field = new ShortcutsTextArea("😉😉😉");
-        
-        field.setStyle("-fx-font-size: 13;");
-        field.setMinHeight(29);
-        field.setMaxHeight(29);
-        field.setMinWidth(29);
-        
-        if(type == FieldType.GRADE) HBox.setMargin(field, new Insets(0, 0, 0, 5));
-        if(type == FieldType.TOTAL) HBox.setMargin(field, new Insets(0, 5, 0, 0));
-        
-        if(contextMenu) field.setContextMenu(core.menu);
-        else field.setContextMenu(null);
-        
-        field.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue){
-                    if(field.getCaretPosition() == field.getText().length() || field.getCaretPosition() == 0 || type != FieldType.NAME){
-                        field.positionCaret(field.getText().length());
-                        field.selectAll();
-                    }
-                }else field.deselect();
-            });
-        });
-        ScratchText meter = new ScratchText();
-        meter.setFont(AppFontsLoader.getFontPath(AppFontsLoader.OPEN_SANS, 13));
-        
-        field.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.contains("\n")){ // Enter : Switch to the next grade
-                if(pageContextMenu != null) pageContextMenu.hide();
-                
-                GradeTreeItem afterItem = getAfterChildItem();
-                MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) Platform.runLater(() -> {
-                    switch(type){
-                        case NAME -> afterItem.nameField.requestFocus();
-                        case GRADE -> afterItem.gradeField.requestFocus();
-                        case TOTAL -> afterItem.totalField.requestFocus();
-                    }
-                });
-                field.setText(oldValue);
-                return;
-            }
-            
-            if(newValue.contains("\u0009")){ // TAB
-                if(core.getTotal() == 0){
-                    switch(type){
-                        case NAME, GRADE -> totalField.requestFocus();
-                        case TOTAL -> gradeField.requestFocus();
-                    }
-                }else{
-                    switch(type){
-                        case NAME, TOTAL -> gradeField.requestFocus();
-                        case GRADE -> totalField.requestFocus();
-                    }
-                }
-                field.setText(oldValue);
-                return;
-            }
-            
-            String newText;
-            if(type == FieldType.NAME){
-                newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
-                if(newText.length() >= 20) newText = newText.substring(0, 20);
-            }else{
-                newText = newValue.replaceAll("[^0123456789.,]", "");
-                String[] splitted = newText.split("[.,]");
-                String integers = splitted.length >= 1 ? splitted[0] : "0";
-                String decimals = splitted.length >= 2 ? splitted[1] : "";
-                
-                if(integers.length() > 4){
-                    if(splitted.length >= 2)
-                        newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
-                    else newText = integers.substring(0, 4);
-                }
-                if(decimals.length() > 3){
-                    newText = integers + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + splitted[1].substring(0, 3);
-                }
-            }
-            
-            field.setText(newText);
-            meter.setText(newText);
-            field.setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-            field.setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-            
-            if(type == FieldType.GRADE && field != gradeField){
-                gradeField.setText(newText);
-            }
-            
-            switch(type){
-                case NAME:
-                    core.setName(newText);
-                    if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("graderename");
-                    break;
-                case GRADE:
-                    // dont accept a value higher than the total
-                    try{
-                        double value = Double.parseDouble(newText.replaceAll(Pattern.quote(","), "."));
-                        if(value > core.getTotal() && !hasSubGrade()){
-                            field.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
-                            gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
-                        }else core.setValue(value);
-                    }catch(NumberFormatException e){
-                        core.setValue(-1);
-                    }
-                    break;
-                case TOTAL:
-                    try{
-                        core.setTotal(Double.parseDouble(newText.replaceAll(Pattern.quote(","), ".")));
-                    }catch(NumberFormatException e){
-                        core.setTotal(0);
-                    }
-                    break;
-            }
-            
-        });
-        
-        return field;
-    }
-    
-    
     public boolean isDeleted(){
         return deleted;
+    }
+    
+    
+    /////////////// GETTERS ///////////////
+    
+    public boolean hasSubGrade(){
+        return getChildren().size() != 0;
+    }
+    public boolean isRoot(){
+        return StringUtils.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;
+    }
+    
+    public ContextMenu getPageContextmenu(){
+        return pageContextMenu;
+    }
+    public GradeElement getCore(){
+        return core;
+    }
+    public TreeCell<String> getCell(){
+        return cell;
+    }
+    public GradeTreeItemPanel getPanel(){
+        return panel;
     }
 }
