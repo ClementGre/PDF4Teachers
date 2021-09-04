@@ -76,6 +76,9 @@ public class TextTreeItem extends TreeItem<String> {
     private final ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
         setColor((Color) newValue);
     };
+    private final ChangeListener<Boolean> defaultLaTeXChangeListener = (ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+        updateGraphic(false);
+    };
     
     
     public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate){
@@ -109,6 +112,7 @@ public class TextTreeItem extends TreeItem<String> {
             fontProperty().bind(core.fontProperty());
             core.textProperty().addListener(textChangeListener);
             core.fillProperty().addListener(colorChangeListener);
+            Main.settings.defaultLatex.valueProperty().addListener(defaultLaTeXChangeListener);
         }
         
         // Setup les éléments graphiques
@@ -237,7 +241,7 @@ public class TextTreeItem extends TreeItem<String> {
         
         Font font = getListFont();
         String wrappedText = "";
-        final String[] splitText = getText().split(Pattern.quote("\n"));
+        final String[] splitText = TextElement.invertLaTeXIfNeeded(getText()).split(Pattern.quote("\n"));
         
         if(splitText.length != 0){
             if(Main.settings.textOnlyStart.getValue()){

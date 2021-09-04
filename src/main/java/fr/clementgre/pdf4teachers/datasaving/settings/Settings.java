@@ -29,6 +29,9 @@ public class Settings {
     public StringSetting language = new StringSetting("", false, SVGPathIcons.GLOBE, "language",
             "settings.language.title", "");
     
+    @SettingsGroup(title = "settings.group.accessibility")
+    public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
+    
     
     @SettingObject
     public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
@@ -40,6 +43,9 @@ public class Settings {
     public BooleanSetting restoreLastSession = new BooleanSetting(true, true, SVGPathIcons.REDO, "restoreLastSession",
             "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
     
+    @SettingsGroup(title = "settings.group.ergonomics")
+    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations};
+    
     
     @SettingObject
     public BooleanSetting checkUpdates = new BooleanSetting(true, true, SVGPathIcons.WIFI, "checkUpdates",
@@ -47,6 +53,9 @@ public class Settings {
     @SettingObject
     public BooleanSetting sendStats = new BooleanSetting(true, true, SVGPathIcons.STATS, "sendStatistics",
             "settings.sendStatistics.title", "settings.sendStatistics.tooltip");
+    
+    @SettingsGroup(title = "settings.group.network")
+    public Setting<?>[] networkGroup = {checkUpdates, sendStats};
     
     
     @SettingObject
@@ -56,6 +65,9 @@ public class Settings {
     public IntSetting regularSave = new IntSetting(-1, true, 1, 60, 5, true, false, SVGPathIcons.CLOCK, "regularSave",
             "settings.regularSave.title", "settings.regularSave.tooltip");
     
+    @SettingsGroup(title = "settings.group.save")
+    public Setting<?>[] saveGroup = {autoSave, regularSave};
+    
     
     @SettingObject
     public IntSetting pagesFastMenuTextsNumber = new IntSetting(8, true, 0, 12, 2, false, false, SVGPathIcons.TEXT_HEIGHT, "pagesFastMenuTextsNumber",
@@ -64,6 +76,9 @@ public class Settings {
     @SettingObject
     public BooleanSetting pagesFastMenuShowImages = new BooleanSetting(false, true, SVGPathIcons.PICTURES, "pagesFastMenuShowImages",
             "settings.pagesFastMenuShowImages.title", "");
+    
+    @SettingsGroup(title = "settings.group.pagesContextMenu")
+    public Setting<?>[] pagesContextMenu = {pagesFastMenuTextsNumber, pagesFastMenuShowImages};
     
     
     @SettingObject
@@ -76,10 +91,25 @@ public class Settings {
     public BooleanSetting textSmall = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
             "settings.textSmall.title", "");
     
+    @SettingsGroup(title = "settings.group.elementsLists")
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
+    
+    
+    @SettingObject
+    public BooleanSetting defaultLatex = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
+            "settings.defaultLatex.title", "settings.defaultLatex.tooltip");
+    
+    @SettingsGroup(title = "settings.group.textElements")
+    public Setting<?>[] textElements = {defaultLatex};
+    
     
     @SettingObject
     public BooleanSetting allowAutoTips = new BooleanSetting(true, true, SVGPathIcons.TOOLTIP, "allowAutoTips",
             "settings.allowAutoTips.title", "settings.allowAutoTips.tooltip");
+    
+    @SettingsGroup(title = "menuBar.help")
+    public Setting<?>[] helpGroup = {allowAutoTips};
+    
     
     @SettingObject
     public DoubleSetting zoom = new DoubleSetting(1d, true, .25, 4, .25, false, false, SVGPathIcons.SEARCH, "zoom",
@@ -97,32 +127,9 @@ public class Settings {
     public IntSetting menuForceOpenDelay = new IntSetting(-1, true, 0, 3000, 10, true, false, SVGPathIcons.CLOCK, "menuForceOpenDelay",
             "settings.menuForceOpenDelay", "settings.menuForceOpenDelay.tooltip");
     
-    
-    ////////// GROUPS //////////
-    
-    @SettingsGroup(title = "settings.group.accessibility")
-    public Setting<?>[] accessibilityGroup = {language}; // zoom/scale
-    
-    @SettingsGroup(title = "settings.group.ergonomics")
-    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations};
-    
-    @SettingsGroup(title = "settings.group.network")
-    public Setting<?>[] networkGroup = {checkUpdates, sendStats};
-    
-    @SettingsGroup(title = "settings.group.save")
-    public Setting<?>[] saveGroup = {autoSave, regularSave};
-    
-    @SettingsGroup(title = "settings.group.pagesContextMenu")
-    public Setting<?>[] pagesContextMenu = {pagesFastMenuTextsNumber, pagesFastMenuShowImages};
-    
-    @SettingsGroup(title = "settings.group.elementsLists")
-    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
-    
-    @SettingsGroup(title = "menuBar.help")
-    public Setting<?>[] helpGroup = {allowAutoTips};
-    
     @SettingsGroup(title = "menuBar.tools.debug")
     public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpenDelay}; // menu popup force
+    
     
     public Settings(){
         loadSettings();

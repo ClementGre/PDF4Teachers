@@ -38,6 +38,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.TextBoundsType;
+import org.jetbrains.annotations.NotNull;
 import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
@@ -84,7 +85,7 @@ public class TextElement extends Element {
             this.text.setUnderline(isURL());
             
             if(isSelected() && !MainWindow.textTab.txtArea.getText().equals(newValue)){ // Edit textArea from Element
-                StringUtils.editTextArea(MainWindow.textTab.txtArea, newValue);
+                StringUtils.editTextArea(MainWindow.textTab.txtArea, invertLaTeXIfNeeded(newValue));
                 return;
             }
             
@@ -229,8 +230,23 @@ public class TextElement extends Element {
         return isLatex(text.getText());
     }
     
-    public static boolean isLatex(String text){
+    public static boolean isLatex(@NotNull String text){
         return text.split(Pattern.quote("$$")).length > 1;
+    }
+    
+    
+    // Invert only if settings' defaultLatex is true
+    public static @NotNull String invertLaTeXIfNeeded(@NotNull String value){
+        if(Main.settings.defaultLatex.getValue()){
+            return invertLaTeX(value);
+        }
+        return value;
+    }
+    public static @NotNull String invertLaTeX(@NotNull String value){
+        if(value.startsWith("$$")) // Quit LateX mode
+            return value.substring(2);
+        
+        return "$$" + value; // Add LaTeX mode
     }
     
     public String getLaTeXText(){
@@ -352,6 +368,10 @@ public class TextElement extends Element {
     
     public String getText(){
         return text.getText();
+    }
+    public boolean hasEmptyText(){
+        String text = invertLaTeXIfNeeded(getText());
+        return text.isBlank();
     }
     
     public StringProperty textProperty(){

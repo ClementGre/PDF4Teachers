@@ -120,9 +120,13 @@ public class GradeTreeItemPanel extends HBox {
         
         // CUSTOM OUT OF PANEL
         if(outOfPanel){
-            getChildren().setAll(name, spacer, value, slash, totalField, newGrade);
-            totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
-            Platform.runLater(() -> totalField.requestFocus());
+            if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
+                getChildren().setAll(name, spacer, value, slash, total, newGrade);
+            }else{
+                getChildren().setAll(name, spacer, value, slash, totalField, newGrade);
+                totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
+                Platform.runLater(() -> totalField.requestFocus());
+            }
             return;
         }
         

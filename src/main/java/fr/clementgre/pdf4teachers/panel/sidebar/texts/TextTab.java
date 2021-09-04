@@ -52,7 +52,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("serial")
-public class TextTab extends SideTab{
+public class TextTab extends SideTab {
     
     public VBox pane = new VBox();
     public VBox optionPane = new VBox();
@@ -151,7 +151,14 @@ public class TextTab extends SideTab{
         if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
         else txtArea.setStyle("-fx-font-size: 13");
         txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-        txtArea.setPromptText(TR.tr("textTab.Latex.help"));
+        txtArea.setPromptText(Main.settings.defaultLatex.getValue() ? TR.tr("textTab.Latex.help.inverted") : TR.tr("textTab.Latex.help"));
+        Main.settings.defaultLatex.valueProperty().addListener((observable, oldValue, newValue) -> {
+            txtArea.setPromptText(newValue ? TR.tr("textTab.Latex.help.inverted") : TR.tr("textTab.Latex.help"));
+            if(MainWindow.mainScreen.getSelected() instanceof TextElement){
+                txtArea.setText(TextElement.invertLaTeX(txtArea.getText()));
+            }
+        });
+        
         txtArea.setId("no-vertical-scroll-bar");
         txtArea.setFocusTraversable(false);
         
@@ -178,15 +185,15 @@ public class TextTab extends SideTab{
                 current.textProperty().unbind();
                 current.fontProperty().unbind();
                 
-                if(((TextElement) oldElement).getText().isBlank()){
+                if(((TextElement) oldElement).hasEmptyText()){
                     oldElement.delete(true, UType.NO_COUNT);
                 }
                 
                 if(!(newElement instanceof TextElement)) txtArea.clear();
             }
             if(newElement instanceof TextElement current){
-
-                txtArea.setText(current.getText());
+                
+                txtArea.setText(TextElement.invertLaTeXIfNeeded(current.getText()));
                 boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
                 itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
                 colorPicker.setValue(current.getColor());
@@ -225,26 +232,31 @@ public class TextTab extends SideTab{
                 txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
                 return;
             }
+            
+            // Default LaTeX
+            newValue = TextElement.invertLaTeXIfNeeded(newValue);
+            
             if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
                 if(!TextElement.isLatex(newValue)){
                     // WRAP TEXT
+                    String finalNewValue = newValue;
                     Platform.runLater(() -> {
                         if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-                            String wrapped = new TextWrapper(newValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-                            if(newValue.endsWith(" ")) wrapped += " ";
-    
-                            if(!wrapped.equals(newValue)){
+                            String wrapped = new TextWrapper(finalNewValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
+                            if(finalNewValue.endsWith(" ")) wrapped += " ";
+                            
+                            if(!wrapped.equals(finalNewValue)){
                                 int positionCaret = txtArea.getCaretPosition();
-                                txtArea.setText(wrapped);
+                                txtArea.setText(TextElement.invertLaTeXIfNeeded(wrapped));
                                 txtArea.positionCaret(positionCaret);
                             }
                             Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
                         }
                     });
                 }
-    
+                
                 treeView.updateAutoComplete();
-    
+                
                 updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
                 if(!txtAreaScrollBarListenerIsSetup){
                     getHorizontalSB(txtArea).visibleProperty().addListener((ObservableValue<? extends Boolean> observableTxt, Boolean oldTxtValue, Boolean newTxtValue) -> updateHeightAndYLocations(newTxtValue));
@@ -320,7 +332,7 @@ public class TextTab extends SideTab{
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
             
             TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                    true, txtArea.getText(), colorPicker.getValue(), getFont());
+                    true, "", colorPicker.getValue(), getFont());
             
             page.addElement(current, true, UType.UNDO);
             current.centerOnCoordinatesY();
@@ -355,7 +367,7 @@ public class TextTab extends SideTab{
     }
     
     public void selectItem(){
-        PlatformUtils.runLaterOnUIThread(50, () ->{
+        PlatformUtils.runLaterOnUIThread(50, () -> {
             String text = txtArea.getText();
             txtArea.setText(text);
             txtArea.positionCaret(txtArea.getText().length());

@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -171,6 +172,7 @@ public class TextTreeView extends TreeView<String> {
         getSelectionModel().clearSelection();
         String matchText = MainWindow.textTab.txtArea.getText();
         
+        
         if(!MainWindow.textTab.txtArea.isDisabled() && !matchText.isBlank()){
             
             
@@ -178,7 +180,8 @@ public class TextTreeView extends TreeView<String> {
             int i;
             for(i = 0; i < favoritesSection.getChildren().size(); i++){
                 if(favoritesSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                    if(item.getCore() != MainWindow.mainScreen.getSelected()
+                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }
@@ -187,7 +190,8 @@ public class TextTreeView extends TreeView<String> {
             
             for(i = 0; i < lastsSection.getChildren().size(); i++){
                 if(lastsSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                    if(item.getCore() != MainWindow.mainScreen.getSelected()
+                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }
@@ -196,7 +200,8 @@ public class TextTreeView extends TreeView<String> {
             
             for(i = 0; i < onFileSection.getChildren().size(); i++){
                 if(onFileSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected() && item.getText().toLowerCase().contains(matchText.toLowerCase())){
+                    if(item.getCore() != MainWindow.mainScreen.getSelected()
+                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }
