@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -30,7 +31,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 
-public class ImageElement extends GraphicElement{
+public class ImageElement extends GraphicElement {
     
     // imageId
     
@@ -92,11 +93,11 @@ public class ImageElement extends GraphicElement{
         imageId.addListener((observable, oldValue, newValue) -> {
             updateImage(false);
             Edition.setUnsave("ImageElement changed");
-    
+            
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
                     || !UndoEngine.isNextUndoActionProperty(imageId)){
-        
+                
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.UNDO));
             }
         });
@@ -186,7 +187,7 @@ public class ImageElement extends GraphicElement{
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
         String imageId = Config.getString(data, "imageId");
-    
+        
         RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
         ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
         
@@ -229,9 +230,9 @@ public class ImageElement extends GraphicElement{
     public void defineSizeAuto(){
         double imgWidth = image.getWidth();
         double imgHeight = image.getHeight();
-        double width = Math.min(getPage().getWidth()/3, imgWidth);
-        double height = imgHeight * width/imgWidth;
-    
+        double width = Math.min(getPage().getWidth() / 3, imgWidth);
+        double height = imgHeight * width / imgWidth;
+        
         checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
                 width, height, false);
     }
@@ -247,7 +248,16 @@ public class ImageElement extends GraphicElement{
             size = new BackgroundSize(1, 1, true, true, true, false);
         }
         
-        setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
+        if(image == null){
+            BackgroundRepeat finalRepeat = repeat;
+            BackgroundSize finalSize = size;
+            PlatformUtils.runLaterOnUIThread(4000, () -> {
+                if(image == null) return;
+                setBackground(new Background(new BackgroundImage(image, finalRepeat, finalRepeat, position, finalSize)));
+            });
+        }else setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
+        
+        
     }
     
     private void renderImageAsync(CallBack callBack){
@@ -265,7 +275,7 @@ public class ImageElement extends GraphicElement{
         File file = new File(imageID);
         if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
             try{
-                Image image =  new Image("file:///" + imageID, requestedWidth, requestedHeight == -1 ? 999999 : requestedHeight, requestedHeight == -1, true);
+                Image image = new Image("file:///" + imageID, requestedWidth, requestedHeight == -1 ? 999999 : requestedHeight, requestedHeight == -1, true);
                 if(image.getWidth() == 0) return null;
                 
                 int rotate = new ExifUtils(new File(imageID)).getImageExifRotation().getRotateAngle();

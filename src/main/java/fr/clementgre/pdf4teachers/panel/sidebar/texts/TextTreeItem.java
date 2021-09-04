@@ -20,7 +20,9 @@ import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -53,6 +55,8 @@ public class TextTreeItem extends TreeItem<String> {
     private final ObjectProperty<Font> font = new SimpleObjectProperty<>();
     private String text;
     private final ObjectProperty<Color> color = new SimpleObjectProperty<>();
+    // Must be between 0 and 100 in percents.
+    private final DoubleProperty maxWidth = new SimpleDoubleProperty();
     
     private int type;
     private long uses;
@@ -81,19 +85,20 @@ public class TextTreeItem extends TreeItem<String> {
     };
     
     
-    public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate){
+    public TextTreeItem(Font font, String text, Color color, double maxWidth, int type, long uses, long creationDate){
         this.font.set(font);
         this.text = text;
         this.color.set(color);
         this.type = type;
         this.uses = uses;
         this.creationDate = creationDate;
+        this.maxWidth.set(maxWidth == 0 ? TextElement.DEFAULT_MAX_WIDTH : maxWidth);
         
         setup();
         updateGraphic(false);
     }
     
-    public TextTreeItem(Font font, String text, Color color, int type, long uses, long creationDate, TextElement core){
+    public TextTreeItem(Font font, String text, Color color, double maxWidth, int type, long uses, long creationDate, TextElement core){
         this.font.set(font);
         this.text = text;
         this.color.set(color);
@@ -101,6 +106,7 @@ public class TextTreeItem extends TreeItem<String> {
         this.uses = uses;
         this.creationDate = creationDate;
         this.core = core;
+        this.maxWidth.set(maxWidth == 0 ? TextElement.DEFAULT_MAX_WIDTH : maxWidth);
         
         setup();
     }
@@ -351,7 +357,7 @@ public class TextTreeItem extends TreeItem<String> {
     }
     
     public TextTreeItem clone(){
-        return new TextTreeItem(font.get(), text, color.get(), type, uses, creationDate);
+        return new TextTreeItem(font.get(), text, color.get(), getMaxWidth(), type, uses, creationDate);
     }
     
     public LinkedHashMap<Object, Object> getYAMLData(){
@@ -364,12 +370,13 @@ public class TextTreeItem extends TreeItem<String> {
         data.put("uses", uses);
         data.put("date", creationDate);
         data.put("text", text);
+        data.put("maxWidth", maxWidth.get());
         
         return data;
     }
     
     public TextElement toRealTextElement(int x, int y, int page){
-        return new TextElement(x, y, page, true, text, color.get(), font.get());
+        return new TextElement(x, y, page, true, text, color.get(), font.get(), getMaxWidth());
     }
     
     public static TextTreeItem readYAMLDataAndGive(HashMap<String, Object> data, int type){
@@ -382,14 +389,15 @@ public class TextTreeItem extends TreeItem<String> {
         long uses = Config.getLong(data, "uses");
         long creationDate = Config.getLong(data, "date");
         String text = Config.getString(data, "text");
+        double maxWidth = Config.getDouble(data, "maxWidth");
         
         Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
         
-        return new TextTreeItem(font, text, color, type, uses, creationDate);
+        return new TextTreeItem(font, text, color, maxWidth, type, uses, creationDate);
     }
     
     public TextListItem toTextItem(){
-        return new TextListItem(font.get(), text, color.get(), uses, creationDate);
+        return new TextListItem(font.get(), text, color.get(), getMaxWidth(), uses, creationDate);
     }
     
     public void addToDocument(boolean link, boolean margin){
@@ -444,59 +452,54 @@ public class TextTreeItem extends TreeItem<String> {
     public Font getFont(){
         return font.get();
     }
-    
     public ObjectProperty<Font> fontProperty(){
         return font;
     }
-    
     public void setFont(Font font){
         this.font.set(font);
     }
-    
     public String getText(){
         return text;
     }
-    
     public void setText(String text){
         this.text = text;
     }
-    
     public Color getColor(){
         return color.get();
     }
-    
     public ObjectProperty<Color> colorProperty(){
         return color;
     }
-    
     public void setColor(Color color){
         this.color.set(color);
     }
-    
     public int getType(){
         return type;
     }
-    
     public void setType(int type){
         this.type = type;
     }
-    
     public long getUses(){
         return uses;
     }
-    
     public void setUses(long uses){
         this.uses = uses;
     }
-    
     public long getCreationDate(){
         return creationDate;
     }
-    
     public void setCreationDate(long creationDate){
         this.creationDate = creationDate;
     }
-    
+    public double getMaxWidth(){
+        return maxWidth.get();
+    }
+    public DoubleProperty maxWidthProperty(){
+        return maxWidth;
+    }
+    public void setMaxWidth(double maxWidth){
+        this.maxWidth.set(maxWidth);
+    }
     public TextElement getCore(){
         return core;
     }

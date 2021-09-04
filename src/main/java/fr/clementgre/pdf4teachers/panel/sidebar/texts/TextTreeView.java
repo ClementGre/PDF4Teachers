@@ -311,7 +311,7 @@ public class TextTreeView extends TreeView<String> {
             }
         });
         item3.setOnAction((e) -> {
-            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis() / 1000));
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), element.getMaxWidth(), TextTreeSection.FAVORITE_TYPE, 0, System.currentTimeMillis() / 1000));
             if(element.getType() == TextTreeSection.LAST_TYPE){
                 if(Main.settings.listsMoveAndDontCopy.getValue()){
                     removeSavedElement(element);
@@ -319,7 +319,7 @@ public class TextTreeView extends TreeView<String> {
             }
         });
         item4.setOnAction((e) -> {
-            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
+            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), element.getMaxWidth(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
         });
         item5.setOnAction((e) -> {
             element.unLink(true);

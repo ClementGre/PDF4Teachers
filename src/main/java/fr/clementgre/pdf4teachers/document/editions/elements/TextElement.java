@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -20,11 +21,11 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.VPos;
 import javafx.scene.image.Image;
@@ -53,25 +54,33 @@ import java.util.regex.Pattern;
 
 public class TextElement extends Element {
     
-    private final ScratchText text = new ScratchText();
+    private final ScratchText textNode = new ScratchText();
     private final ImageView image = new ImageView();
     
-    public static final float imageFactor = 3f;
+    private final StringProperty text = new SimpleStringProperty();
+    // Must be between 0 and 100 in percents.
+    private final DoubleProperty maxWidth = new SimpleDoubleProperty();
     
-    public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font){
+    private final BooleanProperty isTextWrapped = new SimpleBooleanProperty(false);
+    
+    public static final double DEFAULT_MAX_WIDTH = 50;
+    public static final float IMAGE_FACTOR = 3f;
+    
+    public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font, double maxWidth){
         super(x, y, pageNumber);
         
-        this.text.setFont(font);
-        this.text.setFill(color);
-        this.text.setText(text);
+        this.textNode.setFont(font);
+        this.textNode.setFill(color);
+        this.text.set(text);
+        this.maxWidth.set(maxWidth == 0 ? DEFAULT_MAX_WIDTH : maxWidth);
         
-        this.text.setBoundsType(TextBoundsType.LOGICAL);
-        this.text.setTextOrigin(VPos.TOP);
+        this.textNode.setBoundsType(TextBoundsType.LOGICAL);
+        this.textNode.setTextOrigin(VPos.TOP);
         
         if(hasPage && getPage() != null){
-            setupGeneral(true, isLatex() ? this.image : this.text);
-            updateLaTeX();
-            this.text.setUnderline(isURL());
+            setupGeneral(true, isLatex() ? this.image : this.textNode);
+            updateText();
+            this.textNode.setUnderline(isURL());
         }
         
     }
@@ -80,9 +89,9 @@ public class TextElement extends Element {
     
     @Override
     protected void setupBindings(){
-        this.text.textProperty().addListener((observable, oldValue, newValue) -> {
-            updateLaTeX();
-            this.text.setUnderline(isURL());
+        textProperty().addListener((observable, oldValue, newValue) -> {
+            updateText();
+            this.textNode.setUnderline(isURL());
             
             if(isSelected() && !MainWindow.textTab.txtArea.getText().equals(newValue)){ // Edit textArea from Element
                 StringUtils.editTextArea(MainWindow.textTab.txtArea, invertLaTeXIfNeeded(newValue));
@@ -91,21 +100,25 @@ public class TextElement extends Element {
             
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
-                    || !UndoEngine.isNextUndoActionProperty(this.text.textProperty())){
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.textProperty(), oldValue.trim(), UType.UNDO));
+                    || !UndoEngine.isNextUndoActionProperty(textProperty())){
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, textProperty(), oldValue.trim(), UType.UNDO));
             }
             
         });
-        this.text.fillProperty().addListener((observable, oldValue, newValue) -> {
-            updateLaTeX();
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.fillProperty(), oldValue, UType.UNDO));
+        this.textNode.fillProperty().addListener((observable, oldValue, newValue) -> {
+            updateText();
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fillProperty(), oldValue, UType.UNDO));
         });
-        this.text.fontProperty().addListener((observable, oldValue, newValue) -> {
-            updateLaTeX();
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.text.fontProperty(), oldValue, UType.UNDO));
+        this.textNode.fontProperty().addListener((observable, oldValue, newValue) -> {
+            updateText();
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fontProperty(), oldValue, UType.UNDO));
         });
         widthProperty().addListener((observable, oldValue, newValue) -> {
             checkLocation(getLayoutX(), getLayoutY(), false);
+        });
+        
+        isTextWrappedProperty().addListener((observable, oldValue, newValue) -> {
+            setGrabLineMaxed(newValue);
         });
     }
     
@@ -135,6 +148,15 @@ public class TextElement extends Element {
         item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));
     }
     
+    private void updateGrabIndicator(boolean selected){
+        if(selected){
+            getChildren().add(new GrabLine(this, isIsTextWrapped()));
+        }else{
+            getChildren().removeIf((n) -> n instanceof GrabLine);
+        }
+        
+    }
+    
     // ACTIONS
     
     @Override
@@ -152,7 +174,19 @@ public class TextElement extends Element {
     public void onDoubleClick(){
     
     }
-    
+    @Override
+    protected void onSelected(){
+        super.onSelected();
+        updateGrabIndicator(true);
+        
+        // Return value is ignored, this is only used to check if text is wrapped (update GrabLine color)
+        getWrappedTextFromMaxWidth();
+    }
+    @Override
+    protected void onDeSelected(){
+        super.onDeSelected();
+        updateGrabIndicator(false);
+    }
     @Override
     public void addedToDocument(boolean markAsUnsave){
         if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.addElement(this);
@@ -169,12 +203,13 @@ public class TextElement extends Element {
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
-        data.put("color", text.getFill().toString());
-        data.put("font", text.getFont().getFamily());
-        data.put("size", text.getFont().getSize());
-        data.put("bold", FontUtils.getFontWeight(text.getFont()) == FontWeight.BOLD);
-        data.put("italic", FontUtils.getFontPosture(text.getFont()) == FontPosture.ITALIC);
-        data.put("text", text.getText());
+        data.put("color", textNode.getFill().toString());
+        data.put("font", textNode.getFont().getFamily());
+        data.put("size", textNode.getFont().getSize());
+        data.put("bold", FontUtils.getFontWeight(textNode.getFont()) == FontWeight.BOLD);
+        data.put("italic", FontUtils.getFontPosture(textNode.getFont()) == FontPosture.ITALIC);
+        data.put("text", getText());
+        data.put("maxWidth", maxWidth.get());
         
         return data;
     }
@@ -196,6 +231,7 @@ public class TextElement extends Element {
         String fontName = Config.getString(data, "font");
         Color color = Color.valueOf(Config.getString(data, "color"));
         String text = Config.getString(data, "text");
+        double maxWidth = Config.getDouble(data, "maxWidth");
         
         Font font = FontUtils.getFont(fontName, isItalic, isBold, (int) fontSize);
         
@@ -204,30 +240,30 @@ public class TextElement extends Element {
             y *= 100;
         }
         
-        return new TextElement(x, y, page, hasPage, text, color, font);
+        return new TextElement(x, y, page, hasPage, text, color, font, maxWidth);
     }
     
     // SPECIFIC METHODS
     
     public float getBaseLineY(){
-        return (float) (text.getBaselineOffset());
+        return (float) (textNode.getBaselineOffset());
     }
     
     @Override
     public float getBoundsHeight(){
-        return (float) text.getLayoutBounds().getHeight();
+        return (float) textNode.getLayoutBounds().getHeight();
     }
     
     public float getBoundsWidth(){
-        return (float) text.getLayoutBounds().getWidth();
+        return (float) textNode.getLayoutBounds().getWidth();
     }
     
     public boolean isURL(){
-        return text.getText().startsWith("http://") || text.getText().startsWith("https://") || text.getText().startsWith("www.");
+        return getText().startsWith("http://") || getText().startsWith("https://") || getText().startsWith("www.");
     }
     
     public boolean isLatex(){
-        return isLatex(text.getText());
+        return isLatex(getText());
     }
     
     public static boolean isLatex(@NotNull String text){
@@ -252,8 +288,8 @@ public class TextElement extends Element {
     public String getLaTeXText(){
         
         String latexText = "";
-        boolean isText = !text.getText().startsWith(Pattern.quote("$$"));
-        for(String part : text.getText().split(Pattern.quote("$$"))){
+        boolean isText = !getText().startsWith(Pattern.quote("$$"));
+        for(String part : getText().split(Pattern.quote("$$"))){
             
             if(isText) latexText += formatLatexText(part);
             else latexText += part.replace("\n", " \\\\ ");
@@ -283,31 +319,57 @@ public class TextElement extends Element {
                 (float) getColor().getOpacity());
     }
     
-    public void updateLaTeX(){
+    public void updateText(){
         if(isLatex()){ // LaTeX
             
-            if(getChildren().contains(text)){
-                getChildren().remove(text);
+            if(getChildren().contains(textNode)){ // Remove plain text
+                getChildren().remove(textNode);
                 getChildren().add(image);
             }
             renderLatex((render) -> {
                 Platform.runLater(() -> {
                     image.setImage(render);
                     image.setVisible(true);
-                    image.setFitWidth(render.getWidth() / imageFactor);
-                    image.setFitHeight(render.getHeight() / imageFactor);
+                    image.setFitWidth(render.getWidth() / IMAGE_FACTOR);
+                    image.setFitHeight(render.getHeight() / IMAGE_FACTOR);
                 });
             });
             
         }else{ // Lambda Text
             
-            text.setVisible(true);
-            if(getChildren().contains(image)){
+            textNode.setText(getWrappedTextFromMaxWidth());
+            textNode.setVisible(true);
+            
+            if(getChildren().contains(image)){ // Remove image
                 getChildren().remove(image);
-                getChildren().add(text);
+                getChildren().add(textNode);
                 image.setImage(null);
             }
         }
+    }
+    
+    public String getWrappedTextFromMaxWidth(){
+        int maxWidth = (int) (PageRenderer.PAGE_WIDTH * (getTextMaxWidth() / 100d));
+        
+        if(getText() == null){
+            setGrabLineMaxed(false);
+            return "";
+        }
+        
+        TextWrapper wrapper = new TextWrapper(getText(), getFont(), maxWidth);
+        
+        String wrapped = wrapper.wrap();
+        isTextWrapped.set(wrapper.doHasWrapped());
+        
+        return wrapped;
+    }
+    
+    private void setGrabLineMaxed(boolean maxed){
+        getChildren().forEach((n) -> {
+            if(n instanceof GrabLine grabLine){
+                grabLine.setMaxed(maxed);
+            }
+        });
     }
     
     public void renderLatex(CallBackArg<Image> callback){
@@ -327,9 +389,9 @@ public class TextElement extends Element {
             TeXFormula formula = new TeXFormula(text);
             formula.setColor(color);
             
-            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, size * imageFactor);
+            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, size * IMAGE_FACTOR);
             
-            icon.setInsets(new Insets((int) (-size * imageFactor / 7), (int) (-size * imageFactor / 7), (int) (-size * imageFactor / 7), (int) (-size * imageFactor / 7)));
+            icon.setInsets(new Insets((int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7)));
             
             BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();
@@ -367,7 +429,7 @@ public class TextElement extends Element {
     }
     
     public String getText(){
-        return text.getText();
+        return text.get();
     }
     public boolean hasEmptyText(){
         String text = invertLaTeXIfNeeded(getText());
@@ -375,50 +437,60 @@ public class TextElement extends Element {
     }
     
     public StringProperty textProperty(){
-        return text.textProperty();
+        return text;
     }
-    
     public void setText(String text){
-        this.text.setText(text);
+        this.text.set(text);
     }
-    
     public void setColor(Color color){
-        this.text.setFill(color);
+        this.textNode.setFill(color);
     }
-    
     public ObjectProperty<Paint> fillProperty(){
-        return text.fillProperty();
+        return textNode.fillProperty();
     }
-    
     public Color getColor(){
-        return (Color) text.getFill();
+        return (Color) textNode.getFill();
     }
-    
     public void setFont(Font font){
-        text.setFont(font);
+        textNode.setFont(font);
     }
-    
     public ObjectProperty<Font> fontProperty(){
-        return text.fontProperty();
+        return textNode.fontProperty();
     }
-    
     public Font getFont(){
-        return text.getFont();
+        return textNode.getFont();
     }
-    
+    public double getTextMaxWidth(){
+        return maxWidth.get();
+    }
+    public DoubleProperty textMaxWidthProperty(){
+        return maxWidth;
+    }
+    public void setTextMaxWidth(double maxWidth){
+        this.maxWidth.set(maxWidth);
+    }
+    public boolean isIsTextWrapped(){
+        return isTextWrapped.get();
+    }
+    public BooleanProperty isTextWrappedProperty(){
+        return isTextWrapped;
+    }
+    public void setIsTextWrapped(boolean isTextWrapped){
+        this.isTextWrapped.set(isTextWrapped);
+    }
     // TRANSFORMATIONS
     
     @Override
     public Element clone(){
         AutoTipsManager.showByAction("textclone");
-        return new TextElement(getRealX(), getRealY(), pageNumber, true, text.getText(), (Color) text.getFill(), text.getFont());
+        return new TextElement(getRealX(), getRealY(), pageNumber, true, getText(), (Color) textNode.getFill(), textNode.getFont(), getTextMaxWidth());
     }
     
     public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
         if(hasCore)
-            return new TextTreeItem(text.getFont(), text.getText(), (Color) text.getFill(), type, 0, System.currentTimeMillis() / 1000, this);
+            return new TextTreeItem(textNode.getFont(), textNode.getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000, this);
         else
-            return new TextTreeItem(text.getFont(), text.getText(), (Color) text.getFill(), type, 0, System.currentTimeMillis() / 1000);
+            return new TextTreeItem(textNode.getFont(), textNode.getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
     }
     
 }

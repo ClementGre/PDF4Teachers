@@ -10,7 +10,6 @@ import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
-import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
@@ -23,13 +22,11 @@ import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToDoubleConverter;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
-import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ObservableValue;
@@ -207,21 +204,7 @@ public class TextTab extends SideTab {
             }
         });
         
-        ContextMenu menu = new ContextMenu();
-        MenuItem deleteReturn = new NodeMenuItem(TR.tr("textTab.fieldActions.deleteUselessLineBreak"), true);
-        deleteReturn.setOnAction(event -> {
-            String wrapped = new TextWrapper(txtArea.getText().replaceAll(Pattern.quote("\n"), " "), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-            if(txtArea.getText().endsWith(" ")) wrapped += " ";
-            
-            if(!wrapped.equals(txtArea.getText())){
-                int positionCaret = txtArea.getCaretPosition();
-                txtArea.setText(wrapped);
-                txtArea.positionCaret(positionCaret);
-            }
-            Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
-        });
-        menu.getItems().add(deleteReturn);
-        txtArea.setContextMenu(menu);
+        txtArea.setContextMenu(null);
         
         txtArea.disableProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
         MainWindow.mainScreen.selectedProperty().addListener((observable, oldValue, newValue) -> treeView.updateAutoComplete());
@@ -237,24 +220,6 @@ public class TextTab extends SideTab {
             newValue = TextElement.invertLaTeXIfNeeded(newValue);
             
             if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
-                if(!TextElement.isLatex(newValue)){
-                    // WRAP TEXT
-                    String finalNewValue = newValue;
-                    Platform.runLater(() -> {
-                        if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-                            String wrapped = new TextWrapper(finalNewValue, ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-                            if(finalNewValue.endsWith(" ")) wrapped += " ";
-                            
-                            if(!wrapped.equals(finalNewValue)){
-                                int positionCaret = txtArea.getCaretPosition();
-                                txtArea.setText(TextElement.invertLaTeXIfNeeded(wrapped));
-                                txtArea.positionCaret(positionCaret);
-                            }
-                            Platform.runLater(() -> MainWindow.mainScreen.getSelected().checkLocation(false));
-                        }
-                    });
-                }
-                
                 treeView.updateAutoComplete();
                 
                 updateHeightAndYLocations(getHorizontalSB(txtArea).isVisible());
@@ -266,18 +231,6 @@ public class TextTab extends SideTab {
                 if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
             }
         });
-        sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
-            if(!((TextElement) MainWindow.mainScreen.getSelected()).isLatex()){
-                String wrapped = new TextWrapper(txtArea.getText(), ((TextElement) MainWindow.mainScreen.getSelected()).getFont(), (int) MainWindow.mainScreen.getSelected().getPage().getWidth()).wrap();
-                if(txtArea.getText().endsWith(" ")) wrapped += " ";
-                
-                if(!wrapped.equals(txtArea.getText())){
-                    int positionCaret = txtArea.getCaretPosition();
-                    txtArea.setText(wrapped);
-                    txtArea.positionCaret(positionCaret);
-                }
-            }
-        }));
         txtArea.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
                 e.consume();
@@ -332,7 +285,7 @@ public class TextTab extends SideTab {
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
             
             TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                    true, "", colorPicker.getValue(), getFont());
+                    true, "", colorPicker.getValue(), getFont(), MainWindow.userData.textLastMaxWidth);
             
             page.addElement(current, true, UType.UNDO);
             current.centerOnCoordinatesY();

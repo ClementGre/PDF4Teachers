@@ -8,83 +8,85 @@ package fr.clementgre.pdf4teachers.utils;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import javafx.scene.text.Font;
 
-import java.util.regex.Pattern;
-
 public class TextWrapper {
     
     private String text;
     private final Font font;
     private final int maxWidth;
     
-    private int wordIndex = 0;
-    private int charIndex = 0;
-    private String wrappedLine = "";
+    private String wrappedLine;
+    private boolean hasWrapped = false;
     
     public TextWrapper(String text, Font font, int maxWidth){
         this.font = font;
         this.text = text;
         this.maxWidth = maxWidth;
-        
     }
     
     public String wrapFirstLine(){
         
-        while(text.length() != 0){ // Tant que l'index est plus petit que le nombre de mots, crée une nouvelle ligne et la remplis de mots
+        // While there is still text, add the next line into wrappedLine and let the remaining text into text
+        if(text.length() == 0){
+            return "";
+        }
+        
+        if(text.split(" ", -1).length == 0) return "";
+        String firstWord = text.split(" ", -1)[0];
+        
+        if(!test(firstWord)){ // Split between chars
             
-            if(text.split(" ").length == 0) break;
-            if(text.startsWith(" ")) text = text.replaceFirst(Pattern.quote(" "), "");
-            String firstWord = text.split(" ")[0];
+            String[] results = fillLineWithChar(text);
+            if(!results[1].isEmpty()) hasWrapped = true;
+            return results[0]; // Line generated
             
-            if(!test(firstWord)){
-                while(!test(firstWord)){
-                    String[] results = fillLineWithChar(firstWord);
-                    return results[0];
-                }
-            }
+            
+        }else{ // Split between words
             
             String[] results = fillLineWithWord(text);
-            return results[0];
-            
+            if(!results[1].isEmpty()) hasWrapped = true;
+            return results[0]; // Line generated
         }
-        return wrappedLine;
+        
     }
     
     public String wrap(){
         
-        while(text.length() != 0){ // Tant que l'index est plus petit que le nombre de mots, crée une nouvelle ligne et la remplis de mots
+        // While there is still text, add the next line into wrappedLine and let the remaining text into text
+        while(text.length() != 0){
             
-            if(text.split(" ").length == 0) break;
-            if(text.startsWith(" ")) text = text.replaceFirst(Pattern.quote(" "), "");
-            String firstWord = text.split(" ")[0];
+            if(text.split(" ", -1).length == 0) break;
+            String firstWord = text.split(" ", -1)[0];
             
-            if(!test(firstWord)){
-                String[] results = new String[]{"", ""};
-                String passedChars = "";
-                while(!test(firstWord)){
-                    passedChars += results[0];
-                    results = fillLineWithChar(firstWord);
-                    firstWord = results[1];
-                    appendLine(results[0]);
-                }
-                if(firstWord.isEmpty()){
-                    text = text.replaceFirst(Pattern.quote(passedChars), "");
-                }else{
-                    text = text.replaceFirst(Pattern.quote(passedChars + results[0]), "");
-                }
-                continue;
+            if(!test(firstWord)){ // Split between chars
                 
+                String[] results = fillLineWithChar(text);
+                if(!results[1].isEmpty()) hasWrapped = true;
+                
+                appendLine(results[0]); // Line generated
+                text = results[1]; // Remaining text
+                
+            }else{ // Split between words
+                
+                String[] results = fillLineWithWord(text);
+                if(!results[1].isEmpty()) hasWrapped = true;
+                
+                appendLine(results[0]); // Line generated
+                text = results[1]; // Remaining text
             }
-            
-            String[] results = fillLineWithWord(text);
-            text = results[1];
-            appendLine(results[0]);
-            
         }
-        return wrappedLine;
+        return getWrappedLine();
+    }
+    
+    public boolean doHasWrapped(){
+        return hasWrapped;
     }
     
     private void appendLine(String text){
-        wrappedLine += wrappedLine.isEmpty() ? text : "\n" + text;
+        if(wrappedLine == null) wrappedLine = text;
+        else wrappedLine += "\n" + text;
+    }
+    private String getWrappedLine(){
+        return wrappedLine == null ? "" : wrappedLine;
     }
     
     private boolean test(String line){
@@ -95,36 +97,40 @@ public class TextWrapper {
     
     private String[] fillLineWithWord(String text){
         
-        String line = text.split(" ")[0];
-        wordIndex = 1;
-        while(wordIndex < text.split(" ").length){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
+        String[] splitted = text.split(" ", -1);
+        String line = splitted[0];
+        
+        for(int i = 1; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
             
             String lastLine = line;
-            line += " " + text.split(" ")[wordIndex];
+            line += " " + splitted[i];
             
             if(!test(line)){
-                return new String[]{lastLine, text.replaceFirst(Pattern.quote(lastLine), "")};
-            }else wordIndex++;
-            
+                StringBuilder remaining = new StringBuilder(splitted[i]);
+                for(i++; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
+                    remaining.append(" ").append(splitted[i]);
+                }
+                return new String[]{lastLine, remaining.toString()};
+            }
         }
-        wordIndex = 0;
-        return new String[]{line, text.replaceFirst(Pattern.quote(line), "")};
+        
+        return new String[]{line, ""};
     }
     
     private String[] fillLineWithChar(String word){
+        
         if(word.length() == 0) return new String[]{"", ""};
         String line = word.substring(0, 1);
-        charIndex = 1;
-        while(charIndex < word.length()){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
+        
+        for(int i = 1; i < word.length(); i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
             String lastLine = line;
-            line = word.substring(0, charIndex + 1);
+            line = word.substring(0, i + 1);
             
             if(!test(line)){
-                return new String[]{lastLine, word.replaceFirst(Pattern.quote(lastLine), "")};
-            }else charIndex++;
+                return new String[]{lastLine, word.substring(i)};
+            }
         }
-        charIndex = 0;
-        return new String[]{line, word.replaceFirst(Pattern.quote(line), "")};
+        return new String[]{line, ""};
         
     }
     
