@@ -92,7 +92,7 @@ public class TextTreeItem extends TreeItem<String> {
         this.type = type;
         this.uses = uses;
         this.creationDate = creationDate;
-        this.maxWidth.set(maxWidth == 0 ? TextElement.DEFAULT_MAX_WIDTH : maxWidth);
+        this.maxWidth.set(maxWidth == 0 ? Main.settings.defaultMaxWidth.getValue() : maxWidth);
         
         setup();
         updateGraphic(false);
@@ -106,7 +106,7 @@ public class TextTreeItem extends TreeItem<String> {
         this.uses = uses;
         this.creationDate = creationDate;
         this.core = core;
-        this.maxWidth.set(maxWidth == 0 ? TextElement.DEFAULT_MAX_WIDTH : maxWidth);
+        this.maxWidth.set(maxWidth == 0 ? Main.settings.defaultMaxWidth.getValue() : maxWidth);
         
         setup();
     }

@@ -11,9 +11,15 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.interactive.action.PDActionURI;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotationLink;
+import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,17 +36,18 @@ public class TextRenderer {
     }
     
     public static record TextSpecs(float boundsHeight, float boundsWidth, float bottomMargin, float baseLineY,
-                                   float realX, float realY, String text) {}
+                                   float realX, float realY, String text, Color color, boolean isURL) {}
     
-    public void drawText(PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
+    public void drawText(PDPage page, PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
         
         int lineNumber = textSpecs.text().split("\\n").length;
         double lineHeight = textSpecs.boundsHeight() / lineNumber;
         
-        
+        contentStream.setNonStrokingColor(textSpecs.color());
         contentStream.newLineAtOffset(pageSpecs.startX() + textSpecs.realX() / Element.GRID_WIDTH * pageSpecs.width(),
                 textSpecs.bottomMargin() + pageSpecs.realHeight() - textSpecs.baseLineY() - textSpecs.realY() / Element.GRID_HEIGHT * pageSpecs.height());
         
+        int i = 0;
         for(String line : textSpecs.text().split("\\n")){
             try{
                 contentStream.showText(line);
@@ -69,11 +76,37 @@ public class TextRenderer {
                     e.printStackTrace();
                 }
             }
+            
+            if(textSpecs.isURL()){
+                final PDAnnotationLink txtLink = new PDAnnotationLink();
+                txtLink.setColor(ExportRenderer.toPDColor(textSpecs.color()));
+                
+                // Border bottom
+                final PDBorderStyleDictionary linkBorder = new PDBorderStyleDictionary();
+                
+                linkBorder.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
+                linkBorder.setWidth(2);
+                txtLink.setBorderStyle(linkBorder);
+                
+                // Border color
+                final PDRectangle position = new PDRectangle();
+                position.setLowerLeftX(pageSpecs.startX() + textSpecs.realX() / Element.GRID_WIDTH * pageSpecs.width());
+                position.setLowerLeftY((float) (textSpecs.bottomMargin() + pageSpecs.realHeight() - textSpecs.boundsHeight() + i * lineHeight - textSpecs.realY() / Element.GRID_HEIGHT * pageSpecs.height()));
+                position.setUpperRightX(position.getLowerLeftX() + textSpecs.boundsWidth());
+                position.setUpperRightY((float) (position.getLowerLeftY() + lineHeight));
+                
+                txtLink.setRectangle(position);
+                page.getAnnotations().add(txtLink);
+                
+                PDActionURI action = new PDActionURI();
+                action.setURI(textSpecs.text().replace("\n", "").split(" ")[0]);
+                txtLink.setAction(action);
+            }
+            
             contentStream.newLineAtOffset(0, (float) -lineHeight);
+            i++;
         }
         contentStream.endText();
-        
-        
     }
     
     public Map.Entry<String, String> setContentStreamFont(PDPageContentStream contentStream, Font font, float pageWidth) throws IOException{

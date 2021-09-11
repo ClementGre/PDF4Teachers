@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChanged
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -23,7 +24,7 @@ public class GrabLine extends Region {
     
     private static final Region line = new Region();
     
-    private boolean maxed;
+    private boolean maxed = false;
     private boolean wasInEditPagesModeWhenMousePressed = false;
     private boolean dragAlreadyDetected = false;
     private double shiftX = 0;
@@ -32,9 +33,13 @@ public class GrabLine extends Region {
     public static final double LINE_OUTER = 1;
     
     public GrabLine(TextElement element, boolean maxed){
-        setMaxed(maxed);
-        /// POSITION ///
         
+        /// BORDER ///
+        line.setBackground(new Background(new BackgroundFill(Color.color(0 / 255.0, 100 / 255.0, 255 / 255.0, .8),
+                new CornerRadii(2), Insets.EMPTY)));
+        setMaxed(maxed);
+        
+        /// POSITION ///
         getChildren().add(line);
         setPadding(new javafx.geometry.Insets(-Double.MAX_VALUE, -Double.MAX_VALUE, -Double.MAX_VALUE, 0));
         setPrefWidth(LINE_WIDTH);
@@ -61,14 +66,12 @@ public class GrabLine extends Region {
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             dragAlreadyDetected = false;
-            
             if(e.getClickCount() == 1){
                 shiftX = e.getX();
                 element.menu.hide();
             }
         });
         line.setOnMouseDragged(e -> {
-            if(PageRenderer.isEditPagesMode()) return;
             e.consume();
             if(wasInEditPagesModeWhenMousePressed) return;
             
@@ -78,9 +81,11 @@ public class GrabLine extends Region {
             }
             
             double width = localToParent(line.localToParent(e.getX(), 0)).getX() - shiftX;
+            width = StringUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
             
             element.setTextMaxWidth(width / PageRenderer.PAGE_WIDTH * 100d);
             element.checkLocation(false);
+            element.setPrefWidth(width);
         });
         line.setOnMouseReleased(e -> {
             if(wasInEditPagesModeWhenMousePressed) return;
@@ -88,9 +93,11 @@ public class GrabLine extends Region {
             Edition.setUnsave("TextElementResize");
             
             double width = localToParent(line.localToParent(e.getX(), 0)).getX() - shiftX;
+            width = StringUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
             
             element.setTextMaxWidth(width / PageRenderer.PAGE_WIDTH * 100d);
             element.checkLocation(false);
+            element.setPrefWidth(USE_COMPUTED_SIZE);
         });
     }
     

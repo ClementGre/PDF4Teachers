@@ -96,11 +96,15 @@ public class Settings {
     
     
     @SettingObject
-    public BooleanSetting defaultLatex = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
+    public BooleanSetting defaultLatex = new BooleanSetting(false, true, SVGPathIcons.SUBSCRIPT, "text.defaultLaTeX",
             "settings.defaultLatex.title", "settings.defaultLatex.tooltip");
     
+    @SettingObject
+    public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDH, "text.defaultMaxWidth",
+            "settings.textMaxWidth.title", "settings.textMaxWidth.tooltip");
+    
     @SettingsGroup(title = "settings.group.textElements")
-    public Setting<?>[] textElements = {defaultLatex};
+    public Setting<?>[] textElements = {defaultLatex, defaultMaxWidth};
     
     
     @SettingObject

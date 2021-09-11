@@ -60,7 +60,7 @@ public class IntSetting extends Setting<Integer> {
             Label valueDisplay = new Label(getValueOrEmpty());
             valueDisplay.textProperty().bind(Bindings.createStringBinding(this::getValueOrEmpty, valueProperty()));
             if(disableInMinus1) valueDisplay.visibleProperty().bind(valueProperty().isNotEqualTo(-1));
-            root.getChildren().addAll(valueDisplay, slider);
+            root.getChildren().setAll(valueDisplay, slider);
         }else{
             spinner = new Spinner<>(min, max, getValueOrStep());
             spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -72,7 +72,7 @@ public class IntSetting extends Setting<Integer> {
             
             spinner.setMinWidth(80);
             spinner.setPrefWidth(80);
-            root.getChildren().addAll(spinner);
+            root.getChildren().setAll(spinner);
         }
         
         if(disableInMinus1){

@@ -110,4 +110,8 @@ public class ExportRenderer {
         final float[] components = new float[]{(float) color.getRed(), (float) color.getGreen(), (float) color.getBlue()};
         return new PDColor(components, PDDeviceRGB.INSTANCE);
     }
+    public static PDColor toPDColor(java.awt.Color color){
+        final float[] components = new float[]{(float) color.getRed() / 255f, (float) color.getGreen() / 255f, (float) color.getBlue() / 255f};
+        return new PDColor(components, PDDeviceRGB.INSTANCE);
+    }
 }

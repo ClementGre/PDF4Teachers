@@ -63,7 +63,6 @@ public class TextElement extends Element {
     
     private final BooleanProperty isTextWrapped = new SimpleBooleanProperty(false);
     
-    public static final double DEFAULT_MAX_WIDTH = 50;
     public static final float IMAGE_FACTOR = 3f;
     
     public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font, double maxWidth){
@@ -72,7 +71,7 @@ public class TextElement extends Element {
         this.textNode.setFont(font);
         this.textNode.setFill(color);
         this.text.set(text);
-        this.maxWidth.set(maxWidth == 0 ? DEFAULT_MAX_WIDTH : maxWidth);
+        this.maxWidth.set(maxWidth == 0 ? Main.settings.defaultMaxWidth.getValue() : maxWidth);
         
         this.textNode.setBoundsType(TextBoundsType.LOGICAL);
         this.textNode.setTextOrigin(VPos.TOP);
@@ -120,6 +119,9 @@ public class TextElement extends Element {
         isTextWrappedProperty().addListener((observable, oldValue, newValue) -> {
             setGrabLineMaxed(newValue);
         });
+        textMaxWidthProperty().addListener((observable, oldValue, newValue) -> {
+            updateText();
+        });
     }
     
     @Override
@@ -149,8 +151,9 @@ public class TextElement extends Element {
     }
     
     private void updateGrabIndicator(boolean selected){
-        if(selected){
-            getChildren().add(new GrabLine(this, isIsTextWrapped()));
+        if(selected && !isLatex()){
+            if(getChildren().stream().noneMatch((n) -> n instanceof GrabLine))
+                getChildren().add(new GrabLine(this, isIsTextWrapped()));
         }else{
             getChildren().removeIf((n) -> n instanceof GrabLine);
         }
@@ -322,6 +325,7 @@ public class TextElement extends Element {
     public void updateText(){
         if(isLatex()){ // LaTeX
             
+            updateGrabIndicator(false);
             if(getChildren().contains(textNode)){ // Remove plain text
                 getChildren().remove(textNode);
                 getChildren().add(image);
@@ -337,6 +341,7 @@ public class TextElement extends Element {
             
         }else{ // Lambda Text
             
+            updateGrabIndicator(isSelected());
             textNode.setText(getWrappedTextFromMaxWidth());
             textNode.setVisible(true);
             
@@ -353,6 +358,7 @@ public class TextElement extends Element {
         
         if(getText() == null){
             setGrabLineMaxed(false);
+            isTextWrapped.set(false);
             return "";
         }
         
@@ -431,6 +437,9 @@ public class TextElement extends Element {
     public String getText(){
         return text.get();
     }
+    public String getTextNodeText(){
+        return textNode.getText();
+    }
     public boolean hasEmptyText(){
         String text = invertLaTeXIfNeeded(getText());
         return text.isBlank();
@@ -467,7 +476,7 @@ public class TextElement extends Element {
         return maxWidth;
     }
     public void setTextMaxWidth(double maxWidth){
-        this.maxWidth.set(maxWidth);
+        this.maxWidth.set(StringUtils.clamp(maxWidth, 1, 100));
     }
     public boolean isIsTextWrapped(){
         return isTextWrapped.get();
@@ -488,9 +497,9 @@ public class TextElement extends Element {
     
     public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
         if(hasCore)
-            return new TextTreeItem(textNode.getFont(), textNode.getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000, this);
+            return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000, this);
         else
-            return new TextTreeItem(textNode.getFont(), textNode.getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
+            return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
     }
     
 }

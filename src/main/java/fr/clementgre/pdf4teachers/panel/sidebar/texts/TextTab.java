@@ -285,7 +285,7 @@ public class TextTab extends SideTab {
             itBtn.setSelected(MainWindow.userData.textLastFontItalic);
             
             TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                    true, "", colorPicker.getValue(), getFont(), MainWindow.userData.textLastMaxWidth);
+                    true, "", colorPicker.getValue(), getFont(), 0);
             
             page.addElement(current, true, UType.UNDO);
             current.centerOnCoordinatesY();

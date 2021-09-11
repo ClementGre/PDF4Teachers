@@ -22,14 +22,12 @@ public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         
         float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
         TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), bottomMargin,
-                element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getText());
+                element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getText(), element.getAwtColor(), false);
         
-        // COLOR
-        contentStream.setNonStrokingColor(element.getAwtColor());
         // FONT
         Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), pageSpecs.width());
         // DRAW TEXT
-        textRenderer.drawText(contentStream, fontEntry, textSpecs, pageSpecs);
+        textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
         
     }
     

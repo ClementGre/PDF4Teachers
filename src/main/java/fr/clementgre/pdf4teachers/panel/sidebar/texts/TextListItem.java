@@ -5,8 +5,8 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.texts;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -35,7 +35,7 @@ public class TextListItem {
         this.color = color;
         this.uses = uses;
         this.creationDate = creationDate;
-        this.maxWidth.set(maxWidth == 0 ? TextElement.DEFAULT_MAX_WIDTH : maxWidth);
+        this.maxWidth.set(maxWidth == 0 ? Main.settings.defaultMaxWidth.getValue() : maxWidth);
     }
     
     public TextTreeItem toTextTreeItem(int type){

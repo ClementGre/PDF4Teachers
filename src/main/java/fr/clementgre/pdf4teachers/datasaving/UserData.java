@@ -8,7 +8,6 @@ package fr.clementgre.pdf4teachers.datasaving;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.datasaving.simpleconfigs.SimpleConfig;
-import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
@@ -73,8 +72,6 @@ public class UserData {
     public boolean textLastFontBold = false;
     @UserDataObject(path = "texts.lastFont.italic")
     public boolean textLastFontItalic = false;
-    @UserDataObject(path = "texts.lastFont.maxWidth")
-    public double textLastMaxWidth = TextElement.DEFAULT_MAX_WIDTH;
     
     // GradesTab
     @UserDataObject(path = "grades.lockGradeScale")
