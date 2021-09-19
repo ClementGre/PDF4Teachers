@@ -1,7 +1,7 @@
 open module fr.clementgre.pdf4teachers {
-
+    
     // JAVA MODULES
-
+    
     requires java.xml;
     requires java.base;
     requires java.logging;
@@ -10,14 +10,14 @@ open module fr.clementgre.pdf4teachers {
     requires java.management;
     requires jdk.crypto.ec;
     requires jdk.accessibility;
-
+    
     // OTHER DEPENDENCIES
-
+    
     // pdf
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
-
+    
     // jfx addons
     requires org.jfxtras.styles.jmetro;
     requires org.controlsfx.controls;
@@ -26,13 +26,13 @@ open module fr.clementgre.pdf4teachers {
     requires org.yaml.snakeyaml;
     requires com.fasterxml.jackson.core;
     requires metadata.extractor; // EXIF READER
-
+    
     // latex
     requires jlatexmath;
-
+    
     // OSX
     requires nsmenufx;
-
+    
     // JAVAFX
     requires javafx.base;
     requires javafx.controls;
@@ -50,9 +50,10 @@ open module fr.clementgre.pdf4teachers {
     
     // Utils
     requires google.diffmatchpatch;
+    requires uniqueforj;
     
     // EXPORTS
-
+    
     exports fr.clementgre.pdf4teachers;
     exports fr.clementgre.pdf4teachers.components;
     exports fr.clementgre.pdf4teachers.datasaving;

@@ -30,6 +30,8 @@ extraJavaModuleInfo {
     automaticModule("batik-parser-1.14.jar", "batik.parser")
 
     automaticModule("google-diff-match-patch-0.1.jar", "google.diffmatchpatch")
+    automaticModule("unique4j-1.4.jar", "uniqueforj")
+
 }
 
 dependencies {
@@ -73,6 +75,10 @@ dependencies {
 
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
+
+    // Unique4J
+    implementation 'tk.pratanumandal:unique4j:1.4'
+
 
 }
 
@@ -149,7 +155,8 @@ jlink {
     } else {
         if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-16.0.1.9-hotspot')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
-        else if (os.linux) javaHome.set('/etc/jdk-16.0.1/')
+        else if (os.linux) javaHome.set('/opt/jdk-16.0.2+7')
+        System.out.println("Using JDK: ".concat(javaHome.get()))
     }
 
     targetPlatform(platform, javaHome.get())

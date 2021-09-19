@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
+import fr.clementgre.pdf4teachers.utils.AppInstancesManager;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
@@ -21,6 +22,7 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Application;
 import javafx.application.HostServices;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DataFormat;
@@ -45,6 +47,7 @@ public class Main extends Application {
     
     public static String dataFolder = System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator;
     public static final String APP_NAME = "PDF4Teachers";
+    public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
     // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1
     
@@ -52,8 +55,9 @@ public class Main extends Application {
     public static final String VERSION = "1.3.1-sn1";
     public static final boolean IS_PRE_RELEASE = false;
     public static final boolean DEBUG = true;
-    public static final boolean COPY_CONSOLE = false;
+    public static final boolean COPY_CONSOLE = true;
     public static final boolean TRANSLATIONS_IN_CODE = true;
+    public static final boolean ONLY_ONE_INSTANCE = true;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -71,14 +75,23 @@ public class Main extends Application {
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     
     public static void main(String[] args){
+        if(ONLY_ONE_INSTANCE && !AppInstancesManager.registerInstance(List.of(args))){
+            Platform.exit();
+            System.exit(0);
+            return;
+        }
+        
+        
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
         
         // Enable anti aliasing
         //System.setProperty("prism.lcdtext", "false");
+        
         ///// START APP /////
         launch(args);
     }
+    
     
     // OSX FILE COPY
     private void copyDirToNewOSXLocation(File source, File output){
@@ -118,6 +131,9 @@ public class Main extends Application {
     @Override
     public void start(Stage stage){
         
+        // Check double instance
+        params = getParameters().getRaw();
+        
         // define crucial vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
         else if(isOSX()){
@@ -147,8 +163,6 @@ public class Main extends Application {
                     + "\n Unnamed: " + getParameters().getUnnamed().toString()
                     + "\n Named: " + getParameters().getNamed().toString());
         }
-        
-        params = getParameters().getRaw();
         
         // PREPARATION
         

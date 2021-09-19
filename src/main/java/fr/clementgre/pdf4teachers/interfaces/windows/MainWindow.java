@@ -22,6 +22,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
+import fr.clementgre.pdf4teachers.utils.AppInstancesManager;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
@@ -40,7 +41,7 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -163,8 +164,8 @@ public class MainWindow extends Stage {
         
         menuBar = new MenuBar();
         mainScreen.repaint();
-
-//		PANELS
+        
+        //		PANELS
         
         show();
         requestFocus();
@@ -179,36 +180,25 @@ public class MainWindow extends Stage {
             if(newValue) root.setBottom(null);
             else root.setBottom(footerBar);
         });
-
-//		SHOWING
+        
+        //		SHOWING
         
         setupDesktopEvents();
         updateStyle();
         mainScreen.repaint();
-
-//      OPEN DOC WITH PARAMS OR Auto Documentation
         
-        List<File> toOpenFiles = new ArrayList<>();
-        for(String param : Main.params){
-            if(new File(param).exists()){
-                toOpenFiles.add(new File(param));
-            }
-        }
-        filesTab.openFiles(toOpenFiles);
+        //      OPEN DOC WITH PARAMS OR Auto Documentation
         
+        openFiles(AppInstancesManager.getToOpenFiles(Main.params), !openDocumentation);
         if(openDocumentation){
             Platform.runLater(() -> mainScreen.openFile(TR.getDocFile()));
-        }else if(toOpenFiles.size() >= 1){
-            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
-                Platform.runLater(() -> mainScreen.openFile(toOpenFiles.get(0)));
-            }
         }
-
-//      LOAD TABS
+        
+        //      LOAD TABS
         
         SideBar.loadBarsOrganization();
-
-//      CHECK UPDATES
+        
+        //      CHECK UPDATES
         new Thread(() -> {
             
             userData = new UserData();
@@ -393,6 +383,17 @@ public class MainWindow extends Stage {
         
         gradesDigFormat = new DecimalFormat("0.###", symbols);
         gradesDigFormat.setMaximumIntegerDigits(4);
+    }
+    
+    
+    
+    public void openFiles(List<File> toOpenFiles, boolean loadSingleFile){
+        MainWindow.filesTab.openFiles(toOpenFiles);
+        if(loadSingleFile && toOpenFiles.size() >= 1){
+            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
+                Platform.runLater(() -> MainWindow.mainScreen.openFile(toOpenFiles.get(0)));
+            }
+        }
     }
     
 }

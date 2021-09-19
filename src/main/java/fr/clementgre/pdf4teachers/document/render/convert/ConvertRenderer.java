@@ -82,9 +82,7 @@ public class ConvertRenderer {
         for(ConvertedFile file : convertedFiles){
             try{
                 file.document.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
+            }catch(IOException e){e.printStackTrace();}
         }
     }
     
