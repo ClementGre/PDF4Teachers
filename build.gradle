@@ -53,13 +53,13 @@ dependencies {
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0'
 
     // JSON requests
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.4'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.12.5'
     // YAML
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
 
-    implementation 'org.jetbrains:annotations:20.1.0'
+    implementation 'org.jetbrains:annotations:22.0.0'
 
     // OSX
     implementation 'de.jangassen:nsmenufx:3.1.0'
@@ -84,9 +84,10 @@ javafx {
 def os = org.gradle.internal.os.OperatingSystem.current()
 
 version = "1.3.0"
-description = "PDF editing software in large quantities. Designed for teachers, this app keeps recorded previous annotations, and offers features like marking scale, PDF conversion, vectorial drawing..."
+description = "PDF students assessments editor"
+
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2021. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 

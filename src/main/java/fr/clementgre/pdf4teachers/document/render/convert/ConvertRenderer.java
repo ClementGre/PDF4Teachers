@@ -16,8 +16,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +37,7 @@ public class ConvertRenderer {
     
     // entry : String current document name | Double document internal advancement (range 0 ; 1)
     CallBackArg<Map.Entry<String, Double>> documentCallBack;
+    
     public ArrayList<ConvertedFile> start(CallBackArg<Map.Entry<String, Double>> documentCallBack) throws Exception{
         this.documentCallBack = documentCallBack;
         
@@ -52,7 +52,7 @@ public class ConvertRenderer {
                 
                 if(isValidDir(dir)){
                     documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
-                    convertFile(Objects.requireNonNull(dir.listFiles()), new File(out + dir.getName() + ".pdf"));
+                    convertFile(Objects.requireNonNull(dir.listFiles((f) -> !f.isHidden())), new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
                     String imgName = StringUtils.removeAfterLastRegex(dir.getName(), ".");
                     documentCallBack.call(Map.entry(imgName + ".pdf", -1d));
@@ -82,7 +82,9 @@ public class ConvertRenderer {
         for(ConvertedFile file : convertedFiles){
             try{
                 file.document.close();
-            }catch(IOException e){e.printStackTrace();}
+            }catch(IOException e){
+                e.printStackTrace();
+            }
         }
     }
     
@@ -185,7 +187,7 @@ public class ConvertRenderer {
     public static boolean isGoodFormat(File file){
         String ext = FilesUtils.getExtension(file);
         if(!file.exists()) ext = "";
-        return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext);
+        return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext) && !file.isHidden();
     }
     
     private boolean isValidFile(File file){
@@ -231,6 +233,7 @@ public class ConvertRenderer {
     }
     
     private boolean shouldStop = false;
+    
     public void stop(){
         shouldStop = true;
     }

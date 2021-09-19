@@ -97,7 +97,7 @@ The application was developed with JavaFX framework, with Java SE 16 (1.3.0).
   LaTeX text elements feature in 1.2.0)
 - **[SnakeYAML 1.29](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user
   datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
-- **[Jackson Streaming API 2.12.4](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to
+- **[Jackson Streaming API 2.12.5](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to
   send requests to GitHub to check if a new release is available.
 - **[Metadata-Extractor 2.16.0](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so
   PDF4Teachers can take in account the rotation of images

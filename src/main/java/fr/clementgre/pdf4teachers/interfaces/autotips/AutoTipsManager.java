@@ -77,9 +77,6 @@ public class AutoTipsManager {
     private static final String textAutoCompletion = "autoTips.textAutoCompletion";
     
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
-    private static final String textAutoWrap = "autoTips.textAutoWrap";
-    
-    @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
     private static final String textLatex = "autoTips.textLatex";
     
     @ToolTipVar(actionKey = "textedit", prerequisiteKey = "", objectWhereDisplay = "auto")
