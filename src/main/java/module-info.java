@@ -91,5 +91,6 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.svg;
     exports fr.clementgre.pdf4teachers.utils.panes;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine;
+    exports fr.clementgre.pdf4teachers.utils.locking;
     
 }

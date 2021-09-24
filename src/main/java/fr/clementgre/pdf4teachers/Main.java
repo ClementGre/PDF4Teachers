@@ -13,12 +13,12 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
-import fr.clementgre.pdf4teachers.utils.AppInstancesManager;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.locking.LockManager;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -75,7 +75,7 @@ public class Main extends Application {
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     
     public static void main(String[] args){
-        if(ONLY_ONE_INSTANCE && !AppInstancesManager.registerInstance(List.of(args))){
+        if(ONLY_ONE_INSTANCE && !LockManager.registerInstance(List.of(args))){
             Platform.exit();
             System.exit(0);
             return;

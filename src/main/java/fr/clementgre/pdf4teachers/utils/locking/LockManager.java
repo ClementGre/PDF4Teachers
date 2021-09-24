@@ -3,9 +3,11 @@
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
-package fr.clementgre.pdf4teachers.utils;
+package fr.clementgre.pdf4teachers.utils.locking;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.application.Platform;
 import tk.pratanumandal.unique4j.Unique4j;
 import tk.pratanumandal.unique4j.Unique4jList;
@@ -13,63 +15,75 @@ import tk.pratanumandal.unique4j.exception.Unique4jException;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class AppInstancesManager {
+public class LockManager {
+    
+    public static boolean locked = false;
+    private static LockMessageType messageType = LockMessageType.CHECK;
     
     private static Unique4j unique;
+    private static final boolean FAKE_OPEN_FILE = false;
     
     public static boolean registerInstance(List<String> args){
         
-        List<String> toOpenPaths /*= getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
-        toOpenPaths*/ = Arrays.asList("/home/clement/Téléchargements/Kev.pdf");
+        List<String> toOpenPaths = getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
+        if(FAKE_OPEN_FILE) toOpenPaths = List.of("/home/clement/Téléchargements/Kev.pdf");
+        
         System.out.println("Executing with toOpenPath = " + toOpenPaths.toString());
         
         unique = new Unique4jList(Main.APP_ID, false) {
             
             @Override
             protected List<String> sendMessageList(){
-                System.out.println("An instance of this app is already running !");
-                if(toOpenPaths.size() != 0) System.out.println("Sending arguments to first instance...");
+                System.out.println("Another instance is already running:");
                 
-                return toOpenPaths;
+                LockMessage message = new LockMessage(messageType, toOpenPaths);
+                System.out.println("Sending message to other instance: " + message.toStringInfos());
+                return message.toList();
             }
             
             @Override
-            protected void receiveMessageList(List<String> toOpenPaths){
-                System.out.println("Receiving arguments from another instance: " + toOpenPaths.toString());
+            protected void receiveMessageList(List<String> list){
+                LockMessage message = LockMessage.fromList(list);
+                System.out.println("Receiving message from another instance: " + message.toStringInfos());
                 
-                if(toOpenPaths.size() == 0){
-                    // No file to open -> the next instance will take the lock
-                    /*try{
-                        System.out.println("freeLock because the message was empty : the next instance will take the lock");
-                        unique.freeLock();
-                    }catch(Unique4jException e){e.printStackTrace();}*/
+                if(message.type() == LockMessageType.REQUIRE_UNLOCK){
+                    try{
+                        locked = unique.freeLock();
+                        System.out.println("Lock released: " + locked);
+                    }catch(Unique4jException e){e.printStackTrace();}
                     
-                }else{
-                    Platform.runLater(() -> tryToOpenFiles(getToOpenFiles(toOpenPaths)));
+                }else if(message.type() == LockMessageType.OPEN_FILES){
+                    Platform.runLater(() -> tryToOpenFiles(getToOpenFiles(message.args())));
                 }
             }
             
         };
         
         try{
-            boolean locked = unique.acquireLock();
             
-            if(!locked && toOpenPaths.size() == 0){
-                // In this case, the last instance should have freeLock()
-                /*while(!locked){
-                    PlatformUtils.sleepThread(300);
-                    System.out.println("cycle...");
-                    locked = unique.acquireLock();
-                }
-                System.out.println("Lock acquired because of no files to open");*/
-                return true;
+            if(toOpenPaths.size() == 0){
+                messageType = LockMessageType.REQUIRE_UNLOCK;
+            }else{
+                messageType = LockMessageType.OPEN_FILES;
             }
             
-            return locked;
+            locked = unique.acquireLock();
             
+            if(!locked && messageType == LockMessageType.REQUIRE_UNLOCK){
+                // In this case, the last instance should have freeLock()
+                int i = 0;
+                while(!locked){
+                    if(i > 5) break;
+                    i++;
+                    PlatformUtils.sleepThread(300);
+                    locked = unique.acquireLock();
+                }
+            }
+            
+            System.out.println("Instance locked: " + locked);
+            return true;
         }catch(Unique4jException e){
             e.printStackTrace();
             return false;

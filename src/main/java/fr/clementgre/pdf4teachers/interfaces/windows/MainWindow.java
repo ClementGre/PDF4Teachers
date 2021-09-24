@@ -22,10 +22,10 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
-import fr.clementgre.pdf4teachers.utils.AppInstancesManager;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.locking.LockManager;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -189,7 +189,7 @@ public class MainWindow extends Stage {
         
         //      OPEN DOC WITH PARAMS OR Auto Documentation
         
-        openFiles(AppInstancesManager.getToOpenFiles(Main.params), !openDocumentation);
+        openFiles(LockManager.getToOpenFiles(Main.params), !openDocumentation);
         if(openDocumentation){
             Platform.runLater(() -> mainScreen.openFile(TR.getDocFile()));
         }
