@@ -27,8 +27,12 @@ public class LockManager {
     
     public static boolean registerInstance(List<String> args){
         
-        List<String> toOpenPaths = getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
-        if(FAKE_OPEN_FILE) toOpenPaths = List.of("/home/clement/Téléchargements/Kev.pdf");
+        List<String> toOpenPaths;
+        if(FAKE_OPEN_FILE){
+            toOpenPaths = List.of("/home/clement/Téléchargements/Kev.pdf");
+        }else{
+            toOpenPaths = getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
+        }
         
         System.out.println("Executing with toOpenPath = " + toOpenPaths.toString());
         
@@ -68,7 +72,6 @@ public class LockManager {
             }else{
                 messageType = LockMessageType.OPEN_FILES;
             }
-            
             locked = unique.acquireLock();
             
             if(!locked && messageType == LockMessageType.REQUIRE_UNLOCK){
@@ -80,10 +83,14 @@ public class LockManager {
                     PlatformUtils.sleepThread(300);
                     locked = unique.acquireLock();
                 }
+                System.out.println("Instance locked: " + locked);
+                return true;
+                
+            }else{
+                System.out.println("Instance locked: " + locked);
+                return locked; // If non-locked: the files has been opened on the other instance.
             }
             
-            System.out.println("Instance locked: " + locked);
-            return true;
         }catch(Unique4jException e){
             e.printStackTrace();
             return false;

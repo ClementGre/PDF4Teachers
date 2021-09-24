@@ -57,7 +57,6 @@ public class Main extends Application {
     public static final boolean DEBUG = true;
     public static final boolean COPY_CONSOLE = true;
     public static final boolean TRANSLATIONS_IN_CODE = true;
-    public static final boolean ONLY_ONE_INSTANCE = true;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
@@ -75,15 +74,14 @@ public class Main extends Application {
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     
     public static void main(String[] args){
-        if(ONLY_ONE_INSTANCE && !LockManager.registerInstance(List.of(args))){
+        if(COPY_CONSOLE) LogWindow.copyLogs();
+        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
+        
+        if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
             System.exit(0);
             return;
         }
-        
-        
-        if(COPY_CONSOLE) LogWindow.copyLogs();
-        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
         
         // Enable anti aliasing
         //System.setProperty("prism.lcdtext", "false");

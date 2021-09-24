@@ -387,9 +387,9 @@ public class MainWindow extends Stage {
     
     
     
-    public void openFiles(List<File> toOpenFiles, boolean loadSingleFile){
+    public void openFiles(List<File> toOpenFiles, boolean openDocument){
         MainWindow.filesTab.openFiles(toOpenFiles);
-        if(loadSingleFile && toOpenFiles.size() >= 1){
+        if(openDocument && toOpenFiles.size() == 1){
             if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
                 Platform.runLater(() -> MainWindow.mainScreen.openFile(toOpenFiles.get(0)));
             }
