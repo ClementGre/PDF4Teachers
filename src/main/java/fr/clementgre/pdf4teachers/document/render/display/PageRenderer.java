@@ -191,31 +191,32 @@ public class PageRenderer extends Pane {
                 if(TextTab.draggingItem != null){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    menu.hide();
+                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(TextTab.draggingElement == null){ // Add to document
                         TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
                     }
                 }
-            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag GraphicElement
+            }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag ImageElement
                 if(PaintTab.draggingItem instanceof ImageGridElement item){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    menu.hide();
+                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument();
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth() / 2, e.getY() - PaintTab.draggingElement.getHeight() / 2, false);
                     }
-                }else if(PaintTab.draggingItem instanceof VectorGridElement item){
+                }else if(PaintTab.draggingItem instanceof VectorGridElement item){ // Drag VectorElement
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    menu.hide();
+                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument(false);
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth() / 2, e.getY() - PaintTab.draggingElement.getHeight() / 2, false);
                     }
+                    
                 }
             }
         });
@@ -277,11 +278,13 @@ public class PageRenderer extends Pane {
             final Dragboard dragboard = e.getDragboard();
             if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
                 e.setDropCompleted(true);
+                menu.hide();
                 if(TextTab.draggingElement != null) TextTab.draggingElement.select();
                 TextTab.draggingItem = null;
                 TextTab.draggingElement = null;
             }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
                 e.setDropCompleted(true);
+                menu.hide();
                 if(PaintTab.draggingElement != null) PaintTab.draggingElement.select();
                 PaintTab.draggingItem = null;
                 PaintTab.draggingElement = null;

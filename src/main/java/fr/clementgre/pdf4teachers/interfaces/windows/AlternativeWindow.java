@@ -74,7 +74,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         setWidth(width.getWidth());
         setMaxHeight(Main.SCREEN_VISUAL_BOUNDS.getHeight());
         
-        setTitle("PDF4Teachers - " + title);
+        setTitle(title + " - PDF4Teachers");
         setScene(scene);
         StyleManager.putStyle(scene, Style.DEFAULT);
         StyleManager.putStyle(borderPane, Style.DEFAULT);

@@ -410,9 +410,9 @@ public class MainScreen extends Pane {
     
     private void updateWindowName(){
         if(status.get() == Status.OPEN){
-            Main.window.setTitle("PDF4Teachers - " + document.getFile().getName() + (Edition.isSave() ? "" : "*"));
+            Main.window.setTitle(document.getFile().getName() + (Edition.isSave() ? "" : "*") + " - PDF4Teachers");
         }else{
-            Main.window.setTitle(TR.tr("mainWindow.title.noDocument"));
+            Main.window.setTitle(TR.tr("mainWindow.title.noDocument") + " - PDF4Teachers");
         }
     }
     
