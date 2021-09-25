@@ -347,7 +347,6 @@ public class ZoomOperator {
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
         
         double targetScale = (availableWidth / pageWidth);
-        
         zoom(targetScale, removeTransition);
     }
     public void overviewWidth(boolean removeTransition){

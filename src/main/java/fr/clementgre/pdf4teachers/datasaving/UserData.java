@@ -267,8 +267,7 @@ public class UserData {
                     for(Object filePath : lastOpenedFiles){
                         Platform.runLater(() -> {
                             File lastFile = new File(filePath.toString());
-                            if(lastFile.exists()) MainWindow.filesTab.originalFiles.add(lastFile);
-                            MainWindow.filesTab.backOpenFilesList(false);
+                            if(lastFile.exists()) MainWindow.filesTab.openFileNonDir(lastFile);
                         });
                     }
                     File lastFile = new File(lastOpenedFile);

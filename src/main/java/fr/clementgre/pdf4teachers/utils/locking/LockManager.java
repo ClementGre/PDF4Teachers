@@ -23,7 +23,7 @@ public class LockManager {
     private static LockMessageType messageType = LockMessageType.CHECK;
     
     private static Unique4j unique;
-    private static final boolean FAKE_OPEN_FILE = false;
+    public static final boolean FAKE_OPEN_FILE = false;
     
     public static boolean registerInstance(List<String> args){
         

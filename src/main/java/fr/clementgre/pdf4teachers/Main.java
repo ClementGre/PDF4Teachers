@@ -131,6 +131,7 @@ public class Main extends Application {
         
         // Check double instance
         params = getParameters().getRaw();
+        if(LockManager.FAKE_OPEN_FILE) params = List.of("/home/clement/Téléchargements/Kev.pdf");
         
         // define crucial vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";

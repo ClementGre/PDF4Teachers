@@ -180,7 +180,7 @@ public class FileTab extends SideTab {
                 if(childrenFile.isDirectory()) openFileSubDir(childrenFile, deep + 1);
                 
                 if(isFilePdf(childrenFile) && !files.getItems().contains(childrenFile)){
-                    if(isRecursive()) openFile(childrenFile, true);
+                    if(isRecursive()) openFile(childrenFile);
                     else return;
                 }
             }
@@ -203,10 +203,6 @@ public class FileTab extends SideTab {
     }
     
     private void openFile(File file){
-        openFile(file, null);
-    }
-    
-    private void openFile(File file, Boolean recursive){
         if(!file.isDirectory()){
             openFileNonDir(file);
         }else{
@@ -215,7 +211,7 @@ public class FileTab extends SideTab {
         sortManager.simulateCall();
     }
     
-    private void openFileNonDir(File file){
+    public void openFileNonDir(File file){
         if(isFilePdf(file) && !files.getItems().contains(file)){
             files.getItems().add(file);
             originalFiles.add(file);

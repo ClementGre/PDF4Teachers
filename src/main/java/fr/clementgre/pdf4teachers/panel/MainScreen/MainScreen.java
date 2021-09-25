@@ -25,6 +25,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -112,6 +114,16 @@ public class MainScreen extends Pane {
     public MainScreen(){
         setPrefWidth(Double.MAX_VALUE);
         setMaxWidth(Double.MAX_VALUE);
+        
+        // This fits zoom when the MainScreen's width is known (for documents opened before everything is initialized).
+        InvalidationListener widthTempListener = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable){
+                widthProperty().removeListener(this);
+                zoomOperator.fitWidth(true);
+            }
+        };
+        widthProperty().addListener(widthTempListener);
         
         setup();
         repaint();
