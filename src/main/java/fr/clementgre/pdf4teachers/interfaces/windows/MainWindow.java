@@ -125,6 +125,7 @@ public class MainWindow extends Stage {
         }
         
         // At this point, it is sure the app will close.
+        LockManager.onCloseApp();
         Main.window.close();
         if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
         AutoTipsManager.hideAll();

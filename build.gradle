@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2021. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.0'
@@ -83,7 +88,7 @@ dependencies {
 }
 
 javafx {
-    version = '16'
+    version = '17'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -92,12 +97,7 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 version = "1.3.0"
 description = "PDF students assessments editor"
 
-/*
- * Copyright (c) 2021. Clément Grennerat
- * All rights reserved. You must refer to the licence Apache 2.
- */
-
-//frenchDescription=Éditeur PDF en grande quantité. Conçus pour les enseignants, cette application garde en mémoire les dernière annotations, et offre des fonctions de barème, de conversion, de dessin vectoriel...
+//frenchDescription="Éditeur de copies PDF"
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"

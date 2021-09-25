@@ -26,7 +26,7 @@ All the utilitary classes.
 
 - ``.objects`` is just objects that store vars, like PositionDimentions that store a width, a height, a x and a y.
 
-- ``.interfaces`` contains various types of callBack interfaces, but also a custom JavaFx StringConverter<Double>
+- ``.interfaces`` contains various types of callBack interfaces, but also a custom JavaFX StringConverter<Double>
   . ``.interfaces.TwoStepListAction`` is used to make an action with a List in two steps. It is used to export PDF : the
   prepare() method is registering all the files that will be exported, the sortData() is used to remove files that will
   not be exported, and to check if files already exists etc. And completeData() is generating the PDF. completeData()

@@ -96,7 +96,11 @@ public class LockManager {
             return false;
         }
     }
-    
+    public static void onCloseApp(){
+        try{
+            locked = unique.freeLock();
+        }catch(Unique4jException e){e.printStackTrace();}
+    }
     
     public static void tryToOpenFiles(List<File> toOpenFiles){
         while(true){
@@ -128,5 +132,4 @@ public class LockManager {
         
         return toOpenFiles;
     }
-    
 }

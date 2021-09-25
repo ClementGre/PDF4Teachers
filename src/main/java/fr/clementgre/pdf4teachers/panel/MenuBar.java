@@ -97,6 +97,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem file8ExportAll = createMenuItem(TR.tr("menuBar.file.exportAll"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.exportAll.tooltip"), false, true, false);
     
+    private final MenuItem file9Exit = createMenuItem(TR.tr("menuBar.file.exit"), SVGPathIcons.EXIT, new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN),
+            null, false, false, false);
+    
     
     ////////// TOOLS //////////
     
@@ -187,7 +190,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// FILE //////////
         
-        file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6Close, new SeparatorMenuItem(), file7Export, file8ExportAll);
+        file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6Close, new SeparatorMenuItem(), file7Export, file8ExportAll, new SeparatorMenuItem(), file9Exit);
         
         ////////// TOOLS //////////
         
@@ -259,6 +262,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             }
             new ExportWindow(MainWindow.filesTab.files.getItems());
             
+        });
+        file9Exit.setOnAction((e) -> {
+            MainWindow.requestCloseApp();
         });
         
         ////////// TOOLS //////////
