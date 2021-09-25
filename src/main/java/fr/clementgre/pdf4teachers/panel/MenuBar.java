@@ -39,6 +39,8 @@ import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.input.Clipboard;
@@ -46,7 +48,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -505,7 +507,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             getMenus().addAll(file, tools, edit, help, settings, about);
             
             setupMenus();
-            Main.settings.menuForceOpenDelay.valueProperty().addListener((observable, oldValue, newValue) -> {
+            Main.settings.menuForceOpen.valueProperty().addListener((observable, oldValue, newValue) -> {
                 setupMenus();
             });
         }
@@ -516,11 +518,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         for(Menu menu : getMenus()){
             if(!menu.getItems().isEmpty()){
                 menu.setStyle("-fx-padding: 5 7 5 7;");
-                if(Main.settings.menuForceOpenDelay.getValue() == 0){
-                    menu.setOnShowing((e) -> {
-                        Platform.runLater(menu::show);
-                    });
-                }else if(Main.settings.menuForceOpenDelay.getValue() == 1){
+                if(Main.settings.menuForceOpen.getValue()){
                     menu.setOnShowing((e) -> {
                         for(int i = 50; i <= 500; i += 50){
                             PlatformUtils.runLaterOnUIThread(i, () -> {
@@ -531,15 +529,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                             });
                         }
                     });
-                }else if(Main.settings.menuForceOpenDelay.getValue() > 0){
-                    menu.setOnShowing((e) -> {
-                        PlatformUtils.runLaterOnUIThread(Main.settings.menuForceOpenDelay.getValue(), () -> {
-                            for(Menu m : getMenus()){
-                                if(m.isShowing()) return;
-                            }
-                            menu.show();
-                        });
-                    });
+                }else{
+                    menu.setOnShowing(null);
                 }
             }else menu.setStyle("-fx-padding: 0;");
         }

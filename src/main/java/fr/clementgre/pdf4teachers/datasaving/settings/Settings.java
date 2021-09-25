@@ -128,11 +128,11 @@ public class Settings {
             "settings.renderWithZoom", "");
     
     @SettingObject
-    public IntSetting menuForceOpenDelay = new IntSetting(-1, true, 0, 3000, 10, true, false, SVGPathIcons.CLOCK, "menuForceOpenDelay",
+    public BooleanSetting menuForceOpen = new BooleanSetting(false, true, SVGPathIcons.CLOCK, "menuForceOpenDelay",
             "settings.menuForceOpenDelay", "settings.menuForceOpenDelay.tooltip");
     
     @SettingsGroup(title = "menuBar.tools.debug")
-    public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpenDelay}; // menu popup force
+    public Setting<?>[] debugGroup = {zoom, renderZoom, renderWithZoom, menuForceOpen}; // menu popup force
     
     
     public Settings(){
