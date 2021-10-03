@@ -5,9 +5,12 @@
 
 package fr.clementgre.pdf4teachers.document.render.convert;
 
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.MetadataException;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -123,6 +126,14 @@ public class ConvertRenderer {
                 }
                 
                 PDPage page = new PDPage(pageSize);
+                
+                try{
+                    // Rotate page in function of image EXIF data
+                    page.setRotation(new ExifUtils(file).getImageExifRotation().getRotateAngle());
+                }catch(MetadataException | ImageProcessingException e){
+                    e.printStackTrace();
+                }
+                
                 PDPageContentStream contentStream = new PDPageContentStream(convertedFile.document, page, PDPageContentStream.AppendMode.APPEND, true, true);
                 
                 /////////////// DEFINE IMAGE SIZE AND SHIFT ON PAGE + IMAGE DEFINITION ///////////////////

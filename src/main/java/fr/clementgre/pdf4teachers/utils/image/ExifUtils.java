@@ -13,14 +13,14 @@ import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Date;
 
-public class ExifUtils{
+public class ExifUtils {
     
     private final Metadata metadata;
     
@@ -64,7 +64,6 @@ public class ExifUtils{
     }*/
     
     public ImageTransform getImageExifRotation() throws MetadataException{
-    
         ExifIFD0Directory exifIFD0Directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
         if(exifIFD0Directory != null){
             if(exifIFD0Directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)){
@@ -76,14 +75,14 @@ public class ExifUtils{
     }
     
     public Date getImageExifEditDate() throws MetadataException, IOException{
-    
+        
         ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
         if(directory != null){
             if(directory.containsTag(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL)){
                 return directory.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
             }
         }
-    
+        
         BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
         if(attr != null && attr.lastModifiedTime() != null){
             return new Date(attr.lastModifiedTime().toMillis());
@@ -109,16 +108,16 @@ public class ExifUtils{
         };
     }
     
-    public static class ImageTransform{
+    public static class ImageTransform {
         public static final ImageTransform NONE = new ImageTransform(false, 0);
         private boolean flip;
         private int rotateAngle;
         
         public void applyTransformToGraphics2D(Graphics2D g, int width, int height){
             if(rotateAngle != 0)
-                g.rotate(Math.toRadians(rotateAngle), width/2d, height/2d);
+                g.rotate(Math.toRadians(rotateAngle), width / 2d, height / 2d);
         }
-    
+        
         public ImageTransform(boolean flip, int rotateAngle){
             this.flip = flip;
             this.rotateAngle = rotateAngle;
@@ -138,17 +137,17 @@ public class ExifUtils{
         
     }
     
-    public static class BasicExifData{
+    public static class BasicExifData {
         private long size = 0;
         private Date editDate = new Date();
         private ImageTransform rotation = ImageTransform.NONE;
-    
+        
         public BasicExifData(int size, Date editDate, ImageTransform rotation){
             this.size = size;
             this.editDate = editDate;
             this.rotation = rotation;
         }
-    
+        
         public BasicExifData(File file){
             try{
                 ExifUtils utils = new ExifUtils(file);
@@ -159,7 +158,7 @@ public class ExifUtils{
                 e.printStackTrace();
             }
         }
-    
+        
         public long getSize(){
             return size;
         }
