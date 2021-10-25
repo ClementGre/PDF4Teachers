@@ -29,6 +29,7 @@ open module fr.clementgre.pdf4teachers {
     
     // latex
     requires jlatexmath;
+    requires writertolatex;
     
     // OSX
     requires nsmenufx;
@@ -38,9 +39,6 @@ open module fr.clementgre.pdf4teachers {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.swing;
-    
-    //requires jtouchbar;
-    //requires jtouchbar.javafx;
     
     // SVG
     requires batik.parser;

@@ -44,9 +44,9 @@ import org.scilab.forge.jlatexmath.ParseException;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
+import writer2latex.api.ConverterFactory;
 
-import java.awt.Graphics2D;
-import java.awt.Insets;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -290,19 +290,24 @@ public class TextElement extends Element {
     
     public String getLaTeXText(){
         
-        String latexText = "";
+        StringBuilder latexText = new StringBuilder();
         boolean isText = !getText().startsWith(Pattern.quote("$$"));
         for(String part : getText().split(Pattern.quote("$$"))){
             
-            if(isText) latexText += formatLatexText(part);
-            else latexText += part.replace("\n", " \\\\ ");
-            
+            if(isText) latexText.append(formatLatexText(part));
+            else{
+                if(false /* true will use StarMath input instead of LaTeX*/){
+                    latexText.append(translateStarMathToLatex(part.replace("\n", " newline ")));
+                }else{
+                    latexText.append(part.replace("\n", " \\\\ "));
+                }
+            }
             isText = !isText;
         }
-        return latexText;
+        return latexText.toString();
     }
     
-    public static String formatLatexText(String text){
+    private static String formatLatexText(String text){
         return "\\text{" + text.replace("\\", "\\\\")
                 .replace("{", "\\{")
                 .replace("}", "\\}")
@@ -421,6 +426,10 @@ public class TextElement extends Element {
                 return renderLatex(formatLatexText(TR.tr("dialog.error.presentative") + "\\" + ex.getMessage()), color, size, calls + 1);
             }
         }
+    }
+    
+    private static String translateStarMathToLatex(String starMath){
+        return ConverterFactory.createStarMathConverter().convert(starMath);
     }
     
     // ELEMENT DATA GETTERS AND SETTERS
