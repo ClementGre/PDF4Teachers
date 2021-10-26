@@ -28,6 +28,8 @@ public class SettingsWindow extends AlternativeWindow<VBox> {
     public void setupSubClass(){
         setSubHeaderText(TR.tr("settingsWindow.description"));
         
+        setHeight(StageWidth.NORMAL.getWidth() * 1.6);
+        
         int i = 0;
         for(Field field : Main.settings.getClass().getDeclaredFields()){
             if(field.isAnnotationPresent(SettingsGroup.class)){

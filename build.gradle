@@ -45,6 +45,8 @@ extraJavaModuleInfo {
 
 dependencies {
 
+    implementation 'org.jetbrains:annotations:22.0.0'
+
     // JAVA FX //
     implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.15') {
         exclude group: 'org.openjfx'
@@ -69,8 +71,7 @@ dependencies {
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
-
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation(name: 'writer2latex', ext: 'jar')
 
     // OSX
     implementation 'de.jangassen:nsmenufx:3.1.0'
@@ -87,9 +88,6 @@ dependencies {
 
     // Unique4J
     implementation 'tk.pratanumandal:unique4j:1.4'
-
-    // Writer2Latex
-    implementation(name: 'writer2latex', ext: 'jar')
 
 
 }

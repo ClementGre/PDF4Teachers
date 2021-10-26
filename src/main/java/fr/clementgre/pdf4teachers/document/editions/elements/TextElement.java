@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
@@ -45,6 +46,7 @@ import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
 import writer2latex.api.ConverterFactory;
+import writer2latex.api.StarMathConverter;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -64,6 +66,8 @@ public class TextElement extends Element {
     private final BooleanProperty isTextWrapped = new SimpleBooleanProperty(false);
     
     public static final float IMAGE_FACTOR = 3f;
+    public static final String STARMATH_CHAR = "&&";
+    public static final String STARMATH_CHAR_IN_LATEX = "\\&\\&";
     
     public TextElement(int x, int y, int pageNumber, boolean hasPage, String text, Color color, Font font, double maxWidth){
         super(x, y, pageNumber);
@@ -77,7 +81,7 @@ public class TextElement extends Element {
         this.textNode.setTextOrigin(VPos.TOP);
         
         if(hasPage && getPage() != null){
-            setupGeneral(true, isLatex() ? this.image : this.textNode);
+            setupGeneral(true, isMath() ? this.image : this.textNode);
             updateText();
             this.textNode.setUnderline(isURL());
         }
@@ -93,7 +97,7 @@ public class TextElement extends Element {
             this.textNode.setUnderline(isURL());
             
             if(isSelected() && !MainWindow.textTab.txtArea.getText().equals(newValue)){ // Edit textArea from Element
-                StringUtils.editTextArea(MainWindow.textTab.txtArea, invertLaTeXIfNeeded(newValue));
+                StringUtils.editTextArea(MainWindow.textTab.txtArea, invertMathIfNeeded(newValue));
                 return;
             }
             
@@ -151,7 +155,7 @@ public class TextElement extends Element {
     }
     
     private void updateGrabIndicator(boolean selected){
-        if(selected && !isLatex()){
+        if(selected && !isMath()){
             if(getChildren().stream().noneMatch((n) -> n instanceof GrabLine))
                 getChildren().add(new GrabLine(this, isIsTextWrapped()));
         }else{
@@ -265,50 +269,83 @@ public class TextElement extends Element {
         return getText().startsWith("http://") || getText().startsWith("https://") || getText().startsWith("www.");
     }
     
-    public boolean isLatex(){
-        return isLatex(getText());
+    public boolean isMath(){
+        return isMath(getText());
     }
-    
-    public static boolean isLatex(@NotNull String text){
-        return text.split(Pattern.quote("$$")).length > 1;
+    public static boolean isMath(@NotNull String text){
+        return text.startsWith("$$") || text.startsWith(STARMATH_CHAR) ||
+                text.split(Pattern.quote("$$")).length > 1 || text.split(Pattern.quote(STARMATH_CHAR)).length > 1;
     }
     
     
     // Invert only if settings' defaultLatex is true
-    public static @NotNull String invertLaTeXIfNeeded(@NotNull String value){
-        if(Main.settings.defaultLatex.getValue()){
-            return invertLaTeX(value);
+    public static @NotNull String invertMathIfNeeded(@NotNull String value){
+        if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_LATEX){
+            return invertLatex(value);
+        }else if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_STARMATH){
+            return invertStarMath(value);
         }
         return value;
     }
-    public static @NotNull String invertLaTeX(@NotNull String value){
-        if(value.startsWith("$$")) // Quit LateX mode
-            return value.substring(2);
-        
-        return "$$" + value; // Add LaTeX mode
+    public static @NotNull String invertLatex(@NotNull String value){
+        if(value.startsWith("$$")) return value.substring(2);
+        return "$$" + value;
+    }
+    public static @NotNull String invertStarMath(@NotNull String value){
+        if(value.startsWith(STARMATH_CHAR)) return value.substring(2);
+        return STARMATH_CHAR + value;
+    }
+    public static String invertBySettings(String text, int defaultTextMode){
+        if(defaultTextMode == Settings.TEXT_MODE_LATEX){
+            return invertLatex(text);
+        }else if(defaultTextMode == Settings.TEXT_MODE_STARMATH){
+            return invertStarMath(text);
+        }else{
+            return text;
+        }
     }
     
     public String getLaTeXText(){
         
-        StringBuilder latexText = new StringBuilder();
-        boolean isText = !getText().startsWith(Pattern.quote("$$"));
-        for(String part : getText().split(Pattern.quote("$$"))){
+        String text = getText();
+        StringBuilder output = new StringBuilder();
+        
+        boolean isLatex = text.startsWith("$$");
+        boolean isStarmath = text.startsWith(STARMATH_CHAR);
+        if(isLatex || isStarmath) text = text.substring(2);
+        
+        for(String latexPart : text.split(Pattern.quote("$$"))){
+            if(isLatex) latexPart = latexPart.replace(STARMATH_CHAR, STARMATH_CHAR_IN_LATEX);
             
-            if(isText) latexText.append(formatLatexText(part));
-            else{
-                if(false /* true will use StarMath input instead of LaTeX*/){
-                    latexText.append(translateStarMathToLatex(part.replace("\n", " newline ")));
+            String[] latexPartSplit = latexPart.split(Pattern.quote(STARMATH_CHAR));
+            for(int i = 0; i < latexPartSplit.length; i++){
+                String part = latexPartSplit[i];
+                
+                if(isLatex){
+                    output.append(part.replace("\n", " \\\\ "));
+                }else if(isStarmath){
+                    output.append(translateStarMathToLatex(part));
                 }else{
-                    latexText.append(part.replace("\n", " \\\\ "));
+                    output.append(formatLatexText(part));
                 }
+                
+                // Invert only if this is not the end of the for loop,
+                // if there is a change of starMath and not of LaTeX
+                if(i != latexPartSplit.length - 1){
+                    isStarmath = !isStarmath;
+                }
+                
             }
-            isText = !isText;
+            // If in starmath, do not invert
+            if(isStarmath && !isLatex) output.append("$$");
+            else isLatex = !isLatex;
         }
-        return latexText.toString();
+        
+        return output.toString();
     }
     
     private static String formatLatexText(String text){
-        return "\\text{" + text.replace("\\", "\\\\")
+        return "\\textsf{" + text.replace("\\", "\\\\")
                 .replace("{", "\\{")
                 .replace("}", "\\}")
                 .replace("$", "\\$")
@@ -317,7 +354,7 @@ public class TextElement extends Element {
                 .replace("&", "\\&")
                 .replace("_", "\\_")
                 .replace("~", "\\~")
-                .replace("\n", "} \\\\ \\text{") + "}";
+                .replace("\n", "} \\\\ \\textsf{") + "}";
     }
     
     public java.awt.Color getAwtColor(){
@@ -328,7 +365,7 @@ public class TextElement extends Element {
     }
     
     public void updateText(){
-        if(isLatex()){ // LaTeX
+        if(isMath()){ // LaTeX
             
             updateGrabIndicator(false);
             if(getChildren().contains(textNode)){ // Remove plain text
@@ -391,16 +428,24 @@ public class TextElement extends Element {
     }
     
     public BufferedImage renderAwtLatex(){
-        return renderLatex(getLaTeXText(), getAwtColor(), (int) getFont().getSize(), 0);
+        int style = 0;
+        
+        if(FontUtils.getFontWeight(getFont()) == FontWeight.BOLD) style = style | TeXFormula.BOLD;
+        if(FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC) style = style | TeXFormula.ITALIC;
+        
+        return renderLatex(getLaTeXText(), getAwtColor(), getFont().getFamily(), style, (int) getFont().getSize(), 0);
     }
     
-    public static BufferedImage renderLatex(String text, java.awt.Color color, int size, int calls){
+    public static BufferedImage renderLatex(String text, java.awt.Color color, String family, int type, int size, int calls){
         
         try{
+            
+            //TeXFormula.registerExternalFont(Character.UnicodeBlock.BASIC_LATIN, family);
             TeXFormula formula = new TeXFormula(text);
+            
             formula.setColor(color);
             
-            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, size * IMAGE_FACTOR);
+            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size * IMAGE_FACTOR, type);
             
             icon.setInsets(new Insets((int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7)));
             
@@ -419,17 +464,27 @@ public class TextElement extends Element {
             }
             if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
                 return renderLatex(formatLatexText(TR.tr("textTab.Latex.unknownError") + "\\" +
-                        ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), "")), color, size, calls + 1);
+                        ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), "")), color, family, type, size, calls + 1);
             }else if(text.startsWith(TR.tr("dialog.error.presentative") + "\\")){
-                return renderLatex(formatLatexText(TR.tr("textTab.Latex.unableToParse")), color, size, calls + 1);
+                return renderLatex(formatLatexText(TR.tr("textTab.Latex.unableToParse")), color, family, type, size, calls + 1);
             }else{
-                return renderLatex(formatLatexText(TR.tr("dialog.error.presentative") + "\\" + ex.getMessage()), color, size, calls + 1);
+                return renderLatex(formatLatexText(TR.tr("dialog.error.presentative") + "\\" + ex.getMessage()), color, family, type, size, calls + 1);
             }
         }
     }
     
     private static String translateStarMathToLatex(String starMath){
-        return ConverterFactory.createStarMathConverter().convert(starMath);
+        
+        StarMathConverter converter = ConverterFactory.createStarMathConverter();
+        StringBuilder output = new StringBuilder();
+        
+        int i = 0;
+        for(String part : starMath.split(Pattern.quote("\n"))){
+            if(i != 0) output.append(" \\\\ ");
+            output.append(converter.convert(part));
+            i++;
+        }
+        return output.toString();
     }
     
     // ELEMENT DATA GETTERS AND SETTERS
@@ -450,7 +505,7 @@ public class TextElement extends Element {
         return textNode.getText();
     }
     public boolean hasEmptyText(){
-        String text = invertLaTeXIfNeeded(getText());
+        String text = invertMathIfNeeded(getText());
         return text.isBlank();
     }
     

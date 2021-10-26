@@ -72,7 +72,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         
         setWidth(width.getWidth());
-        setMaxHeight(Main.SCREEN_VISUAL_BOUNDS.getHeight());
+        setMaxHeight(width.getWidth() * 1.75);
         
         setTitle(title + " - PDF4Teachers");
         setScene(scene);
@@ -91,7 +91,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             setMinHeight(300 * Main.settings.zoom.getValue());
             setMaxWidth(width.getWidth() * 2 * Main.settings.zoom.getValue());
             
-            if(getHeight() > 1.5 * getWidth()) setHeight(1.5 * getWidth());
+            if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
             
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);

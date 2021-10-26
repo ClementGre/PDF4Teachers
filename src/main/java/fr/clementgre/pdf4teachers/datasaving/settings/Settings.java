@@ -18,6 +18,7 @@ import javafx.scene.layout.HBox;
 
 import java.io.File;
 import java.lang.reflect.Field;
+import java.util.Map;
 
 public class Settings {
     
@@ -95,16 +96,19 @@ public class Settings {
     public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
     
     
+    public static final int TEXT_MODE_DEFAULT = 0;
+    public static final int TEXT_MODE_LATEX = 1;
+    public static final int TEXT_MODE_STARMATH = 2;
     @SettingObject
-    public BooleanSetting defaultLatex = new BooleanSetting(false, true, SVGPathIcons.SUBSCRIPT, "text.defaultLaTeX",
-            "settings.defaultLatex.title", "settings.defaultLatex.tooltip");
+    public ToggleGroupSetting defaultTextMode = new ToggleGroupSetting(0, Map.of(1, "LaTeX", 2, "LibreOffice"), true, true, SVGPathIcons.SUBSCRIPT, "text.defaultTextMode",
+            "settings.defaultTextMode.title", "settings.defaultTextMode.tooltip");
     
     @SettingObject
     public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDH, "text.defaultMaxWidth",
             "settings.textMaxWidth.title", "settings.textMaxWidth.tooltip");
     
     @SettingsGroup(title = "settings.group.textElements")
-    public Setting<?>[] textElements = {defaultLatex, defaultMaxWidth};
+    public Setting<?>[] textElements = {defaultTextMode, defaultMaxWidth};
     
     
     @SettingObject
@@ -191,6 +195,10 @@ public class Settings {
                                 DoubleSetting var = (DoubleSetting) field.get(this);
                                 Double value = config.getDoubleNull(var.getPath());
                                 if(value != null) var.setValue(value);
+                            }else if(field.getType() == ToggleGroupSetting.class){
+                                ToggleGroupSetting var = (ToggleGroupSetting) field.get(this);
+                                Long value = config.getLongNull(var.getPath());
+                                if(value != null) var.setValue(value.intValue());
                             }
                         }catch(Exception e){
                             e.printStackTrace();

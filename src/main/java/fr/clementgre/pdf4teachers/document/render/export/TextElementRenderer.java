@@ -23,7 +23,7 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         
         ////////// LATEX RENDER
         
-        if(element.isLatex()){
+        if(element.isMath()){
             
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ImageIO.write(element.renderAwtLatex(), "png", bos);

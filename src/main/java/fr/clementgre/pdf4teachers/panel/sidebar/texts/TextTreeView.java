@@ -181,7 +181,7 @@ public class TextTreeView extends TreeView<String> {
             for(i = 0; i < favoritesSection.getChildren().size(); i++){
                 if(favoritesSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }
@@ -191,7 +191,7 @@ public class TextTreeView extends TreeView<String> {
             for(i = 0; i < lastsSection.getChildren().size(); i++){
                 if(lastsSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }
@@ -201,7 +201,7 @@ public class TextTreeView extends TreeView<String> {
             for(i = 0; i < onFileSection.getChildren().size(); i++){
                 if(onFileSection.getChildren().get(i) instanceof TextTreeItem item){
                     if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertLaTeXIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
                         getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
                     }
                 }

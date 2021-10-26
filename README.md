@@ -93,7 +93,9 @@ The application was developed with JavaFX framework, with Java SE 16 (1.3.0).
 - **[JMetro 11.6.15](https://pixelduke.com/java-javafx-theme-jmetro/)** : JavaFX theme. It offers you a nicer interface,
   including the dark mode.
 - **[ControlsFX 11.1.0](https://controlsfx.github.io/)** : JavaFX new inputs and custom panes
-- **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (
+- **[Writer2Latex 1.6.1](http://writer2latex.sourceforge.net/)** : used to convert StarMath (or LibreOffice Math)
+  language in LaTeX for rendering.
+  **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (
   LaTeX text elements feature in 1.2.0)
 - **[SnakeYAML 1.29](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user
   datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.

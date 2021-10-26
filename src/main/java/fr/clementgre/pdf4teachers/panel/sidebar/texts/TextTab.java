@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.components.FontComboBox;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextArea;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
+import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
@@ -148,11 +149,12 @@ public class TextTab extends SideTab {
         if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
         else txtArea.setStyle("-fx-font-size: 13");
         txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
-        txtArea.setPromptText(Main.settings.defaultLatex.getValue() ? TR.tr("textTab.Latex.help.inverted") : TR.tr("textTab.Latex.help"));
-        Main.settings.defaultLatex.valueProperty().addListener((observable, oldValue, newValue) -> {
-            txtArea.setPromptText(newValue ? TR.tr("textTab.Latex.help.inverted") : TR.tr("textTab.Latex.help"));
+        updateTextAreaPromptText();
+        Main.settings.defaultTextMode.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateTextAreaPromptText();
             if(MainWindow.mainScreen.getSelected() instanceof TextElement){
-                txtArea.setText(TextElement.invertLaTeX(txtArea.getText()));
+                String text = TextElement.invertBySettings(txtArea.getText(), oldValue.intValue());
+                txtArea.setText(TextElement.invertBySettings(text, newValue.intValue()));
             }
         });
         
@@ -190,7 +192,7 @@ public class TextTab extends SideTab {
             }
             if(newElement instanceof TextElement current){
                 
-                txtArea.setText(TextElement.invertLaTeXIfNeeded(current.getText()));
+                txtArea.setText(TextElement.invertMathIfNeeded(current.getText()));
                 boldBtn.setSelected(FontUtils.getFontWeight(current.getFont()) == FontWeight.BOLD);
                 itBtn.setSelected(FontUtils.getFontPosture(current.getFont()) == FontPosture.ITALIC);
                 colorPicker.setValue(current.getColor());
@@ -217,7 +219,7 @@ public class TextTab extends SideTab {
             }
             
             // Default LaTeX
-            newValue = TextElement.invertLaTeXIfNeeded(newValue);
+            newValue = TextElement.invertMathIfNeeded(newValue);
             
             if(MainWindow.mainScreen.getSelected() instanceof TextElement element){
                 treeView.updateAutoComplete();
@@ -302,6 +304,17 @@ public class TextTab extends SideTab {
             MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
             MainWindow.mainScreen.setSelected(null);
         });
+    }
+    
+    private void updateTextAreaPromptText(){
+        if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_LATEX){
+            txtArea.setPromptText(TR.tr("textTab.textAreaPromptText.latexInverted"));
+        }else if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_STARMATH){
+            txtArea.setPromptText(TR.tr("textTab.textAreaPromptText.starMathInverted"));
+        }else{
+            txtArea.setPromptText(TR.tr("textTab.textAreaPromptText"));
+        }
+        
     }
     
     public void updateHeightAndYLocations(boolean sbIsVisible){
