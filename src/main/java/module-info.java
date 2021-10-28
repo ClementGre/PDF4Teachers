@@ -51,7 +51,7 @@ open module fr.clementgre.pdf4teachers {
     requires google.diffmatchpatch;
     requires uniqueforj;
     
-    // Android
+    // Gluon
     /*requires com.gluonhq.attach.display;
     requires com.gluonhq.attach.util;
     requires com.gluonhq.attach.lifecycle;

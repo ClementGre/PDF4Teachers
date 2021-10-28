@@ -212,21 +212,9 @@ jlink {
 }
 
 
-task androidRun(type: Exec) {
-
-    def adb = "/home/clement/bin/platform-tools/adb"
-
-    def dotIndex = mainClassName.lastIndexOf('.')
-    if (dotIndex != -1) {
-        def packageName = mainClassName[0..<dotIndex]
-        commandLine "$adb", 'shell', 'am', 'start', '-n', "$packageName"
-    }
-
-}
-
 gluonfx {
-    target = "host"
-    //target = "android"
+    // target = "host"
+    target = "android"
 
     attachConfig {
         version = "4.0.10"
@@ -238,12 +226,18 @@ gluonfx {
     reflectionList = []
     jniList = []
 
-    compilerArgs = ['--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls']
-    runtimeArgs = ['--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls']
+    compilerArgs = [
+            '--allow-incomplete-classpath',
+            '--enable-https'
+    ]
+    runtimeArgs = [
+            '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
+    ]
 
     javaStaticSdkVersion = "18-ea+2"
     javafxStaticSdkVersion = "18-ea+2"
-    graalvmHome = "/home/clement/bin/graalvm-ce-java17-22.0.0-dev"
+    graalvmHome = "/home/clement/bin/graalvm-ce-java17-21.3.0/"
 
     verbose = false
     enableSwRendering = false
