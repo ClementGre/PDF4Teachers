@@ -7,12 +7,16 @@ plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.0'
     id 'idea'
-    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+//    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
     id "de.jjohannes.extra-java-module-info" version "0.8"
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.8'
 }
+
 repositories {
     mavenCentral()
     maven { url "https://clojars.org/repo" }
+    maven { url "https://nexus.gluonhq.com/nexus/content/repositories/releases/" }
     flatDir {
         dirs 'locallibs'
     }
@@ -44,6 +48,9 @@ extraJavaModuleInfo {
 }
 
 dependencies {
+
+    // Gluon
+//    implementation "com.gluonhq:charm-glisten:6.1.0"
 
     implementation 'org.jetbrains:annotations:22.0.0'
 
@@ -88,7 +95,6 @@ dependencies {
 
     // Unique4J
     implementation 'tk.pratanumandal:unique4j:1.4'
-
 
 }
 
@@ -204,4 +210,65 @@ jlink {
         }
     }
 }
+
+
+task androidRun(type: Exec) {
+
+    def adb = "/home/clement/bin/platform-tools/adb"
+
+    def dotIndex = mainClassName.lastIndexOf('.')
+    if (dotIndex != -1) {
+        def packageName = mainClassName[0..<dotIndex]
+        commandLine "$adb", 'shell', 'am', 'start', '-n', "$packageName"
+    }
+
+}
+
+gluonfx {
+    target = "host"
+    //target = "android"
+
+    attachConfig {
+        version = "4.0.10"
+        services 'display', 'lifecycle', 'statusbar', 'storage'
+    }
+
+    bundlesList = []
+    resourcesList = []
+    reflectionList = []
+    jniList = []
+
+    compilerArgs = ['--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls']
+    runtimeArgs = ['--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls']
+
+    javaStaticSdkVersion = "18-ea+2"
+    javafxStaticSdkVersion = "18-ea+2"
+    graalvmHome = "/home/clement/bin/graalvm-ce-java17-22.0.0-dev"
+
+    verbose = false
+    enableSwRendering = false
+
+    /*remoteHostName = ""
+    remoteDir = ""*/
+
+    release {
+        // Android
+        appLabel = "PDF4Teachers"
+        versionCode = "1"
+        versionName = "1.3.1"
+        /*providedKeyStorePath = ""
+        providedKeyStorePassword = ""
+        providedKeyAlias = ""
+        providedKeyAliasPassword = ""*/
+
+        // iOS
+        /*bundleName = ""
+        bundleVersion = ""
+        bundleShortVersion = ""
+        providedSigningIdentity = ""
+        providedProvisioningProfile = ""
+        skipSigning = false*/
+    }
+}
+
 

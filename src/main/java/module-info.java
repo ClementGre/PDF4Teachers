@@ -36,6 +36,7 @@ open module fr.clementgre.pdf4teachers {
     
     // JAVAFX
     requires javafx.base;
+    requires javafx.graphics;
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.swing;
@@ -49,6 +50,14 @@ open module fr.clementgre.pdf4teachers {
     // Utils
     requires google.diffmatchpatch;
     requires uniqueforj;
+    
+    // Android
+    /*requires com.gluonhq.attach.display;
+    requires com.gluonhq.attach.util;
+    requires com.gluonhq.attach.lifecycle;
+    requires com.gluonhq.attach.storage;
+    requires com.gluonhq.attach.statusbar;
+    requires com.gluonhq.charm.glisten;*/
     
     // EXPORTS
     
