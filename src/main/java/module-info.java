@@ -8,7 +8,7 @@ open module fr.clementgre.pdf4teachers {
     requires java.sql;
     requires java.desktop;
     requires java.management;
-    requires jdk.crypto.ec;
+    requires jdk.crypto.cryptoki;
     requires jdk.accessibility;
     
     // OTHER DEPENDENCIES
