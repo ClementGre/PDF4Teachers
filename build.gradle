@@ -213,8 +213,8 @@ jlink {
 
 
 gluonfx {
-    // target = "host"
-    target = "android"
+    target = "host"
+    //target = "android"
 
     attachConfig {
         version = "4.0.10"
@@ -237,7 +237,11 @@ gluonfx {
 
     javaStaticSdkVersion = "18-ea+2"
     javafxStaticSdkVersion = "18-ea+2"
-    graalvmHome = "/home/clement/bin/graalvm-ce-java17-21.3.0/"
+    if (os.windows) graalvmHome = "C:\\Program Files\\AdoptOpenJDK\\graalvm-ce-java17-21.3.0"
+    else if (os.macOsX) graalvmHome = "undefined"
+    else if (os.linux) graalvmHome = "/opt/graalvm-ce-java17-21.3.0"
+    System.out.println("Using GraalVM: ".concat(graalvmHome))
+
 
     verbose = false
     enableSwRendering = false
