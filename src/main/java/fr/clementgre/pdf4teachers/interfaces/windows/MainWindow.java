@@ -49,6 +49,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MainWindow extends Stage {
     
@@ -158,7 +159,7 @@ public class MainWindow extends Stage {
         textTab = new TextTab();
         gradeTab = new GradeTab();
         try{
-            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"));
+            FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/PaintTab.fxml")));
         }catch(IOException e){
             e.printStackTrace();
         }

@@ -133,7 +133,7 @@ public class Main extends Application {
         params = getParameters().getRaw();
         if(LockManager.FAKE_OPEN_FILE) params = List.of("/home/clement/Téléchargements/Kev.pdf");
         
-        // define crucial vars
+        // define important vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
         else if(isOSX()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
