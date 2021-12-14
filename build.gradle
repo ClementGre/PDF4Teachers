@@ -52,7 +52,7 @@ dependencies {
         exclude group: 'org.openjfx'
     }
     // ControlsFX
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.0'
+    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.1'
 
     // Support special images format when render a PDF
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
@@ -99,7 +99,7 @@ javafx {
 
 def os = org.gradle.internal.os.OperatingSystem.current()
 
-version = "1.3.0"
+version = "1.3.1"
 description = "PDF students assessments editor"
 
 //frenchDescription="Éditeur de copies PDF"
