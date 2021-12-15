@@ -75,21 +75,21 @@ public class KeyboardShortcuts {
                         
                     }else if(e.getCode() == KeyCode.G){
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
-                        if(!MainWindow.gradeTab.isSelected()) return;
+                        if(!MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
                         
                         GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
-                        if(item == null) return;
-                        if(item.isRoot()){
+                        if(item == null || item.isRoot()){
+                            item = MainWindow.gradeTab.treeView.getRootTreeItem(); // In case item == null
+                            
                             GradeElement element = MainWindow.gradeTab.newGradeElementAuto(item);
                             element.select();
+                            // Update total (Fix the bug when a total is predefined (with no children))
+                            item.makeSum(false);
                         }else{
                             GradeElement element = MainWindow.gradeTab.newGradeElementAuto(((GradeTreeItem) item.getParent()));
                             element.select();
                         }
-                        // Update total (Fix the bug when a total is predefined (with no children))
-                        item.makeSum(false);
                         return;
-                        
                     }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP){
                         e.consume();
                         MainWindow.mainScreen.zoomMore();

@@ -375,10 +375,7 @@ public class MainWindow extends Stage {
     
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        char separator = TR.tr("chars.decimalSeparator").charAt(0);
-        if(separator == 'D') separator = ',';
-        else if(separator != ',' && separator != '.') separator = '.';
-        symbols.setDecimalSeparator(separator);
+        symbols.setDecimalSeparator(TR.tr("chars.decimalSeparator").charAt(0) == ',' ? ',' : '.');
         
         fourDigFormat = new DecimalFormat("0.####", symbols);
         twoDigFormat = new DecimalFormat("0.##", symbols);

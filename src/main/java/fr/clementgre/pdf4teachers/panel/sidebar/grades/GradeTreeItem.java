@@ -320,7 +320,7 @@ public class GradeTreeItem extends TreeItem<String> {
         else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
     public void makeSum(int previousPage, int previousRealY){
-        if(!deleted){
+        if(!deleted && getChildren().size() != 0){
             boolean hasValue = false;
             double value = 0;
             double total = 0;
@@ -340,7 +340,7 @@ public class GradeTreeItem extends TreeItem<String> {
             }
             
             if(hasValue){
-                if(!core.isFilled() && previousPage != -1){
+                if(!core.isFilled() && previousPage != -1){ // Add core element to the page if needed
                     if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
                     core.nextRealYToUse = previousRealY - core.getRealHeight();
                 }

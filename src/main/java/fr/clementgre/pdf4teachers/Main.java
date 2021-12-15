@@ -57,7 +57,7 @@ public class Main extends Application {
     public static final boolean DEBUG = true;
     public static final boolean COPY_CONSOLE = true;
     public static final boolean COPY_TRANSLATIONS_AT_START = false;
-    public static final boolean TRANSLATIONS_IN_CODE = false;
+    public static final boolean TRANSLATIONS_IN_CODE = true;
     
     public static boolean firstLaunch;
     public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();

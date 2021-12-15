@@ -125,7 +125,10 @@ public class GradeTreeItemPanel extends HBox {
             }else{
                 getChildren().setAll(name, spacer, value, slash, totalField, newGrade);
                 totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
-                Platform.runLater(() -> totalField.requestFocus());
+                
+                if(treeItem.getCore().getOutOfTotal() == -1) // Select only if the real total panel has no important reason to request focus
+                    if(treeItem.hasSubGrade() || treeItem.getCore().getTotal() != 0 && treeItem.getCore().getValue() != -1)
+                        Platform.runLater(() -> totalField.requestFocus());
             }
             return;
         }
@@ -190,6 +193,7 @@ public class GradeTreeItemPanel extends HBox {
         name.textProperty().unbind();
         value.textProperty().unbind();
         total.textProperty().unbind();
+        newGrade.disableProperty().unbind();
         
         getChildren().clear();
         nameField = null;
