@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
@@ -159,7 +160,6 @@ public class FileTab extends SideTab {
     }
     
     public class DirOpener {
-        private final int DEEP_LIMIT = 2;
         boolean alreadyAsked = false;
         boolean recursive = false;
         
@@ -173,16 +173,13 @@ public class FileTab extends SideTab {
             }
         }
         
-        private void openFileSubDir(File file, int deep){
-            if(deep > DEEP_LIMIT || file.listFiles() == null) return;
+        private void openFileSubDir(File file, int depth){
+            int DEPTH_LIMIT = 2;
+            if(!isRecursive() || depth > DEPTH_LIMIT || file.listFiles() == null) return;
             
             for(File childrenFile : Objects.requireNonNull(file.listFiles())){
-                if(childrenFile.isDirectory()) openFileSubDir(childrenFile, deep + 1);
-                
-                if(isFilePdf(childrenFile) && !files.getItems().contains(childrenFile)){
-                    if(isRecursive()) openFile(childrenFile);
-                    else return;
-                }
+                if(childrenFile.isDirectory()) openFileSubDir(childrenFile, depth + 1);
+                else openFileNonDir(childrenFile);
             }
         }
         
@@ -222,12 +219,14 @@ public class FileTab extends SideTab {
         for(File file : files){
             openFile(file);
         }
+        if(files.length != 0) SideBar.selectTab(this);
     }
     
     public void openFiles(List<File> files){
         for(File file : files){
             openFile(file);
         }
+        if(files.size() != 0) SideBar.selectTab(this);
     }
     
     public void clearFiles(){

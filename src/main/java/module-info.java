@@ -17,6 +17,14 @@ open module fr.clementgre.pdf4teachers {
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
+    requires imageio.core;
+    uses javax.imageio.spi.ImageInputStreamSpi;
+    uses javax.imageio.spi.ImageOutputStreamSpi;
+    uses javax.imageio.spi.ImageWriterSpi;
+    requires jai.imageio.jpeg2000;
+    requires org.apache.pdfbox.jbig2;
+    uses javax.imageio.spi.ImageReaderSpi;
+    uses org.apache.pdfbox.jbig2.util.log.LoggerBridge;
     
     // jfx addons
     requires org.jfxtras.styles.jmetro;
@@ -27,7 +35,7 @@ open module fr.clementgre.pdf4teachers {
     requires com.fasterxml.jackson.core;
     requires metadata.extractor; // EXIF READER
     
-    // latex
+    // Latex & StarMath
     requires jlatexmath;
     requires writertolatex;
     
@@ -44,11 +52,12 @@ open module fr.clementgre.pdf4teachers {
     requires batik.parser;
     requires de.rototor.pdfbox.graphics2d;
     
-    requires org.jetbrains.annotations;
-    
     // Utils
     requires google.diffmatchpatch;
     requires uniqueforj;
+    
+    // IDE
+    requires org.jetbrains.annotations;
     
     // EXPORTS
     
@@ -90,5 +99,5 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.panes;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine;
     exports fr.clementgre.pdf4teachers.utils.locking;
-    
 }
+    

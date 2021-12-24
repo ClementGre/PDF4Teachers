@@ -5,7 +5,7 @@
 
 plugins {
     id 'application'
-    id 'org.beryx.jlink' version '2.24.0'
+    id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
     id 'com.dua3.javafxgradle7plugin' version '0.0.9'
     id "de.jjohannes.extra-java-module-info" version "0.8"
@@ -66,7 +66,7 @@ dependencies {
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0'
 
     // JSON requests
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.0'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.1'
     // YAML
     implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
     // LaTeX
@@ -78,7 +78,7 @@ dependencies {
 
     // SVG
     implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
-    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.33'
+    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.34'
 
     // PDF Box
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
@@ -203,5 +203,65 @@ jlink {
             else if (installerType == 'rpm') installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
         }
     }
+
+    mergedModule{
+
+        // JBig2
+        uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge";
+        uses "org.apache.pdfbox.jbig2.util.cache.CacheBridge";
+
+        // Generated automatically by gradle
+        requires 'java.logging';
+        requires 'jdk.xml.dom';
+        requires 'java.sql';
+        requires 'java.xml';
+        requires 'java.desktop'; // needed for jbig2 LoggerBridge
+        uses 'javax.imageio.spi.ImageWriterSpi';
+        provides 'org.apache.xmlgraphics.image.loader.spi.ImageConverter' with 'org.apache.xmlgraphics.image.loader.impl.ImageConverterBitmap2G2D',
+                'org.apache.xmlgraphics.image.loader.impl.ImageConverterBuffered2Rendered',
+                'org.apache.xmlgraphics.image.loader.impl.ImageConverterG2D2Bitmap',
+                'org.apache.xmlgraphics.image.loader.impl.ImageConverterRendered2PNG';
+        provides 'javax.imageio.spi.ImageOutputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageOutputStreamSpi';
+        provides 'org.apache.xmlgraphics.image.writer.ImageWriter' with 'org.apache.xmlgraphics.image.writer.imageio.ImageIOJPEGImageWriter',
+                'org.apache.xmlgraphics.image.writer.imageio.ImageIOPNGImageWriter',
+                'org.apache.xmlgraphics.image.writer.imageio.ImageIOTIFFImageWriter',
+                'org.apache.xmlgraphics.image.writer.internal.PNGImageWriter',
+                'org.apache.xmlgraphics.image.writer.internal.TIFFImageWriter';
+        provides 'javax.imageio.spi.ImageReaderSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageReaderSpi',
+                'com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi',
+                'com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi',
+                'com.github.jaiimageio.impl.plugins.raw.RawImageReaderSpi',
+                'com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi',
+                'com.github.jaiimageio.impl.plugins.wbmp.WBMPImageReaderSpi',
+                'com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi',
+                'org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi';
+        provides 'org.apache.xmlgraphics.image.loader.spi.ImageLoaderFactory' with 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryEPS',
+                'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryInternalTIFF',
+                'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryPNG',
+                'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRaw',
+                'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRawCCITTFax',
+                'org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderFactoryImageIO';
+        provides 'org.apache.xmlgraphics.image.loader.spi.ImagePreloader' with 'org.apache.xmlgraphics.image.loader.impl.PreloaderBMP',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderEMF',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderEPS',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderGIF',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderJPEG',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderRawPNG',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderTIFF',
+                'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO';
+        provides 'javax.imageio.spi.ImageInputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageInputStreamSpi';
+        provides 'javax.xml.transform.URIResolver' with 'org.apache.xmlgraphics.util.uri.DataURIResolver';
+        provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge';
+        provides 'javax.imageio.spi.ImageWriterSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.pnm.PNMImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi',
+                'com.github.jaiimageio.impl.plugins.wbmp.WBMPImageWriterSpi',
+                'com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi';
+        provides 'org.apache.pdfbox.jbig2.util.cache.CacheBridge' with 'org.apache.pdfbox.jbig2.util.cache.SoftReferenceCacheBridge';
+    }
 }
+
 

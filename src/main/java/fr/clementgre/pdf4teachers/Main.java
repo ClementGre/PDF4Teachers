@@ -30,6 +30,7 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -78,7 +79,7 @@ public class Main extends Application {
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
-        
+        ImageIO.scanForPlugins();
         if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
             System.exit(0);
