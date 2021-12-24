@@ -18,10 +18,9 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -136,12 +135,16 @@ public class KeyboardShortcuts {
             }else{ // NO SHORTCUT PRESSED
                 
                 if(e.getCode() == KeyCode.BEGIN || e.getCode() == KeyCode.HOME){ // NAVIGATE IN DOCUMENT SHORTCUTS
-                    e.consume();
-                    MainWindow.mainScreen.navigateBegin();
+                    if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field of a spinner is focused.
+                        e.consume();
+                        MainWindow.mainScreen.navigateBegin();
+                    }
                     return;
                 }else if(e.getCode() == KeyCode.END){
-                    e.consume();
-                    MainWindow.mainScreen.navigateEnd();
+                    if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field of a spinner is focused.
+                        e.consume();
+                        MainWindow.mainScreen.navigateEnd();
+                    }
                     return;
                 }else if(e.getCode() == KeyCode.PAGE_UP){
                     e.consume();
@@ -235,6 +238,14 @@ public class KeyboardShortcuts {
             }
         }
         
+    }
+    
+    private boolean canBeginEndOnNode(Node node){
+         if(node instanceof TextInputControl) return true;
+         else if(node instanceof Spinner<?> spinner){
+             return spinner.isEditable();
+         }
+         return false;
     }
     
 }

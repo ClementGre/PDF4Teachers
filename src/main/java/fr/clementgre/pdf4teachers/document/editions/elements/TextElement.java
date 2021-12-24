@@ -92,6 +92,7 @@ public class TextElement extends Element {
     
     @Override
     protected void setupBindings(){
+        
         textProperty().addListener((observable, oldValue, newValue) -> {
             updateText();
             this.textNode.setUnderline(isURL());
