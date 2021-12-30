@@ -75,7 +75,7 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            if(vector == null) return;
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1){
                 e.consume();
                 // Draw only one point
@@ -86,7 +86,8 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseReleased((e) -> {
-            if(vector == null) return;
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            
             if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
                 if((lastX != e.getX() && lastY != e.getY()) || hasToMove)
@@ -148,6 +149,7 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnKeyReleased((e) -> {
+            
             if(e.getCode() == KeyCode.L){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(false);

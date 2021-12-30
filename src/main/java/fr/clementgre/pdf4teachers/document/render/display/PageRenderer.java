@@ -82,7 +82,7 @@ public class PageRenderer extends Pane {
     private double renderedZoomFactor;
     
     private PageEditPane pageEditPane;
-    private PageZoneSelector pageCursorRecord;
+    private PageZoneSelector pageZoneSelector;
     private VectorElementPageDrawer vectorElementPageDrawer;
     
     private GraphicElement placingElement = null;
@@ -123,16 +123,6 @@ public class PageRenderer extends Pane {
         ds.setColor(Color.BLACK);
         setEffect(ds);
         
-        // UPDATE MOUSE COORDINATES
-        // Detect all mouse events, even ones of Elements because they dont consume the event.
-        // (This is used to autoscroll when approaching the top/bottom of MainScreen)
-        setOnMouseMoved(e -> {
-            mouseX = e.getX();
-            mouseY = e.getY();
-            
-            if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
-        });
-        
         translateYProperty().addListener(translateYListener);
         
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +139,7 @@ public class PageRenderer extends Pane {
             mouseX = e.getX();
             mouseY = e.getY();
             
-            if(isEditPagesMode()){
+            if(isEditPagesMode() && !isPageZoneSelectorActive()){
                 
                 double translateY = getTranslateY() + e.getY() - shiftY;
                 if(getPage() == 0) translateY = Math.max(translateY, defaultTranslateY);
@@ -313,7 +303,7 @@ public class PageRenderer extends Pane {
         });
         
         //////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////// ENTER / EXIT //////////////////////////////////////
+        ////////////////////////////////// ENTER / MOVE / EXIT ///////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
         setOnMouseEntered(e -> {
@@ -325,6 +315,17 @@ public class PageRenderer extends Pane {
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
             
+        });
+        // UPDATE MOUSE COORDINATES
+        // Detect all mouse events, even ones of Elements because they don't consume the event.
+        // (This is used to autoscroll when approaching the top/bottom of MainScreen)
+        setOnMouseMoved(e -> {
+            mouseX = e.getX();
+            mouseY = e.getY();
+    
+            if(isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+            else setCursor(Cursor.DEFAULT);
         });
         setOnMouseExited(e -> {
             if(pageEditPane != null) pageEditPane.checkMouseExited();
@@ -640,9 +641,9 @@ public class PageRenderer extends Pane {
             pageEditPane.delete();
             pageEditPane = null;
         }
-        if(pageCursorRecord != null){
-            pageCursorRecord.delete();
-            pageCursorRecord = null;
+        if(pageZoneSelector != null){
+            pageZoneSelector.delete();
+            pageZoneSelector = null;
         }
         vectorElementPageDrawer = null;
         
@@ -883,10 +884,15 @@ public class PageRenderer extends Pane {
         this.status = status;
     }
     
-    public PageZoneSelector getPageCursorRecord(){
-        if(pageCursorRecord == null) pageCursorRecord = new PageZoneSelector(this);
-        return pageCursorRecord;
+    public PageZoneSelector getPageZoneSelector(){
+        if(pageZoneSelector == null) pageZoneSelector = new PageZoneSelector(this);
+        return pageZoneSelector;
     }
+    public boolean isPageZoneSelectorActive(){
+        if(pageZoneSelector == null) return false;
+        return pageZoneSelector.isActive();
+    }
+    
     public VectorElementPageDrawer getVectorElementPageDrawer(){
         if(vectorElementPageDrawer == null) vectorElementPageDrawer = new VectorElementPageDrawer(this);
         return vectorElementPageDrawer;

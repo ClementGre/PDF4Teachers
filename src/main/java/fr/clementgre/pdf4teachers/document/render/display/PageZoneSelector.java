@@ -32,6 +32,8 @@ public class PageZoneSelector extends Pane {
     private double startY = 0;
     private CallBackArg<PositionDimensions> callBack;
     
+    private boolean isActive = false;
+    
     public PageZoneSelector(PageRenderer page){
         super();
         setCache(false);
@@ -49,6 +51,7 @@ public class PageZoneSelector extends Pane {
     
     public void setupSelectionZoneOnce(CallBackArg<PositionDimensions> callBack){
         this.callBack = callBack;
+        this.isActive = true;
         
         selectionZone.setPrefWidth(0);
         selectionZone.setPrefHeight(0);
@@ -88,7 +91,6 @@ public class PageZoneSelector extends Pane {
     }
     
     private void updateSelectionPositionDimensions(MouseEvent e){
-        if(PageRenderer.isEditPagesMode()) return;
         
         if(startX < 0) startX = 0;
         if(startY < 0) startY = 0;
@@ -132,9 +134,10 @@ public class PageZoneSelector extends Pane {
         setOnKeyPressed(null);
         setBackground(null);
         selectionZone.setVisible(false);
-        setShow(false);
+        setDoShow(false);
         
         callBack = null;
+        isActive = false;
     }
     public void delete(){
         // In case of leak of this class, the others classes won't be leaked too :
@@ -142,10 +145,11 @@ public class PageZoneSelector extends Pane {
         selectionZone.setBackground(null);
         selectionZone = null;
         callBack = null;
+        isActive = false;
         page = null;
     }
     
-    public void setShow(boolean visible){
+    public void setDoShow(boolean visible){
         setVisible(visible);
         if(visible){
             toFront();
@@ -179,5 +183,9 @@ public class PageZoneSelector extends Pane {
     
     public void setPage(PageRenderer page){
         this.page = page;
+    }
+    
+    public boolean isActive(){
+        return isActive;
     }
 }

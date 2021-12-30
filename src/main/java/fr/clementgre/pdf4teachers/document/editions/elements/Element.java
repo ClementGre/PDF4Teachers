@@ -89,14 +89,14 @@ public abstract class Element extends Region {
                 
                 if(e.getClickCount() == 1){
                     lastClickSelected.set(MainWindow.mainScreen.getSelected() == this);
-                    
-                    shiftX = (int) e.getX();
-                    shiftY = (int) e.getY();
                     menu.hide();
                     select();
                     
                     if(e.getButton() == MouseButton.SECONDARY){
                         menu.show(getPage(), e.getScreenX(), e.getScreenY());
+                    }else{
+                        shiftX = (int) e.getX();
+                        shiftY = (int) e.getY();
                     }
                     
                 }
@@ -112,7 +112,7 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseDragged(e -> {
-                if(wasInEditPagesModeWhenMousePressed) return;
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 
                 if(!dragAlreadyDetected){
                     MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
@@ -124,7 +124,7 @@ public abstract class Element extends Region {
                 checkLocation(itemX, itemY, true);
             });
             setOnMouseReleased(e -> {
-                if(wasInEditPagesModeWhenMousePressed) return;
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 Edition.setUnsave("ElementMouseRelease");
                 
                 double itemX = getLayoutX() + e.getX() - shiftX;
