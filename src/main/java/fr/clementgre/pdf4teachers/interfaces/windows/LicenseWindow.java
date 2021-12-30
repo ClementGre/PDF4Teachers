@@ -249,7 +249,7 @@ public class LicenseWindow extends Stage {
         
         show();
         Main.window.centerWindowIntoMe(this);
-        MainWindow.preventWindowOverflowScreen(this);
+        MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         new Thread(() -> {
             try{
                 Thread.sleep(1500);

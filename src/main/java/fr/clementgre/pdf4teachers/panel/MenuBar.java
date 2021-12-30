@@ -434,9 +434,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             else edit5Paste.setText(paste);
         });
         
-        edit1Undo.setOnAction(e -> {
-            MainWindow.mainScreen.undo();
-        });
+        edit1Undo.setOnAction(e -> MainWindow.mainScreen.undo());
         edit2Redo.setOnAction(e -> MainWindow.mainScreen.redo());
         
         edit3Cut.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.CUT));

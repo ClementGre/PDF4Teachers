@@ -30,13 +30,16 @@ import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
@@ -278,44 +281,57 @@ public class MainWindow extends Stage {
         
     }
     
-    public void centerWindowIntoMe(Window window){
+    public void centerWindowIntoMe(Stage window){
         centerWindowIntoMe(window, window.getWidth(), window.getHeight());
     }
-    public void centerWindowIntoMe(Window window, double w, double h){
-        double sw = Main.SCREEN_BOUNDS.getWidth();
-        double sh = Main.SCREEN_BOUNDS.getHeight();
-        
+    public void centerWindowIntoMe(Stage window, double w, double h){
         double x = getX() + getWidth() / 2 - w / 2;
         double y = getY() + getHeight() / 2 - h / 2;
-        
-        if(x > sw - w) x = sw - w;
-        if(y > sh - h) y = sh - h;
-        if(x < 0) x = 0;
-        if(y < 0) y = 0;
-        
         window.setX(x);
         window.setY(y);
     }
     public static void preventWindowOverflowScreen(Stage window){
+        preventWindowOverflowScreen(window, getScreen(window).getVisualBounds());
+    }
+    public static void preventWindowOverflowScreen(Stage window, Rectangle2D bounds){
         double w = window.getWidth();
         double h = window.getHeight();
         double x = window.getX();
         double y = window.getY();
-        
-        double sw = Main.SCREEN_VISUAL_BOUNDS.getWidth();
-        double sh = Main.SCREEN_VISUAL_BOUNDS.getHeight();
-        if(w > sw) w = sw;
-        if(h > sh) h = sh;
-        if(x != -1){
-            if(x + w > sw) window.setX(0);
-        }
-        if(y != -1){
-            if(y + h > sh) window.setY(0);
-        }
+
+        double minX = bounds.getMinX();
+        double maxX = bounds.getMaxX();
+        double minY = bounds.getMinY();
+        double maxY = bounds.getMaxY();
+
+        // Check in top right coordinates and move window
+        if(x+w > maxX) x -= x+w - maxX;
+        if(y+h > maxY) y -= y+h - maxY;
+
+        // Check in bottom right coordinates and move window
+        if(x < minX) x = minX;
+        if(y < minY) y = minY;
+
+        // Check in top right coordinates and resize window
+        if(x+w > maxX) w -= x+w - maxX;
+        if(y+h > maxY) w -= y+h - maxY;
+
         if(window.getMinWidth() > w) window.setMinWidth(w);
         if(window.getMinHeight() > h) window.setMinHeight(h);
         window.setWidth(w);
         window.setHeight(h);
+        window.setX(x);
+        window.setY(y);
+    }
+    public static Screen getScreen(){
+        return getScreen(Main.window);
+    }
+    public static Screen getScreen(Window window){
+        ObservableList<Screen> screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
+        if(screens.size() == 0){
+            if(window == Main.window) return Screen.getPrimary();
+            else return getScreen();
+        }else return screens.get(0);
     }
     
     /*

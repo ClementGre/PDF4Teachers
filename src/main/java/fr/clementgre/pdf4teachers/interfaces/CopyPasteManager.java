@@ -30,12 +30,11 @@ public class CopyPasteManager {
     }
     
     public static void execute(CopyPasteType type){
+        if(!Main.window.isFocused()) return;
         // Field Action
         if(doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), type)){
-            System.out.println("Executing action on JavaFX node");
             if(executeOnNode(Main.window.getScene().getFocusOwner(), type)) return;
         }
-        System.out.println("Executing action on app custom features");
         // App Feature Action
         executeOnAppFeatures(type);
     }
@@ -71,7 +70,6 @@ public class CopyPasteManager {
         TextInputControl field = null;
         if(node instanceof TextInputControl textInputControl){
             field = textInputControl;
-            System.out.println("TextInputControl node detected: action will be executed on this node");
         }else if(node instanceof Spinner<?> spinner){
             if(spinner.isEditable()) field = spinner.getEditor();
         }
@@ -94,7 +92,6 @@ public class CopyPasteManager {
         }
         
         if(node instanceof TextInputControl field){
-            System.out.println("Node selected is a text field => doNodeCanPerformAction = " + (field.getSelection().getLength() != 0));
             return field.getSelection().getLength() != 0;
             
         }else if(node instanceof Spinner<?> spinner){
