@@ -117,6 +117,12 @@ Hyperlink {
     -fx-vbar-policy: never;
 }
 
+/* Text area */
+.text-area#no-vertical-scroll-bar .scroll-pane {
+    -fx-vbar-policy: never;
+    -fx-hbar-policy: never;
+}
+
 /* Check Box */
 CheckBox {
     -fx-font-size: 13;

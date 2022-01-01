@@ -19,8 +19,11 @@ import java.util.regex.Pattern;
 
 public class GradeTreeItemField extends ShortcutsTextArea {
     
+    private static final int GRADE_NAME_MAX_CHARS = 40;
+    
     public GradeTreeItemField(GradeTreeItem treeItem, GradeTreeItemPanel panel, GradeTreeItem.FieldType type, boolean contextMenu){
         super("😉😉😉");
+        setId("no-vertical-scroll-bar");
         
         setStyle("-fx-font-size: 13;");
         setMinHeight(29);
@@ -100,7 +103,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             String newText;
             if(type == GradeTreeItem.FieldType.NAME){
                 newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
-                if(newText.length() >= 20) newText = newText.substring(0, 20);
+                if(newText.length() >= GRADE_NAME_MAX_CHARS) newText = newText.substring(0, GRADE_NAME_MAX_CHARS);
             }else{
                 newText = newValue.replaceAll("[^0123456789.,]", "");
                 String[] splitted = newText.split("[.,]");
@@ -122,7 +125,8 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             setText(newText);
             meter.setText(newText);
             setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-            setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
+            // Name field will never push others nodes
+            if(type != GradeTreeItem.FieldType.NAME) setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             
             // In case this is not the real grade field (in the right click context menu field)
             if(type == GradeTreeItem.FieldType.GRADE && this != panel.gradeField){

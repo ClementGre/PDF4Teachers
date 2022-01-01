@@ -13,7 +13,14 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
+import javafx.scene.Node;
+import javafx.scene.control.ScrollBar;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.Background;
@@ -28,11 +35,11 @@ import java.util.regex.Pattern;
 
 public class GradeTreeView extends TreeView<String> {
     
+    private ScrollBar verticalScrollbar = null;
     
     public GradeTreeView(GradeTab gradeTab){
         
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        setBackground(new Background(new BackgroundFill(Color.rgb(244, 244, 244), CornerRadii.EMPTY, Insets.EMPTY)));
         prefHeightProperty().bind(gradeTab.pane.heightProperty().subtract(layoutYProperty()));
         prefWidthProperty().bind(gradeTab.pane.widthProperty());
         
@@ -44,7 +51,7 @@ public class GradeTreeView extends TreeView<String> {
                     protected void updateItem(String item, boolean empty){
                         super.updateItem(item, empty);
                         
-                        // Enpty cell or String Data
+                        // Empty cell or String Data
                         if(empty || item != null){
                             setGraphic(null);
                             setStyle(null);
@@ -54,8 +61,8 @@ public class GradeTreeView extends TreeView<String> {
                             return;
                         }
                         // TreeGradeData
-                        if(getTreeItem() instanceof GradeTreeItem){
-                            ((GradeTreeItem) getTreeItem()).updateCell(this);
+                        if(getTreeItem() instanceof GradeTreeItem gradeTreeItem){
+                            gradeTreeItem.updateCell(this);
                             return;
                         }
                         // Other
@@ -69,6 +76,22 @@ public class GradeTreeView extends TreeView<String> {
             }
         });
         
+        getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        
+        // Update cells max-width (system to prevent horizontal scroll)
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            refresh();
+        });
+    
+        Platform.runLater(() -> {
+            verticalScrollbar = getVerticalScrollbar();
+            if(verticalScrollbar != null){
+                // Setup listener for updating view when bar visibility changes (So system to prevent horizontal scroll can update its max-width)
+                verticalScrollbar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                    refresh();
+                });
+            }
+        });
     }
     
     // Clear elements in tree and in page
@@ -358,5 +381,21 @@ public class GradeTreeView extends TreeView<String> {
     
     public GradeTreeItem getRootTreeItem(){
         return (GradeTreeItem) getRoot();
+    }
+    
+    private ScrollBar getVerticalScrollbar(){
+        for(Node node : lookupAll(".scroll-bar")) {
+            if(node instanceof ScrollBar bar){
+                if(bar.getOrientation().equals(Orientation.VERTICAL)){
+                    return bar;
+                }
+            }
+        }
+        return null;
+    }
+    
+    public double getVScrollbarVisibleWidth(){
+        if(verticalScrollbar == null) return 0;
+        return verticalScrollbar.isVisible() ? verticalScrollbar.getWidth() : 0;
     }
 }
