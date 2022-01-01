@@ -225,16 +225,16 @@ public abstract class Element extends Region {
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));
         
-        if(this instanceof GraphicElement){
-            
+        if(this instanceof GraphicElement graphicElement){
+    
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
-                ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
+                graphicElement.setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
             
             if(getWidth() != width){
                 int value = getPage().toGridX(width);
-                ((GraphicElement) this).setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
+                graphicElement.setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
             }
         }
     }

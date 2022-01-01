@@ -89,8 +89,9 @@ public class VectorElement extends GraphicElement{
         if(checkSize && getRealWidth() == 0 && getRealHeight() == 0){
             defineSizeAuto();
         }else{
-            checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
-                    getRealWidth() * getPage().getWidth() / GRID_WIDTH, getRealHeight() * getPage().getHeight() / GRID_HEIGHT, false);
+            // checkLocation must be called after centerOnCoordinatesX() or centerOnCoordinatesY()
+            Platform.runLater(() -> checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
+                    getRealWidth() * getPage().getWidth() / GRID_WIDTH, getRealHeight() * getPage().getHeight() / GRID_HEIGHT, false));
         }
     }
     

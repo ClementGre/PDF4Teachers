@@ -81,7 +81,6 @@ public class TextTreeView extends TreeView<String> {
         setCellFactory((TreeView<String> param) -> new TreeCell<>() {
             @Override
             protected void updateItem(String item, boolean empty){
-                
                 super.updateItem(item, empty);
                 
                 // Null
@@ -117,6 +116,9 @@ public class TextTreeView extends TreeView<String> {
             }
         });
         
+        if(Main.settings.textSmall.getValue()){
+            Platform.runLater(this::refresh);
+        }
         Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> {
             refresh();
         });
@@ -175,41 +177,25 @@ public class TextTreeView extends TreeView<String> {
         
         if(!MainWindow.textTab.txtArea.isDisabled() && !matchText.isBlank()){
             
-            
-            int totalIndex = 1;
-            int i;
-            for(i = 0; i < favoritesSection.getChildren().size(); i++){
-                if(favoritesSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
-                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
-                    }
-                }
-            }
-            totalIndex += i + 1;
-            
-            for(i = 0; i < lastsSection.getChildren().size(); i++){
-                if(lastsSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
-                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
-                    }
-                }
-            }
-            totalIndex += i + 1;
-            
-            for(i = 0; i < onFileSection.getChildren().size(); i++){
-                if(onFileSection.getChildren().get(i) instanceof TextTreeItem item){
-                    if(item.getCore() != MainWindow.mainScreen.getSelected()
-                            && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
-                        getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
-                    }
-                }
-            }
+            int totalIndex = selectSectionIndices(1, favoritesSection, matchText);
+            totalIndex = selectSectionIndices(totalIndex + 1, lastsSection, matchText);
+            selectSectionIndices(totalIndex + 1, onFileSection, matchText);
             
         }
         getSelectionModel().select(null);
         
+    }
+    private int selectSectionIndices(int totalIndex, TextTreeSection section, String matchText){
+        int i;
+        for(i = 0; i < section.getChildren().size(); i++){
+            if(section.getChildren().get(i) instanceof TextTreeItem item){
+                if(item.getCore() != MainWindow.mainScreen.getSelected()
+                        && TextElement.invertMathIfNeeded(item.getText()).toLowerCase().contains(matchText.toLowerCase())){
+                    getSelectionModel().selectIndices(totalIndex + i, getSelectionModel().getSelectedIndices().stream().mapToInt(value -> value).toArray());
+                }
+            }
+        }
+        return totalIndex + i;
     }
     
     public boolean selectNextInSelection(){
