@@ -89,7 +89,6 @@ public class MainWindow extends Stage {
         
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
-        loadDimensions();
         setupDecimalFormat();
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
@@ -104,20 +103,6 @@ public class MainWindow extends Stage {
         setOnCloseRequest(e -> {
             if(!requestCloseApp()) e.consume();
         });
-        
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        heightProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        xProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        yProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        
     }
     
     public static boolean requestCloseApp(){
@@ -144,7 +129,17 @@ public class MainWindow extends Stage {
     }
     
     public void setup(boolean openDocumentation){
-        
+
+        // WINDOW DIMENSIONS
+
+        loadDimensions();
+        widthProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        heightProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        xProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        yProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+
+        //      TRANSLATIONS
+
         ShapesGridView.setupTranslations();
         ConvertWindow.setupTranslations();
         
