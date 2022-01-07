@@ -72,7 +72,7 @@ public class SettingGroupPane extends VBox {
         box.setAlignment(Pos.CENTER_RIGHT);
         
         if(!setting.getDescription().isBlank()){
-            String color = Main.settings.darkTheme.getValue() ? "#ff8989" : "#ff8989";
+            String color = "#ff8989";
             Region icon = SVGPathIcons.generateImage(SVGPathIcons.INFO, color, 0, 15, 15);
             Pane iconContainer = new Pane(icon);
             iconContainer.setMinSize(15, 15);

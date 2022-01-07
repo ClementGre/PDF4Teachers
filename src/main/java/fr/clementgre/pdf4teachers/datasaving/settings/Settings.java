@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 public class Settings {
     
@@ -91,9 +92,15 @@ public class Settings {
     @SettingObject
     public BooleanSetting textSmall = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
             "settings.textSmall.title", "");
+    @SettingObject
+    public IntSetting maxPreviousElements = new IntSetting(50, true, 5, 500, 5, false, false, SVGPathIcons.ELLIPSIS_VERTICAL, "maxPreviousElements",
+            "settings.maxPreviousElements.title", "");
+    @SettingObject
+    public BooleanSetting keepLastDrawings = new BooleanSetting(false, true, SVGPathIcons.PEN, "keepLastDrawings",
+            "settings.keepLastDrawings.title", "");
     
     @SettingsGroup(title = "settings.group.elementsLists")
-    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall, maxPreviousElements, keepLastDrawings};
     
     
     public static final int TEXT_MODE_DEFAULT = 0;
@@ -104,7 +111,7 @@ public class Settings {
             "settings.defaultTextMode.title", "settings.defaultTextMode.tooltip");
     
     @SettingObject
-    public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDH, "text.defaultMaxWidth",
+    public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDTH, "text.defaultMaxWidth",
             "settings.textMaxWidth.title", "settings.textMaxWidth.tooltip");
     
     @SettingsGroup(title = "settings.group.textElements")

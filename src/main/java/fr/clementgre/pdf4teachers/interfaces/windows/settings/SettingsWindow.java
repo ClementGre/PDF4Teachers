@@ -54,7 +54,7 @@ public class SettingsWindow extends AlternativeWindow<VBox> {
         region.setMaxWidth(Double.MAX_VALUE);
         region.setPrefHeight(1);
         region.setStyle("-fx-background-color: gray;");
-        VBox.setMargin(region, new Insets(8, 0, 6, 0));
+        VBox.setMargin(region, new Insets(10, 0, 8, 0));
         return region;
     }
     

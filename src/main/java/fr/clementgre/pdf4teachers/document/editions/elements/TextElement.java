@@ -65,7 +65,8 @@ public class TextElement extends Element {
     
     private final BooleanProperty isTextWrapped = new SimpleBooleanProperty(false);
     
-    public static final float IMAGE_FACTOR = 3f;
+    public static final float SIZE_FACTOR = 1f;
+    public static final float RENDER_FACTOR = 3f;
     public static final String STARMATH_CHAR = "&&";
     public static final String STARMATH_CHAR_IN_LATEX = "\\&\\&";
     
@@ -377,8 +378,8 @@ public class TextElement extends Element {
                 Platform.runLater(() -> {
                     image.setImage(render);
                     image.setVisible(true);
-                    image.setFitWidth(render.getWidth() / IMAGE_FACTOR);
-                    image.setFitHeight(render.getHeight() / IMAGE_FACTOR);
+                    image.setFitWidth(render.getWidth() / RENDER_FACTOR);
+                    image.setFitHeight(render.getHeight() / RENDER_FACTOR);
                 });
             });
             
@@ -446,9 +447,10 @@ public class TextElement extends Element {
             
             formula.setColor(color);
             
-            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, size * IMAGE_FACTOR, type);
+            int finalSize = (int) (size * RENDER_FACTOR * SIZE_FACTOR);
+            TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, finalSize, type);
             
-            icon.setInsets(new Insets((int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7), (int) (-size * IMAGE_FACTOR / 7)));
+            icon.setInsets(new Insets((int) (-finalSize / 7), (int) (-finalSize / 7), (int) (-finalSize / 7), (int) (-finalSize / 7)));
             
             BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();

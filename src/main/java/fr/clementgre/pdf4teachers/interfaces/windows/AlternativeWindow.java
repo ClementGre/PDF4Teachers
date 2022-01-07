@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.SmoothishScrollpane;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
@@ -41,7 +42,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     public R root;
     public HBox buttonsBox;
     
-    protected ScrollPane scrollPane = new ScrollPane(container);
+    protected ScrollPane scrollPane = new SmoothishScrollpane(container);
     private final BorderPane borderPane = new BorderPane(scrollPane);
     private final Scene scene = new Scene(borderPane);
     
@@ -126,7 +127,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         
         // SCROLLPANE SPEED FIX //
         
-        scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
+        /*scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
             e.consume();
             if(Math.abs(e.getDeltaX()) > Math.abs(e.getDeltaY()) / 2){ // Accept side scrolling only if the scroll is not too vertical
                 double hValue = scrollPane.getHvalue() + e.getDeltaY() * 2 / (scrollPane.getWidth() - container.getWidth());
@@ -136,7 +137,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             double vValue = scrollPane.getVvalue() + e.getDeltaY() * 2 / (scrollPane.getHeight() - container.getHeight());
             scrollPane.setVvalue(StringUtils.clamp(vValue, scrollPane.getVmin(), scrollPane.getVmax()));
             
-        });
+        });*/
 
         // MenuBar on OSX Fix //
         if(Main.isOSX() && MenuBar.isSystemMenuBarSupported()){
