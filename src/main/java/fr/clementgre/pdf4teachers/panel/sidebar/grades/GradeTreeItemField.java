@@ -23,7 +23,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
     
     public GradeTreeItemField(GradeTreeItem treeItem, GradeTreeItemPanel panel, GradeTreeItem.FieldType type, boolean contextMenu){
         super("😉😉😉");
-        setId("no-vertical-scroll-bar");
+        setId("no-scroll-bar");
         
         setStyle("-fx-font-size: 13;");
         setMinHeight(29);

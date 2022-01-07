@@ -253,7 +253,7 @@ public class TextTab extends SideTab {
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectNextInSelection()){
-                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                    txtArea.requestFocus();
                 }
             }else if(e.getCode() == KeyCode.UP && txtArea.getText().split("\n").length == 1){
                 e.consume();
@@ -261,7 +261,7 @@ public class TextTab extends SideTab {
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectPreviousInSelection()){
-                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                    txtArea.requestFocus();
                 }
             }
         });

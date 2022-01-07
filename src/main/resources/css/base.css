@@ -112,13 +112,10 @@ Hyperlink {
  *                                                                             *
  ******************************************************************************/
 
-/* Text field */
-#no-vertical-scroll-bar .scroll-pane {
+#no-vertical-scroll-bar .scroll-pane, .text-area#no-vertical-scroll-bar .scroll-pane {
     -fx-vbar-policy: never;
 }
-
-/* Text area */
-.text-area#no-vertical-scroll-bar .scroll-pane {
+.text-area#no-scroll-bar .scroll-pane {
     -fx-vbar-policy: never;
     -fx-hbar-policy: never;
 }
