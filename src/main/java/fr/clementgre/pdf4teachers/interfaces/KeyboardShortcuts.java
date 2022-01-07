@@ -51,18 +51,13 @@ public class KeyboardShortcuts {
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
                         
                         SideBar.selectTab(MainWindow.textTab);
-                        MainWindow.textTab.newBtn.fire();
-                        Element selected = MainWindow.mainScreen.getSelected();
-                        if(selected != null){
-                            if(selected instanceof TextElement){
-                                selected.setRealX(selected.getPage().getNewElementXOnGrid(false));
-                            }
-                        }
+                        TextElement element = MainWindow.textTab.newTextElement(!e.isShiftDown());
+                        element.setRealX(element.getPage().getNewElementXOnGrid(false));
                         return;
                         
                     }else if(e.getCode() == KeyCode.D){
                         SideBar.selectTab(MainWindow.paintTab);
-                        MainWindow.paintTab.newVectorDrawing();
+                        MainWindow.paintTab.newVectorDrawing(e.isShiftDown());
                         return;
                         
                     }else if(e.getCode() == KeyCode.N){

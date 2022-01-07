@@ -303,7 +303,7 @@ public class PaintTab extends SideTab {
         //NodeMenuItem.setupMenu(menu);
         
         newVectorDrawing.setOnAction(ae -> {
-            newVectorDrawing();
+            newVectorDrawing(false);
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
@@ -373,7 +373,7 @@ public class PaintTab extends SideTab {
         
     }
     
-    public void newVectorDrawing(){
+    public void newVectorDrawing(boolean doInvertAddToPrevious){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
         VectorElement element = new VectorElement(page.getNewElementXOnGrid(false), page.getNewElementYOnGrid(), page.getPage(), true,
@@ -388,7 +388,7 @@ public class PaintTab extends SideTab {
         MainWindow.mainScreen.setSelected(element);
         
         // Drawing elements are not added to previous elements by default
-        if(Main.settings.saveLastDrawings.getValue()) element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        if(Main.settings.saveLastDrawings.getValue() != doInvertAddToPrevious) element.setLinkedVectorData(VectorListPane.addLastVector(element));
         
         // Let the time update coordinates correctly, otherwise it can create shifts.
         element.setVisible(false); // prevent a flashing element due to the runLater.

@@ -120,7 +120,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             setGraphic(root);
             setOnMouseClicked((e) -> {
                 MainWindow.paintTab.select();
-                Platform.runLater(() -> MainWindow.paintTab.newVectorDrawing());
+                Platform.runLater(() -> MainWindow.paintTab.newVectorDrawing(e.isShiftDown()));
             });
         }else{
     
