@@ -19,7 +19,6 @@ import javafx.scene.layout.HBox;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 public class Settings {
     
@@ -96,11 +95,11 @@ public class Settings {
     public IntSetting maxPreviousElements = new IntSetting(50, true, 5, 500, 5, false, false, SVGPathIcons.ELLIPSIS_VERTICAL, "maxPreviousElements",
             "settings.maxPreviousElements.title", "");
     @SettingObject
-    public BooleanSetting keepLastDrawings = new BooleanSetting(false, true, SVGPathIcons.PEN, "keepLastDrawings",
-            "settings.keepLastDrawings.title", "");
+    public BooleanSetting saveLastDrawings = new BooleanSetting(false, true, SVGPathIcons.PEN, "saveLastDrawings",
+            "settings.saveLastDrawings.title", "");
     
     @SettingsGroup(title = "settings.group.elementsLists")
-    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall, maxPreviousElements, keepLastDrawings};
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall, maxPreviousElements, saveLastDrawings};
     
     
     public static final int TEXT_MODE_DEFAULT = 0;

@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
@@ -387,7 +388,7 @@ public class PaintTab extends SideTab {
         MainWindow.mainScreen.setSelected(element);
         
         // Drawing elements are not added to previous elements by default
-        // element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        if(Main.settings.saveLastDrawings.getValue()) element.setLinkedVectorData(VectorListPane.addLastVector(element));
         
         // Let the time update coordinates correctly, otherwise it can create shifts.
         element.setVisible(false); // prevent a flashing element due to the runLater.

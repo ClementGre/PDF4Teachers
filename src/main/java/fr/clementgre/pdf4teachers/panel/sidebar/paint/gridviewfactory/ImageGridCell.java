@@ -114,6 +114,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 clipboardContent.put(Main.INTERNAL_FORMAT, PaintTab.PAINT_ITEM_DRAG_KEY);
                 dragboard.setContent(clipboardContent);
                 
+                Main.window.requestFocus(); // When dragging from gallery, MainWindow shows up
+                
                 PaintTab.draggingItem = item;
                 e.consume();
             });
