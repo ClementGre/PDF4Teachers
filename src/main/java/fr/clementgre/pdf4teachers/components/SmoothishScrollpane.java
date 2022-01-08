@@ -21,7 +21,9 @@ import javafx.util.Duration;
 public class SmoothishScrollpane extends ScrollPane {
     private final static int TRANSITION_DURATION = 200;
     private final static double SCROLL_FACTOR = 1.5;
-    
+
+    private boolean hasScrollStartEndEvents = false;
+
     /**
      * @param content
      *            Item to be wrapped in the scrollpane.
@@ -33,11 +35,21 @@ public class SmoothishScrollpane extends ScrollPane {
         VBox wrapper = new VBox(content);
         setContent(wrapper);
         // add scroll handling to wrapper
+
+        wrapper.setOnScrollStarted(event -> {
+            hasScrollStartEndEvents = true;
+        });
+        wrapper.setOnScrollFinished(event -> {
+            hasScrollStartEndEvents = false;
+        });
+
         wrapper.setOnScroll(new EventHandler<>() {
             private SmoothishTransition transition;
             @Override
             public void handle(ScrollEvent e){
-                
+
+                if(e.isInertia() || hasScrollStartEndEvents) return;
+
                 ///// VERTICAL SCROLL /////
                 
                 double vShift = 0;
