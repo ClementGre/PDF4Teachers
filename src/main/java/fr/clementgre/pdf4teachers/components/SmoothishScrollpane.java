@@ -25,8 +25,7 @@ public class SmoothishScrollpane extends ScrollPane {
     private boolean hasScrollStartEndEvents = false;
 
     /**
-     * @param content
-     *            Item to be wrapped in the scrollpane.
+     * @param content Item to be wrapped in the scrollpane.
      */
     public SmoothishScrollpane(Node content) {
         // ease-of-access for inner class
@@ -36,12 +35,8 @@ public class SmoothishScrollpane extends ScrollPane {
         setContent(wrapper);
         // add scroll handling to wrapper
 
-        wrapper.setOnScrollStarted(event -> {
-            hasScrollStartEndEvents = true;
-        });
-        wrapper.setOnScrollFinished(event -> {
-            hasScrollStartEndEvents = false;
-        });
+        wrapper.setOnScrollStarted(event -> hasScrollStartEndEvents = true);
+        wrapper.setOnScrollFinished(event -> hasScrollStartEndEvents = false);
 
         wrapper.setOnScroll(new EventHandler<>() {
             private SmoothishTransition transition;

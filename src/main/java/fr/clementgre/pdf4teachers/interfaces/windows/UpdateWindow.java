@@ -253,7 +253,6 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
                 if(line.startsWith("##")){
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
-                    label.setMaxWidth(530);
                     if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
                     else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
                     root.getChildren().add(label);
@@ -264,7 +263,6 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
                 }else{
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
-                    label.setMaxWidth(530);
                     
                     if(line.startsWith("- ")){
                         label.setStyle("-fx-padding: 0 0 0 30;");
