@@ -160,7 +160,7 @@ jlink {
     } else {
         if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
-        else if (os.linux) javaHome.set('/opt/jdk-17.0.1+12')
+        else if (os.linux) javaHome.set('/opt/jdk-17')
         System.out.println("Using JDK: ".concat(javaHome.get()))
     }
 
