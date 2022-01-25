@@ -37,9 +37,12 @@ public class VectorElementPageDrawer extends Pane{
     
     private double lastClickX = 0;
     private double lastClickY = 0;
+    // Last coordinate of the mouse (onMove and not drag), of the last action or of the last initialized segment (initSegment())
+    // It is used mainly by initSegment() (and moveTo()/lineTo()) to add a M (move) instruction when the cursor has moved
     private double lastX = 0;
     private double lastY = 0;
     private double lastLineAngle = 0;
+    // Is true when the next action will have to move to (lastX, lastY) before being added
     private boolean hasToMove = true;
     private boolean lastLineMode = isPerpendicularLineMode();
     private boolean spaceDown = false;
@@ -75,7 +78,7 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            if(vector == null) return;
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1){
                 e.consume();
                 // Draw only one point
@@ -86,16 +89,14 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseReleased((e) -> {
-            if(vector == null) return;
+            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            
             if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
                 if((lastX != e.getX() && lastY != e.getY()) || hasToMove)
                     appendPoint(e.getX(), e.getY(), true);
             }
         });
-        /*addEventHandler(MouseDragEvent.DRAG_DETECTED, (e) -> {
-            initSegment(e.getX(), e.getY());
-        });*/
         setOnMouseDragged((e) -> {
             if(vector == null || PageRenderer.isEditPagesMode()) return;
             
@@ -105,8 +106,13 @@ public class VectorElementPageDrawer extends Pane{
         setOnMouseMoved((e) -> {
             if(vector == null || PageRenderer.isEditPagesMode()) return;
             
-            if(spaceDown) appendPoint(e.getX(), e.getY(), false);
-            else{
+            if(spaceDown){
+                if(lastX == 0 && lastY == 0){
+                    lastX = e.getX();
+                    lastY = e.getY();
+                }
+                appendPoint(e.getX(), e.getY(), false);
+            }else{
                 lastX = e.getX();
                 lastY = e.getY();
             }
@@ -148,6 +154,7 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnKeyReleased((e) -> {
+            
             if(e.getCode() == KeyCode.L){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(false);
@@ -269,18 +276,13 @@ public class VectorElementPageDrawer extends Pane{
             }
             
             if(isPerpendicularLineMode()){
-                
                 if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) y = lastClickY;
                 else x = lastClickX;
-                if(lastAction.equalsIgnoreCase("L")){
-                    removeLastAction("L");
-                }
-                
-            }else{ // straightLineMode
-                if(lastAction.equalsIgnoreCase("L")){
-                    removeLastAction("L");
-                }
             }
+            if(lastAction.equalsIgnoreCase("L")){
+                removeLastAction("L");
+            }
+            
         }else{ // Basic drawing
     
             // Do the line only if it has a min length
@@ -292,7 +294,7 @@ public class VectorElementPageDrawer extends Pane{
             if(lastLineMode){ // exit straight line mode
                 lastLineMode = false;
                 lastClickX = lastX = x;
-                lastClickY = lastY =  y;
+                lastClickY = lastY = y;
                 appendAction("L", checkX(x), checkY(y));
                 return;
             }
@@ -320,9 +322,6 @@ public class VectorElementPageDrawer extends Pane{
         return y - getVectorShiftY();
     }
     
-    public void onCreateCurve(){
-    
-    }
     public void removeLastAction(String name){
         vector.setPath(StringUtils.removeAfterLastRegexIgnoringCase(vector.getPath(), name));
     }
@@ -338,6 +337,8 @@ public class VectorElementPageDrawer extends Pane{
                 + Main.oneDigENFormat.format(y));
     }
     
+    // The origin of the vector element is also the origin of the display svg.
+    // A translation is applied to put coordinates on the good empty (page -> element).
     public double getVectorShiftX(){
         return vector.getLayoutX() + vector.getSVGPadding();
     }

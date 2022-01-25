@@ -678,9 +678,9 @@ public class MainScreen extends Pane {
         }
     }
     public void undo(){
-        if(getUndoEngine() != null) getUndoEngine().undo();
+        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
     }
     public void redo(){
-        if(getUndoEngine() != null) getUndoEngine().redo();
+        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
     }
 }

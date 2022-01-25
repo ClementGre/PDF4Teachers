@@ -16,6 +16,7 @@ import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -25,7 +26,7 @@ import javafx.scene.text.Text;
 public class GradeTreeItemPanel extends HBox {
     
     Region spacer = new Region();
-    private final Text name = new Text();
+    private final Label name = new Label();
     private final Text value = new Text();
     private final Text slash = new Text("/");
     private final Text total = new Text();
@@ -68,9 +69,7 @@ public class GradeTreeItemPanel extends HBox {
                 return MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal());
             }, treeItem.getCore().outOfTotalProperty()));
             
-            total.setStyle("-fx-text-fill: #585858;");
-            name.setStyle("-fx-text-fill: #9a0000 !important; -fx-font-style: italic;");
-            value.setStyle("-fx-text-fill: #585858;");
+            name.setStyle("-fx-font-style: italic;");
         }else{
             name.textProperty().bind(treeItem.getCore().nameProperty());
             
@@ -125,7 +124,10 @@ public class GradeTreeItemPanel extends HBox {
             }else{
                 getChildren().setAll(name, spacer, value, slash, totalField, newGrade);
                 totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
-                Platform.runLater(() -> totalField.requestFocus());
+                
+                if(treeItem.getCore().getOutOfTotal() == -1) // Select only if the real total panel has no important reason to request focus
+                    if(treeItem.hasSubGrade() || treeItem.getCore().getTotal() != 0 && treeItem.getCore().getValue() != -1)
+                        Platform.runLater(() -> totalField.requestFocus());
             }
             return;
         }
@@ -190,6 +192,7 @@ public class GradeTreeItemPanel extends HBox {
         name.textProperty().unbind();
         value.textProperty().unbind();
         total.textProperty().unbind();
+        newGrade.disableProperty().unbind();
         
         getChildren().clear();
         nameField = null;

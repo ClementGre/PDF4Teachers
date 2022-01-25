@@ -135,10 +135,10 @@ public abstract class GraphicElement extends Element {
             dragAlreadyDetected = false;
             requestFocus();
             
-            setupMousePressVars(e.getX(), e.getY(), null, false, true);
-            
             if(e.getButton() == MouseButton.SECONDARY){
                 menu.show(getPage(), e.getScreenX(), e.getScreenY());
+            }else{
+                setupMousePressVars(e.getX(), e.getY(), null, false, true);
             }
         });
         
@@ -152,7 +152,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseDragged(e -> {
-            if(wasInEditPagesModeWhenMousePressed) return;
+            if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
             
             if(dragType == PlatformUtils.CURSOR_MOVE){
                 if(!dragAlreadyDetected){ // UNDO system
@@ -174,7 +174,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseReleased(e -> {
-            if(wasInEditPagesModeWhenMousePressed) return;
+            if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
             Edition.setUnsave("GraphicElementMouseRelease");
             
             if(dragType == PlatformUtils.CURSOR_MOVE){

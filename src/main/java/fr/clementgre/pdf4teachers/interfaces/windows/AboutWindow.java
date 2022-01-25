@@ -67,7 +67,7 @@ public class AboutWindow extends Stage {
         setOnShown((e) -> {
             StagesUtils.resizeStageAccordingToAppScale(this, scene);
             Main.window.centerWindowIntoMe(this);
-            MainWindow.preventWindowOverflowScreen(this);
+            MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         });
         
         setupUi();

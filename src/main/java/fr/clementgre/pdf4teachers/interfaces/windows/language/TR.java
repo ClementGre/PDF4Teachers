@@ -44,7 +44,7 @@ public class TR {
                 file.delete();
         }
         // Copy files if version has changed
-        copyFiles(Main.settings.hasVersionChanged() || Main.DEBUG);
+        copyFiles(Main.settings.hasVersionChanged() || Main.COPY_TRANSLATIONS_AT_START);
         
         // Load locales
         
@@ -274,9 +274,9 @@ public class TR {
         Config.set(languages, name + ".name", displayName);
     }
     
-    // Return numbers :
-    // 1 : total translations
-    // 2 : translated translations
+    // Return values :
+    // [1] : total translations
+    // [2] : translated translations
     public static int[] getTranslationFileStats(File file){
         
         try{

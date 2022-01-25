@@ -18,10 +18,9 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.Slider;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -52,18 +51,13 @@ public class KeyboardShortcuts {
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
                         
                         SideBar.selectTab(MainWindow.textTab);
-                        MainWindow.textTab.newBtn.fire();
-                        Element selected = MainWindow.mainScreen.getSelected();
-                        if(selected != null){
-                            if(selected instanceof TextElement){
-                                selected.setRealX(selected.getPage().getNewElementXOnGrid(false));
-                            }
-                        }
+                        TextElement element = MainWindow.textTab.newTextElement(!e.isShiftDown());
+                        element.setRealX(element.getPage().getNewElementXOnGrid(false));
                         return;
                         
                     }else if(e.getCode() == KeyCode.D){
                         SideBar.selectTab(MainWindow.paintTab);
-                        MainWindow.paintTab.newVectorDrawing();
+                        MainWindow.paintTab.newVectorDrawing(e.isShiftDown());
                         return;
                         
                     }else if(e.getCode() == KeyCode.N){
@@ -75,21 +69,21 @@ public class KeyboardShortcuts {
                         
                     }else if(e.getCode() == KeyCode.G){
                         if(!MainWindow.mainScreen.hasDocument(false)) return;
-                        if(!MainWindow.gradeTab.isSelected()) return;
+                        if(!MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
                         
                         GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
-                        if(item == null) return;
-                        if(item.isRoot()){
+                        if(item == null || item.isRoot()){
+                            item = MainWindow.gradeTab.treeView.getRootTreeItem(); // In case item == null
+                            
                             GradeElement element = MainWindow.gradeTab.newGradeElementAuto(item);
                             element.select();
+                            // Update total (Fix the bug when a total is predefined (with no children))
+                            item.makeSum(false);
                         }else{
                             GradeElement element = MainWindow.gradeTab.newGradeElementAuto(((GradeTreeItem) item.getParent()));
                             element.select();
                         }
-                        // Update total (Fix the bug when a total is predefined (with no children))
-                        item.makeSum(false);
                         return;
-                        
                     }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP){
                         e.consume();
                         MainWindow.mainScreen.zoomMore();
@@ -136,12 +130,16 @@ public class KeyboardShortcuts {
             }else{ // NO SHORTCUT PRESSED
                 
                 if(e.getCode() == KeyCode.BEGIN || e.getCode() == KeyCode.HOME){ // NAVIGATE IN DOCUMENT SHORTCUTS
-                    e.consume();
-                    MainWindow.mainScreen.navigateBegin();
+                    if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field of a spinner is focused.
+                        e.consume();
+                        MainWindow.mainScreen.navigateBegin();
+                    }
                     return;
                 }else if(e.getCode() == KeyCode.END){
-                    e.consume();
-                    MainWindow.mainScreen.navigateEnd();
+                    if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field of a spinner is focused.
+                        e.consume();
+                        MainWindow.mainScreen.navigateEnd();
+                    }
                     return;
                 }else if(e.getCode() == KeyCode.PAGE_UP){
                     e.consume();
@@ -235,6 +233,14 @@ public class KeyboardShortcuts {
             }
         }
         
+    }
+    
+    private boolean canBeginEndOnNode(Node node){
+         if(node instanceof TextInputControl) return true;
+         else if(node instanceof Spinner<?> spinner){
+             return spinner.isEditable();
+         }
+         return false;
     }
     
 }

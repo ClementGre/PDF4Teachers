@@ -20,15 +20,23 @@ import javafx.scene.text.Font;
 
 public class PaneUtils {
     
-    public static void printParentStructure(Parent parent, int depth){
+    public static void printChildrenStructure(Parent parent, int depth){
         for(Node children : parent.getChildrenUnmodifiable()){
             
             System.out.println("   " + "|   ".repeat(Math.max(0, depth - 1)) + (depth == 0 ? "-" : "|- ") +
                     children.getClass().getSimpleName() + " [" + children.getStyleClass().toString() + "]");
             
             if(children instanceof Parent newParent){
-                printParentStructure(newParent, depth + 1);
+                printChildrenStructure(newParent, depth + 1);
             }
+        }
+    }
+    public static void printParentsStructure(Parent parent, int depth){
+        int i = 0;
+        while(parent.getParent() != null && i < depth){
+            System.out.println("  ".repeat(i) + parent.getClass().getSimpleName() + " [" + parent.getStyleClass().toString() + "]");
+            parent = parent.getParent();
+            i++;
         }
     }
     

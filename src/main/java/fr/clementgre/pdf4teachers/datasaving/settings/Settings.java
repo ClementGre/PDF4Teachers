@@ -91,9 +91,15 @@ public class Settings {
     @SettingObject
     public BooleanSetting textSmall = new BooleanSetting(false, true, SVGPathIcons.TEXT_HEIGHT, "textSmall",
             "settings.textSmall.title", "");
+    @SettingObject
+    public IntSetting maxPreviousElements = new IntSetting(50, true, 5, 500, 5, false, false, SVGPathIcons.ELLIPSIS_VERTICAL, "maxPreviousElements",
+            "settings.maxPreviousElements.title", "");
+    @SettingObject
+    public BooleanSetting saveLastDrawings = new BooleanSetting(false, true, SVGPathIcons.PEN, "saveLastDrawings",
+            "settings.saveLastDrawings.title", "");
     
     @SettingsGroup(title = "settings.group.elementsLists")
-    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall};
+    public Setting<?>[] elementsLists = {listsMoveAndDontCopy, textOnlyStart, textSmall, maxPreviousElements, saveLastDrawings};
     
     
     public static final int TEXT_MODE_DEFAULT = 0;
@@ -104,7 +110,7 @@ public class Settings {
             "settings.defaultTextMode.title", "settings.defaultTextMode.tooltip");
     
     @SettingObject
-    public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDH, "text.defaultMaxWidth",
+    public IntSetting defaultMaxWidth = new IntSetting(90, true, 1, 100, 5, false, true, SVGPathIcons.TEXT_WIDTH, "text.defaultMaxWidth",
             "settings.textMaxWidth.title", "settings.textMaxWidth.tooltip");
     
     @SettingsGroup(title = "settings.group.textElements")

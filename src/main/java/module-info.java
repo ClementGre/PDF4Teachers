@@ -17,6 +17,14 @@ open module fr.clementgre.pdf4teachers {
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires commons.logging;
+    requires imageio.core;
+    uses javax.imageio.spi.ImageInputStreamSpi;
+    uses javax.imageio.spi.ImageOutputStreamSpi;
+    uses javax.imageio.spi.ImageWriterSpi;
+    requires jai.imageio.jpeg2000;
+    requires org.apache.pdfbox.jbig2;
+    uses javax.imageio.spi.ImageReaderSpi;
+    uses org.apache.pdfbox.jbig2.util.log.LoggerBridge;
     
     // jfx addons
     requires org.jfxtras.styles.jmetro;
@@ -59,6 +67,9 @@ open module fr.clementgre.pdf4teachers {
     requires com.gluonhq.attach.statusbar;
     requires com.gluonhq.charm.glisten;*/
     
+    // IDE
+    requires org.jetbrains.annotations;
+    
     // EXPORTS
     
     exports fr.clementgre.pdf4teachers;
@@ -99,5 +110,5 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.panes;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine;
     exports fr.clementgre.pdf4teachers.utils.locking;
-    
 }
+

@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.locking.LockManager;
+import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Application;
 import javafx.application.HostServices;
@@ -29,6 +30,7 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -51,16 +53,16 @@ public class Main extends Application {
     
     // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1
     
-    public static final int VERSION_ID = 2;
-    public static final String VERSION = "1.3.1-sn1";
+    public static final int VERSION_ID = 3;
+    public static final String VERSION = "1.3.1";
     public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
     public static final boolean COPY_CONSOLE = true;
-    public static final boolean TRANSLATIONS_IN_CODE = true;
+    public static final boolean COPY_TRANSLATIONS_AT_START = false;
+    public static final boolean TRANSLATIONS_IN_CODE = false;
     
     public static boolean firstLaunch;
-    public static final Rectangle2D SCREEN_BOUNDS = Screen.getPrimary().getBounds();
-    public static final Rectangle2D SCREEN_VISUAL_BOUNDS = Screen.getPrimary().getVisualBounds();
+
     public static String systemShortcut = "Ctrl";
     public static List<String> params;
     
@@ -76,7 +78,7 @@ public class Main extends Application {
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
-        
+        ImageIO.scanForPlugins();
         if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
             System.exit(0);
@@ -133,7 +135,7 @@ public class Main extends Application {
         params = getParameters().getRaw();
         if(LockManager.FAKE_OPEN_FILE) params = List.of("/home/clement/Téléchargements/Kev.pdf");
         
-        // define crucial vars
+        // define important vars
         if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
         else if(isOSX()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";

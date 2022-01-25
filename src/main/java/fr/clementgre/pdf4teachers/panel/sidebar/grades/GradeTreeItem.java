@@ -46,7 +46,7 @@ public class GradeTreeItem extends TreeItem<String> {
     
     // UI
     private TreeCell<String> cell;
-    private VBox root = new VBox();
+    private final VBox root = new VBox();
     private GradeTreeItemPanel outOfPanel;
     private GradeTreeItemPanel panel;
     
@@ -98,7 +98,7 @@ public class GradeTreeItem extends TreeItem<String> {
         
         // Remove listener on old cell
         if(this.cell != null){
-            this.cell.selectedProperty().removeListener(selectedListener);
+            this.cell.focusedProperty().removeListener(selectedListener);
             this.cell.setOnMouseExited(null);
             this.cell.setOnMouseEntered(null);
             this.cell.setContextMenu(null);
@@ -106,15 +106,21 @@ public class GradeTreeItem extends TreeItem<String> {
         
         this.cell = cell;
         cell.setGraphic(root);
+    
+        Platform.runLater(() -> {
+            double diff = MainWindow.gradeTab.treeView.sceneToLocal(cell.localToScene(root.getLayoutX(), 0)).getX();
+            root.setMaxWidth(MainWindow.gradeTab.treeView.getWidth() - diff - 6 - MainWindow.gradeTab.treeView.getVScrollbarVisibleWidth());
+        });
+        
         cell.setStyle(null);
         cell.setStyle("-fx-padding: 6 6 6 2;");
+        
         cell.setContextMenu(core.menu);
         cell.setOnMouseEntered(mouseEnteredEvent);
         cell.setOnMouseExited(e -> {
             if(!cell.isFocused()) panel.onMouseOut();
         });
-        
-        cell.selectedProperty().addListener(selectedListener);
+        cell.focusedProperty().addListener(selectedListener);
         
         if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
             if(cell.getTooltip() == null)
@@ -320,7 +326,7 @@ public class GradeTreeItem extends TreeItem<String> {
         else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
     public void makeSum(int previousPage, int previousRealY){
-        if(!deleted){
+        if(!deleted && getChildren().size() != 0){
             boolean hasValue = false;
             double value = 0;
             double total = 0;
@@ -340,7 +346,7 @@ public class GradeTreeItem extends TreeItem<String> {
             }
             
             if(hasValue){
-                if(!core.isFilled() && previousPage != -1){
+                if(!core.isFilled() && previousPage != -1){ // Add core element to the page if needed
                     if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
                     core.nextRealYToUse = previousRealY - core.getRealHeight();
                 }

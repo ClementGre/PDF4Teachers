@@ -34,9 +34,9 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
             float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
             contentStream.drawImage(pdImage,
                     pageSpecs.startX() + element.getRealX() / Element.GRID_WIDTH * pageSpecs.width(),
-                    (float) (bottomMargin + pageSpecs.realHeight() - ((pdImage.getHeight() / TextElement.IMAGE_FACTOR) / 596.0 * pageSpecs.width()) - element.getRealY() / Element.GRID_HEIGHT * pageSpecs.height()),
-                    (float) ((pdImage.getWidth() / TextElement.IMAGE_FACTOR) / 596.0 * pageSpecs.width()),
-                    (float) ((pdImage.getHeight() / TextElement.IMAGE_FACTOR) / 596.0 * pageSpecs.width()));
+                    (float) (bottomMargin + pageSpecs.realHeight() - ((pdImage.getHeight() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()) - element.getRealY() / Element.GRID_HEIGHT * pageSpecs.height()),
+                    (float) ((pdImage.getWidth() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()),
+                    (float) ((pdImage.getHeight() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()));
             
             return;
         }

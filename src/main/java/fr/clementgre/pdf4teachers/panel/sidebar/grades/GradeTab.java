@@ -100,7 +100,10 @@ public class GradeTab extends SideTab {
         export.setCursor(Cursor.HAND);
         export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        export.setOnAction((e) -> new GradeExportWindow());
+        export.setOnAction((e) -> {
+            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.save(true))
+                new GradeExportWindow();
+        });
         export.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.gradeExportWindow.accessButton")));
         
         optionPane.setStyle("-fx-padding: 5 0 5 0;");

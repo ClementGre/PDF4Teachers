@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.components;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.CopyPasteManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -13,6 +14,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.NonLeakingEventHandler;
 import javafx.event.Event;
 import javafx.scene.Node;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyEvent;
 
 public class ShortcutsTextField extends TextField {
@@ -32,9 +34,11 @@ public class ShortcutsTextField extends TextField {
     }
     
     private static void onKeyAction(NonLeakingEventHandler.EventHandler<KeyEvent, Integer> event){
+
         KeyEvent e = event.getEvent();
         // Consume node event if event is eligible for being overridden by the others features of the app.
-        // On OSX, consume is enough and the MenuBar event will be called, but this is not the case with JFX MenuBar.
+        // On OSX, consume is enough and the MenuBar event will be called,
+        // but with JFX MenuBar, we consume the menu bar event at the same time.
         
         if(UndoEngine.KEY_COMB_UNDO.match(e)){ // UNDO
             e.consume();
@@ -48,13 +52,14 @@ public class ShortcutsTextField extends TextField {
                 if(e.getEventType() == KeyEvent.KEY_PRESSED) MainWindow.mainScreen.redo();
             }
             
-        }else if(e.getSource() instanceof Node node){ // Cut / Copy / Paste
+        }else if(e.getSource() instanceof TextInputControl){ // Cut / Copy / Paste
             CopyPasteManager.CopyPasteType type = CopyPasteManager.getCopyPasteTypeByKeyEvent(e);
-            if(type != null && !CopyPasteManager.doNodeCanPerformAction(node, type)){
+            if(type != null){
                 e.consume();
                 if(!MenuBar.isSystemMenuBarSupported() && e.getEventType() == KeyEvent.KEY_PRESSED){
-                    CopyPasteManager.executeOnAppFeatures(type);
+                    CopyPasteManager.execute(type);
                 }
+
             }
         }
     }

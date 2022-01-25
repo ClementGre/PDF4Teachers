@@ -89,14 +89,14 @@ public abstract class Element extends Region {
                 
                 if(e.getClickCount() == 1){
                     lastClickSelected.set(MainWindow.mainScreen.getSelected() == this);
-                    
-                    shiftX = (int) e.getX();
-                    shiftY = (int) e.getY();
                     menu.hide();
                     select();
                     
                     if(e.getButton() == MouseButton.SECONDARY){
                         menu.show(getPage(), e.getScreenX(), e.getScreenY());
+                    }else{
+                        shiftX = (int) e.getX();
+                        shiftY = (int) e.getY();
                     }
                     
                 }
@@ -112,7 +112,7 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseDragged(e -> {
-                if(wasInEditPagesModeWhenMousePressed) return;
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 
                 if(!dragAlreadyDetected){
                     MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
@@ -124,7 +124,7 @@ public abstract class Element extends Region {
                 checkLocation(itemX, itemY, true);
             });
             setOnMouseReleased(e -> {
-                if(wasInEditPagesModeWhenMousePressed) return;
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 Edition.setUnsave("ElementMouseRelease");
                 
                 double itemX = getLayoutX() + e.getX() - shiftX;
@@ -225,16 +225,16 @@ public abstract class Element extends Region {
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));
         
-        if(this instanceof GraphicElement){
-            
+        if(this instanceof GraphicElement graphicElement){
+    
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
-                ((GraphicElement) this).setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
+                graphicElement.setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
             
             if(getWidth() != width){
                 int value = getPage().toGridX(width);
-                ((GraphicElement) this).setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
+                graphicElement.setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
             }
         }
     }

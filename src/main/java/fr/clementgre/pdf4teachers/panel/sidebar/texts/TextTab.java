@@ -253,7 +253,7 @@ public class TextTab extends SideTab {
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectNextInSelection()){
-                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                    txtArea.requestFocus();
                 }
             }else if(e.getCode() == KeyCode.UP && txtArea.getText().split("\n").length == 1){
                 e.consume();
@@ -261,7 +261,7 @@ public class TextTab extends SideTab {
                 else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectPreviousInSelection()){
-                    MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+                    txtArea.requestFocus();
                 }
             }
         });
@@ -274,36 +274,39 @@ public class TextTab extends SideTab {
                 
             }
         });
-        newBtn.setOnAction(e -> {
-            
-            PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-            
-            MainWindow.mainScreen.setSelected(null);
-            
-            fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
-            sizeSpinner.getValueFactory().setValue(MainWindow.userData.textLastFontSize);
-            colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
-            boldBtn.setSelected(MainWindow.userData.textLastFontBold);
-            itBtn.setSelected(MainWindow.userData.textLastFontItalic);
-            
-            TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
-                    true, "", colorPicker.getValue(), getFont(), 0);
-            
-            page.addElement(current, true, UType.UNDO);
-            current.centerOnCoordinatesY();
-            MainWindow.mainScreen.setSelected(current);
-            isNew = true;
-            
-            txtArea.setText("");
-            TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
-            txtArea.requestFocus();
-            
-            AutoTipsManager.showByAction("newtextelement");
-        });
+        newBtn.setOnAction(e -> newTextElement(true));
         deleteBtn.setOnAction(e -> {
             MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
             MainWindow.mainScreen.setSelected(null);
         });
+    }
+    
+    public TextElement newTextElement(boolean addToLasts){
+        PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+    
+        MainWindow.mainScreen.setSelected(null);
+    
+        fontCombo.getSelectionModel().select(MainWindow.userData.textLastFontName.isEmpty() ? "Open Sans" : MainWindow.userData.textLastFontName);
+        sizeSpinner.getValueFactory().setValue(MainWindow.userData.textLastFontSize);
+        colorPicker.setValue(Color.valueOf(MainWindow.userData.textLastFontColor.isEmpty() ? "#000000" : MainWindow.userData.textLastFontColor));
+        boldBtn.setSelected(MainWindow.userData.textLastFontBold);
+        itBtn.setSelected(MainWindow.userData.textLastFontItalic);
+    
+        TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
+                true, "", colorPicker.getValue(), getFont(), 0);
+    
+        page.addElement(current, true, UType.UNDO);
+        current.centerOnCoordinatesY();
+        MainWindow.mainScreen.setSelected(current);
+        isNew = true;
+    
+        txtArea.setText("");
+        if(addToLasts) TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
+        txtArea.requestFocus();
+    
+        AutoTipsManager.showByAction("newtextelement");
+        
+        return current;
     }
     
     private void updateTextAreaPromptText(){

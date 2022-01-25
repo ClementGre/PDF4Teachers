@@ -364,7 +364,7 @@ public class Edition{
         
         HashMap<File, File> files = new HashMap<>();
         
-        for(File editFile : new File(Main.dataFolder + "editions" + File.separator).listFiles()){
+        for(File editFile : Objects.requireNonNull(new File(Main.dataFolder + "editions" + File.separator).listFiles())){
             
             File file = getFileFromEdit(editFile);
             
@@ -390,7 +390,7 @@ public class Edition{
     }
     
     public void clearEdit(boolean confirm){
-        if(!confirm || new ConfirmAlert(true, TR.tr("dialog.confirmation.clearEdit.header")).execute()){
+        if(!confirm || new ConfirmAlert(false, TR.tr("dialog.confirmation.clearEdit.header")).execute()){
             MainWindow.mainScreen.setSelected(null);
             for(PageRenderer page : document.getPages()){
                 page.clearElements();

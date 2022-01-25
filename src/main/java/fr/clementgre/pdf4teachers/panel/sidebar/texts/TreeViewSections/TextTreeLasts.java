@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.ListsManager;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
@@ -50,26 +51,38 @@ public class TextTreeLasts extends TextTreeSection {
     public void addElement(TextTreeItem element){
         if(!getChildren().contains(element)){
             getChildren().add(element);
-            if(getChildren().size() > 50){
-                
-                // SORT BY DATE
-                List<TextTreeItem> toSort = new ArrayList<>();
-                for(int i = 0; i < getChildren().size(); i++){
-                    if(getChildren().get(i) instanceof TextTreeItem){
-                        toSort.add((TextTreeItem) getChildren().get(i));
-                    }
-                }
-                List<TextTreeItem> sorted = Sorter.sortElementsByDate(toSort, false);
-                
-                // GET THE LESS USE IN THE 20 OLDER
-                toSort = new ArrayList<>();
-                for(int i = 0; i < 20; i++){
-                    toSort.add(sorted.get(i));
-                }
-                sorted = Sorter.sortElementsByUtils(toSort, false);
-                removeElement(sorted.get(0));
-            }
+            checkMaxElements();
             sortManager.simulateCall();
+        }
+    }
+    private void checkMaxElements(){
+        int toRemoveItems = getChildren().size() - Main.settings.maxPreviousElements.getValue();
+        if(toRemoveItems > 0){
+            
+            
+            // SORT BY DATE
+            List<TextTreeItem> toSort = new ArrayList<>();
+            for(int i = 0; i < getChildren().size(); i++){
+                if(getChildren().get(i) instanceof TextTreeItem){
+                    toSort.add((TextTreeItem) getChildren().get(i));
+                }
+            }
+            List<TextTreeItem> sorted = Sorter.sortElementsByDate(toSort, false);
+        
+            // The removed items will be the less used along the older half of the maximum number of previous elements.
+            toSort = new ArrayList<>();
+            for(int i = 0; i < Math.min(Main.settings.maxPreviousElements.getValue() / 2, sorted.size()-1); i++){
+                toSort.add(sorted.get(i));
+            }
+            sorted = Sorter.sortElementsByUtils(toSort, false);
+        
+            for(int i = 0; i < toRemoveItems; i++){
+                if(sorted.size() <= i){ // More than the half of the items have been removed, let's re-call the function.
+                    checkMaxElements();
+                    return;
+                }
+                removeElement(sorted.get(i));
+            }
         }
     }
 }

@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.paint;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.NoArrowMenuButton;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
@@ -36,6 +37,7 @@ import fr.clementgre.pdf4teachers.utils.panes.PressAndHoldManager;
 import fr.clementgre.pdf4teachers.utils.svg.SVGFileParser;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -301,7 +303,7 @@ public class PaintTab extends SideTab {
         //NodeMenuItem.setupMenu(menu);
         
         newVectorDrawing.setOnAction(ae -> {
-            newVectorDrawing();
+            newVectorDrawing(false);
         });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
@@ -349,12 +351,6 @@ public class PaintTab extends SideTab {
         
         // VectorsButtons
         
-        vectorStraightLineMode.setOnAction((e) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
-                vectorElement.getPage().getVectorElementPageDrawer().onCreateCurve();
-            }
-        });
-        
         vectorEditMode.selectedProperty().addListener(this::vectorDrawModeChanged);
         vectorStraightLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorPerpendicularLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
@@ -377,22 +373,26 @@ public class PaintTab extends SideTab {
         
     }
     
-    public void newVectorDrawing(){
+    public void newVectorDrawing(boolean doInvertAddToPrevious){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
-        VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+        VectorElement element = new VectorElement(page.getNewElementXOnGrid(false), page.getNewElementYOnGrid(), page.getPage(), true,
                 page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS,
                 false, MainWindow.userData.vectorsLastFill, MainWindow.userData.drawVectorsLastStroke, (int) MainWindow.userData.drawVectorsLastStrokeWidth == 0 ? 2 : (int) MainWindow.userData.vectorsLastStrokeWidth,
                 "", false, false, 0);
         
         
         page.addElement(element, true, UType.UNDO);
+        element.centerOnCoordinatesX();
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         
         // Drawing elements are not added to previous elements by default
-        // element.setLinkedVectorData(VectorListPane.addLastVector(element));
-        element.enterEditMode();
+        if(Main.settings.saveLastDrawings.getValue() != doInvertAddToPrevious) element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        
+        // Let the time update coordinates correctly, otherwise it can create shifts.
+        element.setVisible(false); // prevent a flashing element due to the runLater.
+        Platform.runLater(element::enterEditMode);
     }
     
     private void deleteSelected(){

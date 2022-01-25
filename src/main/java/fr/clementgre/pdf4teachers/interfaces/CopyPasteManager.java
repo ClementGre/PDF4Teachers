@@ -30,6 +30,7 @@ public class CopyPasteManager {
     }
     
     public static void execute(CopyPasteType type){
+        if(!Main.window.isFocused()) return;
         // Field Action
         if(doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), type)){
             if(executeOnNode(Main.window.getScene().getFocusOwner(), type)) return;

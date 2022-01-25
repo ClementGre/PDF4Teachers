@@ -9,6 +9,8 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
+import fr.clementgre.pdf4teachers.utils.TextWrapper;
+import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
@@ -20,6 +22,7 @@ import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
@@ -133,6 +136,10 @@ public class CustomAlert extends Alert {
     
     // BUTTONS PRESETS
     
+    public String wrapTextForButton(String text){
+        return new TextWrapper(text, FontUtils.getDefaultFont(false, false, 14), 200).wrap();
+    }
+    
     public ButtonType addLeftButton(String text){
         return addButton(text, ButtonPosition.OTHER_LEFT);
     }
@@ -147,7 +154,7 @@ public class CustomAlert extends Alert {
     }
     
     public ButtonType addButton(String text, ButtonBar.ButtonData data){
-        ButtonType button = new ButtonType(text, data);
+        ButtonType button = new ButtonType(wrapTextForButton(text), data);
         addButtonType(button);
         return button;
     }
@@ -157,7 +164,7 @@ public class CustomAlert extends Alert {
         return button;
     }
     public ButtonType getButton(String text, ButtonPosition pos){
-        return new ButtonType(text, buttonPositionToData(pos));
+        return new ButtonType(wrapTextForButton(text), buttonPositionToData(pos));
     }
     public ButtonType addSmallSpace(){
         return addButton("", ButtonBar.ButtonData.SMALL_GAP);

@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.utils.locking;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.application.Platform;
@@ -88,7 +89,7 @@ public class LockManager {
                 
             }else{
                 System.out.println("Instance locked: " + locked);
-                return locked; // If non-locked: the files has been opened on the other instance.
+                return locked; // If non-locked: the files has been opened on the locked instance.
             }
             
         }catch(Unique4jException e){
@@ -103,20 +104,17 @@ public class LockManager {
     }
     
     public static void tryToOpenFiles(List<File> toOpenFiles){
-        while(true){
-            if(Main.window == null){
-                PlatformUtils.sleepThread(500);
-            }else if(Main.window.isShowing()){
-                Main.window.openFiles(toOpenFiles, true);
-                Main.window.setIconified(true);
-                Main.window.requestFocus();
-                Main.window.setIconified(false);
-                return;
-            }else{
-                Main.window.setOnShown((e) -> Main.window.openFiles(toOpenFiles, true));
-                return;
-            }
+        if(Main.window != null && Main.window.isShowing()){
+            
+            Main.window.openFiles(toOpenFiles, !MainWindow.mainScreen.hasDocument(false));
+            
+            /*Main.window.setIconified(true);*/
+            Main.window.requestFocus();
+            /*Main.window.setIconified(false);*/
+        }else if(Main.window != null){
+            Main.window.setOnShown((e) -> Main.window.openFiles(toOpenFiles, true));
         }
+        
         
     }
     

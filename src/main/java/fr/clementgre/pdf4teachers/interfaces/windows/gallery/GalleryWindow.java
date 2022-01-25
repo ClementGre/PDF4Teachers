@@ -80,7 +80,7 @@ public class GalleryWindow extends Stage {
         
         setup();
         Main.window.centerWindowIntoMe(this);
-        MainWindow.preventWindowOverflowScreen(this);
+        MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         show();
         PlatformUtils.runLaterOnUIThread(1000, () -> {
             AutoTipsManager.showByAction("opengallery", this);

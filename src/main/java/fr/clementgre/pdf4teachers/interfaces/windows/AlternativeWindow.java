@@ -7,6 +7,9 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.SmoothishScrollpane;
+import fr.clementgre.pdf4teachers.panel.MenuBar;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -14,6 +17,7 @@ import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -27,6 +31,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -37,7 +42,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     public R root;
     public HBox buttonsBox;
     
-    protected ScrollPane scrollPane = new ScrollPane(container);
+    protected ScrollPane scrollPane = new SmoothishScrollpane(container);
     private final BorderPane borderPane = new BorderPane(scrollPane);
     private final Scene scene = new Scene(borderPane);
     
@@ -66,7 +71,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     }
     public AlternativeWindow(R root, StageWidth width, String title, String header, String subHeader){
         this.root = root;
-        
+
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
@@ -94,7 +99,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
             
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
-            MainWindow.preventWindowOverflowScreen(this);
+            MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
             
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();
@@ -111,16 +116,18 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         });
         
         setup(header, subHeader);
+
         Platform.runLater(() -> {
             setupSubClass();
-            if(Main.window != null)
+            if(Main.window != null) {
                 Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
+            }
             show();
         });
         
         // SCROLLPANE SPEED FIX //
         
-        scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
+        /*scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
             e.consume();
             if(Math.abs(e.getDeltaX()) > Math.abs(e.getDeltaY()) / 2){ // Accept side scrolling only if the scroll is not too vertical
                 double hValue = scrollPane.getHvalue() + e.getDeltaY() * 2 / (scrollPane.getWidth() - container.getWidth());
@@ -130,7 +137,14 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             double vValue = scrollPane.getVvalue() + e.getDeltaY() * 2 / (scrollPane.getHeight() - container.getHeight());
             scrollPane.setVvalue(StringUtils.clamp(vValue, scrollPane.getVmin(), scrollPane.getVmax()));
             
-        });
+        });*/
+
+        // MenuBar on OSX Fix //
+        if(Main.isOSX() && MenuBar.isSystemMenuBarSupported()){
+            javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
+            container.getChildren().add(0, menuBar);
+            menuBar.setUseSystemMenuBar(true);
+        }
     }
     
     public abstract void setupSubClass();

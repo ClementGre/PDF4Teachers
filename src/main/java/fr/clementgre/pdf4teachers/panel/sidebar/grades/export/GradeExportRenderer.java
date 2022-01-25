@@ -18,28 +18,40 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class GradeExportRenderer {
     
-    String text = "";
+    private String content = "";
     
-    public ArrayList<GradeRating> gradeScale;
-    ArrayList<ExportFile> files = new ArrayList<>();
-    int exportTier;
+    private ArrayList<GradeRating> gradeScale;
+    private final ArrayList<ExportFile> files = new ArrayList<>();
+    private final int exportTier;
     
-    int exported = 0;
+    private int exported = 0;
+    private final DecimalFormat decimalFormat;
+    private final String separator;
     
-    GradeExportWindow.ExportPane pane;
-    AlreadyExistDialogManager alreadyExistDialogManager;
+    private final GradeExportWindow.ExportPane pane;
+    private AlreadyExistDialogManager alreadyExistDialogManager;
     
     public GradeExportRenderer(GradeExportWindow.ExportPane pane){
         this.pane = pane;
         this.exportTier = (int) pane.settingsTiersExportSlider.getValue();
+    
         
-        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save(true);
+        if(pane.settingsCSVFormulaEnglish.isSelected()){
+            DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
+            decimalFormat = new DecimalFormat("0.###", symbols);
+            decimalFormat.setMaximumIntegerDigits(4);
+            System.out.println("ENGLISH FORMAT");
+        }else decimalFormat = MainWindow.gradesDigFormat;
+        
+        separator = pane.settingsCSVSeparatorComma.isSelected() ? "," : ";";
         
     }
     
@@ -101,29 +113,29 @@ public class GradeExportRenderer {
     
     public void generateNamesLine(boolean includeGradeScale){
         
-        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.parts");
+        content += TR.tr("gradeTab.gradeExportWindow.csv.titles.parts");
         
         for(GradeRating rating : gradeScale){
             if(rating.isRoot() && rating.outOfTotal > 0){
-                if(includeGradeScale) text += ";" + rating.name + " /" + rating.outOfTotal;
-                else text += ";" + rating.name + " (/" + rating.outOfTotal + ")";
+                if(includeGradeScale) content += separator + rating.name + " /" + decimalFormat.format(rating.outOfTotal);
+                else content += separator + rating.name + " (/" + decimalFormat.format(rating.outOfTotal) + ")";
             }
-            text += ";" + rating.name + (includeGradeScale ? " /" + rating.total : "");
+            content += separator + rating.name + (includeGradeScale ? " /" + decimalFormat.format(rating.total) : "");
         }
-        text += "\n";
+        content += "\n";
     }
     
     public void generateGradeScaleLine(){
         
-        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.gradeScale");
+        content += TR.tr("gradeTab.gradeExportWindow.csv.titles.gradeScale");
         
         for(GradeRating rating : gradeScale){
             if(rating.isRoot() && rating.outOfTotal > 0){
-                text += ";" + rating.outOfTotal;
+                content += separator + decimalFormat.format(rating.outOfTotal);
             }
-            text += ";" + rating.total;
+            content += separator + decimalFormat.format(rating.total);
         }
-        text += "\n";
+        content += "\n";
         
     }
     
@@ -133,38 +145,38 @@ public class GradeExportRenderer {
         int startY = pane.settingsAttributeTotalLine.isSelected() ? 4 : 3;
         int endY = startY + files.size() - 1;
         
-        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.average");
+        content += TR.tr("gradeTab.gradeExportWindow.csv.titles.average");
         
         for(GradeRating rating : gradeScale){
+            String formula = pane.settingsCSVFormulaEnglish.isSelected() ? "AVERAGE" : TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase();
             if(rating.isRoot() && rating.outOfTotal > 0){
-                text += ";=" + TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
+                content += separator + "=" + formula + "(" + x + startY + ":" + x + endY + ")";
                 x++;
             }
-            text += ";=" + TR.tr("gradeTab.gradeExportWindow.csv.formulas.average.name").toUpperCase() + "(" + x + startY + ":" + x + endY + ")";
+            content += separator + "=" + formula + "(" + x + startY + ":" + x + endY + ")";
             x++;
         }
-        text += "\n";
+        content += "\n";
     }
     
     public void generateStudentLine(ExportFile file){
         
         if(pane.studentNameSimple != null){
-            text += pane.studentNameSimple.getText();
+            content += pane.studentNameSimple.getText();
         }else{
-            text += StringUtils.removeAfterLastRegex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
+            content += StringUtils.removeAfterLastRegex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
         }
         
         boolean hasOutOfColumn = false;
         for(GradeElement rating : file.grades){
-            if(rating.isRoot() && rating.getOutOfTotal() > 0){
+            if(rating.isRoot() && rating.getOutOfTotal() > 0){ // Add outof column if needed.
                 hasOutOfColumn = true;
-                text += ";" + (rating.getValue() == -1 ? "" :
-                        MainWindow.twoDigFormat.format(rating.getValue() / rating.getTotal() * rating.getOutOfTotal())
-                                .replaceAll(",", "."));
+                content += separator + (rating.getValue() == -1 ? "" :
+                        decimalFormat.format(rating.getValue() / rating.getTotal() * rating.getOutOfTotal()));
             }
-            text += ";" + (rating.getValue() == -1 ? "" : rating.getValue());
+            content += separator + (rating.getValue() == -1 ? "" : decimalFormat.format(rating.getValue()));
         }
-        text += "\n";
+        content += "\n";
         
         if(pane.settingsWithTxtElements.isSelected()){
             generateCommentsLines(file, hasOutOfColumn);
@@ -174,7 +186,7 @@ public class GradeExportRenderer {
     
     public void generateCommentsLines(ExportFile file, boolean hasOutOfColumn){
         
-        text += TR.tr("gradeTab.gradeExportWindow.csv.titles.comments");
+        content += TR.tr("gradeTab.gradeExportWindow.csv.titles.comments");
         
         if(file.comments.size() >= 1){
             
@@ -229,23 +241,23 @@ public class GradeExportRenderer {
                 Collections.reverse(reversedComments);
                 
                 for(String comment : reversedComments){
-                    if(rows.size() <= rowNumber) rows.add(";" + comment);
-                    else rows.set(rowNumber, rows.get(rowNumber) + ";" + comment);
+                    if(rows.size() <= rowNumber) rows.add(separator + comment);
+                    else rows.set(rowNumber, rows.get(rowNumber) + separator + comment);
                     rowNumber++;
                 }
                 // Fill rows until rowNumber == 100 (it is needed to add semicolon even for void cells)
                 while(rowNumber < 100){
-                    if(rows.size() <= rowNumber) rows.add(";");
-                    else rows.set(rowNumber, rows.get(rowNumber) + ";");
+                    if(rows.size() <= rowNumber) rows.add(separator);
+                    else rows.set(rowNumber, rows.get(rowNumber) + separator);
                     rowNumber++;
                 }
             }
             
             // Filling rows
             for(String line : rows){
-                text += (hasOutOfColumn ? ";" : "") + line + "\n";
+                content += (hasOutOfColumn ? separator : "") + line + "\n";
             }
-        }else text += "\n";
+        }else content += "\n";
     }
     
     // OTHERS
@@ -321,13 +333,13 @@ public class GradeExportRenderer {
         file.createNewFile();
         BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
         
-        writer.write(text);
+        writer.write(content);
         
         writer.flush();
         writer.close();
         
         exported++;
-        text = "";
+        content = "";
         return true;
     }
     

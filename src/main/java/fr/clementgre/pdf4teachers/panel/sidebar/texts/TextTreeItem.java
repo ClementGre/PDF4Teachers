@@ -290,13 +290,16 @@ public class TextTreeItem extends TreeItem<String> {
             HBox.setMargin(linkImage, new Insets(((lineHeight - linkImage.getFitHeight()) / 2.0), 0, 0, 0));
         }
         HBox.setMargin(namePane, new Insets(-negativePadding / 2d, 0, -negativePadding / 2d, 0));
-        
-        if(updateParentHeight && pane.getParent() != null && pane.getParent() instanceof TreeCell){
-            ((TreeCell<?>) pane.getParent()).setPrefHeight(cellHeight + 4);
+    
+        // Updating TreeCell height
+        if(updateParentHeight && pane.getParent() != null && pane.getParent() instanceof TreeCell cell){
+            cell.setMinHeight(cellHeight + negativePadding);
+            cell.setPrefHeight(cellHeight + negativePadding);
+            cell.setMaxHeight(cellHeight + negativePadding);
         }
     }
     
-    Rectangle rect = new Rectangle();
+    private final Rectangle rect = new Rectangle();
     
     public void updateIcon(){ // Re définis les children de la pane
         int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
@@ -330,8 +333,10 @@ public class TextTreeItem extends TreeItem<String> {
         
         int negativePadding = (Main.settings.textSmall.getValue() ? 6 : 4);
         int cellHeight = (int) name.getLayoutBounds().getHeight() - negativePadding;
-        
-        cell.setPrefHeight(cellHeight + 4);
+    
+        cell.setMinHeight(cellHeight + negativePadding);
+        cell.setPrefHeight(cellHeight + negativePadding);
+        cell.setMaxHeight(cellHeight + negativePadding);
         cell.setGraphic(pane);
         cell.setStyle(null);
         cell.setStyle("-fx-padding: 0 0 0 -38;"); // top - right - bottom - left

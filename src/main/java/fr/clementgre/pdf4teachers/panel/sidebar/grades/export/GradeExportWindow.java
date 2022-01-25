@@ -12,6 +12,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -20,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 public class GradeExportWindow extends AlternativeWindow<TabPane> {
     
@@ -92,7 +95,11 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
         public CheckBox settingsAttributeAverageLine = new CheckBox(TR.tr("gradeTab.gradeExportWindow.options.attributeAverageLine"));
         public CheckBox settingsWithTxtElements = new CheckBox(TR.tr("gradeTab.gradeExportWindow.options.withTxtElements"));
         public Slider settingsTiersExportSlider = new Slider(1, 5, MainWindow.userData.settingsTiersExportSlider);
-        
+    
+        public ToggleButton settingsCSVSeparatorComma = new ToggleButton(TR.tr("gradeTab.gradeExportWindow.options.csvSeparator.comma"));
+        public ToggleButton settingsCSVSeparatorSemicolon = new ToggleButton(TR.tr("gradeTab.gradeExportWindow.options.csvSeparator.semicolon"));
+        public ToggleButton settingsCSVFormulaEnglish = new ToggleButton(TR.tr("gradeTab.gradeExportWindow.options.csvLanguage.english"));
+        public ToggleButton settingsCSVFormulaLanguage = new ToggleButton(TR.tr("language.name").split(Pattern.quote(" "))[0]);
         
         public ExportPane(GradeExportWindow window, String tabName, int type, boolean fileNameCustom, boolean studentNameCustom, boolean multipleFilesCustom, boolean canExportTextElements){
             
@@ -112,6 +119,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             setupStudentNameForm();
             setupPathForm();
             setupSettingsForm();
+            setupExportLanguageSettings();
             
         }
         
@@ -251,14 +259,14 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             settingsTiersExportSlider.setMajorTickUnit(1);
             settingsTiersExportSlider.setMinorTickCount(0);
             
-            PaneUtils.setHBoxPosition(settingsOnlySameGradeScale, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsOnlyCompleted, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsOnlySameDir, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsAttributeTotalLine, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsAttributeAverageLine, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsWithTxtElements, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(settingsTiersExportSlider, 0, 30, 0, 2.5);
-            PaneUtils.setHBoxPosition(tiersExportLabel, 0, 30, 2.5, 2.5);
+            PaneUtils.setVBoxPosition(settingsOnlySameGradeScale, 0, 30, 2.5, 0);
+            PaneUtils.setVBoxPosition(settingsOnlyCompleted, 0, 30, 2.5, 0);
+            PaneUtils.setVBoxPosition(settingsOnlySameDir, 0, 30, 2.5, 0);
+            PaneUtils.setVBoxPosition(settingsAttributeTotalLine, 0, 30, 2.5, 0);
+            PaneUtils.setVBoxPosition(settingsAttributeAverageLine, 0, 30, 2.5, 0);
+            PaneUtils.setVBoxPosition(settingsWithTxtElements, 0, 30, 2.5, 0);
+            PaneUtils.setHBoxPosition(settingsTiersExportSlider, 0, 30, 2.5, 0);
+            PaneUtils.setHBoxPosition(tiersExportLabel, 0, 30, 2.5, 0);
             
             root.getChildren().add(info);
             
@@ -286,6 +294,49 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             
         }
         
+        public void setupExportLanguageSettings(){
+            ToggleGroup separatorGroup = new ToggleGroup();
+            separatorGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue == null) separatorGroup.selectToggle(oldValue);
+            });
+    
+            Label separatorLabel = new Label(TR.tr("gradeTab.gradeExportWindow.options.csvSeparator"));
+            HBox separatorButtons = new HBox(settingsCSVSeparatorComma, settingsCSVSeparatorSemicolon);
+            VBox separatorInfo = new VBox(separatorLabel, separatorButtons);
+            separatorInfo.setSpacing(5);
+           
+            HBox box = new HBox(separatorInfo);
+            PaneUtils.setVBoxPosition(box, 0, 0, 2.5, 5);
+            
+            settingsCSVSeparatorComma.setToggleGroup(separatorGroup);
+            settingsCSVSeparatorSemicolon.setToggleGroup(separatorGroup);
+            
+            if(TR.tr("chars.csvSeparator").charAt(0) == ';'){
+                settingsCSVSeparatorSemicolon.setSelected(true);
+            }else settingsCSVSeparatorComma.setSelected(true);
+            
+            if(!Main.settings.language.getValue().equals("en_us")){
+                ToggleGroup formulaGroup = new ToggleGroup();
+                formulaGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+                    if(newValue == null) formulaGroup.selectToggle(oldValue);
+                });
+                settingsCSVFormulaEnglish.setToggleGroup(formulaGroup);
+                settingsCSVFormulaLanguage.setToggleGroup(formulaGroup);
+                settingsCSVFormulaLanguage.setSelected(true);
+    
+                Label formulaLabel = new Label(TR.tr("gradeTab.gradeExportWindow.options.csvLanguage"));
+                HBox formulaButtons = new HBox(settingsCSVFormulaEnglish, settingsCSVFormulaLanguage);
+                VBox formulaInfo = new VBox(formulaLabel, formulaButtons);
+                formulaInfo.setSpacing(5);
+                formulaInfo.setPadding(new Insets(0, 0, 0, 15));
+                box.getChildren().add(formulaInfo);
+            }
+    
+            VBox container = generateInfo(null, true);
+            container.getChildren().add(box);
+            root.getChildren().add(container);
+        }
+        
         public VBox generateInfo(String text, boolean topBar){
             
             VBox box = new VBox();
@@ -296,9 +347,11 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
                 box.getChildren().add(separator);
             }
             
-            Label info = new Label(text);
-            PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
-            box.getChildren().add(info);
+            if(text != null){
+                Label info = new Label(text);
+                PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
+                box.getChildren().add(info);
+            }
             
             return box;
         }

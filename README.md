@@ -16,7 +16,7 @@
   <a href="https://pdf4teachers.org">https://pdf4teachers.org</a>
 </h3>
 <p align="center">
-  <a href="#presentation-en">Presentation</a> | <a href="#the-dependencies-130">The dependencies</a> | <a href="https://github.com/ClementGre/PDF4Teachers/tree/master/src/main/java/fr/clementgre/pdf4teachers">Code organization</a><br/>
+  <a href="#presentation-en">Presentation</a> | <a href="#the-dependencies">The dependencies</a> | <a href="https://github.com/ClementGre/PDF4Teachers/tree/master/src/main/java/fr/clementgre/pdf4teachers">Code organization</a><br/>
   PDF editing software in large quantities designed for teachers.<br/><br/>
   <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/images/banner-flat.png" alt="Logo" width="690"/><br/>
 </p>
@@ -26,9 +26,9 @@
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
 [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.0%22+label%3A%22enhancement%22+)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.1%22+label%3A%22enhancement%22+)
 
 # Presentation [EN]
 
@@ -82,7 +82,7 @@ local, les seuls accès réseaux de l'application concernent la vérification de
 
 # The dependencies
 
-The application was developed with JavaFX framework, with Java SE 16 (1.3.0).
+The application was developed with JavaFX framework, in Java SE 17 (1.3.1).
 
 ### Java dependencies
 
@@ -99,13 +99,13 @@ The application was developed with JavaFX framework, with Java SE 16 (1.3.0).
   LaTeX text elements feature in 1.2.0)
 - **[SnakeYAML 1.29](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user
   datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
-- **[Jackson Streaming API 2.13.0](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to
+- **[Jackson Streaming API 2.13.1](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to
   send requests to GitHub to check if a new release is available.
 - **[Metadata-Extractor 2.16.0](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so
   PDF4Teachers can take in account the rotation of images
 - **[Batik Parser 1.14](https://xmlgraphics.apache.org/batik/using/parsers.html)** : Allow me to parse SVG easily, with
   custom handlers.
-- **[PdfBox Graphics2D 0.33](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
+- **[PdfBox Graphics2D 0.34](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
 - **[Google Diff-Match-Patch 0.1](https://github.com/google/diff-match-patch)** : Allow me to perform some actions on
   strings..
 - **[Unique4J](https://github.com/prat-man/unique4j)** : used to set up a single instance of the app when opening files

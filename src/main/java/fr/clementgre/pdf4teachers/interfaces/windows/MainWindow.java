@@ -30,13 +30,16 @@ import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
@@ -49,6 +52,7 @@ import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MainWindow extends Stage {
     
@@ -85,7 +89,6 @@ public class MainWindow extends Stage {
         
         Scene scene = new Scene(notificationPane);
         scene.setFill(Color.TRANSPARENT);
-        loadDimensions();
         setupDecimalFormat();
         setTitle(TR.tr("mainWindow.title.noDocument"));
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
@@ -100,20 +103,6 @@ public class MainWindow extends Stage {
         setOnCloseRequest(e -> {
             if(!requestCloseApp()) e.consume();
         });
-        
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        heightProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        xProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        yProperty().addListener((observable, oldValue, newValue) -> {
-            saveDimensions();
-        });
-        
     }
     
     public static boolean requestCloseApp(){
@@ -140,7 +129,17 @@ public class MainWindow extends Stage {
     }
     
     public void setup(boolean openDocumentation){
-        
+
+        // WINDOW DIMENSIONS
+
+        loadDimensions();
+        widthProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        heightProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        xProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+        yProperty().addListener((observable, oldValue, newValue) -> saveDimensions());
+
+        //      TRANSLATIONS
+
         ShapesGridView.setupTranslations();
         ConvertWindow.setupTranslations();
         
@@ -158,7 +157,7 @@ public class MainWindow extends Stage {
         textTab = new TextTab();
         gradeTab = new GradeTab();
         try{
-            FXMLLoader.load(getClass().getResource("/fxml/PaintTab.fxml"));
+            FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/PaintTab.fxml")));
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -277,44 +276,57 @@ public class MainWindow extends Stage {
         
     }
     
-    public void centerWindowIntoMe(Window window){
+    public void centerWindowIntoMe(Stage window){
         centerWindowIntoMe(window, window.getWidth(), window.getHeight());
     }
-    public void centerWindowIntoMe(Window window, double w, double h){
-        double sw = Main.SCREEN_BOUNDS.getWidth();
-        double sh = Main.SCREEN_BOUNDS.getHeight();
-        
+    public void centerWindowIntoMe(Stage window, double w, double h){
         double x = getX() + getWidth() / 2 - w / 2;
         double y = getY() + getHeight() / 2 - h / 2;
-        
-        if(x > sw - w) x = sw - w;
-        if(y > sh - h) y = sh - h;
-        if(x < 0) x = 0;
-        if(y < 0) y = 0;
-        
         window.setX(x);
         window.setY(y);
     }
     public static void preventWindowOverflowScreen(Stage window){
+        preventWindowOverflowScreen(window, getScreen(window).getVisualBounds());
+    }
+    public static void preventWindowOverflowScreen(Stage window, Rectangle2D bounds){
         double w = window.getWidth();
         double h = window.getHeight();
         double x = window.getX();
         double y = window.getY();
-        
-        double sw = Main.SCREEN_VISUAL_BOUNDS.getWidth();
-        double sh = Main.SCREEN_VISUAL_BOUNDS.getHeight();
-        if(w > sw) w = sw;
-        if(h > sh) h = sh;
-        if(x != -1){
-            if(x + w > sw) window.setX(0);
-        }
-        if(y != -1){
-            if(y + h > sh) window.setY(0);
-        }
+
+        double minX = bounds.getMinX();
+        double maxX = bounds.getMaxX();
+        double minY = bounds.getMinY();
+        double maxY = bounds.getMaxY();
+
+        // Check in top right coordinates and move window
+        if(x+w > maxX) x -= x+w - maxX;
+        if(y+h > maxY) y -= y+h - maxY;
+
+        // Check in bottom right coordinates and move window
+        if(x < minX) x = minX;
+        if(y < minY) y = minY;
+
+        // Check in top right coordinates and resize window
+        if(x+w > maxX) w -= x+w - maxX;
+        if(y+h > maxY) w -= y+h - maxY;
+
         if(window.getMinWidth() > w) window.setMinWidth(w);
         if(window.getMinHeight() > h) window.setMinHeight(h);
         window.setWidth(w);
         window.setHeight(h);
+        window.setX(x);
+        window.setY(y);
+    }
+    public static Screen getScreen(){
+        return getScreen(Main.window);
+    }
+    public static Screen getScreen(Window window){
+        ObservableList<Screen> screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
+        if(screens.size() == 0){
+            if(window == Main.window) return Screen.getPrimary();
+            else return getScreen();
+        }else return screens.get(0);
     }
     
     /*
@@ -374,10 +386,7 @@ public class MainWindow extends Stage {
     
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
-        char separator = TR.tr("chars.decimalSeparator").charAt(0);
-        if(separator == 'D') separator = ',';
-        else if(separator != ',' && separator != '.') separator = '.';
-        symbols.setDecimalSeparator(separator);
+        symbols.setDecimalSeparator(TR.tr("chars.decimalSeparator").charAt(0) == ',' ? ',' : '.');
         
         fourDigFormat = new DecimalFormat("0.####", symbols);
         twoDigFormat = new DecimalFormat("0.##", symbols);
