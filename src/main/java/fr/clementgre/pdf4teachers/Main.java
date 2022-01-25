@@ -78,7 +78,7 @@ public class Main extends Application {
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
         System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
-        ImageIO.scanForPlugins();
+//        ImageIO.scanForPlugins();
         if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
             System.exit(0);
@@ -191,7 +191,7 @@ public class Main extends Application {
     public boolean languageAsk(){
         if(settings.language.getValue().isEmpty()){
             String language = TR.getLanguageFromComputerLanguage();
-            
+            language = "fr_fr";
             if(language != null){
                 Main.settings.language.setValue(language);
                 Main.settings.saveSettings();

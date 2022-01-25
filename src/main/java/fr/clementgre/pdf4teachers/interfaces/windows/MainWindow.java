@@ -85,9 +85,9 @@ public class MainWindow extends Stage {
     public MainWindow(){
         
         root = new BorderPane();
-        notificationPane = new AutoHideNotificationPane(root);
+        //notificationPane = new AutoHideNotificationPane(root);
         
-        Scene scene = new Scene(notificationPane);
+        Scene scene = new Scene(root);
         scene.setFill(Color.TRANSPARENT);
         setupDecimalFormat();
         setTitle(TR.tr("mainWindow.title.noDocument"));
@@ -183,7 +183,7 @@ public class MainWindow extends Stage {
         
         //		SHOWING
         
-        setupDesktopEvents();
+        //setupDesktopEvents();
         updateStyle();
         mainScreen.repaint();
         
@@ -333,13 +333,13 @@ public class MainWindow extends Stage {
      * @Param autoHide in seconds
      */
     public static void showNotification(AlertIconType type, String text, int autoHide){
-        notificationPane.addToPending(text, type, autoHide);
+        //notificationPane.addToPending(text, type, autoHide);
     }
     public static void showNotificationNow(AlertIconType type, String text, int autoHide){
-        notificationPane.showNow(text, type, autoHide);
+        //notificationPane.showNow(text, type, autoHide);
     }
     
-    public void setupDesktopEvents(){
+    /*public void setupDesktopEvents(){
         
         if(Desktop.isDesktopSupported()){
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
@@ -382,7 +382,7 @@ public class MainWindow extends Stage {
             
         }
         
-    }
+    }*/
     
     private static void setupDecimalFormat(){
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);

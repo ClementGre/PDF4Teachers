@@ -53,19 +53,17 @@ open module fr.clementgre.pdf4teachers {
     requires batik.parser;
     requires de.rototor.pdfbox.graphics2d;
     
-    requires org.jetbrains.annotations;
-    
     // Utils
     requires google.diffmatchpatch;
     requires uniqueforj;
     
     // Gluon
-    /*requires com.gluonhq.attach.display;
+    requires com.gluonhq.attach.display;
     requires com.gluonhq.attach.util;
     requires com.gluonhq.attach.lifecycle;
     requires com.gluonhq.attach.storage;
     requires com.gluonhq.attach.statusbar;
-    requires com.gluonhq.charm.glisten;*/
+    requires com.gluonhq.charm.glisten;
     
     // IDE
     requires org.jetbrains.annotations;

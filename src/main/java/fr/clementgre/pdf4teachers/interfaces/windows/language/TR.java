@@ -101,7 +101,9 @@ public class TR {
     }
     
     public static String getLanguageFromComputerLanguage(){
-        String language = System.getProperty("user.language").toLowerCase();
+        String language = System.getProperty("user.language");
+        if(language != null) language = language.toLowerCase();
+        else return null;
         //String country = System.getProperty("user.country").toLowerCase();
         switch(language){
             case "fr" -> {return "fr_fr";}
