@@ -1,4 +1,6 @@
+from http://tuxdiary.com/2013/12/01/unpack-modify-and-repack-deb-files/
 
+-------------------------------------------------------------------------------
 1. Copier le fichier .deb dans un dossier
 
 -------------------------------------------------------------------------------
@@ -22,5 +24,5 @@ $ dpkg-deb -e file.deb oldpack/DEBIAN
 -------------------------------------------------------------------------------
 6. Repackager le .deb dans ./newpack avec la compression zstd :
 
-$ dpkg-deb -Z zstd -b oldpack/ newpack/
+$ dpkg-deb -Z xz -b oldpack/ newpack/
 
