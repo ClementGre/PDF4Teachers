@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -53,7 +54,6 @@ public class AboutWindow extends Stage {
         
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
-        
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setTitle(TR.tr("aboutWindow.title"));
         setResizable(false);

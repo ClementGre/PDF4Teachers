@@ -5,7 +5,11 @@
   ~ All rights reserved. You must refer to the licence Apache 2.
   -->
 
-<?import fr.clementgre.pdf4teachers.components.*?>
+<?import fr.clementgre.pdf4teachers.components.NoArrowMenuButton?>
+<?import fr.clementgre.pdf4teachers.components.ShortcutsTextField?>
+<?import fr.clementgre.pdf4teachers.components.SyncColorPicker?>
+<?import fr.clementgre.pdf4teachers.components.ScaledComboBox?>
+<?import fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane?>
 <?import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane?>
 <?import javafx.geometry.*?>

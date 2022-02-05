@@ -7,10 +7,10 @@ plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
-//    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
-    id 'org.openjfx.javafxplugin' version '0.0.10'
+    //id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.11'
     id "de.jjohannes.extra-java-module-info" version "0.8"
-    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.11'
+    id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.12'
 }
 repositories {
     mavenCentral()
@@ -278,10 +278,42 @@ gluonfx {
     }
 
     bundlesList = ['com/sun/glass/ui/win/themes']
-    resourcesList = ["src/main/resources", 'impl/jfxtras/styles/jmetro']
-    reflectionList = []
+    resourcesList = ["src/main/resources", '.*\\\\.properties$']
+    reflectionList = ['javafx.fxml.FXMLLoader',
+                      // Classes imported in PDF4Teachers' FXML
+                      'fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab',
+                      'fr.clementgre.pdf4teachers.interfaces.windows.AboutWindow',
+                      'fr.clementgre.pdf4teachers.components.NoArrowMenuButton',
+                      'fr.clementgre.pdf4teachers.components.ShortcutsTextField',
+                      'fr.clementgre.pdf4teachers.components.SyncColorPicker',
+                      'fr.clementgre.pdf4teachers.components.ScaledComboBox',
+                      'fr.clementgre.pdf4teachers.components.SameSizeTitledPaneContainer',
+                      'fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane',
+                      'fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane',
+                      'javafx.scene.control.Spinner',
+                      'javafx.scene.control.TitledPane',
+                      'javafx.scene.layout.GridPane',
+                      // JMetro Skins
+                      'impl.jfxtras.styles.jmetro.FluentButtonSkin',
+                      'impl.jfxtras.styles.jmetro.FluentToggleButtonSkin',
+                      'impl.jfxtras.styles.jmetro.PasswordFieldSkin',
+                      'impl.jfxtras.styles.jmetro.ProgressBarSkin',
+                      'impl.jfxtras.styles.jmetro.SliderPopup',
+                      'impl.jfxtras.styles.jmetro.SliderSkin',
+                      'impl.jfxtras.styles.jmetro.TextFieldSkin',
+                      'impl.jfxtras.styles.jmetro.TextFieldWithButtonSkin',
+                      'impl.jfxtras.styles.jmetro.ToggleSwitchSkin',
+                      // JavaFX
+                      'javafx.scene.control.skin.TextFieldSkin',
+                      // Orher issues with dependencies
+                      'org.apache.commons.logging.impl.LogFactoryImpl',
+                      // PDF4Teachers' reflection
+                      'fr.clementgre.pdf4teachers.datasaving.settings.Setting',
+                      'fr.clementgre.pdf4teachers.datasaving.UserData',
+                      'fr.clementgre.pdf4teachers.datasaving.SyncUserData',
+                      'fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager'
+    ]
     jniList = ["com.sun.glass.ui.win.WinView"]
-
 
 
     compilerArgs = [

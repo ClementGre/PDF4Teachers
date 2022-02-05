@@ -32,11 +32,13 @@ import java.util.List;
  */
 public class SystemFontsMapper {
     
-    //              Family, Paths
+    //                    Family, Paths
     private final HashMap<String, FontPaths> systemFontMap = new HashMap<>();
     
     public static String[] getSystemFontNames(){
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
+        return new String[]{};
+        // Not supported by Gluon
+        //return GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();
     }
     
     private String[] getSystemFontsDirs(){
