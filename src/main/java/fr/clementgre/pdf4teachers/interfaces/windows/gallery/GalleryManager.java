@@ -77,9 +77,8 @@ public class GalleryManager {
     }
     
     
-    public static boolean isAcceptableImage(String name){
-        String extension = StringUtils.removeBeforeLastRegex(name, ".");
-        return ImageUtils.ACCEPTED_EXTENSIONS.contains(extension);
+    public static boolean isAcceptableImage(String filename){
+        return ImageUtils.ACCEPTED_EXTENSIONS.stream().anyMatch((ext) -> filename.toLowerCase().endsWith(ext));
     }
     
 }

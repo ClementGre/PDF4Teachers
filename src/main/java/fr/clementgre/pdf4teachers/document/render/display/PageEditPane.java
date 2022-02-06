@@ -161,12 +161,12 @@ public class PageEditPane extends VBox {
         if(this.page == null) return;
         
         int buttonNumber = 7;
-        double factor = StringUtils.clamp(.5 / MainWindow.mainScreen.getZoomFactor(), .5, 6);
-        double height = 30 * buttonNumber;
-        double width = 30;
+        double factor = .7 / MainWindow.mainScreen.getZoomFactor();
+        double height = (30 * buttonNumber) * (factor - 1);
+        double width = 30 * (factor - 1);
         
-        setLayoutY((height * factor - height) / 2d);
-        setLayoutX(page.getWidth() + (width * factor - width) / 2d);
+        setLayoutY(height / 2d);
+        setLayoutX(page.getWidth() + width / 2d);
         
         setScaleX(factor);
         setScaleY(factor);

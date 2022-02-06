@@ -263,7 +263,9 @@ public class ImageElement extends GraphicElement {
     private void renderImageAsync(CallBack callBack){
         new Thread(() -> {
             image = renderImage(0, 0);
-            if(image == null) image = getNotFoundImage();
+            
+            notFound = image == null;
+            if(notFound) image = getNotFoundImage();
             
             Platform.runLater(callBack::call);
         }, "ImageElement Renderer").start();
@@ -289,7 +291,6 @@ public class ImageElement extends GraphicElement {
     }
     
     private Image getNotFoundImage(){
-        notFound = true;
         return new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
     }
     

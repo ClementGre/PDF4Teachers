@@ -45,7 +45,7 @@ public class FilesUtils {
     // Always return lower case extension without the dot.
     public static String getExtension(String fileName) {
         String[] splitted = fileName.split(Pattern.quote("."));
-        if (splitted.length == 0 || splitted.length == 1) return "";
+        if(splitted.length == 0 || splitted.length == 1) return "";
         return splitted[splitted.length - 1].toLowerCase();
     }
 
