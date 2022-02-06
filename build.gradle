@@ -7,7 +7,6 @@ plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
-    //id 'com.dua3.javafxgradle7plugin' version '0.0.9'
     id 'org.openjfx.javafxplugin' version '0.0.11'
     id "de.jjohannes.extra-java-module-info" version "0.8"
     id 'com.gluonhq.gluonfx-gradle-plugin' version '1.0.12'
@@ -34,7 +33,7 @@ extraJavaModuleInfo {
 
     automaticModule("metadata-extractor-2.16.0.jar", "metadata.extractor")
 
-    automaticModule("commons-logging-1.2.jar", "commons.logging")
+    //automaticModule("commons-logging-1.2.jar", "commons.logging")
 
     automaticModule("jai-imageio-core-1.4.0.jar", "imageio.core")
     automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
@@ -47,7 +46,6 @@ extraJavaModuleInfo {
 }
 
 dependencies {
-
     // Gluon
     implementation "com.gluonhq:charm-glisten:6.1.0"
 
@@ -68,7 +66,7 @@ dependencies {
     // Signing and encrypting pdf (not used)
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
-    // Image IO - EXIF
+    // EXIF
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0'
 
     // JSON requests
@@ -83,11 +81,20 @@ dependencies {
     implementation 'de.jangassen:nsmenufx:3.1.0'
 
     // SVG
-    implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
-    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.34'
+    implementation (group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'){
+        exclude group: 'commons-logging'
+    }
+    implementation (group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.34'){
+        exclude group: 'commons-logging'
+    }
 
     // PDF Box
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
+    implementation (group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'){
+        exclude group: 'commons-logging'
+    }
+
+    implementation group: 'org.jboss.logging', name: 'jboss-logging', version: '3.4.3.Final'
+    implementation group: 'org.jboss.logging', name: 'commons-logging-jboss-logging', version: '1.0.0.Final'
 
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
@@ -128,7 +135,8 @@ application {
 run {
     jvmArgs = [
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
+            '--add-modules=javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.swing',
     ]
     if (os.macOsX) {
         // The dock icon works only when app is in /Applications
@@ -163,7 +171,7 @@ jlink {
         javaHome.set(jdkPath)
 
     } else {
-        if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
+        if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-libertica-full')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
         else if (os.linux) javaHome.set('/opt/jdk-17.0.1+12')
         System.out.println("Using JDK: ".concat(javaHome.get()))
@@ -325,9 +333,9 @@ gluonfx {
             '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
     ]
 
-    javaStaticSdkVersion = "18-ea+2"
-    javafxStaticSdkVersion = "18-ea+2"
-    if (os.windows) graalvmHome = "C:\\Program Files\\AdoptOpenJDK\\graalvm-ce-java17-22.0.0.2"
+    javaStaticSdkVersion = "17"
+    javafxStaticSdkVersion = "17"
+    if (os.windows) graalvmHome = "C:\\Program Files\\AdoptOpenJDK\\graalvm-17-gluon-22.0.0.3"
     else if (os.macOsX) graalvmHome = "undefined"
     else if (os.linux) graalvmHome = "/opt/graalvm-ce-java17-21.3.0"
     System.out.println("Using GraalVM: ".concat(graalvmHome))
@@ -362,8 +370,9 @@ gluonfx {
 /*
 
 cd C:\Users\Clement\Developpement\Java\PDF4Teachers
-set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.1.12-hotspot
+set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-libertica-full
 gradlew nativeBuild
+gradlew nativeRun
 
 */
 

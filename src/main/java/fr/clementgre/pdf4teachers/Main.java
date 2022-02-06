@@ -5,6 +5,8 @@
 
 package fr.clementgre.pdf4teachers;
 
+import com.gluonhq.attach.storage.StorageService;
+import com.gluonhq.attach.util.Services;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -77,7 +79,7 @@ public class Main extends Application {
     
     public static void main(String[] args){
         if(COPY_CONSOLE) LogWindow.copyLogs();
-        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
+        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ", Os " + System.getProperty("os.name") + ")");
 //        ImageIO.scanForPlugins();
         if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
@@ -87,6 +89,12 @@ public class Main extends Application {
         
         // Enable anti aliasing
         //System.setProperty("prism.lcdtext", "false");
+    
+        if(isWindows() || isOSX()) System.setProperty("javafx.platform", "desktop");
+        
+        System.out.println("Root Gluon data dir: " + Services.get(StorageService.class)
+                .flatMap(StorageService::getPrivateStorage)
+                .orElseThrow(() -> new RuntimeException("Error retrieving private storage")));
         
         ///// START APP /////
         launch(args);

@@ -16,7 +16,6 @@ open module fr.clementgre.pdf4teachers {
     // pdf
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
-    requires commons.logging;
     requires imageio.core;
     uses javax.imageio.spi.ImageInputStreamSpi;
     uses javax.imageio.spi.ImageOutputStreamSpi;
