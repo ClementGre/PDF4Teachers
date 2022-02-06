@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -27,7 +28,9 @@ import javafx.stage.Stage;
 
 public class AboutWindow extends Stage {
     
+    public ScrollPane scrollPane;
     public VBox root;
+    
     public Label versionName;
     public Button newRelease;
     
@@ -44,12 +47,12 @@ public class AboutWindow extends Stage {
     public Pane dependenciesLeft;
     public Pane dependenciesRight;
     
-    public Hyperlink liscenselabel;
+    public Hyperlink licenselabel;
     public Label statsLabel;
     
     @FXML
     public void initialize(){
-        Scene scene = new Scene(root);
+        Scene scene = new Scene(scrollPane);
         
         initOwner(Main.window);
         initModality(Modality.WINDOW_MODAL);
@@ -59,16 +62,22 @@ public class AboutWindow extends Stage {
         setResizable(false);
         setScene(scene);
         setOnCloseRequest(e -> close());
-        StyleManager.putStyle(root, Style.DEFAULT);
-        StyleManager.putCustomStyle(root, "otherWindows.css");
-        PaneUtils.setupScaling(root, true, false);
+        StyleManager.putStyle(scrollPane, Style.DEFAULT);
+        StyleManager.putCustomStyle(scrollPane, "otherWindows.css");
+        PaneUtils.setupScaling(scrollPane, true, false);
         scene.setFill(Color.web("#252525"));
+    
+        
         
         setOnShown((e) -> {
+            setMinWidth(400);
+            setMaxWidth(400);
+            
             StagesUtils.resizeStageAccordingToAppScale(this, scene);
             Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         });
+    
         
         setupUi();
         Main.window.centerWindowIntoMe(this);
@@ -113,7 +122,7 @@ public class AboutWindow extends Stage {
         dependenciesLeft.setPrefWidth(160);
         dependenciesRight.setPrefWidth(160);
         
-        liscenselabel.setText(TR.tr("aboutWindow.info.license", "Apache 2"));
+        licenselabel.setText(TR.tr("aboutWindow.info.license", "Apache 2"));
         
         statsLabel.setText(TR.tr("aboutWindow.statistics", MainWindow.twoDigFormat.format(MainWindow.userData.foregroundTime / 61d), String.valueOf(MainWindow.userData.startsCount)));
         statsLabel.setWrapText(true);
