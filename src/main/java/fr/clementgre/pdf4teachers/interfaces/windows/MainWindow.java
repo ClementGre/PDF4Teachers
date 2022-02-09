@@ -309,7 +309,7 @@ public class MainWindow extends Stage {
 
         // Check in top right coordinates and resize window
         if(x+w > maxX) w -= x+w - maxX;
-        if(y+h > maxY) w -= y+h - maxY;
+        if(y+h > maxY) h -= y+h - maxY;
 
         if(window.getMinWidth() > w) window.setMinWidth(w);
         if(window.getMinHeight() > h) window.setMinHeight(h);

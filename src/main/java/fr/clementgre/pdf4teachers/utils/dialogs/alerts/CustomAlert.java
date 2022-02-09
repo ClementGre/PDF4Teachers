@@ -15,14 +15,12 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
-import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetroStyleClass;
 
@@ -54,15 +52,13 @@ public class CustomAlert extends Alert {
         if(Main.settings.zoom.getValue() != 1){
             getDialogPane().getScene().setFill(Color.web("#252525"));
             setOnShown((e) -> {
-                Platform.runLater(() -> {
-                    StagesUtils.resizeStageAccordingToAppScale(this, getDialogPane().getScene());
+                StagesUtils.trysScaleAlertUntilDoable(this, getDialogPane().getScene(), () -> {
                     PaneUtils.setupScaling(getDialogPane(), true, false);
                 });
             });
         }
-        
-        
     }
+    
     public CustomAlert(AlertType type, String title, String header){
         this(type, title, header, null);
     }

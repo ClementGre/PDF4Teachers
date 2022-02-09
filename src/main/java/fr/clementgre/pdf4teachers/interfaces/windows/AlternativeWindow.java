@@ -9,15 +9,12 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.SmoothishScrollpane;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -25,13 +22,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -90,7 +85,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         PaneUtils.setupScaling(borderPane, true, false);
         
         setOnShown(e -> {
-            StagesUtils.resizeStageAccordingToAppScale(this, scene);
+            StagesUtils.scaleStage(this, scene);
             
             setContentMinWidth(400, true);
             setMinHeight(300 * Main.settings.zoom.getValue());
@@ -99,7 +94,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
             
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
-            MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
+            MainWindow.preventWindowOverflowScreen(this);
             
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();

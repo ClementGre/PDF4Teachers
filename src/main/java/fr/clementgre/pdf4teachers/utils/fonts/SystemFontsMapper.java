@@ -4,7 +4,6 @@
  */
 
 package fr.clementgre.pdf4teachers.utils.fonts;
-
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -153,6 +152,7 @@ public class SystemFontsMapper {
         }
         paths.addPathAuto(path, FontUtils.getFontWeight(font, false), FontUtils.getFontPosture(font).equals(FontPosture.ITALIC));
         systemFontMap.put(font.getFamily(), paths);
+
         return true;
     }
     

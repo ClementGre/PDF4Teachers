@@ -73,7 +73,7 @@ public class AboutWindow extends Stage {
             setMinWidth(400);
             setMaxWidth(400);
             
-            StagesUtils.resizeStageAccordingToAppScale(this, scene);
+            StagesUtils.scaleStage(this, scene);
             Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         });
