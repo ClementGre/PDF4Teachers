@@ -95,7 +95,7 @@ public class PDFPagesEditor {
         for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
-        document.getPages().get(0).updatePosition(30, true);
+        document.getPages().get(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
         document.updateShowsStatus();
         
         // update current page
@@ -113,7 +113,7 @@ public class PDFPagesEditor {
         }
         
         if(!animated){
-            page.updatePosition((int) page.getTranslateY(), true);
+            page.updatePosition(-1, true);
             page.updateRender();
         }else{
             Timeline timeline = new Timeline(60);
@@ -148,7 +148,7 @@ public class PDFPagesEditor {
             e.printStackTrace();
         }
         if(!animated){
-            page.updatePosition((int) page.getTranslateY(), true);
+            page.updatePosition(-1, true);
             page.updateRender();
         }else{
             Timeline timeline = new Timeline(60);
@@ -174,7 +174,7 @@ public class PDFPagesEditor {
         timeline.setOnFinished(null);
         timeline.stop();
         page.setRotate(0);
-        page.updatePosition((int) page.getTranslateY(), true);
+        page.updatePosition(-1, true);
     }
     
     public void deletePage(PageRenderer page){
@@ -213,8 +213,7 @@ public class PDFPagesEditor {
                 for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
                 
                 // update coordinates of the pages
-                document.getPage(0).updatePosition(30, true);
-                document.updateShowsStatus();
+                document.updatePagesPosition();
                 
                 // update current page
                 document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
@@ -248,7 +247,7 @@ public class PDFPagesEditor {
         for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
-        document.getPage(0).updatePosition(30, true);
+        document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
         document.updateShowsStatus();
         
         // update current page
@@ -301,7 +300,7 @@ public class PDFPagesEditor {
             }
             
             // update coordinates of the pages
-            document.getPage(0).updatePosition(30, true);
+            document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
             document.updateShowsStatus();
             
             // update current page
@@ -362,7 +361,7 @@ public class PDFPagesEditor {
                 }
                 
                 // update coordinates of the pages
-                document.getPage(0).updatePosition(30, true);
+                document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
                 document.updateShowsStatus();
                 
                 // update current page

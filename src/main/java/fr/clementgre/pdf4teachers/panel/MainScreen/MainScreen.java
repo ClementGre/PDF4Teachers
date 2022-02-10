@@ -27,6 +27,7 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.BooleanBinding;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -167,7 +168,7 @@ public class MainScreen extends Pane {
         setStyle("-fx-padding: 0; -fx-background-color: #484848;");
         setBorder(Border.EMPTY);
         
-        pane.setStyle("-fx-background-color: #484848;");
+        pane.setStyle("-fx-background-color: #911c1c;");
         pane.setBorder(Border.EMPTY);
         getChildren().add(pane);
         
@@ -198,6 +199,13 @@ public class MainScreen extends Pane {
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
+    
+                // Redraw pages when switching to grid view
+                if(isEditPagesMode() != isEditPagesMode(oldValue.doubleValue())){
+                    document.updatePagesPosition();
+                }
+                
+                // Execute action only when it is the last zoom update from 100ms
                 lastScaleChangedMs = System.currentTimeMillis();
                 PlatformUtils.runLaterOnUIThread(100, () -> {
                     if(System.currentTimeMillis() - lastScaleChangedMs >= 95){
@@ -286,7 +294,14 @@ public class MainScreen extends Pane {
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
-                    if(document != null) document.updateShowsStatus();
+                    if(document != null) document.updatePagesPosition();
+                });
+            }
+        });
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            if(document != null){
+                Platform.runLater(() -> {
+                    if(document != null && isEditPagesMode()) document.updatePagesPosition();
                 });
             }
         });
@@ -295,7 +310,7 @@ public class MainScreen extends Pane {
             // GrabNScroll
             if(!(((Node) e.getTarget()).getParent() instanceof Element) && !(e.getTarget() instanceof Element) // Not an element
                     && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer) // Not a page filter
-                    && (!PageRenderer.isEditPagesMode() || !(e.getTarget() instanceof PageRenderer)) // Not in edit pages mode
+                    && (!isEditPagesMode() || !(e.getTarget() instanceof PageRenderer)) // Not in edit pages mode
                     && PaintTab.draggingElement == null){ // No dragging element
                 
                 double distY = e.getY() - dragStartY;
@@ -544,7 +559,7 @@ public class MainScreen extends Pane {
                 topPage = document.getPages().get(firstTopVisiblePage.getPage() - 1);
             }
             
-            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN + 5) * pane.getScaleX());
+            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (topPage.getTranslateY() - PageRenderer.PAGE_MARGIN + 5) * pane.getScaleX());
             zoomOperator.scroll(toScroll, false, false);
         }
     }
@@ -562,7 +577,7 @@ public class MainScreen extends Pane {
                 bottomPage = document.getPage(firstTopVisiblePage.getPage() + 1);
             }
             
-            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_VERTICAL_MARGIN + 5) * pane.getScaleX());
+            int toScroll = (int) ((pane.getTranslateY() - zoomOperator.getPaneShiftY()) + (bottomPage.getTranslateY() - PageRenderer.PAGE_MARGIN + 5) * pane.getScaleX());
             zoomOperator.scroll(toScroll, false, false);
         }
     }
@@ -637,7 +652,7 @@ public class MainScreen extends Pane {
         return getZoomFactor() * 100;
     }
     public DoubleBinding zoomPercentProperty(){
-        return pane.scaleXProperty().multiply(100);
+        return pane.scaleXProperty().multiply(100d);
     }
     public DoubleProperty zoomProperty(){
         return pane.scaleXProperty();
@@ -649,10 +664,19 @@ public class MainScreen extends Pane {
     public void addPage(PageRenderer page){
         pane.getChildren().add(page);
     }
+    
+    // For classic column view
     public void updateSize(int totalHeight){
-        
-        pane.setPrefWidth(PageRenderer.PAGE_WIDTH + (PageRenderer.PAGE_HORIZONTAL_MARGIN * 2));
         pane.setPrefHeight(totalHeight);
+        pane.setPrefWidth(PageRenderer.PAGE_WIDTH + (PageRenderer.PAGE_MARGIN * 2));
+    }
+    // For grid view
+    public void updateSize(int totalHeight, int totalWidth){
+        if(isEditPagesMode()){
+            pane.setPrefWidth(totalWidth);
+            pane.setPrefHeight(totalHeight);
+        }
+        
     }
     
     public boolean pasteText(String text){
@@ -682,5 +706,18 @@ public class MainScreen extends Pane {
     }
     public void redo(){
         if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
+    }
+    
+    public boolean isEditPagesMode(){
+        return getZoomPercent() < 41;
+    }
+    public boolean isEditPagesMode(double zoomFactor){
+        return zoomFactor < .41;
+    }
+    public BooleanBinding editPagesModeProperty(){
+        return zoomPercentProperty().lessThan(41d);
+    }
+    public double getAvailableWidthInPaneContext(){
+        return zoomOperator.getMainScreenWidth() / getZoomFactor();
     }
 }

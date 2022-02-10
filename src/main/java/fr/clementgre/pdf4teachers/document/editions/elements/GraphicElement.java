@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -120,7 +121,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseMoved(e -> {
-            if(PageRenderer.isEditPagesMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 setCursor(PlatformUtils.CURSOR_MOVE);
             }else{
                 setCursor(getDragCursorType(e.getX(), e.getY()));
@@ -128,7 +129,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMousePressed(e -> {
-            wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
+            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             
@@ -143,7 +144,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseClicked(e -> {
-            if(PageRenderer.isEditPagesMode()) return;
+            if(MainWindow.mainScreen.isEditPagesMode()) return;
             e.consume();
             requestFocus();
             if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){

@@ -343,7 +343,7 @@ public class ZoomOperator {
     
     public void fitWidth(boolean removeTransition){
         
-        double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.PAGE_HORIZONTAL_MARGIN;
+        double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.PAGE_MARGIN;
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
         
         double targetScale = (availableWidth / pageWidth);

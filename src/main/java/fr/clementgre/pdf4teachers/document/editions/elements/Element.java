@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
@@ -82,7 +83,7 @@ public abstract class Element extends Region {
             
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
-                wasInEditPagesModeWhenMousePressed = PageRenderer.isEditPagesMode();
+                wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
                 if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
                 dragAlreadyDetected = false;
@@ -102,7 +103,7 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseClicked(e -> {
-                if(PageRenderer.isEditPagesMode()) return;
+                if(MainWindow.mainScreen.isEditPagesMode()) return;
                 e.consume();
                 if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
                     onDoubleClick();

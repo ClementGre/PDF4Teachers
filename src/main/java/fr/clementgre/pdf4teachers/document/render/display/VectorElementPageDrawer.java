@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyCode;
@@ -78,7 +79,7 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1){
                 e.consume();
                 // Draw only one point
@@ -89,7 +90,7 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseReleased((e) -> {
-            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             
             if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
@@ -98,13 +99,13 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseDragged((e) -> {
-            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             
             e.consume();
             if(e.getButton() == MouseButton.PRIMARY) appendPoint(e.getX(), e.getY(), false);
         });
         setOnMouseMoved((e) -> {
-            if(vector == null || PageRenderer.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             
             if(spaceDown){
                 if(lastX == 0 && lastY == 0){
