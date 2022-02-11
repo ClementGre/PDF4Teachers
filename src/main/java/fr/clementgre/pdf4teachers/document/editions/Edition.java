@@ -130,7 +130,7 @@ public class Edition{
             // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
             else{
-                config.base.put("lastScrollValue", document.getCurrentScrollValue());
+                config.base.put("lastScrollValue", document.getLastScrollValue());
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
                 config.base.put("images", images);
@@ -155,7 +155,7 @@ public class Edition{
             Config config = new Config(editFile);
             config.load();
             
-            config.base.put("lastScrollValue", document.getCurrentScrollValue());
+            config.base.put("lastScrollValue", document.getLastScrollValue());
             
             config.save();
         }catch(Exception e){

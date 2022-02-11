@@ -48,7 +48,6 @@ public class GradeExportRenderer {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
             decimalFormat = new DecimalFormat("0.###", symbols);
             decimalFormat.setMaximumIntegerDigits(4);
-            System.out.println("ENGLISH FORMAT");
         }else decimalFormat = MainWindow.gradesDigFormat;
         
         separator = pane.settingsCSVSeparatorComma.isSelected() ? "," : ";";

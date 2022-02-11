@@ -10,7 +10,6 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChanged
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
@@ -63,7 +62,7 @@ public class GrabLine extends Region {
         /// EVENTS ///
         
         line.setOnMousePressed(e -> {
-            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
+            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isIsGridMode();
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             dragAlreadyDetected = false;

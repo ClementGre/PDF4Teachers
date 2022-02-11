@@ -96,7 +96,7 @@ public class PageRenderer extends Pane {
     private final InvalidationListener translateYListener = e -> updateShowStatus();
     
     private final InvalidationListener mainScreenZoomListener = (observable) -> {
-        if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+        if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
         else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         else setCursor(Cursor.DEFAULT);
         
@@ -140,7 +140,7 @@ public class PageRenderer extends Pane {
             mouseX = e.getX();
             mouseY = e.getY();
             
-            if(MainWindow.mainScreen.isEditPagesMode() && !isPageZoneSelectorActive()){
+            if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()){
                 
                 double translateY = getTranslateY() + e.getY() - shiftY;
                 if(getPage() == 0) translateY = Math.max(translateY, defaultTranslateY);
@@ -312,7 +312,7 @@ public class PageRenderer extends Pane {
             if(pageEditPane == null) pageEditPane = new PageEditPane(this);
             else pageEditPane.setVisible(true);
             
-            if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
             
@@ -324,7 +324,7 @@ public class PageRenderer extends Pane {
             mouseX = e.getX();
             mouseY = e.getY();
     
-            if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
         });
@@ -345,7 +345,7 @@ public class PageRenderer extends Pane {
             menu.hide();
             menu.getItems().clear();
             
-            if(MainWindow.mainScreen.isEditPagesMode()) return;
+            if(MainWindow.mainScreen.isIsGridMode()) return;
             
             if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
@@ -379,7 +379,7 @@ public class PageRenderer extends Pane {
                 else{
                     setCursor(Cursor.CLOSED_HAND);
                     
-                    if(e.getClickCount() == 2 && !MainWindow.mainScreen.isEditPagesMode()){
+                    if(e.getClickCount() == 2 && !MainWindow.mainScreen.isIsGridMode()){
                         e.consume();
                         SideBar.selectTab(MainWindow.textTab);
                         MainWindow.textTab.newBtn.fire();
@@ -397,7 +397,7 @@ public class PageRenderer extends Pane {
         setOnMouseReleased(e -> {
             if(getTranslateY() != defaultTranslateY) animateTranslateY(defaultTranslateY);
             
-            if(placingElement != null && !MainWindow.mainScreen.isEditPagesMode()){
+            if(placingElement != null && !MainWindow.mainScreen.isIsGridMode()){
                 e.consume();
                 if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10
                         || (placingElement.getWidth() < 10 && placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES)){
@@ -408,7 +408,7 @@ public class PageRenderer extends Pane {
                 }
                 placingElement = null;
             }
-            if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else setCursor(Cursor.DEFAULT);
         });
         
@@ -549,7 +549,7 @@ public class PageRenderer extends Pane {
         
         defaultTranslateY = totalHeight;
     
-        if(MainWindow.mainScreen.isEditPagesMode()){
+        if(MainWindow.mainScreen.isIsGridMode()){
             if(totalWidth <= 0) totalWidth = PAGE_MARGIN;
     
             if(animated) animateTranslateX(totalWidth);
@@ -569,7 +569,7 @@ public class PageRenderer extends Pane {
         }
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
-            if(MainWindow.mainScreen.isEditPagesMode()){
+            if(MainWindow.mainScreen.isIsGridMode()){
                 if(totalWidth + PAGE_WIDTH + PAGE_MARGIN > MainWindow.mainScreen.getAvailableWidthInPaneContext()){
                     // Wrap
                     totalHeight += maxHeight;
@@ -579,7 +579,7 @@ public class PageRenderer extends Pane {
                 }
             }else MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, animated);
         }else{
-            if(MainWindow.mainScreen.isEditPagesMode()) MainWindow.mainScreen.updateSize(totalHeight + maxHeight, maxWidth);
+            if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.updateSize(totalHeight + maxHeight, maxWidth);
             else MainWindow.mainScreen.updateSize(totalHeight);
         }
         
@@ -700,9 +700,9 @@ public class PageRenderer extends Pane {
     }
     
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
-        int pageHeight = (int) (getHeight() * MainWindow.mainScreen.pane.getScaleX());
-        int upDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY() * MainWindow.mainScreen.pane.getScaleX() + pageHeight);
-        int downDistance = (int) (MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY() * MainWindow.mainScreen.pane.getScaleX());
+        int pageHeight = (int) (getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale());
+        int upDistance = (int) (MainWindow.mainScreen.zoomOperator.getPaneY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY() * MainWindow.mainScreen.zoomOperator.getPaneScale() + pageHeight);
+        int downDistance = (int) (MainWindow.mainScreen.zoomOperator.getPaneY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + getTranslateY() * MainWindow.mainScreen.zoomOperator.getPaneScale());
         
         //if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < MainWindow.mainScreen.getHeight()){ // one page of space
         if((upDistance) > 0 && (downDistance) < MainWindow.mainScreen.getHeight()){ // pil poil
@@ -790,11 +790,11 @@ public class PageRenderer extends Pane {
     
     // Bottom of the page coordinates in the Pane of MainScreen
     public double getBottomY(){
-        return MainWindow.mainScreen.pane.getTranslateY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + 15 + getTranslateY()) * MainWindow.mainScreen.pane.getScaleX();
+        return MainWindow.mainScreen.zoomOperator.getPaneY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + 15 + getTranslateY()) * MainWindow.mainScreen.zoomOperator.getPaneScale();
     }
     
     public double getPreciseMouseY(){
-        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.pane.getScaleX())) / MainWindow.mainScreen.pane.getScaleX() + 15;
+        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneX() + 15;
     }
     
     // ELEMENTS

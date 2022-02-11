@@ -114,8 +114,9 @@ public class Document {
         }
         return false;
     }
-    public double getCurrentScrollValue(){
-        return MainWindow.mainScreen.zoomOperator.vScrollBar.getValue();
+    // Excludes the grid display mode
+    public double getLastScrollValue(){
+        return MainWindow.mainScreen.zoomOperator.getLastVScrollValue();
     }
     public void setCurrentScrollValue(double value){
         MainWindow.mainScreen.zoomOperator.vScrollBar.setValue(value);

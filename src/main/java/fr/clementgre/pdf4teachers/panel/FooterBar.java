@@ -37,7 +37,7 @@ public class FooterBar extends StackPane {
     
     private final HBox zoom = new HBox();
     private final Label zoomInfo = new Label();
-    private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 40, 20);
+    private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 20, 10);
     private final Label zoomPercent = new Label();
     private final ColorAdjust lightGrayColorAdjust = new ColorAdjust();
     private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, lightGrayColorAdjust);
@@ -69,12 +69,12 @@ public class FooterBar extends StackPane {
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
                 double scale = newValue.doubleValue();
-                double val = 20;
+                double val = 10;
                 
                 if(scale < 1){
-                    val = scale * 20;
+                    val = scale * 10;
                 }else if(scale > 1){
-                    val = 20 + (20 * (scale - 1)) / 4;
+                    val = 10 + (10 * (scale - 1)) / 4;
                 }
                 zoomController.setValue(val);
             }
@@ -85,10 +85,10 @@ public class FooterBar extends StackPane {
             double scale = 1;
             // val < 20 : scale = val / 20
             // val > 20 : scale = 1 + (4 * (val-20)) / 20
-            if(val < 20){
-                scale = val / 20;
-            }else if(val > 20){
-                scale = 1 + (4 * (val - 20)) / 20;
+            if(val < 10){
+                scale = val / 10;
+            }else if(val > 10){
+                scale = 1 + (4 * (val - 10)) / 10;
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
