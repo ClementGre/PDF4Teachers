@@ -59,7 +59,7 @@ public class Main extends Application {
     public static final boolean DEBUG = false;
     public static final boolean COPY_CONSOLE = false;
     public static final boolean COPY_TRANSLATIONS_AT_START = false;
-    public static final boolean TRANSLATIONS_IN_CODE = false;
+    public static final boolean TRANSLATIONS_IN_CODE = true;
     
     public static boolean firstLaunch;
 

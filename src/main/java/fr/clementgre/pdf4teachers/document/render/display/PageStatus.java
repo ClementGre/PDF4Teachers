@@ -9,5 +9,7 @@ public enum PageStatus {
     HIDE,
     RENDERING,
     FAIL,
-    RENDERED,
+    RENDERED;
+    
+    
 }

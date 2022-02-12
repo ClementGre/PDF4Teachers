@@ -388,9 +388,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
             String nextUndo = null;
             String nextRedo = null;
-            if(MainWindow.mainScreen.getUndoEngine() != null){
-                nextUndo = MainWindow.mainScreen.getUndoEngine().getUndoNextName();
-                nextRedo = MainWindow.mainScreen.getUndoEngine().getRedoNextName();
+            if(MainWindow.mainScreen.getUndoEngineAuto() != null){
+                nextUndo = MainWindow.mainScreen.getUndoEngineAuto().getUndoNextName();
+                nextRedo = MainWindow.mainScreen.getUndoEngineAuto().getRedoNextName();
             }
             if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
             else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";

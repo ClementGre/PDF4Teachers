@@ -26,6 +26,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static writer2latex.office.BibMark.EntryType.edition;
+
 public class PDFPagesRender {
     
     private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack) {}
@@ -66,14 +68,27 @@ public class PDFPagesRender {
             
             // Close
             pdfRenderer = null;
+            while(editor.isEdited()){ // document pages not saved
+                PlatformUtils.sleepThread(100);
+            }
             try{
                 document.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
+            }catch(IOException e){ e.printStackTrace(); }
             document = null;
             
         }, "Page Renderer").start();
+    
+        // Save document pages each 10 seconds if needed
+        new Thread(() -> {
+            PlatformUtils.sleepThread(10000);
+            while(!closed){
+                PlatformUtils.runAndWait(() -> {
+                    editor.saveEditsIfNeeded();
+                    return null;
+                });
+                PlatformUtils.sleepThread(10000);
+            }
+        }, "Page Editor Saver").start();
     }
     
     private void renderPage(RenderPending renderPending){
@@ -150,6 +165,7 @@ public class PDFPagesRender {
     
     public void close(){
         closed = true;
+        editor.saveEditsIfNeeded();
     }
     
     public PDDocument getDocument(){

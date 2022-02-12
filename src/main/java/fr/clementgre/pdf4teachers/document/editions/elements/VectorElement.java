@@ -117,7 +117,7 @@ public class VectorElement extends GraphicElement{
     
             // New move added OR this is the first registration of this action/property.
             if(StringUtils.count(oldValue.toLowerCase(), 'm') != StringUtils.count(newValue.toLowerCase(), 'm')
-                    || !UndoEngine.isNextUndoActionProperty(path)){
+                    || !MainWindow.mainScreen.isNextUndoActionProperty(path)){
         
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), UType.UNDO));
             }

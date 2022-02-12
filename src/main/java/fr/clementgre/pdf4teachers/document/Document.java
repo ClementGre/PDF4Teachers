@@ -109,7 +109,7 @@ public class Document {
         this.edition = new Edition(file, this);
         if(edition.load()){
             if(!documentSaver.isAlive()) documentSaver.start();
-            this.undoEngine = new UndoEngine();
+            this.undoEngine = new UndoEngine(true);
             return true;
         }
         return false;
@@ -149,7 +149,7 @@ public class Document {
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
         MainWindow.gradeTab.treeView.clearElements(false, false);
         this.edition.load();
-        this.undoEngine = new UndoEngine();
+        this.undoEngine = new UndoEngine(true);
     }
     
     public void close(){

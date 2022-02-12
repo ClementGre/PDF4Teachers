@@ -58,6 +58,8 @@ public class GradeTreeItemPanel extends HBox {
         if(outOfPanel){
             name.setText(TR.tr("gradeTab.putGradeOutOf"));
             value.textProperty().bind(Bindings.createStringBinding(() -> {
+                if(treeItem.getCore() == null) return "";
+                
                 if(treeItem.getCore().getValue() == -1) return "?";
                 if(treeItem.getCore().getTotal() <= 0) return "0";
                 if(treeItem.getCore().getOutOfTotal() <= 0) return "?";
@@ -65,6 +67,8 @@ public class GradeTreeItemPanel extends HBox {
             }, treeItem.getCore().valueProperty(), treeItem.getCore().totalProperty(), treeItem.getCore().outOfTotalProperty()));
             
             total.textProperty().bind(Bindings.createStringBinding(() -> {
+                if(treeItem.getCore() == null) return "";
+                
                 if(treeItem.getCore().getOutOfTotal() <= 0) return "?";
                 return MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal());
             }, treeItem.getCore().outOfTotalProperty()));
@@ -73,8 +77,10 @@ public class GradeTreeItemPanel extends HBox {
         }else{
             name.textProperty().bind(treeItem.getCore().nameProperty());
             
-            value.textProperty().bind(Bindings.createStringBinding(() -> (treeItem.getCore().getValue() == -1 ? "?" :
-                    MainWindow.gradesDigFormat.format(treeItem.getCore().getValue())), treeItem.getCore().valueProperty()));
+            value.textProperty().bind(Bindings.createStringBinding(() -> {
+                if(treeItem.getCore() == null) return "";
+                return treeItem.getCore().getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(treeItem.getCore().getValue());
+            }, treeItem.getCore().valueProperty()));
             
             total.textProperty().bind(Bindings.createStringBinding(() -> MainWindow.gradesDigFormat.format(treeItem.getCore().getTotal()), treeItem.getCore().totalProperty()));
         }

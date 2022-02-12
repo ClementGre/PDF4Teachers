@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.CreateDeleteUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageMoveUndoAction;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -71,6 +72,14 @@ public class PageRenderer extends Pane {
     
     private PageStatus status = PageStatus.HIDE;
     
+    public enum PageGridPosition {
+        LEFT,
+        MIDDLE,
+        RIGHT
+    }
+    private PageGridPosition pageGridPosition = PageGridPosition.MIDDLE;
+    private int pageRowIndex = 0;
+    
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     private double mouseX = 0;
@@ -89,7 +98,9 @@ public class PageRenderer extends Pane {
     private GraphicElement placingElement = null;
     
     private double shiftY = 0;
+    private double shiftX = 0;
     private double defaultTranslateY = 0;
+    private double defaultTranslateX = 0;
     
     private boolean removed = false;
     
@@ -136,6 +147,10 @@ public class PageRenderer extends Pane {
         //////////////////////////////////////// DRAGGING ////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////
         
+        setOnDragDetected(e -> {
+            if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()) MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, this, getPage()));
+        });
+        
         setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
@@ -143,26 +158,30 @@ public class PageRenderer extends Pane {
             if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()){
                 
                 double translateY = getTranslateY() + e.getY() - shiftY;
-                if(getPage() == 0) translateY = Math.max(translateY, defaultTranslateY);
-                if(getPage() == MainWindow.mainScreen.document.totalPages - 1)
-                    translateY = Math.min(translateY, defaultTranslateY);
+                if(getPage() < MainWindow.mainScreen.getGridModePagesPerRow()) translateY = Math.max(translateY, defaultTranslateY);
+                if(getPage() >= MainWindow.mainScreen.document.totalPages - MainWindow.mainScreen.getGridModePagesInLastRow()) translateY = Math.min(translateY, defaultTranslateY);
                 setTranslateY(translateY);
+                translateYTimeline.stop();
+    
+                double translateX = getTranslateX() + e.getX() - shiftX;
+                if(pageGridPosition == PageGridPosition.LEFT) translateX = Math.max(translateX, defaultTranslateX);
+                if(pageGridPosition == PageGridPosition.RIGHT) translateX = Math.min(translateX, defaultTranslateX);
+                setTranslateX(translateX);
+                translateXTimeline.stop();
                 
-                if(getTranslateY() - defaultTranslateY > getHeight() * 3 / 4 && getPage() != MainWindow.mainScreen.document.totalPages - 1){
-                    if(getTranslateY() - defaultTranslateY > (getHeight() + PAGE_MARGIN) * 2){ // Descend multiple pages
-                        MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this,
-                                StringUtils.clamp((int) ((getTranslateY() - defaultTranslateY) / (getHeight() + PAGE_MARGIN)), 1, MainWindow.mainScreen.document.totalPages - 1 - getPage()));
-                    }else{ // Descend one page
-                        MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(this);
-                    }
-                }else if(getTranslateY() - defaultTranslateY < -getHeight() * 3 / 4 && getPage() != 0){
-                    if(getTranslateY() - defaultTranslateY < -(getHeight() + PAGE_MARGIN) * 2){ // Ascend multiple pages
-                        MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this,
-                                StringUtils.clamp((int) ((getTranslateY() - defaultTranslateY) / (getHeight() + PAGE_MARGIN)), -getPage(), -1));
-                    }else{ // Ascend one page
-                        MainWindow.mainScreen.document.pdfPagesRender.editor.ascendPage(this);
-                    }
+                // Vertical : pass the number of pages in the row
+                if(getTranslateY() - defaultTranslateY > getHeight() * .75 && getPage() != MainWindow.mainScreen.document.totalPages - 1){
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this, StringUtils.clamp(MainWindow.mainScreen.getGridModePagesPerRow(), 1, MainWindow.mainScreen.document.totalPages - 1 - getPage()));
+                }else if(getTranslateY() - defaultTranslateY < -getHeight() * .75 && getPage() != 0){
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this, StringUtils.clamp(-MainWindow.mainScreen.getGridModePagesPerRow(), -getPage(), -1));
                 }
+                // Horizontal
+                if(getTranslateX() - defaultTranslateX > getWidth() * .75 && getPage() != MainWindow.mainScreen.document.totalPages - 1){
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this, 1);
+                }else if(getTranslateX() - defaultTranslateX < -getWidth() * .75 && getPage() != 0){
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(this, -1);
+                }
+                
             }else{
                 if(placingElement != null){
                     e.consume();
@@ -340,7 +359,9 @@ public class PageRenderer extends Pane {
             requestFocus();
             toFront();
             shiftY = e.getY();
+            shiftX = e.getX();
             defaultTranslateY = getTranslateY();
+            defaultTranslateX = getTranslateX();
             MainWindow.mainScreen.setSelected(null);
             menu.hide();
             menu.getItems().clear();
@@ -395,7 +416,10 @@ public class PageRenderer extends Pane {
             }
         });
         setOnMouseReleased(e -> {
-            if(getTranslateY() != defaultTranslateY) animateTranslateY(defaultTranslateY);
+            if(MainWindow.mainScreen.isIsGridMode()){
+                if(getTranslateY() != defaultTranslateY) animateTranslateY(defaultTranslateY);
+                if(getTranslateX() != defaultTranslateX) animateTranslateX(defaultTranslateX);
+            }
             
             if(placingElement != null && !MainWindow.mainScreen.isIsGridMode()){
                 e.consume();
@@ -433,12 +457,12 @@ public class PageRenderer extends Pane {
             double rotate = e.getTotalAngle() * 2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateLeftPage(this, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, false, false);
                     setRotate(0);
                 });
             }else if(rotate > 45){
                 setVisibleRotate(90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotateRightPage(this, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, true, false);
                     setRotate(0);
                 });
             }else{
@@ -526,9 +550,16 @@ public class PageRenderer extends Pane {
     }
     
     public void updatePosition(int totalHeight, boolean animated){
-        updatePosition(totalHeight, 0, 0, 0, animated);
+        updatePosition(totalHeight, 0, 0, 0, 0, animated);
     }
-    public void updatePosition(int totalHeight, int maxHeight, int totalWidth, int maxWidth, boolean animated){
+    /**
+     * @param totalHeight The Y coordinate where this page should be places (sum of all pages height + margin)
+     * @param maxHeight When GridMode, the height + margin of the highest page of the current row (= the height of the row)
+     * @param totalWidth When GridMode, the X coordinate where this page should be places (sum of all pages width + margin)
+     * @param maxWidth The width reached by the largest column
+     * @param rowCount The number of pages in the current row
+     */
+    public void updatePosition(int totalHeight, int maxHeight, int totalWidth, int maxWidth, int rowCount, boolean animated){
         if(totalHeight == -1) totalHeight = (int) getTranslateY();
         
         PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
@@ -546,12 +577,18 @@ public class PageRenderer extends Pane {
         
         if(animated) animateTranslateY(totalHeight);
         else setTranslateY(totalHeight);
-        
-        defaultTranslateY = totalHeight;
     
         if(MainWindow.mainScreen.isIsGridMode()){
-            if(totalWidth <= 0) totalWidth = PAGE_MARGIN;
+            pageGridPosition = PageGridPosition.MIDDLE; // Default value
+            pageRowIndex = rowCount;
+            
+            if(totalWidth <= 0){
+                totalWidth = PAGE_MARGIN;
+                pageGridPosition = PageGridPosition.LEFT;
+            }
     
+            defaultTranslateX = totalWidth;
+            
             if(animated) animateTranslateX(totalWidth);
             else setTranslateX(totalWidth);
             totalWidth += PAGE_WIDTH + PAGE_MARGIN;
@@ -559,26 +596,28 @@ public class PageRenderer extends Pane {
             // Update maxHeight & maxWidth
             if(getHeight() + PAGE_MARGIN > maxHeight) maxHeight = (int) (getHeight() + PAGE_MARGIN);
             if(totalWidth > maxWidth) maxWidth = totalWidth;
+            
         }else{
-            if(getTranslateX() != PAGE_MARGIN){
+            if(getTranslateX() != PAGE_MARGIN){ // Reset translateX
                 if(animated) animateTranslateX(PAGE_MARGIN);
                 else setTranslateX(PAGE_MARGIN);
             }
-            
             totalHeight += (int) (getHeight() + PAGE_MARGIN);
         }
+    
+        defaultTranslateY = totalHeight;
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
             if(MainWindow.mainScreen.isIsGridMode()){
-                if(totalWidth + PAGE_WIDTH + PAGE_MARGIN > MainWindow.mainScreen.getAvailableWidthInPaneContext()){
-                    // Wrap
+                if(rowCount+1 >= MainWindow.mainScreen.getGridModePagesPerRow()){ // Wrap
+                    pageGridPosition = PageGridPosition.RIGHT;
                     totalHeight += maxHeight;
-                    MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, 0, 0, maxWidth, animated);
+                    MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, 0, 0, maxWidth, 0, animated);
                 }else{
-                    MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, maxHeight, totalWidth, maxWidth, animated);
+                    MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, maxHeight, totalWidth, maxWidth, rowCount+1, animated);
                 }
             }else MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, animated);
-        }else{
+        }else{ // Last page
             if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.updateSize(totalHeight + maxHeight, maxWidth);
             else MainWindow.mainScreen.updateSize(totalHeight);
         }
@@ -794,7 +833,7 @@ public class PageRenderer extends Pane {
     }
     
     public double getPreciseMouseY(){
-        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneX() + 15;
+        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneScale() + 15;
     }
     
     // ELEMENTS

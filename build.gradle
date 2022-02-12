@@ -81,7 +81,7 @@ dependencies {
     implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.34'
 
     // PDF Box
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.24'
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.25'
 
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'

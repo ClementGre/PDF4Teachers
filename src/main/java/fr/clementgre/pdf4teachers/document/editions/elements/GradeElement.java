@@ -134,7 +134,7 @@ public class GradeElement extends Element {
             }else{
                 // New word added OR this is the first registration of this action/property.
                 if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
-                        || !UndoEngine.isNextUndoActionProperty(nameProperty())){
+                        || !MainWindow.mainScreen.isNextUndoActionProperty(nameProperty())){
                     
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, nameProperty(), oldValue.trim(), UType.UNDO));
                 }
@@ -177,7 +177,7 @@ public class GradeElement extends Element {
                 treeItem.getPanel().gradeField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined value so otherwise, this is useless
                 // This is the first registration of this action/property.
-                if(!UndoEngine.isNextUndoActionProperty(valueProperty())){
+                if(!MainWindow.mainScreen.isNextUndoActionProperty(valueProperty())){
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, valueProperty(), oldValue, UType.UNDO));
                 }
             }
@@ -198,7 +198,7 @@ public class GradeElement extends Element {
                 
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined total so otherwise, this is useless
                 // This is the first registration of this action/property.
-                if(!UndoEngine.isNextUndoActionProperty(totalProperty())){
+                if(!MainWindow.mainScreen.isNextUndoActionProperty(totalProperty())){
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, totalProperty(), oldValue, UType.UNDO));
                 }
             }
@@ -216,7 +216,7 @@ public class GradeElement extends Element {
                 
             }else{
                 // This is the first registration of this action/property.
-                if(!UndoEngine.isNextUndoActionProperty(outOfTotalProperty())){
+                if(!MainWindow.mainScreen.isNextUndoActionProperty(outOfTotalProperty())){
                     MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, outOfTotalProperty(), oldValue, UType.UNDO));
                 }
             }

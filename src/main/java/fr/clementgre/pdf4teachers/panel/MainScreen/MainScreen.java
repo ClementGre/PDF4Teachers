@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
@@ -43,6 +44,9 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.File;
 import java.io.IOException;
+
+import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PAGE_MARGIN;
+import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PAGE_WIDTH;
 
 public class MainScreen extends Pane {
     
@@ -675,7 +679,7 @@ public class MainScreen extends Pane {
     }
     
     public int getPageWidth(){
-        return PageRenderer.PAGE_WIDTH;
+        return PAGE_WIDTH;
     }
     public void addPage(PageRenderer page){
         pane.getChildren().add(page);
@@ -684,7 +688,7 @@ public class MainScreen extends Pane {
     // For classic column view
     public void updateSize(int totalHeight){
         pane.setPrefHeight(totalHeight);
-        pane.setPrefWidth(PageRenderer.PAGE_WIDTH + (PageRenderer.PAGE_MARGIN * 2));
+        pane.setPrefWidth(PAGE_WIDTH + (PAGE_MARGIN * 2));
     }
     // For grid view
     public void updateSize(int totalHeight, int totalWidth){
@@ -710,17 +714,54 @@ public class MainScreen extends Pane {
         if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
         return null;
     }
+    // The UndoEngine of the PDF pages editor
+    public UndoEngine getPagesUndoEngine(){
+        if(hasDocument(false)) return document.pdfPagesRender.editor.getUndoEngine();
+        return null;
+    }
+    public UndoEngine getUndoEngineAuto(){
+        if(isIsGridMode()) return getPagesUndoEngine();
+        else return getUndoEngine();
+    }
+    
+    public <T> boolean isNextUndoActionProperty(Property<T> property){
+        if(getUndoEngine() != null && getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
+            return action.getObservableValue() == property;
+        } return false;
+    }
+    public <T> boolean isNextPageUndoActionProperty(Property<T> property){
+        if(getPagesUndoEngine() != null && getPagesUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
+            return action.getObservableValue() == property;
+        } return false;
+    }
+    
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO) return;
         if(getUndoEngine() != null){
             getUndoEngine().registerNewAction(action);
         }
     }
+    // The UndoEngine of the PDF pages editor
+    public void registerNewPageAction(UndoAction action){
+        if(action.getUndoType() == UType.NO_UNDO) return;
+        if(getPagesUndoEngine() != null){
+            getPagesUndoEngine().registerNewAction(action);
+        }
+    }
     public void undo(){
-        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
+        if(isIsGridMode()){
+            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().undo();
+        }else{
+            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
+        }
+        
     }
     public void redo(){
-        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
+        if(isIsGridMode()){
+            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().redo();
+        }else{
+            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
+        }
     }
     
     public boolean isIsGridMode(){
@@ -732,5 +773,12 @@ public class MainScreen extends Pane {
     
     public double getAvailableWidthInPaneContext(){
         return zoomOperator.getMainScreenWidth() / zoomOperator.getPaneScale();
+    }
+    public int getGridModePagesPerRow(){
+        return (int) ((getAvailableWidthInPaneContext() - PAGE_MARGIN) / (PAGE_WIDTH + PAGE_MARGIN));
+    }
+    public int getGridModePagesInLastRow(){
+        int rest = document.getPagesNumber() % getGridModePagesPerRow();
+        return rest == 0 ? getGridModePagesPerRow() : rest;
     }
 }

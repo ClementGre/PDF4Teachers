@@ -96,7 +96,7 @@ public class ImageElement extends GraphicElement {
             
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
-                    || !UndoEngine.isNextUndoActionProperty(imageId)){
+                    || !MainWindow.mainScreen.isNextUndoActionProperty(imageId)){
                 
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.UNDO));
             }

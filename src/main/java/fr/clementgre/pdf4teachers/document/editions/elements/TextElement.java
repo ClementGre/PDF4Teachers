@@ -105,7 +105,7 @@ public class TextElement extends Element {
             
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
-                    || !UndoEngine.isNextUndoActionProperty(textProperty())){
+                    || !MainWindow.mainScreen.isNextUndoActionProperty(textProperty())){
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, textProperty(), oldValue.trim(), UType.UNDO));
             }
             

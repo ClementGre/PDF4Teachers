@@ -25,6 +25,14 @@ public class UndoEngine{
     // Prevent adding actions while reversing an action.
     public static boolean isUndoingThings = false;
     
+    // When false, only NO_COUNT actions before the classic undo action will be processed.
+    // If true, the NO_COUNT actions that are after the classic undo action, will be processed at the same time
+    // This boolean is false for Pages UndoEngine
+    private final boolean doProcessNoCountRightAndLeft;
+    public UndoEngine(boolean doProcessNoCountRightAndLeft){
+        this.doProcessNoCountRightAndLeft = doProcessNoCountRightAndLeft;
+    }
+    
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO || isUndoingThings) return;
     
@@ -39,11 +47,13 @@ public class UndoEngine{
     
     public void undo(){
         //System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
-        
         isUndoingThings = true;
+        
         while(!undoLastAction());
+        
         // After having undoing last action, undo all next NO_COUNT actions
-        while(undoList.size() != 0 && undoList.get(0).getUndoType() == UType.NO_COUNT){
+        // Do not process next NO_COUNT actions if doProcessNoCountRightAndLeft is true
+        while(doProcessNoCountRightAndLeft && undoList.size() != 0 && undoList.get(0).getUndoType() == UType.NO_COUNT){
             undoLastAction();
         }
         
@@ -53,10 +63,11 @@ public class UndoEngine{
     
     public void redo(){
         //System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
-        
         isUndoingThings = true;
-    
+        
+        // doProcessNoCountRightAndLeft has no interest in redo because the first action in the list will always be a classic action
         while(!redoLastAction());
+    
         // After having undoing last action, undo all next NO_COUNT actions
         while(redoList.size() != 0 && redoList.get(0).getUndoType() == UType.NO_COUNT){
             redoLastAction();
@@ -126,14 +137,5 @@ public class UndoEngine{
         if(redoList.size() > MAX_STACK_LENGTH){
             redoList = new ArrayList<>(redoList.stream().limit(MAX_STACK_LENGTH).toList());
         }
-    }
-    
-    public static <T> boolean isNextUndoActionProperty(Property<T> property){
-        if(MainWindow.mainScreen.getUndoEngine() != null
-            && MainWindow.mainScreen.getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
-            
-            return action.getObservableValue() == property;
-        }
-        return false;
     }
 }

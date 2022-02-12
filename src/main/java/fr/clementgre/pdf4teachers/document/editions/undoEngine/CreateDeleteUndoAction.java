@@ -17,13 +17,13 @@ public class CreateDeleteUndoAction extends UndoAction{
     // No weak references, otherwise, deleted elements would be loss
     private final Element element;
     private boolean deleted;
-    private final boolean originallyDeteted;
+    private final boolean originallyDeleted;
     
     public CreateDeleteUndoAction(Element element, boolean deleted, UType undoType){
         super(undoType);
         this.element = element;
         this.deleted = deleted;
-        this.originallyDeteted = deleted;
+        this.originallyDeleted = deleted;
     }
     
     @Override
@@ -76,7 +76,7 @@ public class CreateDeleteUndoAction extends UndoAction{
     }
     
     public String toString(){
-        if(originallyDeteted){
+        if(originallyDeleted){
             return TR.tr("actions.delete") + " " + element.getElementName(false).toLowerCase();
         }else{
             return TR.tr("actions.create") + " " + element.getElementName(false).toLowerCase();

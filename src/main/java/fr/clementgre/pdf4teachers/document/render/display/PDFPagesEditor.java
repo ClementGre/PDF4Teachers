@@ -10,6 +10,10 @@ import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageAddRemoveUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageMoveUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageRotateUndoAction;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertWindow;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertedFile;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -29,6 +33,7 @@ import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
@@ -58,108 +63,98 @@ public class PDFPagesEditor {
     
     private final PDDocument document;
     private final File file;
+    private boolean edited = false;
+    
+    private final UndoEngine undoEngine = new UndoEngine(false);
     
     public PDFPagesEditor(PDDocument document, File file){
         this.document = document;
         this.file = file;
     }
     
-    public void ascendPage(PageRenderer page){
-        page.quitVectorEditMode();
-        movePage(page, -1);
+    public void saveEditsIfNeeded(){
+        if(edited) saveEdits();
+    }
+    public void saveEdits(){
+        try{
+            document.setAllSecurityToBeRemoved(true);
+            document.save(file);
+            edited = false;
+        }catch(IOException e){
+            e.printStackTrace();
+            ErrorAlert alert = new ErrorAlert(TR.tr("dialog.error.unableToSavePDFPagesEdits"), e.getMessage(), false);
+            alert.getButtonTypes().clear();
+            alert.addIgnoreButton(ButtonPosition.CLOSE);
+            alert.addDefaultButton(TR.tr("actions.retry"));
+            
+            if(alert.getShowAndWaitIsDefaultButton()) saveEdits();
+            else edited = false;
+        }
     }
     
-    public void descendPage(PageRenderer page){
-        page.quitVectorEditMode();
-        movePage(page, +1);
+    // ascendPage and descendPage are registering an UndoAction,
+    // but it is not the case of the others moving functions.
+    public void ascendPage(PageRenderer page){
+        MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, page, page.getPage()));
+        movePage(page, -1);
     }
-    public void movePage(PageRenderer page, int index){
-        assert index != 0 : "You can't move a page with an index of 0, this means to not move the page.";
+    public void descendPage(PageRenderer page){
+        MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, page, page.getPage()));
+        movePage(page, 1);
+    }
+    public void movePage(PageRenderer page, int pagesToPass){
+        assert pagesToPass != 0 : "You can't move a page with pagesToPass = 0, this means to not move the page.";
+        movePageByIndex(page, page.getPage() + pagesToPass);
+    }
+    public void movePageByIndex(PageRenderer page, int index){
+        
+        page.quitVectorEditMode();
         PDPage docPage = document.getPage(page.getPage());
         
         document.removePage(docPage);
-        addDocumentPage(page.getPage() + index, docPage);
-        try{
-            document.save(file);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+        addDocumentPage(index, docPage);
         
         Document document = MainWindow.mainScreen.document;
         
         // move page
         document.getPages().remove(page);
-        document.getPages().add(page.getPage() + index, page);
+        document.getPages().add(index, page);
         
         // Update pages of all pages
         for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
-        document.getPages().get(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
-        document.updateShowsStatus();
+        document.updatePagesPosition();
         
         // update current page
-        document.setCurrentPage(page.getPage() + index);
+        document.setCurrentPage(index);
     }
     
-    public void rotateLeftPage(PageRenderer page, boolean animated){
+    public void rotatePage(PageRenderer page, boolean right, boolean animated){
+        int angle = right ? 90 : -90;
         page.quitVectorEditMode();
-        document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() - 90);
-        try{
-            document.setAllSecurityToBeRemoved(true);
-            document.save(file);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
+        document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + angle);
+        edited = true;
+        
+        MainWindow.mainScreen.registerNewPageAction(new PageRotateUndoAction(UType.UNDO, page, right));
         
         if(!animated){
-            page.updatePosition(-1, true);
+            // If grid mode, one need to update all the pages.
+            if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.document.updatePagesPosition();
+            else page.updatePosition(-1, true);
+            
             page.updateRender();
         }else{
             Timeline timeline = new Timeline(60);
             timeline.getKeyFrames().clear();
             timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(200), new KeyValue(page.rotateProperty(), -90))
+                    new KeyFrame(Duration.millis(200), new KeyValue(page.rotateProperty(), angle))
             );
             timeline.play();
             
             AtomicBoolean timelineFinished = new AtomicBoolean(false);
             AtomicBoolean renderFinished = new AtomicBoolean(false);
-            timeline.setOnFinished((e) -> {
-                timelineFinished.set(true);
-                if(renderFinished.get()) endRotateAnimation(page, timeline);
-            });
-            page.updateRenderAsync(() -> {
-                renderFinished.set(true);
-                if(timelineFinished.get()) endRotateAnimation(page, timeline);
-            }, false);
-        }
-        
-        
-    }
-    
-    public void rotateRightPage(PageRenderer page, boolean animated){
-        page.quitVectorEditMode();
-        document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + 90);
-        try{
-            document.setAllSecurityToBeRemoved(true);
-            document.save(file);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        if(!animated){
-            page.updatePosition(-1, true);
-            page.updateRender();
-        }else{
-            Timeline timeline = new Timeline(60);
-            timeline.getKeyFrames().clear();
-            timeline.getKeyFrames().addAll(
-                    new KeyFrame(Duration.millis(200), new KeyValue(page.rotateProperty(), 90))
-            );
-            timeline.play();
-            
-            AtomicBoolean timelineFinished = new AtomicBoolean(false);
-            AtomicBoolean renderFinished = new AtomicBoolean(false);
+            // The last event to be called will call endRotateAnimation()
             timeline.setOnFinished((e) -> {
                 timelineFinished.set(true);
                 if(renderFinished.get()) endRotateAnimation(page, timeline);
@@ -174,143 +169,93 @@ public class PDFPagesEditor {
         timeline.setOnFinished(null);
         timeline.stop();
         page.setRotate(0);
-        page.updatePosition(-1, true);
+        // If grid mode, one need to update all the pages.
+        if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.document.updatePagesPosition();
+        else page.updatePosition(-1, true);
     }
     
     public void deletePage(PageRenderer page){
         page.quitVectorEditMode();
         if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
-            ConfirmAlert alert = new ConfirmAlert(true, TR.tr("document.pageActions.delete.confirmationDialog.header", (page.getPage() + 1)));
             
-            if(alert.execute()){
-                document.removePage(page.getPage());
-                try{
-                    document.setAllSecurityToBeRemoved(true);
-                    document.save(file);
-                }catch(IOException e){
-                    e.printStackTrace();
+            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), document.getPage(page.getPage()), true));
+                
+            document.removePage(page.getPage());
+            edited = true;
+            
+            int pageNumber = page.getPage();
+            
+            // remove page elements
+            while(page.getElements().size() != 0){
+                if(page.getElements().get(0) instanceof GradeElement grade){
+                    grade.setValue(-1);
+                    grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
+                }else{
+                    page.getElements().get(0).delete(true, UType.NO_UNDO);
                 }
-                
-                int pageNumber = page.getPage();
-                
-                // remove page elements
-                while(page.getElements().size() != 0){
-                    if(page.getElements().get(0) instanceof GradeElement grade){
-                        grade.setValue(-1);
-                        grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
-                    }else{
-                        page.getElements().get(0).delete(true, UType.NO_UNDO);
-                    }
-                }
-                Document document = MainWindow.mainScreen.document;
-                // remove page
-                page.remove();
-                document.totalPages--;
-                document.getPages().remove(pageNumber);
-                MainWindow.mainScreen.pane.getChildren().remove(page);
-                
-                // Update pages of all pages
-                for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
-                
-                // update coordinates of the pages
-                document.updatePagesPosition();
-                
-                // update current page
-                document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
-                
-                Edition.setUnsave("DeletePage");
-                document.edition.save();
             }
+            Document document = MainWindow.mainScreen.document;
+            // remove page
+            page.remove();
+            document.totalPages--;
+            document.getPages().remove(pageNumber);
+            MainWindow.mainScreen.pane.getChildren().remove(page);
+            
+            // Update pages of all pages
+            for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
+            
+            // update coordinates of the pages
+            document.updatePagesPosition();
+            
+            // update current page
+            document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
+            
+            Edition.setUnsave("DeletePage");
+            document.edition.save();
         }
     }
     
-    public void newBlankPage(int originalPage, int index){
+    public void addPage(PDPage docPage, int index){
+        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, docPage, false));
+        
         PageRenderer page = new PageRenderer(index);
-        PDPage docPage = new PDPage(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage));
         
         addDocumentPage(index, docPage);
-        try{
-            document.setAllSecurityToBeRemoved(true);
-            document.save(file);
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-        
+    
         Document document = MainWindow.mainScreen.document;
-        
+    
         // add page
         document.getPages().add(index, page);
         MainWindow.mainScreen.addPage(page);
         document.totalPages++;
-        
+    
         // Update pages of all pages
         for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
-        
+    
         // update coordinates of the pages
         document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
         document.updateShowsStatus();
-        
+    
         // update current page
         document.setCurrentPage(index);
+        
+        page.removeRender();
+        Platform.runLater(page::updateRender);
+    }
+    
+    public void newBlankPage(int originalPage, int index){
+        addPage(new PDPage(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage)), index);
     }
     
     public void newConvertPage(int originalPage, int index){
-        
-        Document document = MainWindow.mainScreen.document;
-        
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage), (convertedFiles) -> {
             if(convertedFiles.size() == 0) return;
             ConvertedFile file = convertedFiles.get(0);
-            
-            PDFMergerUtility merger = new PDFMergerUtility();
-            
-            int addedPages = file.document.getNumberOfPages();
-            try{
-                merger.appendDocument(this.document, file.document);
-                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            
-            for(int j = 0; j < addedPages; j++){
-                PageRenderer page = new PageRenderer(index);
-                
-                moveDocumentPage(this.document.getNumberOfPages() - 1, index);
-                
-                try{
-                    this.document.setAllSecurityToBeRemoved(true);
-                    this.document.save(this.file);
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-                
-                // add page
-                document.getPages().add(index, page);
-                MainWindow.mainScreen.addPage(page);
-                document.totalPages++;
-                
-                // Update pages of all pages
-                for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
-            }
-            
-            try{
-                file.document.close();
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-            
-            // update coordinates of the pages
-            document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
-            document.updateShowsStatus();
-            
-            // update current page
-            document.setCurrentPage(index);
+            addPdfDocument(file.document, index);
         });
     }
     
     public void newPdfPage(int index){
-        
-        Document document = MainWindow.mainScreen.document;
         
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(TR.tr("dialog.file.extensionType.PDF"), "*.pdf"));
@@ -322,56 +267,61 @@ public class PDFPagesEditor {
             if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
             try{
                 PDDocument fileDoc = PDDocument.load(file);
-                
-                PDFMergerUtility merger = new PDFMergerUtility();
-                
-                int addedPages = fileDoc.getNumberOfPages();
-                try{
-                    merger.appendDocument(this.document, fileDoc);
-                    merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-                
-                for(int j = 0; j < addedPages; j++){
-                    PageRenderer page = new PageRenderer(index);
-                    
-                    moveDocumentPage(this.document.getNumberOfPages() - 1, index);
-                    
-                    try{
-                        this.document.setAllSecurityToBeRemoved(true);
-                        this.document.save(this.file);
-                    }catch(IOException e){
-                        e.printStackTrace();
-                    }
-                    
-                    // add page
-                    document.getPages().add(index, page);
-                    MainWindow.mainScreen.addPage(page);
-                    document.totalPages++;
-                    
-                    // Update pages of all pages
-                    for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
-                }
-                
-                try{
-                    fileDoc.close();
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-                
-                // update coordinates of the pages
-                document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
-                document.updateShowsStatus();
-                
-                // update current page
-                document.setCurrentPage(index);
-                
+                addPdfDocument(fileDoc, index);
             }catch(IOException e){
                 e.printStackTrace();
             }
         }
         
+    }
+    
+    public void addPdfDocument(PDDocument toAddDoc, int index){
+        Document document = MainWindow.mainScreen.document;
+        
+        PDFMergerUtility merger = new PDFMergerUtility();
+    
+        int addedPages = toAddDoc.getNumberOfPages();
+        try{
+            merger.appendDocument(this.document, toAddDoc);
+            merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+        
+        edited = true;
+    
+        for(int j = 0; j < addedPages; j++){
+            PageRenderer page = new PageRenderer(index);
+        
+            moveDocumentPage(this.document.getNumberOfPages() - 1, index);
+        
+            // add page
+            document.getPages().add(index, page);
+            MainWindow.mainScreen.addPage(page);
+            document.totalPages++;
+        
+            // Update pages of all pages
+            for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
+        }
+    
+        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, this.document.getPage(index), false));
+        // For each page, the index is equals to index because when we remove a page, the index will not change
+        for(int j = index+1; j < index+addedPages; j++){
+            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, index, this.document.getPage(j), false));
+        }
+    
+        try{
+            toAddDoc.close();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    
+        // update coordinates of the pages
+        document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
+        document.updateShowsStatus();
+    
+        // update current page
+        document.setCurrentPage(index);
     }
     
     // "UTILS"
@@ -394,6 +344,7 @@ public class PDFPagesEditor {
             // add pages
             for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         }
+        edited = true;
     }
     
     private void moveDocumentPage(final int from, final int to){
@@ -412,6 +363,7 @@ public class PDFPagesEditor {
         
         // add pages
         for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
+        edited = true;
     }
     
     // OTHER
@@ -578,7 +530,6 @@ public class PDFPagesEditor {
                     subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
         }
     }
-    
     private BufferedImage capturePage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
         
         int width = (int) (Math.sqrt(pixels) / (841d / 594d));
@@ -597,7 +548,6 @@ public class PDFPagesEditor {
             return image.getSubimage(subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX - 1 : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY - 1 : subHeight);
         }
     }
-    
     private Image capturePageInFXImage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
         
         int width = (int) (Math.sqrt(pixels) / (841d / 594d));
@@ -619,4 +569,11 @@ public class PDFPagesEditor {
         }
     }
     
+    
+    public boolean isEdited(){
+        return edited;
+    }
+    public UndoEngine getUndoEngine(){
+        return undoEngine;
+    }
 }
