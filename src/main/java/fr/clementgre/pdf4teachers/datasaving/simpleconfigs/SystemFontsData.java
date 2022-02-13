@@ -28,7 +28,7 @@ public class SystemFontsData extends SimpleConfig {
     protected void manageLoadedData(Config config){
         
         long fontsCount = config.getLong("systemFontsCount");
-        if(fontsCount != realSysFontsCount){
+        if(fontsCount != realSysFontsCount && false){
             System.out.println("Updating system fonts indexing because fonts list length changed.");
             FontUtils.getSystemFontsMapper().loadFontsFromSystemFiles();
             return;
@@ -38,8 +38,7 @@ public class SystemFontsData extends SimpleConfig {
         
         for(Map.Entry<String, Object> entry : config.getSection("systemFontsCache").entrySet()){
             if(entry.getValue() instanceof HashMap map){
-                String family = entry.getKey();
-                FontPaths fontPaths = new FontPaths(family);
+                FontPaths fontPaths = new FontPaths(entry.getKey());
                 fontPaths.deSerialize(map);
                 fontPathss.add(fontPaths);
             }

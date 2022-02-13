@@ -15,6 +15,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class Config {
@@ -251,19 +252,22 @@ public class Config {
     
     public static HashMap<String, Object> getSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) return (HashMap<String, Object>) value;
+        if(value instanceof Map) return new HashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return new HashMap<>();
     }
     
     public static LinkedHashMap<String, Object> getLinkedSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) return (LinkedHashMap<String, Object>) value;
+        if(value instanceof Map) return new LinkedHashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return new LinkedHashMap<>();
     }
     
     public static HashMap<String, Object> getSectionNull(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) return (HashMap<String, Object>) value;
+        if(value instanceof Map) return new HashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return null;
     }
     
