@@ -26,8 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import static writer2latex.office.BibMark.EntryType.edition;
-
 public class PDFPagesRender {
     
     private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack) {}

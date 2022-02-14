@@ -25,14 +25,12 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.MultipleSelectionModel;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Document {
     

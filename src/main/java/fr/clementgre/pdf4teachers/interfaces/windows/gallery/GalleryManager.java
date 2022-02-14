@@ -8,7 +8,6 @@ package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 
 import java.io.File;

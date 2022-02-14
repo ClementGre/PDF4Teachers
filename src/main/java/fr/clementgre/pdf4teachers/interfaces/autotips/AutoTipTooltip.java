@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import org.controlsfx.control.PopOver;
 
-import java.awt.MouseInfo;
+import java.awt.*;
 
 public class AutoTipTooltip extends PopOver {
     

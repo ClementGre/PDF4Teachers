@@ -12,8 +12,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 
-import java.util.Calendar;
-
 public class StagesUtils {
     
     public static void scaleStage(Stage stage, Scene scene){

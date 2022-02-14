@@ -34,7 +34,7 @@ import jfxtras.styles.jmetro.Style;
 import org.controlsfx.control.GridCell;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;

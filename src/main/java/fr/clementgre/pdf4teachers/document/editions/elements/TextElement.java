@@ -12,7 +12,6 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -450,7 +449,7 @@ public class TextElement extends Element {
             int finalSize = (int) (size * RENDER_FACTOR * SIZE_FACTOR);
             TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_DISPLAY, finalSize, type);
             
-            icon.setInsets(new Insets((int) (-finalSize / 7), (int) (-finalSize / 7), (int) (-finalSize / 7), (int) (-finalSize / 7)));
+            icon.setInsets(new Insets(-finalSize / 7, -finalSize / 7, -finalSize / 7, -finalSize / 7));
             
             BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = image.createGraphics();

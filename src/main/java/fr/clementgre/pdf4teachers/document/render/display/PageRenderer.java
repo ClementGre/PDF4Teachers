@@ -52,7 +52,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -60,8 +59,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import static org.yaml.snakeyaml.tokens.Token.ID.Key;
 
 public class PageRenderer extends Pane {
     

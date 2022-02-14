@@ -11,7 +11,6 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;

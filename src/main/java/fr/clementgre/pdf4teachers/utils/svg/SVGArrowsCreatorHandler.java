@@ -10,8 +10,8 @@ import org.apache.batik.parser.ParseException;
 public class SVGArrowsCreatorHandler extends SVGTransformHandler{
     
     
-    private float arrowLength;
-    private float angle;
+    private final float arrowLength;
+    private final float angle;
     public SVGArrowsCreatorHandler(int decimals, float arrowLength, float degAngle){
         super(decimals);
         this.arrowLength = arrowLength;

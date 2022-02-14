@@ -19,15 +19,12 @@ import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.locking.LockManager;
-import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.input.DataFormat;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;

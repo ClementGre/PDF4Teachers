@@ -37,7 +37,7 @@ public class GradeTreeItemPanel extends HBox {
     public TextArea gradeField;
     public TextArea totalField;
     
-    private GradeTreeItem treeItem;
+    private final GradeTreeItem treeItem;
     boolean outOfPanel;
     public GradeTreeItemPanel(GradeTreeItem treeItem, boolean outOfPanel){
         this.treeItem = treeItem;

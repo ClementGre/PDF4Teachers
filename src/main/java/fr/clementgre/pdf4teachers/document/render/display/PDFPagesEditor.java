@@ -25,7 +25,6 @@ import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ComboBoxDialog;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;

@@ -4,6 +4,7 @@
  */
 
 package fr.clementgre.pdf4teachers.utils.fonts;
+
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -15,7 +16,7 @@ import javafx.scene.text.FontPosture;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 
-import java.awt.GraphicsEnvironment;
+import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

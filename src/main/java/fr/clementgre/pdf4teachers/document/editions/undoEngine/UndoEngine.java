@@ -5,8 +5,6 @@
 
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import javafx.beans.property.Property;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;

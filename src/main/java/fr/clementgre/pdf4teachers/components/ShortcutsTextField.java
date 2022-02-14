@@ -5,7 +5,6 @@
 
 package fr.clementgre.pdf4teachers.components;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.CopyPasteManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;

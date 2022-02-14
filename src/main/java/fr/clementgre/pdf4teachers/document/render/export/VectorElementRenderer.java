@@ -16,8 +16,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
-import java.awt.BasicStroke;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 
 public class VectorElementRenderer{

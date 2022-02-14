@@ -12,7 +12,7 @@ import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
 import javafx.scene.Cursor;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;

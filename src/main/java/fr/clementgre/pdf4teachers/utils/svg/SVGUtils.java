@@ -10,7 +10,7 @@ import org.apache.batik.parser.AWTPathProducer;
 import org.apache.batik.parser.ParseException;
 import org.apache.batik.parser.PathParser;
 
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.Path2D;
 import java.util.Collections;
 import java.util.List;
