@@ -52,6 +52,7 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
@@ -95,6 +96,10 @@ public class PageRenderer extends Pane {
     private PageEditPane pageEditPane;
     private PageZoneSelector pageZoneSelector;
     private VectorElementPageDrawer vectorElementPageDrawer;
+    private PageGridSeparator pageGridSeparator;
+    private PageGridSeparator pageGridSeparatorBefore;
+    private PageGridEditPane pageGridEditPane;
+    private PageGridNumber pageGridNumber;
     
     private GraphicElement placingElement = null;
     
@@ -113,6 +118,9 @@ public class PageRenderer extends Pane {
         else setCursor(Cursor.DEFAULT);
         
         if(pageEditPane != null) pageEditPane.updatePosition();
+        if(pageGridNumber != null) pageGridNumber.updateZoom();
+        if(pageGridSeparator != null) pageGridSeparator.updateZoom();
+        if(pageGridSeparatorBefore != null) pageGridSeparatorBefore.updateZoom();
     };
     
     public PageRenderer(int page){
@@ -151,7 +159,6 @@ public class PageRenderer extends Pane {
         setOnDragDetected(e -> {
             if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()) MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, this, getPage()));
         });
-        
         setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
@@ -329,12 +336,19 @@ public class PageRenderer extends Pane {
         
         setOnMouseEntered(e -> {
             MainWindow.mainScreen.document.setCurrentPage(page);
-            if(pageEditPane == null) pageEditPane = new PageEditPane(this);
-            else pageEditPane.setVisible(true);
             
-            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
-            else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
-            else setCursor(Cursor.DEFAULT);
+            if(MainWindow.mainScreen.isIsGridMode()){
+                setCursor(PlatformUtils.CURSOR_MOVE);
+                
+                if(pageGridEditPane == null) pageGridEditPane = new PageGridEditPane(this);
+                else pageGridEditPane.setVisible(true);
+            }else{
+                if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
+                else setCursor(Cursor.DEFAULT);
+                
+                if(pageEditPane == null) pageEditPane = new PageEditPane(this);
+                else pageEditPane.setVisible(true);
+            }
             
         });
         // UPDATE MOUSE COORDINATES
@@ -350,6 +364,7 @@ public class PageRenderer extends Pane {
         });
         setOnMouseExited(e -> {
             if(pageEditPane != null) pageEditPane.checkMouseExited();
+            if(pageGridEditPane != null) pageGridEditPane.setVisible(false);
         });
         
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -591,6 +606,12 @@ public class PageRenderer extends Pane {
             if(totalWidth <= 0){
                 totalWidth = PAGE_MARGIN_GRID;
                 pageGridPosition = PageGridPosition.LEFT;
+                
+                // PageGridSeparator for before page is shown only if it is the first page of the row
+                if(pageGridSeparatorBefore == null) pageGridSeparatorBefore = new PageGridSeparator(this, true);
+            }else if(pageGridSeparatorBefore != null){
+                pageGridSeparatorBefore.remove();
+                pageGridSeparatorBefore = null;
             }
     
             defaultTranslateX = totalWidth;
@@ -603,12 +624,28 @@ public class PageRenderer extends Pane {
             if(getHeight() + PAGE_MARGIN_GRID > maxHeight) maxHeight = (int) (getHeight() + PAGE_MARGIN_GRID);
             if(totalWidth > maxWidth) maxWidth = totalWidth;
             
+            // PageGridNumber
+            if(pageGridNumber == null) pageGridNumber = new PageGridNumber(this);
+            if(pageGridSeparator == null) pageGridSeparator = new PageGridSeparator(this, false);
+            
         }else{
             if(getTranslateX() != PAGE_MARGIN){ // Reset translateX
                 if(animated) animateTranslateX(PAGE_MARGIN);
                 else setTranslateX(PAGE_MARGIN);
             }
             totalHeight += (int) (getHeight() + PAGE_MARGIN);
+    
+            // PageGridNumber
+            if(pageGridNumber != null){
+                pageGridNumber.remove();
+                pageGridNumber = null;
+            }if(pageGridSeparator != null){
+                pageGridSeparator.remove();
+                pageGridSeparator = null;
+            }if(pageGridSeparatorBefore != null){
+                pageGridSeparatorBefore.remove();
+                pageGridSeparatorBefore = null;
+            }
         }
     
         defaultTranslateY = totalHeight;
@@ -954,6 +991,7 @@ public class PageRenderer extends Pane {
             this.page = page;
             if(pageEditPane != null) pageEditPane.updateVisibility();
             if(vectorElementPageDrawer != null) vectorElementPageDrawer.updateVisibility();
+            if(pageGridNumber != null) pageGridNumber.updateNumber();
             updateElementsPage();
         }
     }
