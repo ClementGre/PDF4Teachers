@@ -196,7 +196,10 @@ public class KeyboardShortcuts {
                 MainWindow.mainScreen.navigateRight();
             }
         }else{ // SHORTCUT PRESSED
-        
+            if(MainWindow.mainScreen.isIsGridMode() && e.getCode() == KeyCode.A){
+                e.consume();
+                MainWindow.mainScreen.document.selectAll();
+            }
         }
     }
     

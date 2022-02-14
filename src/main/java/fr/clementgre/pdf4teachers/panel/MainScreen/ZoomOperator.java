@@ -320,7 +320,7 @@ public class ZoomOperator {
     
     public void fitWidth(boolean removeTransition){
         
-        double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.PAGE_MARGIN;
+        double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.getPageMargin();
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
     
         double targetScale = (availableWidth / pageWidth);
@@ -362,7 +362,7 @@ public class ZoomOperator {
         else pane.setTranslateY(newTranslateY);
     }
     public void scrollToPage(PageRenderer page){
-        int toScroll = (int) ((getPaneY() - getPaneShiftY()) + (page.getTranslateY() - PageRenderer.PAGE_MARGIN + 5) * getPaneScale());
+        int toScroll = (int) ((getPaneY() - getPaneShiftY()) + (page.getTranslateY() - PageRenderer.getPageMargin() + 5) * getPaneScale());
         scrollByTranslateY(toScroll, false, false);
     }
     

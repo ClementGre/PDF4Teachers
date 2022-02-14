@@ -49,10 +49,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.RotateEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
@@ -63,11 +60,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static org.yaml.snakeyaml.tokens.Token.ID.Key;
+
 public class PageRenderer extends Pane {
     
     public static final int PAGE_WIDTH = 596;
     public static final int PAGE_MARGIN = 30;
+    public static final int PAGE_MARGIN_GRID = 60;
     
+    public static final KeyCombination KEY_COMB_ALL = new KeyCodeCombination(KeyCode.A, KeyCombination.SHORTCUT_DOWN);
     public static Background WHITE_BACKGROUND = new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY));
     
     private PageStatus status = PageStatus.HIDE;
@@ -366,7 +367,12 @@ public class PageRenderer extends Pane {
             menu.hide();
             menu.getItems().clear();
             
-            if(MainWindow.mainScreen.isIsGridMode()) return;
+            if(MainWindow.mainScreen.isIsGridMode()){
+                if(e.isShiftDown()) MainWindow.mainScreen.document.selectToPage(getPage());
+                else if(e.isControlDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
+                else MainWindow.mainScreen.document.selectPage(getPage());
+                return;
+            }
             
             if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
@@ -583,7 +589,7 @@ public class PageRenderer extends Pane {
             pageRowIndex = rowCount;
             
             if(totalWidth <= 0){
-                totalWidth = PAGE_MARGIN;
+                totalWidth = PAGE_MARGIN_GRID;
                 pageGridPosition = PageGridPosition.LEFT;
             }
     
@@ -591,10 +597,10 @@ public class PageRenderer extends Pane {
             
             if(animated) animateTranslateX(totalWidth);
             else setTranslateX(totalWidth);
-            totalWidth += PAGE_WIDTH + PAGE_MARGIN;
+            totalWidth += PAGE_WIDTH + PAGE_MARGIN_GRID;
             
             // Update maxHeight & maxWidth
-            if(getHeight() + PAGE_MARGIN > maxHeight) maxHeight = (int) (getHeight() + PAGE_MARGIN);
+            if(getHeight() + PAGE_MARGIN_GRID > maxHeight) maxHeight = (int) (getHeight() + PAGE_MARGIN_GRID);
             if(totalWidth > maxWidth) maxWidth = totalWidth;
             
         }else{
@@ -1004,4 +1010,10 @@ public class PageRenderer extends Pane {
     public void quitVectorEditMode(){
         if(isVectorEditMode()) vectorElementPageDrawer.getVectorElement().quitEditMode();
     }
+    
+    public static int getPageMargin(){
+        if(MainWindow.mainScreen.isIsGridMode()) return PAGE_MARGIN_GRID;
+        else return PAGE_MARGIN;
+    }
+    
 }

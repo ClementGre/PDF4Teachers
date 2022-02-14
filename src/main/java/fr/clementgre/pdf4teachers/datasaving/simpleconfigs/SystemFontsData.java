@@ -28,7 +28,7 @@ public class SystemFontsData extends SimpleConfig {
     protected void manageLoadedData(Config config){
         
         long fontsCount = config.getLong("systemFontsCount");
-        if(fontsCount != realSysFontsCount && false){
+        if(fontsCount != realSysFontsCount){
             System.out.println("Updating system fonts indexing because fonts list length changed.");
             FontUtils.getSystemFontsMapper().loadFontsFromSystemFiles();
             return;

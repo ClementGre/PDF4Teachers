@@ -233,7 +233,7 @@ public class PDFPagesEditor {
         for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
     
         // update coordinates of the pages
-        document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
+        document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
         document.updateShowsStatus();
     
         // update current page
@@ -317,7 +317,7 @@ public class PDFPagesEditor {
         }
     
         // update coordinates of the pages
-        document.getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
+        document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
         document.updateShowsStatus();
     
         // update current page

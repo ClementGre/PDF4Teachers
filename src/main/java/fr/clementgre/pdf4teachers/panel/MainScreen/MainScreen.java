@@ -28,6 +28,7 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.*;
 import javafx.beans.value.ObservableValue;
@@ -36,17 +37,21 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.effect.BlurType;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PAGE_MARGIN;
-import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PAGE_WIDTH;
+import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.*;
 
 public class MainScreen extends Pane {
     
@@ -68,6 +73,9 @@ public class MainScreen extends Pane {
     
     private final Label info = new Label();
     private final Hyperlink infoLink = new Hyperlink();
+    
+    public final DropShadow notSelectedShadow = new DropShadow();
+    public final DropShadow selectedShadow = new DropShadow();
     
     public static class Status {
         public static final int CLOSED = 0;
@@ -172,6 +180,17 @@ public class MainScreen extends Pane {
         
         setStyle("-fx-padding: 0; -fx-background-color: #484848;");
         setBorder(Border.EMPTY);
+        
+        // Pages Shadow
+       
+        notSelectedShadow.setColor(Color.BLACK);
+        selectedShadow.setSpread(.90);
+        selectedShadow.setColor(Color.web("#0078d7"));
+        notSelectedShadow.radiusProperty().bind(Bindings.min(40, Bindings.divide(10, zoomProperty())));
+        selectedShadow.radiusProperty().bind(Bindings.min(25, Bindings.divide(6, zoomProperty())));
+        zoomProperty().addListener((observable, oldValue, newValue) -> {
+            if(hasDocument(false) && document != null) document.updateSelectedPages();
+        });
         
         pane.setStyle("-fx-background-color: #484848;");
         pane.setBorder(Border.EMPTY);
@@ -775,7 +794,7 @@ public class MainScreen extends Pane {
         return zoomOperator.getMainScreenWidth() / zoomOperator.getPaneScale();
     }
     public int getGridModePagesPerRow(){
-        return (int) ((getAvailableWidthInPaneContext() - PAGE_MARGIN) / (PAGE_WIDTH + PAGE_MARGIN));
+        return (int) ((getAvailableWidthInPaneContext() - PAGE_MARGIN_GRID) / (PAGE_WIDTH + PAGE_MARGIN_GRID));
     }
     public int getGridModePagesInLastRow(){
         int rest = document.getPagesNumber() % getGridModePagesPerRow();

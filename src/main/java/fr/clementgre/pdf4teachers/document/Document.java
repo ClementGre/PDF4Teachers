@@ -25,17 +25,23 @@ import javafx.application.Platform;
 import javafx.geometry.Bounds;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.MultipleSelectionModel;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
+import java.util.*;
 
 public class Document {
     
     private final File file;
     public Edition edition;
     private final ArrayList<PageRenderer> pages = new ArrayList<>();
+    
+    private int lastSelectedPage = 0;
+    private final HashSet<Integer> selectedPages = new HashSet<>();
     
     private int currentPage = -1;
     public int totalPages;
@@ -82,7 +88,7 @@ public class Document {
     }
     
     public void updatePagesPosition(){
-        getPage(0).updatePosition(PageRenderer.PAGE_MARGIN, true);
+        getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
         updateShowsStatus();
     }
     
@@ -225,6 +231,48 @@ public class Document {
     public int getLastCursorOverPage(){
         return currentPage;
     }
+    
+    public HashSet<Integer> getSelectedPages(){
+        return selectedPages;
+    }
+    public void invertSelectedPage(int index){
+        if(selectedPages.contains(index)) selectedPages.remove(index);
+        else selectedPages.add(index);
+        
+        lastSelectedPage = index;
+        updateSelectedPages();
+    }
+    public void deselectPage(int index){
+        selectedPages.remove(index);
+        lastSelectedPage = index;
+        updateSelectedPages();
+    }
+    public void selectPage(int index){
+        selectedPages.clear();
+        selectedPages.add(index);
+        lastSelectedPage = index;
+        updateSelectedPages();
+    }
+    public void selectToPage(int index){
+        selectedPages.clear();
+        boolean forward = index >= lastSelectedPage;
+        for(int i = lastSelectedPage; i != index; i += forward ? 1 : -1) selectedPages.add(i);
+        selectedPages.add(index);
+        updateSelectedPages();
+    }
+    public void selectAll(){
+        selectedPages.clear();
+        for(int i = 0; i < pages.size(); i++) selectedPages.add(i);
+        updateSelectedPages();
+    }
+    public void updateSelectedPages(){
+        
+        for(PageRenderer page : pages){
+            if(MainWindow.mainScreen.isIsGridMode() && selectedPages.contains(page.getPage())) page.setEffect(MainWindow.mainScreen.selectedShadow);
+            else page.setEffect(MainWindow.mainScreen.notSelectedShadow);
+        }
+    }
+    
     
     public void setCurrentPage(int currentPage){
         this.currentPage = currentPage;
