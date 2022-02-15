@@ -447,11 +447,14 @@ public class PageRenderer extends Pane {
             else setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {
-            if(MainWindow.mainScreen.isIsGridMode() && !hasDragged){
+            if(MainWindow.mainScreen.isIsGridMode()){
                 e.consume();
-                if(e.isShiftDown()) MainWindow.mainScreen.document.selectToPage(getPage());
-                else if(e.isControlDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
-                else MainWindow.mainScreen.document.selectPage(getPage());
+                
+                if(!hasDragged){
+                    if(e.isShiftDown()) MainWindow.mainScreen.document.selectToPage(getPage());
+                    else if(e.isControlDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
+                    else MainWindow.mainScreen.document.selectPage(getPage());
+                }
             }
         });
         
@@ -579,8 +582,11 @@ public class PageRenderer extends Pane {
         // invert order, the pages needs to be moved in a certain order.
         if(index > 0) pages = pages.stream().collect(ArrayList::new, (ps, p) -> ps.add(0, p), (list1, list2) -> list1.addAll(0, list2));
         
-        for(PageRenderer page : pages)
+        for(PageRenderer page : pages){
+            MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.NO_COUNT, page, page.getPage()));
             MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(page, index);
+        }
+        
     }
     
     public void showContextMenu(double pageY, double screenX, double screenY){

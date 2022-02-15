@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -107,11 +107,9 @@ public class MainWindow extends Stage {
     
     public static boolean requestCloseApp(){
         System.out.println("Received close request");
-        
+    
         userData.save();
-        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)){
-            return false;
-        }
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)) return false;
         
         // At this point, it is sure the app will close.
         LockManager.onCloseApp();

@@ -179,10 +179,12 @@ public class PDFPagesEditor {
     }
     
     public void deletePage(PageRenderer page){
+        
         page.quitVectorEditMode();
         if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
-            
-            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), document.getPage(page.getPage()), true));
+    
+            List<PageRenderer> savedSelectedPages = saveSelectedPages();
+            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
                 
             document.removePage(page.getPage());
             edited = true;
@@ -210,6 +212,9 @@ public class PDFPagesEditor {
             
             // update coordinates of the pages
             document.updatePagesPosition();
+    
+            // Update selection
+            restoreSelectedPages(savedSelectedPages);
             
             // update current page
             document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
@@ -220,7 +225,8 @@ public class PDFPagesEditor {
     }
     
     public void addPage(PDPage docPage, int index){
-        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, docPage, false));
+        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, docPage, false));
+        List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         PageRenderer page = new PageRenderer(index);
         
@@ -242,6 +248,10 @@ public class PDFPagesEditor {
     
         // update current page
         document.setCurrentPage(index);
+    
+        // Update selection
+        restoreSelectedPages(savedSelectedPages);
+        document.addSelectedPage(index);
         
         page.removeRender();
         Platform.runLater(page::updateRender);
@@ -281,6 +291,7 @@ public class PDFPagesEditor {
     
     public void addPdfDocument(PDDocument toAddDoc, int index){
         Document document = MainWindow.mainScreen.document;
+        document.clearSelectedPages();
         
         PDFMergerUtility merger = new PDFMergerUtility();
     
@@ -308,10 +319,12 @@ public class PDFPagesEditor {
             for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
         }
     
-        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, this.document.getPage(index), false));
+        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, this.document.getPage(index), false));
+        document.addSelectedPage(index);
         // For each page, the index is equals to index because when we remove a page, the index will not change
         for(int j = index+1; j < index+addedPages; j++){
-            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, index, this.document.getPage(j), false));
+            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, index, null, this.document.getPage(j), false));
+            document.addSelectedPage(j);
         }
     
         try{
@@ -336,7 +349,8 @@ public class PDFPagesEditor {
     private void restoreSelectedPages(List<PageRenderer> savedPages){
         MainWindow.mainScreen.document.getSelectedPages().clear();
         for(PageRenderer page : savedPages){
-            MainWindow.mainScreen.document.getSelectedPages().add(page.getPage());
+            if(MainWindow.mainScreen.document.getPages().contains(page)) // Check page still exists
+                MainWindow.mainScreen.document.getSelectedPages().add(page.getPage());
         }
         MainWindow.mainScreen.document.updateSelectedPages();
     }

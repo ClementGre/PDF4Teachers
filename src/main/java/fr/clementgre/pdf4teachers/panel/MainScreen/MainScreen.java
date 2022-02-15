@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -243,6 +243,9 @@ public class MainScreen extends Pane {
         isGridModeProperty().bind(zoomPercentProperty().lessThan(41));
         isGridModeProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
+                if(newValue) setSelected(null);
+                document.clearSelectedPages();
+                
                 double lastVScroll = document.getLastScrollValue();
                 document.updatePagesPosition();
                 Platform.runLater(() -> {
@@ -429,6 +432,9 @@ public class MainScreen extends Pane {
             setSelected(null);
             if(hasDocument(false)) setCursor(Cursor.CLOSED_HAND);
         });
+        setOnMouseClicked(e -> {
+            if(hasDocument(false)) document.clearSelectedPages();
+        });
         setOnMouseReleased(e -> {
             dragNScrollFactorVertical = 0;
             dragNScrollFactorHorizontal = 0;
@@ -509,11 +515,15 @@ public class MainScreen extends Pane {
         repaint();
         isRotating = false; // In case of a bug, it stayed to true
         
-        double scrollValue = zoomOperator.vScrollBar.getValue();
-        zoomOperator.fitWidth(true);
-        Platform.runLater(() -> {
-            zoomOperator.updatePaneDimensions(scrollValue, 0.5);
-        });
+        if(MainWindow.userData.wasGridMode){
+            zoomOperator.overviewWidth(true);
+            Platform.runLater(() -> zoomOperator.updatePaneDimensions(0, 0.5));
+        }else{
+            double scrollValue = zoomOperator.vScrollBar.getValue();
+            zoomOperator.fitWidth(true);
+            Platform.runLater(() -> zoomOperator.updatePaneDimensions(scrollValue, 0.5));
+        }
+        
         AutoTipsManager.showByAction("opendocument");
     }
     
@@ -533,6 +543,8 @@ public class MainScreen extends Pane {
                     return false;
                 }
             }else if(!forceNotToSave) document.edition.save();
+    
+            MainWindow.userData.wasGridMode = isIsGridMode();
             
             MainWindow.gradeTab.treeView.clearElements(false, false);
             MainWindow.textTab.treeView.onCloseDocument();

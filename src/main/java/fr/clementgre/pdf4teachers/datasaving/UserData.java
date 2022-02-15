@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -48,6 +48,9 @@ public class UserData {
     // OTHER
     @UserDataObject(path = "languages")
     public HashMap<String, Object> languages = new HashMap<>();
+    
+    @UserDataObject(path = "mainScreen.wasGridMode")
+    public boolean wasGridMode = false;
     
     // FILES (FilesTab)
     @UserDataObject(path = "files.lastFile")
@@ -332,6 +335,7 @@ public class UserData {
         // SINGLES
         customColors = SyncColorPicker.getCustomColorsList();
         languages = TR.getLanguagesConfig();
+        if(MainWindow.mainScreen.hasDocument(false)) wasGridMode = MainWindow.mainScreen.isIsGridMode();
         
         // FILES
         lastOpenedFiles = new ArrayList<>();
