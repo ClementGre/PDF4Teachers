@@ -18,8 +18,8 @@ body:
       placeholder: A clear and concise description of what the bug is.
   - type: textarea
     attributes:
-      label: To Reproduce
-      description: Steps to reproduce the behavior:
+      label: 'To Reproduce'
+      description: 'Steps to reproduce the behavior:'
       value: |
           1. 
           2. 
