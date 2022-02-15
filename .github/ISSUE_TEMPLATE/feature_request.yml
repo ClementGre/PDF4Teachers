@@ -1,0 +1,35 @@
+name: Feature request
+description: Suggest an idea for this project
+title: ""
+labels: ["enhancement"]
+assignees:
+  - ClementGre
+body:
+  - type: checkboxes
+    id: alreadyRequested
+    attributes:
+      label: Code of Conduct
+      description: By submitting this issue, you agree to follow our [Code of Conduct](https://example.com)
+      options:
+        - label: I checked this feature was not already requested [here](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.1%22+label%3A%22enhancement%22+)
+          required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Is your feature request related to a problem? Please describe.
+      placeholder: Ex. I'm always frustrated when [...]
+  - type: textarea
+    id: solutionLiked
+    attributes:
+      label: Describe the solution you'd like
+      placeholder: A clear and concise description of what you want to happen.
+  - type: textarea
+    id: alternative
+    attributes:
+      label: Describe alternatives you've considered
+      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    id: additionalContext
+    attributes:
+      label: Additional context
+      placeholder: Add any other context or screenshots about the feature request here.
