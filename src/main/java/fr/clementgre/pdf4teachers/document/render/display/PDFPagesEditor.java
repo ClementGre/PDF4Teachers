@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -106,6 +106,7 @@ public class PDFPagesEditor {
         movePageByIndex(page, page.getPage() + pagesToPass);
     }
     public void movePageByIndex(PageRenderer page, int index){
+        List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         page.quitVectorEditMode();
         PDPage docPage = document.getPage(page.getPage());
@@ -124,6 +125,10 @@ public class PDFPagesEditor {
         
         // update coordinates of the pages
         document.updatePagesPosition();
+    
+        // Update selection
+        restoreSelectedPages(savedSelectedPages);
+        document.setLastSelectedPage(index);
         
         // update current page
         document.setCurrentPage(index);
@@ -325,8 +330,19 @@ public class PDFPagesEditor {
     
     // "UTILS"
     
+    private List<PageRenderer> saveSelectedPages(){
+        return MainWindow.mainScreen.document.getSelectedPages().stream().map((i) -> MainWindow.mainScreen.document.getPage(i)).toList();
+    }
+    private void restoreSelectedPages(List<PageRenderer> savedPages){
+        MainWindow.mainScreen.document.getSelectedPages().clear();
+        for(PageRenderer page : savedPages){
+            MainWindow.mainScreen.document.getSelectedPages().add(page.getPage());
+        }
+        MainWindow.mainScreen.document.updateSelectedPages();
+    }
+    
     private void addDocumentPage(final int index, final PDPage page){
-        
+
         if(index >= document.getNumberOfPages())
             document.addPage(page);
         else{

@@ -251,6 +251,14 @@ public class Document {
         lastSelectedPage = index;
         updateSelectedPages();
     }
+    public void addSelectedPage(int index){
+        selectedPages.add(index);
+        lastSelectedPage = index;
+        updateSelectedPages();
+    }
+    public void setLastSelectedPage(int index){
+        lastSelectedPage = index;
+    }
     public void selectToPage(int index){
         selectedPages.clear();
         boolean forward = index >= lastSelectedPage;
@@ -350,4 +358,5 @@ public class Document {
         }
         return null;
     }
+    
 }
