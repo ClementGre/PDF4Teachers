@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -116,6 +116,7 @@ public class SVGPathIcons {
         
         int w = width - padding * 2;
         StackPane imagePane = new StackPane();
+        imagePane.setStyle("-fx-background-color: transparent;");
         
         if(ratio == null){
             double rw = image.getLayoutBounds().getWidth();

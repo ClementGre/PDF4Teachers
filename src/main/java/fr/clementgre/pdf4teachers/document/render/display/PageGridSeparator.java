@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -56,16 +61,13 @@ public class PageGridSeparator extends Pane {
         double factor = (MainWindow.mainScreen.getZoomFactor() - .1) / 3 * 2.5 + .15;
         // .1 .4 -> .15 .4
     
-        double circleRadius = PageRenderer.PAGE_MARGIN_GRID/1.8d * .4/factor;
-        double circleMargin = circleRadius / 2;
+        double circleRadius = PageRenderer.PAGE_MARGIN_GRID/1.6d * .4/factor;
+        double circleMargin = circleRadius / 1.5;
     
         DropShadow shadow = new DropShadow();
-        DropShadow shadow2 = new DropShadow();
         shadow.setRadius(10/factor);
         shadow.setSpread(.90);
         shadow.setColor(Color.web("#00da42"));
-        shadow2.setColor(Color.web("#00da42"));
-        shadow2.setRadius(5/factor);
     
         Line line = new Line(PageRenderer.PAGE_MARGIN_GRID/2f, 0f, PageRenderer.PAGE_MARGIN_GRID/2f, getHeight());
         line.setStroke(Color.web("#00da42"));
@@ -73,11 +75,12 @@ public class PageGridSeparator extends Pane {
         line.setStrokeWidth(.5 / factor);
     
         Circle circle = new Circle(PageRenderer.PAGE_MARGIN_GRID/2d, getHeight()/2, circleRadius);
-        circle.setFill(Color.web("#00c63c"));
-        circle.setEffect(shadow2);
+        circle.setFill(Color.web("#00d541"));
+        circle.setStroke(Color.web("#00ab34"));
+        circle.setStrokeWidth(circleRadius/6);
         circle.setCursor(Cursor.HAND);
     
-        Region plus = SVGPathIcons.generateImage(SVGPathIcons.PLUS, "#e5e5e5", (int) (2*circleRadius-circleMargin), (int) (2*circleRadius-circleMargin));
+        Region plus = SVGPathIcons.generateImage(SVGPathIcons.PLUS, "#eeeeee", (int) (2*circleRadius-circleMargin), (int) (2*circleRadius-circleMargin));
         plus.setLayoutX(PageRenderer.PAGE_MARGIN_GRID/2d - circleRadius + circleMargin/2);
         plus.setLayoutY(getHeight()/2 - circleRadius + circleMargin/2);
         plus.setMouseTransparent(true);
@@ -87,12 +90,12 @@ public class PageGridSeparator extends Pane {
         toFront();
     
         circle.setOnMouseEntered(e -> {
-            circle.setFill(Color.web("#00e445"));
+            circle.setFill(Color.web("#00e846"));
             plus.setStyle("-fx-background-color: white;");
         });
         circle.setOnMouseExited(e -> {
-            circle.setFill(Color.web("#00c63c"));
-            plus.setStyle("-fx-background-color: #e4e4e4;");
+            circle.setFill(Color.web("#00d541"));
+            plus.setStyle("-fx-background-color: #eeeeee;");
         });
     
         circle.setOnMouseClicked(e -> triggerMenu());
@@ -112,6 +115,10 @@ public class PageGridSeparator extends Pane {
         timeline.setOnFinished((e) -> getChildren().clear());
     }
     
+    private int getIndex(){
+        if(before) return page.getPage();
+        else return page.getPage() +1;
+    }
     public void triggerMenu(){
         System.out.println("Menu triggered");
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -269,6 +269,12 @@ public class Document {
             if(MainWindow.mainScreen.isIsGridMode() && selectedPages.contains(page.getPage())) page.setEffect(MainWindow.mainScreen.selectedShadow);
             else page.setEffect(MainWindow.mainScreen.notSelectedShadow);
         }
+    }
+    public boolean isPageSelected(PageRenderer page){
+        return selectedPages.contains(page.getPage());
+    }
+    public boolean isPageSelected(int page){
+        return selectedPages.contains(page);
     }
     
     

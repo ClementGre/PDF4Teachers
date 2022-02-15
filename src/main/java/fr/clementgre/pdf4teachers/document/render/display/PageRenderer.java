@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -116,6 +116,7 @@ public class PageRenderer extends Pane {
         
         if(pageEditPane != null) pageEditPane.updatePosition();
         if(pageGridNumber != null) pageGridNumber.updateZoom();
+        if(pageGridEditPane != null) pageGridEditPane.updateZoom();
         if(pageGridSeparator != null) pageGridSeparator.updateZoom();
         if(pageGridSeparatorBefore != null) pageGridSeparatorBefore.updateZoom();
     };
@@ -338,7 +339,7 @@ public class PageRenderer extends Pane {
                 setCursor(PlatformUtils.CURSOR_MOVE);
                 
                 if(pageGridEditPane == null) pageGridEditPane = new PageGridEditPane(this);
-                else pageGridEditPane.setVisible(true);
+                pageGridEditPane.show(true);
             }else{
                 if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
                 else setCursor(Cursor.DEFAULT);
@@ -361,7 +362,7 @@ public class PageRenderer extends Pane {
         });
         setOnMouseExited(e -> {
             if(pageEditPane != null) pageEditPane.checkMouseExited();
-            if(pageGridEditPane != null) pageGridEditPane.setVisible(false);
+            if(pageGridEditPane != null) pageGridEditPane.hide();
         });
         
         //////////////////////////////////////////////////////////////////////////////////////////
@@ -632,17 +633,7 @@ public class PageRenderer extends Pane {
             }
             totalHeight += (int) (getHeight() + PAGE_MARGIN);
     
-            // PageGridNumber
-            if(pageGridNumber != null){
-                pageGridNumber.remove();
-                pageGridNumber = null;
-            }if(pageGridSeparator != null){
-                pageGridSeparator.remove();
-                pageGridSeparator = null;
-            }if(pageGridSeparatorBefore != null){
-                pageGridSeparatorBefore.remove();
-                pageGridSeparatorBefore = null;
-            }
+            removeGridModePanes();
         }
     
         defaultTranslateY = totalHeight;
@@ -664,6 +655,24 @@ public class PageRenderer extends Pane {
         
         if(pageEditPane != null) pageEditPane.updatePosition();
         
+    }
+    private void removeGridModePanes(){
+        if(pageGridEditPane != null){
+            pageGridEditPane.remove();
+            pageGridEditPane = null;
+        }
+        if(pageGridNumber != null){
+            pageGridNumber.remove();
+            pageGridNumber = null;
+        }
+        if(pageGridSeparatorBefore != null){
+            pageGridSeparatorBefore.remove();
+            pageGridSeparatorBefore = null;
+        }
+        if(pageGridSeparator != null){
+            pageGridSeparator.remove();
+            pageGridSeparator = null;
+        }
     }
     
     private final Timeline translateYTimeline = new Timeline(60);
@@ -763,11 +772,12 @@ public class PageRenderer extends Pane {
         if(pageEditPane != null){
             pageEditPane.delete();
             pageEditPane = null;
-        }
-        if(pageZoneSelector != null){
+        }if(pageZoneSelector != null){
             pageZoneSelector.delete();
             pageZoneSelector = null;
         }
+        removeGridModePanes();
+        
         vectorElementPageDrawer = null;
         
         loader.translateXProperty().unbind();
