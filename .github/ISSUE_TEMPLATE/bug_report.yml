@@ -5,30 +5,50 @@ assignees:
   - ClementGre
 body:
   - type: checkboxes
-    id: alreadyRequested
     attributes:
-      label: Code of Conduct
+      label: Prerequisite
       options:
         - label: I checked the bug was not already reported [here](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+          required: true
         - label: I checked the bug is not an existing user issue [here](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
           required: true
   - type: textarea
-    id: description
     attributes:
       label: Describe the bug
       placeholder: A clear and concise description of what the bug is.
   - type: textarea
-    id: solutionLiked
     attributes:
-      label: Describe the solution you'd like
-      placeholder: A clear and concise description of what you want to happen.
+      label: To Reproduce
+      description: Steps to reproduce the behavior:
+      value: |
+          1. 
+          2. 
+          3. 
+          4. 
   - type: textarea
-    id: alternative
     attributes:
-      label: Describe alternatives you've considered
-      placeholder: A clear and concise description of any alternative solutions or features you've considered.
+      label: Check the console
+      description: |
+                You can open the console window by pressing Ctrl/Cmd + Alt + C while the main window of PDF4Teachers is selected.
+                Please provide a screenshot of the console if it is not empty.
+      placeholder: |
+                Starting PDF4Teachers... (Java 17.0.1)
+                Executing with toOpenPath = []
+                Instance locked: true
+                [...]
+      render: java
   - type: textarea
-    id: additionalContext
     attributes:
-      label: Additional context
-      placeholder: Add any other context or screenshots about the feature request here.
+      label: Edits
+      description: |
+                If applicable, export the concerned edit with Tools > Export Edit/Grade scale > Export edit 
+                You can rename file(s) name/text elements or delete all ``texts:`` section if the text elements are not concerned.
+  - type: textarea
+    attributes:
+      label: Screenshots
+      description: If applicable, add screenshots to help explain your problem.
+  - type: input
+    attributes:
+      label: Desktop
+      description: OS+version
+      placeholder: e.g. OSX 14.15.6
