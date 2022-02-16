@@ -134,13 +134,13 @@ public class PDFPagesEditor {
         document.setCurrentPage(index);
     }
     
-    public void rotatePage(PageRenderer page, boolean right, boolean animated){
+    public void rotatePage(PageRenderer page, boolean right, UType uType, boolean animated){
         int angle = right ? 90 : -90;
         page.quitVectorEditMode();
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + angle);
         edited = true;
         
-        MainWindow.mainScreen.registerNewPageAction(new PageRotateUndoAction(UType.UNDO, page, right));
+        MainWindow.mainScreen.registerNewPageAction(new PageRotateUndoAction(uType, page, right));
         
         if(!animated){
             // If grid mode, one need to update all the pages.
@@ -178,50 +178,73 @@ public class PDFPagesEditor {
         else page.updatePosition(-1, true);
     }
     
+    public void deleteSelectedPages(){
+        if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
+            
+            List<PageRenderer> savedSelectedPages = saveSelectedPages();
+            MainWindow.mainScreen.document.clearSelectedPages();
+            int i = 0;
+            
+            for(PageRenderer page : savedSelectedPages){
+                if(MainWindow.mainScreen.document.getPages().size() == 1) return;
+                
+                if(i == 0) MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
+                else MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, page.getPage(), page, document.getPage(page.getPage()), true));
+                i++;
+                
+                page.quitVectorEditMode();
+                deletePageUtil(page);
+            }
+            
+        }
+    }
     public void deletePage(PageRenderer page){
         
         page.quitVectorEditMode();
         if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
-    
+            
             List<PageRenderer> savedSelectedPages = saveSelectedPages();
             MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
-                
-            document.removePage(page.getPage());
-            edited = true;
             
-            int pageNumber = page.getPage();
-            
-            // remove page elements
-            while(page.getElements().size() != 0){
-                if(page.getElements().get(0) instanceof GradeElement grade){
-                    grade.setValue(-1);
-                    grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
-                }else{
-                    page.getElements().get(0).delete(true, UType.NO_UNDO);
-                }
-            }
-            Document document = MainWindow.mainScreen.document;
-            // remove page
-            page.remove();
-            document.totalPages--;
-            document.getPages().remove(pageNumber);
-            MainWindow.mainScreen.pane.getChildren().remove(page);
-            
-            // Update pages of all pages
-            for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
-            
-            // update coordinates of the pages
-            document.updatePagesPosition();
-    
-            // Update selection
+            deletePageUtil(page);
             restoreSelectedPages(savedSelectedPages);
-            
-            // update current page
-            document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
-            
-            Edition.setUnsave("DeletePage");
-            document.edition.save();
         }
+    }
+    private void deletePageUtil(PageRenderer page){
+        
+        page.quitVectorEditMode();
+        document.removePage(page.getPage());
+        edited = true;
+        
+        int pageNumber = page.getPage();
+        
+        // remove page elements
+        while(page.getElements().size() != 0){
+            if(page.getElements().get(0) instanceof GradeElement grade){
+                grade.setValue(-1);
+                grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
+            }else{
+                page.getElements().get(0).delete(true, UType.NO_UNDO);
+            }
+        }
+        Document document = MainWindow.mainScreen.document;
+        // remove page
+        page.remove();
+        document.totalPages--;
+        document.getPages().remove(pageNumber);
+        MainWindow.mainScreen.pane.getChildren().remove(page);
+        
+        // Update pages of all pages
+        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
+        
+        // update coordinates of the pages
+        document.updatePagesPosition();
+        
+        // update current page
+        document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
+        
+        Edition.setUnsave("DeletePage");
+        document.edition.save();
     }
     
     public void addPage(PDPage docPage, int index){
@@ -397,12 +420,19 @@ public class PDFPagesEditor {
     
     // OTHER
     
-    public void capture(int pageIndex, PositionDimensions dimensions){
+    public void capture(int pageIndex, boolean selection, boolean allPages, PositionDimensions dimensions){
         Image pageImage;
         List<Image> images = new ArrayList<>();
         PageRenderer page;
-        if(pageIndex == -1){
+        
+        if(selection && MainWindow.mainScreen.document.getSelectedPages().size() == 0){
+            selection = false;
+            pageIndex = 0;
+        }
+        if(allPages){
             page = MainWindow.mainScreen.document.getPage(0);
+        }else if(selection){
+            page = saveSelectedPages().get(0);
         }else{
             page = MainWindow.mainScreen.document.getPage(pageIndex);
         }
@@ -427,7 +457,7 @@ public class PDFPagesEditor {
         alert.getButtonTypes().clear();
         alert.addDefaultButton(TR.tr("actions.save"));
         alert.addCancelButton(ButtonPosition.CLOSE);
-        if(pageIndex != -1) alert.addRightButton(TR.tr("actions.copyClipboard"));
+        if(!allPages && !selection) alert.addRightButton(TR.tr("actions.copyClipboard"));
         
         ButtonPosition buttonPos = alert.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
         if(buttonPos == ButtonPosition.CLOSE) return;
@@ -435,16 +465,20 @@ public class PDFPagesEditor {
         if(choosed != null){
             int definition = (int) (Double.parseDouble(choosed.split("Mp")[0]) * 1000000);
             
-            AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(pageIndex == -1);
-            new TwoStepListAction<>(true, pageIndex == -1, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
+            AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(allPages || selection);
+            boolean finalSelection = selection;
+            int finalPageIndex = pageIndex;
+            new TwoStepListAction<>(true, allPages || selection, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
                 File exportDir = null;
                 
                 @Override
                 public List<Integer> prepare(boolean recursive){
-                    if(recursive){
+                    if(allPages){
                         return MainWindow.mainScreen.document.getPages().stream().map(PageRenderer::getPage).collect(Collectors.toList());
+                    }else if(finalSelection){
+                        return new ArrayList<>(MainWindow.mainScreen.document.getSelectedPages());
                     }else{
-                        return Collections.singletonList(pageIndex);
+                        return Collections.singletonList(finalPageIndex);
                     }
                 }
                 

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -40,16 +41,16 @@ public class PageEditPane extends VBox {
         
         descendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(page));
         
-        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, false, true));
+        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, false, UType.UNDO, true));
         
-        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, true, true));
+        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, true, UType.UNDO, true));
         
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
         
         newButton.setOnMouseClicked((e) -> {
             menu.hide();
             menu.getItems().clear();
-            menu.getItems().addAll(getNewPageMenu(page.getPage(), 0, false));
+            menu.getItems().addAll(getNewPageMenu(page.getPage(), page.getPage(), page.getPage()+1, page.getPage() == 0, false));
             NodeMenuItem.setupMenu(menu);
             menu.show(newButton, e.getScreenX(), e.getScreenY());
         });
@@ -70,9 +71,10 @@ public class PageEditPane extends VBox {
         
     }
     
-    public static ArrayList<MenuItem> getNewPageMenu(int page, int addAtTheEnd, boolean vanillaMenu){
+    public static ArrayList<MenuItem> getNewPageMenu(int page, int indexBefore, int indexAfter, boolean askBefore, boolean vanillaMenu){
         ArrayList<MenuItem> menus = new ArrayList<>();
-        if(page == 0){
+        
+        if(askBefore){
             MenuItem addTopBlank = getMenuItem(TR.tr("document.pageActions.addPages.blank.above"), vanillaMenu);
             MenuItem addTopConvert = getMenuItem(TR.tr("document.pageActions.addPages.converted.above"), vanillaMenu);
             MenuItem addTopPdf = getMenuItem(TR.tr("document.pageActions.addPages.pdf.above"), vanillaMenu);
@@ -81,8 +83,8 @@ public class PageEditPane extends VBox {
             menus.add(addTopPdf);
             menus.add(new SeparatorMenuItem());
             
-            addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, page));
-            addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, page));
+            addTopBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, indexBefore));
+            addTopConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, indexBefore));
             addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(page));
         }
         
@@ -92,10 +94,10 @@ public class PageEditPane extends VBox {
         menus.add(addBlank);
         menus.add(addConvert);
         menus.add(addTopPdf);
-        int index = (addAtTheEnd != 0) ? addAtTheEnd : page + 1;
-        addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, index));
-        addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, index));
-        addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(index));
+        
+        addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, indexAfter));
+        addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, indexAfter));
+        addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(indexAfter));
         
         return menus;
     }
@@ -103,11 +105,11 @@ public class PageEditPane extends VBox {
     public static ArrayList<MenuItem> getCaptureMenu(PageRenderer page, boolean vanillaMenu){
         ArrayList<MenuItem> menus = new ArrayList<>();
         
-        MenuItem capturePage = getMenuItem(TR.tr("document.pageActions.capture.allPage"), vanillaMenu);
+        MenuItem capturePage = getMenuItem(TR.tr("document.pageActions.capture.wholePage"), vanillaMenu);
         menus.add(capturePage);
         capturePage.setOnAction(ignored -> {
             page.quitVectorEditMode();
-            MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), null);
+            MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), false, false, null);
         });
         
         
@@ -118,19 +120,22 @@ public class PageEditPane extends VBox {
             PageZoneSelector recorder = page.getPageZoneSelector();
             recorder.setSelectionZoneType(PageZoneSelector.SelectionZoneType.PDF_ON_DARK);
             recorder.setupSelectionZoneOnce(positionDimensions -> {
-                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), positionDimensions);
+                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), false, false, positionDimensions);
             });
             recorder.setDoShow(true);
         });
         
         
         if(MainWindow.mainScreen.document.totalPages != 1){
-            MenuItem captureDocument = getMenuItem(TR.tr("document.pageActions.capture.allDocument"), vanillaMenu);
+            
+            boolean selectionCapture = MainWindow.mainScreen.isIsGridMode() && MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getSelectedPages().size() > 1;
+            
+            MenuItem captureDocument = getMenuItem(selectionCapture ? TR.tr("document.pageActions.capture.selectedPages") : TR.tr("document.pageActions.capture.allDocument"), vanillaMenu);
             menus.add(captureDocument);
             
             captureDocument.setOnAction(ignored -> {
                 page.quitVectorEditMode();
-                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(-1, null);
+                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(-1, selectionCapture, !selectionCapture, null);
             });
         }
         

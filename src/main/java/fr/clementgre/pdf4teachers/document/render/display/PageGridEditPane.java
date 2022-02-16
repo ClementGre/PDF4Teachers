@@ -5,15 +5,25 @@
 
 package fr.clementgre.pdf4teachers.document.render.display;
 
+import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.Document;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.event.Event;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.util.Duration;
@@ -107,8 +117,32 @@ public class PageGridEditPane extends Pane {
         Document doc = MainWindow.mainScreen.document;
         if(!doc.isPageSelected(page)) doc.selectPage(page.getPage());
         
-        for(int page : doc.getSelectedPages())
-            doc.pdfPagesRender.editor.rotatePage(doc.getPage(page), right, true);
+        int i = 0;
+        for(int page : doc.getSelectedPages()){
+            doc.pdfPagesRender.editor.rotatePage(doc.getPage(page), right, i == 0 ? UType.UNDO : UType.NO_COUNT, true);
+            i++;
+        }
+    }
+    
+    public void triggerRightClickMenu(MouseEvent e){
+        ContextMenu menu = new ContextMenu();
+    
+        NodeMenuItem delete;
+        if(MainWindow.mainScreen.document.getSelectedPages().size() == 1)
+            delete = new NodeMenuItem(TR.tr("actions.delete"), false);
+        else
+            delete = new NodeMenuItem(TR.tr("document.pageActions.deleteSelected.title"), false);
         
+        
+        delete.setKeyCombinaison(new KeyCodeCombination(KeyCode.DELETE));
+        delete.setOnAction(event -> MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages());
+        
+        Menu capture = new NodeMenu(TR.tr("document.pageActions.capture.title"));
+        capture.getItems().addAll(PageEditPane.getCaptureMenu(page, false));
+        
+        menu.getItems().addAll(delete, capture);
+        
+        NodeMenuItem.setupMenu(menu);
+        menu.show(Main.window, e.getScreenX(), e.getScreenY());
     }
 }

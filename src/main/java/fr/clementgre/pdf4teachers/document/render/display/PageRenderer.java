@@ -379,7 +379,13 @@ public class PageRenderer extends Pane {
     
             if(MainWindow.mainScreen.isIsGridMode()){
                 setupPageDragVars(e, true);
-                
+    
+                if(e.getButton() == MouseButton.SECONDARY){
+                    if(!MainWindow.mainScreen.document.isPageSelected(this)) MainWindow.mainScreen.document.selectPage(getPage());
+                    if(pageGridEditPane == null) pageGridEditPane = new PageGridEditPane(this);
+                    pageGridEditPane.triggerRightClickMenu(e);
+                }
+    
             }else if(MainWindow.mainScreen.hasToPlace()){
                 placingElement = MainWindow.mainScreen.getToPlace();
                 
@@ -450,7 +456,7 @@ public class PageRenderer extends Pane {
             if(MainWindow.mainScreen.isIsGridMode()){
                 e.consume();
                 
-                if(!hasDragged){
+                if(!hasDragged && e.getButton() == MouseButton.PRIMARY){
                     if(e.isShiftDown()) MainWindow.mainScreen.document.selectToPage(getPage());
                     else if(e.isControlDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
                     else MainWindow.mainScreen.document.selectPage(getPage());
@@ -479,12 +485,12 @@ public class PageRenderer extends Pane {
             double rotate = e.getTotalAngle() * 2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, false, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, false, UType.UNDO, false);
                     setRotate(0);
                 });
             }else if(rotate > 45){
                 setVisibleRotate(90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, true, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, true, UType.UNDO, false);
                     setRotate(0);
                 });
             }else{

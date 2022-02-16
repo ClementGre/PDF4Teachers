@@ -5,12 +5,16 @@
 
 package fr.clementgre.pdf4teachers.document.render.display;
 
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -19,9 +23,14 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
+import java.util.ArrayList;
+
 public class PageGridSeparator extends Pane {
     
     private final Timeline timeline = new Timeline(60);
+    
+    private final ContextMenu menu = new ContextMenu();
+    private boolean mouseOn = false;
     
     private final PageRenderer page;
     private final boolean before;
@@ -39,9 +48,19 @@ public class PageGridSeparator extends Pane {
         prefHeightProperty().bind(page.heightProperty());
         
         
-        setOnMouseEntered(event -> show(true));
-        setOnMouseExited(event -> fadeOut());
+        setOnMouseEntered(event -> {
+            mouseOn = true;
+            show(true);
+        });
+        setOnMouseExited(event -> {
+            mouseOn = false;
+            if(!menu.isShowing()) fadeOut();
+        });
         setOpacity(0);
+        
+        menu.setOnHidden(e -> {
+            if(!mouseOn) fadeOut();
+        });
         
         MainWindow.mainScreen.pane.getChildren().add(this);
     }
@@ -98,7 +117,10 @@ public class PageGridSeparator extends Pane {
             plus.setStyle("-fx-background-color: #eeeeee;");
         });
     
-        circle.setOnMouseClicked(e -> triggerMenu());
+        circle.setOnMouseClicked(e -> {
+            e.consume();
+            triggerMenu(circle.getCenterX() + circleRadius, circle.getCenterY() - circleRadius);
+        });
         
         if(fadeIn) fadeIn();
     }
@@ -117,9 +139,19 @@ public class PageGridSeparator extends Pane {
     
     private int getIndex(){
         if(before) return page.getPage();
-        else return page.getPage() +1;
+        else return page.getPage() + 1;
     }
-    public void triggerMenu(){
-        System.out.println("Menu triggered");
+    public void triggerMenu(double x, double y){
+        menu.hide();
+        menu.getItems().clear();
+    
+        ArrayList<MenuItem> newPageMenuItems = PageEditPane.getNewPageMenu(page.getPage(), 0, getIndex(), false, false);
+        
+        menu.getItems().addAll(newPageMenuItems);
+    
+        NodeMenuItem.setupMenu(menu);
+        
+        Point2D menuLocation = localToScreen(x, y);
+        menu.show(this, menuLocation.getX(), menuLocation.getY());
     }
 }

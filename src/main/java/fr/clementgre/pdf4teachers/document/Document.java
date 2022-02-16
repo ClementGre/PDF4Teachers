@@ -73,6 +73,7 @@ public class Document {
         this.file = file;
         
         pdfPagesRender = new PDFPagesRender(file);
+        if(pdfPagesRender.getNumberOfPages() == 0) throw new IOException("Unable to load a document with 0 pages!");
         totalPages = pdfPagesRender.getNumberOfPages();
     }
     

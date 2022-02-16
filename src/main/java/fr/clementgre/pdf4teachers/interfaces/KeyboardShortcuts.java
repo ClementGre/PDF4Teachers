@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -194,6 +194,9 @@ public class KeyboardShortcuts {
             }else if(e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.KP_RIGHT){
                 e.consume();
                 MainWindow.mainScreen.navigateRight();
+            }else if(MainWindow.mainScreen.isIsGridMode() && e.getCode() == KeyCode.DELETE){
+                e.consume();
+                MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages();
             }
         }else{ // SHORTCUT PRESSED
             if(MainWindow.mainScreen.isIsGridMode() && e.getCode() == KeyCode.A){

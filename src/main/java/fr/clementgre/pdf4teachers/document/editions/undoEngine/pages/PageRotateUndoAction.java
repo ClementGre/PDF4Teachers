@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.editions.undoEngine.pages;
 
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
@@ -26,7 +31,7 @@ public class PageRotateUndoAction extends UndoAction {
     
             rightRotation = !rightRotation;
             
-            MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, rightRotation, true);
+            MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, rightRotation, UType.NO_UNDO, true);
             return true;
         }
         return false;

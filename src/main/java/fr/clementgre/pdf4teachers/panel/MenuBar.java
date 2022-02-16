@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -275,7 +275,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         
         tools3AddPages.setOnShowing(e -> {
-            tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, MainWindow.mainScreen.document.totalPages, isSystemMenuBarSupported()));
+            tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.totalPages, true, isSystemMenuBarSupported()));
             NodeMenuItem.setupMenu(tools3AddPages);
         });
         
