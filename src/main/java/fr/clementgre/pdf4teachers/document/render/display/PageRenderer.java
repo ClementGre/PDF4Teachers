@@ -458,7 +458,7 @@ public class PageRenderer extends Pane {
                 
                 if(!hasDragged && e.getButton() == MouseButton.PRIMARY){
                     if(e.isShiftDown()) MainWindow.mainScreen.document.selectToPage(getPage());
-                    else if(e.isControlDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
+                    else if(e.isShortcutDown()) MainWindow.mainScreen.document.invertSelectedPage(getPage());
                     else MainWindow.mainScreen.document.selectPage(getPage());
                 }
             }

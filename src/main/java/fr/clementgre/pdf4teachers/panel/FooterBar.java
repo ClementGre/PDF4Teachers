@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -22,6 +22,8 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -40,8 +42,10 @@ public class FooterBar extends StackPane {
     private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 20, 10);
     private final Label zoomPercent = new Label();
     private final ColorAdjust lightGrayColorAdjust = new ColorAdjust();
-    private final Region fitZoom = SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "lightgray", 0, 14, 14, lightGrayColorAdjust);
-    private final Region overviewZoom = SVGPathIcons.generateImage(SVGPathIcons.SMALL_SCREEN, "lightgray", 0, 14, 14, lightGrayColorAdjust);
+    private final ToggleGroup zoomGroup = new ToggleGroup();
+    private final ToggleButton maxWidth = new ToggleButton(TR.tr("footerBar.maxWidth"), SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "white", 0, 14, 14, lightGrayColorAdjust));
+    private final ToggleButton gridView = new ToggleButton(TR.tr("footerBar.gridView"), SVGPathIcons.generateImage(SVGPathIcons.SMALL_SCREEN, "white", 0, 14, 14, lightGrayColorAdjust));
+    
     
     private final Label statsElements = new Label();
     private final Label statsTexts = new Label();
@@ -53,7 +57,7 @@ public class FooterBar extends StackPane {
     private final Region spacer = new Region();
     
     private int oldWidth = 0;
-    private final int widthLimit = 1200;
+    private final int widthLimit = 1350;
     
     public FooterBar(){
         StyleManager.putStyle(this, Style.ACCENT);
@@ -64,8 +68,17 @@ public class FooterBar extends StackPane {
     
     public void setup(){
         
+        // ZOOM INFO
+        zoomInfo.setText(TR.tr("footerBar.zoom"));
+        zoom.setAlignment(Pos.CENTER_LEFT);
+        zoomPercent.setMinWidth(40);
+        zoom.setSpacing(5);
+        
         zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.doubleValue() < .41) zoomGroup.selectToggle(gridView);
+            else zoomGroup.selectToggle(maxWidth);
+            
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
                 double scale = newValue.doubleValue();
@@ -92,37 +105,20 @@ public class FooterBar extends StackPane {
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
-        // FIT ZOOM
-        fitZoom.setOnMouseClicked((e) -> {
-            MainWindow.mainScreen.zoomOperator.fitWidth(false);
+
+        maxWidth.setToggleGroup(zoomGroup);
+        gridView.setToggleGroup(zoomGroup);
+        PaneUtils.setHBoxPosition(maxWidth, -1, 21, new Insets(-1, 0, 1, 10));
+        PaneUtils.setHBoxPosition(gridView, -1, 21, new Insets(-1, 5, 1, -5));
+        maxWidth.setOnAction(e -> MainWindow.mainScreen.zoomOperator.fitWidth(false));
+        gridView.setOnAction(e -> MainWindow.mainScreen.zoomOperator.overviewWidth(false));
+    
+        zoomGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if(MainWindow.mainScreen.getZoomFactor() < .41) zoomGroup.selectToggle(gridView);
+            else zoomGroup.selectToggle(maxWidth);
         });
-        fitZoom.setOnMouseEntered((e) -> {
-            if(!fitZoom.isDisabled()) fitZoom.setStyle("-fx-background-color: white;");
-        });
-        fitZoom.setOnMouseExited((e) -> fitZoom.setStyle("-fx-background-color: lightgray;"));
-        // COLORS ADJUST
-        fitZoom.disabledProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) lightGrayColorAdjust.setBrightness(-0.6);
-            else lightGrayColorAdjust.setBrightness(0);
-        });
-        // OVERVIEW ZOOM
-        overviewZoom.setOnMouseClicked((e) -> {
-            MainWindow.mainScreen.zoomOperator.overviewWidth(false);
-        });
-        overviewZoom.setOnMouseEntered((e) -> {
-            if(!overviewZoom.isDisabled()) overviewZoom.setStyle("-fx-background-color: white;");
-        });
-        overviewZoom.setOnMouseExited((e) -> overviewZoom.setStyle("-fx-background-color: lightgray;"));
-        // ZOOM INFO
-        zoomInfo.setText(TR.tr("footerBar.zoom"));
-        fitZoom.setMaxHeight(14);
-        overviewZoom.setMaxHeight(14);
-        zoom.setAlignment(Pos.CENTER_LEFT);
-        HBox.setMargin(fitZoom, new Insets(0, 5, 1, 5));
-        HBox.setMargin(overviewZoom, new Insets(0, 0, 1, 3));
-        zoomPercent.setMinWidth(40);
-        zoom.setSpacing(5);
-        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, fitZoom, overviewZoom);
+        
+        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, maxWidth, gridView);
         
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
@@ -138,7 +134,7 @@ public class FooterBar extends StackPane {
         root.setPadding(new Insets(0, 10, 0, 10));
         root.setSpacing(10);
         root.setAlignment(Pos.CENTER_LEFT);
-        root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
+        root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
         getChildren().add(root);
         
         messagePane.getChildren().add(message);
@@ -210,9 +206,9 @@ public class FooterBar extends StackPane {
         if(status == MainScreen.Status.OPEN){
             if(hard){
                 if(getWidth() < widthLimit){
-                    root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
+                    root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
                 }else{
-                    root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(),
+                    root.getChildren().setAll(zoom, spacer, getSpacerShape(),
                             statsElements, getSpacerShape(), statsTexts, getSpacerShape(), statsGrades, getSpacerShape(), statsGraphics, getSpacerShape(), statsTotalGrade, getSpacerShape(),
                             this.status);
                 }
@@ -222,8 +218,8 @@ public class FooterBar extends StackPane {
             zoomController.setDisable(false);
             zoomPercent.setDisable(false);
             zoomInfo.setDisable(false);
-            fitZoom.setDisable(false);
-            overviewZoom.setDisable(false);
+            maxWidth.setDisable(false);
+            gridView.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
             }else
@@ -233,10 +229,10 @@ public class FooterBar extends StackPane {
             zoomController.setDisable(true);
             zoomPercent.setDisable(true);
             zoomInfo.setDisable(true);
-            fitZoom.setDisable(true);
-            overviewZoom.setDisable(true);
+            maxWidth.setDisable(true);
+            gridView.setDisable(true);
             if(hard){
-                root.getChildren().setAll(zoom, getSpacerShape(), spacer, getSpacerShape(), this.status);
+                root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
             }
             
             if(status == MainScreen.Status.CLOSED){

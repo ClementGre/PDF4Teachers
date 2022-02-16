@@ -108,6 +108,7 @@ public class SVGPathIcons {
         imageRegion.setShape(image);
         imageRegion.setRotate(rotate);
         imageRegion.setStyle("-fx-background-color: " + bgColor + ";");
+        imageRegion.getStyleClass().add("image-icon");
         
         if(effect != null){
             //effect.brightnessProperty().addListener(new NonLeakingListener(imageRegion));

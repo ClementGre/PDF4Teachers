@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -10,7 +10,7 @@
  ******************************************************************************/
 
 .text, .label, Label, Text, .tab-label, .menu-bar, .list-cell, .table-cell, .titled-pane > .title > .text,
-.text-area, .text-field, .tooltip {
+.text-area, .text-field, .tooltip .toggle-button{
     -fx-font-family: "Open Sans";
 }
 
@@ -33,6 +33,11 @@
 
 .app-footer-bar * {
     -fx-font-size: 15;
+}
+.app-footer-bar .toggle-button {
+    -fx-padding: -3 5 -3 5;
+    -fx-alignment: center;
+    -fx-graphic-text-gap: 7;
 }
 
 /* Paint Tab */
