@@ -212,14 +212,14 @@ public class MainScreen extends Pane {
         
         // Update show status when scroll level change
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            if(document != null){
+            if(document != null && document.getPages().size() != 0){
                 Platform.runLater(() -> {
                     if(document != null) document.updateShowsStatus();
                 });
             }
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null){
+            if(document != null && document.getPages().size() != 0){
     
                 // Redraw pages when zooming while being in grid mode
                 if(isIsGridMode()){
@@ -242,7 +242,8 @@ public class MainScreen extends Pane {
         
         isGridModeProperty().bind(zoomPercentProperty().lessThan(41));
         isGridModeProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null){
+            if(document != null && document.getPages().size() != 0){
+                
                 if(newValue) setSelected(null);
                 document.clearSelectedPages();
                 
@@ -494,6 +495,9 @@ public class MainScreen extends Pane {
         }
         status.set(Status.OPEN);
         MainWindow.filesTab.files.getSelectionModel().select(file);
+    
+        if(MainWindow.userData.wasGridMode) zoomOperator.overviewWidth(true);
+        else zoomOperator.fitWidth(true);
         
         zoomOperator.vScrollBar.setValue(0);
         document.showPages();
@@ -507,7 +511,6 @@ public class MainScreen extends Pane {
             failedEditFile = Edition.getEditFile(file).getAbsolutePath();
             status.set(Status.ERROR_EDITION);
             repaint();
-            
             
             return;
         }

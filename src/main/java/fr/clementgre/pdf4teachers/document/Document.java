@@ -84,7 +84,8 @@ public class Document {
             MainWindow.mainScreen.addPage(page);
             pages.add(page);
         }
-        updatePagesPosition();
+        getPage(0).updatePosition(PageRenderer.getPageMargin(), false);
+        updateShowsStatus();
     }
     
     public void updatePagesPosition(){
