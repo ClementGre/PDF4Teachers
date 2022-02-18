@@ -267,8 +267,8 @@ public class Document {
     public void setLastSelectedPage(int index){
         lastSelectedPage = index;
     }
-    public void selectToPage(int index){
-        selectedPages.clear();
+    public void selectToPage(int index, boolean keepOldSelection){
+        if(!keepOldSelection) selectedPages.clear();
         lastSelectedPage = StringUtils.clamp(lastSelectedPage, 0, pages.size()-1);
         boolean forward = index >= lastSelectedPage;
         for(int i = lastSelectedPage; i != index; i += forward ? 1 : -1) selectedPages.add(i);
