@@ -823,7 +823,8 @@ public class PageRenderer extends Pane {
         }else{
             setBackground(WHITE_BACKGROUND);
         }
-        
+        status = PageStatus.HIDE;
+    
     }
     
     public void updateRender(){

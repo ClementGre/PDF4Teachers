@@ -148,6 +148,10 @@ public class UserData {
     @UserDataObject(path = "convert.settings.convertVoidFile")
     public boolean settingsConvertVoidFiles = true;
     
+    // Booklet params
+    @UserDataObject(path = "booklet.doMakeBooklet")
+    public boolean bookletDoMakeBooklet = true;
+    
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")
     public List<Object> autoTipsValidated = new ArrayList<>();

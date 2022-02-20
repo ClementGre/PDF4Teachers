@@ -366,10 +366,10 @@ public class PDFPagesEditor {
     
     // "UTILS"
     
-    private List<PageRenderer> saveSelectedPages(){
+    public List<PageRenderer> saveSelectedPages(){
         return MainWindow.mainScreen.document.getSelectedPages().stream().map((i) -> MainWindow.mainScreen.document.getPage(i)).toList();
     }
-    private void restoreSelectedPages(List<PageRenderer> savedPages){
+    public void restoreSelectedPages(List<PageRenderer> savedPages){
         MainWindow.mainScreen.document.getSelectedPages().clear();
         for(PageRenderer page : savedPages){
             if(MainWindow.mainScreen.document.getPages().contains(page)) // Check page still exists
@@ -378,7 +378,7 @@ public class PDFPagesEditor {
         MainWindow.mainScreen.document.updateSelectedPages();
     }
     
-    private void addDocumentPage(final int index, final PDPage page){
+    public void addDocumentPage(final int index, final PDPage page){
 
         if(index >= document.getNumberOfPages())
             document.addPage(page);
@@ -636,7 +636,13 @@ public class PDFPagesEditor {
     public boolean isEdited(){
         return edited;
     }
+    public void markAsEdited(){
+        edited = true;
+    }
     public UndoEngine getUndoEngine(){
         return undoEngine;
+    }
+    public PDDocument getDocument(){
+        return document;
     }
 }

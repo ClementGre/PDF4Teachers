@@ -576,10 +576,10 @@ public class MainScreen extends Pane {
         return pane.getScaleX();
     }
     
-    public boolean hasDocument(boolean confirm){
+    public boolean hasDocument(boolean errorDialog){
         
         if(status.get() != Status.OPEN){
-            if(confirm){
+            if(errorDialog){
                 new OKAlert(Alert.AlertType.ERROR, TR.tr("dialog.unableToPerform.title"),
                         TR.tr("dialog.unableToPerform.title"), TR.tr("footerBar.documentStatus.noDocument")).showAndWait();
             }
