@@ -5,10 +5,12 @@
 
 package fr.clementgre.pdf4teachers.interfaces.windows.booklet;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -17,6 +19,8 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+
+import java.io.IOException;
 
 public class BookletWindow extends AlternativeWindow<VBox> {
     
@@ -54,10 +58,14 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         
         convertKind.getChildren().addAll(convertKindMake, convertKindDisassemble);
         
-        doNotReorderPages.setSelected(false);
+        doNotReorderPages.setSelected(MainWindow.userData.bookletDoNotReorderPages);
         doTookPages4by4.setSelected(MainWindow.userData.bookletDoTookPages4by4);
         doReverseOrder.setSelected(MainWindow.userData.bookletDoReverseOrder);
         
+        doNotReorderPages.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.bookletDoNotReorderPages = newValue;
+            updateStatus();
+        });
         doTookPages4by4.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoTookPages4by4 = newValue);
         doReverseOrder.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoReverseOrder = newValue);
     
@@ -82,9 +90,14 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         updateStatus();
     
         convert.setOnAction((e) -> {
-            if(MainWindow.mainScreen.hasDocument(true)){
-                new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected()).convert(MainWindow.mainScreen.document);
-                close();
+            if(MainWindow.mainScreen.hasDocument(true) && MainWindow.mainScreen.document.save(false) && Edition.isSave()){
+                try{
+                    new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected()).convert(MainWindow.mainScreen.document);
+                    close();
+                }catch(IOException ex){
+                    new ErrorAlert(null, ex.getMessage(), false).showAndWait();
+                    ex.printStackTrace();
+                }
             }
         });
     }
@@ -96,14 +109,18 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         clearInfoBox();
         convert.setDisable(false);
         
+        
         if(convertKindMake.isSelected()){
-            if(MainWindow.mainScreen.document.totalPages % 4 != 0){
-                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.multipleOf4"));
+            if(MainWindow.mainScreen.document.totalPages % 4 != 0 && !doNotReorderPages.isSelected()){
+                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.make.multipleOf4"));
+                convert.setDisable(true);
+            }else if(MainWindow.mainScreen.document.totalPages % 2 != 0 && doNotReorderPages.isSelected()){
+                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.make.multipleOf2"));
                 convert.setDisable(true);
             }
         }else{
-            if(MainWindow.mainScreen.document.totalPages % 2 != 0){
-                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.multipleOf2"));
+            if(MainWindow.mainScreen.document.totalPages % 2 != 0 && !doNotReorderPages.isSelected()){
+                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.disassemble.multipleOf2"));
                 convert.setDisable(true);
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -28,7 +28,7 @@ import java.util.ArrayList;
 
 public class PDFPagesRender {
     
-    private record RenderPending(int pageNumber, int width, CallBackArg<Image> callBack) {}
+    private record RenderPending(PageRenderer page, int width, CallBackArg<Image> callBack) {}
     
     private final File file;
     public PDFPagesEditor editor;
@@ -55,7 +55,7 @@ public class PDFPagesRender {
             
             while(!closed){ // not closed
                 
-                if(rendersPending.size() != 0){ // Render
+                if(rendersPending.size() != 0 && !rendersPending.get(0).page.isRemoved()){ // Render
                     renderPage(rendersPending.get(0));
                     rendersPending.remove(0);
                     
@@ -90,29 +90,26 @@ public class PDFPagesRender {
     }
     
     private void renderPage(RenderPending renderPending){
-        PDRectangle pageSize = getPageSize(renderPending.pageNumber);
+        PDRectangle pageSize = getPageSize(renderPending.page.getPage());
         
         BufferedImage renderImage = new BufferedImage(renderPending.width, (int) (pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = renderImage.createGraphics();
         graphics.setBackground(Color.WHITE);
         
-        //document.setResourceCache();
-        
         try{
-            //PDDocument document = PDDocument.load(file);
-            //PDFRenderer pdfRenderer = new PDFRenderer(document);
-            pdfRenderer.renderPageToGraphics(renderPending.pageNumber, graphics,
+            pdfRenderer.renderPageToGraphics(renderPending.page.getPage(), graphics,
                     (float) renderPending.width / pageSize.getWidth(),
                     (float) renderPending.width / pageSize.getWidth(),
                     RenderDestination.VIEW);
             
-            if(document == null) Platform.runLater(() -> renderPending.callBack.call(null));
-            //scale(pdfRenderer.renderImage(page, 3, ImageType.RGB), 1800);
-            //document.close();
-            
+            if(renderPending.page.isRemoved()){
+                // Nothing
+            }else if(document == null){
+                Platform.runLater(() -> renderPending.callBack.call(null));
+            }else{
+                Platform.runLater(() -> renderPending.callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
+            }
             graphics.dispose();
-            
-            Platform.runLater(() -> renderPending.callBack.call(SwingFXUtils.toFXImage(renderImage, null)));
         }catch(Exception e){
             e.printStackTrace();
             Platform.runLater(() -> renderPending.callBack.call(null));
@@ -122,9 +119,9 @@ public class PDFPagesRender {
         System.gc(); // clear unused element in RAM
     }
     
-    public void renderPage(int pageNumber, double size, CallBackArg<Image> callBack){
+    public void renderPage(PageRenderer page, double size, CallBackArg<Image> callBack){
         // *1=595 | *1.5=892 |*2=1190
-        rendersPending.add(new RenderPending(pageNumber, (int) (595 * 1.4 * size), callBack));
+        rendersPending.add(new RenderPending(page, (int) (595 * 1.4 * size), callBack));
     }
     
     public BufferedImage renderPageBasic(int pageNumber, int width, int height){

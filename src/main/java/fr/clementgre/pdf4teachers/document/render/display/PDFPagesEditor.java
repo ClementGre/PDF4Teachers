@@ -211,7 +211,7 @@ public class PDFPagesEditor {
             restoreSelectedPages(savedSelectedPages);
         }
     }
-    private void deletePageUtil(PageRenderer page){
+    public void deletePageUtil(PageRenderer page){
         
         page.quitVectorEditMode();
         document.removePage(page.getPage());

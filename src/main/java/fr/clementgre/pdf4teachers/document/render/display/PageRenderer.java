@@ -777,6 +777,8 @@ public class PageRenderer extends Pane {
         timeline.play();
     }
     public void endTranslateAnimations(){
+        if(removed) return;
+        
         if(translateXTimeline.getStatus() == Animation.Status.RUNNING){
             translateXTimeline.stop();
             setTranslateX(targetTranslateX);
@@ -788,6 +790,7 @@ public class PageRenderer extends Pane {
     }
     
     public void updateShowStatus(){
+        if(removed) return;
         
         int firstTest = getShowStatus();
         switchVisibleStatus(firstTest);
@@ -803,6 +806,8 @@ public class PageRenderer extends Pane {
     }
     
     public void updateZoom(){
+        if(removed) return;
+        
         if(lastShowStatus != 0) return; // Verify that the page is visible
         if(status != PageStatus.RENDERED) return; // Verify that the page is rendered
         
@@ -935,7 +940,7 @@ public class PageRenderer extends Pane {
     private void render(CallBack callBack){
         renderedZoomFactor = getRenderingZoomFactor();
         
-        MainWindow.mainScreen.document.pdfPagesRender.renderPage(page, renderedZoomFactor, (image) -> {
+        MainWindow.mainScreen.document.pdfPagesRender.renderPage(this, renderedZoomFactor, (image) -> {
             if(removed || status == PageStatus.HIDE) return;
             
             if(image == null){
@@ -1148,4 +1153,7 @@ public class PageRenderer extends Pane {
         else return PAGE_MARGIN;
     }
     
+    public boolean isRemoved(){
+        return removed;
+    }
 }
