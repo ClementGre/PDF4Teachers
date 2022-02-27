@@ -151,6 +151,11 @@ public class UserData {
     // Booklet params
     @UserDataObject(path = "booklet.doMakeBooklet")
     public boolean bookletDoMakeBooklet = true;
+    @UserDataObject(path = "booklet.doTookPages4by4")
+    public boolean bookletDoTookPages4by4 = true;
+    @UserDataObject(path = "booklet.doReverseOrder")
+    public boolean bookletDoReverseOrder = false;
+    
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")

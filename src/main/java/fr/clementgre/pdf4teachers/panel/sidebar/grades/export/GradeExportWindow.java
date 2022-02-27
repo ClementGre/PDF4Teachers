@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -246,7 +246,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
         
         public void setupSettingsForm(){
             
-            VBox info = generateInfo(TR.tr("convertWindow.options.title"), true);
+            VBox info = generateInfo(TR.tr("options.title"), true);
             
             HBox tiersExport = new HBox();
             Label tiersExportLabel = new Label(TR.tr("gradeTab.gradeExportWindow.options.tiersExportSlider"));
@@ -334,25 +334,6 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             container.getChildren().add(box);
             root.getChildren().add(container);
         }
-        
-        public VBox generateInfo(String text, boolean topBar){
-            
-            VBox box = new VBox();
-            
-            if(topBar){
-                Separator separator = new Separator();
-                PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
-                box.getChildren().add(separator);
-            }
-            
-            if(text != null){
-                Label info = new Label(text);
-                PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
-                box.getChildren().add(info);
-            }
-            
-            return box;
-        }
-        
+    
     }
 }

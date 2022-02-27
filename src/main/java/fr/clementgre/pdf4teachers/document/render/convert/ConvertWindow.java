@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -418,7 +418,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         }
         
         public void setupSettingsForm(){
-            VBox info = generateInfo(TR.tr("convertWindow.options.title"), true);
+            VBox info = generateInfo(TR.tr("options.title"), true);
             root.getChildren().add(info);
             if(convertDirs){
                 

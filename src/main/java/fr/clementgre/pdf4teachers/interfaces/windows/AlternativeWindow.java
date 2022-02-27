@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,8 +8,10 @@ package fr.clementgre.pdf4teachers.interfaces.windows;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.SmoothishScrollpane;
+import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
@@ -19,25 +21,28 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+
+import java.util.Objects;
 
 public abstract class AlternativeWindow<R extends Node> extends Stage {
     
     private final VBox container = new VBox();
     private final VBox header = new VBox();
     public R root;
+    
+    private final HBox bottomBarContainer = new HBox();
+    public HBox infoBox;
     public HBox buttonsBox;
     
-    protected ScrollPane scrollPane = new SmoothishScrollpane(container);
+    protected SmoothishScrollpane scrollPane = new SmoothishScrollpane(container);
     private final BorderPane borderPane = new BorderPane(scrollPane);
     private final Scene scene = new Scene(borderPane);
     
@@ -92,16 +97,24 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             setMaxWidth(width.getWidth() * 2 * Main.settings.zoom.getValue());
             
             if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
-            
+    
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
             MainWindow.preventWindowOverflowScreen(this);
-            
+    
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();
                 toRequestFocus.setDefaultButton(true);
             }
-            
-            afterShown();
+    
+            Platform.runLater(() -> {
+                // Remove the scroll by stretching the window
+                double diffHeight = container.getHeight() - scrollPane.getHeight();
+                setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight + 6));
+                
+                if(Main.window != null) Main.window.centerWindowIntoMe(this);
+                MainWindow.preventWindowOverflowScreen(this);
+                afterShown();
+            });
         });
         
         scene.setOnKeyPressed((e) -> {
@@ -111,7 +124,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         });
         
         setup(header, subHeader);
-
+        
         Platform.runLater(() -> {
             setupSubClass();
             if(Main.window != null) {
@@ -119,20 +132,6 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             }
             show();
         });
-        
-        // SCROLLPANE SPEED FIX //
-        
-        /*scrollPane.addEventFilter(ScrollEvent.SCROLL, e -> {
-            e.consume();
-            if(Math.abs(e.getDeltaX()) > Math.abs(e.getDeltaY()) / 2){ // Accept side scrolling only if the scroll is not too vertical
-                double hValue = scrollPane.getHvalue() + e.getDeltaY() * 2 / (scrollPane.getWidth() - container.getWidth());
-                scrollPane.setHvalue(StringUtils.clamp(hValue, scrollPane.getHmin(), scrollPane.getHmax()));
-            }
-            
-            double vValue = scrollPane.getVvalue() + e.getDeltaY() * 2 / (scrollPane.getHeight() - container.getHeight());
-            scrollPane.setVvalue(StringUtils.clamp(vValue, scrollPane.getVmin(), scrollPane.getVmax()));
-            
-        });*/
 
         // MenuBar on OSX Fix //
         if(Main.isOSX() && MenuBar.isSystemMenuBarSupported()){
@@ -148,31 +147,53 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     private void setup(String header, String subHeader){
         this.header.getStyleClass().add("header");
         root.getStyleClass().add("rootPane");
+        container.getStyleClass().add("container");
+        borderPane.getStyleClass().add("mainBorderPane");
         headerText.getStyleClass().add("headerText");
         subHeaderText.getStyleClass().add("subHeaderText");
         
         VBox.setMargin(headerText, new Insets(30, 20, -5, 20));
         VBox.setMargin(subHeaderText, new Insets(0, 20, 30, 20));
+        subHeaderText.setMinHeight(Region.USE_PREF_SIZE);
         
         setHeaderText(header);
         setSubHeaderText(subHeader);
         this.header.getChildren().addAll(headerText, subHeaderText);
-        
+    
         container.getChildren().addAll(this.header, root);
         scrollPane.setFitToWidth(true);
     }
     
     private void setupButtonsBox(){
+        infoBox = new HBox();
         buttonsBox = new HBox();
-        HBox container = new HBox(buttonsBox);
+        bottomBarContainer.getChildren().setAll(infoBox, buttonsBox);
         
-        container.getStyleClass().add("buttonBoxContainer");
+        bottomBarContainer.getStyleClass().add("buttonBoxContainer");
+        infoBox.getStyleClass().add("infoBox");
         buttonsBox.getStyleClass().add("buttonBox");
+        buttonsBox.setMinWidth(Region.USE_PREF_SIZE);
         
+        HBox.setHgrow(infoBox, Priority.NEVER);
         HBox.setHgrow(buttonsBox, Priority.ALWAYS);
-        borderPane.setBottom(container);
+        borderPane.setBottom(bottomBarContainer);
     }
     private Button toRequestFocus;
+    
+    
+    public void updateInfoBox(AlertIconType iconType, String text){
+        Label info = new Label(text);
+    
+        Image image = new Image(Objects.requireNonNull(AutoHideNotificationPane.class.getResourceAsStream("/img/dialogs/" + iconType.getFileName() + ".png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(35);
+        imageView.setPreserveRatio(true);
+        
+        infoBox.getChildren().setAll(imageView, info);
+    }
+    protected void clearInfoBox(){
+        infoBox.getChildren().clear();
+    }
     
     // Must be called after setButtons(), only once
     public void setLeftButtons(Button... buttons){
@@ -203,6 +224,28 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         }else{
             VBox.setMargin(subHeaderText, new Insets(0, 20, 30, 20));
         }
+    }
+    
+    
+    
+    // Utils
+    public static VBox generateInfo(String text, boolean topBar){
+        
+        VBox box = new VBox();
+        
+        if(topBar){
+            Separator separator = new Separator();
+            PaneUtils.setVBoxPosition(separator, 0, 0, new Insets(5, -5, 0, -5));
+            box.getChildren().add(separator);
+        }
+        
+        if(text != null){
+            Label info = new Label(text);
+            PaneUtils.setVBoxPosition(info, 0, 0, 2.5);
+            box.getChildren().add(info);
+        }
+        
+        return box;
     }
     
 }

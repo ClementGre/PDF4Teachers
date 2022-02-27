@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -35,9 +40,10 @@ public class PageGridNumber extends Label {
         double factor = (MainWindow.mainScreen.getZoomFactor() - .1) / 3 * 2.5 + .15;
         // .1 .4 -> .15 .4
         
-        setStyle("-fx-background-color: rgba(0, 0, 0, .5); -fx-font-weight: 900;" +
+        setStyle("-fx-text-fill: white;" +
+                "-fx-background-color: rgba(0, 0, 0, .5); -fx-font-weight: 900;" +
                 "-fx-font-size: " + 14/factor + ";" +
                 "-fx-background-radius: " + 3/factor + " 0 0 0;" +
-                " -fx-padding: " + 2/factor + " " + 5/factor + ";");
+                "-fx-padding: " + 2/factor + " " + 5/factor + ";");
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -26,6 +26,7 @@ import jfxtras.styles.jmetro.JMetroStyleClass;
 import org.controlsfx.control.NotificationPane;
 
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AutoHideNotificationPane extends NotificationPane {
@@ -97,8 +98,8 @@ public class AutoHideNotificationPane extends NotificationPane {
         show(text, getGraphic(iconType), autoHideTime);
     }
     
-    private HBox getGraphic(AlertIconType iconType){
-        Image image = new Image(getClass().getResourceAsStream("/img/dialogs/" + iconType.getFileName() + ".png"));
+    private static HBox getGraphic(AlertIconType iconType){
+        Image image = new Image(Objects.requireNonNull(AutoHideNotificationPane.class.getResourceAsStream("/img/dialogs/" + iconType.getFileName() + ".png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(35);
         imageView.setPreserveRatio(true);

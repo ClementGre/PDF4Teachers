@@ -14,7 +14,7 @@ import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,14 +23,25 @@ public class BookletEngine {
     private final boolean makeBooklet;
     private final boolean reorganisePages;
     private final boolean tookPages4by4;
-    public BookletEngine(boolean makeBooklet, boolean reorganisePages, boolean tookPages4by4){
+    private final boolean invertOrder;
+    public BookletEngine(boolean makeBooklet, boolean reorganisePages, boolean tookPages4by4, boolean invertOrder){
         this.makeBooklet = makeBooklet;
         this.reorganisePages = reorganisePages;
         this.tookPages4by4 = tookPages4by4;
+        this.invertOrder = invertOrder;
     }
     
     public void convert(Document document){
-        
+        if(!makeBooklet) disassemble(document);
+        else assemble(document);
+    }
+    
+    public void assemble(Document document){
+    
+    }
+    
+    public void disassemble(Document document){
+    
         /// SCINDER / délivreter
         /* ----- 4 BY 4 :
          * 4 | 1
@@ -43,57 +54,58 @@ public class BookletEngine {
          * 6 | 3
          * 4 | 5
          */
-        
+    
         PDFPagesEditor editor = document.pdfPagesRender.editor;
         editor.markAsEdited();
         List<PageRenderer> savedSelectedPages = editor.saveSelectedPages();
     
-        
+        // Invert pages order if needed
+        if(invertOrder){
+            int pagesCount = editor.getDocument().getNumberOfPages();
+            for(int i = 0; i < pagesCount; i++){
+                editor.movePageByIndex(document.getPage(0), pagesCount-1-i);
+            }
+        }
+    
         // Create pages copy
         int oldNumPages = editor.getDocument().getNumberOfPages();
         for(int i = 0; i < oldNumPages; i++){
             PDPage oldPage = editor.getDocument().getPage(i);
             COSDictionary newPageDict = new COSDictionary(oldPage.getCOSObject());
             PDPage page = new PDPage(newPageDict);
-            
+        
             PDRectangle bounds = oldPage.getCropBox();
             bounds.setUpperRightX(bounds.getUpperRightX() - bounds.getWidth()/2);
             oldPage.setCropBox(bounds);
-    
+        
             bounds = page.getCropBox();
             bounds.setLowerLeftX(bounds.getLowerLeftX() + bounds.getWidth()/2);
             page.setCropBox(bounds);
-            
+        
             PageRenderer pageRenderer = new PageRenderer(document.totalPages);
             editor.getDocument().addPage(page);
-    
+        
             // add page
             document.getPages().add(pageRenderer);
             MainWindow.mainScreen.addPage(pageRenderer);
             document.totalPages++;
-    
+        
             pageRenderer.removeRender();
             Platform.runLater(pageRenderer::updateRender);
         }
         editor.restoreSelectedPages(savedSelectedPages);
     
-        
-    
         // Move pages
+        LinkedHashMap<PageRenderer, Integer> pagesToMove = new LinkedHashMap<>();
         if(reorganisePages){
-            HashMap<PageRenderer, Integer> pagesToMove = new HashMap<>();
             if(tookPages4by4){
-                
-                for(int oldIndex = 0; oldIndex < oldNumPages; oldIndex++){
-                    boolean front = oldIndex % 2 == 0;
-                    if(front){
-                        pagesToMove.put(document.getPage(oldIndex), oldIndex*2+3);
-                        pagesToMove.put(document.getPage(oldNumPages + oldIndex), oldIndex*2);
-                    }else{
-                        pagesToMove.put(document.getPage(oldIndex), (oldIndex-1)*2+1);
-                        pagesToMove.put(document.getPage(oldNumPages + oldIndex), (oldIndex-1)*2+2);
-                    }
-                    
+                int newIndex = 0;
+                for(int oldIndex = 0; oldIndex < oldNumPages; oldIndex += 2){
+                    pagesToMove.put(document.getPage(oldNumPages + oldIndex)    , newIndex);
+                    pagesToMove.put(document.getPage(oldIndex + 1)              , newIndex+1);
+                    pagesToMove.put(document.getPage(oldNumPages + oldIndex + 1), newIndex+2);
+                    pagesToMove.put(document.getPage(oldIndex)                  , newIndex+3);
+                    newIndex += 4;
                 }
             }else{
                 // Old left page = odd indice
@@ -117,15 +129,17 @@ public class BookletEngine {
             for(Map.Entry<PageRenderer, Integer> toMove : pagesToMove.entrySet()){
                 editor.movePageByIndex(toMove.getKey(), toMove.getValue());
             }
-            
         }else{
             for(int i = 0; i < oldNumPages; i++){
-                editor.movePageByIndex(document.getPage(i+oldNumPages), 2*i+1);
+                pagesToMove.put(document.getPage(i+oldNumPages), 2*i+1);
             }
         }
-        
-        
-        
+        // Really move pages
+        for(Map.Entry<PageRenderer, Integer> toMove : pagesToMove.entrySet()){
+            editor.movePageByIndex(toMove.getKey(), toMove.getValue());
+        }
+    
+    
         editor.markAsEdited();
         // Update coordinates & render of the pages
         document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
@@ -134,6 +148,6 @@ public class BookletEngine {
             page.removeRender();
             Platform.runLater(page::updateShowStatus);
         }
-        
+    
     }
 }

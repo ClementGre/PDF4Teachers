@@ -106,6 +106,7 @@ public class PDFPagesEditor {
         movePageByIndex(page, page.getPage() + pagesToPass);
     }
     public void movePageByIndex(PageRenderer page, int index){
+        if(page.getPage() == index) return;
         List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         page.quitVectorEditMode();

@@ -8,6 +8,9 @@ package fr.clementgre.pdf4teachers.interfaces.windows.booklet;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ToggleButton;
@@ -21,6 +24,10 @@ public class BookletWindow extends AlternativeWindow<VBox> {
     private final ToggleButton convertKindDisassemble = new ToggleButton(TR.tr("bookletWindow.convertKindDisassemble"));
     
     private final CheckBox doNotReorderPages = new CheckBox(TR.tr("bookletWindow.doNotReorderPages"));
+    private final CheckBox doTookPages4by4 = new CheckBox(TR.tr("bookletWindow.doTookPages4by4"));
+    private final CheckBox doReverseOrder = new CheckBox(TR.tr("bookletWindow.doReverseOrder"));
+    
+    private final Button convert = new Button(TR.tr("actions.convert"));
     
     public BookletWindow(){
         super(new VBox(), StageWidth.LARGE, TR.tr("bookletWindow.title"), TR.tr("bookletWindow.title"), TR.tr("bookletWindow.description"));
@@ -40,26 +47,66 @@ public class BookletWindow extends AlternativeWindow<VBox> {
             }
         });
         convertKindGroup.selectToggle(MainWindow.userData.bookletDoMakeBooklet ? convertKindMake : convertKindDisassemble);
-        convertKindGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoMakeBooklet = newValue == convertKindMake);
+        convertKindGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.bookletDoMakeBooklet = newValue == convertKindMake;
+            updateStatus();
+        });
         
         convertKind.getChildren().addAll(convertKindMake, convertKindDisassemble);
         
         doNotReorderPages.setSelected(false);
+        doTookPages4by4.setSelected(MainWindow.userData.bookletDoTookPages4by4);
+        doReverseOrder.setSelected(MainWindow.userData.bookletDoReverseOrder);
         
-        root.getChildren().addAll(convertKind, doNotReorderPages);
-    }
-    @Override
-    public void afterShown(){
-        Button convert = new Button(TR.tr("actions.convert"));
+        doTookPages4by4.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoTookPages4by4 = newValue);
+        doReverseOrder.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoReverseOrder = newValue);
+    
+        doReverseOrder.visibleProperty().bind(convertKindDisassemble.selectedProperty());
+        doTookPages4by4.disableProperty().bind(doNotReorderPages.selectedProperty());
+    
+        PaneUtils.setVBoxPosition(convertKind, 0, 0, new Insets(0, 0, 10, 0));
+        PaneUtils.setVBoxPosition(doNotReorderPages, 0, 0, 2.5, 0);
+        PaneUtils.setVBoxPosition(doTookPages4by4, 0, 0, 2.5, 0);
+        PaneUtils.setVBoxPosition(doReverseOrder, 0, 0, 2.5, 0);
+        
+        
+        root.setSpacing(5);
+        root.getChildren().addAll(convertKind, generateInfo(TR.tr("options.title"), false), doNotReorderPages, doTookPages4by4, doReverseOrder);
+    
+    
+    
         Button cancel = new Button(TR.tr("actions.cancel"));
         cancel.setOnAction(event -> close());
     
         setButtons(cancel, convert);
+        updateStatus();
     
         convert.setOnAction((e) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
-                new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), true).convert(MainWindow.mainScreen.document);
+                new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected()).convert(MainWindow.mainScreen.document);
+                close();
             }
         });
     }
+    @Override
+    public void afterShown(){
+    }
+    
+    private void updateStatus(){
+        clearInfoBox();
+        convert.setDisable(false);
+        
+        if(convertKindMake.isSelected()){
+            if(MainWindow.mainScreen.document.totalPages % 4 != 0){
+                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.multipleOf4"));
+                convert.setDisable(true);
+            }
+        }else{
+            if(MainWindow.mainScreen.document.totalPages % 2 != 0){
+                updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.multipleOf2"));
+                convert.setDisable(true);
+            }
+        }
+    }
+    
 }

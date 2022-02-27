@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -44,9 +44,16 @@
     -fx-border-width: 1 0 0 0;
     -fx-border-color: grey;
     -fx-padding: 10;
-    -fx-alignment: CENTER_RIGHT;
+    -fx-spacing: 20;
+    -fx-alignment: CENTER;
 }
-
+.infoBox{
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+}
+.infoBox .label{
+    -fx-wrap-text: true;
+}
 .buttonBox {
     -fx-spacing: 10;
     -fx-alignment: CENTER_RIGHT;

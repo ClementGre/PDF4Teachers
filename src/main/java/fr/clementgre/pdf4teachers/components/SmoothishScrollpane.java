@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -24,6 +29,8 @@ public class SmoothishScrollpane extends ScrollPane {
 
     private boolean hasScrollStartEndEvents = false;
 
+    public VBox wrapper;
+    
     /**
      * @param content Item to be wrapped in the scrollpane.
      */
@@ -31,7 +38,9 @@ public class SmoothishScrollpane extends ScrollPane {
         // ease-of-access for inner class
         ScrollPane scroll = this;
         // set content in a wrapper
-        VBox wrapper = new VBox(content);
+        wrapper = new VBox(content);
+        wrapper.getStyleClass().add("scroll-pane-wrapper");
+        getStyleClass().add("smoothishScrollpane");
         setContent(wrapper);
         // add scroll handling to wrapper
 
