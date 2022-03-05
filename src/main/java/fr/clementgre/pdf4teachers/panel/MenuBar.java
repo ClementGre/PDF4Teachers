@@ -245,7 +245,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         file4Save.setOnAction((ActionEvent actionEvent) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
-                MainWindow.mainScreen.document.edition.save();
+                MainWindow.mainScreen.document.edition.save(true);
             }
         });
         file5Delete.setOnAction((ActionEvent e) -> {

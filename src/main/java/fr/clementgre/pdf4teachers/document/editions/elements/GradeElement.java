@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -334,6 +334,11 @@ public class GradeElement extends Element {
         super.removedFromDocument(markAsUnsave);
         MainWindow.gradeTab.treeView.removeElement(this, markAsUnsave);
     }
+    @Override
+    public void size(double scale){
+        // Grade elements can't be resized because their font are common to all documents.
+    }
+    
     // READER AND WRITERS
     
     @Override

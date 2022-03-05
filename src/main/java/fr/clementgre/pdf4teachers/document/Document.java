@@ -59,7 +59,7 @@ public class Document {
                 
                 PlatformUtils.sleepThreadMinutes(Main.settings.regularSave.getValue());
                 if(!documentSaverNeedToStop && !Edition.isSave()){
-                    Platform.runLater(() -> edition.save());
+                    Platform.runLater(() -> edition.save(true));
                 }
                 
             }else{
@@ -181,7 +181,7 @@ public class Document {
         }
         
         if(Main.settings.autoSave.getValue()){
-            edition.save();
+            edition.save(true);
             return true;
             
         }
@@ -194,7 +194,7 @@ public class Document {
         ButtonType option = alert.getShowAndWait();
         if(option == null) return false; // Window close button (null)
         if(option.getButtonData().isDefaultButton()){ // Save button (Default)
-            edition.save();
+            edition.save(true);
             return true;
             
         }else if(option.getButtonData().isCancelButton()){ // cancel button

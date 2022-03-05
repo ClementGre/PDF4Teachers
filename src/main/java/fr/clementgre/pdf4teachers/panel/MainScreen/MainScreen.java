@@ -545,7 +545,7 @@ public class MainScreen extends Pane {
                 if(!document.save(false)){
                     return false;
                 }
-            }else if(!forceNotToSave) document.edition.save();
+            }else if(!forceNotToSave) document.edition.save(true);
     
             MainWindow.userData.wasGridMode = isIsGridMode();
             

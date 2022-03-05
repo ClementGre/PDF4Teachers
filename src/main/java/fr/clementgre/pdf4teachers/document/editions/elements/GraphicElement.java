@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -608,9 +608,15 @@ public abstract class GraphicElement extends Element {
         
         super.switchPage(page);
         
+        // When the new page is just created, its dimensions are not defined yet.
+        if(getPage().getHeight() == 0) Platform.runLater(() -> updateDimensionsAfterSwitchingPage(oldPageWidth, oldPageHeight));
+        else updateDimensionsAfterSwitchingPage(oldPageWidth, oldPageHeight);
+        
+    }
+    private void updateDimensionsAfterSwitchingPage(double oldPageWidth, double oldPageHeight){
         setRealHeight((int) (getRealHeight() * oldPageHeight / getPage().getHeight()));
         setRealWidth((int) (getRealWidth() * oldPageWidth / getPage().getWidth()));
-        
+    
         prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
         prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
     }
@@ -627,6 +633,16 @@ public abstract class GraphicElement extends Element {
         super.restoredToDocument();
         prefWidthProperty().bind(getPage().widthProperty().multiply(realWidth.divide(Element.GRID_WIDTH)));
         prefHeightProperty().bind(getPage().heightProperty().multiply(realHeight.divide(Element.GRID_HEIGHT)));
+    }
+    
+    @Override
+    public void size(double scale){
+        double oldWidth = getWidth();
+        double oldHeight = getHeight();
+        double newWidth = oldWidth*scale;
+        double newHeight = oldHeight*scale;
+    
+        checkLocation(getLayoutX()/* + (oldWidth - newWidth)/2d*/, getLayoutY()/* + (oldHeight - newHeight)/2d*/, newWidth, newHeight, false);
     }
     
     // READERS AND WRITERS

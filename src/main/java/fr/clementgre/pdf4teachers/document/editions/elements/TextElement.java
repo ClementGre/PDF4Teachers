@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -204,6 +204,11 @@ public class TextElement extends Element {
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
         if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.removeElement(this);
+    }
+    @Override
+    public void size(double scale){
+        setFont(FontUtils.getFont(getFont().getFamily(), FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC, FontUtils.getFontWeight(getFont()) == FontWeight.BOLD, getFont().getSize()*scale));
+        Platform.runLater(() -> checkLocation(getLayoutX(), getLayoutY(), false));
     }
     
     // READER AND WRITERS

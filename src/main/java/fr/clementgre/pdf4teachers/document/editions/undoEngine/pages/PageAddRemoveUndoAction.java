@@ -83,7 +83,7 @@ public class PageAddRemoveUndoAction extends UndoAction {
         restoreGrade(MainWindow.gradeTab.treeView.getRootTreeItem());
         
         Edition.setUnsave("RestorePageElements");
-        MainWindow.mainScreen.document.edition.save();
+        MainWindow.mainScreen.document.edition.save(false);
         MainWindow.mainScreen.setSelected(null);
     }
     

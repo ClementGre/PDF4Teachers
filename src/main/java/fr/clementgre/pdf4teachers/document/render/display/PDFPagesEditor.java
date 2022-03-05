@@ -245,7 +245,7 @@ public class PDFPagesEditor {
         document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
         
         Edition.setUnsave("DeletePage");
-        document.edition.save();
+        document.edition.save(false);
     }
     
     public void addPage(PDPage docPage, int index){

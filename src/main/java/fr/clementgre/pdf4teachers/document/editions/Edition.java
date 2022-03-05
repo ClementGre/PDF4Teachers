@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -86,7 +86,7 @@ public class Edition{
         }
     }
     
-    public void save(){
+    public void save(boolean toast){
         if(Edition.isSave()){
             saveLastScrollValue();
             return;
@@ -144,7 +144,7 @@ public class Edition{
         }
         
         isSave.set(true);
-        MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
+        if(toast) MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
         MainWindow.filesTab.files.refresh();
         
     }
@@ -398,6 +398,7 @@ public class Edition{
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
             MainWindow.gradeTab.treeView.clearElements(true, false);
             Edition.setUnsave("Clear edit");
+            MainWindow.mainScreen.document.edition.save(false);
         }
     }
     

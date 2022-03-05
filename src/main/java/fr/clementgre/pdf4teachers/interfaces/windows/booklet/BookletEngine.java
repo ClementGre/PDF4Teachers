@@ -6,6 +6,8 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.booklet;
 
 import fr.clementgre.pdf4teachers.document.Document;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.render.display.PDFPagesEditor;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -28,6 +30,8 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
         else assemble(document);
     }
     
+    private record MergedPage(PDPage newPage, PageRenderer left, PageRenderer right){}
+    
     
     public void assemble(Document document) throws IOException{
         PDFPagesEditor editor = document.pdfPagesRender.editor;
@@ -42,10 +46,10 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             }
         }
         
-        // Generate new pages
+        // Merging pages 2 by 2
         // Source algorithm for merging pages from https://stackoverflow.com/questions/12093408/pdfbox-merge-2-portrait-pages-onto-a-single-side-by-side-landscape-page
         // Edited by Clément Grennerat
-        ArrayList<PDPage> newPages = new ArrayList<>();
+        ArrayList<MergedPage> newPages = new ArrayList<>();
         int oldNumPages = editor.getDocument().getNumberOfPages();
         for(int i = 0; i < oldNumPages; i+=2){
             // Create output PDF frame
@@ -66,25 +70,47 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             LayerUtility layerUtility = new LayerUtility(editor.getDocument());
             PDFormXObject formPdf1 = layerUtility.importPageAsForm(editor.getDocument(), i);
             PDFormXObject formPdf2 = layerUtility.importPageAsForm(editor.getDocument(), i+1);
-    
-            // Add form objects to output page
-            AffineTransform afLeft = new AffineTransform();
-            AffineTransform afRight = AffineTransform.getTranslateInstance(leftFrame.getWidth(), 0.0);
-            layerUtility.appendFormAsLayer(newPage, formPdf1, afRight, "left-" + i/2 + "-" + new Random().nextInt(99999));
-            //?
-            layerUtility.appendFormAsLayer(newPage, formPdf2, afRight, "right-" + i/2 + "-" + new Random().nextInt(99999));
             
-            newPages.add(newPage);
+            
+            // Add form objects to output page
+            AffineTransform afLeft = AffineTransform.getTranslateInstance(leftFrame.getLowerLeftX(), 0);
+            AffineTransform afRight = AffineTransform.getTranslateInstance(leftFrame.getWidth() + rightFrame.getLowerLeftX(), 0);
+            layerUtility.appendFormAsLayer(newPage, formPdf1, afLeft, "left-" + 2*i + "-" + new Random().nextInt(99999));
+            layerUtility.appendFormAsLayer(newPage, formPdf2, afRight, "right-" + (2*i+1) + "-" + new Random().nextInt(99999));
+            
+            
+            newPages.add(new MergedPage(newPage, document.getPage(i), document.getPage(i+1)));
         }
     
         // Adding new pages and removing old pages
-        for(PDPage newPage : newPages){
+        for(MergedPage pages : newPages){
             PageRenderer pageRenderer = new PageRenderer(document.totalPages);
             
             // add page
             document.getPages().add(pageRenderer);
             MainWindow.mainScreen.addPage(pageRenderer);
             document.totalPages++;
+            
+            // Move elements to new page
+            while(pages.left.getElements().size() != 0){
+                Element element = pages.left.getElements().get(0);
+                element.switchPage(pageRenderer.getPage());
+                element.setRealX(element.getRealX()/2);
+                Platform.runLater(() -> {
+                    element.size(.5);
+                    Platform.runLater(() -> element.checkLocation(false));
+                });
+    
+            }
+            while(pages.right.getElements().size() != 0){
+                Element element = pages.right.getElements().get(0);
+                element.switchPage(pageRenderer.getPage());
+                element.setRealX((int) (Element.GRID_WIDTH/2d + element.getRealX()/2d));
+                Platform.runLater(() -> {
+                    element.size(.5);
+                    Platform.runLater(() -> element.checkLocation(false));
+                });
+            }
         }
         for(int i = 0; i < oldNumPages; i++){
             document.getPage(0).quitVectorEditMode();
@@ -99,6 +125,9 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             page.removeRender();
             Platform.runLater(page::updateShowStatus);
         }
+    
+        Edition.setUnsave("Assemble booklet");
+        document.edition.save(false);
     }
     
     public void disassemble(Document document){
@@ -128,7 +157,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             }
         }
     
-        // Create pages copy
+        // Create pages copy for right pages
         int oldNumPages = editor.getDocument().getNumberOfPages();
         for(int i = 0; i < oldNumPages; i++){
             PDPage oldPage = editor.getDocument().getPage(i);
@@ -153,6 +182,20 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
             pageRenderer.removeRender();
             Platform.runLater(pageRenderer::updateRender);
+            
+            // Move elements to new page
+            for(Element element : new ArrayList<>(document.getPage(i).getElements())){
+                if(element.getLayoutX() + element.getWidth()/2 > document.getPage(i).getWidth()/2){ // Move element to right page
+                    element.switchPage(pageRenderer.getPage());
+                    element.setRealX((int) ((element.getRealX() - Element.GRID_WIDTH/2d)*2));
+                }else{
+                    element.setRealX(element.getRealX()*2);
+                }
+                Platform.runLater(() -> {
+                    element.size(2);
+                    Platform.runLater(() -> element.checkLocation(false));
+                });
+            }
         }
         editor.restoreSelectedPages(savedSelectedPages);
     
@@ -202,6 +245,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
     
         editor.markAsEdited();
+        
         // Update coordinates & render of the pages
         document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
         document.updateShowsStatus();
@@ -209,6 +253,9 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             page.removeRender();
             Platform.runLater(page::updateShowStatus);
         }
+    
+        Edition.setUnsave("Disassemble booklet");
+        document.edition.save(false);
     
     }
 }
