@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -22,6 +22,7 @@ public class UndoEngine{
     
     // Prevent adding actions while reversing an action.
     public static boolean isUndoingThings = false;
+    private static boolean isLocked = false;
     
     // When false, only NO_COUNT actions before the classic undo action will be processed.
     // If true, the NO_COUNT actions that are after the classic undo action, will be processed at the same time
@@ -32,7 +33,7 @@ public class UndoEngine{
     }
     
     public void registerNewAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings) return;
+        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) return;
     
         //System.out.println("Adding action to undo stack: " + action);
         undoList.add(0, action);
@@ -135,5 +136,16 @@ public class UndoEngine{
         if(redoList.size() > MAX_STACK_LENGTH){
             redoList = new ArrayList<>(redoList.stream().limit(MAX_STACK_LENGTH).toList());
         }
+    }
+    
+    
+    public static void lock(){
+        isLocked = true;
+    }
+    public static void unlock(){
+        isLocked = false;
+    }
+    public static boolean isLocked(){
+        return isLocked;
     }
 }

@@ -34,15 +34,50 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
     
     public void assemble(Document document) throws IOException{
+        
+        /// FUSIONNER / livreter
+        /* ----- 4 BY 4 :
+         * 4 | 1
+         * 2 | 3
+         * 8 | 5
+         * 6 | 7
+         * ----- All booklet :
+         * 8 | 1        * 7 | 0
+         * 2 | 7        * 1 | 6
+         * 6 | 3        * 5 | 2
+         * 4 | 5        * 3 | 4
+         */
+        
         PDFPagesEditor editor = document.pdfPagesRender.editor;
         document.clearSelectedPages();
         
         // Reordering pages
         if(reorganisePages){
+            int mumPages = editor.getDocument().getNumberOfPages();
+            LinkedHashMap<PageRenderer, Integer> pagesToMove = new LinkedHashMap<>();
+            
             if(tookPages4by4){
-            
+                for(int index = 0; index < mumPages; index += 4){
+                    pagesToMove.put(document.getPage(index    ), index + 1);
+                    pagesToMove.put(document.getPage(index + 1), index + 2);
+                    pagesToMove.put(document.getPage(index + 2), index + 3);
+                    pagesToMove.put(document.getPage(index + 3), index    );
+                }
             }else{
-            
+                for(int oldIndex = 0; oldIndex < mumPages/2; oldIndex++){
+                    if(oldIndex % 2 == 0){
+                        pagesToMove.put(document.getPage(mumPages-1-oldIndex), oldIndex*2  );
+                        pagesToMove.put(document.getPage(oldIndex)         , oldIndex*2+1);
+                    }else{
+                        pagesToMove.put(document.getPage(oldIndex)         , oldIndex*2  );
+                        pagesToMove.put(document.getPage(mumPages-1-oldIndex), oldIndex*2+1);
+                    }
+                    
+                }
+            }
+            // Really move pages
+            for(Map.Entry<PageRenderer, Integer> toMove : pagesToMove.entrySet()){
+                editor.movePageByIndex(toMove.getKey(), toMove.getValue());
             }
         }
         

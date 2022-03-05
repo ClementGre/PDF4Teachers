@@ -150,7 +150,7 @@ public class UserData {
     
     // Booklet params
     @UserDataObject(path = "booklet.doMakeBooklet")
-    public boolean bookletDoMakeBooklet = true;
+    public boolean bookletDoMakeBooklet = false;
     @UserDataObject(path = "booklet.doNotReorderPages")
     public boolean bookletDoNotReorderPages = false;
     @UserDataObject(path = "booklet.doTookPages4by4")
