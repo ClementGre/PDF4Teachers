@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -156,6 +156,9 @@ public class Config {
     public Color getColor(String path){
         return getColor(base, path);
     }
+    public Color getColorNull(String path){
+        return getColorNull(base, path);
+    }
     
     public boolean getBoolean(String path){
         return getBoolean(base, path);
@@ -198,6 +201,13 @@ public class Config {
             return Color.valueOf(getValue(base, path).toString());
         }catch(NullPointerException | IllegalArgumentException ignored){
             return Color.BLACK;
+        }
+    }
+    public static Color getColorNull(HashMap<String, Object> base, String path){
+        try{
+            return Color.valueOf(getValue(base, path).toString());
+        }catch(NullPointerException | IllegalArgumentException ignored){
+            return null;
         }
     }
     
@@ -330,4 +340,5 @@ public class Config {
         }
         return true;
     }
+    
 }

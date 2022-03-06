@@ -6,7 +6,6 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.splitpdf;
 
 import fr.clementgre.pdf4teachers.components.DirSelector;
-import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -15,15 +14,14 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,12 +34,12 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     private final HBox outputPath = new DirSelector();
     private final TextArea names = new TextArea();
     
-    private final SyncColorPicker colorPicker = new SyncColorPicker();
-    private final Slider slider = new Slider(0, 100, 50);
+    private final ColorPicker colorPicker = new ColorPicker(MainWindow.userData.splitPdfMatchColor);
+    private final Slider slider = new Slider(0, 100, MainWindow.userData.splitSensibility);
     
     private final Button ok = new Button(TR.tr("actions.generate"));
     
-    private final SplitEngine engine = new SplitEngine(this, -1);
+    private final SplitEngine engine = new SplitEngine(this);
     
     public SplitWindow(){
         super(new VBox(), StageWidth.LARGE, TR.tr("splitPdfWindow.title"), TR.tr("splitPdfWindow.title"), TR.tr("splitPdfWindow.description"));
@@ -59,12 +57,12 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         Button browseNames = new Button(TR.tr("file.browse"));
         PaneUtils.setHBoxPosition(browseNames, 0, 30, new Insets(0, 2.5, 0, 5));
     
+        names.textProperty().addListener((observable, oldValue, newValue) -> updateStatus());
         namesBox.getChildren().addAll(names, browseNames);
     
         browseNames.setOnAction(e -> {
-            File selected = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.txt"), "*.txt");
+            File selected = FilesChooserManager.showFileDialog(null, TR.tr("dialog.file.extensionType.txt"), "*.txt");
             if(selected != null) loadNames(selected);
-            updateStatus();
         });
         
         HBox signalPage = new HBox();
@@ -74,6 +72,15 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         signalPage.setSpacing(10);
         signalPage.setAlignment(Pos.CENTER_LEFT);
         PaneUtils.setVBoxPosition(signalPage, 0, 30, 2.5, 0);
+        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateStatus();
+            MainWindow.userData.splitPdfMatchColor = newValue;
+        });
+        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            updateStatus();
+            MainWindow.userData.splitSensibility = newValue.intValue();
+        });
+        
         
         root.setSpacing(5);
         root.getChildren().addAll(generateInfo(TR.tr("file.destinationFolder"), false), outputPath, generateInfo(TR.tr("splitPdfWindow.filesNames"), true), namesBox, generateInfo(TR.tr("splitPdfWindow.signalPage"), true), signalPage);
@@ -113,8 +120,9 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         clearInfoBox();
         ok.setDisable(false);
         
-        if(engine.detectedPages() != -1){
-            int detectedCount = engine.detectedPages();
+        int detectedCount = engine.countMatchPages();
+        
+        if(detectedCount != -1){
             int namesCount = getNamesCount();
             
             if(detectedCount < namesCount){
@@ -151,5 +159,15 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     
     public int getNamesCount(){
         return StringUtils.cleanArray(names.getText().split(Pattern.quote("\n"))).length;
+    }
+    public Color getColor(){
+        return colorPicker.getValue();
+    }
+    public double getSensibility(){
+        // Range .5 - 0
+        return .5 - (slider.getValue() / 100d / 2d);
+    }
+    public ObservableList<Color> getCustomColors(){
+        return colorPicker.getCustomColors();
     }
 }

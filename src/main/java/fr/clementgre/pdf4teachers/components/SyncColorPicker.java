@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -21,7 +21,11 @@ public class SyncColorPicker extends ColorPicker {
     private static ArrayList<Color> customColors = new ArrayList<>();
     
     public SyncColorPicker(){
-        super();
+        this(Color.WHITE);
+    }
+    
+    public SyncColorPicker(Color color){
+        super(color);
         colorPickers.add(new WeakReference<>(this));
         
         getCustomColors().setAll(customColors);

@@ -158,6 +158,11 @@ public class UserData {
     @UserDataObject(path = "booklet.doReverseOrder")
     public boolean bookletDoReverseOrder = false;
     
+    // Split PDF params
+    @UserDataObject(path = "splitPdf.matchColor")
+    public Color splitPdfMatchColor = Color.CYAN;
+    @UserDataObject(path = "splitPdf.sensibility")
+    public int splitSensibility = 50;
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")
@@ -264,7 +269,8 @@ public class UserData {
                             }else if(field.getType() == LinkedHashMap.class){
                                 field.set(this, config.getLinkedSection(field.getAnnotation(UserDataObject.class).path()));
                             }else if(field.getType() == Color.class){
-                                field.set(this, config.getColor(field.getAnnotation(UserDataObject.class).path()));
+                                Color value = config.getColorNull(field.getAnnotation(UserDataObject.class).path());
+                                if(value != null) field.set(this, value);
                             }
                         }catch(Exception e){
                             e.printStackTrace();
