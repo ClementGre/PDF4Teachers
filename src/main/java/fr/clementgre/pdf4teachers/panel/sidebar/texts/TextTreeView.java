@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -354,7 +354,7 @@ public class TextTreeView extends TreeView<String> {
             return Sorter.sortElementsByPolice(toSort, order);
         }else if(sortType.equals(TR.tr("sorting.sortType.fontSize"))){
             return Sorter.sortElementsBySize(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.color"))){
+        }else if(sortType.equals(TR.tr("string.color"))){
             return Sorter.sortElementsByColor(toSort, order);
         }else if(sortType.equals(TR.tr("sorting.sortType.location"))){
             return Sorter.sortElementsByCorePosition(toSort, order);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -23,7 +23,7 @@ public class TextTreeOnFile extends TextTreeSection {
         sortManager.setup(sortCell.pane, TR.tr("sorting.sortType.location"),
                 TR.tr("sorting.sortType.location"), TR.tr("sorting.sortType.name"),
                 "\n",
-                TR.tr("sorting.sortType.fontFamily"), TR.tr("sorting.sortType.fontSize"), TR.tr("sorting.sortType.color"));
+                TR.tr("sorting.sortType.fontFamily"), TR.tr("sorting.sortType.fontSize"), TR.tr("string.color"));
     }
     
     public void updateElementsList(){

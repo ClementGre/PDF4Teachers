@@ -21,6 +21,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.Separator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -174,7 +175,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         buttonsBox.getStyleClass().add("buttonBox");
         buttonsBox.setMinWidth(Region.USE_PREF_SIZE);
         
-        HBox.setHgrow(infoBox, Priority.NEVER);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
         HBox.setHgrow(buttonsBox, Priority.ALWAYS);
         borderPane.setBottom(bottomBarContainer);
     }
@@ -183,13 +184,17 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     
     public void updateInfoBox(AlertIconType iconType, String text){
         Label info = new Label(text);
-    
         Image image = new Image(Objects.requireNonNull(AutoHideNotificationPane.class.getResourceAsStream("/img/dialogs/" + iconType.getFileName() + ".png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(35);
         imageView.setPreserveRatio(true);
         
         infoBox.getChildren().setAll(imageView, info);
+    }
+    public void setInfoBoxLoader(){
+        ProgressBar loader = new ProgressBar();
+        PaneUtils.setHBoxPosition(loader, -1, 0, new Insets(13, 0, 0, 0));
+        infoBox.getChildren().setAll(loader);
     }
     protected void clearInfoBox(){
         infoBox.getChildren().clear();

@@ -24,6 +24,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.booklet.BookletWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.splitpdf.SplitWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -118,6 +119,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem tools4PdfTools1Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
             TR.tr("bookletWindow.description"));
     
+    private final MenuItem tools4PdfTools2Split = createMenuItem(TR.tr("splitPdfWindow.title"), SVGPathIcons.CUT, null,
+            TR.tr("splitPdfWindow.description"));
+    
     private final MenuItem tools5DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
             TR.tr("menuBar.tools.deleteAllEdits.tooltip"));
     
@@ -202,7 +206,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         ////////// TOOLS //////////
         
         tools3AddPages.getItems().add(new MenuItem(""));
-        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet);
+        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2Split);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
         if(Main.COPY_CONSOLE) tools8Debug.getItems().add(tools8Debug1OpenConsole);
@@ -272,24 +276,19 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             new ExportWindow(MainWindow.filesTab.files.getItems());
             
         });
-        file9Exit.setOnAction((e) -> {
-            MainWindow.requestCloseApp();
-        });
+        file9Exit.setOnAction(e -> MainWindow.requestCloseApp());
         
         ////////// TOOLS //////////
         
-        tools1Convert.setOnAction(e -> {
-            new ConvertDocument();
-        });
+        tools1Convert.setOnAction(e -> new ConvertDocument());
         
         tools3AddPages.setOnShowing(e -> {
             tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.totalPages, true, isSystemMenuBarSupported()));
             NodeMenuItem.setupMenu(tools3AddPages);
         });
     
-        tools4PdfTools1Booklet.setOnAction(e -> {
-            new BookletWindow();
-        });
+        tools4PdfTools1Booklet.setOnAction(e -> new BookletWindow());
+        tools4PdfTools2Split.setOnAction(e -> new SplitWindow());
         
         tools5DeleteAllEdits.setOnAction((ActionEvent e) -> {
             CustomAlert dialog = new CustomAlert(Alert.AlertType.WARNING, TR.tr("dialog.deleteEdits.confirmation.title"), TR.tr("dialog.deleteEdits.confirmation.header"));
