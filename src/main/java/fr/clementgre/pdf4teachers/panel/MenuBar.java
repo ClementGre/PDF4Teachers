@@ -118,9 +118,10 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     
     private final MenuItem tools4PdfTools1Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
             TR.tr("bookletWindow.description"));
-    
     private final MenuItem tools4PdfTools2Split = createMenuItem(TR.tr("splitPdfWindow.title"), SVGPathIcons.CUT, null,
             TR.tr("splitPdfWindow.description"));
+    private final MenuItem tools4PdfTools3SplitSelection = createMenuItem(TR.tr("splitPdfWindow.selection.title"), SVGPathIcons.CUT, null,
+            TR.tr("splitPdfWindow.selection.description"));
     
     private final MenuItem tools5DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
             TR.tr("menuBar.tools.deleteAllEdits.tooltip"));
@@ -206,7 +207,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         ////////// TOOLS //////////
         
         tools3AddPages.getItems().add(new MenuItem(""));
-        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2Split);
+        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2Split, tools4PdfTools3SplitSelection);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
         if(Main.COPY_CONSOLE) tools8Debug.getItems().add(tools8Debug1OpenConsole);
@@ -288,7 +289,12 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
     
         tools4PdfTools1Booklet.setOnAction(e -> new BookletWindow());
-        tools4PdfTools2Split.setOnAction(e -> new SplitWindow());
+        tools4PdfTools2Split.setOnAction(e -> new SplitWindow(false));
+        tools4PdfTools3SplitSelection.setOnAction(e -> {
+            if(MainWindow.mainScreen.document.getSelectedPages().size() == 0 || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.totalPages){
+                new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
+            }else new SplitWindow(true);
+        });
         
         tools5DeleteAllEdits.setOnAction((ActionEvent e) -> {
             CustomAlert dialog = new CustomAlert(Alert.AlertType.WARNING, TR.tr("dialog.deleteEdits.confirmation.title"), TR.tr("dialog.deleteEdits.confirmation.header"));

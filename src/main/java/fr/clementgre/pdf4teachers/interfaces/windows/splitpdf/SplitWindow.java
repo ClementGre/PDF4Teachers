@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -31,7 +32,7 @@ import java.util.regex.Pattern;
 
 public class SplitWindow extends AlternativeWindow<VBox> {
     
-    private final HBox outputPath = new DirSelector();
+    private final DirSelector outputPath = new DirSelector();
     private final TextArea names = new TextArea();
     
     private final ColorPicker colorPicker = new ColorPicker(MainWindow.userData.splitPdfMatchColor);
@@ -40,9 +41,11 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     private final Button ok = new Button(TR.tr("actions.generate"));
     
     private final SplitEngine engine = new SplitEngine(this);
+    public final boolean selection;
     
-    public SplitWindow(){
-        super(new VBox(), StageWidth.LARGE, TR.tr("splitPdfWindow.title"), TR.tr("splitPdfWindow.title"), TR.tr("splitPdfWindow.description"));
+    public SplitWindow(boolean selection){
+        super(new VBox(), StageWidth.LARGE, TR.tr("splitPdfWindow." + (selection ? "selection." : "") + "title"), TR.tr("splitPdfWindow." + (selection ? "selection." : "") + "title"), TR.tr("splitPdfWindow." + (selection ? "selection." : "") + "description"));
+        this.selection = selection;
     }
     @Override
     public void setupSubClass(){
@@ -65,27 +68,32 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             if(selected != null) loadNames(selected);
         });
         
-        HBox signalPage = new HBox();
-        HBox.setMargin(colorPicker, new Insets(0, 10, 0, 0));
-        slider.setMaxWidth(100);
-        signalPage.getChildren().addAll(new Label(TR.tr("string.color")), colorPicker, new Label(TR.tr("string.sensibility")), slider);
-        signalPage.setSpacing(10);
-        signalPage.setAlignment(Pos.CENTER_LEFT);
-        PaneUtils.setVBoxPosition(signalPage, 0, 30, 2.5, 0);
-        colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateStatus();
-            MainWindow.userData.splitPdfMatchColor = newValue;
-        });
-        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            updateStatus();
-            MainWindow.userData.splitSensibility = newValue.intValue();
-        });
-        
         
         root.setSpacing(5);
-        root.getChildren().addAll(generateInfo(TR.tr("file.destinationFolder"), false), outputPath, generateInfo(TR.tr("splitPdfWindow.filesNames"), true), namesBox, generateInfo(TR.tr("splitPdfWindow.signalPage"), true), signalPage);
-        
-        
+        root.getChildren().addAll(generateInfo(TR.tr("file.destinationFolder"), false), outputPath, generateInfo(TR.tr("splitPdfWindow.filesNames"), true), namesBox);
+        if(!selection){
+            
+            HBox signalPage = new HBox();
+            HBox.setMargin(colorPicker, new Insets(0, 10, 0, 0));
+            slider.setMaxWidth(100);
+            signalPage.getChildren().addAll(new Label(TR.tr("string.color")), colorPicker, new Label(TR.tr("string.sensibility")), slider);
+            signalPage.setSpacing(10);
+            signalPage.setAlignment(Pos.CENTER_LEFT);
+            PaneUtils.setVBoxPosition(signalPage, 0, 30, 2.5, 0);
+            colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateStatus();
+                MainWindow.userData.splitPdfMatchColor = newValue;
+            });
+            slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+                updateStatus();
+                MainWindow.userData.splitSensibility = newValue.intValue();
+            });
+    
+            Label info = new Label(TR.tr("splitPdfWindow.signalPage.info"));
+            PaneUtils.setVBoxPosition(info, 0, 0, new Insets(7.5, 2.5, 2.5, 2.5));
+            
+            root.getChildren().addAll(generateInfo(TR.tr("splitPdfWindow.signalPage"), true), signalPage, info);
+        }
         
         Button cancel = new Button(TR.tr("actions.cancel"));
         cancel.setOnAction(event -> close());
@@ -95,20 +103,16 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         
         ok.setOnAction((e) -> {
             if(MainWindow.mainScreen.hasDocument(true) && MainWindow.mainScreen.document.save(false) && Edition.isSave()){
-                /*try{
-                    UndoEngine.lock();
+                try{
                     engine.process();
-                    close();
                 }catch(IOException ex){
                     new ErrorAlert(null, ex.getMessage(), false).showAndWait();
                     ex.printStackTrace();
-                }finally{
-                    Platform.runLater(UndoEngine::unlock);
-                }*/
+                }
             }
         });
     
-        engine.updateDetectedPages(this::updateStatus);
+        if(!selection) engine.updateDetectedPages(this::updateStatus);
     }
     @Override
     public void afterShown(){
@@ -160,6 +164,9 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     public int getNamesCount(){
         return StringUtils.cleanArray(names.getText().split(Pattern.quote("\n"))).length;
     }
+    public String[] getNames(){
+        return StringUtils.cleanArray(names.getText().split(Pattern.quote("\n")));
+    }
     public Color getColor(){
         return colorPicker.getValue();
     }
@@ -170,4 +177,8 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     public ObservableList<Color> getCustomColors(){
         return colorPicker.getCustomColors();
     }
+    public File getOutputDir(){
+        return outputPath.getFile();
+    }
+    
 }

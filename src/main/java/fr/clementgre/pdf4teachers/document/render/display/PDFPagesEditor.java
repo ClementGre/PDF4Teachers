@@ -47,6 +47,8 @@ import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.multipdf.PageExtractor;
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
@@ -417,6 +419,29 @@ public class PDFPagesEditor {
         // add pages
         for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         edited = true;
+    }
+    
+    public PDDocument extractPages(List<Integer> indices) throws IOException{
+        Splitter splitter = new Splitter();
+        
+        PDDocument output = null;
+        List<PDDocument> documents = splitter.split(document);
+    
+        PDFMergerUtility merger = new PDFMergerUtility();
+    
+        
+        for(int index : indices){
+            if(output == null) output = documents.get(index);
+            else{
+                merger.appendDocument(output, documents.get(index));
+                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+                documents.get(index).close();
+            }
+        }
+        return output;
+    }
+    public PDDocument extractPages(int startIndex, int endIndex) throws IOException{
+        return new PageExtractor(document, startIndex+1, endIndex+1).extract();
     }
     
     // OTHER
