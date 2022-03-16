@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -115,6 +115,20 @@ public class Settings {
     
     @SettingsGroup(title = "settings.group.textElements")
     public Setting<?>[] textElements = {defaultTextMode, defaultMaxWidth};
+    
+    
+    @SettingObject
+    public IntSetting drawingMaxDistance = new IntSetting(-1, true, 0, 70, 10, true, true, SVGPathIcons.RULE, "drawingMaxDistance",
+            "settings.drawingMaxDistance", "settings.drawingSplitting.tooltip");
+    @SettingObject
+    public DoubleSetting drawingMaxTime = new DoubleSetting(-1d, true, 1, 60, 5, true, false, SVGPathIcons.CLOCK, "drawingMaxTime",
+            "settings.drawingMaxTime", "settings.drawingSplitting.tooltip");
+    @SettingObject
+    public DoubleSetting drawingMaxLength = new DoubleSetting(-1d, true, 1000, 100000, 10000, true, false, SVGPathIcons.PENCIL, "drawingMaxLength",
+            "settings.drawingMaxLength", "settings.drawingSplitting.tooltip");
+    
+    @SettingsGroup(title = "settings.group.freeformDrawing")
+    public Setting<?>[] freeformDrawing = {drawingMaxDistance, drawingMaxTime, drawingMaxLength};
     
     
     @SettingObject

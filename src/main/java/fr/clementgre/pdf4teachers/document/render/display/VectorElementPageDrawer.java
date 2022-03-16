@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -29,12 +29,18 @@ public class VectorElementPageDrawer extends Pane{
     private VectorElement vector;
     private final SVGPath svgPath = new SVGPath();
     
+    private long lastClickTime = 0;
+    // When dynamically creating a new element to split drawing into different drawings,
+    // this var should be true to not reset the vars when re-entering in draw mode.
+    private boolean doSwitchElementMode = false;
+    
     public VectorElementPageDrawer(PageRenderer page){
         this.page = page;
         setup();
         updateVisibility();
     }
     
+    // Last coordinate of click AND release
     private double lastClickX = 0;
     private double lastClickY = 0;
     // Last coordinate of the mouse (onMove and not drag), of the last action or of the last initialized segment (initSegment())
@@ -96,6 +102,9 @@ public class VectorElementPageDrawer extends Pane{
                 if((lastX != e.getX() && lastY != e.getY()) || hasToMove)
                     appendPoint(e.getX(), e.getY(), true);
             }
+            lastClickTime = System.currentTimeMillis();
+            lastClickX = e.getX();
+            lastClickY = e.getY();
         });
         setOnMouseDragged((e) -> {
             if(vector == null || MainWindow.mainScreen.isIsGridMode()) return;
@@ -172,11 +181,32 @@ public class VectorElementPageDrawer extends Pane{
     
     private void initSegment(double x, double y){
         requestFocus();
+    
+        if(doSplitElement(x, y)){ // Create new element
+            System.out.println("---> Split element");
+            quitEditMode();
+            doSwitchElementMode = true;
+            MainWindow.paintTab.newVectorDrawing(false);
+        }
+    
         hasToMove = true;
         lastClickX = lastX = x;
         lastClickY = lastY = y;
         lastLineMode = isPerpendicularLineMode();
     }
+    private boolean doSplitElement(double x, double y){
+        if(Main.settings.drawingMaxTime.getValue() != -1){
+            if(System.currentTimeMillis() - lastClickTime > Main.settings.drawingMaxTime.getValue()*1000) return true;
+        }
+        if(Main.settings.drawingMaxDistance.getValue() != -1){
+            if(Math.sqrt(Math.pow(lastClickX - x, 2) + Math.pow(lastClickY - y, 2)) > Main.settings.drawingMaxDistance.getValue()/100d * PageRenderer.PAGE_WIDTH && !hasToMove) return true;
+        }
+        if(Main.settings.drawingMaxLength.getValue() != -1){
+            return vector.getPath().length() > Main.settings.drawingMaxLength.getValue();
+        }
+        return false;
+    }
+    
     private void appendPoint(double x, double y, boolean force){
         if(hasToMove){
             moveTo(lastX, lastY);
@@ -220,12 +250,17 @@ public class VectorElementPageDrawer extends Pane{
         
         getChildren().setAll(svgPath);
         
-        lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        if(!doSwitchElementMode) lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
         hasToMove = true; // Anyway, we will need to move. This can also prevent some bugs where the first move is missing.
-        spaceDown = false;
+        if(!doSwitchElementMode) spaceDown = false;
         lastLineMode = isPerpendicularLineMode();
+        
+        lastClickTime = Long.MAX_VALUE;
+        doSwitchElementMode = false;
     }
     public void quitEditMode(){
+        lastClickTime = Long.MAX_VALUE;
+        
         getChildren().clear();
         page.getChildren().remove(this);
         

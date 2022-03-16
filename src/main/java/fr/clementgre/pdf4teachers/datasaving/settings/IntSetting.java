@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
 import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
-import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.interfaces.StringToIntConverter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.Label;
+import javafx.scene.control.OverrunStyle;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.layout.HBox;
@@ -53,13 +53,16 @@ public class IntSetting extends Setting<Integer> {
             slider.setMinorTickCount(0);
             slider.setMajorTickUnit(step);
             
-            slider.setPrefWidth(80);
-            slider.setMinWidth(80);
+            slider.setPrefWidth(90);
+            slider.setMinWidth(90);
             root.getChildren().add(slider);
             
-            Label valueDisplay = new Label(getValueOrEmpty());
-            valueDisplay.textProperty().bind(Bindings.createStringBinding(this::getValueOrEmpty, valueProperty()));
-            if(disableInMinus1) valueDisplay.visibleProperty().bind(valueProperty().isNotEqualTo(-1));
+            Label valueDisplay = new Label(getValueOrStep()+"");
+            valueDisplay.setMinWidth(25);
+            valueDisplay.setStyle("-fx-wrap-text: false;");
+            valueDisplay.setTextOverrun(OverrunStyle.CLIP);
+            valueDisplay.textProperty().bind(Bindings.createStringBinding(() -> getValueOrStep()+"", valueProperty()));
+            if(disableInMinus1) valueDisplay.disableProperty().bind(valueProperty().isEqualTo(-1));
             root.getChildren().setAll(valueDisplay, slider);
         }else{
             spinner = new Spinner<>(min, max, getValueOrStep());
@@ -70,22 +73,26 @@ public class IntSetting extends Setting<Integer> {
             spinner.getValueFactory().setConverter(new StringToIntConverter(getValueOrStep()));
             ((SpinnerValueFactory.IntegerSpinnerValueFactory) spinner.getValueFactory()).setAmountToStepBy(step);
             
-            spinner.setMinWidth(80);
-            spinner.setPrefWidth(80);
+            spinner.setMinWidth(90);
+            spinner.setPrefWidth(90);
             root.getChildren().setAll(spinner);
         }
         
         if(disableInMinus1){
             toggle = new ToggleSwitch();
             toggle.setSelected(getValue() != -1);
-            ChangeListener<Boolean> listener = (observable, oldValue, newValue) -> {
-                if(!newValue) setValue(-1);
+            ChangeListener<Boolean> selectedListener = (observable, oldValue, newValue) -> {
+                setValue(-1);
+                if(newValue){
+                    if(slider != null) setValue((int) slider.getValue());
+                    else if(spinner != null) setValue(spinner.getValue());
+                }
                 
                 if(slider != null) slider.setDisable(!newValue);
                 else if(spinner != null) spinner.setDisable(!newValue);
             };
-            listener.changed(null, getValue() == -1, getValue() != -1);
-            toggle.selectedProperty().addListener(listener);
+            selectedListener.changed(null, getValue() == -1, getValue() != -1);
+            toggle.selectedProperty().addListener(selectedListener);
             
             root.getChildren().add(toggle);
         }
@@ -94,12 +101,11 @@ public class IntSetting extends Setting<Integer> {
     }
     
     public int getValueOrStep(){
-        if(getValue() == -1 && disableInMinus1) return step;
-        else return getValue();
-    }
-    public String getValueOrEmpty(){
-        if(getValue() == -1 && disableInMinus1) return "";
-        else return MainWindow.fourDigFormat.format(getValue());
+        if(getValue() == -1 && disableInMinus1){
+            if(slider != null && slider.getValue() != -1) return (int) slider.getValue(); // For slider, return selected value even when disabled
+            return step;
+        }
+        return getValue();
     }
     
     public IntegerProperty valueProperty(){
