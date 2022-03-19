@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -35,8 +35,22 @@ public class DefaultFavoriteVectors {
     private static final VectorData SQUARE = new VectorData(30000, 30000, GraphicElement.RepeatMode.KEEP_RATIO, GraphicElement.ResizeMode.CORNERS,
             false, CYAN_TRANSPARENT, Color.DARKRED, 3, "M0 0 L1 0 L1 1 L0 1 L0 0 z", false, false, 0, 0, 0);
     
-    private static final VectorData WAVES = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
+    private static final VectorData WAVES_ROUGH = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
             false, CYAN_TRANSPARENT, Color.DARKRED, 1, "M0 1 L1 0 L2 1 M0 -7", false, false, 0, 0, 0);
+    
+    public static final VectorData DOTS = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
+            false, CYAN_TRANSPARENT, Color.DARKRED, 2, "M0 1 L0 1 M2 -7", false, false, 0, 0, 0);
+    
+    public static final VectorData UNDERLINE_SMALL_LINES = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
+            false, CYAN_TRANSPARENT, Color.DARKRED, 1, "M0 1 L1 1 M2 -7", false, false, 0, 0, 0);
+    
+    public static final VectorData UNDERLINE_LONG_LINES = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
+            false, CYAN_TRANSPARENT, Color.DARKRED, 1, "M0 1 L5 1 M7 -7", false, false, 0, 0, 0);
+    
+    public static final VectorData WAVES = new VectorData(50000, 5000, GraphicElement.RepeatMode.MULTIPLY, GraphicElement.ResizeMode.SIDE_EDGES,
+            false, CYAN_TRANSPARENT, Color.DARKRED, 1, "M 0 20 Q20 0, 40 20 Q60 40, 80 20 M80 -100", false, false, 0, 0, 0);
+    
+    
     
     private static final VectorData HIGHLIGHTER = new VectorData(50000, 5000, GraphicElement.RepeatMode.STRETCH, GraphicElement.ResizeMode.SIDE_EDGES,
             true, YELLOW_TRANSPARENT, Color.DARKRED, 0, "M0 0 L1 0 1 1 0 1 z", false, false, 0, 0, 0);

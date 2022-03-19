@@ -151,7 +151,9 @@ public class PageRenderer extends Pane {
                 MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, this, getPage()));
                 hasDragged = true;
             }else if(e.getButton() != MouseButton.SECONDARY){
-                setCursor(Cursor.CLOSED_HAND);
+                if(placingElement == null){
+                    setCursor(Cursor.CLOSED_HAND);
+                }
             }
         });
         setOnMouseDragged(e -> {
@@ -198,6 +200,7 @@ public class PageRenderer extends Pane {
         //////////////////////////////////////////////////////////////////////////////////////////
         
         setOnDragEntered(e -> {
+            MainWindow.mainScreen.document.setCurrentPage(getPage());
             final Dragboard dragboard = e.getDragboard();
             if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Drag TextElement
                 if(TextTab.draggingItem != null){

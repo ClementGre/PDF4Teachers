@@ -363,7 +363,6 @@ public class MainScreen extends Pane {
         });
         
         setOnMouseDragged(e -> {
-            
             // GrabNScroll
             if(!(((Node) e.getTarget()).getParent() instanceof Element && e.getButton() != MouseButton.MIDDLE) && !(e.getTarget() instanceof Element && e.getButton() != MouseButton.MIDDLE) // Not an element
                     && !(e.getTarget() instanceof PageZoneSelector) && !(e.getTarget() instanceof VectorElementPageDrawer && e.getButton() != MouseButton.MIDDLE) // Not a page filter
