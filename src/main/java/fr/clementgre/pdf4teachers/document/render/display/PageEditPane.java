@@ -128,7 +128,7 @@ public class PageEditPane extends VBox {
         
         if(MainWindow.mainScreen.document.totalPages != 1){
             
-            boolean selectionCapture = MainWindow.mainScreen.isIsGridMode() && MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getSelectedPages().size() > 1;
+            boolean selectionCapture = MainWindow.mainScreen.isEditPagesMode() && MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getSelectedPages().size() > 1;
             
             MenuItem captureDocument = getMenuItem(selectionCapture ? TR.tr("document.pageActions.capture.selectedPages") : TR.tr("document.pageActions.capture.allDocument"), vanillaMenu);
             menus.add(captureDocument);

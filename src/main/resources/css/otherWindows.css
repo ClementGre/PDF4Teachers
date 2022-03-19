@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -10,6 +10,10 @@
  ******************************************************************************/
 .aboutPane {
     -fx-padding: 10;
+}
+
+.aboutScrollPane{
+    -fx-fit-to-width: true;
 }
 
 .aboutPane * {

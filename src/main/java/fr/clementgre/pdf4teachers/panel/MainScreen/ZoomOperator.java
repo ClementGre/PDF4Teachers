@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -127,7 +127,7 @@ public class ZoomOperator {
         // Modifie translateY lorsque la valeur de la scrollBar est modifié.
         vScrollBar.valueProperty().addListener((observable) -> {
             // Update lastVScrollValue
-            if(!MainWindow.mainScreen.isIsGridMode()){
+            if(!MainWindow.mainScreen.isEditPagesMode()){
                 lastVScrollValue = vScrollBar.getValue();
             }
             
@@ -318,19 +318,24 @@ public class ZoomOperator {
         
     }
     
-    public void fitWidth(boolean removeTransition){
-        
+    public void fitWidth(boolean removeTransition, boolean forceMultiPages){
         double pageWidth = PageRenderer.PAGE_WIDTH + 2 * PageRenderer.getPageMargin();
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
-    
-        double targetScale = (availableWidth / pageWidth);
+        double targetScale;
+        
+        if(MainWindow.mainScreen.isGridView() && availableWidth > 1300 || forceMultiPages){
+            int pages = Math.max(2, (int) ((availableWidth-PageRenderer.getPageMargin()) / (1.1*PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin())));
+            targetScale = (availableWidth-PageRenderer.getPageMargin()) / (pages*(PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin()));
+            
+        }else targetScale = (availableWidth / pageWidth);
+        
         zoom(targetScale, removeTransition);
     }
     public void overviewWidth(boolean removeTransition){
         double lastVScrollValue = vScrollBar.getValue();
         zoom(.405, removeTransition);
     
-        // Re set the scroll value to the original before the zoom animation
+        // Reset the scroll value to the original before the zoom animation
         PlatformUtils.runLaterOnUIThread(500, () ->  {
             this.lastVScrollValue = lastVScrollValue;
         });
@@ -460,7 +465,7 @@ public class ZoomOperator {
         return pane.getScaleX();
     }
     public double getAimScale(){
-        return aimScale;
+        return aimScale == 0 ? pane.getScaleX() : aimScale;
     }
     public void setPaneX(double x){
         pane.setTranslateX(x);

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.components.SliderWithoutPopup;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
+import fr.clementgre.pdf4teachers.panel.MainScreen.ZoomOperator;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -38,14 +39,13 @@ public class FooterBar extends StackPane {
     private final HBox root = new HBox();
     
     private final HBox zoom = new HBox();
-    private final Label zoomInfo = new Label();
     private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 20, 10);
     private final Label zoomPercent = new Label();
     private final ColorAdjust lightGrayColorAdjust = new ColorAdjust();
-    private final ToggleGroup zoomGroup = new ToggleGroup();
-    private final ToggleButton maxWidth = new ToggleButton(TR.tr("footerBar.maxWidth"), SVGPathIcons.generateImage(SVGPathIcons.FULL_SCREEN, "white", 0, 14, 14, lightGrayColorAdjust));
-    private final ToggleButton gridView = new ToggleButton(TR.tr("footerBar.gridView"), SVGPathIcons.generateImage(SVGPathIcons.SMALL_SCREEN, "white", 0, 14, 14, lightGrayColorAdjust));
-    
+    private final ToggleGroup viewGroup = new ToggleGroup();
+    private final ToggleButton columnView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.SINGLE_PAGE, "white", 0, 25, 14, lightGrayColorAdjust));
+    private final ToggleButton gridView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.MULTI_PAGE, "white", 0, 25, 14, lightGrayColorAdjust));
+    private final ToggleButton editPagesMode = new ToggleButton(TR.tr("footerBar.editPages"));
     
     private final Label statsElements = new Label();
     private final Label statsTexts = new Label();
@@ -69,16 +69,14 @@ public class FooterBar extends StackPane {
     public void setup(){
         
         // ZOOM INFO
-        zoomInfo.setText(TR.tr("footerBar.zoom"));
+        zoomController.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.zoom")));
+        zoomPercent.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.zoom")));
         zoom.setAlignment(Pos.CENTER_LEFT);
         zoomPercent.setMinWidth(40);
         zoom.setSpacing(5);
         
         zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.doubleValue() < .41) zoomGroup.selectToggle(gridView);
-            else zoomGroup.selectToggle(maxWidth);
-            
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
                 double scale = newValue.doubleValue();
@@ -105,20 +103,37 @@ public class FooterBar extends StackPane {
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
-
-        maxWidth.setToggleGroup(zoomGroup);
-        gridView.setToggleGroup(zoomGroup);
-        PaneUtils.setHBoxPosition(maxWidth, -1, 21, new Insets(-1, 0, 1, 10));
-        PaneUtils.setHBoxPosition(gridView, -1, 21, new Insets(-1, 5, 1, -5));
-        maxWidth.setOnAction(e -> MainWindow.mainScreen.zoomOperator.fitWidth(false));
-        gridView.setOnAction(e -> MainWindow.mainScreen.zoomOperator.overviewWidth(false));
     
-        zoomGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getZoomFactor() < .41) zoomGroup.selectToggle(gridView);
-            else zoomGroup.selectToggle(maxWidth);
+        columnView.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.columnView")));
+        gridView.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.gridView")));
+        columnView.setToggleGroup(viewGroup);
+        gridView.setToggleGroup(viewGroup);
+        PaneUtils.setHBoxPosition(columnView, -1, 21, new Insets(-1, 0, 1, 0));
+        PaneUtils.setHBoxPosition(gridView, -1, 21, new Insets(-1, 5, 1, -5));
+        ZoomOperator zoomOperator = MainWindow.mainScreen.zoomOperator;
+        columnView.setOnAction(e -> zoomOperator.fitWidth(true, false));
+        gridView.setOnAction(e -> zoomOperator.fitWidth(false, true));
+    
+        columnView.setSelected(true);
+        
+        viewGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue == null) viewGroup.selectToggle(oldValue);
+            boolean gridView = viewGroup.getSelectedToggle() == this.gridView;
+            if(MainWindow.mainScreen.isMultiPagesMode() != gridView) MainWindow.mainScreen.setIsMultiPagesMode(gridView);
+        });
+        MainWindow.mainScreen.isMultiPagesModeProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue && viewGroup.getSelectedToggle() != this.gridView) this.gridView.setSelected(true);
+            if(!newValue && viewGroup.getSelectedToggle() != this.columnView) this.columnView.setSelected(true);
         });
         
-        zoom.getChildren().addAll(zoomInfo, zoomPercent, zoomController, maxWidth, gridView);
+        editPagesMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.editPages.tooltip")));
+        PaneUtils.setHBoxPosition(editPagesMode, -1, 21, new Insets(-1, 0, 1, 0));
+        MainWindow.mainScreen.isEditPagesModeProperty().bindBidirectional(editPagesMode.selectedProperty());
+        
+        columnView.disableProperty().bind(MainWindow.mainScreen.isEditPagesModeProperty().or(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN)));
+        gridView.disableProperty().bind(MainWindow.mainScreen.isEditPagesModeProperty().or(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN)));
+        
+        zoom.getChildren().addAll(zoomPercent, zoomController, getSpacerShape(), editPagesMode, getSpacerShape(), columnView, gridView);
         
         HBox.setHgrow(spacer, Priority.ALWAYS);
         
@@ -217,9 +232,7 @@ public class FooterBar extends StackPane {
             }
             zoomController.setDisable(false);
             zoomPercent.setDisable(false);
-            zoomInfo.setDisable(false);
-            maxWidth.setDisable(false);
-            gridView.setDisable(false);
+            editPagesMode.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
             }else
@@ -228,9 +241,7 @@ public class FooterBar extends StackPane {
         }else{
             zoomController.setDisable(true);
             zoomPercent.setDisable(true);
-            zoomInfo.setDisable(true);
-            maxWidth.setDisable(true);
-            gridView.setDisable(true);
+            editPagesMode.setDisable(true);
             if(hard){
                 root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
             }

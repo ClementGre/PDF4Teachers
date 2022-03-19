@@ -283,7 +283,7 @@ public class Document {
     public void updateSelectedPages(){
         
         for(PageRenderer page : pages){
-            if(MainWindow.mainScreen.isIsGridMode() && selectedPages.contains(page.getPage())) page.setEffect(MainWindow.mainScreen.selectedShadow);
+            if(MainWindow.mainScreen.isEditPagesMode() && selectedPages.contains(page.getPage())) page.setEffect(MainWindow.mainScreen.selectedShadow);
             else page.setEffect(MainWindow.mainScreen.notSelectedShadow);
         }
     }
@@ -326,13 +326,25 @@ public class Document {
     }
     
     public PageRenderer getPreciseMouseCurrentPage(){
+        PageRenderer match = null;
         for(PageRenderer page : pages){
-            double bottomY = page.getBottomY();
-            if(MainWindow.mainScreen.mouseY < bottomY){
-                return page;
+            if(MainWindow.mainScreen.mouseY < page.getBottomY()){
+                match = page; break;
+            }else match = page;
+        }
+        
+        if(MainWindow.mainScreen.isGridView() && match != null){
+            // Detected page is the first one of the row.
+            // Check pages horizontally.
+            for(int i = match.getPage(); i < Math.min(match.getPage()+MainWindow.mainScreen.getGridModePagesPerRow(), MainWindow.mainScreen.document.totalPages); i++){
+                PageRenderer page = MainWindow.mainScreen.document.getPage(i);
+                if(MainWindow.mainScreen.mouseX < page.getRightX()){
+                    match = page; break;
+                }else match = page;
             }
         }
-        return null;
+        
+        return match;
     }
     
     // Return null if there is no top page below the top of MainScreen

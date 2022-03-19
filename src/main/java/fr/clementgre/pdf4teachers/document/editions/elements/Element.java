@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.Clipboard;
@@ -82,7 +83,10 @@ public abstract class Element extends Region {
             
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
-                wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isIsGridMode();
+                if(e.getButton() == MouseButton.MIDDLE) setCursor(Cursor.CLOSED_HAND);
+                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
+                
+                wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
                 if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
                 dragAlreadyDetected = false;
@@ -102,7 +106,8 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseClicked(e -> {
-                if(MainWindow.mainScreen.isIsGridMode()) return;
+                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
+                if(MainWindow.mainScreen.isEditPagesMode()) return;
                 e.consume();
                 if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
                     onDoubleClick();
@@ -124,6 +129,7 @@ public abstract class Element extends Region {
                 checkLocation(itemX, itemY, true);
             });
             setOnMouseReleased(e -> {
+                setCursor(PlatformUtils.CURSOR_MOVE);
                 if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 Edition.setUnsave("ElementMouseRelease");
                 
@@ -138,6 +144,7 @@ public abstract class Element extends Region {
                         MainWindow.mainScreen.setSelected(null);
                         
                         switchPage(newPage.getPage());
+                        itemX = newPage.getPreciseMouseX() - shiftX;
                         itemY = newPage.getPreciseMouseY() - shiftY;
                         checkLocation(itemX, itemY, true);
                         
@@ -215,12 +222,18 @@ public abstract class Element extends Region {
     }
     public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
         
-        if(getPageNumber() == 0 || !allowSwitchPage) if(itemY < 0) itemY = 0;
-        if(getPageNumber() == MainWindow.mainScreen.document.totalPages - 1 || !allowSwitchPage)
+        // Negative Y
+        if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage) if(itemY < 0) itemY = 0;
+        // Positive Y
+        if(getPageNumber() >= MainWindow.mainScreen.document.totalPages-MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
-        
-        if(itemX < 0) itemX = 0;
-        if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
+            
+        // Negative X
+        if(getPageNumber() % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
+            if(itemX < 0) itemX = 0;
+        // Positive X
+        if((getPageNumber() +1) % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
+            if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
         
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));

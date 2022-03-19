@@ -105,6 +105,7 @@ public abstract class GraphicElement extends Element {
         Platform.runLater(() -> checkLocation(false));
         
         setOnKeyPressed(e -> {
+            
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
                 delete(true, UType.UNDO);
                 e.consume();
@@ -120,7 +121,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseMoved(e -> {
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 setCursor(PlatformUtils.CURSOR_MOVE);
             }else{
                 setCursor(getDragCursorType(e.getX(), e.getY()));
@@ -128,7 +129,10 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMousePressed(e -> {
-            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isIsGridMode();
+            if(e.getButton() == MouseButton.MIDDLE) setCursor(Cursor.CLOSED_HAND);
+            if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
+            
+            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             
@@ -143,7 +147,9 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseClicked(e -> {
-            if(MainWindow.mainScreen.isIsGridMode()) return;
+            if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
+            
+            if(MainWindow.mainScreen.isEditPagesMode()) return;
             e.consume();
             requestFocus();
             if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
@@ -174,6 +180,7 @@ public abstract class GraphicElement extends Element {
         });
         
         setOnMouseReleased(e -> {
+            if(e.getButton() == MouseButton.MIDDLE) setCursor(getDragCursorType(e.getX(), e.getY()));
             if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
             Edition.setUnsave("GraphicElementMouseRelease");
             
@@ -188,6 +195,7 @@ public abstract class GraphicElement extends Element {
                         MainWindow.mainScreen.setSelected(null);
                         
                         switchPage(newPage.getPage());
+                        itemX = newPage.getPreciseMouseX() - shiftX;
                         itemY = newPage.getPreciseMouseY() - shiftY;
                         checkLocation(itemX, itemY, true);
                         

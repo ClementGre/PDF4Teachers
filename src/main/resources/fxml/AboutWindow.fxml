@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ Copyright (c) 2021. Clément Grennerat
+  ~ Copyright (c) 2021-2022. Clément Grennerat
   ~ All rights reserved. You must refer to the licence Apache 2.
   -->
 
@@ -10,12 +10,12 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
 <ScrollPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             hbarPolicy="NEVER"
             fx:controller="fr.clementgre.pdf4teachers.interfaces.windows.AboutWindow"
-            fx:id="scrollPane">
+            fx:id="scrollPane"
+            styleClass="aboutScrollPane">
     <VBox fx:id="root" alignment="CENTER" styleClass="aboutPane">
 
 

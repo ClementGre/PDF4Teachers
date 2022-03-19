@@ -70,12 +70,6 @@ public class PageRenderer extends Pane {
     
     private PageStatus status = PageStatus.HIDE;
     
-    public enum PageGridPosition {
-        LEFT,
-        MIDDLE,
-        RIGHT
-    }
-    
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
     private double mouseX = 0;
@@ -108,7 +102,7 @@ public class PageRenderer extends Pane {
     private final InvalidationListener translateYListener = e -> updateShowStatus();
     
     private final InvalidationListener mainScreenZoomListener = (observable) -> {
-        if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+        if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
         else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
         else setCursor(Cursor.DEFAULT);
         
@@ -153,16 +147,18 @@ public class PageRenderer extends Pane {
         //////////////////////////////////////////////////////////////////////////////////////////
         
         setOnDragDetected(e -> {
-            if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()){
+            if(MainWindow.mainScreen.isEditPagesMode() && !isPageZoneSelectorActive()){
                 MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, this, getPage()));
                 hasDragged = true;
+            }else if(e.getButton() != MouseButton.SECONDARY){
+                setCursor(Cursor.CLOSED_HAND);
             }
         });
         setOnMouseDragged(e -> {
             mouseX = e.getX();
             mouseY = e.getY();
             
-            if(MainWindow.mainScreen.isIsGridMode() && !isPageZoneSelectorActive()){
+            if(MainWindow.mainScreen.isEditPagesMode() && !isPageZoneSelectorActive()){
                 // Select if not selected
                 if(!MainWindow.mainScreen.document.isPageSelected(this)) MainWindow.mainScreen.document.selectPage(getPage());
                 
@@ -192,6 +188,7 @@ public class PageRenderer extends Pane {
                     e.consume();
                     placingElement.simulateDragToResize(e.getX() - placingElement.getLayoutX(), e.getY() - placingElement.getLayoutY(), e.isShiftDown());
                 }
+                if(e.getButton() == MouseButton.SECONDARY) e.consume(); // document dragToScroll not allowed with secondary click
             }
             
         });
@@ -334,7 +331,7 @@ public class PageRenderer extends Pane {
         setOnMouseEntered(e -> {
             MainWindow.mainScreen.document.setCurrentPage(page);
             
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 setCursor(PlatformUtils.CURSOR_MOVE);
                 
                 if(pageGridEditPane == null) pageGridEditPane = new PageGridEditPane(this);
@@ -345,6 +342,13 @@ public class PageRenderer extends Pane {
                 
                 if(pageEditPane == null) pageEditPane = new PageEditPane(this);
                 else pageEditPane.setVisible(true);
+    
+                // Switch element drawing page
+                if(MainWindow.mainScreen.getSelected() instanceof VectorElement oldElement){
+                    if(oldElement.getPageNumber() != getPage() && oldElement.isEditMode()){
+                        MainWindow.paintTab.newVectorDrawing(false);
+                    }
+                }
             }
             
         });
@@ -355,7 +359,7 @@ public class PageRenderer extends Pane {
             mouseX = e.getX();
             mouseY = e.getY();
     
-            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
             else setCursor(Cursor.DEFAULT);
         });
@@ -377,7 +381,7 @@ public class PageRenderer extends Pane {
             menu.hide();
             menu.getItems().clear();
     
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 setupPageDragVars(e, true);
     
                 if(e.getButton() == MouseButton.SECONDARY){
@@ -416,9 +420,8 @@ public class PageRenderer extends Pane {
             }else{
                 if(e.getButton() == MouseButton.SECONDARY) showContextMenu(e.getY(), e.getScreenX(), e.getScreenY());
                 else{
-                    setCursor(Cursor.CLOSED_HAND);
                     
-                    if(e.getClickCount() == 2 && !MainWindow.mainScreen.isIsGridMode()){
+                    if(e.getClickCount() == 2 && !MainWindow.mainScreen.isEditPagesMode()){
                         e.consume();
                         SideBar.selectTab(MainWindow.textTab);
                         MainWindow.textTab.newBtn.fire();
@@ -434,11 +437,11 @@ public class PageRenderer extends Pane {
             }
         });
         setOnMouseReleased(e -> {
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 resetPageDragPosition(true);
             }
             
-            if(placingElement != null && !MainWindow.mainScreen.isIsGridMode()){
+            if(placingElement != null && !MainWindow.mainScreen.isEditPagesMode()){
                 e.consume();
                 if(placingElement.getWidth() < 10 && placingElement.getHeight() < 10
                         || (placingElement.getWidth() < 10 && placingElement.getResizeMode() == GraphicElement.ResizeMode.SIDE_EDGES)){
@@ -449,11 +452,11 @@ public class PageRenderer extends Pane {
                 }
                 placingElement = null;
             }
-            if(MainWindow.mainScreen.isIsGridMode()) setCursor(PlatformUtils.CURSOR_MOVE);
+            if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else setCursor(Cursor.DEFAULT);
         });
         setOnMouseClicked(e -> {
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isEditPagesMode()){
                 e.consume();
                 
                 if(!hasDragged && e.getButton() == MouseButton.PRIMARY){
@@ -543,11 +546,11 @@ public class PageRenderer extends Pane {
         
         if(mainPage){
             double translateX = getTranslateX() + x;
-            translateX = StringUtils.clamp(translateX, PAGE_MARGIN_GRID, MainWindow.mainScreen.pane.getWidth() - PAGE_MARGIN_GRID - PAGE_WIDTH);
+            translateX = StringUtils.clamp(translateX, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getWidth() - PageRenderer.getPageMargin() - PAGE_WIDTH);
             setTranslateX(translateX);
     
             double translateY = getTranslateY() + y;
-            translateY = StringUtils.clamp(translateY, PAGE_MARGIN_GRID, MainWindow.mainScreen.pane.getHeight() - PAGE_MARGIN_GRID - getHeight());
+            translateY = StringUtils.clamp(translateY, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getHeight() - PageRenderer.getPageMargin() - getHeight());
             setTranslateY(translateY);
             
             if(MainWindow.mainScreen.hasDocument(false)){
@@ -677,14 +680,14 @@ public class PageRenderer extends Pane {
         if(animated) animateTranslateY(totalHeight);
         else setTranslateY(totalHeight);
     
-        if(MainWindow.mainScreen.isIsGridMode()){
+        if(MainWindow.mainScreen.isGridView()){
             
             if(totalWidth <= 0){
-                totalWidth = PAGE_MARGIN_GRID;
+                totalWidth = PageRenderer.getPageMargin();
                 
                 // PageGridSeparator for before page is shown only if it is the first page of the row
-                if(pageGridSeparatorBefore == null) pageGridSeparatorBefore = new PageGridSeparator(this, true);
-            }else if(pageGridSeparatorBefore != null){
+                if(MainWindow.mainScreen.isEditPagesMode() && pageGridSeparatorBefore == null) pageGridSeparatorBefore = new PageGridSeparator(this, true);
+            }else if(MainWindow.mainScreen.isEditPagesMode() && pageGridSeparatorBefore != null){
                 pageGridSeparatorBefore.remove();
                 pageGridSeparatorBefore = null;
             }
@@ -693,30 +696,30 @@ public class PageRenderer extends Pane {
             
             if(animated) animateTranslateX(totalWidth);
             else setTranslateX(totalWidth);
-            totalWidth += PAGE_WIDTH + PAGE_MARGIN_GRID;
+            totalWidth += PAGE_WIDTH + PageRenderer.getPageMargin();
             
             // Update maxHeight & maxWidth
-            if(getHeight() + PAGE_MARGIN_GRID > maxHeight) maxHeight = (int) (getHeight() + PAGE_MARGIN_GRID);
+            if(getHeight() + PageRenderer.getPageMargin() > maxHeight) maxHeight = (int) (getHeight() + PageRenderer.getPageMargin());
             if(totalWidth > maxWidth) maxWidth = totalWidth;
             
             // PageGridNumber
-            if(pageGridNumber == null) pageGridNumber = new PageGridNumber(this);
-            if(pageGridSeparator == null) pageGridSeparator = new PageGridSeparator(this, false);
+            if(MainWindow.mainScreen.isEditPagesMode() && pageGridNumber == null) pageGridNumber = new PageGridNumber(this);
+            if(MainWindow.mainScreen.isEditPagesMode() && pageGridSeparator == null) pageGridSeparator = new PageGridSeparator(this, false);
             
         }else{
-            if(getTranslateX() != PAGE_MARGIN){ // Reset translateX
-                if(animated) animateTranslateX(PAGE_MARGIN);
-                else setTranslateX(PAGE_MARGIN);
+            if(getTranslateX() != PageRenderer.getPageMargin()){ // Reset translateX
+                if(animated) animateTranslateX(PageRenderer.getPageMargin());
+                else setTranslateX(PageRenderer.getPageMargin());
             }
-            totalHeight += (int) (getHeight() + PAGE_MARGIN);
-    
-            removeGridModePanes();
+            totalHeight += (int) (getHeight() + PageRenderer.getPageMargin());
         }
+    
+        if(!MainWindow.mainScreen.isEditPagesMode()) removeEditPagesPanes();
     
         defaultTranslateY = totalHeight;
         
         if(MainWindow.mainScreen.document.totalPages > page + 1){
-            if(MainWindow.mainScreen.isIsGridMode()){
+            if(MainWindow.mainScreen.isGridView()){
                 if(rowCount+1 >= MainWindow.mainScreen.getGridModePagesPerRow()){ // Wrap
                     totalHeight += maxHeight;
                     MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, 0, 0, maxWidth, 0, animated);
@@ -725,14 +728,14 @@ public class PageRenderer extends Pane {
                 }
             }else MainWindow.mainScreen.document.getPage(page + 1).updatePosition(totalHeight, animated);
         }else{ // Last page
-            if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.updateSize(totalHeight + maxHeight, maxWidth);
+            if(MainWindow.mainScreen.isGridView()) MainWindow.mainScreen.updateSize(totalHeight + maxHeight, maxWidth);
             else MainWindow.mainScreen.updateSize(totalHeight);
         }
         
         if(pageEditPane != null) pageEditPane.updatePosition();
         
     }
-    private void removeGridModePanes(){
+    private void removeEditPagesPanes(){
         if(pageGridEditPane != null){
             pageGridEditPane.remove();
             pageGridEditPane = null;
@@ -868,7 +871,7 @@ public class PageRenderer extends Pane {
             pageZoneSelector.delete();
             pageZoneSelector = null;
         }
-        removeGridModePanes();
+        removeEditPagesPanes();
         
         vectorElementPageDrawer = null;
         
@@ -971,11 +974,17 @@ public class PageRenderer extends Pane {
     
     // Bottom of the page coordinates in the Pane of MainScreen
     public double getBottomY(){
-        return MainWindow.mainScreen.zoomOperator.getPaneY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + 15 + getTranslateY()) * MainWindow.mainScreen.zoomOperator.getPaneScale();
+        return MainWindow.mainScreen.zoomOperator.getPaneY() - MainWindow.mainScreen.zoomOperator.getPaneShiftY() + (getHeight() + getPageMargin()/2d + getTranslateY()) * MainWindow.mainScreen.zoomOperator.getPaneScale();
+    }
+    public double getRightX(){
+        return MainWindow.mainScreen.zoomOperator.getPaneX() - MainWindow.mainScreen.zoomOperator.getPaneShiftX() + (getWidth() + getPageMargin()/2d + getTranslateX()) * MainWindow.mainScreen.zoomOperator.getPaneScale();
     }
     
     public double getPreciseMouseY(){
-        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneScale() + 15;
+        return (MainWindow.mainScreen.mouseY - (getBottomY() - getHeight() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneScale() + getPageMargin()/2d;
+    }
+    public double getPreciseMouseX(){
+        return (MainWindow.mainScreen.mouseX - (getRightX() - getWidth() * MainWindow.mainScreen.zoomOperator.getPaneScale())) / MainWindow.mainScreen.zoomOperator.getPaneScale() + getPageMargin()/2d;
     }
     
     // ELEMENTS
@@ -1149,7 +1158,7 @@ public class PageRenderer extends Pane {
     }
     
     public static int getPageMargin(){
-        if(MainWindow.mainScreen.isIsGridMode()) return PAGE_MARGIN_GRID;
+        if(MainWindow.mainScreen.isEditPagesMode()) return PAGE_MARGIN_GRID;
         else return PAGE_MARGIN;
     }
     

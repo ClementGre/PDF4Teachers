@@ -57,7 +57,6 @@ public class VectorElementPageDrawer extends Pane{
         // UI
         setBorder(new Border(new BorderStroke(Color.color(255 / 255.0, 50 / 255.0, 50 / 255.0),
                 BorderStrokeStyle.DOTTED, CornerRadii.EMPTY, new BorderWidths(1.5))));
-        setCursor(Cursor.CROSSHAIR);
         
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         svgPath.setStrokeLineJoin(StrokeLineJoin.ROUND);
@@ -84,18 +83,27 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            if(vector == null || MainWindow.mainScreen.isIsGridMode()) return;
-            if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 1){
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+    
+    
+            if(e.getButton() == MouseButton.PRIMARY){
+                if(e.getClickCount() == 1){
+                    e.consume();
+                    // Draw only one point
+                    initSegment(e.getX(), e.getY());
+                }else if(e.getClickCount() == 2){
+                    // Cancel point
+                    removeLastAction("M");
+                }
+            }else if(e.getButton() == MouseButton.SECONDARY){
+                setCursor(Cursor.DEFAULT);
+            }else if(e.getButton() == MouseButton.MIDDLE){
                 e.consume();
-                // Draw only one point
-                initSegment(e.getX(), e.getY());
-            }else if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
-                // Cancel point
-                removeLastAction("M");
+                MainWindow.mainScreen.initDragOrigin(e);
             }
         });
         setOnMouseReleased((e) -> {
-            if(vector == null || MainWindow.mainScreen.isIsGridMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             
             if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
@@ -105,15 +113,24 @@ public class VectorElementPageDrawer extends Pane{
             lastClickTime = System.currentTimeMillis();
             lastClickX = e.getX();
             lastClickY = e.getY();
+            setCursor(Cursor.CROSSHAIR);
+        });
+        setOnDragDetected(e -> {
+            if(e.getButton() == MouseButton.MIDDLE) setCursor(Cursor.CLOSED_HAND);
         });
         setOnMouseDragged((e) -> {
-            if(vector == null || MainWindow.mainScreen.isIsGridMode()) return;
-            
-            e.consume();
-            if(e.getButton() == MouseButton.PRIMARY) appendPoint(e.getX(), e.getY(), false);
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+    
+            if(e.getButton() == MouseButton.PRIMARY){
+                e.consume();
+                appendPoint(e.getX(), e.getY(), false);
+            }else if(e.getButton() == MouseButton.MIDDLE){
+                e.consume();
+                MainWindow.mainScreen.onDragForScroll(e);
+            }
         });
         setOnMouseMoved((e) -> {
-            if(vector == null || MainWindow.mainScreen.isIsGridMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
             
             if(spaceDown){
                 if(lastX == 0 && lastY == 0){
@@ -183,7 +200,6 @@ public class VectorElementPageDrawer extends Pane{
         requestFocus();
     
         if(doSplitElement(x, y)){ // Create new element
-            System.out.println("---> Split element");
             quitEditMode();
             doSwitchElementMode = true;
             MainWindow.paintTab.newVectorDrawing(false);
@@ -230,7 +246,8 @@ public class VectorElementPageDrawer extends Pane{
     
     public void enterEditMode(VectorElement vector){
         if(isEditMode()) quitEditMode();
-        
+    
+        setCursor(Cursor.CROSSHAIR);
         page.getChildren().add(this);
         toFront();
         requestFocus();

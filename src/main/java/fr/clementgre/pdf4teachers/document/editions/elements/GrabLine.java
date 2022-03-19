@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -62,7 +62,7 @@ public class GrabLine extends Region {
         /// EVENTS ///
         
         line.setOnMousePressed(e -> {
-            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isIsGridMode();
+            wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
             if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             dragAlreadyDetected = false;

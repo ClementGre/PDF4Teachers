@@ -90,7 +90,7 @@ public class KeyboardShortcuts {
                         return;
                     }else if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.KP_DOWN){
                         e.consume();
-                        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.zoomOperator.fitWidth(false);
+                        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.zoomOperator.fitWidth(false, false);
                         return;
                     }
                     
@@ -194,12 +194,12 @@ public class KeyboardShortcuts {
             }else if(e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.KP_RIGHT){
                 e.consume();
                 MainWindow.mainScreen.navigateRight();
-            }else if(MainWindow.mainScreen.isIsGridMode() && e.getCode() == KeyCode.DELETE){
+            }else if(MainWindow.mainScreen.isEditPagesMode() && e.getCode() == KeyCode.DELETE){
                 e.consume();
                 MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages();
             }
         }else{ // SHORTCUT PRESSED
-            if(MainWindow.mainScreen.isIsGridMode() && e.getCode() == KeyCode.A){
+            if(MainWindow.mainScreen.isEditPagesMode() && e.getCode() == KeyCode.A){
                 e.consume();
                 MainWindow.mainScreen.document.selectAll();
             }

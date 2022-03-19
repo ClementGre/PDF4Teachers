@@ -49,8 +49,10 @@ public class UserData {
     @UserDataObject(path = "languages")
     public HashMap<String, Object> languages = new HashMap<>();
     
-    @UserDataObject(path = "mainScreen.wasGridMode")
-    public boolean wasGridMode = false;
+    @UserDataObject(path = "mainScreen.multiPagesMode")
+    public boolean multiPagesMode = false;
+    @UserDataObject(path = "mainScreen.editPagesMode")
+    public boolean editPagesMode = false;
     
     // FILES (FilesTab)
     @UserDataObject(path = "files.lastFile")
@@ -352,7 +354,10 @@ public class UserData {
         // SINGLES
         customColors = SyncColorPicker.getCustomColorsList();
         languages = TR.getLanguagesConfig();
-        if(MainWindow.mainScreen.hasDocument(false)) wasGridMode = MainWindow.mainScreen.isIsGridMode();
+        if(MainWindow.mainScreen.hasDocument(false)){
+            multiPagesMode = MainWindow.mainScreen.isMultiPagesMode();
+            editPagesMode = MainWindow.mainScreen.isEditPagesMode();
+        }
         
         // FILES
         lastOpenedFiles = new ArrayList<>();

@@ -147,7 +147,7 @@ public class PDFPagesEditor {
         
         if(!animated){
             // If grid mode, one need to update all the pages.
-            if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.document.updatePagesPosition();
+            if(MainWindow.mainScreen.isGridView()) MainWindow.mainScreen.document.updatePagesPosition();
             else page.updatePosition(-1, true);
             
             page.updateRender();
@@ -177,7 +177,7 @@ public class PDFPagesEditor {
         timeline.stop();
         page.setRotate(0);
         // If grid mode, one need to update all the pages.
-        if(MainWindow.mainScreen.isIsGridMode()) MainWindow.mainScreen.document.updatePagesPosition();
+        if(MainWindow.mainScreen.isGridView()) MainWindow.mainScreen.document.updatePagesPosition();
         else page.updatePosition(-1, true);
     }
     
