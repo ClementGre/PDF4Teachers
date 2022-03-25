@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.utils;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -81,5 +81,16 @@ public class FilesUtils {
 
         }
         return files;
+    }
+    
+    public static void copyFileUsingStream(File source, File dest) throws IOException{
+        
+        try(InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)){
+            byte[] buffer = new byte[1024];
+            int length;
+            while((length = is.read(buffer)) > 0){
+                os.write(buffer, 0, length);
+            }
+        }
     }
 }

@@ -375,10 +375,10 @@ public class VectorElementPageDrawer extends Pane{
     }
     
     public void removeLastAction(String name){
-        vector.setPath(StringUtils.removeAfterLastRegexIgnoringCase(vector.getPath(), name));
+        vector.setPath(StringUtils.removeAfterLastOccurrenceIgnoringCase(vector.getPath(), name));
     }
     public void removeLastAction(String[] names){
-        vector.setPath(StringUtils.removeAfterLastRegexIgnoringCase(vector.getPath(), names));
+        vector.setPath(StringUtils.removeAfterLastOccurrenceIgnoringCase(vector.getPath(), names));
     }
     public void appendAction(String name, double x, double y){
         lastAction = name;

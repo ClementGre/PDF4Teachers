@@ -330,7 +330,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 updateDefaultValues();
                 definition.applyCss(); // Prevent the black text on black bg bug
                 
-                String data = StringUtils.removeAfterLastRegex(newValue, "Mp");
+                String data = StringUtils.removeAfterLastOccurrence(newValue, "Mp");
                 Double mp = StringUtils.getDouble(data);
                 if(mp != null){
                     this.mp = mp;
@@ -341,7 +341,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 updateDefaultValues();
                 format.applyCss(); // Prevent the black text on black bg bug
                 
-                String data = StringUtils.removeAfterLastRegex(newValue, " (");
+                String data = StringUtils.removeAfterLastOccurrence(newValue, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
                     Integer heightFactor = StringUtils.getInt(data.split(":")[1]);
@@ -390,7 +390,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             if(definitions.contains(MainWindow.userData.lastConvertDefinition))
                 definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
             else{
-                Double mp = StringUtils.getDouble(StringUtils.removeAfterLastRegex(MainWindow.userData.lastConvertDefinition, "Mp"));
+                Double mp = StringUtils.getDouble(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
                 if(mp != null){
                     definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
                     
@@ -400,7 +400,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             if(formats.contains(MainWindow.userData.lastConvertFormat))
                 format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
             else{
-                String data = StringUtils.removeAfterLastRegex(MainWindow.userData.lastConvertFormat, " (");
+                String data = StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertFormat, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
                     Integer heightFactor = StringUtils.getInt(data.split(":")[1]);

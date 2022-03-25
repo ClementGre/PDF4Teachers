@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -32,6 +33,8 @@ public class BookletWindow extends AlternativeWindow<VBox> {
     private final CheckBox doNotReorderPages = new CheckBox(TR.tr("bookletWindow.doNotReorderPages"));
     private final CheckBox doTookPages4by4 = new CheckBox(TR.tr("bookletWindow.doTookPages4by4"));
     private final CheckBox doReverseOrder = new CheckBox(TR.tr("bookletWindow.doReverseOrder"));
+    private final String copyName = StringUtils.removeAfterLastOccurrenceIgnoringCase(MainWindow.mainScreen.document.getFileName(), ".pdf") + "-backup.pdf";
+    private final CheckBox doCopyOriginal = new CheckBox(TR.tr("bookletWindow.doCopyOriginal", copyName));
     
     private final Button convert = new Button(TR.tr("actions.convert"));
     
@@ -63,6 +66,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         doNotReorderPages.setSelected(MainWindow.userData.bookletDoNotReorderPages);
         doTookPages4by4.setSelected(MainWindow.userData.bookletDoTookPages4by4);
         doReverseOrder.setSelected(MainWindow.userData.bookletDoReverseOrder);
+        doCopyOriginal.setSelected(MainWindow.userData.bookletDoCopyOriginal);
         
         doNotReorderPages.selectedProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.bookletDoNotReorderPages = newValue;
@@ -70,6 +74,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         });
         doTookPages4by4.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoTookPages4by4 = newValue);
         doReverseOrder.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoReverseOrder = newValue);
+        doCopyOriginal.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoCopyOriginal = newValue);
     
         doReverseOrder.visibleProperty().bind(convertKindDisassemble.selectedProperty());
         doTookPages4by4.disableProperty().bind(doNotReorderPages.selectedProperty());
@@ -78,10 +83,11 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         PaneUtils.setVBoxPosition(doNotReorderPages, 0, 0, 2.5, 0);
         PaneUtils.setVBoxPosition(doTookPages4by4, 0, 0, 2.5, 0);
         PaneUtils.setVBoxPosition(doReverseOrder, 0, 0, 2.5, 0);
+        PaneUtils.setVBoxPosition(doCopyOriginal, 0, 0, 2.5, 0);
         
         
         root.setSpacing(5);
-        root.getChildren().addAll(convertKind, generateInfo(TR.tr("options.title"), false), doNotReorderPages, doTookPages4by4, doReverseOrder);
+        root.getChildren().addAll(convertKind, generateInfo(TR.tr("options.title"), false), doNotReorderPages, doTookPages4by4, doCopyOriginal, doReverseOrder);
     
     
     
@@ -95,7 +101,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
             if(MainWindow.mainScreen.hasDocument(true) && MainWindow.mainScreen.document.save(false) && Edition.isSave()){
                 try{
                     UndoEngine.lock();
-                    new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected()).convert(MainWindow.mainScreen.document);
+                    new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected(), doCopyOriginal.isSelected() ? copyName : null).convert(MainWindow.mainScreen.document);
                     close();
                 }catch(IOException ex){
                     new ErrorAlert(null, ex.getMessage(), false).showAndWait();

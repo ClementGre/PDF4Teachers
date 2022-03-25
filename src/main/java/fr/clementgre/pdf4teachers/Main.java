@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
@@ -28,7 +29,8 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.List;
@@ -84,7 +86,6 @@ public class Main extends Application {
         
         // Enable anti aliasing
         //System.setProperty("prism.lcdtext", "false");
-        
         ///// START APP /////
         launch(args);
     }
@@ -99,7 +100,7 @@ public class Main extends Application {
                 copyDirToNewOSXLocation(file, destFile);
             }else{
                 try{
-                    copyFileUsingStream(file, destFile);
+                    FilesUtils.copyFileUsingStream(file, destFile);
                     file.delete();
                 }catch(IOException e){
                     e.printStackTrace();
@@ -107,22 +108,6 @@ public class Main extends Application {
             }
         }
         source.delete();
-    }
-    private void copyFileUsingStream(File source, File dest) throws IOException{
-        InputStream is = null;
-        OutputStream os = null;
-        try{
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
-            byte[] buffer = new byte[1024];
-            int length;
-            while((length = is.read(buffer)) > 0){
-                os.write(buffer, 0, length);
-            }
-        }finally{
-            is.close();
-            os.close();
-        }
     }
     
     @Override

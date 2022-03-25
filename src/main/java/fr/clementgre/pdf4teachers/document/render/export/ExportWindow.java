@@ -266,11 +266,11 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                 String fileName = pdfFile.getName();
                 if(recursive){
                     
-                    fileName = StringUtils.removeAfterLastRegexIgnoringCase(fileName, ".pdf");
+                    fileName = StringUtils.removeAfterLastOccurrenceIgnoringCase(fileName, ".pdf");
                     fileName = fileName.replace(replaceText, replaceByText);
                     fileName = prefix + fileName + suffix + ".pdf";
                 }else{
-                    fileName = StringUtils.removeAfterLastRegexIgnoringCase(customName, ".pdf") + ".pdf";
+                    fileName = StringUtils.removeAfterLastOccurrenceIgnoringCase(customName, ".pdf") + ".pdf";
                 }
                 
                 File toFile = new File(directory.getAbsolutePath() + File.separator + fileName);

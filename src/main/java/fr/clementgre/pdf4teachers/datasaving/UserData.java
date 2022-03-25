@@ -159,6 +159,8 @@ public class UserData {
     public boolean bookletDoTookPages4by4 = true;
     @UserDataObject(path = "booklet.doReverseOrder")
     public boolean bookletDoReverseOrder = false;
+    @UserDataObject(path = "booklet.doCopyOriginal")
+    public boolean bookletDoCopyOriginal = true;
     
     // Split PDF params
     @UserDataObject(path = "splitPdf.matchColor")

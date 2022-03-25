@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -97,19 +97,19 @@ public class StringUtils {
         }
     }
     
-    public static String removeBeforeLastRegex(String string, String rejex){
-        if(rejex.isEmpty()) return string;
-        int index = string.lastIndexOf(rejex);
+    public static String removeBeforeLastOccurrence(String string, String match){
+        if(match.isEmpty()) return string;
+        int index = string.lastIndexOf(match);
         
         if(index == -1) return string;
-        if(index < string.length()) return string.substring(index + rejex.length());
+        if(index < string.length()) return string.substring(index + match.length());
         
         return "";
     }
     
-    public static String removeAfterLastRegex(String string, String rejex){
-        if(rejex.isEmpty()) return string;
-        int index = string.lastIndexOf(rejex);
+    public static String removeAfterLastOccurrence(String string, String match){
+        if(match.isEmpty()) return string;
+        int index = string.lastIndexOf(match);
         
         if(index == -1) return string;
         if(index < string.length()) return string.substring(0, index);
@@ -117,20 +117,20 @@ public class StringUtils {
         return "";
     }
     
-    public static String removeAfterLastRegexIgnoringCase(String string, String rejex){
-        if(rejex.isEmpty()) return string;
-        int index = string.toLowerCase().lastIndexOf(rejex.toLowerCase());
+    public static String removeAfterLastOccurrenceIgnoringCase(String string, String match){
+        if(match.isEmpty()) return string;
+        int index = string.toLowerCase().lastIndexOf(match.toLowerCase());
         
         if(index == -1) return string;
         if(index < string.length()) return string.substring(0, index);
         
         return "";
     }
-    public static String removeAfterLastRegexIgnoringCase(String string, String[] strs){
-        if(strs.length == 0) return string;
+    public static String removeAfterLastOccurrenceIgnoringCase(String string, String[] matches){
+        if(matches.length == 0) return string;
         
         HashMap<Integer, String> indices = new HashMap<>();
-        for(String str : strs){
+        for(String str : matches){
             int index = string.toLowerCase().lastIndexOf(str.toLowerCase());
             if(index < string.length() && index != -1){
                 indices.put(index, str);

@@ -167,7 +167,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
                 
             }else{
                 
-                fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
+                fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastOccurrence(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("file.documentName"));
                 PaneUtils.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
                 if(type != 2)
@@ -206,7 +206,7 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             }else{
                 VBox info = generateInfo(TR.tr("gradeTab.gradeExportWindow.fields.studentName"), true);
                 
-                studentNameSimple = new TextField(StringUtils.removeAfterLastRegex(MainWindow.mainScreen.document.getFileName(), ".pdf"));
+                studentNameSimple = new TextField(StringUtils.removeAfterLastOccurrence(MainWindow.mainScreen.document.getFileName(), ".pdf"));
                 studentNameSimple.setPromptText(TR.tr("gradeTab.gradeExportWindow.fields.studentName"));
                 PaneUtils.setHBoxPosition(studentNameSimple, 0, 30, 0, 2.5);
                 

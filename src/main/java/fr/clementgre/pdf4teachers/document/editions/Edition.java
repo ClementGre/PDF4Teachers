@@ -339,7 +339,7 @@ public class Edition{
     public static File getFileFromEdit(File editFile){
         String path = editFile.getName();
         path = path.replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
-        path = StringUtils.removeAfterLastRegex(path, ".yml");
+        path = StringUtils.removeAfterLastOccurrence(path, ".yml");
         
         if(!editFile.getName().contains("!P!") && Main.isWindows()){
             return new File(File.separator + path);

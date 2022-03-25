@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -57,20 +57,20 @@ public class ConvertRenderer {
                     documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
                     convertFile(Objects.requireNonNull(dir.listFiles((f) -> !f.isHidden())), new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
-                    String imgName = StringUtils.removeAfterLastRegex(dir.getName(), ".");
+                    String imgName = StringUtils.removeAfterLastOccurrence(dir.getName(), ".");
                     documentCallBack.call(Map.entry(imgName + ".pdf", -1d));
                     convertFile(new File[]{dir}, new File(out + imgName + ".pdf"));
                 }
             }
         }else{
-            documentCallBack.call(Map.entry(StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf", 0d));
+            documentCallBack.call(Map.entry(StringUtils.removeAfterLastOccurrence(convertPane.docName.getText(), ".pdf") + ".pdf", 0d));
             File[] files = new File[convertPane.srcFiles.getText().split(Pattern.quote("\n")).length];
             int i = 0;
             for(String filePath : convertPane.srcFiles.getText().split(Pattern.quote("\n"))){
                 files[i] = new File(filePath);
                 i++;
             }
-            convertFile(files, new File(out + StringUtils.removeAfterLastRegex(convertPane.docName.getText(), ".pdf") + ".pdf"));
+            convertFile(files, new File(out + StringUtils.removeAfterLastOccurrence(convertPane.docName.getText(), ".pdf") + ".pdf"));
         }
         documentCallBack.call(Map.entry("", 0d));
         

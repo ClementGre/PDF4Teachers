@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -102,7 +102,7 @@ public class AlreadyExistDialogManager{
     public static File rename(File file){
         int counter = 1;
         String extension = "." + FilesUtils.getExtension(file.getName());
-        String fileName = StringUtils.removeAfterLastRegex(file.getName(), extension);
+        String fileName = StringUtils.removeAfterLastOccurrence(file.getName(), extension);
         while(file.exists()){
             file = new File(file.getParentFile().getAbsolutePath() + File.separator + fileName + " (" + counter + ")" + extension);
             counter++;

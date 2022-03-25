@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -31,7 +31,7 @@ public class ErrorAlert extends WrongAlert {
         expContent.add(textArea, 0, 1);
         
         if(error.endsWith("(Access is denied.)") || error.endsWith("(Accès refusé)") || error.endsWith("(Permission denied)")){
-            setContentText(TR.tr("dialog.error.accessDenied.details", StringUtils.removeAfterLastRegex(error, File.separator)));
+            setContentText(TR.tr("dialog.error.accessDenied.details", StringUtils.removeAfterLastOccurrence(error, File.separator)));
         }
         
         getDialogPane().setExpandableContent(expContent);

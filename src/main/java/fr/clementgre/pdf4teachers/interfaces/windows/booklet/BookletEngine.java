@@ -11,6 +11,8 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.render.display.PDFPagesEditor;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import javafx.application.Platform;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
@@ -20,12 +22,25 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
 
 import java.awt.geom.AffineTransform;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolean tookPages4by4, boolean invertOrder) {
+public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolean tookPages4by4, boolean invertOrder, String copyName) {
     
     public void convert(Document document) throws IOException{
+        if(copyName != null){
+            File target = new File(document.getFile().getParentFile(), copyName);
+            
+            if(target.exists()){
+                var result = new AlreadyExistDialogManager(false).showAndWait(target);
+                if(result == AlreadyExistDialogManager.ResultType.RENAME) target = AlreadyExistDialogManager.rename(target);
+                if(result == AlreadyExistDialogManager.ResultType.STOP) return;
+                // ResultType.SKIP is never returned for non-recursive operations, and ResultType.OVERWRITE leads to nothing.
+            }
+            FilesUtils.copyFileUsingStream(document.getFile(), target);
+        }
+        
         if(!makeBooklet) disassemble(document);
         else assemble(document);
     }

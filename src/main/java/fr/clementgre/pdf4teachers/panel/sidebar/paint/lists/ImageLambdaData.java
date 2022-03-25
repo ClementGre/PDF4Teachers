@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -48,9 +48,9 @@ public class ImageLambdaData{ // 2 child : ImageGridElement & ImageData
     }
     
     public String getImageIdDirectory(){
-        return StringUtils.removeAfterLastRegex(getImageId(), File.separator);
+        return StringUtils.removeAfterLastOccurrence(getImageId(), File.separator);
     }
     public String getImageIdFileName(){
-        return StringUtils.removeBeforeLastRegex(getImageId(), File.separator);
+        return StringUtils.removeBeforeLastOccurrence(getImageId(), File.separator);
     }
 }

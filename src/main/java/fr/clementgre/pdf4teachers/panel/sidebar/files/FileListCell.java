@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -87,7 +87,7 @@ public class FileListCell extends ListCell<File> {
             
             path.setText(FilesUtils.getPathReplacingUserHome(getItem().getParent()));
             
-            name.setText(StringUtils.removeAfterLastRegex(file.getName(), ".pdf"));
+            name.setText(StringUtils.removeAfterLastOccurrence(file.getName(), ".pdf"));
             if(file.getName().equals(".pdf")) name.setText(".pdf");
             name.setStyle("-fx-font-size: 13;");
             

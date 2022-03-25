@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -163,7 +163,7 @@ public class GradeExportRenderer {
         if(pane.studentNameSimple != null){
             content += pane.studentNameSimple.getText();
         }else{
-            content += StringUtils.removeAfterLastRegex(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
+            content += StringUtils.removeAfterLastOccurrence(file.file.getName(), ".pdf").replaceAll(Pattern.quote(pane.studentNameReplace.getText()), pane.studentNameBy.getText());
         }
         
         boolean hasOutOfColumn = false;
@@ -312,10 +312,10 @@ public class GradeExportRenderer {
         String fileName;
         
         if(source != null){ // type = 1 -> Splited export
-            fileName = pane.fileNamePrefix.getText() + StringUtils.removeAfterLastRegex(source.file.getName(), ".pdf")
+            fileName = pane.fileNamePrefix.getText() + StringUtils.removeAfterLastOccurrence(source.file.getName(), ".pdf")
                     .replaceAll(Pattern.quote(pane.fileNameReplace.getText()), pane.fileNameBy.getText()) + pane.fileNameSuffix.getText();
         }else{ // other
-            fileName = StringUtils.removeAfterLastRegex(pane.fileNameSimple.getText(), ".csv");
+            fileName = StringUtils.removeAfterLastOccurrence(pane.fileNameSimple.getText(), ".csv");
         }
         
         File file = new File(filePath + File.separator + fileName + ".csv");

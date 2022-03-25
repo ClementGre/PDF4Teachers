@@ -333,7 +333,7 @@ public class ZoomOperator {
     }
     public void overviewWidth(boolean removeTransition){
         double lastVScrollValue = vScrollBar.getValue();
-        zoom(.405, removeTransition);
+        zoom(.505, removeTransition);
     
         // Reset the scroll value to the original before the zoom animation
         PlatformUtils.runLaterOnUIThread(500, () ->  {

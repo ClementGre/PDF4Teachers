@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -532,9 +532,9 @@ public class VectorElement extends GraphicElement{
         
         Bounds beforeBounds = noScaledSvgPath.getLayoutBounds();
         if(toUndoActions.length == 1){ // Optimize code when length == 1
-            setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), toUndoActions[0]));
+            setPath(StringUtils.removeAfterLastOccurrenceIgnoringCase(getPath(), toUndoActions[0]));
         }else{
-            setPath(StringUtils.removeAfterLastRegexIgnoringCase(getPath(), toUndoActions));
+            setPath(StringUtils.removeAfterLastOccurrenceIgnoringCase(getPath(), toUndoActions));
         }
         
         
