@@ -62,7 +62,7 @@ public class LogWindow extends Stage {
         Main.window.centerWindowIntoMe(this);
         show();
         Main.window.centerWindowIntoMe(this);
-        MainWindow.preventWindowOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
+        MainWindow.preventStageOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
     }
     
     private final Label text = new Label(logs.toString());

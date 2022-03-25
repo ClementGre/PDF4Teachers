@@ -11,6 +11,7 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 public class StagesUtils {
     
@@ -20,16 +21,17 @@ public class StagesUtils {
         
         stage.setMaxWidth(stage.getMaxWidth() * Main.settings.zoom.getValue());
         stage.setMaxHeight(stage.getMaxHeight() * Main.settings.zoom.getValue());
-        
+    
         stage.setWidth((stage.getWidth() - horizontalShift) * Main.settings.zoom.getValue() + horizontalShift);
         stage.setHeight((stage.getHeight() - verticalShift) * Main.settings.zoom.getValue() + verticalShift);
+    
     }
     public static boolean scaleAlert(Alert stage, Scene scene){
-        if(Double.isNaN(stage.getWidth()) || Double.isNaN(stage.getHeight()) || Double.isNaN(scene.getWidth()) || Double.isNaN(scene.getHeight())) return false;
+        if(Double.isNaN(stage.getWidth()) || Double.isNaN(stage.getHeight()) || Double.isNaN(scene.getWidth()) || Double.isNaN(scene.getHeight()) || stage.getWidth() <= 1  || stage.getHeight() <= 1) return false;
         
         double horizontalShift = stage.getWidth() - scene.getWidth();
         double verticalShift = stage.getHeight() - scene.getHeight();
-    
+        
         stage.setWidth((stage.getWidth() - horizontalShift) * Main.settings.zoom.getValue() + horizontalShift);
         stage.setHeight((stage.getHeight() - verticalShift) * Main.settings.zoom.getValue() + verticalShift);
         return true;

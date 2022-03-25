@@ -54,6 +54,7 @@ public class CustomAlert extends Alert {
             setOnShown((e) -> {
                 StagesUtils.trysScaleAlertUntilDoable(this, getDialogPane().getScene(), () -> {
                     PaneUtils.setupScaling(getDialogPane(), true, false);
+                    if(Main.window != null) Main.window.centerWindowIntoMe(getDialogPane().getScene().getWindow());
                 });
             });
         }

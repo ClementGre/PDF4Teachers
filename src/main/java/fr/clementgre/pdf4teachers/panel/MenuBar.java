@@ -289,8 +289,12 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
     
         tools4PdfTools1Booklet.setOnAction(e -> new BookletWindow());
-        tools4PdfTools2Split.setOnAction(e -> new SplitWindow(false));
+        tools4PdfTools2Split.setOnAction(e -> {
+            MainWindow.mainScreen.setIsEditPagesMode(true);
+            new SplitWindow(false);
+        });
         tools4PdfTools3SplitSelection.setOnAction(e -> {
+            MainWindow.mainScreen.setIsEditPagesMode(true);
             if(MainWindow.mainScreen.document.getSelectedPages().size() == 0 || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.totalPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
             }else new SplitWindow(true);
@@ -640,7 +644,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             }
             return menuItem;
         }else{
-            NodeMenuItem menuItem = new NodeMenuItem(text, true);
+            NodeMenuItem menuItem = new NodeMenuItem(text, false);
             
             if(image != null){
                 if(image.length() >= 30){

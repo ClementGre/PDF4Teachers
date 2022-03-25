@@ -100,20 +100,26 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
     
             if(Main.window != null) Main.window.centerWindowIntoMe(this);
-            MainWindow.preventWindowOverflowScreen(this);
+            MainWindow.preventStageOverflowScreen(this);
     
             if(toRequestFocus != null){
                 toRequestFocus.requestFocus();
                 toRequestFocus.setDefaultButton(true);
             }
-    
+            
+            // When creating the window, there is a small animation so the dimensions are not correct after the runLater.
+            double trueHeight = getHeight();
+            double trueWidth = getWidth();
             Platform.runLater(() -> {
-                // Remove the scroll by stretching the window
-                double diffHeight = container.getHeight() - scrollPane.getHeight();
-                setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight + 6));
+                // Restore thue dimensions (due to the animation)
+                setHeight(trueHeight);
+                setWidth(trueWidth);
+                // Remove the scroll by stretching the window (+ 6px to prevent the scrollbar from showing)
+                double diffHeight = (container.getHeight() - scrollPane.getHeight() + 6) * Main.settings.zoom.getValue();
+                setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight));
                 
                 if(Main.window != null) Main.window.centerWindowIntoMe(this);
-                MainWindow.preventWindowOverflowScreen(this);
+                MainWindow.preventStageOverflowScreen(this);
                 afterShown();
             });
         });

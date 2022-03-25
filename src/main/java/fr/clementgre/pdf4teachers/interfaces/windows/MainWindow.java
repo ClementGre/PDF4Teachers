@@ -161,6 +161,10 @@ public class MainWindow extends Stage {
         }
         
         menuBar = new MenuBar();
+        Main.settings.zoom.valueProperty().addListener((observable, oldValue, newValue) -> {
+            menuBar = new MenuBar();
+            root.setTop(menuBar);
+        });
         mainScreen.repaint();
         
         //		PANELS
@@ -255,7 +259,7 @@ public class MainWindow extends Stage {
         setWidth(Main.syncUserData.mainWindowWidth);
         setHeight(Main.syncUserData.mainWindowHeight);
         
-        preventWindowOverflowScreen(this);
+        preventStageOverflowScreen(this);
     }
     
     private boolean saveDimensionRunning = false;
@@ -274,19 +278,19 @@ public class MainWindow extends Stage {
         
     }
     
-    public void centerWindowIntoMe(Stage window){
+    public void centerWindowIntoMe(Window window){
         centerWindowIntoMe(window, window.getWidth(), window.getHeight());
     }
-    public void centerWindowIntoMe(Stage window, double w, double h){
+    public void centerWindowIntoMe(Window window, double w, double h){
         double x = getX() + getWidth() / 2 - w / 2;
         double y = getY() + getHeight() / 2 - h / 2;
         window.setX(x);
         window.setY(y);
     }
-    public static void preventWindowOverflowScreen(Stage window){
-        preventWindowOverflowScreen(window, getScreen(window).getVisualBounds());
+    public static void preventStageOverflowScreen(Stage window){
+        preventStageOverflowScreen(window, getScreen(window).getVisualBounds());
     }
-    public static void preventWindowOverflowScreen(Stage window, Rectangle2D bounds){
+    public static void preventStageOverflowScreen(Stage window, Rectangle2D bounds){
         double w = window.getWidth();
         double h = window.getHeight();
         double x = window.getX();
