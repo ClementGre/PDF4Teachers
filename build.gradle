@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -98,6 +98,7 @@ javafx {
 }
 
 def os = org.gradle.internal.os.OperatingSystem.current()
+def win32 = true
 
 version = "1.3.1"
 description = "PDF students assessments editor"
@@ -151,16 +152,19 @@ jlink {
     }
 
     String jdkPath = project.findProperty('jdkPath')
-    String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
+    String platform = os.windows ? (win32 ? 'win32' : 'win') : (os.macOsX ? 'mac' : 'lin')
 
-    if (jdkPath != null) { // Use ./gradlew jpackage -PjdkPath=xxx
+    if(jdkPath != null){ // Use ./gradlew jpackage -PjdkPath=xxx
         System.out.println("Using JDK passed in property: ".concat(jdkPath))
         javaHome.set(jdkPath)
 
-    } else {
-        if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
-        else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
-        else if (os.linux) javaHome.set('/opt/jdk-17')
+    }else{
+        if(os.windows){
+            if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2+8-win32')
+            else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
+        }
+        else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
+        else if(os.linux) javaHome.set('/opt/jdk-17')
         System.out.println("Using JDK: ".concat(javaHome.get()))
     }
 
@@ -207,26 +211,26 @@ jlink {
     mergedModule{
 
         // JBig2
-        uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge";
-        uses "org.apache.pdfbox.jbig2.util.cache.CacheBridge";
+        uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge"
+        uses "org.apache.pdfbox.jbig2.util.cache.CacheBridge"
 
         // Generated automatically by gradle
-        requires 'java.logging';
-        requires 'jdk.xml.dom';
-        requires 'java.sql';
-        requires 'java.xml';
-        requires 'java.desktop'; // needed for jbig2 LoggerBridge
-        uses 'javax.imageio.spi.ImageWriterSpi';
+        requires 'java.logging'
+        requires 'jdk.xml.dom'
+        requires 'java.sql'
+        requires 'java.xml'
+        requires 'java.desktop' // needed for jbig2 LoggerBridge
+        uses 'javax.imageio.spi.ImageWriterSpi'
         provides 'org.apache.xmlgraphics.image.loader.spi.ImageConverter' with 'org.apache.xmlgraphics.image.loader.impl.ImageConverterBitmap2G2D',
                 'org.apache.xmlgraphics.image.loader.impl.ImageConverterBuffered2Rendered',
                 'org.apache.xmlgraphics.image.loader.impl.ImageConverterG2D2Bitmap',
-                'org.apache.xmlgraphics.image.loader.impl.ImageConverterRendered2PNG';
-        provides 'javax.imageio.spi.ImageOutputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageOutputStreamSpi';
+                'org.apache.xmlgraphics.image.loader.impl.ImageConverterRendered2PNG'
+        provides 'javax.imageio.spi.ImageOutputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageOutputStreamSpi'
         provides 'org.apache.xmlgraphics.image.writer.ImageWriter' with 'org.apache.xmlgraphics.image.writer.imageio.ImageIOJPEGImageWriter',
                 'org.apache.xmlgraphics.image.writer.imageio.ImageIOPNGImageWriter',
                 'org.apache.xmlgraphics.image.writer.imageio.ImageIOTIFFImageWriter',
                 'org.apache.xmlgraphics.image.writer.internal.PNGImageWriter',
-                'org.apache.xmlgraphics.image.writer.internal.TIFFImageWriter';
+                'org.apache.xmlgraphics.image.writer.internal.TIFFImageWriter'
         provides 'javax.imageio.spi.ImageReaderSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageReaderSpi',
                 'com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi',
                 'com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi',
@@ -234,13 +238,13 @@ jlink {
                 'com.github.jaiimageio.impl.plugins.tiff.TIFFImageReaderSpi',
                 'com.github.jaiimageio.impl.plugins.wbmp.WBMPImageReaderSpi',
                 'com.github.jaiimageio.jpeg2000.impl.J2KImageReaderSpi',
-                'org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi';
+                'org.apache.pdfbox.jbig2.JBIG2ImageReaderSpi'
         provides 'org.apache.xmlgraphics.image.loader.spi.ImageLoaderFactory' with 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryEPS',
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryInternalTIFF',
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryPNG',
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRaw',
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRawCCITTFax',
-                'org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderFactoryImageIO';
+                'org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderFactoryImageIO'
         provides 'org.apache.xmlgraphics.image.loader.spi.ImagePreloader' with 'org.apache.xmlgraphics.image.loader.impl.PreloaderBMP',
                 'org.apache.xmlgraphics.image.loader.impl.PreloaderEMF',
                 'org.apache.xmlgraphics.image.loader.impl.PreloaderEPS',
@@ -248,10 +252,10 @@ jlink {
                 'org.apache.xmlgraphics.image.loader.impl.PreloaderJPEG',
                 'org.apache.xmlgraphics.image.loader.impl.PreloaderRawPNG',
                 'org.apache.xmlgraphics.image.loader.impl.PreloaderTIFF',
-                'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO';
-        provides 'javax.imageio.spi.ImageInputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageInputStreamSpi';
-        provides 'javax.xml.transform.URIResolver' with 'org.apache.xmlgraphics.util.uri.DataURIResolver';
-        provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge';
+                'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO'
+        provides 'javax.imageio.spi.ImageInputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageInputStreamSpi'
+        provides 'javax.xml.transform.URIResolver' with 'org.apache.xmlgraphics.util.uri.DataURIResolver'
+        provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge'
         provides 'javax.imageio.spi.ImageWriterSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi',
@@ -259,8 +263,8 @@ jlink {
                 'com.github.jaiimageio.impl.plugins.raw.RawImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.wbmp.WBMPImageWriterSpi',
-                'com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi';
-        provides 'org.apache.pdfbox.jbig2.util.cache.CacheBridge' with 'org.apache.pdfbox.jbig2.util.cache.SoftReferenceCacheBridge';
+                'com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi'
+        provides 'org.apache.pdfbox.jbig2.util.cache.CacheBridge' with 'org.apache.pdfbox.jbig2.util.cache.SoftReferenceCacheBridge'
     }
 }
 
