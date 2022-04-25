@@ -14,8 +14,6 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -90,26 +88,6 @@ public class Main extends Application {
         launch(args);
     }
     
-    
-    // OSX FILE COPY
-    private void copyDirToNewOSXLocation(File source, File output){
-        if(!output.mkdirs()) throw new RuntimeException("Unable to create dir " + output.getAbsolutePath());
-        for(File file : Objects.requireNonNull(source.listFiles())){
-            File destFile = new File(output.getAbsolutePath() + "/" + file.getName());
-            if(file.isDirectory()){
-                copyDirToNewOSXLocation(file, destFile);
-            }else{
-                try{
-                    FilesUtils.copyFileUsingStream(file, destFile);
-                    file.delete();
-                }catch(IOException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-        source.delete();
-    }
-    
     @Override
     public void start(Stage stage){
         
@@ -118,23 +96,18 @@ public class Main extends Application {
         if(LockManager.FAKE_OPEN_FILE) params = List.of("/home/clement/Téléchargements/Kev.pdf");
         
         // define important vars
-        if(isWindows()) dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
-        else if(isOSX()){
+        if(isWindows()){
+            dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
+        }else if(isOSX()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
             systemShortcut = "Cmd";
-            
-            // OSX PDF4Teachers directory moved
-            try{
-                if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()){
-                    copyDirToNewOSXLocation(new File(System.getProperty("user.home") + "/.PDF4Teachers/"), new File(dataFolder));
-                    PlatformUtils.runLaterOnUIThread(5000, () -> {
-                        MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("osx.moveDataFolderNotification"), -1);
-                        new File(System.getProperty("user.home") + "/.PDF4Teachers/").delete();
-                    });
-                }
-            }catch(Exception e){
-                e.printStackTrace();
-            }
+            // Move data folder
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
+        }else{
+            if(new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/.PDF4Teachers/";
+            else dataFolder = System.getProperty("user.home") + "/.local/share/.PDF4Teachers/";
+            // Move data folder
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
         }
         
         firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();

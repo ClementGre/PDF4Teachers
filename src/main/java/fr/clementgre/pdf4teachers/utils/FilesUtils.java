@@ -5,10 +5,16 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
+import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 public class FilesUtils {
@@ -93,4 +99,34 @@ public class FilesUtils {
             }
         }
     }
+    
+    public static void moveDir(File source, File output){
+        if(!output.mkdirs()) throw new RuntimeException("Unable to create dir " + output.getAbsolutePath());
+        
+        for(File file : Objects.requireNonNull(source.listFiles())){
+            File destFile = new File(output.getAbsolutePath() + "/" + file.getName());
+            if(file.isDirectory()){
+                moveDir(file, destFile);
+            }else{
+                try{
+                    copyFileUsingStream(file, destFile);
+                    file.delete();
+                }catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        source.delete();
+    }
+    
+    // Moves from ~/.PDF4Teachers/ to Main.dataFolder
+    public static void moveDataFolder(){
+        File oldDataFolder = new File(System.getProperty("user.home") + "/.PDF4Teachers/");
+        FilesUtils.moveDir(oldDataFolder, new File(Main.dataFolder));
+        
+        PlatformUtils.runLaterOnUIThread(5000, () -> {
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("moveDataFolderNotification", FilesUtils.getPathReplacingUserHome(Main.dataFolder)), 20);
+        });
+    }
+    
 }
