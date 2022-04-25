@@ -250,7 +250,10 @@ public class MainScreen extends Pane {
             if(document != null && document.getPages().size() != 0){
                 double lastVScroll = document.getLastScrollValue();
                 
-                if(newValue) setSelected(null);
+                if(newValue){
+                    setSelected(null);
+                    AutoTipsManager.showByAction("enterEditPagesMode");
+                }
                 document.clearSelectedPages();
     
                 if(newValue) zoomOperator.overviewWidth(true);
@@ -430,10 +433,14 @@ public class MainScreen extends Pane {
             requestFocus();
             initDragOrigin(e);
             setSelected(null);
-            if(hasDocument(false)) setCursor(Cursor.CLOSED_HAND);
+            if(hasDocument(false)){
+                setCursor(Cursor.CLOSED_HAND);
+            }
         });
+        // consumed by PageRenderer, but can be called if click is released outside the page
         setOnMouseClicked(e -> {
-            if(hasDocument(false)) document.clearSelectedPages();
+            // prevent dragged clicks by using checking e.isStillSincePress()
+            if(e.isStillSincePress() && hasDocument(false)) document.clearSelectedPages();
         });
         setOnMouseReleased(e -> {
             dragNScrollFactorVertical = 0;

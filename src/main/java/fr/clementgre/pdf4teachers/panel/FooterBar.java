@@ -22,6 +22,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
@@ -111,7 +112,7 @@ public class FooterBar extends StackPane {
         PaneUtils.setHBoxPosition(columnView, -1, 21, new Insets(-1, 0, 1, 0));
         PaneUtils.setHBoxPosition(gridView, -1, 21, new Insets(-1, 5, 1, -5));
         ZoomOperator zoomOperator = MainWindow.mainScreen.zoomOperator;
-        columnView.setOnAction(e -> zoomOperator.fitWidth(true, false));
+        columnView.setOnAction(e -> zoomOperator.fitWidth(false, false));
         gridView.setOnAction(e -> zoomOperator.fitWidth(false, true));
     
         columnView.setSelected(true);
@@ -269,5 +270,12 @@ public class FooterBar extends StackPane {
                 }
             });
         }
+    }
+    
+    public Node getEditPagesModeNode(){
+        return editPagesMode;
+    }
+    public Node getViewModeNode(){
+        return gridView;
     }
 }

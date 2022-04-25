@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -51,6 +51,11 @@ public class AutoTipsManager {
     @ToolTipVar(actionKey = "", prerequisiteKey = "", objectWhereDisplay = "firstTabGraphic")
     private static final String dragNDropTabs = "autoTips.dragNDropTabs";
     
+    @ToolTipVar(actionKey = "", prerequisiteKey = "", objectWhereDisplay = "footerEditPagesMode")
+    private static final String editPagesMode = "autoTips.editPagesMode";
+    
+    @ToolTipVar(actionKey = "", prerequisiteKey = "editPagesMode", objectWhereDisplay = "mainscreen")
+    private static final String editPagesUndo = "autoTips.editPagesUndo";
     
     @ToolTipVar(actionKey = "opendocument", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
     private static final String editSystemAndExportation = "autoTips.editSystemAndExportation";
@@ -97,6 +102,12 @@ public class AutoTipsManager {
     @ToolTipVar(actionKey = "enterVectorEditMode", prerequisiteKey = "", objectWhereDisplay = "vectorEditModeButton")
     private static final String vectorEditMode = "autoTips.vectorEditMode";
     
+    @ToolTipVar(actionKey = "zoom", prerequisiteKey = "", objectWhereDisplay = "footerViewMode")
+    private static final String viewMode = "autoTips.viewMode";
+    
+    @ToolTipVar(actionKey = "enterEditPagesMode", prerequisiteKey = "", objectWhereDisplay = "mainscreen")
+    private static final String selectPages = "autoTips.selectPages";
+    
     // GALLERY
     
     @ToolTipVar(actionKey = "opengallery", prerequisiteKey = "", objectWhereDisplay = "gallerycombobox")
@@ -118,7 +129,7 @@ public class AutoTipsManager {
     private static final Thread autoTipsThread = new Thread(() -> {
         while(true){
             try{
-                Thread.sleep(3 * 60 * 1000);
+                Thread.sleep(Main.DEBUG ? 10000 : 3*60000);
             }catch(InterruptedException e){
                 e.printStackTrace();
             }
@@ -255,6 +266,9 @@ public class AutoTipsManager {
             }
             case "hastextsimilarelements" -> {
                 return MainWindow.textTab.treeView.getSelectionModel().getSelectedIndices().size() >= 2;
+            }
+            case "editPagesMode" -> {
+                return MainWindow.mainScreen.isEditPagesMode();
             }
         }
         return false;

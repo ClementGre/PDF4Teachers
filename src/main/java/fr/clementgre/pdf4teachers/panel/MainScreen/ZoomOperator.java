@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.panel.MainScreen;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
+import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -263,7 +264,8 @@ public class ZoomOperator {
         
     }
     public void zoom(boolean removeTransition, double scale, double horizontal, double vertical, double translateFactor){
-    
+        AutoTipsManager.showByAction("zoom");
+        
         double newTranslateX;
         double newTranslateY;
         
@@ -323,11 +325,11 @@ public class ZoomOperator {
         double availableWidth = (MainWindow.mainScreen.getWidth() - 40);
         double targetScale;
         
-        if(MainWindow.mainScreen.isGridView() && availableWidth > 1300 || forceMultiPages){
+        if(MainWindow.mainScreen.isGridView() && availableWidth > 1300 || forceMultiPages){ // grid
             int pages = Math.max(2, (int) ((availableWidth-PageRenderer.getPageMargin()) / (1.1*PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin())));
             targetScale = (availableWidth-PageRenderer.getPageMargin()) / (pages*(PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin()));
             
-        }else targetScale = (availableWidth / pageWidth);
+        }else targetScale = (availableWidth / pageWidth); // single page
         
         zoom(targetScale, removeTransition);
     }

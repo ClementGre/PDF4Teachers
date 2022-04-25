@@ -101,7 +101,7 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 // On 32bits, JDK must include JavaFX (the default JavaFX is 64bits)
 // set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32
 // $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32"
-def win32 = true
+def win32 = false
 
 version = "1.3.1"
 description = "PDF students assessments editor"

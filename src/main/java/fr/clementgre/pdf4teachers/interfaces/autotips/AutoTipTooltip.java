@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -38,7 +38,7 @@ public class AutoTipTooltip extends PopOver {
     
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
         String contentText = Main.isOSX()
-                ? TR.tr("autoTips." + name).replace("Ctrl+", "Cmd+").replace("ctrl+", "cmd+")
+                ? TR.tr("autoTips." + name).replace("ctrl+", "Ctrl+").replace("Ctrl+", "Cmd+")
                 : TR.tr("autoTips." + name);
         text.setText(contentText);
         
@@ -121,6 +121,14 @@ public class AutoTipTooltip extends PopOver {
                 }
                 case "vectorEditModeButton" -> {
                     show(MainWindow.paintTab.vectorEditMode);
+                }
+                case "footerEditPagesMode" -> {
+                    setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+                    show(MainWindow.footerBar.getEditPagesModeNode());
+                }
+                case "footerViewMode" -> {
+                    setArrowLocation(ArrowLocation.BOTTOM_CENTER);
+                    show(MainWindow.footerBar.getViewModeNode());
                 }
             }
         }
