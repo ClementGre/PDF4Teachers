@@ -851,7 +851,7 @@ public class MainScreen extends Pane {
         return zoomOperator.getMainScreenWidth() / zoomOperator.getPaneScale();
     }
     public int getGridModePagesPerRow(){
-        return (int) ((getAvailableWidthInPaneContext() - PageRenderer.getPageMargin()) / (PAGE_WIDTH + PageRenderer.getPageMargin()));
+        return Math.max(1, (int) ((getAvailableWidthInPaneContext() - PageRenderer.getPageMargin()) / (PAGE_WIDTH + PageRenderer.getPageMargin())));
     }
     public int getGridModePagesInLastRow(){
         int rest = document.getPagesNumber() % getGridModePagesPerRow();

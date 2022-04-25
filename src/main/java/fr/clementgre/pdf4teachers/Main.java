@@ -109,8 +109,9 @@ public class Main extends Application {
             // Move data folder
             if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
         }
-        
+        new File(dataFolder).mkdirs();
         firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
+        
         hostServices = getHostServices();
         
         // read params
