@@ -104,7 +104,7 @@ public class Main extends Application {
             // Move data folder
             if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
         }else{
-            if(new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/.PDF4Teachers/";
+            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/.PDF4Teachers/";
             else dataFolder = System.getProperty("user.home") + "/.local/share/.PDF4Teachers/";
             // Move data folder
             if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
