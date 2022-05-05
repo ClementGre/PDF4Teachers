@@ -166,7 +166,7 @@ jlink {
             if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-17-Full
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
         }
-        else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/adopt-openjdk-16.0.1/Contents/Home')
+        else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
         else if(os.linux) javaHome.set('/opt/jdk-17')
         System.out.println("Using JDK: ".concat(javaHome.get()))
     }
