@@ -76,7 +76,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             HBox signalPage = new HBox();
             HBox.setMargin(colorPicker, new Insets(0, 10, 0, 0));
             slider.setMaxWidth(100);
-            signalPage.getChildren().addAll(new Label(TR.tr("string.color")), colorPicker, new Label(TR.tr("string.sensibility")), slider);
+            signalPage.getChildren().addAll(new Label(TR.tr("string.color")), colorPicker, new Label(TR.tr("string.sensitivity")), slider);
             signalPage.setSpacing(10);
             signalPage.setAlignment(Pos.CENTER_LEFT);
             PaneUtils.setVBoxPosition(signalPage, 0, 30, 2.5, 0);

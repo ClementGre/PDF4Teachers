@@ -51,12 +51,12 @@ public class Main extends Application {
     // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2
     
     public static final int VERSION_ID = 4;
-    public static final String VERSION = "1.3.2-sn1";
+    public static final String VERSION = "1.3.2";
     public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = true;
-    public static final boolean COPY_CONSOLE = false;
+    public static final boolean DEBUG = false;
+    public static final boolean COPY_CONSOLE = true;
     public static final boolean COPY_TRANSLATIONS_AT_START = false;
-    public static final boolean TRANSLATIONS_IN_CODE = true;
+    public static final boolean TRANSLATIONS_IN_CODE = false;
     
     public static boolean firstLaunch;
 

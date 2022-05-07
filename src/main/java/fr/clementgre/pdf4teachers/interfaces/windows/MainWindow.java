@@ -178,11 +178,6 @@ public class MainWindow extends Stage {
         root.setTop(menuBar);
         root.setBottom(footerBar);
         
-        Main.window.fullScreenProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) root.setBottom(null);
-            else root.setBottom(footerBar);
-        });
-        
         //		SHOWING
         
         setupDesktopEvents();

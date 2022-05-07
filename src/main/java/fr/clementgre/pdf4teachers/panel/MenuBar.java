@@ -143,7 +143,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem tools7ImportEdition2Grades = createMenuItem(TR.tr("menuBar.tools.importGradeScale"), null, null,
             TR.tr("menuBar.tools.importGradeScale.tooltip"), true, false, false);
     
-    private final MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, null,
+    private final MenuItem tools8FullScreen = createMenuItem(TR.tr("menuBar.tools.fullScreenMode"), SVGPathIcons.FULL_SCREEN, new KeyCodeCombination(KeyCode.F11),
             TR.tr("menuBar.tools.fullScreenMode.tooltip"));
     
     private final Menu tools8Debug = createSubMenu(TR.tr("menuBar.tools.debug"), SVGPathIcons.COMMAND_PROMPT,
