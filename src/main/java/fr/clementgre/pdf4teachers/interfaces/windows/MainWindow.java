@@ -188,11 +188,10 @@ public class MainWindow extends Stage {
         
         openFiles(LockManager.getToOpenFiles(Main.params), !openDocumentation);
         if(openDocumentation){
-            Platform.runLater(() -> mainScreen.openFile(TR.getDocFile()));
+            Platform.runLater(() -> mainScreen.openFile(TR.getDocFile(), true));
         }
         
         //      LOAD TABS
-        
         SideBar.loadBarsOrganization();
         
         //      CHECK UPDATES

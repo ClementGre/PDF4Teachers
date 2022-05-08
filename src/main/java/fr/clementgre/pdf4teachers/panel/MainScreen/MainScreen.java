@@ -505,8 +505,10 @@ public class MainScreen extends Pane {
             Main.window.setTitle(TR.tr("mainWindow.title.noDocument") + " - PDF4Teachers");
         }
     }
-    
     public void openFile(File file){
+        openFile(file,  false);
+    }
+    public void openFile(File file, boolean resetScrollValue){
         
         if(!closeFile(!Main.settings.autoSave.getValue(), false)){
             return;
@@ -533,7 +535,7 @@ public class MainScreen extends Pane {
         zoomOperator.vScrollBar.setValue(0);
         document.showPages();
         try{
-            document.loadEdition();
+            document.loadEdition(!resetScrollValue);
         }catch(Exception e){
             System.err.println("Error: Unable to load the edit file.");
             e.printStackTrace();

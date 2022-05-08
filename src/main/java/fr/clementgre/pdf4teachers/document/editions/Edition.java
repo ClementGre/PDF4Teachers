@@ -46,7 +46,7 @@ public class Edition{
     }
     
     // LOAD ORDER: Texts < Images < Vectors < Grades
-    public boolean load(){
+    public boolean load(boolean updateScrollValue){
         new File(Main.dataFolder + "editions").mkdirs();
         MainWindow.gradeTab.treeView.clearElements(true, false); // Generate root in case of no root in edition
         
@@ -59,7 +59,7 @@ public class Edition{
             boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
             
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
-            if(lastScrollValue != null) document.setCurrentScrollValue(lastScrollValue);
+            if(lastScrollValue != null && updateScrollValue) document.setCurrentScrollValue(lastScrollValue);
     
             loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
                 VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
@@ -352,12 +352,11 @@ public class Edition{
     
     public static void mergeEditFileWithEditFile(File fromEdit, File destEdit){
         try{
-            Files.move(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
             e.printStackTrace();
             new ErrorAlert(ErrorAlert.unableToCopyFileHeader(fromEdit.getAbsolutePath(), destEdit.getAbsolutePath(), true), e.getMessage(), false).showAndWait();
         }
-        fromEdit.delete();
     }
     
     public static HashMap<File, File> getEditFilesWithSameName(File originFile){

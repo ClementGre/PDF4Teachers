@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -166,7 +166,7 @@ public class EditionExporter {
                             else return TwoStepListAction.ProcessResult.SKIPPED;
                         }
                         if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
-                            MainWindow.mainScreen.document.loadEdition();
+                            MainWindow.mainScreen.document.loadEdition(false);
                         }
                         return TwoStepListAction.ProcessResult.OK;
                     }

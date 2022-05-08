@@ -112,9 +112,9 @@ public class Document {
         updateShowsStatus();
     }
     
-    public boolean loadEdition(){
+    public boolean loadEdition(boolean updateScrollValue){
         this.edition = new Edition(file, this);
-        if(edition.load()){
+        if(edition.load(updateScrollValue)){
             if(!documentSaver.isAlive()) documentSaver.start();
             this.undoEngine = new UndoEngine(true);
             return true;
@@ -155,7 +155,7 @@ public class Document {
         }
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
         MainWindow.gradeTab.treeView.clearElements(false, false);
-        this.edition.load();
+        this.edition.load(false);
         this.undoEngine = new UndoEngine(true);
     }
     

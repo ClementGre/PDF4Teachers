@@ -351,24 +351,20 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                     dialog.addButton(TR.tr("dialog.loadSameNameEdit.confirmation.buttons.yesForAllSameFolder"), ButtonPosition.OTHER_RIGHT);
                     
                     ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
-                    if(option == ButtonPosition.DEFAULT){
-                        if(MainWindow.mainScreen.hasDocument(true)){
-                            
-                            MainWindow.mainScreen.document.edition.clearEdit(false);
-                            Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
-                            MainWindow.mainScreen.document.loadEdition();
-                        }
-                    }else if(option == ButtonPosition.OTHER_RIGHT){
-                        if(MainWindow.mainScreen.hasDocument(true)){
-                            
-                            MainWindow.mainScreen.document.edition.clearEdit(false);
-                            Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
-                            MainWindow.mainScreen.document.loadEdition();
-                            
+                    if((option == ButtonPosition.DEFAULT || option == ButtonPosition.OTHER_RIGHT) && MainWindow.mainScreen.hasDocument(true)){
+                        
+                        // Opened document
+                        MainWindow.mainScreen.document.edition.clearEdit(false);
+                        Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
+                        MainWindow.mainScreen.document.loadEdition(false);
+
+                        // Other documents of the same folder in the list
+                        if(option == ButtonPosition.OTHER_RIGHT){
+    
                             for(File otherFileDest : MainWindow.filesTab.files.getItems()){
                                 if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
                                     File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
-                                    
+            
                                     if(fromEditFile.exists()){
                                         Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
                                     }else{
