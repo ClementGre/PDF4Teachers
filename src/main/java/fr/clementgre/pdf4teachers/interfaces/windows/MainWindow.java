@@ -22,7 +22,6 @@ import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.locking.LockManager;
@@ -50,7 +49,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -126,8 +124,9 @@ public class MainWindow extends Stage {
         return true;
     }
     
+    public boolean doOpenDocumentation = false; // Will be used by userData to auto load the documentation.
     public void setup(boolean openDocumentation){
-
+        doOpenDocumentation = openDocumentation;
         // WINDOW DIMENSIONS
 
         loadDimensions();
@@ -183,13 +182,6 @@ public class MainWindow extends Stage {
         setupDesktopEvents();
         updateStyle();
         mainScreen.repaint();
-        
-        //      OPEN DOC WITH PARAMS OR Auto Documentation
-        
-        openFiles(LockManager.getToOpenFiles(Main.params), !openDocumentation);
-        if(openDocumentation){
-            Platform.runLater(() -> mainScreen.openFile(TR.getDocFile(), true));
-        }
         
         //      LOAD TABS
         SideBar.loadBarsOrganization();
@@ -389,17 +381,6 @@ public class MainWindow extends Stage {
         
         gradesDigFormat = new DecimalFormat("0.###", symbols);
         gradesDigFormat.setMaximumIntegerDigits(4);
-    }
-    
-    
-    
-    public void openFiles(List<File> toOpenFiles, boolean openDocument){
-        MainWindow.filesTab.openFiles(toOpenFiles);
-        if(openDocument && toOpenFiles.size() == 1){
-            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
-                Platform.runLater(() -> MainWindow.mainScreen.openFile(toOpenFiles.get(0)));
-            }
-        }
     }
     
 }

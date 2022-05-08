@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -106,13 +106,13 @@ public class LockManager {
     public static void tryToOpenFiles(List<File> toOpenFiles){
         if(Main.window != null && Main.window.isShowing()){
             
-            Main.window.openFiles(toOpenFiles, !MainWindow.mainScreen.hasDocument(false));
+            MainWindow.mainScreen.openFiles(toOpenFiles, !MainWindow.mainScreen.hasDocument(false));
             
             /*Main.window.setIconified(true);*/
             Main.window.requestFocus();
             /*Main.window.setIconified(false);*/
         }else if(Main.window != null){
-            Main.window.setOnShown((e) -> Main.window.openFiles(toOpenFiles, true));
+            Main.window.setOnShown((e) -> MainWindow.mainScreen.openFiles(toOpenFiles, true));
         }
         
         

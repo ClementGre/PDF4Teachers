@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.locking.LockManager;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.paint.Color;
@@ -288,16 +289,24 @@ public class UserData {
             
             Platform.runLater(() -> {
                 if(Main.settings.restoreLastSession.getValue()){
+                    // Files list
                     for(Object filePath : lastOpenedFiles){
                         Platform.runLater(() -> {
                             File lastFile = new File(filePath.toString());
                             if(lastFile.exists()) MainWindow.filesTab.openFileNonDir(lastFile);
                         });
                     }
-                    File lastFile = new File(lastOpenedFile);
-                    if(lastFile.exists() && !MainWindow.mainScreen.hasDocument(false)){
-                        Platform.runLater(() -> MainWindow.mainScreen.openFile(lastFile));
+                    // Opened file
+                    // OPEN DOC WITH PARAMS OR Auto Documentation OR last opened file
+    
+                    MainWindow.mainScreen.openFiles(LockManager.getToOpenFiles(Main.params), !Main.window.doOpenDocumentation); // Params
+                    if(Main.window.doOpenDocumentation){ // Documentation
+                        Platform.runLater(() -> MainWindow.mainScreen.openFile(TR.getDocFile(), true));
+                        
+                    }else if(new File(lastOpenedFile).exists() && !MainWindow.mainScreen.hasDocument(false)){ // Last opened file
+                        Platform.runLater(() -> MainWindow.mainScreen.openFile(new File(lastOpenedFile)));
                     }
+                    
                 }
                 
                 // In the version 1.2.0, the TextElements were not stored in textelements.yml

@@ -23,6 +23,7 @@ import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 import javafx.application.Platform;
@@ -49,6 +50,7 @@ import javafx.scene.text.TextAlignment;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static fr.clementgre.pdf4teachers.document.render.display.PageRenderer.PAGE_WIDTH;
 
@@ -561,6 +563,15 @@ public class MainScreen extends Pane {
         }
         
         AutoTipsManager.showByAction("opendocument");
+    }
+    
+    public void openFiles(List<File> toOpenFiles, boolean openDocument){
+        MainWindow.filesTab.openFiles(toOpenFiles);
+        if(openDocument && toOpenFiles.size() == 1){
+            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
+                Platform.runLater(() -> openFile(toOpenFiles.get(0)));
+            }
+        }
     }
     
     public void failOpen(){
