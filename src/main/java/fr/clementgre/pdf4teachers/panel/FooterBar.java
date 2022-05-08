@@ -64,11 +64,16 @@ public class FooterBar extends StackPane {
         StyleManager.putStyle(this, Style.ACCENT);
         getStyleClass().add("app-footer-bar");
         setMaxHeight(20);
+        setMinHeight(20);
         setup();
+        PlatformUtils.runLaterOnUIThread(2000, () -> {
+            System.out.println(getHeight());
+            System.out.println(gridView.getHeight());
+        });
     }
     
     public void setup(){
-        
+
         // ZOOM INFO
         zoomController.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.zoom")));
         zoomPercent.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.zoom")));
@@ -109,8 +114,8 @@ public class FooterBar extends StackPane {
         gridView.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.gridView")));
         columnView.setToggleGroup(viewGroup);
         gridView.setToggleGroup(viewGroup);
-        PaneUtils.setHBoxPosition(columnView, -1, 21, new Insets(-1, 0, 1, 0));
-        PaneUtils.setHBoxPosition(gridView, -1, 21, new Insets(-1, 5, 1, -5));
+        PaneUtils.setHBoxPosition(columnView, -1, 19, new Insets(-1, 0, 0, 0));
+        PaneUtils.setHBoxPosition(gridView, -1, 19, new Insets(-1, 5, 0, -5));
         ZoomOperator zoomOperator = MainWindow.mainScreen.zoomOperator;
         columnView.setOnAction(e -> zoomOperator.fitWidth(false, false));
         gridView.setOnAction(e -> zoomOperator.fitWidth(false, true));
@@ -128,7 +133,7 @@ public class FooterBar extends StackPane {
         });
         
         editPagesMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.editPages.tooltip")));
-        PaneUtils.setHBoxPosition(editPagesMode, -1, 21, new Insets(-1, 0, 1, 0));
+        PaneUtils.setHBoxPosition(editPagesMode, -1, 19, new Insets(-1, 0, 0, 0));
         MainWindow.mainScreen.isEditPagesModeProperty().bindBidirectional(editPagesMode.selectedProperty());
         
         columnView.disableProperty().bind(MainWindow.mainScreen.isEditPagesModeProperty().or(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN)));
