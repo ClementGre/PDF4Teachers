@@ -30,7 +30,7 @@ public class LockManager {
         
         List<String> toOpenPaths;
         if(FAKE_OPEN_FILE){
-            toOpenPaths = List.of("/home/clement/Téléchargements/Kev.pdf");
+            toOpenPaths = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
         }else{
             toOpenPaths = getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
         }

@@ -93,7 +93,7 @@ public class Main extends Application {
         
         // Check double instance
         params = getParameters().getRaw();
-        if(LockManager.FAKE_OPEN_FILE) params = List.of("/home/clement/Téléchargements/Kev.pdf");
+        if(LockManager.FAKE_OPEN_FILE) params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
         
         // define important vars
         if(isWindows()){

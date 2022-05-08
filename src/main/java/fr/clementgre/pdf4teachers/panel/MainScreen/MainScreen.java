@@ -565,13 +565,15 @@ public class MainScreen extends Pane {
         AutoTipsManager.showByAction("opendocument");
     }
     
-    public void openFiles(List<File> toOpenFiles, boolean openDocument){
+    public boolean openFiles(List<File> toOpenFiles, boolean openDocument){
         MainWindow.filesTab.openFiles(toOpenFiles);
         if(openDocument && toOpenFiles.size() == 1){
             if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
                 Platform.runLater(() -> openFile(toOpenFiles.get(0)));
+                return true;
             }
         }
+        return false;
     }
     
     public void failOpen(){
