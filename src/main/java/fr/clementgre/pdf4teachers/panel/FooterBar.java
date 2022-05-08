@@ -66,10 +66,6 @@ public class FooterBar extends StackPane {
         setMaxHeight(20);
         setMinHeight(20);
         setup();
-        PlatformUtils.runLaterOnUIThread(2000, () -> {
-            System.out.println(getHeight());
-            System.out.println(gridView.getHeight());
-        });
     }
     
     public void setup(){
