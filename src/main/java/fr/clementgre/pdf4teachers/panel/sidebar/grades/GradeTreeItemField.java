@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -36,6 +36,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
         
         if(contextMenu) setContextMenu(treeItem.getCore().menu);
         else setContextMenu(null);
+        
         
         // Select & deselect
         focusedProperty().addListener((observable, oldValue, newValue) -> {

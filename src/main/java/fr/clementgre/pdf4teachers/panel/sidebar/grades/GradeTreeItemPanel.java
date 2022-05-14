@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -13,11 +13,13 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.css.PseudoClass;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -105,15 +107,24 @@ public class GradeTreeItemPanel extends HBox {
             newGrade.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/more.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
             newGrade.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.gradeTab.isLockGradeScaleProperty().get() || GradeTreeView.getElementTier(treeItem.getCore().getParentPath()) >= 4, MainWindow.gradeTab.isLockGradeScaleProperty()));
             newGrade.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.newGradeButton.tooltip")));
-            newGrade.setOnAction(event -> {
+            newGrade.setOnMouseClicked(e -> {
                 treeItem.setExpanded(true);
                 GradeElement element = MainWindow.gradeTab.newGradeElementAuto(treeItem);
                 element.select();
-                
                 // Update total (Fix the bug when a total is predefined (with no children))
                 treeItem.makeSum(false);
+                
                 AutoTipsManager.showByAction("gradecreate");
+                
+                // The new grade has taken the hover, but the mouse is still on the old one
+                newGrade.fireEvent(new MouseEvent(MouseEvent.MOUSE_MOVED, e.getX(), e.getY(), e.getScreenX(), e.getScreenY(), e.getButton(),  e.getClickCount(),
+                        false, false, false, false, false, false, false, false, false, false, null));
+                Platform.runLater(() -> {
+                    treeItem.getCell().pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true);
+                    newGrade.pseudoClassStateChanged(PseudoClass.getPseudoClass("hover"), true);
+                });
             });
+            
         }
         
         getChildren().addAll(name, spacer, value, slash, total, newGrade);
@@ -180,8 +191,8 @@ public class GradeTreeItemPanel extends HBox {
             }
         }
     }
-    public void onDeselected(){
-        newGrade.setVisible(false);
+    public void onDeselected(boolean isMouseOver){
+        newGrade.setVisible(isMouseOver);
         getChildren().setAll(name, spacer, value, slash, total, newGrade);
     }
     

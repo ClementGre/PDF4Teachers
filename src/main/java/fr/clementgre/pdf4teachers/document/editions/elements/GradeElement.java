@@ -415,7 +415,7 @@ public class GradeElement extends Element {
             outOfText += MainWindow.twoDigFormat.format(getOutOfTotal());
         }
         
-        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + " : " : "")
+        text.setText((GradeTab.getTierShowName(GradeTreeView.getElementTier(parentPath)) ? getName() + (TR.trBoolean("chars.doPutSpaceBeforeDoublePunctuation") ? " : " : ": ") : "")
                 + (getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(getValue()))
                 + "/" + MainWindow.gradesDigFormat.format(getTotal()) + outOfText);
     }

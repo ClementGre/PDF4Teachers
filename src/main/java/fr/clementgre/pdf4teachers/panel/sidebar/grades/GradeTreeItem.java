@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -18,6 +18,7 @@ import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
+import javafx.css.PseudoClass;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -51,8 +52,10 @@ public class GradeTreeItem extends TreeItem<String> {
     private GradeTreeItemPanel panel;
     
     // EVENTS
-    private EventHandler<MouseEvent> mouseEnteredEvent;
     private ChangeListener<Boolean> selectedListener;
+    private EventHandler<MouseEvent> mouseEnteredEvent;
+    private EventHandler<MouseEvent> mouseExitedEvent;
+    private boolean isMouseOver = false;
     
     public GradeTreeItem(GradeElement core){
         this.core = core;
@@ -67,24 +70,31 @@ public class GradeTreeItem extends TreeItem<String> {
         selectedListener = (observable, oldValue, newValue) -> {
             if(isDeleted()) return;
             
-            if(newValue){ // Est selectionné
+            if(newValue && !oldValue){ // Devient selectionné
                 panel.onSelected();
                 if(outOfPanel != null) outOfPanel.onSelected();
                 
-            }else if(oldValue){ // n'est plus selectionné
-                panel.onDeselected();
-                if(outOfPanel != null) outOfPanel.onDeselected();
+            }else if(oldValue && !newValue){ // N'est plus selectionné
+                panel.onDeselected(isMouseOver);
+                if(outOfPanel != null) outOfPanel.onDeselected(isMouseOver);
             }
         };
         
         mouseEnteredEvent = event -> {
-            if(!cell.isFocused()) panel.onMouseOver();
+            isMouseOver = true;
+            panel.onMouseOver();
+            
             if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
                 if(cell.getTooltip() == null)
                     cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
             }else if(cell.getTooltip() != null){
                 cell.setTooltip(null);
             }
+        };
+        mouseExitedEvent = event -> {
+            isMouseOver = false;
+            // Hide add button only if cell is not selected.
+            if(!cell.isSelected()) panel.onMouseOut();
         };
         
     }
@@ -96,9 +106,9 @@ public class GradeTreeItem extends TreeItem<String> {
             return;
         }
         
-        // Remove listener on old cell
+        // Switching from this.cell to cell.
         if(this.cell != null){
-            this.cell.focusedProperty().removeListener(selectedListener);
+            this.cell.selectedProperty().removeListener(selectedListener);
             this.cell.setOnMouseExited(null);
             this.cell.setOnMouseEntered(null);
             this.cell.setContextMenu(null);
@@ -106,7 +116,7 @@ public class GradeTreeItem extends TreeItem<String> {
         
         this.cell = cell;
         cell.setGraphic(root);
-    
+        
         Platform.runLater(() -> {
             double diff = MainWindow.gradeTab.treeView.sceneToLocal(cell.localToScene(root.getLayoutX(), 0)).getX();
             root.setMaxWidth(MainWindow.gradeTab.treeView.getWidth() - diff - 6 - MainWindow.gradeTab.treeView.getVScrollbarVisibleWidth());
@@ -114,13 +124,14 @@ public class GradeTreeItem extends TreeItem<String> {
         
         cell.setStyle(null);
         cell.setStyle("-fx-padding: 6 6 6 2;");
-        
-        cell.setContextMenu(core.menu);
+    
+        cell.selectedProperty().addListener(selectedListener);
+        cell.setOnMouseExited(mouseExitedEvent);
         cell.setOnMouseEntered(mouseEnteredEvent);
-        cell.setOnMouseExited(e -> {
-            if(!cell.isFocused()) panel.onMouseOut();
-        });
-        cell.focusedProperty().addListener(selectedListener);
+        cell.setContextMenu(core.menu);
+    
+        // Remove the :pressed pseudo class to prevent the bug where the cell stays pressed because the TextField has appeared and consumed the release event.
+        cell.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         
         if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
             if(cell.getTooltip() == null)
@@ -443,6 +454,7 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         selectedListener = null;
         mouseEnteredEvent = null;
+        mouseExitedEvent = null;
     }
     // This method delete add children of this TreeItem, including pageElements
     public void deleteChildren(boolean markAsUnsave, UType undoType){

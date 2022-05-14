@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -32,6 +32,7 @@ public class GradeTreeView extends TreeView<String> {
     private ScrollBar verticalScrollbar = null;
     
     public GradeTreeView(GradeTab gradeTab){
+        getStyleClass().add("grade-tree-view");
         
         disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         prefHeightProperty().bind(gradeTab.pane.heightProperty().subtract(layoutYProperty()));

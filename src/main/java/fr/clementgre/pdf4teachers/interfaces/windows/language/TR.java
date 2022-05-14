@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -133,6 +133,8 @@ public class TR {
         return locale.getLanguage().toLowerCase() + "_" + locale.getCountry().toLowerCase();
     }
     
+    
+    
     public static void updateLocale(){
         locale = new Locale(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
         bundle = getBundleByLocale(locale);
@@ -162,6 +164,10 @@ public class TR {
     }
     
     // return translation
+    public static boolean trBoolean(String key){
+        return Boolean.parseBoolean(tr(key));
+    }
+    
     public static String tr(String key){
         return tr(key, bundle, true);
     }
