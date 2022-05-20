@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -37,7 +37,8 @@ public class SideBar extends TabPane {
     
     public SideBar(boolean left){
         this.left = left;
-        
+    
+        getStyleClass().add("app-side-bar");
         setStyle(STYLE);
         
         setMaxWidth(DEFAULT_WIDTH);

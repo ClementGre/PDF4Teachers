@@ -31,6 +31,7 @@ import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.control.SplitPane;
@@ -141,8 +142,9 @@ public class MainWindow extends Stage {
         ConvertWindow.setupTranslations();
         
         //		SETUPS
-        
+    
         mainPane = new SplitPane();
+        mainPane.setPadding(new Insets(0));
         
         leftBar = new SideBar(true);
         rightBar = new SideBar(false);

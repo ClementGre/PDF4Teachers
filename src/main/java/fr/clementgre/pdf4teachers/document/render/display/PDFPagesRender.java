@@ -92,7 +92,7 @@ public class PDFPagesRender {
     private void renderPage(RenderPending renderPending){
         PDRectangle pageSize = getPageSize(renderPending.page.getPage());
         
-        BufferedImage renderImage = new BufferedImage(renderPending.width, (int) (pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage renderImage = new BufferedImage(Math.max(1, renderPending.width), (int) Math.max(1, pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = renderImage.createGraphics();
         graphics.setBackground(Color.WHITE);
         
@@ -121,7 +121,7 @@ public class PDFPagesRender {
     
     public void renderPage(PageRenderer page, double size, CallBackArg<Image> callBack){
         // *1=595 | *1.5=892 |*2=1190
-        rendersPending.add(new RenderPending(page, (int) (595 * 1.4 * size), callBack));
+        rendersPending.add(new RenderPending(page, (int) Math.max(1, 595 * 1.4 * size), callBack));
     }
     
     public BufferedImage renderPageBasic(int pageNumber, int width, int height){

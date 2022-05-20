@@ -62,6 +62,11 @@
     -fx-font-size: 13;
 }
 
+.control-buttons-tab, .control-buttons-tab *{
+    -fx-padding: -10;
+    -fx-opacity: 0;
+}
+
 /*******************************************************************************
  *                                                                             *
  * Text & Label                                                                *
