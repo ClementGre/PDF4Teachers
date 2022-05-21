@@ -21,6 +21,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.files.FileTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.SkillsTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
@@ -71,6 +72,7 @@ public class MainWindow extends Stage {
     public static FileTab filesTab;
     public static TextTab textTab;
     public static GradeTab gradeTab;
+    public static SkillsTab skillsTab;
     public static PaintTab paintTab;
     
     public static KeyboardShortcuts keyboardShortcuts;
@@ -155,6 +157,7 @@ public class MainWindow extends Stage {
         filesTab = new FileTab();
         textTab = new TextTab();
         gradeTab = new GradeTab();
+        skillsTab = new SkillsTab();
         try{
             FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/PaintTab.fxml")));
         }catch(IOException e){

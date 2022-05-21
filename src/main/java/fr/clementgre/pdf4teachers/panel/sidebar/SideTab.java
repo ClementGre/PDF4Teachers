@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -94,13 +94,12 @@ public class SideTab extends Tab {
     public static SideTab getByName(String name){
         if(MainWindow.filesTab.getName().equals(name)){
             return MainWindow.filesTab;
-            
         }else if(MainWindow.textTab.getName().equals(name)){
             return MainWindow.textTab;
-            
         }else if(MainWindow.gradeTab.getName().equals(name)){
             return MainWindow.gradeTab;
-            
+        }else if(MainWindow.skillsTab.getName().equals(name)){
+            return MainWindow.skillsTab;
         }else if(MainWindow.paintTab.getName().equals(name)){
             return MainWindow.paintTab;
         }

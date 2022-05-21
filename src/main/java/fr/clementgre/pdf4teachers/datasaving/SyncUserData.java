@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -17,7 +17,7 @@ public class SyncUserData {
     // String, boolean, long, double, List, HashMap, LinkedHashMap
     
     @UserDataObject(path = "barsOrganization.leftBar")
-    public List<String> leftBarOrganization = Arrays.asList("files", "text", "grades", "paint");
+    public List<String> leftBarOrganization = Arrays.asList("files", "text", "grades", "skills", "paint");
     
     @UserDataObject(path = "barsOrganization.rightBar")
     public List<String> rightBarOrganization = Collections.emptyList();
