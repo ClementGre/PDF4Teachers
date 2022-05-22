@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -18,6 +18,7 @@ public abstract class SimpleConfig {
         UserData.registerSimpleConfig(new FavouriteImageData());
         UserData.registerSimpleConfig(new TextElementsData());
         UserData.registerSimpleConfig(new VectorElementsData());
+        UserData.registerSimpleConfig(new SkillsAssessmentData());
         UserData.registerSimpleConfig(new SystemFontsData());
     }
     

@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
@@ -20,15 +21,58 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
+
+/* INFO DEVOIR
+
+----- Compétences : ----- (liste dans l'application)
+
+ID / Code / Nom
+
+----- RÉSULTATS : ----- (Enregistrer par défaut)
+
+Sigle / Légende / Touche Clavier / Image / ID
+
+Et en plus les résultats par défaut :
+    Signe / Légende / Touche clavier (/ Image à partir du Signe / Pas D'ID)
+    AB pour "absent" (touche A)
+    DI pour "dispensé" (touche D)
+    NE pour "non évalué" (touche E)
+    NF pour "non fait" (touche F)
+    NN pour "non noté" (touche N)
+    NR pour "non rendu" (touche R)
+    
+
+----- ÉLÈVES -----
+
+NOM / ID
+
+
+----- INFO DE BASE -----
+
+Classe / Date / Nom de l'eval
+
+*/
+
+/* INFO ÉDITIONS
+
+- Info élément de grille résultat (position, taille).
+- Résultats dans chaque compétence :
+    - ID /
+
+*/
+
 public class SkillsTab extends SideTab {
     
+    
+    private ArrayList<SkillsAssessment> assessments = new ArrayList<>();
     
     private final VBox pane = new VBox();
     private final HBox optionPane = new HBox();
     private final ListView<String> listView = new ListView<>();
     
     private final Button settings = setupButton(SVGPathIcons.LIST, TR.tr("skillsTab.settings.tooltip"), e -> {
-        new SkillsSettingsWindow().show();
+        new SkillsAssessmentWindow().show();
     });
     private final Button link = setupButton(SVGPathIcons.SAVE_LITE, TR.tr("skillsTab.link.tooltip"), e -> {
         // TODO: copy grade scale/settings to others pdf of the list and same folder.
@@ -39,6 +83,9 @@ public class SkillsTab extends SideTab {
     
     public SkillsTab(){
         super("skills", SVGPathIcons.A_CIRCLED, 0, 27, new int[]{1, 1});
+        
+        SkillsAssessment.setup();
+        
         setup();
         setContent(pane);
     }
@@ -63,5 +110,13 @@ public class SkillsTab extends SideTab {
         button.setTooltip(PaneUtils.genWrappedToolTip(tooltip));
         button.setOnAction(onAction);
         return button;
+    }
+    
+    
+    public ArrayList<SkillsAssessment> getAssessments(){
+        return assessments;
+    }
+    public void setAssessments(ArrayList<SkillsAssessment> assessments){
+        this.assessments = assessments;
     }
 }

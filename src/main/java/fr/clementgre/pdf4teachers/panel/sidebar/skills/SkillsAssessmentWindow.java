@@ -8,9 +8,9 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import javafx.scene.layout.VBox;
 
-public class SkillsSettingsWindow extends AlternativeWindow<VBox> {
+public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
     
-    public SkillsSettingsWindow(){
+    public SkillsAssessmentWindow(){
         super(new VBox(), StageWidth.NORMAL, "title", "header", "subheader");
     }
     @Override
