@@ -6,7 +6,9 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -22,6 +24,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /* INFO DEVOIR
 
@@ -72,7 +75,16 @@ public class SkillsTab extends SideTab {
     private final ListView<String> listView = new ListView<>();
     
     private final Button settings = setupButton(SVGPathIcons.LIST, TR.tr("skillsTab.settings.tooltip"), e -> {
-        new SkillsAssessmentWindow().show();
+        // TEST
+        SkillsAssessment skillsAssessment = new SkillsAssessment("test");
+        skillsAssessment.getSkills().add(new Skill("MAT-EXP1", "Expérimenter le calcul fractionnel."));
+        skillsAssessment.getSkills().add(new Skill("MAT-ANA3", "Analyser les méthodes de calcul qui permettent une optimisation du temps de réponse"));
+        skillsAssessment.getSkills().add(new Skill("MAT-ANA1", "Analyser correctement les différents exercices et énoncées de manière à pouvoir comprendre l'objectif des questions."));
+        skillsAssessment.getSkills().add(new Skill("MAT-ANA2", "Analyser les méthodes de calcul qui permettent une optimisation du temps de réponse"));
+        new SkillsAssessmentWindow(skillsAssessment).show();
+    
+        assessments.clear();
+        assessments.add(skillsAssessment);
     });
     private final Button link = setupButton(SVGPathIcons.SAVE_LITE, TR.tr("skillsTab.link.tooltip"), e -> {
         // TODO: copy grade scale/settings to others pdf of the list and same folder.
@@ -118,5 +130,8 @@ public class SkillsTab extends SideTab {
     }
     public void setAssessments(ArrayList<SkillsAssessment> assessments){
         this.assessments = assessments;
+    }
+    public List<Skill> getAllSkills(){
+        return assessments.stream().flatMap(a -> a.getSkills().stream()).toList();
     }
 }

@@ -35,7 +35,7 @@ import java.util.Objects;
 
 public abstract class AlternativeWindow<R extends Node> extends Stage {
     
-    private final VBox container = new VBox();
+    protected final VBox container = new VBox();
     private final VBox header = new VBox();
     public R root;
     
@@ -115,7 +115,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
                 setHeight(trueHeight);
                 setWidth(trueWidth);
                 // Remove the scroll by stretching the window (+ 6px to prevent the scrollbar from showing)
-                double diffHeight = (container.getHeight() - scrollPane.getHeight() + 6) * Main.settings.zoom.getValue();
+                
+                double diffHeight = Math.max((container.getHeight() - scrollPane.getHeight() + 6) * Main.settings.zoom.getValue(), 0);
                 setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight));
                 
                 if(Main.window != null) Main.window.centerWindowIntoMe(this);
@@ -143,7 +144,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         // MenuBar on OSX Fix //
         if(Main.isOSX() && MenuBar.isSystemMenuBarSupported()){
             javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
-            container.getChildren().add(0, menuBar);
+            borderPane.setTop(menuBar);
             menuBar.setUseSystemMenuBar(true);
         }
     }
@@ -174,7 +175,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     private void setupButtonsBox(){
         infoBox = new HBox();
         buttonsBox = new HBox();
-        bottomBarContainer.getChildren().setAll(infoBox, buttonsBox);
+        bottomBarContainer.getChildren().setAll(buttonsBox);
         
         bottomBarContainer.getStyleClass().add("buttonBoxContainer");
         infoBox.getStyleClass().add("infoBox");
@@ -189,6 +190,14 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     
     
     public void updateInfoBox(AlertIconType iconType, String text){
+        if(iconType == null && text.isBlank()){
+            bottomBarContainer.getChildren().remove(infoBox);
+            return;
+        }
+        if(!bottomBarContainer.getChildren().contains(infoBox)){
+            bottomBarContainer.getChildren().add(0, infoBox);
+        }
+        
         Label info = new Label(text);
         Image image = new Image(Objects.requireNonNull(AutoHideNotificationPane.class.getResourceAsStream("/img/dialogs/" + iconType.getFileName() + ".png")));
         ImageView imageView = new ImageView(image);
@@ -209,9 +218,8 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     // Must be called after setButtons(), only once
     public void setLeftButtons(Button... buttons){
         buttonsBox.getChildren().add(0, new HBoxSpacer());
-        for(Button button : buttons){
-            buttonsBox.getChildren().add(0, button);
-        }
+        for(int i = buttons.length-1; i >= 0; i--)
+            buttonsBox.getChildren().add(0, buttons[i]);
     }
     // Should be called only once
     public void setButtons(Button... buttons){

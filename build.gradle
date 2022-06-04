@@ -127,7 +127,8 @@ application {
 run {
     jvmArgs = [
             '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
+            '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls'
     ]
     if (os.macOsX) {
         // The dock icon works only when app is in /Applications
@@ -146,7 +147,8 @@ jlink {
         name = 'PDF4Teachers'
         jvmArgs = [
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-                '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls'
+                '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
+                '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls'
         ]
         if (os.macOsX) {
             // The dock icon works only when app is in /Applications

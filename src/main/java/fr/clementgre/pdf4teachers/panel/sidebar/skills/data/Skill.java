@@ -6,6 +6,8 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -13,16 +15,16 @@ import java.util.Random;
 
 public class Skill {
     private long id;
-    private String acronym;
-    private String name;
+    private final StringProperty acronym = new SimpleStringProperty("");
+    private final StringProperty name = new SimpleStringProperty("");
     
     public Skill(String acronym, String name){
         this(new Random().nextLong(9999999L), acronym, name);
     }
     public Skill(long id, String acronym, String name){
         this.id = id;
-        this.acronym = acronym;
-        this.name = name;
+        this.acronym.set(acronym);
+        this.name.set(name);
     }
     public static Skill loadFromConfig(HashMap<String, Object> map){
         long id = Config.getLong(map, "id");
@@ -34,8 +36,8 @@ public class Skill {
     
     public LinkedHashMap<String, Object> toYAML(){
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
-        map.put("acronym", acronym);
-        map.put("name", name);
+        map.put("acronym", acronym.get());
+        map.put("name", name.get());
         map.put("id", id);
         return map;
     }
@@ -48,15 +50,21 @@ public class Skill {
         this.id = id;
     }
     public String getAcronym(){
+        return acronym.get();
+    }
+    public StringProperty acronymProperty(){
         return acronym;
     }
     public void setAcronym(String acronym){
-        this.acronym = acronym;
+        this.acronym.set(acronym);
     }
     public String getName(){
+        return name.get();
+    }
+    public StringProperty nameProperty(){
         return name;
     }
     public void setName(String name){
-        this.name = name;
+        this.name.set(name);
     }
 }
