@@ -9,8 +9,8 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import javafx.collections.FXCollections;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.stream.Collectors;
 
@@ -25,7 +25,7 @@ public class SkillsAssessmentData extends SimpleConfig{
     protected void manageLoadedData(Config config){
         
         MainWindow.skillsTab.setAssessments(
-                new ArrayList<>(config.getList("assessments").stream()
+                FXCollections.observableArrayList(config.getList("assessments").stream()
                         .filter(d -> d instanceof HashMap)
                         .map(a -> SkillsAssessment.loadFromConfig((HashMap) a)).toList())
         );

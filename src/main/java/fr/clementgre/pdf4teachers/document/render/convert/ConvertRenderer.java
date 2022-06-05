@@ -55,7 +55,8 @@ public class ConvertRenderer {
                 
                 if(isValidDir(dir)){
                     documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
-                    convertFile(Objects.requireNonNull(dir.listFiles((f) -> !f.isHidden())), new File(out + dir.getName() + ".pdf"));
+                    File[] files = dir.listFiles((f) -> !f.isHidden());
+                    convertFile(files == null ? new File[]{} : files, new File(out + dir.getName() + ".pdf"));
                 }else if(isValidFile(dir) && convertPane.convertAloneFiles.isSelected()){
                     String imgName = StringUtils.removeAfterLastOccurrence(dir.getName(), ".");
                     documentCallBack.call(Map.entry(imgName + ".pdf", -1d));
@@ -204,7 +205,7 @@ public class ConvertRenderer {
     }
     
     private boolean isValidDir(File dir){
-        if(!dir.isDirectory()) return false;
+        if(!dir.isDirectory() || dir.isHidden()) return false;
         if(!convertPane.convertVoidFiles.isSelected()){
             int compatibleFiles = 0;
             for(File file : Objects.requireNonNull(dir.listFiles())) if(isValidFile(file)) compatibleFiles++;

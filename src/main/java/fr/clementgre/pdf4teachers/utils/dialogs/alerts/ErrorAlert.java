@@ -30,7 +30,7 @@ public class ErrorAlert extends WrongAlert {
         expContent.add(new Label(TR.tr("convertWindow.dialog.error.details")), 0, 0);
         expContent.add(textArea, 0, 1);
         
-        if(error.endsWith("(Access is denied.)") || error.endsWith("(Accès refusé)") || error.endsWith("(Permission denied)")){
+        if(error != null && (error.endsWith("(Access is denied.)") || error.endsWith("(Accès refusé)") || error.endsWith("(Permission denied)"))){
             setContentText(TR.tr("dialog.error.accessDenied.details", StringUtils.removeAfterLastOccurrence(error, File.separator)));
         }
         

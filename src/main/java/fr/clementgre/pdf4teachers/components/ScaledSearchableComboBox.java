@@ -1,34 +1,45 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.components;
 
 import fr.clementgre.pdf4teachers.Main;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBox;
+import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
+import org.controlsfx.control.SearchableComboBox;
 
-public class ScaledComboBox<T> extends ComboBox<T> {
+public class ScaledSearchableComboBox<T> extends SearchableComboBox<T> {
     
     // Bind by default
-    public ScaledComboBox(){
+    public ScaledSearchableComboBox(){
         setup(true);
     }
     
-    public ScaledComboBox(boolean bind){
+    public ScaledSearchableComboBox(boolean bind){
         setup(bind);
     }
     
-    public ScaledComboBox(ObservableList<T> items, boolean bind){
+    public ScaledSearchableComboBox(ObservableList<T> items, boolean bind){
         super(items);
         setup(bind);
     }
     
     private void setup(boolean bind){
+    
+        // Remove border of children (inner combobox & textfield)
+        getChildrenUnmodifiable().addListener((ListChangeListener<Node>) c -> {
+            while(c.next()){
+                c.getAddedSubList().forEach(n -> {
+                    n.setStyle("-fx-background-insets: 0, 0, 0;");
+                });
+            }
+        });
         
         if(bind){
             Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {

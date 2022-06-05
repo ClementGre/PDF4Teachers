@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
+import fr.clementgre.pdf4teachers.components.ScaledSearchableComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
@@ -13,17 +14,19 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /* INFO DEVOIR
@@ -68,29 +71,24 @@ Classe / Date / Nom de l'eval
 public class SkillsTab extends SideTab {
     
     
-    private ArrayList<SkillsAssessment> assessments = new ArrayList<>();
+    private final ListProperty<SkillsAssessment> assessments = new SimpleListProperty<>(FXCollections.observableArrayList());
     
     private final VBox pane = new VBox();
     private final HBox optionPane = new HBox();
     private final ListView<String> listView = new ListView<>();
     
-    private final Button settings = setupButton(SVGPathIcons.LIST, TR.tr("skillsTab.settings.tooltip"), e -> {
-        // TEST
-        SkillsAssessment skillsAssessment = new SkillsAssessment("test");
-        skillsAssessment.getSkills().add(new Skill("MAT-EXP1", "Expérimenter le calcul fractionnel."));
-        skillsAssessment.getSkills().add(new Skill("MAT-ANA3", "Analyser les méthodes de calcul qui permettent une optimisation du temps de réponse"));
-        skillsAssessment.getSkills().add(new Skill("MAT-ANA1", "Analyser correctement les différents exercices et énoncées de manière à pouvoir comprendre l'objectif des questions."));
-        skillsAssessment.getSkills().add(new Skill("MAT-ANA2", "Analyser les méthodes de calcul qui permettent une optimisation du temps de réponse"));
-        new SkillsAssessmentWindow(skillsAssessment).show();
+    private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>();
     
-        assessments.clear();
-        assessments.add(skillsAssessment);
+    private final Button settings = setupButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
+        // TEST
+        new SkillsAssessmentWindow(assessmentCombo.getValue()).show();
+    
     });
-    private final Button link = setupButton(SVGPathIcons.SAVE_LITE, TR.tr("skillsTab.link.tooltip"), e -> {
-        // TODO: copy grade scale/settings to others pdf of the list and same folder.
+    private final Button deleteAssessment = setupButton(SVGPathIcons.TRASH, TR.tr("skillsTab.link.tooltip"), e -> {
+    
     });
-    private final Button export = setupButton(SVGPathIcons.EXPORT, TR.tr("skillsTab.export.tooltip"), e -> {
-        // TODO: export to csv (SaCoche or Classic).
+    private final Button newAssessment = setupButton(SVGPathIcons.PLUS, TR.tr("skillsTab.export.tooltip"), e -> {
+    
     });
     
     public SkillsTab(){
@@ -104,32 +102,55 @@ public class SkillsTab extends SideTab {
     
     private void setup(){
 
-        optionPane.setStyle("-fx-padding: 5 0 5 0;");
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, settings, link, export);
+        optionPane.setStyle("-fx-padding: 5;");
+        optionPane.setSpacing(3);
+    
+        PaneUtils.setHBoxPosition(assessmentCombo, -1, 30, 0);
+    
+        assessmentCombo.setConverter(new StringConverter<>() {
+            @Override
+            public String toString(SkillsAssessment assessment){
+                if(assessment == null) return null;
+                String text = assessment.getName();
+                if(!assessment.getClasz().isBlank()) text += " - " + assessment.getClasz();
+                if(!assessment.getDate().isBlank()) text += " | " + assessment.getDate();
+                return text;
+            }
+            @Override
+            public SkillsAssessment fromString(String assessmentName){ return null; }
+        });
+        assessmentCombo.itemsProperty().bind(assessments);
+        
+        settings.disableProperty().bind(assessmentCombo.valueProperty().isNull());
+        deleteAssessment.disableProperty().bind(assessmentCombo.valueProperty().isNull());
+        
+        optionPane.getChildren().addAll(assessmentCombo, settings, deleteAssessment, newAssessment);
         
         // TODO: setup listView for showing skills.
     
         pane.getChildren().addAll(optionPane, listView);
+        
     }
     
     private Button setupButton(String iconPath, String tooltip, EventHandler<ActionEvent> onAction){
         Button button = new Button();
-        PaneUtils.setHBoxPosition(button, 45, 35, 0);
+        PaneUtils.setHBoxPosition(button, 30, 30, 0);
         button.setCursor(Cursor.HAND);
-        button.setGraphic(SVGPathIcons.generateImage(iconPath, "black", 0, 26, 0, ImageUtils.defaultDarkColorAdjust));
+        button.setGraphic(SVGPathIcons.generateImage(iconPath, "black", 0, 16, 0, ImageUtils.defaultDarkColorAdjust));
         button.setTooltip(PaneUtils.genWrappedToolTip(tooltip));
         button.setOnAction(onAction);
         return button;
     }
     
     
-    public ArrayList<SkillsAssessment> getAssessments(){
+    public ObservableList<SkillsAssessment> getAssessments(){
+        return assessments.get();
+    }
+    public ListProperty<SkillsAssessment> assessmentsProperty(){
         return assessments;
     }
-    public void setAssessments(ArrayList<SkillsAssessment> assessments){
-        this.assessments = assessments;
+    public void setAssessments(ObservableList<SkillsAssessment> assessments){
+        this.assessments.set(assessments);
     }
     public List<Skill> getAllSkills(){
         return assessments.stream().flatMap(a -> a.getSkills().stream()).toList();

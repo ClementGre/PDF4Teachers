@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
@@ -32,7 +33,18 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
     public SkillsAssessmentWindow(SkillsAssessment assessment){
         super(new VBox(), StageWidth.LARGE, TR.tr("skillsSettingsWindow.title"), TR.tr("skillsSettingsWindow.title"), TR.tr("skillsSettingsWindow.subtitle"));
         this.assessment = assessment;
+    
+        // Loading Data
+        name.setText(assessment.getName());
+        clasz.setText(assessment.getClasz());
+        date.getEditor().setText(assessment.getDate());
         
+        // Saving Data
+        setOnHiding(e -> {
+            assessment.setName(name.getText().isBlank() ? TR.tr("skillsTab.defaults.assessmentName") : name.getText());
+            assessment.setClasz(clasz.getText());
+            assessment.setDate(date.getEditor().getText());
+        });
     }
     
     @Override
@@ -93,6 +105,22 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         assessmentSettings.add(name, 0, 1);
         assessmentSettings.add(clasz, 1, 1);
         assessmentSettings.add(date, 2, 1);
+        
+        name.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER){
+                clasz.requestFocus();
+                e.consume();
+            }
+        });
+        clasz.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER){
+                date.requestFocus();
+                e.consume();
+            }
+        });
+        date.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER) e.consume();
+        });
     
         skillsListingPane = new SkillsListingPane(this);
         notationsListingPane = new NotationsListingPane(this);

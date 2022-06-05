@@ -14,6 +14,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -74,7 +75,7 @@ public class SkillsListingPane extends Tab {
         inputs.getStyleClass().add("noTextFieldClear");
         
         AutoCompletionBinding<Skill> acronymAuto = TextFields.bindAutoCompletion(acronymField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase())).toList();
+            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText())).toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getAcronym(); }
             @Override public Skill fromString(String s){ return null; }
@@ -82,9 +83,10 @@ public class SkillsListingPane extends Tab {
         acronymAuto.setOnAutoCompleted(e -> {
             if(nameField.getText().isBlank()) nameField.setText(e.getCompletion().getName());
         });
+        // TODO : scale auto completion popup
     
         AutoCompletionBinding<Skill> nameAuto = TextFields.bindAutoCompletion(nameField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase())).toList();
+            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText())).toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getName(); }
             @Override public Skill fromString(String s){ return null; }
@@ -97,6 +99,19 @@ public class SkillsListingPane extends Tab {
     
         acronymField.setPromptText(TR.tr("skillsTab.skill.acronym"));
         nameField.setPromptText(TR.tr("skillsTab.skill.name"));
+        
+        acronymField.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER){
+                addSkill.fire();
+                e.consume();
+            }
+        });
+        nameField.setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER){
+                addSkill.fire();
+                e.consume();
+            }
+        });
         
         addSkill.setMinHeight(28);
         addSkill.setPrefHeight(28);
