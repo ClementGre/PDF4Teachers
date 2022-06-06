@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -92,7 +92,7 @@ public abstract class TextTreeSection extends TreeItem<String> {
     public void setupGraphics(){
         
         PaneUtils.setPosition(sortToggleBtn, 0, 0, 30, 30, true);
-        sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
+        sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, ImageUtils.defaultDarkColorAdjust));
         sortToggleBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("sorting.name")));
         
         if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -124,7 +124,7 @@ public class PaintTab extends SideTab {
     public static GraphicElement draggingElement = null;
     
     public PaintTab(){
-        super("paint", SVGPathIcons.DRAW_POLYGON, 28, 30, null);
+        super("paint", SVGPathIcons.DRAW_POLYGON, 28, 0);
         MainWindow.paintTab = this;
     }
     
@@ -132,16 +132,16 @@ public class PaintTab extends SideTab {
     public void initialize(){
         setContent(root);
         
-        newImage.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PICTURES, "darkgreen", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        newVector.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.VECTOR_SQUARE, "darkblue", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
+        newImage.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PICTURES, "darkgreen", 0, 22, ImageUtils.defaultDarkColorAdjust));
+        newVector.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.VECTOR_SQUARE, "darkblue", 0, 22, ImageUtils.defaultDarkColorAdjust));
+        delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 22, ImageUtils.defaultDarkColorAdjust));
         
-        vectorPerpendicularLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULE, "black", 0, 22, 22, ImageUtils.defaultDarkColorAdjust));
-        vectorEditMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 21, 21, ImageUtils.defaultDarkColorAdjust));
+        vectorPerpendicularLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULES, "black", 0, 22, ImageUtils.defaultDarkColorAdjust));
+        vectorStraightLineMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.RULE, "black", 0, 22, ImageUtils.defaultDarkColorAdjust));
+        vectorEditMode.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.PEN, "black", 0, 21, ImageUtils.defaultDarkColorAdjust));
         
-        vectorUndoPath.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.UNDO, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
-        doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, 15, ImageUtils.defaultWhiteColorAdjust));
+        vectorUndoPath.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.UNDO, "white", 0, 15, ImageUtils.defaultWhiteColorAdjust));
+        doFillButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.FILL, "white", 0, 15, ImageUtils.defaultWhiteColorAdjust));
         
         vectorStrokeWidth.getValueFactory().setConverter(new StringToIntConverter(0));
         ShortcutsTextField.registerNewInput(vectorStrokeWidth);

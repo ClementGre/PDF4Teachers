@@ -26,7 +26,7 @@ open module fr.clementgre.pdf4teachers {
     uses javax.imageio.spi.ImageReaderSpi;
     uses org.apache.pdfbox.jbig2.util.log.LoggerBridge;
     
-    // jfx addons
+    // style & controls
     requires org.jfxtras.styles.jmetro;
     requires org.controlsfx.controls;
     
@@ -100,5 +100,6 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine;
     exports fr.clementgre.pdf4teachers.utils.locking;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine.pages;
+    exports fr.clementgre.pdf4teachers.components.autocompletiontextfield;
 }
     

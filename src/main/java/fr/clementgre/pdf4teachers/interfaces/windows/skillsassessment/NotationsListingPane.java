@@ -25,4 +25,6 @@ public class NotationsListingPane extends Tab {
         
     }
     
+    public void save(){
+    }
 }

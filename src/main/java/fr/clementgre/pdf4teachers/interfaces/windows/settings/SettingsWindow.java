@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -71,7 +71,7 @@ public class SettingsWindow extends AlternativeWindow<VBox> {
             Main.settings.saveSettings();
         });
         
-        setOnCloseRequest((e) -> {
+        setOnCloseRequest(e -> {
             close();
             Main.settings.saveSettings();
         });

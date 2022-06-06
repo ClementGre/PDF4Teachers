@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import javafx.beans.binding.Bindings;
@@ -39,12 +40,6 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         clasz.setText(assessment.getClasz());
         date.getEditor().setText(assessment.getDate());
         
-        // Saving Data
-        setOnHiding(e -> {
-            assessment.setName(name.getText().isBlank() ? TR.tr("skillsTab.defaults.assessmentName") : name.getText());
-            assessment.setClasz(clasz.getText());
-            assessment.setDate(date.getEditor().getText());
-        });
     }
     
     @Override
@@ -55,16 +50,17 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
     
     @Override
     public void afterShown(){
+    
     }
     
     public void setupBtns(){
-        Button ok = new Button(TR.tr("actions.ok"));
-        ok.setDefaultButton(true);
+    
+        Button applyButton = new Button(TR.tr("actions.apply"));
+        
         Button sacocheImport = new Button(TR.tr("skillsSettingsWindow.sacocheImport"));
         Button sacocheExport = new Button(TR.tr("skillsSettingsWindow.sacocheExport"));
         Button csvExport = new Button(TR.tr("skillsSettingsWindow.csvExport"));
-        
-        ok.setOnAction(e -> close());
+    
         sacocheImport.setOnAction(e -> {
         
         });
@@ -75,9 +71,27 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         
         });
         
-        setButtons(ok);
-        setLeftButtons(sacocheImport, sacocheExport, csvExport);
+        applyButton.setOnAction(e -> {
+            save();
+            close();
+        });
+        setOnCloseRequest(e -> {
+            save();
+            close();
+        });
         
+        setButtons(applyButton);
+        setLeftButtons(sacocheImport, sacocheExport, csvExport);
+    }
+    
+    private void save(){
+        assessment.setName(name.getText().isBlank() ? TR.tr("skillsTab.defaults.assessmentName") : name.getText());
+        assessment.setClasz(clasz.getText());
+        assessment.setDate(date.getEditor().getText());
+        MainWindow.skillsTab.updateComboBoxSelectedAssessmentName();
+        
+        skillsListingPane.save();
+        notationsListingPane.save();
     }
     
     private void setupUI(){

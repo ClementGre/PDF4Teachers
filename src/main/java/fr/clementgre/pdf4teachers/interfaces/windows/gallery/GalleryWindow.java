@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -119,7 +119,7 @@ public class GalleryWindow extends Stage {
         PaneUtils.setHBoxPosition(zoomSlider, 0, 26, 0);
         PaneUtils.setHBoxPosition(filter, 0, 26, 0);
         PaneUtils.setHBoxPosition(reload, 26, 26, 0);
-        reload.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.REDO, "black", 0, 16, 16, ImageUtils.defaultDarkColorAdjust));
+        reload.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.REDO, "black", 0, 16, ImageUtils.defaultDarkColorAdjust));
         reload.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("galleryWindow.reloadButton.tooltip")));
         
         reload.setOnAction((e) -> {

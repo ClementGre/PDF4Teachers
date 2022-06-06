@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -140,7 +140,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         tooltip.setOnShowing(e -> {
             if(item.isFavorite()){
                 String color = StyleManager.DEFAULT_STYLE == Style.DARK ? "yellow" : "#dbce00";
-                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, color, 0, 16, 16);
+                Region graphic = SVGPathIcons.generateImage(SVGPathIcons.PLAIN_STAR, color, 0, 16);
                 graphic.setPadding(new Insets(0, 5, 0, 0));
                 tooltip.setGraphic(graphic);
             }else{

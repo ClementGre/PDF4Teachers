@@ -56,11 +56,11 @@ public class PageGridEditPane extends Pane {
         int padding = (int) (30/factor / 5);
     
         Region leftRect = new Region();
-        Region leftIcon = SVGPathIcons.generateImage(SVGPathIcons.UNDO, "#e4e4e4", padding, rectDim, rectDim);
+        Region leftIcon = SVGPathIcons.generateImage(SVGPathIcons.UNDO, "#e4e4e4", padding, rectDim);
         setupCorner(rectDim, padding, factor, leftRect, leftIcon, false);
         
         Region rightRect = new Region();
-        Region rightIcon = SVGPathIcons.generateImage(SVGPathIcons.REDO, "#e4e4e4", padding, rectDim, rectDim);
+        Region rightIcon = SVGPathIcons.generateImage(SVGPathIcons.REDO, "#e4e4e4", padding, rectDim);
         setupCorner(rectDim, padding, factor, rightRect, rightIcon, true);
         
         getChildren().setAll(leftRect, rightRect, leftIcon, rightIcon);

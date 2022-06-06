@@ -193,7 +193,7 @@ CheckBox {
 /*******************************************************************************
  *                                                                             *
  * Dialog                                                                      *
- * Restore the default Modena style font global Dialogs pane                   *
+ * Restore the default Modena style for global Dialogs pane                   *
  ******************************************************************************/
 
 .dialog-pane {
@@ -271,4 +271,17 @@ CheckBox {
 
 .alert.warning.dialog-pane {
     -fx-graphic: url("../img/dialogs/warning.png");
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * ControlsFX custom auto complete popup                                       *
+ *                                                                             *
+ ******************************************************************************/
+.auto-complete-popup{
+    -fx-padding: 1px;
+    -fx-border-width: 1px;
+}
+.auto-complete-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-padding: 0.063em 0.375em; /*1px 6px*/
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -33,9 +33,9 @@ public class ListsManager {
     public ListsManager(TextTreeSection section){
         this.section = section;
         
-        loadListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LIST, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
+        loadListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.LIST, "black", 0, 18, ImageUtils.defaultDarkColorAdjust));
         loadListBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("textTab.lists.show.tooltip")));
-        saveListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SAVE, "black", 0, 18, 18, ImageUtils.defaultDarkColorAdjust));
+        saveListBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SAVE, "black", 0, 18, ImageUtils.defaultDarkColorAdjust));
         saveListBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("textTab.lists.save.tooltip")));
         
         PaneUtils.setPosition(loadListBtn, 0, 0, 30, 30, true);

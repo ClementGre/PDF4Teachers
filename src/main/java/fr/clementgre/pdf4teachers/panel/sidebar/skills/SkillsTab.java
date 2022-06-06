@@ -5,22 +5,19 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
+import fr.clementgre.pdf4teachers.components.IconButton;
 import fr.clementgre.pdf4teachers.components.ScaledSearchableComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -77,22 +74,22 @@ public class SkillsTab extends SideTab {
     private final HBox optionPane = new HBox();
     private final ListView<String> listView = new ListView<>();
     
-    private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>();
+    private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>(true);
     
-    private final Button settings = setupButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
+    private final Button settings = new IconButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
         // TEST
-        new SkillsAssessmentWindow(assessmentCombo.getValue()).show();
+        new SkillsAssessmentWindow(assessmentCombo.getValue());
     
     });
-    private final Button deleteAssessment = setupButton(SVGPathIcons.TRASH, TR.tr("skillsTab.link.tooltip"), e -> {
+    private final Button deleteAssessment = new IconButton(SVGPathIcons.TRASH, TR.tr("skillsTab.link.tooltip"), e -> {
     
     });
-    private final Button newAssessment = setupButton(SVGPathIcons.PLUS, TR.tr("skillsTab.export.tooltip"), e -> {
+    private final Button newAssessment = new IconButton(SVGPathIcons.PLUS, TR.tr("skillsTab.export.tooltip"), e -> {
     
     });
     
     public SkillsTab(){
-        super("skills", SVGPathIcons.A_CIRCLED, 0, 27, new int[]{1, 1});
+        super("skills", SVGPathIcons.A_CIRCLED, 28, 1);
         
         SkillsAssessment.setup();
         
@@ -127,19 +124,17 @@ public class SkillsTab extends SideTab {
         optionPane.getChildren().addAll(assessmentCombo, settings, deleteAssessment, newAssessment);
         
         // TODO: setup listView for showing skills.
-    
+        
+        
         pane.getChildren().addAll(optionPane, listView);
         
     }
     
-    private Button setupButton(String iconPath, String tooltip, EventHandler<ActionEvent> onAction){
-        Button button = new Button();
-        PaneUtils.setHBoxPosition(button, 30, 30, 0);
-        button.setCursor(Cursor.HAND);
-        button.setGraphic(SVGPathIcons.generateImage(iconPath, "black", 0, 16, 0, ImageUtils.defaultDarkColorAdjust));
-        button.setTooltip(PaneUtils.genWrappedToolTip(tooltip));
-        button.setOnAction(onAction);
-        return button;
+    // Update assessment name in the combo box
+    public void updateComboBoxSelectedAssessmentName(){
+        SkillsAssessment assessment = assessmentCombo.getValue();
+        assessmentCombo.getSelectionModel().clearSelection();
+        assessmentCombo.getSelectionModel().select(assessment);
     }
     
     

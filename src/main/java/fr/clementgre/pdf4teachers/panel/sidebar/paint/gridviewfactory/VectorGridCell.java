@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -107,7 +107,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             setContextMenu(null);
             setOnDragDetected(null);
     
-            Region icon = SVGPathIcons.generateImage(SVGPathIcons.PENCIL, "#0078d7", (int) getHeight()/2, (int) getWidth()/2);
+            Region icon = SVGPathIcons.generateImage(SVGPathIcons.PENCIL, "#0078d7", (int) getHeight()/2);
             icon.maxWidthProperty().bind(icon.heightProperty());
             
             Text label = new Text(TR.tr("actions.new"));

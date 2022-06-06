@@ -11,6 +11,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Skin;
 import javafx.util.Callback;
 import org.controlsfx.control.SearchableComboBox;
 
@@ -36,12 +37,13 @@ public class ScaledSearchableComboBox<T> extends SearchableComboBox<T> {
         getChildrenUnmodifiable().addListener((ListChangeListener<Node>) c -> {
             while(c.next()){
                 c.getAddedSubList().forEach(n -> {
-                    n.setStyle("-fx-background-insets: 0, 0, 0;");
+                    n.setStyle("-fx-background-insets: 0, 0, 0; -fx-padding: 0");
                 });
             }
         });
         
         if(bind){
+            // TODO: fix dynamic upscale issues.
             Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
                 setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
             });
@@ -65,5 +67,10 @@ public class ScaledSearchableComboBox<T> extends SearchableComboBox<T> {
                 };
             }
         });
+    }
+    
+    @Override
+    protected Skin<?> createDefaultSkin() {
+        return new ScaledSearchableComboBoxSkin<>(this);
     }
 }

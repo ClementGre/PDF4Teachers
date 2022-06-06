@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -45,7 +45,7 @@ public class SettingGroupPane extends VBox {
     }
     private Node generateSettingIcon(Setting<?> setting){
         String color = Main.settings.darkTheme.getValue() ? "darkgray" : "gray";
-        Region icon = SVGPathIcons.generateImage(setting.getIcon(), color, 0, 20, 20);
+        Region icon = SVGPathIcons.generateImage(setting.getIcon(), color, 0, 20);
         Pane iconContainer = new Pane(icon);
         iconContainer.setMinSize(20, 20);
         iconContainer.setMaxSize(20, 20);
@@ -73,7 +73,7 @@ public class SettingGroupPane extends VBox {
         
         if(!setting.getDescription().isBlank()){
             String color = "#ff8989";
-            Region icon = SVGPathIcons.generateImage(SVGPathIcons.INFO, color, 0, 15, 15);
+            Region icon = SVGPathIcons.generateImage(SVGPathIcons.INFO, color, 0, 15);
             Pane iconContainer = new Pane(icon);
             iconContainer.setMinSize(15, 15);
             iconContainer.setMaxSize(15, 15);

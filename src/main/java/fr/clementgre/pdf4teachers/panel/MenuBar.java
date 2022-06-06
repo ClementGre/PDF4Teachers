@@ -569,7 +569,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             if(image != null){
                 if(image.length() >= 30){
-                    ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
+                    ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
                     if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
                         System.err.println("MenuBar image " + image + " does not exist");
@@ -610,7 +610,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             if(image != null){
                 if(image.length() >= 30){
-                    menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
+                    menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
                     if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
                         System.err.println("MenuBar image " + image + " does not exist");
@@ -642,17 +642,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         }else{
             NodeMenuItem menuItem = new NodeMenuItem(text, false);
             
-            if(image != null){
-                if(image.length() >= 30){
-                    menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, 16, colorAdjust));
-                }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        System.err.println("MenuBar image " + image + " does not exist");
-                    else
-                        menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
-                }
-                
-            }
+            if(image != null) menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
             
             if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
             if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);

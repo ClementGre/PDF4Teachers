@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.components.autocompletiontextfield.AutoCompletionTextFieldBinding;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -22,8 +23,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import org.controlsfx.control.textfield.AutoCompletionBinding;
-import org.controlsfx.control.textfield.TextFields;
 
 public class SkillsListingPane extends Tab {
     
@@ -58,6 +57,8 @@ public class SkillsListingPane extends Tab {
         nameCol.setCellFactory(p -> getCellFactory(nameCol, false));
         acronymCol.setReorderable(false);
         nameCol.setReorderable(false);
+        acronymCol.setSortable(false);
+        nameCol.setSortable(false);
     
         acronymCol.setMinWidth(150);
         acronymCol.setMaxWidth(150);
@@ -74,8 +75,10 @@ public class SkillsListingPane extends Tab {
         inputs.setSpacing(5);
         inputs.getStyleClass().add("noTextFieldClear");
         
-        AutoCompletionBinding<Skill> acronymAuto = TextFields.bindAutoCompletion(acronymField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText())).toList();
+        AutoCompletionTextFieldBinding<Skill> acronymAuto = new AutoCompletionTextFieldBinding<>(acronymField, param -> {
+            return MainWindow.skillsTab.getAllSkills().stream()
+                    .filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText()))
+                    .distinct().toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getAcronym(); }
             @Override public Skill fromString(String s){ return null; }
@@ -85,8 +88,10 @@ public class SkillsListingPane extends Tab {
         });
         // TODO : scale auto completion popup
     
-        AutoCompletionBinding<Skill> nameAuto = TextFields.bindAutoCompletion(nameField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream().filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText())).toList();
+        AutoCompletionTextFieldBinding<Skill> nameAuto = new AutoCompletionTextFieldBinding<>(nameField, param -> {
+            return MainWindow.skillsTab.getAllSkills().stream()
+                    .filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText()))
+                    .distinct().toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getName(); }
             @Override public Skill fromString(String s){ return null; }
@@ -119,7 +124,6 @@ public class SkillsListingPane extends Tab {
         addSkill.disableProperty().bind(acronymField.textProperty().isEmpty().or(nameField.textProperty().isEmpty()));
         addSkill.setOnAction(e -> {
             Skill skill = new Skill(acronymField.getText(), nameField.getText());
-            window.getAssessment().getSkills().add(skill);
             tableView.getItems().add(skill);
     
             acronymField.clear();
@@ -219,7 +223,6 @@ public class SkillsListingPane extends Tab {
             NodeMenuItem.setupMenu(menu);
             
             delete.setOnAction(e -> {
-                window.getAssessment().getSkills().remove(row.getItem());
                 tableView.getItems().remove(row.getItem());
             });
             
@@ -235,4 +238,8 @@ public class SkillsListingPane extends Tab {
         };
     }
     
+    public void save(){
+        window.getAssessment().getSkills().clear();
+        window.getAssessment().getSkills().addAll(tableView.getItems());
+    }
 }

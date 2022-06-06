@@ -99,7 +99,7 @@ public class PageGridSeparator extends Pane {
         circle.setStrokeWidth(circleRadius/6);
         circle.setCursor(Cursor.HAND);
     
-        Region plus = SVGPathIcons.generateImage(SVGPathIcons.PLUS, "#eeeeee", (int) (2*circleRadius-circleMargin), (int) (2*circleRadius-circleMargin));
+        Region plus = SVGPathIcons.generateImage(SVGPathIcons.PLUS, "#eeeeee", (int) (2*circleRadius-circleMargin));
         plus.setLayoutX(PageRenderer.PAGE_MARGIN_GRID/2d - circleRadius + circleMargin/2);
         plus.setLayoutY(getHeight()/2 - circleRadius + circleMargin/2);
         plus.setMouseTransparent(true);

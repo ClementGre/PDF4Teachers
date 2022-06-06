@@ -65,12 +65,15 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     }
     
     public AlternativeWindow(R root, StageWidth width, String titleHeader){
-        this(root, width, titleHeader, titleHeader, null);
+        this(root, width, 0, titleHeader, titleHeader, null);
     }
     public AlternativeWindow(R root, StageWidth width, String title, String header){
-        this(root, width, title, header, null);
+        this(root, width, 0, title, header, null);
     }
     public AlternativeWindow(R root, StageWidth width, String title, String header, String subHeader){
+        this(root, width, 0, title, header, subHeader);
+    }
+    public AlternativeWindow(R root, StageWidth width, int height, String title, String header, String subHeader){
         this.root = root;
 
         initOwner(Main.window);
@@ -79,6 +82,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         
         setWidth(width.getWidth());
         setMaxHeight(width.getWidth() * 1.75);
+        if(height != 0) setHeight(height);
         
         setTitle(title + " - PDF4Teachers");
         setScene(scene);
@@ -107,22 +111,27 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
                 toRequestFocus.setDefaultButton(true);
             }
             
-            // When creating the window, there is a small animation so the dimensions are not correct after the runLater.
-            double trueHeight = getHeight();
-            double trueWidth = getWidth();
+            if(height == 0){
+                // When creating the window, there is a small animation so the dimensions are not correct after the runLater.
+                double trueHeight = getHeight();
+                double trueWidth = getWidth();
+                Platform.runLater(() -> {
+                    // Restore thue dimensions (due to the animation)
+                    setHeight(trueHeight);
+                    setWidth(trueWidth);
+                    // Remove the scroll by stretching the window (+ 6px to prevent the scrollbar from showing)
+        
+                    double diffHeight = Math.max((container.getHeight() - scrollPane.getHeight() + 6) * Main.settings.zoom.getValue(), 0);
+                    setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight));
+                });
+            }
             Platform.runLater(() -> {
-                // Restore thue dimensions (due to the animation)
-                setHeight(trueHeight);
-                setWidth(trueWidth);
-                // Remove the scroll by stretching the window (+ 6px to prevent the scrollbar from showing)
-                
-                double diffHeight = Math.max((container.getHeight() - scrollPane.getHeight() + 6) * Main.settings.zoom.getValue(), 0);
-                setHeight(Math.min(getMaxHeight(), getHeight() + diffHeight));
-                
                 if(Main.window != null) Main.window.centerWindowIntoMe(this);
                 MainWindow.preventStageOverflowScreen(this);
                 afterShown();
             });
+            
+            
         });
         
         scene.setOnKeyPressed((e) -> {
@@ -139,6 +148,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
                 Main.window.centerWindowIntoMe(this, width.getWidth() * Main.settings.zoom.getValue(), 600 * Main.settings.zoom.getValue());
             }
             show();
+            
         });
 
         // MenuBar on OSX Fix //

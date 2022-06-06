@@ -5,28 +5,26 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
+import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.IconButton;
+import fr.clementgre.pdf4teachers.components.IconToggleButton;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.export.GradeExportWindow;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
-import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
-import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Cursor;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -43,13 +41,15 @@ public class GradeTab extends SideTab {
     
     public static HashMap<Integer, TiersFont> fontTiers = new HashMap<>();
     
-    public ToggleButton lockGradeScale = new ToggleButton();
-    private final Button settings = new Button();
-    private final Button link = new Button();
-    private final Button export = new Button();
+    public ToggleButton lockGradeScale = new IconToggleButton(SVGPathIcons.LOCK, SVGPathIcons.LOCK_OPEN, TR.tr("gradeTab.lockGradeScale.tooltip"), null, true);
+    private final Button settings = new IconButton(SVGPathIcons.GEAR, TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip"), e -> new GradeSettingsWindow(), true);
+    private final Button link = new IconButton(SVGPathIcons.LINK, TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip"), e -> new GradeCopyGradeScaleDialog().show(), true);
+    private final Button export = new IconButton(SVGPathIcons.EXPORT, TR.tr("gradeTab.gradeExportWindow.accessButton"), e -> {
+        if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.save(true)) new GradeExportWindow();
+    }, true);
     
     public GradeTab(){
-        super("grades", SVGPathIcons.ON_TWENTY, 29, 0, new int[]{500, 440});
+        super("grades", SVGPathIcons.ON_TWENTY, 29, 500/440d);
         
         setContent(pane);
         setup();
@@ -63,17 +63,9 @@ public class GradeTab extends SideTab {
         fontTiers.put(3, new TiersFont(FontUtils.getFont("Open Sans", false, false, 18), Color.valueOf("#e64d4d"), false, false, false));
         fontTiers.put(4, new TiersFont(FontUtils.getFont("Open Sans", false, false, 18), Color.valueOf("#ff6666"), false, false, false));
         
-        PaneUtils.setHBoxPosition(lockGradeScale, 45, 35, 0);
-        lockGradeScale.setCursor(Cursor.HAND);
         lockGradeScale.setSelected(false);
-        lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue){
-                lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas-ferme.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
-                AutoTipsManager.showByAction("gradescalelock");
-            }else
-                lockGradeScale.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/cadenas.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
-            
+            if(newValue) AutoTipsManager.showByAction("gradescalelock");
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
                 int selected = treeView.getSelectionModel().getSelectedIndex();
@@ -81,35 +73,9 @@ public class GradeTab extends SideTab {
                 treeView.getSelectionModel().select(selected);
             }
         });
-        lockGradeScale.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.lockGradeScale.tooltip")));
         
-        PaneUtils.setHBoxPosition(settings, 45, 35, 0);
-        settings.setCursor(Cursor.HAND);
-        settings.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/engrenage.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
-        settings.setOnAction((e) -> new GradeSettingsWindow());
-        settings.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip")));
-        
-        PaneUtils.setHBoxPosition(link, 45, 35, 0);
-        link.setCursor(Cursor.HAND);
-        link.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/link.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
-        link.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        link.setOnAction((e) -> new GradeCopyGradeScaleDialog().show());
-        link.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip")));
-        
-        PaneUtils.setHBoxPosition(export, 45, 35, 0);
-        export.setCursor(Cursor.HAND);
-        export.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/GradesTab/exporter.png") + "", 0, 0, ImageUtils.defaultDarkColorAdjust));
-        export.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
-        export.setOnAction((e) -> {
-            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.save(true))
-                new GradeExportWindow();
-        });
-        export.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("gradeTab.gradeExportWindow.accessButton")));
-        
-        optionPane.setStyle("-fx-padding: 5 0 5 0;");
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        optionPane.getChildren().addAll(spacer, lockGradeScale, settings, link, export);
+        optionPane.setPadding(new Insets(5, 0, 5, 0));
+        optionPane.getChildren().addAll(new HBoxSpacer(), lockGradeScale, settings, link, export);
         
         treeView = new GradeTreeView(this);
         pane.getChildren().addAll(optionPane, treeView);

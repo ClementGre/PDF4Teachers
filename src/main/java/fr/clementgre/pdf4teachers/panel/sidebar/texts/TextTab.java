@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -89,7 +89,7 @@ public class TextTab extends SideTab {
     private boolean txtAreaScrollBarListenerIsSetup = false;
     
     public TextTab(){
-        super("text", SVGPathIcons.TEXT_LETTER, 0, 28, new int[]{460, 500});
+        super("text", SVGPathIcons.TEXT_LETTER, 26, 460/500d);
         
         draggingItem = null;
         draggingElement = null;

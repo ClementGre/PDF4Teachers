@@ -126,9 +126,9 @@ application {
 
 run {
     jvmArgs = [
-            '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
-            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
-            '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls'
+            '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls', // For controlsFX NotificationPane
+            '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls', // For controlsFX NotificationPane
+            '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls', // For controlsFX SearchComboBox
     ]
     if (os.macOsX) {
         // The dock icon works only when app is in /Applications

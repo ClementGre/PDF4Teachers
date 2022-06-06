@@ -44,8 +44,8 @@ public class FooterBar extends StackPane {
     private final Label zoomPercent = new Label();
     private final ColorAdjust lightGrayColorAdjust = new ColorAdjust();
     private final ToggleGroup viewGroup = new ToggleGroup();
-    private final ToggleButton columnView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.SINGLE_PAGE, "white", 0, 25, 14, lightGrayColorAdjust));
-    private final ToggleButton gridView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.MULTI_PAGE, "white", 0, 25, 14, lightGrayColorAdjust));
+    private final ToggleButton columnView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.SINGLE_PAGE, "white", 0, 25, lightGrayColorAdjust));
+    private final ToggleButton gridView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.MULTI_PAGE, "white", 0, 25, lightGrayColorAdjust));
     private final ToggleButton editPagesMode = new ToggleButton(TR.tr("footerBar.editPages"));
     
     private final Label statsElements = new Label();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -77,7 +77,7 @@ public class DirFilterListCell extends ListCell<String> {
             Label text = new Label(FilesUtils.getPathReplacingUserHome(item));
             text.setStyle("-fx-font-size: 12;");
             Button delete = new Button();
-            delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "red", 0, 14, 14));
+            delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "red", 0, 14));
             delete.setStyle("-fx-background-color: transparent;");
             delete.setOnMouseEntered((e) -> delete.setStyle(null));
             delete.setOnMouseExited((e) -> delete.setStyle("-fx-background-color: transparent;"));

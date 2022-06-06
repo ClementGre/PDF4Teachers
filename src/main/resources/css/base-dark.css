@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -23,4 +23,24 @@
 
 .popover > .border {
     -fx-fill: #252525 !important;
+}
+
+/*******************************************************************************
+ *                                                                             *
+ * Main UI                                                                     *
+ *                                                                             *
+ ******************************************************************************/
+
+
+
+
+/*******************************************************************************
+ *                                                                             *
+ * ControlsFX custom auto complete popup                                       *
+ *                                                                             *
+ ******************************************************************************/
+
+.auto-complete-popup {
+    -fx-border-color: #747474;
+    -fx-background-color: #2b2b2b;
 }

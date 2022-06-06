@@ -82,28 +82,33 @@ public class SVGPathIcons {
     public static final String TEXT_WIDTH = "M432 32H16A16 16 0 0 0 0 48v80a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16v-16h120v112h-24a16 16 0 0 0-16 16v32a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-32a16 16 0 0 0-16-16h-24V112h120v16a16 16 0 0 0 16 16h32a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zm-68.69 260.69C354 283.36 336 288.36 336 304v48H112v-48c0-14.31-17.31-21.32-27.31-11.31l-80 80a16 16 0 0 0 0 22.62l80 80C94 484.64 112 479.64 112 464v-48h224v48c0 14.31 17.31 21.33 27.31 11.31l80-80a16 16 0 0 0 0-22.62z";
     public static final String ELLIPSIS_VERTICAL = "M64 360C94.93 360 120 385.1 120 416C120 446.9 94.93 472 64 472C33.07 472 8 446.9 8 416C8 385.1 33.07 360 64 360zM64 200C94.93 200 120 225.1 120 256C120 286.9 94.93 312 64 312C33.07 312 8 286.9 8 256C8 225.1 33.07 200 64 200zM64 152C33.07 152 8 126.9 8 96C8 65.07 33.07 40 64 40C94.93 40 120 65.07 120 96C120 126.9 94.93 152 64 152z";
     
+    public static final String FILTER = "M3.853 54.87C10.47 40.9 24.54 32 40 32H472C487.5 32 501.5 40.9 508.1 54.87C514.8 68.84 512.7 85.37 502.1 97.33L320 320.9V448C320 460.1 313.2 471.2 302.3 476.6C291.5 482 278.5 480.9 268.8 473.6L204.8 425.6C196.7 419.6 192 410.1 192 400V320.9L9.042 97.33C-.745 85.37-2.765 68.84 3.854 54.87L3.853 54.87z";
+    public static final String GEAR = "M495.9 166.6C499.2 175.2 496.4 184.9 489.6 191.2L446.3 230.6C447.4 238.9 448 247.4 448 256C448 264.6 447.4 273.1 446.3 281.4L489.6 320.8C496.4 327.1 499.2 336.8 495.9 345.4C491.5 357.3 486.2 368.8 480.2 379.7L475.5 387.8C468.9 398.8 461.5 409.2 453.4 419.1C447.4 426.2 437.7 428.7 428.9 425.9L373.2 408.1C359.8 418.4 344.1 427 329.2 433.6L316.7 490.7C314.7 499.7 307.7 506.1 298.5 508.5C284.7 510.8 270.5 512 255.1 512C241.5 512 227.3 510.8 213.5 508.5C204.3 506.1 197.3 499.7 195.3 490.7L182.8 433.6C167 427 152.2 418.4 138.8 408.1L83.14 425.9C74.3 428.7 64.55 426.2 58.63 419.1C50.52 409.2 43.12 398.8 36.52 387.8L31.84 379.7C25.77 368.8 20.49 357.3 16.06 345.4C12.82 336.8 15.55 327.1 22.41 320.8L65.67 281.4C64.57 273.1 64 264.6 64 256C64 247.4 64.57 238.9 65.67 230.6L22.41 191.2C15.55 184.9 12.82 175.3 16.06 166.6C20.49 154.7 25.78 143.2 31.84 132.3L36.51 124.2C43.12 113.2 50.52 102.8 58.63 92.95C64.55 85.8 74.3 83.32 83.14 86.14L138.8 103.9C152.2 93.56 167 84.96 182.8 78.43L195.3 21.33C197.3 12.25 204.3 5.04 213.5 3.51C227.3 1.201 241.5 0 256 0C270.5 0 284.7 1.201 298.5 3.51C307.7 5.04 314.7 12.25 316.7 21.33L329.2 78.43C344.1 84.96 359.8 93.56 373.2 103.9L428.9 86.14C437.7 83.32 447.4 85.8 453.4 92.95C461.5 102.8 468.9 113.2 475.5 124.2L480.2 132.3C486.2 143.2 491.5 154.7 495.9 166.6V166.6zM256 336C300.2 336 336 300.2 336 255.1C336 211.8 300.2 175.1 256 175.1C211.8 175.1 176 211.8 176 255.1C176 300.2 211.8 336 256 336z";
+    public static final String LOCK = "M80 192V144C80 64.47 144.5 0 224 0C303.5 0 368 64.47 368 144V192H384C419.3 192 448 220.7 448 256V448C448 483.3 419.3 512 384 512H64C28.65 512 0 483.3 0 448V256C0 220.7 28.65 192 64 192H80zM144 192H304V144C304 99.82 268.2 64 224 64C179.8 64 144 99.82 144 144V192z";
+    public static final String LOCK_OPEN = "M224 64C179.8 64 144 99.82 144 144V192H384C419.3 192 448 220.7 448 256V448C448 483.3 419.3 512 384 512H64C28.65 512 0 483.3 0 448V256C0 220.7 28.65 192 64 192H80V144C80 64.47 144.5 0 224 0C281.5 0 331 33.69 354.1 82.27C361.7 98.23 354.9 117.3 338.1 124.9C322.1 132.5 303.9 125.7 296.3 109.7C283.4 82.63 255.9 64 224 64H224zM256 384C273.7 384 288 369.7 288 352C288 334.3 273.7 320 256 320H192C174.3 320 160 334.3 160 352C160 369.7 174.3 384 192 384H256z";
+    public static final String LINK = "M172.5 131.1C228.1 75.51 320.5 75.51 376.1 131.1C426.1 181.1 433.5 260.8 392.4 318.3L391.3 319.9C381 334.2 361 337.6 346.7 327.3C332.3 317 328.9 297 339.2 282.7L340.3 281.1C363.2 249 359.6 205.1 331.7 177.2C300.3 145.8 249.2 145.8 217.7 177.2L105.5 289.5C73.99 320.1 73.99 372 105.5 403.5C133.3 431.4 177.3 435 209.3 412.1L210.9 410.1C225.3 400.7 245.3 404 255.5 418.4C265.8 432.8 262.5 452.8 248.1 463.1L246.5 464.2C188.1 505.3 110.2 498.7 60.21 448.8C3.741 392.3 3.741 300.7 60.21 244.3L172.5 131.1zM467.5 380C411 436.5 319.5 436.5 263 380C213 330 206.5 251.2 247.6 193.7L248.7 192.1C258.1 177.8 278.1 174.4 293.3 184.7C307.7 194.1 311.1 214.1 300.8 229.3L299.7 230.9C276.8 262.1 280.4 306.9 308.3 334.8C339.7 366.2 390.8 366.2 422.3 334.8L534.5 222.5C566 191 566 139.1 534.5 108.5C506.7 80.63 462.7 76.99 430.7 99.9L429.1 101C414.7 111.3 394.7 107.1 384.5 93.58C374.2 79.2 377.5 59.21 391.9 48.94L393.5 47.82C451 6.731 529.8 13.25 579.8 63.24C636.3 119.7 636.3 211.3 579.8 267.7L467.5 380z";
     
-    public static Region generateImage(String path, String bgColor, int width, int height){
-        return generateImage(path, bgColor, 0, width, height, 0, null, null);
+    public static Region generateImage(String path, String bgColor, int maxDimension){
+        return generateImage(path, bgColor, 0, maxDimension, 0, 0, null);
     }
     
-    public static Region generateImage(String path, String bgColor, int padding, int width, int height){
-        return generateImage(path, bgColor, padding, width, height, 0, null, null);
+    public static Region generateImage(String path, String bgColor, int padding, int maxDimension){
+        return generateImage(path, bgColor, padding, maxDimension, 0, 0, null);
     }
     
-    public static Region generateImage(String path, String bgColor, int padding, int width, int height, ColorAdjust effect){
-        return generateImage(path, bgColor, padding, width, height, 0, null, effect);
+    public static Region generateImage(String path, String bgColor, int padding, int maxDimension, ColorAdjust effect){
+        return generateImage(path, bgColor, padding, maxDimension, 0, 0, effect);
     }
     
-    public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate){
-        return generateImage(path, bgColor, padding, width, height, rotate, null, null);
+    public static Region generateImage(String path, String bgColor, int padding, int maxDimension, int rotate){
+        return generateImage(path, bgColor, padding, maxDimension, rotate, 0, null);
     }
     
-    public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio){
-        return generateImage(path, bgColor, padding, width, height, rotate, ratio, null);
+    public static Region generateImage(String path, String bgColor, int padding, int maxDimension, int rotate, double ratio){
+        return generateImage(path, bgColor, padding, maxDimension, rotate, ratio, null);
     }
     
-    public static Region generateImage(String path, String bgColor, int padding, int width, int height, int rotate, int[] ratio, ColorAdjust effect){
+    public static Region generateImage(String path, String bgColor, int padding, int maxDimension, int rotate, double ratio, ColorAdjust effect){
         
         SVGPath image = new SVGPath();
         image.setContent(path);
@@ -115,52 +120,42 @@ public class SVGPathIcons {
         imageRegion.setStyle("-fx-background-color: " + bgColor + ";");
         imageRegion.getStyleClass().add("image-icon");
         
-        if(effect != null){
-            //effect.brightnessProperty().addListener(new NonLeakingListener(imageRegion));
-            imageRegion.setEffect(effect);
-        }
+        if(effect != null) imageRegion.setEffect(effect);
         
-        int w = width - padding * 2;
+        
+        maxDimension = maxDimension - padding * 2;
         StackPane imagePane = new StackPane();
         imagePane.setStyle("-fx-background-color: transparent;");
+    
+        double rw = image.getLayoutBounds().getWidth();
+        double rh = image.getLayoutBounds().getHeight();
+        if(ratio <= 0) ratio = rw / rh;
         
-        if(ratio == null){
-            double rw = image.getLayoutBounds().getWidth();
-            double rh = image.getLayoutBounds().getHeight();
-            if(rw < rh){
-                imageRegion.setMinWidth((int) (w / rh * rw));
-                imageRegion.setMinHeight(w);
-                double dif = (w - (int) (w / rh * rw)) / 2d;
-                imagePane.setPadding(new Insets(0, (int) dif, 0, Math.ceil(dif)));
-            }else if(rw > rh){
-                imageRegion.setMinWidth(w);
-                imageRegion.setMinHeight(w / rw * rh);
-                double dif = (w - (int) (w / rw * rh)) / 2d;
-                imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif), 0));
-            }else{
-                imageRegion.setMinWidth(w);
-                imageRegion.setMinHeight(w);
-                return imageRegion;
-            }
+        if(ratio < 1){
+            setRegionDimension(imageRegion, maxDimension * ratio, maxDimension);
             
+            double dif = (maxDimension - (int) (maxDimension * ratio)) / 2d;
+            imagePane.setPadding(new Insets(0, (int) dif, 0, Math.ceil(dif)));
+        }else if(ratio > 1){
+            setRegionDimension(imageRegion, maxDimension, maxDimension / ratio);
+            
+            double dif = (maxDimension - (int) (maxDimension / ratio)) / 2d;
+            imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif), 0));
         }else{
-            int h = height - padding * 2;
-            
-            if(height == 0){
-                h = (int) (w / ((double) ratio[0]) * ratio[1]);
-                imagePane.setPadding(new Insets((w - h) / 2d, 0, (w - h) / 2d, 0));
-            }else{
-                w = (int) (h / ((double) ratio[1]) * ratio[0]);
-                imagePane.setPadding(new Insets(0, (h - w) / 2d, 0, (h - w) / 2d));
-            }
-            
-            imageRegion.setMinWidth(w);
-            imageRegion.setMinHeight(h);
+            setRegionDimension(imageRegion, maxDimension, maxDimension);
+            return imageRegion;
         }
-        
         imagePane.getChildren().add(imageRegion);
         return imagePane;
         
+    }
+    private static void setRegionDimension(Region region, double width, double height){
+        if(width != 0 && height != 0){
+            region.setMinWidth(width);
+            region.setMinHeight(height);
+            region.setMaxWidth(region.getMinWidth());
+            region.setMaxHeight(region.getMinHeight());
+        }
     }
     
     public static Image generateNonSvgImage(String path, Color color, Effect effect, double scaleFactor){

@@ -11,6 +11,7 @@ import javafx.beans.property.StringProperty;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.Random;
 
 public class Skill {
@@ -40,6 +41,15 @@ public class Skill {
         map.put("name", name.get());
         map.put("id", id);
         return map;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Skill that = (Skill) o;
+        return Objects.equals(getName(), that.getName()) &&
+                Objects.equals(getAcronym(), that.getAcronym());
     }
     
     

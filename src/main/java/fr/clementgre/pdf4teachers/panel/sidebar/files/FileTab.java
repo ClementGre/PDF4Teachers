@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -52,7 +52,7 @@ public class FileTab extends SideTab {
     public ArrayList<File> originalFiles = new ArrayList<>();
     
     public FileTab(){
-        super("files", SVGPathIcons.PDF_FILE, 0, 28, new int[]{400, 500});
+        super("files", SVGPathIcons.PDF_FILE, 28, 400/500d);
         setContent(pane);
         setup();
         

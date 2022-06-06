@@ -26,11 +26,11 @@ public class SideTab extends Tab {
     
     private final String name;
     
-    public SideTab(String name, String iconPath, int width, int height, int[] ratio){
+    public SideTab(String name, String iconPath, int maxDimension, double ratio){
         this.name = name;
         
         setClosable(false);
-        setGraphic(SVGPathIcons.generateImage(iconPath, "gray", 0, width, height, 0, ratio, ImageUtils.defaultGrayColorAdjust));
+        setGraphic(SVGPathIcons.generateImage(iconPath, "gray", 0, maxDimension, 0, ratio, ImageUtils.defaultGrayColorAdjust));
         setupDragAndDrop(iconPath);
         
         Platform.runLater(() -> {
