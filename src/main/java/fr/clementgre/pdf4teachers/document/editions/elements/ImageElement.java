@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -289,8 +289,8 @@ public class ImageElement extends GraphicElement {
         return null;
     }
     
-    private Image getNotFoundImage(){
-        return new Image(Objects.requireNonNull(getClass().getResourceAsStream("/img/painttab/not_found.png")));
+    public static Image getNotFoundImage(){
+        return new Image(Objects.requireNonNull(ImageElement.class.getResourceAsStream("/img/painttab/not_found.png")));
     }
     
     @Override

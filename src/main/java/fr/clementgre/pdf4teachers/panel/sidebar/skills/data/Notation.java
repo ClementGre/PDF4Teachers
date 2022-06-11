@@ -13,7 +13,9 @@ import java.util.LinkedHashMap;
 import java.util.Random;
 
 public class Notation {
-    
+
+// Sigle / Légende / Touche Clavier / Graphique / ID
+//                                    |-> Caractère (AUTO) / Couleur / Image B64
     
     @NotNull
     private String acronym;
@@ -25,11 +27,14 @@ public class Notation {
     private String data; // Can be base64 icon or color string or just a letter
     private long id;
     
+    public Notation(){
+        this("", "", "", "");
+    }
     public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar){
         this(acronym, name, keyboardChar, "");
     }
     public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar, @NotNull String data){
-        this(acronym, name, keyboardChar, "", new Random().nextLong(9999999L));
+        this(acronym, name, keyboardChar, data, new Random().nextLong(9999999L));
     }
     public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar, @NotNull String data, long id){
         this.acronym = acronym;

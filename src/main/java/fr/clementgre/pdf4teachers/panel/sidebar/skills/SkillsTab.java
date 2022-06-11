@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
@@ -35,7 +36,8 @@ ID / Code / Nom
 
 ----- RÉSULTATS : ----- (Enregistrer par défaut)
 
-Sigle / Légende / Touche Clavier / Image / ID
+Sigle / Légende / Touche Clavier / Graphique / ID
+                                   |-> Caractère (AUTO) / Couleur / Image B64
 
 Et en plus les résultats par défaut :
     Signe / Légende / Touche clavier (/ Image à partir du Signe / Pas D'ID)
@@ -95,7 +97,7 @@ public class SkillsTab extends SideTab {
         SkillsAssessment assessment = new SkillsAssessment();
         assessments.add(assessment);
         assessmentCombo.setValue(assessment);
-        new SkillsAssessmentWindow(assessment);
+        Platform.runLater(() -> new SkillsAssessmentWindow(assessment));
     });
     
     public SkillsTab(){

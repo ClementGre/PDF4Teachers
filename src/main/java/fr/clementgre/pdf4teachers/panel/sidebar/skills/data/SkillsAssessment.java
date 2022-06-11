@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
 import javafx.scene.paint.Color;
 
 import java.util.*;
@@ -31,6 +32,9 @@ public class SkillsAssessment {
                 new Notation("NR", TR.tr("skills.notation.notReturned"), "R") // non rendu
         ));
     }
+    public static ArrayList<Notation> getOtherNotations(){
+        return otherNotations;
+    }
     
     
     private static Notation.NotationType userDefaultNotationType = Notation.NotationType.COLOR;
@@ -38,10 +42,10 @@ public class SkillsAssessment {
     
     private static ArrayList<Notation> getGlobalDefaultNotations(){
         return new ArrayList<>(Arrays.asList(
-                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", Color.DARKRED.toString()),
-                new Notation("2", TR.tr("skills.notation.insufficient"), "2", Color.YELLOW.toString()),
-                new Notation("3", TR.tr("skills.notation.good"), "3", Color.LIGHTGREEN.toString()),
-                new Notation("4", TR.tr("skills.notation.veryGood"), "4", Color.DARKGREEN.toString())
+                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", ColorUtils.toRGBHex(Color.DARKRED)),
+                new Notation("2", TR.tr("skills.notation.insufficient"), "2", ColorUtils.toRGBHex(Color.YELLOW)),
+                new Notation("3", TR.tr("skills.notation.good"), "3", ColorUtils.toRGBHex(Color.LIGHTGREEN)),
+                new Notation("4", TR.tr("skills.notation.veryGood"), "4", ColorUtils.toRGBHex(Color.DARKGREEN))
         ));
     }
     public static ArrayList<Notation> getDefaultNotations(){
