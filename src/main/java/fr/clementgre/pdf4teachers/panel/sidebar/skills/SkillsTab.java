@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAsse
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.property.ListProperty;
@@ -59,9 +60,10 @@ Classe / Date / Nom de l'eval
 
 /* INFO ÉDITIONS
 
-- Info élément de grille résultat (position, taille).
+
 - Résultats dans chaque compétence :
-    - ID /
+    - ID / Nom
+- Info élément de grille résultat.
 
 */
 
@@ -77,15 +79,23 @@ public class SkillsTab extends SideTab {
     private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>(true);
     
     private final Button settings = new IconButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
-        // TEST
-        new SkillsAssessmentWindow(assessmentCombo.getValue());
-    
+        if(assessmentCombo.getValue() != null) new SkillsAssessmentWindow(assessmentCombo.getValue());
     });
-    private final Button deleteAssessment = new IconButton(SVGPathIcons.TRASH, TR.tr("skillsTab.link.tooltip"), e -> {
-    
+    private final Button deleteAssessment = new IconButton(SVGPathIcons.TRASH, TR.tr("skillsTab.deleteAssessment.tooltip"), e -> {
+        if(assessmentCombo.getValue() != null){
+            ConfirmAlert alert = new ConfirmAlert(true, TR.tr("skillsTab.deleteAssessment.confirm", assessmentCombo.getValue().getName()));
+            if(alert.execute()){
+                SkillsAssessment toDelete = assessmentCombo.getValue();
+                assessmentCombo.setValue(null);
+                assessments.remove(toDelete);
+            }
+        }
     });
     private final Button newAssessment = new IconButton(SVGPathIcons.PLUS, TR.tr("skillsTab.export.tooltip"), e -> {
-    
+        SkillsAssessment assessment = new SkillsAssessment();
+        assessments.add(assessment);
+        assessmentCombo.setValue(assessment);
+        new SkillsAssessmentWindow(assessment);
     });
     
     public SkillsTab(){

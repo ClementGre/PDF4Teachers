@@ -110,6 +110,9 @@ public class SkillsAssessment {
     private final ArrayList<Notation> notations;
     
     
+    public SkillsAssessment(){
+        this("", "", "");
+    }
     public SkillsAssessment(String name){
         this(name, "", "");
     }

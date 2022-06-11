@@ -48,10 +48,13 @@ public class Skill {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Skill that = (Skill) o;
-        return Objects.equals(getName(), that.getName()) &&
-                Objects.equals(getAcronym(), that.getAcronym());
+        return getName().equals(that.getName()) && getAcronym().equals(that.getAcronym());
     }
     
+    @Override
+    public int hashCode(){
+        return Objects.hash(acronym.get(), name.get());
+    }
     
     public long getId(){
         return id;

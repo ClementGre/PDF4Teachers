@@ -78,7 +78,8 @@ public class SkillsListingPane extends Tab {
         AutoCompletionTextFieldBinding<Skill> acronymAuto = new AutoCompletionTextFieldBinding<>(acronymField, param -> {
             return MainWindow.skillsTab.getAllSkills().stream()
                     .filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText()))
-                    .distinct().toList();
+                    .unordered().distinct()
+                    .toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getAcronym(); }
             @Override public Skill fromString(String s){ return null; }
@@ -91,7 +92,8 @@ public class SkillsListingPane extends Tab {
         AutoCompletionTextFieldBinding<Skill> nameAuto = new AutoCompletionTextFieldBinding<>(nameField, param -> {
             return MainWindow.skillsTab.getAllSkills().stream()
                     .filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText()))
-                    .distinct().toList();
+                    .unordered().distinct()
+                    .toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getName(); }
             @Override public Skill fromString(String s){ return null; }
