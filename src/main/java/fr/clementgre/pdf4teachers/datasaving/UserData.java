@@ -213,6 +213,15 @@ public class UserData {
         simpleConfigs.add(simpleConfig);
     }
     
+    public SimpleConfig getSimpleConfig(Class<? extends SimpleConfig> clazz){
+        for(SimpleConfig simpleConfig : simpleConfigs){
+            if(simpleConfig.getClass().equals(clazz)){
+                return simpleConfig;
+            }
+        }
+        return null;
+    }
+    
     public UserData(){
         // if: check the actions wasn't already done in case of app restart.
         if(simpleConfigs.size() == 0) SimpleConfig.registerClasses();

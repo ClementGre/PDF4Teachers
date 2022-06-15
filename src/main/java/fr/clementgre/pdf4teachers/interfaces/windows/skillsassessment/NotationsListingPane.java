@@ -10,17 +10,26 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.util.StringConverter;
+
+import java.util.ArrayList;
 
 public class NotationsListingPane extends Tab {
     
@@ -36,7 +45,30 @@ public class NotationsListingPane extends Tab {
         setClosable(false);
         setContent(root);
         root.setStyle("-fx-padding: 15;");
-        root.setSpacing(5);
+        root.setSpacing(10);
+        
+        // Notation style boxes
+    
+        HBox notationModeBox = new HBox();
+        notationModeBox.setSpacing(5);
+        notationModeBox.setAlignment(Pos.CENTER_LEFT);
+        notationModeBox.getChildren().add(new Label(TR.tr("skillsSettingsWindow.notationMode")));
+        
+        ComboBox<Notation.NotationType> notationMode = new ComboBox<>();
+        notationMode.getItems().addAll(Notation.NotationType.values());
+        notationMode.setConverter(new StringConverter<>(){
+            @Override public String toString(Notation.NotationType notationType){ return notationType.getText(); }
+            @Override public Notation.NotationType fromString(String string){ return null; }
+        });
+        notationMode.setValue(window.getAssessment().getNotationType());
+        
+        notationMode.setOnAction(e -> {
+            window.getAssessment().setNotationType(notationMode.getValue());
+            updateGrid();
+        });
+        notationModeBox.getChildren().add(notationMode);
+        
+        // Grid
         
         grid.setVgap(5);
         grid.setHgap(10);
@@ -44,7 +76,7 @@ public class NotationsListingPane extends Tab {
     
         updateGrid();
         
-        root.getChildren().add(grid);
+        root.getChildren().addAll(notationModeBox, grid);
         
     }
     
@@ -58,8 +90,17 @@ public class NotationsListingPane extends Tab {
         grid.add(getLabel(TR.tr("skillsSettingsWindow.notationsListing.grid.graph")), 3, 0, 2, 1);
     
         int row = 1;
+        ArrayList<NotationRow> notationRows = new ArrayList<>();
         for(Notation notation : window.getAssessment().getNotations()){
-            fillLineWithNotation(row, window.getAssessment(), notation);
+            NotationRow notationRow = new NotationRow(window.getAssessment(), notation);
+            int finalRow = row;
+            notationRow.fillLineWithNotation(grid, row, () -> { // Delete notation
+                window.getAssessment().getNotations().remove(notation);
+                updateGrid();
+            }, () -> { // Get next row NotationRow to select field
+                return (notationRows.size() > finalRow) ? notationRows.get(finalRow) : null;
+            });
+            notationRows.add(notationRow);
             row++;
         }
         
@@ -84,7 +125,7 @@ public class NotationsListingPane extends Tab {
         }
         
         grid.getColumnConstraints().clear();
-        grid.getColumnConstraints().addAll(getConstraint(15), getConstraint(35), getConstraint(25), new ColumnConstraints(20), getConstraint(15), new ColumnConstraints(28));
+        grid.getColumnConstraints().addAll(getConstraint(14), getConstraint(34), getConstraint(21), new ColumnConstraints(20), new ColumnConstraints(120), new ColumnConstraints(28));
     }
     
     private static ColumnConstraints getConstraint(int percent){
@@ -103,67 +144,124 @@ public class NotationsListingPane extends Tab {
     
     }
     
+    private static class NotationRow {
+        private final SkillsAssessment assessment;
+        private final Notation notation;
     
-    private void fillLineWithNotation(int line, SkillsAssessment assessment, Notation notation){
-        TextField acronym = new TextField(notation.getAcronym().toUpperCase());
-        TextField name = new TextField(notation.getName());
-        TextField keyboardChar = new TextField(notation.getKeyboardChar().toUpperCase());
-        NotationGraph graph;
+        public final TextField acronym;
+        public final TextField name;
+        public final TextField keyboardChar;
+        private final NotationGraph graph;
         
-        acronym.getStyleClass().add("noTextFieldClear");
-        keyboardChar.getStyleClass().add("noTextFieldClear");
+        public NotationRow(SkillsAssessment assessment, Notation notation){
+            this.assessment = assessment;
+            this.notation = notation;
+            acronym = new TextField(notation.getAcronym().toUpperCase());
+            name = new TextField(notation.getName());
+            keyboardChar = new TextField(notation.getKeyboardChar().toUpperCase());
+            graph = new NotationGraph(assessment.getNotationType(), notation, false);
+        }
+    
+        private void fillLineWithNotation(GridPane grid, int line, CallBack onDelete, ReturnCallBack<NotationRow> getNextRow){
+            
+            acronym.getStyleClass().add("noTextFieldClear");
+            keyboardChar.getStyleClass().add("noTextFieldClear");
+            
+            acronym.textProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue.length() > 2) newValue = newValue.substring(newValue.length() - 2);
+                newValue = newValue.toUpperCase();
+                acronym.setText(newValue);
+                notation.setAcronym(newValue);
+                if(assessment.getNotationType() == Notation.NotationType.CHAR) graph.updateGraph(assessment.getNotationType(), notation, false);
+                
+            });
+            name.textProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue.length() > 100){
+                    newValue = newValue.substring(0, 100);
+                    name.setText(newValue);
+                }
+                notation.setName(newValue);
+            });
+            keyboardChar.textProperty().addListener((observable, oldValue, newValue) -> {
+                if(newValue.length() > 1) newValue = newValue.substring(newValue.length() - 1);
+                newValue = newValue.toUpperCase();
+                keyboardChar.setText(newValue);
+                notation.setKeyboardChar(newValue);
+            });
+            
+            // Enter and tab support to move to next field
+            focusNextField(acronym, () -> {
+                NotationRow nextRow = getNextRow.call();
+                if(nextRow != null) return nextRow.acronym;
+                return null;
+            }, () -> name);
+            focusNextField(name, () -> {
+                NotationRow nextRow = getNextRow.call();
+                if(nextRow != null) return nextRow.name;
+                return null;
+            }, () -> keyboardChar);
+            focusNextField(keyboardChar, () -> {
+                NotationRow nextRow = getNextRow.call();
+                if(nextRow != null) return nextRow.keyboardChar;
+                return null;
+            },  () -> {
+                NotationRow nextRow = getNextRow.call();
+                if(nextRow != null) return nextRow.acronym;
+                return null;
+            });
+    
+            acronym.setMaxWidth(50);
+            name.setMaxWidth(200);
+            keyboardChar.setMaxWidth(50);
         
-        if(assessment.getNotationType() == Notation.NotationType.CHAR) notation.setData(notation.getAcronym());
-        graph = new NotationGraph(assessment.getNotationType(), notation.getData());
-
-        acronym.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.length() > 2) newValue = newValue.substring(newValue.length() - 2);
-            newValue = newValue.toUpperCase();
-            acronym.setText(newValue);
-        });
-        name.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.length() > 100){
-                newValue = newValue.substring(0, 100);
-                name.setText(newValue);
+            grid.addRow(line, acronym, name, keyboardChar, graph);
+        
+            // GRAPH EDITOR
+        
+            if(assessment.getNotationType() == Notation.NotationType.COLOR){
+                ColorPicker colorPicker = new SyncColorPicker(ColorUtils.parseWebOr(notation.getData(), Color.DARKGREEN));
+                colorPicker.setMaxHeight(28);
+                colorPicker.setPadding(new Insets(0, 5, 0, 5));
+                colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+                    notation.setData(ColorUtils.toRGBHex(newValue));
+                    graph.updateGraph(assessment.getNotationType(), notation, false);
+                });
+                grid.addRow(line, colorPicker);
+            
+            }else if(assessment.getNotationType() == Notation.NotationType.ICON){
+                Button browseButton = new Button(TR.tr("file.browse"));
+                browseButton.setPadding(new Insets(0, 5, 0, 5));
+                browseButton.setMaxHeight(28);
+                browseButton.setOnAction(e -> {
+                    graph.updateGraph(assessment.getNotationType(), notation, false);
+                });
+                grid.addRow(line, browseButton);
             }
-        });
-        keyboardChar.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue.length() > 1) newValue = newValue.substring(newValue.length() - 1);
-            newValue = newValue.toUpperCase();
-            keyboardChar.setText(newValue);
-        });
         
-        acronym.setMaxWidth(50);
-        name.setMaxWidth(200);
-        keyboardChar.setMaxWidth(50);
-
-        grid.addRow(line, acronym, name, keyboardChar, graph);
-
-        // GRAPH EDITOR
+            // DELETE
         
-        if(assessment.getNotationType() == Notation.NotationType.COLOR){
-            ColorPicker colorPicker = new SyncColorPicker(Color.web(notation.getData()));
-            grid.addRow(line, colorPicker);
-    
-        }else if(assessment.getNotationType() == Notation.NotationType.ICON){
-            Button browseButton = new Button(TR.tr("file.browse"));
-            browseButton.setPadding(new Insets(0, 5, 0, 5));
-            browseButton.setMaxHeight(28);
-            grid.addRow(line, browseButton);
+            Button deleteButton = new Button();
+            deleteButton.setOnAction(e -> onDelete.call());
+            deleteButton.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("actions.delete")));
+            PaneUtils.setHBoxPosition(deleteButton, 28, 28, 0);
+            deleteButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 20, ImageUtils.defaultDarkColorAdjust));
+            deleteButton.setCursor(Cursor.HAND);
+            grid.addRow(line, deleteButton);
+        }
+        private void focusNextField(TextField field, ReturnCallBack<TextField> getNextRowField, ReturnCallBack<TextField> getNextColumnField){
+            field.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+                if(e.getCode() == KeyCode.ENTER){
+                    TextField nextRow = getNextRowField.call();
+                    if(nextRow != null) nextRow.requestFocus();
+                    e.consume();
+                }else if(e.getCode() == KeyCode.TAB){
+                    TextField nextCol = getNextColumnField.call();
+                    if(nextCol != null) nextCol.requestFocus();
+                    e.consume();
+                }
+            });
         }
         
-        // DELETE
-        
-        Button deleteButton = new Button();
-        deleteButton.setOnAction(e -> {
-            assessment.getNotations().remove(notation);
-            updateGrid();
-        });
-        deleteButton.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("actions.delete")));
-        PaneUtils.setHBoxPosition(deleteButton, 28, 28, 0);
-        deleteButton.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 20, ImageUtils.defaultDarkColorAdjust));
-        deleteButton.setCursor(Cursor.HAND);
-        grid.addRow(line, deleteButton);
     }
     
     private void fillLineWithDefaultNotation(int line, Notation notation){
@@ -173,7 +271,7 @@ public class NotationsListingPane extends Tab {
         name.setText(notation.getName());
         Label keyboardChar = new Label();
         keyboardChar.setText(notation.getKeyboardChar());
-        NotationGraph graph = new NotationGraph(Notation.NotationType.CHAR, notation.getAcronym());
+        NotationGraph graph = new NotationGraph(Notation.NotationType.CHAR, notation, true);
         
         grid.addRow(line, acronym, name, keyboardChar, graph);
     }

@@ -109,7 +109,7 @@ public class SkillsAssessment {
     private String name;
     private String date;
     private String clasz;
-    private final Notation.NotationType notationType;
+    private Notation.NotationType notationType;
     private final ArrayList<Skill> skills;
     private final ArrayList<Notation> notations;
     
@@ -148,6 +148,9 @@ public class SkillsAssessment {
     
     public Notation.NotationType getNotationType(){
         return notationType;
+    }
+    public void setNotationType(Notation.NotationType notationType){
+        this.notationType = notationType;
     }
     public ArrayList<Skill> getSkills(){
         return skills;

@@ -101,7 +101,7 @@ public class SkillsTab extends SideTab {
     });
     
     public SkillsTab(){
-        super("skills", SVGPathIcons.A_CIRCLED, 28, 1);
+        super("skills", SVGPathIcons.SKILLS_GRAPH, 28, 1.08);
         
         SkillsAssessment.setup();
         

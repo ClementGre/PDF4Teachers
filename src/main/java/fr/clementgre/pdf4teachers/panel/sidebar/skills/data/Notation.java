@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -62,7 +63,14 @@ public class Notation {
     }
     
     public enum NotationType{
-        CHAR, COLOR, ICON
+        CHAR, COLOR, ICON;
+        
+        public String getText(){
+            if(this == CHAR) return TR.tr("skillsSettingsWindow.notationMode.chars");
+            else if(this == COLOR) return TR.tr("skillsSettingsWindow.notationMode.colors");
+            else if(this == ICON) return TR.tr("skillsSettingsWindow.notationMode.icons");
+            else return "";
+        }
     }
     
     

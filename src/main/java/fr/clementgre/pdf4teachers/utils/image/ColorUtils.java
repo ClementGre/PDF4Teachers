@@ -17,4 +17,12 @@ public class ColorUtils {
                 (int)( color.getBlue() * 255 ) );
     }
     
+    public static Color parseWebOr(String color, Color fallback){
+        try{
+            return Color.web(color);
+        }catch(IllegalArgumentException | NullPointerException e){
+            return fallback;
+        }
+    }
+    
 }

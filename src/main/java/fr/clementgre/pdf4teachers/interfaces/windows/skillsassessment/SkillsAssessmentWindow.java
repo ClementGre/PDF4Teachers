@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment;
 
+import fr.clementgre.pdf4teachers.datasaving.simpleconfigs.SkillsAssessmentData;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -92,6 +93,8 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         
         skillsListingPane.save();
         notationsListingPane.save();
+        
+        MainWindow.userData.getSimpleConfig(SkillsAssessmentData.class).saveData();
     }
     
     private void setupUI(){
