@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -19,7 +19,8 @@ import java.util.Map;
 
 public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
     
-    public void renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
+    // Returns false if the user cancelled the export process.
+    public boolean renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
         
         ////////// LATEX RENDER
         
@@ -38,7 +39,7 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
                     (float) ((pdImage.getWidth() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()),
                     (float) ((pdImage.getHeight() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()));
             
-            return;
+            return true;
         }
         ////////// TEXT RENDER
         
@@ -50,7 +51,7 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         // FONT
         Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), pageSpecs.width());
         // DRAW TEXT
-        textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
+        return textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
         
     }
     

@@ -296,7 +296,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             @Override
             public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive){
                 try{
-                    new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements);
+                    boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements);
+                    if(ok) return TwoStepListAction.ProcessResult.OK;
+                    else return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){
                     e.printStackTrace();
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){
@@ -307,7 +309,6 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                     }
                     return TwoStepListAction.ProcessResult.SKIPPED;
                 }
-                return TwoStepListAction.ProcessResult.OK;
             }
             
             @Override

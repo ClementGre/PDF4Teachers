@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -55,8 +55,8 @@ public class PlatformUtils {
         }, "runLaterOnUIThread").start();
     }
     
-    // Running code on JavaFX Thread from another Thread
-    // and waiting this acting is completed before continuing the other Thread
+    // Run code on JavaFX Application Thread from another Thread
+    // and wait until action completes before continuing the other Thread
     public static <T> T runAndWait(ReturnCallBack<T> action){
         if(action == null)
             throw new NullPointerException("action");

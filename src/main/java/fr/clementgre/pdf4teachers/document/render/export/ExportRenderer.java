@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -23,7 +23,7 @@ import java.util.Calendar;
 
 public class ExportRenderer {
     
-    public void exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception{
+    public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception{
         
         File editFile = Edition.getEditFile(pdfFile);
         
@@ -86,10 +86,14 @@ public class ExportRenderer {
                 
                 if(element instanceof TextElement tElement){
                     if(textElements)
-                        textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs);
+                        if(!textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs)){
+                            doc.close(); return false;
+                        }
                 }else if(element instanceof GradeElement gElement){
                     if(gradesElements)
-                        gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs);
+                        if(!gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
+                            doc.close(); return false;
+                        }
                 }else if(element instanceof ImageElement gElement){
                     if(drawElements)
                         imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
@@ -104,6 +108,7 @@ public class ExportRenderer {
         
         doc.save(toFile);
         doc.close();
+        return true;
     }
     
     public static PDColor toPDColor(Color color){

@@ -1,11 +1,14 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -35,10 +38,11 @@ public class TextRenderer {
         this.doc = doc;
     }
     
-    public static record TextSpecs(float boundsHeight, float boundsWidth, float bottomMargin, float baseLineY,
-                                   float realX, float realY, String text, Color color, boolean isURL) {}
+    public record TextSpecs(float boundsHeight, float boundsWidth, float bottomMargin, float baseLineY,
+                            float realX, float realY, String text, Color color, boolean isURL) {}
     
-    public void drawText(PDPage page, PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
+    // Returns false if the user cancelled the export process.
+    public boolean drawText(PDPage page, PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
         
         int lineNumber = textSpecs.text().split("\\n").length;
         double lineHeight = textSpecs.boundsHeight() / lineNumber;
@@ -51,10 +55,23 @@ public class TextRenderer {
         for(String line : textSpecs.text().split("\\n")){
             try{
                 contentStream.showText(line);
-            }catch(IllegalArgumentException ignored){
-                PDType0Font font = fonts.get(fontEntry);
+            }catch(IllegalArgumentException e){
+                // A character isn't supported by the current font
+    
+    
+                boolean cancel = PlatformUtils.runAndWait(() -> {
+                    ErrorAlert alert = new ErrorAlert(TR.tr("export.missingGlyphError.header", fontEntry.getKey()), e.getMessage(), true);
+                    alert.setContentText(TR.tr("export.missingGlyphError.description", line));
+                    return alert.getShowAndWaitIsCancelButton();
+                });
+                if(cancel){
+                    contentStream.endText();
+                    return false;
+                }
                 
-                // Find an "Unknown char" in the UTF attributed interval
+                
+                PDType0Font font = fonts.get(fontEntry);
+                // Find an "Unknown char" in the Unicode attributed interval
                 char[] replacements = new char[]{'�'};
                 if(!canRender(font, '�')){
                     replacements = IntStream.range(0, 1 << 16)
@@ -63,17 +80,18 @@ public class TextRenderer {
                             .toString().toCharArray();
                     if(replacements.length == 0) replacements = new char[]{'?'};
                 }
-                
+    
                 try{
+                    // Add chars one by one, only if they can print.
                     StringBuilder newText = new StringBuilder();
                     for(char c : line.toCharArray()){
                         if(canRender(font, c)) newText.append(c);
                         else newText.append(replacements[0]);
                     }
                     contentStream.showText(newText.toString());
-                    
-                }catch(IllegalArgumentException e){
-                    e.printStackTrace();
+        
+                }catch(IllegalArgumentException e2){
+                    e2.printStackTrace();
                 }
             }
             
@@ -107,6 +125,7 @@ public class TextRenderer {
             i++;
         }
         contentStream.endText();
+        return true;
     }
     
     public Map.Entry<String, String> setContentStreamFont(PDPageContentStream contentStream, Font font, float pageWidth) throws IOException{

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -15,9 +15,10 @@ import java.util.Map;
 
 public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
     
-    public void renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
+    // Returns false if the user cancelled the export process.
+    public boolean renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
         
-        if(!element.isShouldVisibleOnExport()) return;
+        if(!element.isShouldVisibleOnExport()) return true;
         
         
         float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
@@ -27,7 +28,7 @@ public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         // FONT
         Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), pageSpecs.width());
         // DRAW TEXT
-        textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
+        return textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
         
     }
     
