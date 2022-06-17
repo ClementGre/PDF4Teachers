@@ -134,13 +134,13 @@ public class SVGPathIcons {
         if(ratio < 1){
             setRegionDimension(imageRegion, maxDimension * ratio, maxDimension);
             
-            double dif = (maxDimension - (int) (maxDimension * ratio)) / 2d;
-            imagePane.setPadding(new Insets(0, (int) dif, 0, Math.ceil(dif)));
+            double dif = (maxDimension - (maxDimension * ratio)) / 2d;
+            imagePane.setPadding(new Insets(0, dif, 0, dif));
         }else if(ratio > 1){
             setRegionDimension(imageRegion, maxDimension, maxDimension / ratio);
             
-            double dif = (maxDimension - (int) (maxDimension / ratio)) / 2d;
-            imagePane.setPadding(new Insets((int) dif, 0, Math.ceil(dif), 0));
+            double dif = (maxDimension - (maxDimension / ratio)) / 2d;
+            imagePane.setPadding(new Insets(dif, 0, dif, 0));
         }else{
             setRegionDimension(imageRegion, maxDimension, maxDimension);
             return imageRegion;

@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
+import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.geometry.Insets;
@@ -77,7 +78,7 @@ public class DirFilterListCell extends ListCell<String> {
             Label text = new Label(FilesUtils.getPathReplacingUserHome(item));
             text.setStyle("-fx-font-size: 12;");
             Button delete = new Button();
-            delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "red", 0, 14));
+            delete.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.TRASH, "darkred", 0, 14, ImageUtils.defaultDarkColorAdjust));
             delete.setStyle("-fx-background-color: transparent;");
             delete.setOnMouseEntered((e) -> delete.setStyle(null));
             delete.setOnMouseExited((e) -> delete.setStyle("-fx-background-color: transparent;"));
