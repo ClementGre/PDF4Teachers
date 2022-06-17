@@ -5,15 +5,22 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.files;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertDocument;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
+import fr.clementgre.pdf4teachers.document.render.display.PDFPagesRender;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
+import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
+import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.TextInputAlert;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
@@ -34,6 +41,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -248,6 +258,19 @@ public class FileTab extends SideTab {
         return ext.equalsIgnoreCase("pdf");
     }
     
+    // Can be used if a file is renamed for example
+    public void replaceFile(File oldFile, File newFile){
+        files.getItems().replaceAll(testFile -> {
+            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
+            else return testFile;
+        });
+        originalFiles.replaceAll(testFile -> {
+            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
+            else return testFile;
+        });
+        sortManager.simulateCall();
+    }
+    
     private void updateOpenFilesList(){
         originalFiles.clear();
         originalFiles.addAll(MainWindow.filesTab.files.getItems());
@@ -307,6 +330,65 @@ public class FileTab extends SideTab {
     
     public void refresh(){
         files.refresh();
+    }
+    
+    public void requestFileRename(File file){
+        copyFileDialog(TR.tr("filesTab.fileMenu.rename.dialog.header"), TR.tr("filesTab.fileMenu.rename.dialog.message"), file, true);
+    }
+    public void requestFileCopy(File file){
+        copyFileDialog(TR.tr("filesTab.fileMenu.copy.dialog.header"), TR.tr("filesTab.fileMenu.copy.dialog.message"), file, false);
+    }
+    
+    private void copyFileDialog(String header, String fieldText, File file, boolean move){
+        TextInputAlert alert = new TextInputAlert(header, header, fieldText);
+        String extension = FilesUtils.getExtension(file);
+        String name = FilesUtils.getNameWithoutExtension(file);
+        alert.setText(name);
+        if(alert.getShowAndWaitIsDefaultButton() && !alert.getText().isBlank() && !(alert.getText().equals(name) && move)){
+            File newFile = new File(file.getParentFile().getAbsolutePath() + File.separator + alert.getText() + "." + extension);
+        
+            // Already exist dialog
+            AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(false);
+            AlreadyExistDialogManager.ResultType resultType = newFile.exists() ? alreadyExistDialogManager.showAndWait(newFile) : AlreadyExistDialogManager.ResultType.ERASE;
+            if(resultType == AlreadyExistDialogManager.ResultType.RENAME) newFile = AlreadyExistDialogManager.rename(newFile);
+            if(resultType == AlreadyExistDialogManager.ResultType.RENAME || resultType == AlreadyExistDialogManager.ResultType.ERASE){
+                try{
+                    // Close file if it is open
+                    boolean documentOpen = MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath());
+                    if(documentOpen){
+                        PDFPagesRender renderer = MainWindow.mainScreen.document.pdfPagesRender;
+                        if(!MainWindow.mainScreen.closeFile(true, false)) return; // Close file cancelled.
+                        while(!renderer.isClosed()){
+                            PlatformUtils.sleepThread(100);
+                        }
+                    }
+                    // Copy/move files
+                    if(move){
+                        Files.move(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        if(Edition.getEditFile(file).exists()) Files.move(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    }else{ // copy
+                        Files.copy(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        if(Edition.getEditFile(file).exists()) Files.copy(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    }
+                    
+                    // AddRename file in files list
+                    if(move){
+                        MainWindow.filesTab.replaceFile(file, newFile);
+                    }else{
+                        MainWindow.filesTab.openFile(newFile);
+                    }
+                
+                    // Reopen file
+                    if(documentOpen){
+                        MainWindow.mainScreen.openFile(newFile);
+                    }
+                }catch(IOException ex){
+                    ex.printStackTrace();
+                    new ErrorAlert(null, ex.getMessage(), false);
+                }
+            }
+        
+        }
     }
     
 }

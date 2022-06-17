@@ -135,29 +135,37 @@ public class FileListCell extends ListCell<File> {
             
             ContextMenu menu = new ContextMenu();
             
-            NodeMenuItem item1 = new NodeMenuItem(TR.tr("actions.open"), false);
-            item1.setToolTip(TR.tr("filesTab.fileMenu.open.tooltip"));
-            NodeMenuItem item2 = new NodeMenuItem(TR.tr("actions.remove"), false);
-            item2.setToolTip(TR.tr("filesTab.fileMenu.remove.tooltip"));
-            NodeMenuItem item3 = new NodeMenuItem(TR.tr("menuBar.file.deleteEdit"), false);
-            item3.setToolTip(TR.tr("menuBar.file.deleteEdit.tooltip"));
-            NodeMenuItem item4 = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
-            item4.setToolTip(TR.tr("filesTab.fileMenu.deleteFile.tooltip"));
-            NodeMenuItem item5 = new NodeMenuItem(TR.tr("menuBar.file.export"), false);
-            item5.setToolTip(TR.tr("menuBar.file.export.tooltip"));
-            NodeMenuItem item6 = new NodeMenuItem(TR.tr("menuBar.file.clearList"), false);
-            item6.setToolTip(TR.tr("menuBar.file.clearList.tooltip"));
+            NodeMenuItem open = new NodeMenuItem(TR.tr("actions.open"), false);
+            open.setToolTip(TR.tr("filesTab.fileMenu.open.tooltip"));
+            NodeMenuItem rename = new NodeMenuItem(TR.tr("actions.rename"), false);
+            rename.setToolTip(TR.tr("filesTab.fileMenu.rename.tooltip"));
+            NodeMenuItem copy = new NodeMenuItem(TR.tr("filesTab.fileMenu.copy"), false);
+            copy.setToolTip(TR.tr("filesTab.fileMenu.copy.tooltip"));
+            NodeMenuItem remove = new NodeMenuItem(TR.tr("actions.remove"), false);
+            remove.setToolTip(TR.tr("filesTab.fileMenu.remove.tooltip"));
+            NodeMenuItem deleteEdit = new NodeMenuItem(TR.tr("menuBar.file.deleteEdit"), false);
+            deleteEdit.setToolTip(TR.tr("menuBar.file.deleteEdit.tooltip"));
+            NodeMenuItem deleteFile = new NodeMenuItem(TR.tr("actions.deleteFile"), false);
+            deleteFile.setToolTip(TR.tr("filesTab.fileMenu.deleteFile.tooltip"));
+            NodeMenuItem export = new NodeMenuItem(TR.tr("menuBar.file.export"), false);
+            export.setToolTip(TR.tr("menuBar.file.export.tooltip"));
+            NodeMenuItem clearList = new NodeMenuItem(TR.tr("menuBar.file.clearList"), false);
+            clearList.setToolTip(TR.tr("menuBar.file.clearList.tooltip"));
             
-            menu.getItems().addAll(item1, item2, item3, item4, item5, new SeparatorMenuItem(), item6);
+            menu.getItems().addAll(open, rename, copy, remove, deleteEdit, deleteFile, export, new SeparatorMenuItem(), clearList);
             NodeMenuItem.setupMenu(menu);
             
-            item1.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(file)));
+            open.setOnAction(e -> Platform.runLater(() -> MainWindow.mainScreen.openFile(file)));
             
-            item2.setOnAction(e -> MainWindow.filesTab.removeFile(file));
+            rename.setOnAction(e -> MainWindow.filesTab.requestFileRename(file));
             
-            item3.setOnAction(e -> Edition.clearEdit(file, true));
+            copy.setOnAction(e -> MainWindow.filesTab.requestFileCopy(file));
             
-            item4.setOnAction(e -> {
+            remove.setOnAction(e -> MainWindow.filesTab.removeFile(file));
+            
+            deleteEdit.setOnAction(e -> Edition.clearEdit(file, true));
+            
+            deleteFile.setOnAction(e -> {
                 if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteDocument.header", file.getName())).execute()){
                     if(MainWindow.mainScreen.hasDocument(false)){
                         if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath())){
@@ -170,7 +178,7 @@ public class FileListCell extends ListCell<File> {
                 }
                 
             });
-            item5.setOnAction(e -> {
+            export.setOnAction(e -> {
                 if(file.exists()){
                     
                     if(MainWindow.mainScreen.hasDocument(false)){
@@ -183,7 +191,7 @@ public class FileListCell extends ListCell<File> {
                 }
                 
             });
-            item6.setOnAction(e -> MainWindow.filesTab.clearFiles());
+            clearList.setOnAction(e -> MainWindow.filesTab.clearFiles());
             
             setContextMenu(menu);
         }

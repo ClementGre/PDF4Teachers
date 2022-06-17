@@ -87,19 +87,22 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem file4Save = createMenuItem(TR.tr("menuBar.file.saveEdit"), SVGPathIcons.SAVE_LITE, new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.saveEdit.tooltip"), true, false, false);
     
-    private final MenuItem file5Delete = createMenuItem(TR.tr("menuBar.file.deleteEdit"), SVGPathIcons.TRASH, null,
+    private final MenuItem file5Rename = createMenuItem(TR.tr("menuBar.file.renameFile"), SVGPathIcons.COPY, new KeyCodeCombination(KeyCode.R, KeyCombination.SHORTCUT_DOWN),
+            TR.tr("menuBar.file.renameFile.tooltip"), true, false, false);
+    
+    private final MenuItem file6Delete = createMenuItem(TR.tr("menuBar.file.deleteEdit"), SVGPathIcons.TRASH, null,
             TR.tr("menuBar.file.deleteEdit.tooltip"), true, false, false);
     
-    private final MenuItem file6Close = createMenuItem(TR.tr("menuBar.file.closeDocument"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file7Close = createMenuItem(TR.tr("menuBar.file.closeDocument"), SVGPathIcons.CROSS, new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.closeDocument.tooltip"), true, false, false);
     
-    private final MenuItem file7Export = createMenuItem(TR.tr("menuBar.file.export"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file8Export = createMenuItem(TR.tr("menuBar.file.export"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.export.tooltip"), true, false, false);
     
-    private final MenuItem file8ExportAll = createMenuItem(TR.tr("menuBar.file.exportAll"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file9ExportAll = createMenuItem(TR.tr("menuBar.file.exportAll"), SVGPathIcons.EXPORT, new KeyCodeCombination(KeyCode.E, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN),
             TR.tr("menuBar.file.exportAll.tooltip"), false, true, false);
     
-    private final MenuItem file9Exit = createMenuItem(TR.tr("menuBar.file.exit"), SVGPathIcons.EXIT, new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN),
+    private final MenuItem file10Exit = createMenuItem(TR.tr("menuBar.file.exit"), SVGPathIcons.EXIT, new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN),
             null, false, false, false);
     
     
@@ -183,7 +186,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem help3Twitter = createMenuItem(TR.tr("menuBar.help.twitter"), SVGPathIcons.TWITTER);
     private final MenuItem help4Website = createMenuItem(TR.tr("menuBar.help.website"), SVGPathIcons.GLOBE);
     
-    ////////// EMPTY MENUS SETTINGS //////////
+    ////////// EMPTY MENUS //////////
     
     public EmptyMenu settings = new EmptyMenu(TR.tr("menuBar.settings"), this);
     public EmptyMenu about = new EmptyMenu(TR.tr("menuBar.about"), this);
@@ -202,7 +205,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// FILE //////////
         
-        file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Delete, file6Close, new SeparatorMenuItem(), file7Export, file8ExportAll, new SeparatorMenuItem(), file9Exit);
+        file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Rename, file6Delete, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll, new SeparatorMenuItem(), file10Exit);
         
         ////////// TOOLS //////////
         
@@ -253,23 +256,28 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 MainWindow.mainScreen.document.edition.save(true);
             }
         });
-        file5Delete.setOnAction((ActionEvent e) -> {
+        file5Rename.setOnAction(e -> {
+            if(MainWindow.mainScreen.hasDocument(true)){
+                MainWindow.filesTab.requestFileRename(MainWindow.mainScreen.document.getFile());
+            }
+        });
+        file6Delete.setOnAction((ActionEvent e) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
                 MainWindow.mainScreen.document.edition.clearEdit(true);
             }
         });
-        file6Close.setOnAction((ActionEvent e) -> {
+        file7Close.setOnAction((ActionEvent e) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
                 MainWindow.mainScreen.closeFile(true, false);
             }
         });
-        file7Export.setOnAction((ActionEvent actionEvent) -> {
+        file8Export.setOnAction((ActionEvent actionEvent) -> {
             
             if(!MainWindow.mainScreen.document.save(true)) return;
             new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
             
         });
-        file8ExportAll.setOnAction((ActionEvent actionEvent) -> {
+        file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
             
             if(MainWindow.mainScreen.hasDocument(false)){
                 if(!MainWindow.mainScreen.document.save(true)) return;
@@ -277,7 +285,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             new ExportWindow(MainWindow.filesTab.files.getItems());
             
         });
-        file9Exit.setOnAction(e -> MainWindow.requestCloseApp());
+        file10Exit.setOnAction(e -> MainWindow.requestCloseApp());
         
         ////////// TOOLS //////////
         

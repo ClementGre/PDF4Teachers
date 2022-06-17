@@ -170,10 +170,10 @@ public class Document {
     /**
      * Save the edition of this document
      *
-     * @param ignoreWarning if user click on "Ignore", the WarningAlert for editing/exporting an edition that is not saved will be displayed.
+     * @param doShowIgnoreWarning if user click on "Ignore", the WarningAlert for editing/exporting an edition that is not saved will be displayed.
      * @return false if action has been cancelled, true otherwise, whatever saved or ignored.
      */
-    public boolean save(boolean ignoreWarning){
+    public boolean save(boolean doShowIgnoreWarning){
         
         if(Edition.isSave()){
             edition.saveLastScrollValue();
@@ -201,7 +201,7 @@ public class Document {
             return false;
             
         }else{ // Ignore button or OS close
-            if(option == ignore && ignoreWarning){
+            if(option == ignore && doShowIgnoreWarning){
                 boolean exportAnyway = new WarningAlert(TR.tr("dialog.unsavedEdit.title"),
                         TR.tr("dialog.unsavedEdit.ignoreWarningDialog.header"),
                         TR.tr("dialog.unsavedEdit.ignoreWarningDialog.details"))

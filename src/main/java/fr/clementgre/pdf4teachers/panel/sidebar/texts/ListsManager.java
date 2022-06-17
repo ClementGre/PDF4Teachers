@@ -51,8 +51,6 @@ public class ListsManager {
         saveListBtn.setOnAction(event -> {
             TextInputAlert inputAlert = new TextInputAlert(TR.tr("textTab.lists.save.dialog.title"), TR.tr("textTab.lists.save.dialog.header"), TR.tr("textTab.lists.save.dialog.details"));
             inputAlert.setText(TR.tr("textTab.lists.defaultName"));
-            inputAlert.addOKButton(ButtonPosition.DEFAULT);
-            inputAlert.addCancelButton(ButtonPosition.CLOSE);
             
             if(inputAlert.getShowAndWaitIsDefaultButton() && !inputAlert.getText().isBlank()){
                 if(TextTreeSection.lists.containsKey(inputAlert.getText())){

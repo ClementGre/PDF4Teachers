@@ -38,7 +38,8 @@ public class PDFPagesRender {
     private final ArrayList<RenderPending> rendersPending = new ArrayList<>();
     
     public boolean advertisement = false;
-    private boolean closed = false;
+    private boolean shouldClose = false;
+    private boolean isClosed = false;
     
     public PDFPagesRender(File file) throws IOException{
         this.file = file;
@@ -53,7 +54,7 @@ public class PDFPagesRender {
         
         new Thread(() -> {
             
-            while(!closed){ // not closed
+            while(!shouldClose){ // not closed
                 
                 if(rendersPending.size() != 0 && !rendersPending.get(0).page.isRemoved()){ // Render
                     renderPage(rendersPending.get(0));
@@ -66,20 +67,21 @@ public class PDFPagesRender {
             
             // Close
             pdfRenderer = null;
-            while(editor.isEdited()){ // document pages not saved
+            while(editor.isEdited()){ // wait until document pages are saved
                 PlatformUtils.sleepThread(100);
             }
             try{
                 document.close();
             }catch(IOException e){ e.printStackTrace(); }
             document = null;
+            isClosed = true;
             
         }, "Page Renderer").start();
     
         // Save document pages each 10 seconds if needed
         new Thread(() -> {
             PlatformUtils.sleepThread(10000);
-            while(!closed){
+            while(!shouldClose){
                 PlatformUtils.runAndWait(() -> {
                     editor.saveEditsIfNeeded();
                     return null;
@@ -159,8 +161,11 @@ public class PDFPagesRender {
     }
     
     public void close(){
-        closed = true;
+        shouldClose = true;
         editor.saveEditsIfNeeded();
+    }
+    public boolean isClosed(){
+        return isClosed;
     }
     
     public PDDocument getDocument(){

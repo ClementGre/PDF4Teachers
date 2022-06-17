@@ -47,7 +47,11 @@ public class FilesUtils {
     public static String getExtension(File file) {
         return getExtension(file.getName());
     }
-
+    
+    public static String getNameWithoutExtension(File file){
+        return StringUtils.removeAfterLastOccurrence(file.getName(), "." + FilesUtils.getExtension(file));
+    }
+    
     // Always return lower case extension without the dot.
     public static String getExtension(String fileName) {
         String[] splitted = fileName.split(Pattern.quote("."));
@@ -129,4 +133,5 @@ public class FilesUtils {
         });
     }
     
+   
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -32,11 +33,16 @@ public class TextInputAlert extends CustomAlert{
             box.getChildren().addAll(input);
         }
     
+        addOKButton(ButtonPosition.DEFAULT);
+        addCancelButton(ButtonPosition.CLOSE);
+    
         StyleManager.putCustomStyle(getDialogPane(), "someDialogs.css");
         if(StyleManager.DEFAULT_STYLE == Style.LIGHT) StyleManager.putCustomStyle(getDialogPane(), "someDialogs-light.css");
         else StyleManager.putCustomStyle(getDialogPane(), "someDialogs-dark.css");
         
         getDialogPane().setContent(box);
+    
+        Platform.runLater(input::requestFocus);
     }
     
     public void setText(String text){
