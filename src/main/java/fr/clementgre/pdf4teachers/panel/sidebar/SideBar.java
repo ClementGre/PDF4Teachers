@@ -29,6 +29,7 @@ public class SideBar extends TabPane {
     
     public static final int DEFAULT_WIDTH = 270;
     public static final int MAX_WIDTH = 450;
+    public static final int TAB_WIDTH = 50; // Estimated
     
     private static final String STYLE = "-fx-tab-max-width: 22px;";
     
@@ -89,7 +90,7 @@ public class SideBar extends TabPane {
                     
                     if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tabPane
                         int actualIndex = getTabs().indexOf(draggingTab);
-                        int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
+                        int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
                         
                         if(actualIndex != targetIndex){
                             getTabs().remove(draggingTab);
@@ -104,7 +105,7 @@ public class SideBar extends TabPane {
                     previewTab.set(draggingTab);
                     
                     draggingTab.getTabPane().getTabs().remove(draggingTab);
-                    int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / 55), 0, getTabs().size() - 1);
+                    int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
                     getTabs().add(targetIndex, draggingTab);
                     getSelectionModel().select(draggingTab);
                     

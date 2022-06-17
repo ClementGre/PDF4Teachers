@@ -62,10 +62,35 @@
     -fx-font-size: 13;
 }
 
-.control-buttons-tab, .control-buttons-tab *{
-    -fx-padding: -10;
-    -fx-opacity: 0;
+/* TABS of MainWindow */
+
+/* Reduce the tab padding so they take less width*/
+.tab-pane > .tab-header-area {
+    -fx-padding: 0px 0px 0px 6px !important;
 }
+.tab-pane > .tab-header-area > .headers-region > .tab {
+    -fx-padding: 1px 14px 1px 14px;
+}
+
+/* Removing the ... button that appears if width is too small*/
+.tab-header-area .control-buttons-tab{
+    -fx-padding: 0 !important;
+    -fx-background-insets: 0 !important;
+    -fx-min-width: 0px !important;
+    -fx-pref-width: 0px !important;
+    -fx-max-width: 0px !important;
+}
+.tab-header-area .control-buttons-tab .tab-down-button .arrow {
+    -fx-max-width: 0px !important;
+    -fx-padding: 0 !important;
+    -fx-shape: "" !important;
+}
+
+/*.tab-header-area .tab{
+    -fx-padding: 0px;
+    -fx-background-color: red;
+}*/
+
 
 /*******************************************************************************
  *                                                                             *
