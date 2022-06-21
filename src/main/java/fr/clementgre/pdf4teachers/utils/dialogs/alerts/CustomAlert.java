@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -51,7 +51,12 @@ public class CustomAlert extends Alert {
         // SCALING
         if(Main.settings.zoom.getValue() != 1){
             getDialogPane().getScene().setFill(Color.web("#252525"));
+            
+            // Alert is only scaled the first time it shows up
+            final boolean[] alreadyShown = {false};
             setOnShown((e) -> {
+                if(alreadyShown[0]) return;
+                alreadyShown[0] = true;
                 StagesUtils.trysScaleAlertUntilDoable(this, getDialogPane().getScene(), () -> {
                     PaneUtils.setupScaling(getDialogPane(), true, false);
                     if(Main.window != null) Main.window.centerWindowIntoMe(getDialogPane().getScene().getWindow());

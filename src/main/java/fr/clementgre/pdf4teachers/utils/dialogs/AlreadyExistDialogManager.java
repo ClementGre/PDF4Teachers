@@ -12,27 +12,22 @@ import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
 
 import java.io.File;
 
 public class AlreadyExistDialogManager{
 
-    private boolean alwaysSkip = false;
-    private boolean alwaysOverwrite = false;
-    private boolean alwaysRename = false;
+    private ResultType memorizedResult = null;
     public CustomAlert alert;
 
     private final ButtonType stopAll;
     private ButtonType skip;
-    private ButtonType skipAlways;
     private final ButtonType rename;
-    private ButtonType renameAlways;
     private final ButtonType overwrite;
-    private ButtonType overwriteAlways;
-
+    private final CheckBox memorize = new CheckBox(TR.tr("dialog.actionError.memorize"));
+    
     private final boolean recursive;
-    private int recursions = 0;
-
     public AlreadyExistDialogManager(boolean recursive){
         this.recursive = recursive;
         alert = new CustomAlert(Alert.AlertType.ERROR, TR.tr("dialog.file.alreadyExist.title"));
@@ -41,12 +36,12 @@ public class AlreadyExistDialogManager{
         overwrite = alert.getButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.OTHER_RIGHT);
         
         if(recursive){
-            skip = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.DEFAULT);
-            skipAlways = alert.getButton(TR.tr("dialog.actionError.skipAlways"), ButtonPosition.OTHER_RIGHT);
             rename = alert.getButton(TR.tr("actions.rename"), ButtonPosition.OTHER_RIGHT);
-            renameAlways = alert.getButton(TR.tr("dialog.actionError.renameAlways"), ButtonPosition.OTHER_RIGHT);
-            overwriteAlways = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
-
+            skip = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.DEFAULT);
+    
+            memorize.setSelected(true);
+            alert.getDialogPane().setContent(memorize);
+            
             alert.getButtonTypes().setAll(overwrite, rename, skip, stopAll);
         }else{
             rename = alert.getButton(TR.tr("actions.rename"), ButtonPosition.DEFAULT);
@@ -63,34 +58,27 @@ public class AlreadyExistDialogManager{
     }
 
     public ResultType showAndWait(File file){
-        recursions++;
+        if(memorizedResult != null) return memorizedResult;
 
-        if(alwaysSkip) return ResultType.SKIP;
-        if(alwaysOverwrite) return ResultType.ERASE;
-        if(alwaysRename) return ResultType.RENAME;
+        if(recursive){
+            alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()) + "\n"
+                    + TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
+        }else{
+            alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
+            alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
+        }
 
-        if(recursions == 2)
-            alert.getButtonTypes().setAll(overwriteAlways, overwrite, renameAlways, rename, skipAlways, skip, stopAll);
-
-        alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
-        alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
 
         ButtonType option = alert.getShowAndWait();
         if(option != null){
             if(option == skip){
-                return ResultType.SKIP;
-            }else if(option == skipAlways){
-                alwaysSkip = true;
+                if(memorize.isSelected()) memorizedResult = ResultType.SKIP;
                 return ResultType.SKIP;
             }else if(option == overwrite){
-                return ResultType.ERASE;
-            }else if(option == overwriteAlways){
-                alwaysOverwrite = true;
+                if(memorize.isSelected()) memorizedResult = ResultType.ERASE;
                 return ResultType.ERASE;
             }else if(option == rename){
-                return ResultType.RENAME;
-            }else if(option == renameAlways){
-                alwaysRename = true;
+                if(memorize.isSelected()) memorizedResult = ResultType.RENAME;
                 return ResultType.RENAME;
             }else{
                 return ResultType.STOP;
