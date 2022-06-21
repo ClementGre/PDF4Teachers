@@ -9,7 +9,6 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawer;
@@ -103,6 +102,7 @@ public class VectorElement extends GraphicElement{
     
     // SETUP / EVENT CALL BACK
     
+    
     @Override
     protected void setupBindings(){
         super.setupBindings();
@@ -118,7 +118,7 @@ public class VectorElement extends GraphicElement{
             if(StringUtils.count(oldValue.toLowerCase(), 'm') != StringUtils.count(newValue.toLowerCase(), 'm')
                     || !MainWindow.mainScreen.isNextUndoActionProperty(path)){
         
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), UType.UNDO));
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), isPathScaledToPage ? UType.NO_COUNT : UType.UNDO));
             }
         });
         
@@ -279,7 +279,7 @@ public class VectorElement extends GraphicElement{
             return scaledPath;
         }
     }
-    public static record ScaledVectorInfo(String path, Bounds withoutArrowBounds){}
+    public record ScaledVectorInfo(String path, Bounds withoutArrowBounds){}
     
     public String getRepeatedPath(float wantedWidth, float wantedHeight, float padding) throws PathParseException{
         return getRepeatedPath(getPath(), noScaledSvgPath, wantedWidth, wantedHeight, padding, isInvertX(), isInvertY(), getArrowLength(), -1);
@@ -477,7 +477,9 @@ public class VectorElement extends GraphicElement{
             Platform.runLater(() -> AutoTipsManager.showByAction("enterVectorEditMode"));
     
             // ElementPageDrawer is resizing and moving the element when exiting
-            MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, this));
+            // MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, this));
+            // This is not necessary since the function formatNoScaledSvgPathToPage() called when undoing path changes,
+            // gets the job done by moving/resizing the element.
         }
     }
     public void quitEditMode(){
@@ -494,6 +496,14 @@ public class VectorElement extends GraphicElement{
         return getPage().isVectorEditMode() && getPage().getVectorElementPageDrawer().getVectorElement() == this;
     }
     
+    /**
+     *  {@link #noScaledSvgPath} is just used to measure the actual size of the svg path, so we can scale it into {@link #svgPath}.
+     *  The SvgPath of {@link VectorElementPageDrawer} is also bound to {@link #noScaledSvgPath}.
+     *  This function makes sure the coordinates of {@link #noScaledSvgPath} and {@link #path} are relative to the page coordinate space.
+     *  The path is scaled to have a width getWidth() and a height getHeight(), which are the JavaFX region dimensions.
+     *  Since the UndoAction must be a {@link UType#NO_COUNT}, {@link #isPathScaledToPage} is set to {@code true}
+     */
+    private boolean isPathScaledToPage = false;
     public void formatNoScaledSvgPathToPage(){
         float padding = (float) getSVGPadding();
         float width = (float) getWidth();
@@ -516,11 +526,15 @@ public class VectorElement extends GraphicElement{
         }
         
         try{
+            isPathScaledToPage = true;
             setPath(getScaledPath(getPath(), noScaledSvgPath, width, height, padding, false, false, 0, 6));
         }catch(PathParseException e){
             e.printStackTrace();
+        }finally{
+            isPathScaledToPage = false;
         }
     }
+    
     public void undoLastAction(){
         undo("m", "z", "l", "h", "v", "a", "c", "s", "t", "q");
     }
@@ -544,14 +558,23 @@ public class VectorElement extends GraphicElement{
         }
     }
     
+    // Dimensions must not be corrected if element is in edit mode
     public void correctDimensions(Bounds beforeBounds){
         Bounds afterBounds = noScaledSvgPath.getLayoutBounds();
+        
+        // noScaledSvgPath is not always in the page coordinate context:
+        double scaleRatioX = (getWidth() - 2*getSVGPadding()) / beforeBounds.getWidth();
+        double scaleRatioY = (getHeight() - 2*getSVGPadding()) / beforeBounds.getHeight();
+        
+        // The dimensions are corrected only if the element is on the page coordinate context (aka come from the EditMode)
+        // Math.round(a * 100.0) / 100.0; gets the rounded value at 3 digits.
+        if(Math.round(scaleRatioX * 1000.0) / 1000.0 != 1 || Math.round(scaleRatioY * 1000.0) / 1000.0 != 1) return;
     
         double xShift = afterBounds.getMinX() - beforeBounds.getMinX();
         double yShift = afterBounds.getMinY() - beforeBounds.getMinY();
         double wShift = afterBounds.getWidth() - beforeBounds.getWidth();
         double hShift = afterBounds.getHeight() - beforeBounds.getHeight();
-    
+        
         checkLocation(getLayoutX() + xShift, getLayoutY() + yShift,
                 getWidth() + wShift, getHeight() + hShift, false);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 
 import java.lang.ref.WeakReference;
@@ -30,6 +31,9 @@ public class MoveUndoAction extends UndoAction{
     public boolean undoAndInvert(){
         Element element = this.element.get();
         if(element != null){
+    
+            // Quit edit mode if enabled
+            if(this.element.get() instanceof VectorElement vectorElement && vectorElement.isEditMode()) vectorElement.quitEditMode();
             
             int oldRealX = element.getRealX();
             int oldRealY = element.getRealY();
