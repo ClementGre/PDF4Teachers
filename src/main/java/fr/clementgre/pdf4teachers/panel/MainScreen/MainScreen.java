@@ -22,6 +22,7 @@ import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawe
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -616,6 +617,7 @@ public class MainScreen extends Pane {
         
         System.gc(); // clear unused element in RAM
         System.runFinalization();
+        SideBar.selectTab(MainWindow.filesTab);
         return true;
     }
     
