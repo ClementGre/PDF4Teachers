@@ -8,8 +8,6 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
-import javafx.scene.paint.Color;
 
 import java.util.*;
 
@@ -40,26 +38,30 @@ public class SkillsAssessment {
     private static Notation.NotationType userDefaultNotationType = Notation.NotationType.COLOR;
     private static ArrayList<Notation> userDefaultNotations = new ArrayList<>();
     
-    private static ArrayList<Notation> getGlobalDefaultNotations(){
+    public static ArrayList<Notation> getGlobalDefaultNotations(){
         return new ArrayList<>(Arrays.asList(
-                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", ColorUtils.toRGBHex(Color.DARKRED)),
-                new Notation("2", TR.tr("skills.notation.insufficient"), "2", ColorUtils.toRGBHex(Color.YELLOW)),
-                new Notation("3", TR.tr("skills.notation.good"), "3", ColorUtils.toRGBHex(Color.LIGHTGREEN)),
-                new Notation("4", TR.tr("skills.notation.veryGood"), "4", ColorUtils.toRGBHex(Color.DARKGREEN))
+                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", "#D04D4D"),
+                new Notation("2", TR.tr("skills.notation.insufficient"), "2", "#E6B34D"),
+                new Notation("3", TR.tr("skills.notation.good"), "3", "#66CF66"),
+                new Notation("4", TR.tr("skills.notation.veryGood"), "4", "#248424")
         ));
     }
     public static ArrayList<Notation> getDefaultNotations(){
-        if(userDefaultNotations.size() == 0) return getGlobalDefaultNotations();
-        return userDefaultNotations;
+        if(userDefaultNotations.size() == 0) return cloneNotations(getGlobalDefaultNotations());
+        return cloneNotations(userDefaultNotations);
     }
     public static void setDefaultNotations(ArrayList<Notation> notations){
-        userDefaultNotations = notations;
+        userDefaultNotations = cloneNotations(notations);
     }
     public static void setDefaultNotationsType(Notation.NotationType userDefaultNotationType){
         SkillsAssessment.userDefaultNotationType = userDefaultNotationType;
     }
     public static Notation.NotationType getDefaultNotationsType(){
         return userDefaultNotationType;
+    }
+    
+    public static ArrayList<Notation> cloneNotations(ArrayList<Notation> toClone){
+        return new ArrayList<>(toClone.stream().map(Notation::clone).toList());
     }
     
     

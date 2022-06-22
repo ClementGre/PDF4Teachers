@@ -602,6 +602,7 @@ public class MainScreen extends Pane {
             document.stopDocumentSaver();
             document.close();
             document = null;
+            SideBar.selectTab(MainWindow.filesTab);
         }
         
         // No need to clear the pane, the PageRenderer are removing themselves in their remove() method.
@@ -617,7 +618,6 @@ public class MainScreen extends Pane {
         
         System.gc(); // clear unused element in RAM
         System.runFinalization();
-        SideBar.selectTab(MainWindow.filesTab);
         return true;
     }
     

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -12,10 +12,14 @@ import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 public class ImageUtils {
@@ -130,6 +134,47 @@ public class ImageUtils {
         g.dispose();
         
         return bImg;
+    }
+    
+    
+    public static String imageToBase64(BufferedImage image) throws IOException{
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ImageIO.write(image, "png", bos);
+        byte[] bytes = bos.toByteArray();
+    
+        String data = Base64.getEncoder().encodeToString(bytes);
+        return data.replace(System.lineSeparator(), "");
+    }
+    
+    
+    /** Get the image as a square image with a side of size.
+     *  The shorter side will be filled with transparent pixels.
+      */
+    
+    public static BufferedImage resizeImageToSquare(BufferedImage image, int size){
+        
+        double ratio = ((double) image.getWidth()) / image.getHeight();
+        int width = ratio >= 1 ? size : (int) (size * ratio);
+        int height = ratio <= 1 ? size : (int) (size / ratio);
+        
+        java.awt.Image scaledImage = image.getScaledInstance(width, height, java.awt.Image.SCALE_DEFAULT);
+    
+        BufferedImage resizedImage = new BufferedImage(size, size, BufferedImage.TYPE_INT_ARGB);
+    
+        int paddingX = (size - width) / 2;
+        int paddingY = (size - height) / 2;
+        
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.drawImage(scaledImage, paddingX, paddingY, width, height, null);
+        
+        g2d.setComposite(AlphaComposite.Src);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.dispose();
+    
+        return resizedImage;
+        
     }
     
     

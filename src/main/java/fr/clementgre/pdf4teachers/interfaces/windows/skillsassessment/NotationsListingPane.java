@@ -5,17 +5,24 @@
 
 package fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment;
 
+import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -29,6 +36,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class NotationsListingPane extends Tab {
@@ -52,9 +62,10 @@ public class NotationsListingPane extends Tab {
         HBox notationModeBox = new HBox();
         notationModeBox.setSpacing(5);
         notationModeBox.setAlignment(Pos.CENTER_LEFT);
-        notationModeBox.getChildren().add(new Label(TR.tr("skillsSettingsWindow.notationMode")));
-        
-        ComboBox<Notation.NotationType> notationMode = new ComboBox<>();
+    
+        ScaledComboBox<Notation.NotationType> notationMode = new ScaledComboBox<>(false);
+        notationMode.maxHeightProperty().bind(new SimpleDoubleProperty(28));
+        notationMode.setPadding(new Insets(0, 5, 0, 5));
         notationMode.getItems().addAll(Notation.NotationType.values());
         notationMode.setConverter(new StringConverter<>(){
             @Override public String toString(Notation.NotationType notationType){ return notationType.getText(); }
@@ -66,7 +77,25 @@ public class NotationsListingPane extends Tab {
             window.getAssessment().setNotationType(notationMode.getValue());
             updateGrid();
         });
-        notationModeBox.getChildren().add(notationMode);
+        
+        Button saveAsDefault = getTopButton(TR.tr("skillsSettingsWindow.notationsListing.saveAsDefault"), (e) -> {
+            SkillsAssessment.setDefaultNotationsType(window.getAssessment().getNotationType());
+            SkillsAssessment.setDefaultNotations(window.getAssessment().getNotations());
+        });
+        Button loadDefault = getTopButton(TR.tr("skillsSettingsWindow.notationsListing.loadDefault"), (e) -> {
+            notationMode.setValue(SkillsAssessment.getDefaultNotationsType());
+            window.getAssessment().getNotations().clear();
+            window.getAssessment().getNotations().addAll(SkillsAssessment.getDefaultNotations());
+            updateGrid();
+        });
+        Button resetDefault = getTopButton(TR.tr("skillsSettingsWindow.notationsListing.reset"), (e) -> {
+            notationMode.setValue(Notation.NotationType.COLOR);
+            window.getAssessment().getNotations().clear();
+            window.getAssessment().getNotations().addAll(SkillsAssessment.getGlobalDefaultNotations());
+            updateGrid();
+        });
+        
+        notationModeBox.getChildren().addAll(new Label(TR.tr("skillsSettingsWindow.notationMode")), notationMode, new HBoxSpacer(), saveAsDefault, loadDefault, resetDefault);
         
         // Grid
         
@@ -78,6 +107,14 @@ public class NotationsListingPane extends Tab {
         
         root.getChildren().addAll(notationModeBox, grid);
         
+    }
+    
+    private Button getTopButton(String text, EventHandler<ActionEvent> onAction){
+        Button button = new Button(text);
+        button.setOnAction(onAction);
+        button.setMaxHeight(28);
+        button.setPadding(new Insets(0, 5, 0, 5));
+        return button;
     }
     
     private void updateGrid(){
@@ -233,7 +270,18 @@ public class NotationsListingPane extends Tab {
                 browseButton.setPadding(new Insets(0, 5, 0, 5));
                 browseButton.setMaxHeight(28);
                 browseButton.setOnAction(e -> {
-                    graph.updateGraph(assessment.getNotationType(), notation, false);
+    
+                    File file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
+                            ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
+                    if(file == null || !file.exists()) return;
+                    
+                    try{
+                        notation.setData(ImageUtils.imageToBase64(ImageUtils.resizeImageToSquare(ImageIO.read(file), 40)));
+                        graph.updateGraph(assessment.getNotationType(), notation, false);
+                    }catch(IOException ex){
+                        ex.printStackTrace();
+                        new ErrorAlert(null, ex.getMessage(), false);
+                    }
                 });
                 grid.addRow(line, browseButton);
             }

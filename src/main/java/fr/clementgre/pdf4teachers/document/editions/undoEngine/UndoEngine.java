@@ -24,6 +24,8 @@ public class UndoEngine{
     public static boolean isUndoingThings = false;
     private static boolean isLocked = false;
     
+    private static final boolean VERBOSE = false;
+    
     // When false, only NO_COUNT actions before the classic undo action will be processed.
     // If true, the NO_COUNT actions that are after the classic undo action, will be processed at the same time
     // This boolean is false for Pages UndoEngine
@@ -35,8 +37,7 @@ public class UndoEngine{
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) return;
     
-        System.out.println("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
-        if(action instanceof ObservableChangedUndoAction<?> a) System.out.println("-> " + a.getObservableValue().getValue().toString().substring(0, Math.min(100, a.getObservableValue().getValue().toString().length()-1)));
+        if(VERBOSE) System.out.println("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
         undoList.add(0, action);
         checkUndoStackLength();
     
@@ -46,7 +47,7 @@ public class UndoEngine{
     }
     
     public void undo(){
-        System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
+        if(VERBOSE) System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
         isUndoingThings = true;
         
         while(!undoLastAction());
@@ -62,7 +63,7 @@ public class UndoEngine{
     }
     
     public void redo(){
-        System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
+        if(VERBOSE) System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
         isUndoingThings = true;
         
         // doProcessNoCountRightAndLeft has no interest in redo because the first action in the list will always be a classic action
@@ -80,7 +81,7 @@ public class UndoEngine{
         if(undoList.size() == 0) return true;
         
         UndoAction action = undoList.get(0);
-        System.out.println("Undoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) System.out.println("Undoing: " + action + " [" + action.getUndoType() + "]");
         undoList.remove(0);
         boolean completed = action.undoAndInvert();
         redoList.add(0, action);
@@ -91,7 +92,7 @@ public class UndoEngine{
         if(redoList.size() == 0) return true;
     
         UndoAction action = redoList.get(0);
-        System.out.println("Redoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) System.out.println("Redoing: " + action + " [" + action.getUndoType() + "]");
         redoList.remove(0);
         boolean completed = action.undoAndInvert();
         undoList.add(0, action);

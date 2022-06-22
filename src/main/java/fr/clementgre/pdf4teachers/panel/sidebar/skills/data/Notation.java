@@ -73,6 +73,10 @@ public class Notation {
         }
     }
     
+    @Override
+    public Notation clone(){
+        return new Notation(acronym, name, keyboardChar, data);
+    }
     
     public String getAcronym(){
         return acronym;
