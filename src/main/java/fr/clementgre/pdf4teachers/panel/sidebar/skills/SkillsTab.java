@@ -7,22 +7,29 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
 import fr.clementgre.pdf4teachers.components.IconButton;
 import fr.clementgre.pdf4teachers.components.ScaledSearchableComboBox;
+import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
+import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
@@ -71,23 +78,26 @@ Classe / Date / Nom de l'eval
 
 public class SkillsTab extends SideTab {
     
+    private SkillTableElement skillTableElement;
     
     private final ListProperty<SkillsAssessment> assessments = new SimpleListProperty<>(FXCollections.observableArrayList());
     
     private final VBox pane = new VBox();
     private final HBox optionPane = new HBox();
-    private final ListView<String> listView = new ListView<>();
-    
     private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>(true);
+    private final HBox studentPane = new HBox();
+    private final ScaledSearchableComboBox<Student> studentCombo = new ScaledSearchableComboBox<>(true);
+    
+    private final ListView<Skill> listView = new ListView<>();
     
     private final Button settings = new IconButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
-        if(assessmentCombo.getValue() != null) new SkillsAssessmentWindow(assessmentCombo.getValue());
+        if(getCurrentAssessment() != null) new SkillsAssessmentWindow(getCurrentAssessment());
     });
     private final Button deleteAssessment = new IconButton(SVGPathIcons.TRASH, TR.tr("skillsTab.deleteAssessment.tooltip"), e -> {
-        if(assessmentCombo.getValue() != null){
-            ConfirmAlert alert = new ConfirmAlert(true, TR.tr("skillsTab.deleteAssessment.confirm", assessmentCombo.getValue().getName()));
+        if(getCurrentAssessment() != null){
+            ConfirmAlert alert = new ConfirmAlert(true, TR.tr("skillsTab.deleteAssessment.confirm", getCurrentAssessment().getName()));
             if(alert.execute()){
-                SkillsAssessment toDelete = assessmentCombo.getValue();
+                SkillsAssessment toDelete = getCurrentAssessment();
                 assessmentCombo.setValue(null);
                 assessments.remove(toDelete);
             }
@@ -110,23 +120,25 @@ public class SkillsTab extends SideTab {
     }
     
     private void setup(){
-
+    
+        optionPane.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
+        pane.getChildren().setAll(optionPane, listView);
+        
+        /* OPTION PANE */
+        
         optionPane.setStyle("-fx-padding: 5;");
         optionPane.setSpacing(3);
     
         PaneUtils.setHBoxPosition(assessmentCombo, -1, 30, 0);
-    
         assessmentCombo.setConverter(new StringConverter<>() {
-            @Override
-            public String toString(SkillsAssessment assessment){
+            @Override public String toString(SkillsAssessment assessment){
                 if(assessment == null) return null;
                 String text = assessment.getName();
                 if(!assessment.getClasz().isBlank()) text += " - " + assessment.getClasz();
                 if(!assessment.getDate().isBlank()) text += " | " + assessment.getDate();
                 return text;
             }
-            @Override
-            public SkillsAssessment fromString(String assessmentName){ return null; }
+            @Override public SkillsAssessment fromString(String assessmentName){ return null; }
         });
         assessmentCombo.itemsProperty().bind(assessments);
         
@@ -134,17 +146,85 @@ public class SkillsTab extends SideTab {
         deleteAssessment.disableProperty().bind(assessmentCombo.valueProperty().isNull());
         
         optionPane.getChildren().addAll(assessmentCombo, settings, deleteAssessment, newAssessment);
+    
+        /* STUDENT PANE */
         
-        // TODO: setup listView for showing skills.
+        studentPane.setStyle("-fx-padding: 5;");
+        studentPane.setSpacing(3);
+    
+        PaneUtils.setVBoxPosition(studentCombo, -1, 30, 0);
+        studentCombo.setConverter(new StringConverter<>() {
+            @Override public String toString(Student s){ return s.name(); }
+            @Override public Student fromString(String name){ return null; }
+        });
+        studentCombo.itemsProperty().bind(Bindings.createObjectBinding(() -> {
+            if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getStudents());
+            return FXCollections.observableArrayList();
+        }, assessmentCombo.valueProperty()));
+    
+        assessmentCombo.valueProperty().addListener(o -> {
+            if(getCurrentAssessment() != null && getCurrentAssessment().getStudents().size() != 0){
+                pane.getChildren().setAll(optionPane, studentPane, listView);
+            }else pane.getChildren().setAll(optionPane, listView);
+        });
         
         
-        pane.getChildren().addAll(optionPane, listView);
+        /* LIST VIEW */
+    
+        listView.setBorder(null);
+        listView.setPadding(new Insets(0));
+        VBox.setVgrow(listView, Priority.SOMETIMES);
+    
+        listView.setCellFactory(param -> new SkillListCell());
+        listView.itemsProperty().bind(Bindings.createObjectBinding(() -> {
+            if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getSkills());
+            return FXCollections.observableArrayList();
+        }, assessmentCombo.valueProperty()));
+        
+        
+        /* LINK WITH SkillTableElement */
+    
+        // Sync assessment id
+        assessmentCombo.valueProperty().addListener(o -> {
+            if(skillTableElement != null){
+                if(getCurrentAssessment() != null) skillTableElement.setAssessmentId(getCurrentAssessment().getId());
+                else skillTableElement.setAssessmentId(0);
+            }
+        });
+        // Sync student id
+        studentCombo.valueProperty().addListener(o -> {
+            if(skillTableElement != null){
+                if(getCurrentAssessment() != null && getCurrentStudent() != null) skillTableElement.setStudentId(getCurrentStudent().id());
+                else skillTableElement.setStudentId(0);
+            }
+        });
         
     }
     
+    public void registerSkillTableElement(SkillTableElement skillTableElement){
+        this.skillTableElement = skillTableElement;
+        
+        for(SkillsAssessment assessment : assessments){
+            if(assessment.getId() == skillTableElement.getAssessmentId()){
+                assessmentCombo.setValue(assessment);
+                return;
+            }
+        }
+        
+        if(getCurrentAssessment() == null) return;
+        for(Student student : getCurrentAssessment().getStudents()){
+            if(student.id() == skillTableElement.getStudentId()){
+                studentCombo.setValue(student);
+                return;
+            }
+        }
+        
+    }
+    
+    
     // Update assessment name in the combo box
     public void updateComboBoxSelectedAssessmentName(){
-        SkillsAssessment assessment = assessmentCombo.getValue();
+        SkillsAssessment assessment = getCurrentAssessment();
         assessmentCombo.getSelectionModel().clearSelection();
         assessmentCombo.getSelectionModel().select(assessment);
     }
@@ -161,5 +241,11 @@ public class SkillsTab extends SideTab {
     }
     public List<Skill> getAllSkills(){
         return assessments.stream().flatMap(a -> a.getSkills().stream()).toList();
+    }
+    public SkillsAssessment getCurrentAssessment(){
+        return assessmentCombo.getValue();
+    }
+    public Student getCurrentStudent(){
+        return studentCombo.getValue();
     }
 }

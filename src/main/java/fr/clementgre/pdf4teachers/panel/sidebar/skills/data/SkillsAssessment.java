@@ -75,6 +75,7 @@ public class SkillsAssessment {
                 Notation.NotationType.valueOf(Config.getString(map, "notationType")),
                 getSkillsFromConfig(Config.getList(map, "skills")),
                 getNotationsFromConfig(Config.getList(map, "notations")),
+                getStudentsFromConfig(Config.getList(map, "students")),
                 Config.getLong(map, "id")
         );
     }
@@ -83,6 +84,9 @@ public class SkillsAssessment {
     }
     public static ArrayList<Notation> getNotationsFromConfig(List<Object> list){
         return new ArrayList<>(list.stream().filter(d -> d instanceof HashMap).map(n -> Notation.loadFromConfig((HashMap) n)).toList());
+    }
+    public static ArrayList<Student> getStudentsFromConfig(List<Object> list){
+        return new ArrayList<>(list.stream().filter(d -> d instanceof HashMap).map(n -> Student.loadFromConfig((HashMap) n)).toList());
     }
     
 //    WRITING FROM CONFIG
@@ -93,6 +97,9 @@ public class SkillsAssessment {
     public static List<LinkedHashMap<String, Object>> skillsToYAML(ArrayList<Skill> skill){
         return skill.stream().map(Skill::toYAML).toList();
     }
+    public static List<LinkedHashMap<String, Object>> studentsToYAML(ArrayList<Student> students){
+        return students.stream().map(Student::toYAML).toList();
+    }
     
 //    OTHER STATIC
     
@@ -101,7 +108,7 @@ public class SkillsAssessment {
     }
     public static long getNewSkillsAssessmentUniqueId(){
         long id = new Random().nextLong();
-        while(getById(id) != null) id = new Random().nextLong();
+        while(getById(id) != null || id == 0) id = new Random().nextLong();
         return id;
     }
     
@@ -114,6 +121,7 @@ public class SkillsAssessment {
     private Notation.NotationType notationType;
     private final ArrayList<Skill> skills;
     private final ArrayList<Notation> notations;
+    private final ArrayList<Student> students;
     
     
     public SkillsAssessment(){
@@ -123,15 +131,16 @@ public class SkillsAssessment {
         this(name, "", "");
     }
     public SkillsAssessment(String name, String date, String clasz){
-        this(name, date, clasz, getDefaultNotationsType(), new ArrayList<>(), getDefaultNotations(), getNewSkillsAssessmentUniqueId());
+        this(name, date, clasz, getDefaultNotationsType(), new ArrayList<>(), getDefaultNotations(), new ArrayList<>(), getNewSkillsAssessmentUniqueId());
     }
-    public SkillsAssessment(String name, String date, String clasz, Notation.NotationType notationType, ArrayList<Skill> skills, ArrayList<Notation> notations, long id){
+    public SkillsAssessment(String name, String date, String clasz, Notation.NotationType notationType, ArrayList<Skill> skills, ArrayList<Notation> notations, ArrayList<Student> students, long id){
         this.name = name;
         this.date = date;
         this.clasz = clasz;
         this.notationType = notationType;
         this.skills = skills;
         this.notations = notations;
+        this.students = students;
         this.id = id;
     }
     
@@ -144,6 +153,7 @@ public class SkillsAssessment {
         map.put("notationType", notationType.name());
         map.put("skills", skillsToYAML(skills));
         map.put("notations", notationsToYAML(notations));
+        map.put("students", studentsToYAML(students));
         return map;
     }
     
@@ -174,6 +184,9 @@ public class SkillsAssessment {
     }
     public String getClasz(){
         return clasz;
+    }
+    public ArrayList<Student> getStudents(){
+        return students;
     }
     public void setClasz(String clasz){
         this.clasz = clasz;

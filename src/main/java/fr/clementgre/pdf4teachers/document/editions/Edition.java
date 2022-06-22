@@ -70,11 +70,13 @@ public class Edition{
             loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
                 TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
             });
+            // There is only one SkillTableElement (the grid) that contains all the skills
+            SkillTableElement.readYAMLDataAndCreate(config.getSection("skills"));
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
             }
-    
+            
             isSave.set(true);
             MainWindow.gradeTab.treeView.updateAllSum();
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
@@ -100,6 +102,8 @@ public class Edition{
             LinkedHashMap<String, ArrayList<Object>> images = new LinkedHashMap<>();
             LinkedHashMap<String, ArrayList<Object>> vectors = new LinkedHashMap<>();
             ArrayList<Object> grades = new ArrayList<>();
+            LinkedHashMap<Object, Object> skills = new LinkedHashMap<>();
+            
             
             // NON GRADES ELEMENTS
             int counter = 0;
@@ -119,6 +123,12 @@ public class Edition{
                     texts.put("page" + page.getPage(), pageTextsData);
                     counter += pageTextsData.size();
                 }
+    
+                // There is only one SkillTableElement (the grid) that contains all the skills
+                if(skills.isEmpty()){
+                    SkillTableElement skillTableElement = (SkillTableElement) page.getElements().stream().filter(e -> e instanceof SkillTableElement).findAny().orElse(null);
+                    if(skillTableElement != null) skills = skillTableElement.getYAMLData();
+                }
             }
             
             // GRADES ELEMENTS
@@ -126,6 +136,8 @@ public class Edition{
                 grades.add(element.getCore().getYAMLData());
                 if(!element.getCore().isDefaultGrade()) counter++;
             }
+            
+            
             
             // delete edit file if edition is empty
             if(counter == 0) editFile.delete();
@@ -135,6 +147,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.base.put("skills", skills);
                 config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
@@ -205,6 +218,9 @@ public class Edition{
                 if(data instanceof Map)
                     elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
             }
+    
+            // There is only one SkillTableElement (the grid) that contains all the skills
+            elements.add(SkillTableElement.readYAMLDataAndGive(config.getSection("skills"), false));
             
             return elements.toArray(new Element[0]);
         }
@@ -232,6 +248,7 @@ public class Edition{
             LinkedHashMap<String, ArrayList<Object>> texts = new LinkedHashMap<>();
             LinkedHashMap<String, ArrayList<Object>> images = new LinkedHashMap<>();
             LinkedHashMap<String, ArrayList<Object>> vectors = new LinkedHashMap<>();
+            LinkedHashMap<Object, Object> skills = new LinkedHashMap<>();
             ArrayList<Object> grades = new ArrayList<>();
             
             int counter = 0;
@@ -256,6 +273,8 @@ public class Edition{
                         }else{
                             texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
+                    }else if(element instanceof SkillTableElement ){
+                        skills = element.getYAMLData();
                     }
                     counter++;
                 }else{
@@ -270,6 +289,7 @@ public class Edition{
                 config.base.put("grades", grades);
                 config.base.put("images", images);
                 config.base.put("vectors", vectors);
+                config.base.put("skills", skills);
                 config.set("versionID", Main.VERSION_ID);
                 config.save();
             }
