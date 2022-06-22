@@ -28,14 +28,17 @@ public class Notation {
     private String data; // Can be base64 icon or color string or just a letter
     private long id;
     
-    public Notation(){
-        this("", "", "", "");
+    // SkillsAssessment is only used to generate a unique ID
+    public Notation(@NotNull SkillsAssessment assessment){
+        this("", "", "", "", getNewNotationUniqueId(assessment));
     }
-    public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar){
-        this(acronym, name, keyboardChar, "");
+    // SkillsAssessment is only used to generate a unique ID
+    public Notation(@NotNull SkillsAssessment assessment, @NotNull String acronym, @NotNull String name, @NotNull String keyboardChar){
+        this(acronym, name, keyboardChar, "", getNewNotationUniqueId(assessment));
     }
-    public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar, @NotNull String data){
-        this(acronym, name, keyboardChar, data, new Random().nextLong(9999999L));
+    // SkillsAssessment is only used to generate a unique ID
+    public Notation(@NotNull SkillsAssessment assessment, @NotNull String acronym, @NotNull String name, @NotNull String keyboardChar, @NotNull String data){
+        this(acronym, name, keyboardChar, data, getNewNotationUniqueId(assessment));
     }
     public Notation(@NotNull String acronym, @NotNull String name, @NotNull String keyboardChar, @NotNull String data, long id){
         this.acronym = acronym;
@@ -44,6 +47,17 @@ public class Notation {
         this.data = data;
         this.id = id;
     }
+    public static long getNewNotationUniqueId(SkillsAssessment assessment){
+        // Negative ids are reserved for default not editable notations.
+        long id = Math.abs(new Random().nextLong());
+        while(id == 0 || getById(assessment, id) != null) id = new Random().nextLong();
+        return id;
+    }
+    public static Notation getById(SkillsAssessment assessment, long id){
+        return assessment.getNotations().stream().filter(s -> s.getId() == id).findAny().orElse(null);
+    }
+    
+    
     public static Notation loadFromConfig(HashMap<String, Object> map){
         String acronym = Config.getString(map, "acronym");
         String name = Config.getString(map, "name");
@@ -75,7 +89,7 @@ public class Notation {
     
     @Override
     public Notation clone(){
-        return new Notation(acronym, name, keyboardChar, data);
+        return new Notation(acronym, name, keyboardChar, data, id);
     }
     
     public String getAcronym(){

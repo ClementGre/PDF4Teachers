@@ -146,7 +146,7 @@ public class NotationsListingPane extends Tab {
         GridPane.setMargin(addNotationButton, new Insets(5, 0, 0, 0));
         addNotationButton.setDisable(window.getAssessment().getNotations().size() >= 8);
         addNotationButton.setOnAction(e -> {
-            Notation notation = new Notation();
+            Notation notation = new Notation(window.getAssessment());
             window.getAssessment().getNotations().add(notation);
             updateGrid();
         });

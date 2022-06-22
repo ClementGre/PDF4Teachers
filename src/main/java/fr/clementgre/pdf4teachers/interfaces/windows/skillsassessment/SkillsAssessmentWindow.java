@@ -89,10 +89,10 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         assessment.setName(name.getText().isBlank() ? TR.tr("skillsTab.defaults.assessmentName") : name.getText());
         assessment.setClasz(clasz.getText());
         assessment.setDate(date.getEditor().getText());
-        MainWindow.skillsTab.updateComboBoxSelectedAssessmentName();
-        
         skillsListingPane.save();
         notationsListingPane.save();
+    
+        MainWindow.skillsTab.updateData();
         
         MainWindow.userData.getSimpleConfig(SkillsAssessmentData.class).saveData();
     }

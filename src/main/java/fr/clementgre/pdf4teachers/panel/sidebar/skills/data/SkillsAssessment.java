@@ -22,12 +22,12 @@ public class SkillsAssessment {
     private static final ArrayList<Notation> otherNotations = new ArrayList<>();
     private static void loadOtherNotations(){
         otherNotations.addAll(Arrays.asList(
-                new Notation("AB", TR.tr("skills.notation.missing"), "A"), // absent
-                new Notation("DI", TR.tr("skills.notation.exempted"), "D"), // dispensé
-                new Notation("NE", TR.tr("skills.notation.notAssessed"), "E"), // non évalué
-                new Notation("NF", TR.tr("skills.notation.notMade"), "F"), // non fait
-                new Notation("NN", TR.tr("skills.notation.notGraded"), "N"), // non noté
-                new Notation("NR", TR.tr("skills.notation.notReturned"), "R") // non rendu
+                new Notation("AB", TR.tr("skills.notation.missing"), "A", "", -1), // absent
+                new Notation("DI", TR.tr("skills.notation.exempted"), "D", "", -2), // dispensé
+                new Notation("NE", TR.tr("skills.notation.notAssessed"), "E", "", -3), // non évalué
+                new Notation("NF", TR.tr("skills.notation.notMade"), "F", "", -4), // non fait
+                new Notation("NN", TR.tr("skills.notation.notGraded"), "N", "", -5), // non noté
+                new Notation("NR", TR.tr("skills.notation.notReturned"), "R", "", -6) // non rendu
         ));
     }
     public static ArrayList<Notation> getOtherNotations(){
@@ -40,10 +40,10 @@ public class SkillsAssessment {
     
     public static ArrayList<Notation> getGlobalDefaultNotations(){
         return new ArrayList<>(Arrays.asList(
-                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", "#D04D4D"),
-                new Notation("2", TR.tr("skills.notation.insufficient"), "2", "#E6B34D"),
-                new Notation("3", TR.tr("skills.notation.good"), "3", "#66CF66"),
-                new Notation("4", TR.tr("skills.notation.veryGood"), "4", "#248424")
+                new Notation("1", TR.tr("skills.notation.veryInsufficient"), "1", "#D04D4D", 1),
+                new Notation("2", TR.tr("skills.notation.insufficient"), "2", "#E6B34D", 2),
+                new Notation("3", TR.tr("skills.notation.good"), "3", "#66CF66", 3),
+                new Notation("4", TR.tr("skills.notation.veryGood"), "4", "#248424", 4)
         ));
     }
     public static ArrayList<Notation> getDefaultNotations(){
@@ -108,7 +108,7 @@ public class SkillsAssessment {
     }
     public static long getNewSkillsAssessmentUniqueId(){
         long id = new Random().nextLong();
-        while(getById(id) != null || id == 0) id = new Random().nextLong();
+        while(id == 0 || getById(id) != null) id = new Random().nextLong();
         return id;
     }
     
@@ -168,6 +168,11 @@ public class SkillsAssessment {
         return skills;
     }
     public ArrayList<Notation> getNotations(){
+        return notations;
+    }
+    public ArrayList<Notation> getNotationsWithDefaults(){
+        ArrayList<Notation> notations = new ArrayList<>(cloneNotations(this.notations));
+        notations.addAll(cloneNotations(otherNotations));
         return notations;
     }
     public String getName(){
