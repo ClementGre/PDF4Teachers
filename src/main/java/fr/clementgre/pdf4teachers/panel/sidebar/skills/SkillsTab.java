@@ -296,4 +296,10 @@ public class SkillsTab extends SideTab {
     public SkillTableElement getSkillTableElement(){
         return skillTableElement.get();
     }
+    public void refreshListView(){
+        listView.refresh();
+    }
+    public void selectAssessment(SkillsAssessment assessment){
+        assessmentCombo.setValue(assessment);
+    }
 }

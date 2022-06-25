@@ -9,6 +9,9 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.SkillUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
@@ -56,7 +59,8 @@ public class SkillListCell extends ListCell<Skill> {
         
         comboBox.setCellFactory(c -> new ComboListCell(skillAssessment, true));
         comboBox.setButtonCell(new ComboListCell(skillAssessment, false));
-        comboBox.setPadding(new Insets(0, 0, 0, 5));
+        comboBox.setPadding(new Insets(0));
+        HBox.setMargin(comboBox, new Insets(0, 0, 0, 5));
         comboBox.setPrefWidth(30);
         comboBox.setMinWidth(30);
         comboBox.setPrefHeight(30);
@@ -152,6 +156,7 @@ public class SkillListCell extends ListCell<Skill> {
             comboBox.setOnAction(e -> {
                 long newId = comboBox.getValue() == null ? 0 : comboBox.getValue().getId();
                 if(editionSkill != null && editionSkill.getNotationId() != newId){
+                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
                     editionSkill.setNotationId(newId);
                     Edition.setUnsave("SkillListCell ComboBox notation changed");
                 }
