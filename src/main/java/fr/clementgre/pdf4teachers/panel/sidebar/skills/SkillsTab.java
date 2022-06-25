@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.IconButton;
 import fr.clementgre.pdf4teachers.components.ScaledSearchableComboBox;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
@@ -125,9 +126,16 @@ public class SkillsTab extends SideTab {
     }
     
     private void setup(){
-    
+        
         optionPane.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         pane.getChildren().setAll(optionPane, listView);
+    
+        MainWindow.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue.intValue() != MainScreen.Status.OPEN){
+                skillTableElement.set(null);
+                assessmentCombo.setValue(null);
+            }
+        });
         
         /* OPTION PANE */
         
@@ -176,10 +184,12 @@ public class SkillsTab extends SideTab {
         
         /* LIST VIEW */
     
+        listView.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         listView.setBorder(null);
         listView.setPadding(new Insets(0));
         VBox.setVgrow(listView, Priority.SOMETIMES);
     
+        skillTableElement.addListener((observable, oldValue, newValue) -> listView.refresh());
         listView.setCellFactory(param -> new SkillListCell(assessmentCombo.valueProperty(), skillTableElement));
         listView.itemsProperty().bind(Bindings.createObjectBinding(() -> {
             if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getSkills());
@@ -195,7 +205,10 @@ public class SkillsTab extends SideTab {
         // Sync assessment id
         assessmentCombo.valueProperty().addListener(o -> {
             if(getSkillTableElement() != null){
-                getSkillTableElement().setAssessmentId(getCurrentAssessmentIdOr0());
+                if(getSkillTableElement().getAssessmentId() != getCurrentAssessmentIdOr0()){ // Needs update
+                    getSkillTableElement().setAssessmentId(getCurrentAssessmentIdOr0());
+                    Edition.setUnsave("Changed selected Assessment");
+                }
             }else if(getCurrentAssessment() != null){
                 addSkillAssessmentElement();
             }
@@ -203,7 +216,10 @@ public class SkillsTab extends SideTab {
         // Sync student id
         studentCombo.valueProperty().addListener(o -> {
             if(getSkillTableElement() != null){
-                getSkillTableElement().setStudentId(getCurrentStudentIdOr0());
+                if(getSkillTableElement().getStudentId() != getCurrentStudentIdOr0()){ // Needs update
+                    getSkillTableElement().setStudentId(getCurrentStudentIdOr0());
+                    Edition.setUnsave("Changed selected Student");
+                }
             }else if(getCurrentAssessment() != null){
                 addSkillAssessmentElement();
             }
@@ -244,8 +260,8 @@ public class SkillsTab extends SideTab {
         // Update assessment name in the combo
         // This will also update the list element (updates assessmentCombo.getValue() changes)
         SkillsAssessment assessment = getCurrentAssessment();
-        assessmentCombo.getSelectionModel().clearSelection();
-        assessmentCombo.getSelectionModel().select(assessment);
+        assessmentCombo.setValue(null);
+        assessmentCombo.setValue(assessment);
         
         // Updating the list
         listView.refresh();

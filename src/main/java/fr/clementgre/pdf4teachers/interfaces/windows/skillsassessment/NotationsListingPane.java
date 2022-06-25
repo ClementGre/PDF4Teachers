@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
@@ -221,7 +222,7 @@ public class NotationsListingPane extends Tab {
             });
             keyboardChar.textProperty().addListener((observable, oldValue, newValue) -> {
                 if(newValue.length() > 1) newValue = newValue.substring(newValue.length() - 1);
-                newValue = newValue.toUpperCase();
+                newValue = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(newValue).toUpperCase();
                 keyboardChar.setText(newValue);
                 notation.setKeyboardChar(newValue);
             });

@@ -47,7 +47,8 @@ public class SkillTableElement extends GraphicElement{
         data.put("page", pageNumber);
         data.put("assessmentId", assessmentId.get());
         data.put("studentId", studentId.get());
-        data.put("list", editionSkills.get().stream().map(EditionSkill::toYAML).toList());
+        // Useless to save editionSkills that have no matching Notation (id == 0)
+        data.put("list", editionSkills.get().stream().filter(s -> s.getNotationId() != 0).map(EditionSkill::toYAML).toList());
         return data;
     }
     

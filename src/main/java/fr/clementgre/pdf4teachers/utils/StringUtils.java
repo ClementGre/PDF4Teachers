@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.utils;
 import javafx.scene.control.TextArea;
 import name.fraser.neil.plaintext.diff_match_patch;
 
+import java.awt.im.InputContext;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -284,5 +285,17 @@ public class StringUtils {
             
         }
         return false;
+    }
+    
+    public static String replaceSymbolsToDigitsIfFrenchLayout(String text){
+        if(!isAzertyLayout()) return text;
+        
+        return text.replace("&", "1").replace("é", "2").replace("\"", "3").replace("'", "4").replace("(", "5")
+                .replace("-", "6").replace("è", "7").replace("_", "8").replace("ç", "9").replace("à", "0");
+    }
+    
+    public static boolean isAzertyLayout(){
+        InputContext is = InputContext.getInstance();
+        return is.getLocale() != null && is.getLocale().getLanguage().equals("fr");
     }
 }

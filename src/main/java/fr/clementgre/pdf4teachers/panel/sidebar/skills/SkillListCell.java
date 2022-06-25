@@ -7,12 +7,13 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
-import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -20,7 +21,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 public class SkillListCell extends ListCell<Skill> {
@@ -29,7 +29,6 @@ public class SkillListCell extends ListCell<Skill> {
     private final VBox left = new VBox();
     private final Label acronym = new Label();
     private final Label name = new Label();
-    private final TextField textInput = new ShortcutsTextField();
     private final ComboBox<Notation> comboBox = new ComboBox<>();
     
     // Edited each time the cell updates
@@ -47,7 +46,7 @@ public class SkillListCell extends ListCell<Skill> {
         spacer.setPrefWidth(Double.MAX_VALUE);
     
         left.getChildren().addAll(acronym, name);
-        root.getChildren().addAll(left, new HBoxSpacer(), textInput, comboBox);
+        root.getChildren().addAll(left, new HBoxSpacer(), comboBox);
         root.setMinWidth(0);
         root.setPrefWidth(1);
         root.setAlignment(Pos.CENTER_LEFT);
@@ -55,17 +54,9 @@ public class SkillListCell extends ListCell<Skill> {
         acronym.setStyle("-fx-font-weight: bold; -fx-font-size: 12px;");
         name.setStyle("-fx-font-size: 11px;");
         
-        textInput.setStyle("-fx-font-size: 12px;");
-        textInput.getStyleClass().add("noTextFieldClear");
-        textInput.setAlignment(Pos.CENTER);
-        textInput.setPrefWidth(30);
-        textInput.setMinWidth(30);
-        textInput.setPrefHeight(30);
-        HBox.setMargin(textInput, new Insets(0, 5, 0, 5));
-        
-        comboBox.setCellFactory((c) -> new ComboListCell(skillAssessment, true));
+        comboBox.setCellFactory(c -> new ComboListCell(skillAssessment, true));
         comboBox.setButtonCell(new ComboListCell(skillAssessment, false));
-        comboBox.setPadding(new Insets(0));
+        comboBox.setPadding(new Insets(0, 0, 0, 5));
         comboBox.setPrefWidth(30);
         comboBox.setMinWidth(30);
         comboBox.setPrefHeight(30);
@@ -76,17 +67,18 @@ public class SkillListCell extends ListCell<Skill> {
         
         // LISTENERS
         setOnKeyTyped(e -> {
+            if(getSkillAssessment() == null) return;
+            String text = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(e.getCharacter());
             for(Notation notation : getSkillAssessment().getNotationsWithDefaults()){
-                if(notation.getKeyboardChar().equalsIgnoreCase(e.getCharacter())){
+                if(notation.getKeyboardChar().equalsIgnoreCase(text)){
                     comboBox.setValue(notation); // editionSkill notationId will be updated in the ComboBox listener
                     e.consume();
                     return;
                 }
             }
         });
-        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(editionSkill != null) editionSkill.setNotationId(newValue == null ? 0 : newValue.getId());
-        });
+        
+        
     }
     
     private static class ComboListCell extends ListCell<Notation>{
@@ -138,27 +130,42 @@ public class SkillListCell extends ListCell<Skill> {
         super.updateItem(skill, empty);
         
         if(skill == null || empty){
+            editionSkill = null;
             setGraphic(null);
             setTooltip(null);
             setContextMenu(null);
+            comboBox.setOnAction(null);
         }else{
+            // Event disabled during loading of items.
+            comboBox.setOnAction(null);
+            
+            // Get the matching EditionSkill that contains the selected Notation id.
             editionSkill = skill.getMatchingEditionSkill(getSkillTableElement().getEditionSkills());
             if(editionSkill == null){
                 editionSkill = new EditionSkill(skill.getId(), 0);
                 getSkillTableElement().getEditionSkills().add(editionSkill);
             }
-    
+            
+            // Updates the ComboBox items, value and add the event
             comboBox.setItems(FXCollections.observableList(getSkillAssessment().getNotationsWithDefaults()));
             comboBox.setValue(editionSkill.getMatchingNotation(getSkillAssessment()));
-            
+            comboBox.setOnAction(e -> {
+                long newId = comboBox.getValue() == null ? 0 : comboBox.getValue().getId();
+                if(editionSkill != null && editionSkill.getNotationId() != newId){
+                    editionSkill.setNotationId(newId);
+                    Edition.setUnsave("SkillListCell ComboBox notation changed");
+                }
+            });
+    
+            // Update text & set root
             acronym.setText(skill.getAcronym());
             name.setText(skill.getName());
-            
             setGraphic(root);
         }
         
-        
     }
+    
+    
     
     
     public SkillsAssessment getSkillAssessment(){

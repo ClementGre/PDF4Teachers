@@ -55,6 +55,19 @@ public class PlatformUtils {
         }, "runLaterOnUIThread").start();
     }
     
+    public static void repeatOnUIThread(int millis, Runnable runnable){
+        new Thread(() -> {
+            while(true){
+                try{
+                    Thread.sleep(millis);
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+                Platform.runLater(runnable);
+            }
+        }, "repeatOnUIThread").start();
+    }
+    
     // Run code on JavaFX Application Thread from another Thread
     // and wait until action completes before continuing the other Thread
     public static <T> T runAndWait(ReturnCallBack<T> action){
