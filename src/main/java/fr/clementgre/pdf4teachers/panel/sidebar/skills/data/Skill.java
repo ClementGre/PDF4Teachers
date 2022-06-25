@@ -9,10 +9,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Objects;
-import java.util.Random;
+import java.util.*;
 
 public class Skill {
     private long id;
@@ -42,6 +39,14 @@ public class Skill {
         map.put("id", id);
         return map;
     }
+    
+    public EditionSkill getMatchingEditionSkill(List<EditionSkill> editionSkills){
+        for(EditionSkill editionSkill : editionSkills){
+            if(editionSkill.getSkillId() == id) return editionSkill;
+        }
+        return null;
+    }
+    
     
     @Override
     public boolean equals(Object o) {

@@ -4,9 +4,12 @@
  */
 
 package fr.clementgre.pdf4teachers.panel.sidebar.skills;
+
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.ShortcutsTextField;
+import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
@@ -29,9 +32,14 @@ public class SkillListCell extends ListCell<Skill> {
     private final TextField textInput = new ShortcutsTextField();
     private final ComboBox<Notation> comboBox = new ComboBox<>();
     
+    // Edited each time the cell updates
+    private EditionSkill editionSkill;
+    
     private final ObjectProperty<SkillsAssessment> skillAssessment;
-    public SkillListCell(ObjectProperty<SkillsAssessment> skillAssessment){
+    private final ObjectProperty<SkillTableElement> skillTableElement;
+    public SkillListCell(ObjectProperty<SkillsAssessment> skillAssessment, ObjectProperty<SkillTableElement> skillTableElement){
         this.skillAssessment = skillAssessment;
+        this.skillTableElement = skillTableElement;
         
         Region spacer = new Region();
         GridPane.setHgrow(spacer, Priority.ALWAYS);
@@ -63,8 +71,22 @@ public class SkillListCell extends ListCell<Skill> {
         comboBox.setPrefHeight(30);
     
         
-        setOnMouseClicked(e -> textInput.requestFocus());
+        setOnMouseClicked(e -> requestFocus());
         root.setPadding(new Insets(-5));
+        
+        // LISTENERS
+        setOnKeyTyped(e -> {
+            for(Notation notation : getSkillAssessment().getNotationsWithDefaults()){
+                if(notation.getKeyboardChar().equalsIgnoreCase(e.getCharacter())){
+                    comboBox.setValue(notation); // editionSkill notationId will be updated in the ComboBox listener
+                    e.consume();
+                    return;
+                }
+            }
+        });
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if(editionSkill != null) editionSkill.setNotationId(newValue == null ? 0 : newValue.getId());
+        });
     }
     
     private static class ComboListCell extends ListCell<Notation>{
@@ -84,7 +106,7 @@ public class SkillListCell extends ListCell<Skill> {
             if(notation == null || empty){
                 setGraphic(null);
             }else{
-    
+                
                 if(!popup){
                     graph = new NotationGraph();
                     graph.setTranslateX(-5);
@@ -120,16 +142,35 @@ public class SkillListCell extends ListCell<Skill> {
             setTooltip(null);
             setContextMenu(null);
         }else{
-            
+            editionSkill = skill.getMatchingEditionSkill(getSkillTableElement().getEditionSkills());
+            if(editionSkill == null){
+                editionSkill = new EditionSkill(skill.getId(), 0);
+                getSkillTableElement().getEditionSkills().add(editionSkill);
+            }
+    
+            comboBox.setItems(FXCollections.observableList(getSkillAssessment().getNotationsWithDefaults()));
+            comboBox.setValue(editionSkill.getMatchingNotation(getSkillAssessment()));
             
             acronym.setText(skill.getAcronym());
             name.setText(skill.getName());
-    
-    
-            comboBox.setItems(FXCollections.observableList(skillAssessment.get().getNotationsWithDefaults()));
             
             setGraphic(root);
         }
+        
+        
     }
     
+    
+    public SkillsAssessment getSkillAssessment(){
+        return skillAssessment.get();
+    }
+    public ObjectProperty<SkillsAssessment> skillAssessmentProperty(){
+        return skillAssessment;
+    }
+    public SkillTableElement getSkillTableElement(){
+        return skillTableElement.get();
+    }
+    public ObjectProperty<SkillTableElement> skillTableElementProperty(){
+        return skillTableElement;
+    }
 }

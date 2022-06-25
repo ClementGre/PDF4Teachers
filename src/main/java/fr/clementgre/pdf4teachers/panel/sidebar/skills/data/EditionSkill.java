@@ -10,7 +10,15 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public record EditionSkill(long skillId, long notationId) {
+public class EditionSkill{
+    
+    private long skillId;
+    private long notationId;
+    public EditionSkill(long skillId, long notationId){
+        this.skillId = skillId;
+        this.notationId = notationId;
+    }
+    
     
     public LinkedHashMap<String, Object> toYAML(){
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
@@ -34,9 +42,23 @@ public record EditionSkill(long skillId, long notationId) {
     }
     
     public Notation getMatchingNotation(SkillsAssessment assessment){
-        for(Notation notation : assessment.getNotations()){
+        for(Notation notation : assessment.getNotationsWithDefaults()){
             if(notation.getId() == notationId) return notation;
         }
         return null;
+    }
+    
+    
+    public long getSkillId(){
+        return skillId;
+    }
+    public void setSkillId(long skillId){
+        this.skillId = skillId;
+    }
+    public long getNotationId(){
+        return notationId;
+    }
+    public void setNotationId(long notationId){
+        this.notationId = notationId;
     }
 }

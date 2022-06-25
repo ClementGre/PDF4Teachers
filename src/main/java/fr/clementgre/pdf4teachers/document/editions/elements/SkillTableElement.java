@@ -25,13 +25,13 @@ public class SkillTableElement extends GraphicElement{
     
     private final LongProperty assessmentId = new SimpleLongProperty();
     private final LongProperty studentId = new SimpleLongProperty();
-    private final ListProperty<EditionSkill> skills = new SimpleListProperty<>();
+    private final ListProperty<EditionSkill> editionSkills = new SimpleListProperty<>();
     
-    public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> skills){
+    public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
         super(x, y, pageNumber, width, height, RepeatMode.KEEP_RATIO, ResizeMode.CORNERS);
         this.assessmentId.set(assessmentId);
         this.studentId.set(studentId);
-        this.skills.set(FXCollections.observableList(skills));
+        this.editionSkills.set(FXCollections.observableList(editionSkills));
         
         setVisible(false);
     }
@@ -47,7 +47,7 @@ public class SkillTableElement extends GraphicElement{
         data.put("page", pageNumber);
         data.put("assessmentId", assessmentId.get());
         data.put("studentId", studentId.get());
-        data.put("list", skills.get().stream().map(EditionSkill::toYAML).toList());
+        data.put("list", editionSkills.get().stream().map(EditionSkill::toYAML).toList());
         return data;
     }
     
@@ -130,13 +130,13 @@ public class SkillTableElement extends GraphicElement{
     public void setStudentId(long studentId){
         this.studentId.set(studentId);
     }
-    public ObservableList<EditionSkill> getSkills(){
-        return skills.get();
+    public ObservableList<EditionSkill> getEditionSkills(){
+        return editionSkills.get();
     }
-    public ListProperty<EditionSkill> skillsProperty(){
-        return skills;
+    public ListProperty<EditionSkill> editionSkillsProperty(){
+        return editionSkills;
     }
-    public void setSkills(ObservableList<EditionSkill> skills){
-        this.skills.set(skills);
+    public void setEditionSkills(ObservableList<EditionSkill> editionSkills){
+        this.editionSkills.set(editionSkills);
     }
 }
