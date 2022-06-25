@@ -17,6 +17,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -24,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 
 public class SkillListCell extends ListCell<Skill> {
@@ -69,7 +71,20 @@ public class SkillListCell extends ListCell<Skill> {
         setOnMouseClicked(e -> requestFocus());
         root.setPadding(new Insets(-5));
         
+        selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue) requestFocus();
+        });
+        
         // LISTENERS
+        setOnKeyPressed(e -> {
+            if(e.getCode() == KeyCode.ENTER || e.getCode() == KeyCode.TAB){
+                int selected = getListView().getSelectionModel().getSelectedIndex(); // Index of this cell
+                if(getListView().getItems().size() > selected+1){
+                    getListView().getSelectionModel().select(selected+1);
+                }else getListView().getSelectionModel().select(0);
+                e.consume();
+            }
+        });
         setOnKeyTyped(e -> {
             if(getSkillAssessment() == null) return;
             String text = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(e.getCharacter());
@@ -165,6 +180,7 @@ public class SkillListCell extends ListCell<Skill> {
             // Update text & set root
             acronym.setText(skill.getAcronym());
             name.setText(skill.getName());
+            setTooltip(PaneUtils.genWrappedToolTip(skill.getName()));
             setGraphic(root);
         }
         

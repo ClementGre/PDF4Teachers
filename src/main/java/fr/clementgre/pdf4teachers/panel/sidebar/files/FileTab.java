@@ -384,7 +384,7 @@ public class FileTab extends SideTab {
                     }
                 }catch(IOException ex){
                     ex.printStackTrace();
-                    new ErrorAlert(null, ex.getMessage(), false);
+                    new ErrorAlert(null, ex.getMessage(), false).show();
                 }
             }
         

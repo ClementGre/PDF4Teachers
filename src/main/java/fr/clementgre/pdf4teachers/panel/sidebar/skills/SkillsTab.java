@@ -33,6 +33,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -187,6 +188,7 @@ public class SkillsTab extends SideTab {
         listView.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         listView.setBorder(null);
         listView.setPadding(new Insets(0));
+        listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         VBox.setVgrow(listView, Priority.SOMETIMES);
     
         skillTableElement.addListener((observable, oldValue, newValue) -> listView.refresh());

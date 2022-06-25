@@ -138,9 +138,7 @@ public class SkillsListingPane extends Tab {
     }
     
     public void updateList(){
-        window.getAssessment().getSkills().forEach(skill -> {
-            tableView.getItems().add(skill);
-        });
+        tableView.getItems().setAll(window.getAssessment().getSkills());
     }
     
     private TableCell<Skill, String> getCellFactory(TableColumn<Skill, String> column, boolean acronym /* true: acronym, false: name */){

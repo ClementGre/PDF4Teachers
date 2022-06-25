@@ -47,6 +47,7 @@ public class NotationsListingPane extends Tab {
     private final VBox root = new VBox();
     
     private final GridPane grid = new GridPane();
+    private final ScaledComboBox<Notation.NotationType> notationMode = new ScaledComboBox<>(false);
     
     private final SkillsAssessmentWindow window;
     public NotationsListingPane(SkillsAssessmentWindow window){
@@ -64,7 +65,7 @@ public class NotationsListingPane extends Tab {
         notationModeBox.setSpacing(5);
         notationModeBox.setAlignment(Pos.CENTER_LEFT);
     
-        ScaledComboBox<Notation.NotationType> notationMode = new ScaledComboBox<>(false);
+        
         notationMode.maxHeightProperty().bind(new SimpleDoubleProperty(28));
         notationMode.setPadding(new Insets(0, 5, 0, 5));
         notationMode.getItems().addAll(Notation.NotationType.values());
@@ -118,7 +119,11 @@ public class NotationsListingPane extends Tab {
         return button;
     }
     
-    private void updateGrid(){
+    public void updateNotationMode(){
+        notationMode.setValue(window.getAssessment().getNotationType());
+    }
+    
+    public void updateGrid(){
         grid.getChildren().clear();
         
         grid.addRow(0, getLabel(TR.tr("skillsSettingsWindow.notationsListing.grid.acronym")),

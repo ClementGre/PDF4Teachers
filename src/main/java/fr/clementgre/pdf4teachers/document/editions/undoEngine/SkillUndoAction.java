@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
@@ -46,7 +47,8 @@ public class SkillUndoAction extends UndoAction{
         long oldNotationId = editionSkill.getNotationId();
         editionSkill.setNotationId(this.oldNotationId);
         this.oldNotationId = oldNotationId;
-
+    
+        Edition.setUnsave("SkillListCell ComboBox notation changed");
         MainWindow.skillsTab.refreshListView();
         
         return true;
