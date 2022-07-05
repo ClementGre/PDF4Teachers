@@ -29,7 +29,7 @@ extraJavaModuleInfo {
 
     automaticModule("xmpcore-6.0.6.jar", "xmpcore")
 
-    automaticModule("metadata-extractor-2.16.0.jar", "metadata.extractor")
+    automaticModule("metadata-extractor-2.18.0.jar", "metadata.extractor")
 
     automaticModule("commons-logging-1.2.jar", "commons.logging")
 
@@ -45,7 +45,7 @@ extraJavaModuleInfo {
 
 dependencies {
 
-    implementation 'org.jetbrains:annotations:22.0.0'
+    implementation 'org.jetbrains:annotations:23.0.0'
 
     // JAVA FX //
     implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.15') {
@@ -57,18 +57,19 @@ dependencies {
     // Support special images format when render a PDF
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-jpeg2000', version: '1.4.0'
-    implementation group: 'org.apache.pdfbox', name: 'jbig2-imageio', version: '3.0.3'
+    implementation group: 'org.apache.pdfbox', name: 'jbig2-imageio', version: '3.0.4'
 
     // Signing and encrypting pdf (not used)
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
 
     // Image IO - EXIF
-    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.16.0'
+    implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.18.0'
 
-    // JSON requests
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.1'
-    // YAML
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.29'
+    // YAML & JSON & CSV
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.6'
+
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
     implementation(name: 'writer2latex', ext: 'jar')
@@ -78,10 +79,10 @@ dependencies {
 
     // SVG
     implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
-    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.34'
+    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.38'
 
     // PDF Box
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.25'
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.26'
 
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'

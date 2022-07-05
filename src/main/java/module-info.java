@@ -24,7 +24,6 @@ open module fr.clementgre.pdf4teachers {
     requires jai.imageio.jpeg2000;
     requires org.apache.pdfbox.jbig2;
     uses javax.imageio.spi.ImageReaderSpi;
-    uses org.apache.pdfbox.jbig2.util.log.LoggerBridge;
     
     // style & controls
     requires org.jfxtras.styles.jmetro;
@@ -33,6 +32,7 @@ open module fr.clementgre.pdf4teachers {
     // data parsing/encoding
     requires org.yaml.snakeyaml;
     requires com.fasterxml.jackson.core;
+    requires com.opencsv;
     requires metadata.extractor; // EXIF READER
     
     // Latex & StarMath
