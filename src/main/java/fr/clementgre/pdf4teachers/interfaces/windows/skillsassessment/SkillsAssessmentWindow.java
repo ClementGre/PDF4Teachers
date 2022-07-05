@@ -9,11 +9,8 @@ import fr.clementgre.pdf4teachers.datasaving.simpleconfigs.SkillsAssessmentData;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.parsers.SACocheParser;
-import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.*;
@@ -23,21 +20,18 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-import java.io.File;
-import java.io.IOException;
-
 public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
     
     private final SkillsAssessment assessment;
     
     private final GridPane assessmentSettings = new GridPane();
-    private final TextField name = new TextField();
-    private final TextField clasz = new TextField();
-    private final DatePicker date = new DatePicker();
+    public final TextField name = new TextField();
+    public final TextField clasz = new TextField();
+    public final DatePicker date = new DatePicker();
     
     private final TabPane tabPane = new TabPane();
-    private SkillsListingPane skillsListingPane;
-    private NotationsListingPane notationsListingPane;
+    public SkillsListingPane skillsListingPane;
+    public NotationsListingPane notationsListingPane;
     
     public SkillsAssessmentWindow(SkillsAssessment assessment){
         super(new VBox(), StageWidth.LARGE, TR.tr("skillsSettingsWindow.title"), TR.tr("skillsSettingsWindow.title"), TR.tr("skillsSettingsWindow.subtitle"));
@@ -69,29 +63,7 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
         Button sacocheExport = new Button(TR.tr("skillsSettingsWindow.sacocheExport"));
         Button csvExport = new Button(TR.tr("skillsSettingsWindow.csvExport"));
     
-        sacocheImport.setOnAction(e -> {
-            File file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.csv"), "*.csv");
-            if(file == null || !file.exists()) return;
-            try{
-                SkillsAssessment loadedAssessment = new SACocheParser(file, ";").getFromCsv();
-                // Assessment infos
-                name.setText(loadedAssessment.getName());
-                clasz.setText(loadedAssessment.getClasz());
-                date.getEditor().setText(loadedAssessment.getDate());
-                // Students & Notations
-                assessment.getStudents().clear(); assessment.getStudents().addAll(loadedAssessment.getStudents());
-                assessment.setNotationType(Notation.NotationType.ICON);
-                assessment.getNotations().clear(); assessment.getNotations().addAll(loadedAssessment.getNotations());
-                notationsListingPane.updateNotationMode();
-                notationsListingPane.updateGrid();
-                // Skills
-                assessment.getSkills().clear(); assessment.getSkills().addAll(loadedAssessment.getSkills());
-                skillsListingPane.updateList();
-            }catch(IOException ex){
-                ex.printStackTrace();
-                new ErrorAlert(null, ex.getMessage(), false).show();
-            }
-        });
+        sacocheImport.setOnAction(e -> new SACocheParser(assessment, this).getAndUpdateData());
         sacocheExport.setOnAction(e -> {
         
         });

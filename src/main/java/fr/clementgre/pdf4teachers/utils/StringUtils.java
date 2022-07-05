@@ -9,6 +9,8 @@ import javafx.scene.control.TextArea;
 import name.fraser.neil.plaintext.diff_match_patch;
 
 import java.awt.im.InputContext;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
 
@@ -217,6 +219,12 @@ public class StringUtils {
         }catch(NumberFormatException e){
             return 0;
         }
+    }
+    
+    public static List<Charset> getAvailableCharsets(){
+        ArrayList<Charset> charsets = new ArrayList<>(Arrays.asList(StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII, StandardCharsets.UTF_16LE, StandardCharsets.UTF_16, StandardCharsets.UTF_16BE));
+        if(!charsets.contains(Charset.defaultCharset())) charsets.add(0, Charset.defaultCharset());
+        return charsets;
     }
     
     

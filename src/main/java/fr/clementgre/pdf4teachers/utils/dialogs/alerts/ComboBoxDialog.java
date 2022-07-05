@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
@@ -43,6 +44,9 @@ public class ComboBoxDialog<T> extends CustomAlert{
     }
     public T getSelected(){
         return input.getSelectionModel().getSelectedItem();
+    }
+    public ComboBox<T> getComboBox(){
+        return input;
     }
     
     public T execute(){

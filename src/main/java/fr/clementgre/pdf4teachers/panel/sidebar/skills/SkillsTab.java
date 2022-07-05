@@ -31,7 +31,9 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
@@ -163,12 +165,16 @@ public class SkillsTab extends SideTab {
     
         /* STUDENT PANE */
         
-        studentPane.setStyle("-fx-padding: 5;");
-        studentPane.setSpacing(3);
+        studentPane.setStyle("-fx-padding: 0 5 5 5;");
+        studentPane.setSpacing(5);
+        studentPane.setAlignment(Pos.CENTER_LEFT);
+        Label label = new Label(TR.tr("skillsTab.student.combobox"));
+        label.setStyle("-fx-font-size: 12; -fx-font-weight: 800;");
+        studentPane.getChildren().addAll(label, studentCombo);
     
         PaneUtils.setVBoxPosition(studentCombo, -1, 30, 0);
         studentCombo.setConverter(new StringConverter<>() {
-            @Override public String toString(Student s){ return s.name(); }
+            @Override public String toString(Student s){ return s == null ? "" : s.name(); }
             @Override public Student fromString(String name){ return null; }
         });
         studentCombo.itemsProperty().bind(Bindings.createObjectBinding(() -> {
@@ -236,18 +242,19 @@ public class SkillsTab extends SideTab {
         for(SkillsAssessment assessment : assessments){
             if(assessment.getId() == skillTableElement.getAssessmentId()){
                 assessmentCombo.setValue(assessment);
-                return;
+                break;
             }
         }
-        
+        trySelectStudent();
+    }
+    private void trySelectStudent(){
         if(getCurrentAssessment() == null) return;
         for(Student student : getCurrentAssessment().getStudents()){
-            if(student.id() == skillTableElement.getStudentId()){
+            if(student.id() == getSkillTableElement().getStudentId()){
                 studentCombo.setValue(student);
-                return;
+                break;
             }
         }
-        
     }
     
     // Generate the element
