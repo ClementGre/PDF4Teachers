@@ -64,6 +64,7 @@ public class SACocheParser {
             assessmentWindow.date.getEditor().setText(loadedAssessment.getDate());
             // Students
             assessment.getStudents().clear(); assessment.getStudents().addAll(loadedAssessment.getStudents());
+            assessmentWindow.sacocheExport.setDisable(assessment.getStudents().isEmpty());
             // Notations
             if(!loadedAssessment.getNotations().isEmpty()){
                 assessment.setNotationType(Notation.NotationType.ICON);
@@ -76,7 +77,7 @@ public class SACocheParser {
             assessmentWindow.skillsListingPane.updateList();
         }catch(Exception ex){
             ex.printStackTrace();
-            new ErrorAlert(null, ex.getMessage(), false).show();
+            ErrorAlert.showErrorAlert(ex);
         }
     }
     

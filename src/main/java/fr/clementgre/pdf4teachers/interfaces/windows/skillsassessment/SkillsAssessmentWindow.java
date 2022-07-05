@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.parsers.SACocheParser;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.parsers.SACocheWriter;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.*;
@@ -55,18 +56,18 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
     
     }
     
+    public Button sacocheExport = new Button(TR.tr("skillsSettingsWindow.sacocheExport"));
     public void setupBtns(){
     
         Button applyButton = new Button(TR.tr("actions.apply"));
         
         Button sacocheImport = new Button(TR.tr("skillsSettingsWindow.sacocheImport"));
-        Button sacocheExport = new Button(TR.tr("skillsSettingsWindow.sacocheExport"));
+        sacocheExport.setDisable(assessment.getStudents().isEmpty());
+        
         Button csvExport = new Button(TR.tr("skillsSettingsWindow.csvExport"));
     
         sacocheImport.setOnAction(e -> new SACocheParser(assessment, this).getAndUpdateData());
-        sacocheExport.setOnAction(e -> {
-        
-        });
+        sacocheExport.setOnAction(e -> new SACocheWriter(assessment).exportAndSave());
         csvExport.setOnAction(e -> {
         
         });

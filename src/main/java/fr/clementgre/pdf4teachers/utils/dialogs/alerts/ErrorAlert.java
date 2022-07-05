@@ -44,4 +44,8 @@ public class ErrorAlert extends WrongAlert {
         }
         return TR.tr("dialog.copyFileError.title", toCopyPath, destPath);
     }
+    
+    public static void showErrorAlert(Exception e){
+        new ErrorAlert(null, e.getMessage(), false).show();
+    }
 }
