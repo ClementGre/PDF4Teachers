@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawe
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -384,6 +385,7 @@ public class VectorElement extends GraphicElement{
     @Override
     public void select(){
         super.select();
+        SideBar.selectTab(MainWindow.paintTab);
     }
     @Override
     protected void onDeSelected(){

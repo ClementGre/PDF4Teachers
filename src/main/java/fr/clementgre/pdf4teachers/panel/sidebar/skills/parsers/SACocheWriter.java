@@ -39,7 +39,7 @@ public class SACocheWriter {
             if(dest == null) return;
     
             List<StudentGrades> studentGrades = getMatchingEdits();
-    
+     
             BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
             ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(';').build();
            
@@ -55,7 +55,7 @@ public class SACocheWriter {
                                 studentGrades.stream()
                                         .map(sg -> sg.skills().stream().filter(s -> s.getSkillId() == skill.getId()).findAny().orElse(null)) // map to matching skill
                                         .map(s -> s == null ? "" : notationIds.get(s.getNotationId()))), // map to matching notation keyboard char
-                                Stream.of(skill.getAcronym() + " " + skill.getName())).toArray(String[]::new)); // Last column: notations names
+                                Stream.of(skill.getAcronym() + " [] [] " + skill.getName())).toArray(String[]::new)); // Last column: notations names
             });
     
             // Write Student names

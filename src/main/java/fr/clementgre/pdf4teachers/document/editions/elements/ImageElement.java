@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
@@ -76,7 +77,7 @@ public class ImageElement extends GraphicElement {
             setupGeneral();
         }
     }
-    
+    @Override
     public void initializePage(int pageNumber, double x, double y){
         this.pageNumber = pageNumber;
         setupGeneral();
@@ -142,7 +143,7 @@ public class ImageElement extends GraphicElement {
     @Override
     public void select(){
         super.select();
-        
+        SideBar.selectTab(MainWindow.paintTab);
     }
     @Override
     public void addedToDocument(boolean markAsUnsave){

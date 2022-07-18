@@ -199,27 +199,32 @@ public class PaintTab extends SideTab {
         
         // Advances options listeners / updaters
         spinnerX.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 if(element.getRealX() != newValue) element.setRealX(newValue);
             }
         });
         spinnerY.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 if(element.getRealY() != newValue) element.setRealY(newValue);
             }
         });
         spinnerWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 if(element.getRealWidth() != newValue) element.setRealWidth(newValue);
             }
         });
         spinnerHeight.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 if(element.getRealHeight() != newValue) element.setRealHeight(newValue);
             }
         });
         repeatMode.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 for(GraphicElement.RepeatMode mode : GraphicElement.RepeatMode.values()){
                     if(TR.tr(mode.getKey()).equals(newValue)){
                         element.setRepeatMode(mode);
@@ -229,7 +234,8 @@ public class PaintTab extends SideTab {
             }
         });
         resizeMode.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof GraphicElement element){
+            if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
+                GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
                 for(GraphicElement.ResizeMode mode : GraphicElement.ResizeMode.values()){
                     if(TR.tr(mode.getKey()).equals(newValue)){
                         element.setResizeMode(mode);
@@ -472,12 +478,16 @@ public class PaintTab extends SideTab {
         return null;
     }
     
+    private boolean isPaintTabElement(Element element){
+        return element instanceof VectorElement || element instanceof ImageElement;
+    }
     private void updateDocumentStatus(ObservableValue<? extends Number> observableValue, Number oldValue, Number newValue){
         setAllDisable(newValue.intValue() != MainScreen.Status.OPEN);
     }
     public void updateSelected(ObservableValue<? extends Element> observable, Element oldValue, Element newValue){
         // Old element
-        if(oldValue instanceof GraphicElement gElement){
+        if(isPaintTabElement(oldValue)){
+            GraphicElement gElement = (GraphicElement) oldValue;
             if(oldValue instanceof VectorElement element){ // Vector
                 element.pathProperty().unbindBidirectional(path.textProperty());
                 element.fillProperty().unbind();
@@ -495,7 +505,8 @@ public class PaintTab extends SideTab {
         }
         
         // Disable/Enable nodes
-        if(newValue instanceof GraphicElement gElement){
+        if(isPaintTabElement(newValue)){
+            GraphicElement gElement = (GraphicElement) newValue;
             setGlobalDisable(false);
             
             if(newValue instanceof VectorElement element){ // Vector

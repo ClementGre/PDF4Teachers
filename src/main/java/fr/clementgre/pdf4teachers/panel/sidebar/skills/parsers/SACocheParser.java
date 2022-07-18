@@ -129,7 +129,7 @@ public class SACocheParser {
                 line = StringUtils.cleanArray(line);
                 long id = Long.parseLong(line[0]);
                 String[] textSplit = line[line.length-1].split("[\\[\\]]");
-                assessment.getSkills().add(new Skill(id, textSplit[0], textSplit[textSplit.length-1]));
+                assessment.getSkills().add(new Skill(id, textSplit[0].trim(), textSplit[textSplit.length-1].trim()));
             }
         }
         

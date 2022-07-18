@@ -13,7 +13,6 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
@@ -66,6 +65,8 @@ public abstract class GraphicElement extends Element {
             return key;
         }
     }
+    
+    protected boolean allowShiftToInvertResizeMode = true;
     
     protected IntegerProperty realWidth = new SimpleIntegerProperty();
     protected IntegerProperty realHeight = new SimpleIntegerProperty();
@@ -230,6 +231,7 @@ public abstract class GraphicElement extends Element {
     }
     
     public void simulateDragToResize(double x, double y, boolean shift){
+        if(!allowShiftToInvertResizeMode) shift = false;
         //
         //              |
         //            - +
@@ -257,7 +259,7 @@ public abstract class GraphicElement extends Element {
             double height = Math.min(y + shiftYFromEnd, getPage().getHeight() - originY);
             
             if(doKeepRatio(shift, false)){
-                originX = originX + (originWidth - height * ratio) / 2;
+                originX = Math.max(0, originX + (originWidth - height * ratio) / 2);
                 originWidth = Math.min(height * ratio, getPage().getWidth() - originX);
                 height = originWidth / ratio; // In case the width is > than the page, we re-edit the height so the ratio is respected
             }
@@ -269,7 +271,7 @@ public abstract class GraphicElement extends Element {
             double width = Math.min(x + shiftXFromEnd, getPage().getWidth() - originX);
             
             if(doKeepRatio(shift, false)){
-                originY = originY + (originHeight - width / ratio) / 2;
+                originY = Math.max(0, originY + (originHeight - width / ratio) / 2);
                 originHeight = Math.min(width / ratio, getPage().getHeight() - originY);
                 width = originHeight * ratio;
             }
@@ -356,8 +358,10 @@ public abstract class GraphicElement extends Element {
             double height = Math.min(originHeight + (originY - newY), getPage().getHeight());
             
             if(doKeepRatio(shift, false)){
-                originX = originX + (originWidth - height * ratio) / 2;
+                originX = Math.max(0, originX + (originWidth - height * ratio) / 2);
                 originWidth = Math.min(height * ratio, getPage().getWidth() - originX);
+                // In case the width is > than the page, we re-edit the height & newY so the ratio is respected
+                newY += height - originWidth / ratio;
                 height = originWidth / ratio;
             }
             
@@ -369,8 +373,10 @@ public abstract class GraphicElement extends Element {
             double width = Math.min(originWidth + (originX - newX), getPage().getWidth());
             
             if(doKeepRatio(shift, false)){
-                originY = originY + (originHeight - width / ratio) / 2;
+                originY = Math.max(0, originY + (originHeight - width / ratio) / 2);
                 originHeight = Math.min(width / ratio, getPage().getHeight() - originY);
+                // In case the height is > than the page, we re-edit the width & newX so the ratio is respected
+                newX += width - originHeight * ratio;
                 width = originHeight * ratio;
             }
             
@@ -597,7 +603,6 @@ public abstract class GraphicElement extends Element {
     public void select(){
         super.selectPartial();
         requestFocus();
-        SideBar.selectTab(MainWindow.paintTab);
     }
     
     @Override
