@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -26,7 +27,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkillTableElement extends GraphicElement{
@@ -34,6 +34,7 @@ public class SkillTableElement extends GraphicElement{
     private final LongProperty assessmentId = new SimpleLongProperty();
     private final LongProperty studentId = new SimpleLongProperty();
     private final ListProperty<EditionSkill> editionSkills = new SimpleListProperty<>();
+    
     
     private final GridPane gridPane = new GridPane();
     
@@ -63,61 +64,68 @@ public class SkillTableElement extends GraphicElement{
         
         gridPane.setBorder(new Border(new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
         gridPane.setMouseTransparent(true);
+        gridPane.setGridLinesVisible(true);
         
-        AtomicBoolean isEditingDimensions = new AtomicBoolean(false);
-        heightProperty().addListener((observable, oldValue, newValue) -> {
-            if(isEditingDimensions.get()) return;
-            isEditingDimensions.set(true);
-    
-            if(getWidth()/getHeight() != getRatio()){
-                System.out.println("Ratio not respected !");
-                if(getWidth()/getHeight() >= getRatio()){
-                    checkLocation(getLayoutX(), getLayoutY(), getHeight() * getRatio(), getHeight(), false);
-                }else{
-                    checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth() / getRatio(), false);
-                }
-            }
-            
-            updateGridPaneScale();
-            isEditingDimensions.set(false);
-        });
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            if(isEditingDimensions.get()) return;
-            isEditingDimensions.set(true);
-    
-            if(getWidth()/getHeight() != getRatio()){
-                System.out.println("Ratio not respected !");
-                if(getWidth()/getHeight() >= getRatio()){
-                    checkLocation(getLayoutX(), getLayoutY(), getHeight() * getRatio(), getHeight(), false);
-                }else{
-                    checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth() / getRatio(), false);
-                }
-            }
-            
-            updateGridPaneScale();
-            isEditingDimensions.set(false);
-        });
         
-        // Update element height when gridPane size changes.
-        gridPane.widthProperty().addListener((observable, oldValue, newValue) -> {
-            double ratio = newValue.doubleValue() / oldValue.doubleValue();
-            checkLocation(getLayoutX(), getLayoutY(), getWidth() * ratio, getHeight(), false);
-            updateGridPaneScale();
-        });
-        gridPane.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double ratio = newValue.doubleValue() / oldValue.doubleValue();
-            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getHeight() * ratio, false);
-            updateGridPaneScale();
-        });
-        
-    
         if(getRealWidth() == 0 && getRealHeight() == 0){
-            setRealHeight(15000);
-            setRealWidth(100000);
+            System.out.println("Defining default size");
+            setRealWidth(30000);
         }
-        updateGridPaneScale();
+        
+        
+    
+        // Make sure the ratio is always respected & update the gridPane scale
+        heightProperty().addListener((observable) -> updateDimensionsToMatchRatio());
+        widthProperty().addListener((observable) -> updateDimensionsToMatchRatio());
+    
+        // Update element height when gridPane size changes.
+        gridPane.widthProperty().addListener((observable) -> updateDimensionsExtendingHeight());
+        gridPane.heightProperty().addListener((observable) -> updateDimensionsExtendingHeight());
+        
         
         setupGeneral(gridPane);
+    
+        Platform.runLater(this::updateDimensionsToMatchRatio);
+    }
+    private boolean isEditingDimensions = false;
+    private void updateDimensionsToMatchRatio(){
+        if(isEditingDimensions) return;
+        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
+        isEditingDimensions = true;
+        
+        
+        if((int) ((getWidth()/getHeight()) * 1000) != (int) (getRatio() * 1000)){ // 3 decimal precision equality
+            System.out.println("updateDimensionsToMatchRatio(): " + getWidth()/getHeight() + " != " + getRatio());
+            
+            if(getWidth()/getHeight() >= getRatio()){
+                checkLocation(getLayoutX(), getLayoutY(),  getHeightFromRealHeight() * getRatio(),  getHeightFromRealHeight(), false);
+            }else{
+                checkLocation(getLayoutX(), getLayoutY(), getWidthFromRealWidth(), getWidthFromRealWidth() / getRatio(), false);
+            }
+        }
+        
+        updateGridPaneScale();
+        
+        isEditingDimensions = false;
+    }
+    private void updateDimensionsExtendingHeight(){
+        if(isEditingDimensions) return;
+        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
+        System.out.println("updateDimensionsExtendingHeight(), ratio = " + getRatio() + " (" + gridPane.getWidth() + " * " + gridPane.getHeight() + ")");
+    
+        isEditingDimensions = true;
+        checkLocation(getLayoutX(), getLayoutY(), getWidthFromRealWidth(), getWidthFromRealWidth() / getRatio(), false);
+        getPage().layout(); // Required to update the visual bounds of the element
+        isEditingDimensions = false;
+        
+        // Update in case the dimensions are higher than the page.
+        updateDimensionsToMatchRatio();
+    }
+    public double getWidthFromRealWidth(){
+        return getPage().fromGridX(getRealWidth());
+    }
+    public double getHeightFromRealHeight(){
+        return getPage().fromGridY(getRealHeight());
     }
     
     private void updateGridPaneScale(){

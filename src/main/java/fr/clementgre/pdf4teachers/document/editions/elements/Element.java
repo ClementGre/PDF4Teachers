@@ -242,6 +242,7 @@ public abstract class Element extends Region {
     
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
+                System.out.println("Update height from " + getHeight() + " to " + height);
                 graphicElement.setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
             
