@@ -8,10 +8,12 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -21,7 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,12 +41,13 @@ public class SkillTableElement extends GraphicElement{
     private final GridPane gridPane = new GridPane();
     
     public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
-        super(x, y, pageNumber, width, height, RepeatMode.KEEP_RATIO, ResizeMode.CORNERS);
+        super(x, y, pageNumber, width, height, RepeatMode.AUTO, ResizeMode.CORNERS);
+        //super.allowShiftToInvertResizeMode = false;
         this.assessmentId.set(assessmentId);
         this.studentId.set(studentId);
         this.editionSkills.set(FXCollections.observableList(editionSkills));
     
-        //super.allowShiftToInvertResizeMode = false;
+        
         
         if(hasPage && getPage() != null) setupPage();
     }
@@ -59,104 +62,133 @@ public class SkillTableElement extends GraphicElement{
     private void setupPage(){
         
         visibleProperty().bind(editionSkillsProperty().emptyProperty().not());
-        updateLayout();
         editionSkills.addListener((observable, oldValue, newValue) -> updateLayout());
         
-        gridPane.setBorder(new Border(new BorderStroke(Color.DARKGRAY, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(1))));
         gridPane.setMouseTransparent(true);
-        gridPane.setGridLinesVisible(true);
-        
+        gridPane.getColumnConstraints().setAll(new ColumnConstraints(), new ColumnConstraints(80));
+        gridPane.getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
+        gridPane.setMaxHeight(Double.MAX_VALUE);
         
         if(getRealWidth() == 0 && getRealHeight() == 0){
-            System.out.println("Defining default size");
-            setRealWidth(30000);
+            setRealWidth(120000);
+            setRealHeight(3327);
         }
         
+        // Update the gridPane scale
+        widthProperty().addListener((observable) -> updateGridPaneScale());
+        heightProperty().addListener((observable) -> updateGridPaneScale());
         
-    
-        // Make sure the ratio is always respected & update the gridPane scale
-        heightProperty().addListener((observable) -> updateDimensionsToMatchRatio());
-        widthProperty().addListener((observable) -> updateDimensionsToMatchRatio());
-    
-        // Update element height when gridPane size changes.
-        gridPane.widthProperty().addListener((observable) -> updateDimensionsExtendingHeight());
-        gridPane.heightProperty().addListener((observable) -> updateDimensionsExtendingHeight());
+        // Update element height when gridPane height changes. (Adding new skill or new row)
+        gridPane.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
+            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getHeight() * newValue.doubleValue() / oldValue.doubleValue(), false);
+            getPage().layout(); // Required to update the visual bounds of the element
+            updateGridPaneScale();
+        });
         
+        assessmentId.addListener((observable, oldValue, newValue) -> {
+            updateLayout();
+        });
         
         setupGeneral(gridPane);
-    
-        Platform.runLater(this::updateDimensionsToMatchRatio);
-    }
-    private boolean isEditingDimensions = false;
-    private void updateDimensionsToMatchRatio(){
-        if(isEditingDimensions) return;
-        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
-        isEditingDimensions = true;
-        
-        
-        if((int) ((getWidth()/getHeight()) * 1000) != (int) (getRatio() * 1000)){ // 3 decimal precision equality
-            System.out.println("updateDimensionsToMatchRatio(): " + getWidth()/getHeight() + " != " + getRatio());
-            
-            if(getWidth()/getHeight() >= getRatio()){
-                checkLocation(getLayoutX(), getLayoutY(),  getHeightFromRealHeight() * getRatio(),  getHeightFromRealHeight(), false);
-            }else{
-                checkLocation(getLayoutX(), getLayoutY(), getWidthFromRealWidth(), getWidthFromRealWidth() / getRatio(), false);
-            }
-        }
-        
-        updateGridPaneScale();
-        
-        isEditingDimensions = false;
-    }
-    private void updateDimensionsExtendingHeight(){
-        if(isEditingDimensions) return;
-        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
-        System.out.println("updateDimensionsExtendingHeight(), ratio = " + getRatio() + " (" + gridPane.getWidth() + " * " + gridPane.getHeight() + ")");
-    
-        isEditingDimensions = true;
-        checkLocation(getLayoutX(), getLayoutY(), getWidthFromRealWidth(), getWidthFromRealWidth() / getRatio(), false);
-        getPage().layout(); // Required to update the visual bounds of the element
-        isEditingDimensions = false;
-        
-        // Update in case the dimensions are higher than the page.
-        updateDimensionsToMatchRatio();
-    }
-    public double getWidthFromRealWidth(){
-        return getPage().fromGridX(getRealWidth());
-    }
-    public double getHeightFromRealHeight(){
-        return getPage().fromGridY(getRealHeight());
+        Platform.runLater(this::updateGridPaneScale);
     }
     
     private void updateGridPaneScale(){
-        double scale = getWidth() / gridPane.getWidth();
-        gridPane.setScaleX(scale);
-        gridPane.setScaleY(scale);
-        gridPane.setTranslateX(- (gridPane.getWidth()  - gridPane.getWidth() * scale) / 2);
-        gridPane.setTranslateY(- (gridPane.getHeight() - gridPane.getHeight() * scale) / 2);
+        double scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), .5, 1.5);
+        // Using scale transform to make sure the pivot point is always (0, 0)
+        gridPane.getTransforms().setAll(new Scale(scale, scale));
+        // Grid pane width always match the element width, considering the scaling.
+        gridPane.setPrefWidth(getWidth() / scale);
+    
+        //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
+    }
+    
+    @Override
+    public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
+        boolean itemYChanged = itemY != getLayoutY();
+        // If the Y position changed, it means that the element is resized via N/W grab cursor so the origin needs to be updated as well.
+        super.checkLocation(itemX, itemY, width, height, allowSwitchPage);
+        
+        // HEIGHT - min and max scale
+        double scale = getPage().fromGridY(getRealHeight()) / gridPane.getHeight(); // Not clamped
+        double clampedScale = StringUtils.clamp(scale, .5, 1.5);
+        if(scale != clampedScale){
+            int newRealHeight = getPage().toGridY(gridPane.getHeight() * clampedScale);
+            if(getRealHeight() != newRealHeight){
+                if(itemYChanged) setRealY(getRealY() + getRealHeight() - newRealHeight); // When resized from north or west
+                setRealHeight(newRealHeight);
+                
+            }
+        }
     }
     
     public void updateLayout(){
         
         gridPane.getChildren().clear();
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
-        
-        
-        gridPane.addRow(0, new Label("Compétences"), new Label("Évaluation"));
         if(assessment == null) return;
+    
+        addGridLabel(0, 0, TR.tr("skillTableElement.header.skill"), true, true);
+        addGridLabel(1, 0, TR.tr("skillTableElement.header.grade"), true, false);
+        
         AtomicInteger i = new AtomicInteger();
-        editionSkills.forEach(editionSkill -> {
-            Skill skill = editionSkill.getMatchingSkill(assessment);
-            Notation notation = editionSkill.getMatchingNotation(assessment);
-            if(skill != null && notation != null){
-                gridPane.addRow(i.incrementAndGet(), new Label(skill.getAcronym() + "\n" + skill.getName()), new Label(notation.getName()));
-            }
+        assessment.getSkills().forEach(skill -> {
+            EditionSkill editionSkill = editionSkills.stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
+            
+            Notation notation = null;
+            if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
+            
+            addGridLabel(0, i.incrementAndGet(), skill.getAcronym() + "\n" + skill.getName(), false, true);
+            addGridNotationGraph(1, i.get(), assessment, notation, false, false);
         });
+        
+    }
+    private Pane getGridPane(boolean firstRow, boolean firstCol){
+        Pane pane = new Pane();
+        pane.getStyleClass().add("bordered-grid-cell");
+        if(firstRow) pane.getStyleClass().add("first-row");
+        if(firstCol) pane.getStyleClass().add("first-column");
+        GridPane.setFillWidth(pane, true);
+        GridPane.setFillHeight(pane, true);
+        return pane;
+    }
+    private void addGridLabel(int x, int y, String text, boolean firstRow, boolean firstCol){
+        Pane pane = getGridPane(firstRow, firstCol);
+        Label label = new Label(text);
+        label.setWrapText(true);
+        label.setStyle("-fx-wrap-text: true !important;");
+        label.maxWidthProperty().bind(pane.widthProperty());
+        label.heightProperty().addListener((observable, oldValue, newValue) -> {
+            if(oldValue.doubleValue() == 0 || getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
+            pane.setMinHeight(newValue.doubleValue()+2);
+            gridPane.getChildren().remove(pane);
+            gridPane.add(pane, x, y);
+            updateGridPaneScale();
+            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getHeight() * newValue.doubleValue() / oldValue.doubleValue(), false);
+            getPage().layout(); // Required to update the visual bounds of the element
+            updateGridPaneScale();
+        });
+        
+        
+        pane.getChildren().add(label);
+        gridPane.add(pane, x, y);
+    }
+    private void addGridNotationGraph(int x, int y, SkillsAssessment assessment, Notation notation, boolean firstRow, boolean firstCol){
+        Pane pane = getGridPane(firstRow, firstCol);
+        if(notation != null){
+            Region notationGraph = new NotationGraph(1.3, assessment.getNotationType(), notation, true);
+            pane.getChildren().add(notationGraph);
+            notationGraph.layoutXProperty().bind(pane.widthProperty().subtract(notationGraph.widthProperty()).divide(2));
+            notationGraph.layoutYProperty().bind(pane.heightProperty().subtract(notationGraph.heightProperty()).divide(2));
+        }
+        gridPane.add(pane, x, y);
     }
     
     @Override
     public void addedToDocument(boolean markAsUnsave){
         MainWindow.skillsTab.registerSkillTableElement(this);
+        updateLayout();
     }
     @Override
     public void removedFromDocument(boolean markAsUnsave){

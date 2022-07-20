@@ -91,6 +91,38 @@
     -fx-background-color: red;
 }*/
 
+/* SkillTableElement */
+
+.bordered-grid-cell {
+    -fx-background-color: black, white ;
+    -fx-background-insets: 0, 0 1 1 0 ;
+    -fx-padding: 0 1 1 0;
+}
+.bordered-grid-cell.first-row {
+    -fx-background-insets: 0, 1 1 1 0;
+    -fx-padding: 1 1 1 0;
+}
+.bordered-grid-cell.first-column {
+    -fx-background-insets: 0, 0 1 1 1 ;
+    -fx-padding: 0 1 1 1;
+}
+.bordered-grid-cell.first-row.first-column {
+    -fx-background-insets: 0, 1 ;
+}
+
+.bordered-grid-cell .label{
+    -fx-padding: 0 1 1 0;
+}
+.bordered-grid-cell.first-row .label{
+    -fx-padding: 1 1 1 0;
+}
+.bordered-grid-cell.first-column .label{
+    -fx-padding: 0 1 1 1;
+}
+.bordered-grid-cell.first-row.first-column .label{
+    -fx-padding: 1;
+}
+
 
 /*******************************************************************************
  *                                                                             *

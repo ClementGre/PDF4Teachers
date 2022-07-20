@@ -58,6 +58,10 @@ public class Notation {
         return assessment.getNotations().stream().filter(s -> s.getId() == id).findAny().orElse(null);
     }
     
+    public boolean isDefaultNotation(){
+        return id < 0;
+    }
+    
     
     public static Notation loadFromConfig(HashMap<String, Object> map){
         String acronym = Config.getString(map, "acronym");

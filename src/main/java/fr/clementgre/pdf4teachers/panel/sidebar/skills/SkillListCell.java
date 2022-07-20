@@ -128,7 +128,7 @@ public class SkillListCell extends ListCell<Skill> {
                 root.getChildren().setAll(graph);
                 
                 // Negative ids are reserved for default not editable notations. => Italic
-                graph.updateGraph(getNotationType(notation), notation, notation.getId() < 0);
+                graph.updateGraph(getNotationType(notation), notation, false);
                 if(!popup && getNotationType(notation) == Notation.NotationType.ICON){ // Force the background to cover the combo arrow
                     if(Main.settings.darkTheme.getValue()) graph.setStyle(graph.getStyle() + " -fx-background-color: #111111;");
                     else graph.setStyle(graph.getStyle() + " -fx-background-color: white;");
@@ -139,7 +139,7 @@ public class SkillListCell extends ListCell<Skill> {
             }
         }
         private Notation.NotationType getNotationType(Notation notation){
-            if(notation.getId() < 0) return Notation.NotationType.CHAR; // Negative ids are reserved for default not editable notations.
+            if(notation.isDefaultNotation()) return Notation.NotationType.CHAR; // Negative ids are reserved for default not editable notations.
             else return skillAssessment.get().getNotationType();
         }
     }

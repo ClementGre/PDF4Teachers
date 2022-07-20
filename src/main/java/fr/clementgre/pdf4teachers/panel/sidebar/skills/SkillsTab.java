@@ -218,7 +218,7 @@ public class SkillsTab extends SideTab {
                     Edition.setUnsave("Changed selected Assessment");
                 }
             }else if(getCurrentAssessment() != null){
-                addSkillAssessmentElement();
+                addSkillTableElement();
             }
         });
         // Sync student id
@@ -229,7 +229,7 @@ public class SkillsTab extends SideTab {
                     Edition.setUnsave("Changed selected Student");
                 }
             }else if(getCurrentAssessment() != null){
-                addSkillAssessmentElement();
+                addSkillTableElement();
             }
         });
         
@@ -258,9 +258,15 @@ public class SkillsTab extends SideTab {
     }
     
     // Generate the element
-    private void addSkillAssessmentElement(){
+    private void addSkillTableElement(){
         this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
         MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), false, UType.NO_UNDO);
+    }
+    private void removeSkillTableElement(){
+        if(getSkillTableElement() != null){
+            getSkillTableElement().delete(false, UType.NO_UNDO);
+            this.skillTableElement.set(null);
+        }
     }
     
     
@@ -274,6 +280,8 @@ public class SkillsTab extends SideTab {
         
         // Updating the list
         listView.refresh();
+        // Updating the element
+        getSkillTableElement().updateLayout();
     }
     
     

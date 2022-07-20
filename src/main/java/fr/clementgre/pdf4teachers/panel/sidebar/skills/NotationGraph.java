@@ -25,7 +25,7 @@ import java.util.Base64;
 
 public class NotationGraph extends Pane {
     
-    private static String style = "-fx-background-radius: 5px; -fx-alignment: center;";
+    private String style = "-fx-background-radius: 5px; -fx-alignment: center;";
     private int size = 20;
     private double scale = 1;
     
@@ -35,30 +35,40 @@ public class NotationGraph extends Pane {
     public NotationGraph(double scale){
         this.scale = scale;
         this.size = (int) (20*scale);
-        style = "-fx-background-radius: " + ((int) scale*5) + "px; -fx-alignment: center;";
+        style = "-fx-background-radius: " + ((int) (scale*5)) + "px; -fx-alignment: center;";
         setMinSize(size, size);
         setMaxSize(size, size);
     }
     
-    public NotationGraph(Notation.NotationType notationType, Notation notation, boolean italic){
+    public NotationGraph(double scale, Notation.NotationType notationType, Notation notation, boolean forceWhiteBackground){
+        this.scale = scale;
+        this.size = (int) (20*scale);
+        style = "-fx-background-radius: " + ((int) (scale*5)) + "px; -fx-alignment: center;";
         setMinSize(size, size);
         setMaxSize(size, size);
         
-        updateGraph(notationType, notation, italic);
+        updateGraph(notationType, notation, forceWhiteBackground);
     }
     
-    public void updateGraph(Notation.NotationType notationType, Notation notation, boolean italic){
+    public NotationGraph(Notation.NotationType notationType, Notation notation, boolean forceWhiteBackground){
+        setMinSize(size, size);
+        setMaxSize(size, size);
+        
+        updateGraph(notationType, notation, forceWhiteBackground);
+    }
+    
+    public void updateGraph(Notation.NotationType notationType, Notation notation, boolean forceWhiteBackground){
         getChildren().clear();
         
         String backgroundColor = "#FFFFFF";
         String foregroundColor = "#000000";
-        if(!Main.settings.darkTheme.getValue()){
+        if(!Main.settings.darkTheme.getValue() || forceWhiteBackground){
             backgroundColor = "#000000";
             foregroundColor = "#FFFFFF";
         }
-        String fontStyle = italic ? "italic" : "normal";
+        String fontStyle = notation.isDefaultNotation() ? "italic" : "normal";
         
-        if(notationType == Notation.NotationType.CHAR){
+        if(notationType == Notation.NotationType.CHAR || notation.isDefaultNotation()){
             
             String text = notation.getAcronym();
             if(text.isBlank()) text = "?";
@@ -66,7 +76,7 @@ public class NotationGraph extends Pane {
             text = text.toUpperCase();
         
             Label label = new Label(text);
-            label.setStyle("-fx-alignment: center; -fx-text-fill: " + foregroundColor + "; -fx-font: " + fontStyle + " bold " + ((int) scale*11) + "px 'Open Sans';");
+            label.setStyle("-fx-alignment: center; -fx-text-fill: " + foregroundColor + "; -fx-font: " + fontStyle + " bold " + ((int) (scale*11)) + "px 'Open Sans' !important;");
             label.setMinSize(size, size);
             label.setMaxSize(size, size);
             

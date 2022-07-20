@@ -325,7 +325,7 @@ public class NotationsListingPane extends Tab {
         name.setText(notation.getName());
         Label keyboardChar = new Label();
         keyboardChar.setText(notation.getKeyboardChar());
-        NotationGraph graph = new NotationGraph(Notation.NotationType.CHAR, notation, true);
+        NotationGraph graph = new NotationGraph(Notation.NotationType.CHAR, notation, false);
         
         grid.addRow(line, acronym, name, keyboardChar, graph);
     }
