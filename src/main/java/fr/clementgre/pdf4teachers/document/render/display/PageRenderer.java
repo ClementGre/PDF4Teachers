@@ -1025,7 +1025,7 @@ public class PageRenderer extends Pane {
             element.setPage(page);
             
             page.elements.add(element);
-            page.getChildren().add(element);
+            if(!page.getChildren().contains(element)) page.getChildren().add(element);
         }
     }
     
@@ -1040,7 +1040,6 @@ public class PageRenderer extends Pane {
                 Edition.setUnsave("PageRenderer ElementAdded");
             }
             element.addedToDocument(markAsUnsave);
-            
             MainWindow.mainScreen.registerNewAction(new CreateDeleteUndoAction(element, false, undoType));
         }
     }

@@ -21,8 +21,10 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -41,8 +43,7 @@ public class SkillTableElement extends GraphicElement{
     private final GridPane gridPane = new GridPane();
     
     public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
-        super(x, y, pageNumber, width, height, RepeatMode.AUTO, ResizeMode.CORNERS);
-        //super.allowShiftToInvertResizeMode = false;
+        super(x, y, pageNumber, width, height, RepeatMode.STRETCH, ResizeMode.CORNERS);
         this.assessmentId.set(assessmentId);
         this.studentId.set(studentId);
         this.editionSkills.set(FXCollections.observableList(editionSkills));
@@ -86,9 +87,7 @@ public class SkillTableElement extends GraphicElement{
             updateGridPaneScale();
         });
         
-        assessmentId.addListener((observable, oldValue, newValue) -> {
-            updateLayout();
-        });
+        assessmentId.addListener((observable, oldValue, newValue) -> updateLayout());
         
         setupGeneral(gridPane);
         Platform.runLater(this::updateGridPaneScale);
@@ -100,8 +99,7 @@ public class SkillTableElement extends GraphicElement{
         gridPane.getTransforms().setAll(new Scale(scale, scale));
         // Grid pane width always match the element width, considering the scaling.
         gridPane.setPrefWidth(getWidth() / scale);
-    
-        //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
+        gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
     }
     
     @Override
@@ -118,7 +116,6 @@ public class SkillTableElement extends GraphicElement{
             if(getRealHeight() != newRealHeight){
                 if(itemYChanged) setRealY(getRealY() + getRealHeight() - newRealHeight); // When resized from north or west
                 setRealHeight(newRealHeight);
-                
             }
         }
     }
@@ -129,8 +126,8 @@ public class SkillTableElement extends GraphicElement{
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
         if(assessment == null) return;
     
-        addGridLabel(0, 0, TR.tr("skillTableElement.header.skill"), true, true);
-        addGridLabel(1, 0, TR.tr("skillTableElement.header.grade"), true, false);
+        addGridLabel(0, 0, TR.tr("skillTableElement.header.skill"), null);
+        addGridLabel(1, 0, TR.tr("skillTableElement.header.grade"), null);
         
         AtomicInteger i = new AtomicInteger();
         assessment.getSkills().forEach(skill -> {
@@ -139,8 +136,8 @@ public class SkillTableElement extends GraphicElement{
             Notation notation = null;
             if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
             
-            addGridLabel(0, i.incrementAndGet(), skill.getAcronym() + "\n" + skill.getName(), false, true);
-            addGridNotationGraph(1, i.get(), assessment, notation, false, false);
+            addGridLabel(0, i.incrementAndGet(), skill.getAcronym(), skill.getName());
+            addGridNotationGraph(1, i.get(), assessment, notation);
         });
         
     }
@@ -153,29 +150,33 @@ public class SkillTableElement extends GraphicElement{
         GridPane.setFillHeight(pane, true);
         return pane;
     }
-    private void addGridLabel(int x, int y, String text, boolean firstRow, boolean firstCol){
-        Pane pane = getGridPane(firstRow, firstCol);
-        Label label = new Label(text);
-        label.setWrapText(true);
-        label.setStyle("-fx-wrap-text: true !important;");
-        label.maxWidthProperty().bind(pane.widthProperty());
-        label.heightProperty().addListener((observable, oldValue, newValue) -> {
-            if(oldValue.doubleValue() == 0 || getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
-            pane.setMinHeight(newValue.doubleValue()+2);
-            gridPane.getChildren().remove(pane);
-            gridPane.add(pane, x, y);
-            updateGridPaneScale();
-            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getHeight() * newValue.doubleValue() / oldValue.doubleValue(), false);
-            getPage().layout(); // Required to update the visual bounds of the element
-            updateGridPaneScale();
-        });
+    private void addGridLabel(int x, int y, String header, String text){
+        Pane pane = getGridPane(y == 0, x == 0);
+        Label headerLabel = new Label(header);
+        headerLabel.setStyle("-fx-font: normal bold 12 'Open Sans' !important");
+        headerLabel.maxWidthProperty().bind(pane.widthProperty());
+        pane.getChildren().add(headerLabel);
         
         
-        pane.getChildren().add(label);
+        if(text != null){
+            Label textLabel = new Label(text + "\n"); // Make sure the text is always at least two lines long.
+            textLabel.setStyle("-fx-font: normal normal 12 'Open Sans' !important");
+            textLabel.setAlignment(Pos.TOP_LEFT);
+            textLabel.maxWidthProperty().bind(pane.widthProperty());
+            textLabel.setPrefHeight(41); // Two lines height
+            textLabel.setWrapText(true);
+            pane.getChildren().add(textLabel);
+            
+            textLabel.setLayoutY(20);
+        }else{
+            pane.setStyle("-fx-background-color: black, #e8e8e8");
+        }
+        
+        
         gridPane.add(pane, x, y);
     }
-    private void addGridNotationGraph(int x, int y, SkillsAssessment assessment, Notation notation, boolean firstRow, boolean firstCol){
-        Pane pane = getGridPane(firstRow, firstCol);
+    private void addGridNotationGraph(int x, int y, SkillsAssessment assessment, Notation notation){
+        Pane pane = getGridPane(y == 0, x == 0);
         if(notation != null){
             Region notationGraph = new NotationGraph(1.3, assessment.getNotationType(), notation, true);
             pane.getChildren().add(notationGraph);
@@ -195,10 +196,9 @@ public class SkillTableElement extends GraphicElement{
         super.removedFromDocument(markAsUnsave);
     }
     @Override
-    public void restoredToDocument(){
-        super.restoredToDocument();
+    public void delete(boolean markAsUnsave, UType undoType){
+        // SkillTableElement can't be deleted and should always be kept.
     }
-    
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();

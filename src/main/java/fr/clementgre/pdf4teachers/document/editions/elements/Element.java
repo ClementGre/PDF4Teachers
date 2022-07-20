@@ -163,7 +163,7 @@ public abstract class Element extends Region {
     }
     
     public static void copy(Element element){
-        if(element instanceof GradeElement) return;
+        if(element instanceof GradeElement || element instanceof SkillTableElement) return;
         
         final ClipboardContent clipboardContent = new ClipboardContent();
         clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);

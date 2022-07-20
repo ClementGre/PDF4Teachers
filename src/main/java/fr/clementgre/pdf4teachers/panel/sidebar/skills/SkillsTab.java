@@ -262,12 +262,6 @@ public class SkillsTab extends SideTab {
         this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
         MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), false, UType.NO_UNDO);
     }
-    private void removeSkillTableElement(){
-        if(getSkillTableElement() != null){
-            getSkillTableElement().delete(false, UType.NO_UNDO);
-            this.skillTableElement.set(null);
-        }
-    }
     
     
     // Called when closing the SkillAssessmentWindow

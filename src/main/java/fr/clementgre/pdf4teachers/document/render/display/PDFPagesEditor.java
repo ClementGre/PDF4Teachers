@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageAddRemoveUndoAction;
@@ -226,6 +227,8 @@ public class PDFPagesEditor {
             if(page.getElements().get(0) instanceof GradeElement grade){
                 grade.setValue(-1);
                 grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
+            }else if(page.getElements().get(0) instanceof SkillTableElement skillTable){
+                skillTable.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
             }else{
                 page.getElements().get(0).delete(true, UType.NO_UNDO);
             }

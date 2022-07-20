@@ -127,7 +127,7 @@ public class Edition{
                 // There is only one SkillTableElement (the grid) that contains all the skills
                 if(skills.isEmpty()){
                     SkillTableElement skillTableElement = (SkillTableElement) page.getElements().stream().filter(e -> e instanceof SkillTableElement).findAny().orElse(null);
-                    if(skillTableElement != null){
+                    if(skillTableElement != null && skillTableElement.getAssessmentId() != 0){
                         skills = skillTableElement.getYAMLData();
                         counter ++;
                     }
@@ -276,8 +276,10 @@ public class Edition{
                         }else{
                             texts.put("page" + element.getPageNumber(), new ArrayList<>(Collections.singletonList(element.getYAMLData())));
                         }
-                    }else if(element instanceof SkillTableElement){
-                        skills = element.getYAMLData();
+                    }else if(element instanceof SkillTableElement skillTableElement){
+                        if(skillTableElement.getAssessmentId() != 0){
+                            skills = element.getYAMLData();
+                        }else counter--;
                     }
                     counter++;
                 }else{
