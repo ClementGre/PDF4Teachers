@@ -42,6 +42,7 @@ public class ScaledSearchableComboBox<T> extends SearchableComboBox<T> {
             }
         });
         
+        
         if(bind){
             // TODO: fix dynamic upscale issues.
             Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {

@@ -8,11 +8,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -21,10 +17,6 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.*;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.transform.Scale;
 
@@ -32,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkillTableElement extends GraphicElement{
     
@@ -41,15 +32,13 @@ public class SkillTableElement extends GraphicElement{
     private final ListProperty<EditionSkill> editionSkills = new SimpleListProperty<>();
     
     
-    private final GridPane gridPane = new GridPane();
+    private final SkillTableGridPane gridPane = new SkillTableGridPane(this);
     
     public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
         super(x, y, pageNumber, width, height, RepeatMode.STRETCH, ResizeMode.CORNERS);
         this.assessmentId.set(assessmentId);
         this.studentId.set(studentId);
         this.editionSkills.set(FXCollections.observableList(editionSkills));
-    
-        
         
         if(hasPage && getPage() != null) setupPage();
     }
@@ -65,24 +54,11 @@ public class SkillTableElement extends GraphicElement{
         
         editionSkills.addListener((observable, oldValue, newValue) -> updateLayout());
         assessmentId.addListener((observable, oldValue, newValue) -> updateLayout());
-        
-        gridPane.setMouseTransparent(true);
-        gridPane.getColumnConstraints().setAll(new ColumnConstraints(), new ColumnConstraints(80));
-        gridPane.getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
-        gridPane.setMaxHeight(Double.MAX_VALUE);
     
         setupGeneral(gridPane);
-    
-       /* heightProperty().addListener((observable, o, n) -> {
-            System.out.println("[L] height: " + o.intValue() + " -> " + n.intValue());
-        });
-        realHeight.addListener((observable, o, n) -> {
-            System.out.println("[L] realHeight: " + o.intValue() + " -> " + n.intValue());
-        });*/
         
         if(getRealWidth() == 0 && getRealHeight() == 0){
             checkLocation(getPage().fromGridX(22700), getPage().fromGridX(22700), getPage().fromGridX(120000), 0, false);
-            System.out.println("[S] Set default size: " + getRealHeight() + " -> " + getHeight());
         }
     
         // Update the gridPane scale
@@ -110,7 +86,6 @@ public class SkillTableElement extends GraphicElement{
                 }
             }
     
-            System.out.println("Growing height from " + getHeight() + " to " + newHeight);
             checkLocation(getLayoutX(), getLayoutY(), getWidth(), newHeight, false);
             getPage().layout(); // Required to update the visual bounds of the element
             updateGridPaneScale();
@@ -152,77 +127,8 @@ public class SkillTableElement extends GraphicElement{
         }
     }
     
-    // When data updated
     public void updateLayout(){
-        
-        gridPane.getChildren().clear();
-        SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
-        if(assessment == null){
-            setVisible(false);
-            return;
-        }
-        setVisible(true);
-    
-        addGridLabel(0, 0, TR.tr("skillTableElement.header.skill"), null);
-        addGridLabel(1, 0, TR.tr("skillTableElement.header.grade"), null);
-        
-        AtomicInteger i = new AtomicInteger();
-        assessment.getSkills().forEach(skill -> {
-            EditionSkill editionSkill = editionSkills.stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
-            
-            Notation notation = null;
-            if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
-            
-            addGridLabel(0, i.incrementAndGet(), skill.getAcronym(), skill.getName());
-            addGridNotationGraph(1, i.get(), assessment, notation);
-        });
-        if(i.get() == 0) setVisible(false);
-        
-    }
-    private Pane getGridCellPane(boolean firstRow, boolean firstCol){
-        Pane pane = new Pane();
-        pane.getStyleClass().add("bordered-grid-cell");
-        if(firstRow) pane.getStyleClass().add("first-row");
-        if(firstCol) pane.getStyleClass().add("first-column");
-        GridPane.setFillWidth(pane, true);
-        GridPane.setFillHeight(pane, true);
-        return pane;
-    }
-    private void addGridLabel(int x, int y, String header, String text){
-        Pane pane = getGridCellPane(y == 0, x == 0);
-        Label headerLabel = new Label(header);
-        headerLabel.setStyle("-fx-font: normal bold 11 'Open Sans' !important");
-        headerLabel.maxWidthProperty().bind(pane.widthProperty());
-        pane.getChildren().add(headerLabel);
-       
-        
-        
-        if(text != null){
-            Label textLabel = new Label(text + "\n"); // Make sure the text is always at least two lines long.
-            textLabel.setPadding(Insets.EMPTY);
-            textLabel.setStyle("-fx-font: normal normal 11 'Open Sans' !important");
-            textLabel.setAlignment(Pos.TOP_LEFT);
-            textLabel.maxWidthProperty().bind(pane.widthProperty());
-            textLabel.setPrefHeight(39); // Two lines height
-            textLabel.setWrapText(true);
-            pane.getChildren().add(textLabel);
-            textLabel.setLayoutY(15);
-        }else{
-            pane.setStyle("-fx-background-color: black, #e8e8e8");
-        }
-        
-        
-        gridPane.add(pane, x, y);
-    }
-    private void addGridNotationGraph(int x, int y, SkillsAssessment assessment, Notation notation){
-        Pane pane = getGridCellPane(y == 0, x == 0);
-        if(notation != null){
-            Region notationGraph = new NotationGraph(1.3, assessment.getNotationType(), notation, true);
-            pane.getChildren().add(notationGraph);
-            notationGraph.layoutXProperty().bind(pane.widthProperty().subtract(notationGraph.widthProperty()).divide(2));
-            notationGraph.layoutYProperty().bind(pane.heightProperty().subtract(notationGraph.heightProperty()).divide(2));
-        }
-        gridPane.add(pane, x, y);
+        gridPane.updateLayout();
     }
     
     @Override

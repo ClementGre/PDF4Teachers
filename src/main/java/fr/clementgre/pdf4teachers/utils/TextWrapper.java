@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,6 +7,8 @@ package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.components.ScratchText;
 import javafx.scene.text.Font;
+
+import java.util.regex.Pattern;
 
 public class TextWrapper {
     
@@ -75,6 +77,33 @@ public class TextWrapper {
             }
         }
         return getWrappedLine();
+    }
+    
+    public static String wrapFirstLineWithEllipsis(String text, Font font, int maxWidth){
+        
+        String wrappedText = new TextWrapper(text, font, (int) (maxWidth - font.getSize() * 1.1)).wrapFirstLine();
+        text = text.replaceFirst(Pattern.quote(wrappedText), "");
+        
+        // SECOND LINE
+        if(!text.isBlank()){
+            return wrappedText.trim() + "...";
+        }
+        return wrappedText.trim();
+    }
+    
+    public static String wrapTwoFirstLinesWithEllipsis(String text, Font font, int maxWidth){
+    
+        String wrappedText = new TextWrapper(text, font, maxWidth).wrapFirstLine();
+        text = text.replaceFirst(Pattern.quote(wrappedText), "");
+    
+        // SECOND LINE
+        if(!text.isBlank()){
+            String wrapped = new TextWrapper(text, font, (int) (maxWidth - font.getSize() * 1.1)).wrapFirstLine();
+            wrappedText = wrappedText.trim() + "\n" + wrapped.trim();
+            if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+        }
+        
+        return wrappedText.trim();
     }
     
     public boolean doHasWrapped(){

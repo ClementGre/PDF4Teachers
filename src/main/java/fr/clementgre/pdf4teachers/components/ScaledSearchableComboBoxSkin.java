@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.binding.Bindings;
 import javafx.collections.transformation.FilteredList;
+import javafx.scene.Cursor;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SkinBase;
@@ -85,9 +86,19 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         field.setId("search");
         field.getStyleClass().add("combo-box-search");
         
-        Region image = SVGPathIcons.generateImage(SVGPathIcons.FILTER, "#999999", 0, 15);
-        image.setMaxHeight(15);
-        field.setLeft(image);
+        Region sortImage = SVGPathIcons.generateImage(SVGPathIcons.FILTER, "#999999", 0, 15);
+        sortImage.setMaxHeight(15);
+        field.setLeft(sortImage);
+        Region emptyImage = SVGPathIcons.generateImage(SVGPathIcons.CROSS, "#ff6060", 1, 15);
+        emptyImage.setCursor(Cursor.HAND);
+        emptyImage.setMaxHeight(15);
+        
+        field.setRight(emptyImage);
+        
+        
+        emptyImage.setOnMousePressed(event -> {
+            getSkinnable().getSelectionModel().select(null);
+        });
         
         return field;
     }

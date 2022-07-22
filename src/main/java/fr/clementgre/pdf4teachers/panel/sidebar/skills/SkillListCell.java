@@ -7,11 +7,13 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
+import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.SkillUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
@@ -23,10 +25,14 @@ import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.layout.*;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkillListCell extends ListCell<Skill> {
     
@@ -35,6 +41,8 @@ public class SkillListCell extends ListCell<Skill> {
     private final Label acronym = new Label();
     private final Label name = new Label();
     private final ComboBox<Notation> comboBox = new ComboBox<>();
+    
+    private final ContextMenu contextMenu = new ContextMenu();
     
     // Edited each time the cell updates
     private EditionSkill editionSkill;
@@ -82,11 +90,18 @@ public class SkillListCell extends ListCell<Skill> {
                 if(getListView().getItems().size() > selected+1){
                     getListView().getSelectionModel().select(selected+1);
                 }else getListView().getSelectionModel().select(0);
+                
+                e.consume();
+                
+            }else if(e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE){
+                if(getSkillAssessment() == null || editionSkill == null) return;
+                comboBox.setValue(null); // editionSkill notationId will be updated in the ComboBox listener
                 e.consume();
             }
         });
         setOnKeyTyped(e -> {
-            if(getSkillAssessment() == null) return;
+            if(getSkillAssessment() == null || editionSkill == null) return;
+            
             String text = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(e.getCharacter());
             for(Notation notation : getSkillAssessment().getNotationsWithDefaults()){
                 if(notation.getKeyboardChar().equalsIgnoreCase(text)){
@@ -97,6 +112,42 @@ public class SkillListCell extends ListCell<Skill> {
             }
         });
         
+        // MENU
+    
+        NodeMenuItem resetItem = new NodeMenuItem(TR.tr("actions.reset"), false);
+        resetItem.setKeyCombinaison(new KeyCodeCombination(KeyCode.DELETE));
+        NodeMenuItem copyItem = new NodeMenuItem(TR.tr("skillsTab.list.contextMenu.copyMarkOnAllSkills"), false);
+        
+        resetItem.setOnAction(e -> {
+            if(editionSkill != null && editionSkill.getNotationId() != 0){
+                MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), editionSkill.getSkillId(), editionSkill.getNotationId()));
+                editionSkill.setNotationId(0);
+                MainWindow.skillsTab.refreshListView();
+                getSkillTableElement().updateLayout();
+                Edition.setUnsave("SkillListCell ComboBox notation changed");
+            }
+        });
+        
+        copyItem.setOnAction(e -> {
+            if(editionSkill != null && getSkillAssessment() != null && getSkillTableElement() != null){
+                AtomicInteger i = new AtomicInteger();
+                getSkillAssessment().getSkills().forEach(skill -> {
+                    EditionSkill editionSkill = getSkillTableElement().getEditionSkills().stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
+                    // null, this one, or already the same notation
+                    if(editionSkill == null || editionSkill == this.editionSkill || editionSkill.getNotationId() == this.editionSkill.getNotationId()) return;
+                    
+                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(i.getAndIncrement() == 0 ? UType.UNDO : UType.NO_COUNT, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
+                    editionSkill.setNotationId(this.editionSkill.getNotationId());
+                });
+                if(i.get() != 0){
+                    MainWindow.skillsTab.refreshListView();
+                    getSkillTableElement().updateLayout();
+                    Edition.setUnsave("SkillListCell ComboBox notation changed");
+                }
+            }
+        });
+        
+        contextMenu.getItems().addAll(resetItem, copyItem);
         
     }
     
@@ -183,6 +234,7 @@ public class SkillListCell extends ListCell<Skill> {
             name.setText(skill.getName());
             setTooltip(PaneUtils.genWrappedToolTip(skill.getName()));
             setGraphic(root);
+            setContextMenu(contextMenu);
         }
         
     }

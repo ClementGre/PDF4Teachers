@@ -38,6 +38,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
@@ -168,6 +169,7 @@ public class SkillsTab extends SideTab {
         studentPane.setSpacing(5);
         studentPane.setAlignment(Pos.CENTER_LEFT);
         Label label = new Label(TR.tr("skillsTab.student.combobox"));
+        label.setMinWidth(Region.USE_PREF_SIZE);
         label.setStyle("-fx-font-size: 12; -fx-font-weight: 800;");
         studentPane.getChildren().addAll(label, studentCombo);
     

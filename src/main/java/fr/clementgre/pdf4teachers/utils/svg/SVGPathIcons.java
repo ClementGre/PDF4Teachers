@@ -131,20 +131,19 @@ public class SVGPathIcons {
         double rh = image.getLayoutBounds().getHeight();
         if(ratio <= 0) ratio = rw / rh;
         
+        double topBottomPadding = padding;
+        double leftRightPadding = padding;
         if(ratio < 1){
             setRegionDimension(imageRegion, maxDimension * ratio, maxDimension);
-            
-            double dif = (maxDimension - (maxDimension * ratio)) / 2d;
-            imagePane.setPadding(new Insets(0, dif, 0, dif));
+            leftRightPadding += (maxDimension - (maxDimension * ratio)) / 2d;
         }else if(ratio > 1){
             setRegionDimension(imageRegion, maxDimension, maxDimension / ratio);
-            
-            double dif = (maxDimension - (maxDimension / ratio)) / 2d;
-            imagePane.setPadding(new Insets(dif, 0, dif, 0));
+            topBottomPadding += (maxDimension - (maxDimension / ratio)) / 2d;
         }else{
             setRegionDimension(imageRegion, maxDimension, maxDimension);
-            return imageRegion;
+            if(padding == 0) return imageRegion;
         }
+        imagePane.setPadding(new Insets(topBottomPadding, leftRightPadding, topBottomPadding, leftRightPadding));
         imagePane.getChildren().add(imageRegion);
         return imagePane;
         

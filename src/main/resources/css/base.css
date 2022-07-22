@@ -111,16 +111,16 @@
 }
 
 .bordered-grid-cell .label{
-    -fx-padding: 3 4 4 3;
+    -fx-padding: 0 1 1 0;
 }
 .bordered-grid-cell.first-row .label{
-    -fx-padding: 4 4 4 3;
+    -fx-padding: 1 1 1 0;
 }
 .bordered-grid-cell.first-column .label{
-    -fx-padding: 3 4 4 4;
+    -fx-padding: 0 1 1 1;
 }
 .bordered-grid-cell.first-row.first-column .label{
-    -fx-padding: 4;
+    -fx-padding: 1;
 }
 
 
