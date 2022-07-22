@@ -68,14 +68,18 @@ public class PageAddRemoveUndoAction extends UndoAction {
         PageRenderer page = MainWindow.mainScreen.document.getPage(pageIndex);
         
         for(Element element : elements){
-            element.setPage(page);
+            
             
             // GradeElements are not deleted, just reset
             if(element instanceof GradeElement) return;
             
-            // Do not add the element if it already has a parent.
-            if(page.getElements().contains(element) || element.getParent() != null) return;
+            // Move element if it has been moved on another page (e.g. SkillTableElement).
+            if(element.getParent() != null){
+                if(!page.getElements().contains(element)) element.switchPage(pageIndex);
+                return;
+            }
             
+            element.setPage(page);
             page.addElement(element, true, UType.NO_UNDO);
             element.restoredToDocument();
         }

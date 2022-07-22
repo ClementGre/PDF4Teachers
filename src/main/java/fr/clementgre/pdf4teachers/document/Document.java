@@ -154,6 +154,7 @@ public class Document {
             page.clearElements();
         }
         MainWindow.textTab.treeView.onFileSection.updateElementsList();
+        MainWindow.skillsTab.clearEditRelatedData();
         MainWindow.gradeTab.treeView.clearElements(false, false);
         this.edition.load(false);
         this.undoEngine = new UndoEngine(true);

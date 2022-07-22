@@ -420,6 +420,7 @@ public class Edition{
                 page.clearElements();
             }
             MainWindow.textTab.treeView.onFileSection.updateElementsList();
+            MainWindow.skillsTab.clearEditRelatedData();
             MainWindow.gradeTab.treeView.clearElements(true, false);
             Edition.setUnsave("Clear edit");
             MainWindow.mainScreen.document.edition.save(false);

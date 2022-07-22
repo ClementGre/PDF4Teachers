@@ -135,8 +135,7 @@ public class SkillsTab extends SideTab {
     
         MainWindow.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() != MainScreen.Status.OPEN){
-                skillTableElement.set(null);
-                assessmentCombo.setValue(null);
+                clearEditRelatedData();
             }
         });
         
@@ -246,6 +245,10 @@ public class SkillsTab extends SideTab {
             }
         }
         trySelectStudent();
+    }
+    public void clearEditRelatedData(){
+        this.skillTableElement.set(null);
+        assessmentCombo.setValue(null);
     }
     private void trySelectStudent(){
         if(getCurrentAssessment() == null) return;
