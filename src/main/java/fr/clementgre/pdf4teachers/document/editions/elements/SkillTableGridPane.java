@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
@@ -30,7 +31,10 @@ public class SkillTableGridPane extends GridPane {
     
     public boolean areDimensionsSetup = false;
     public Pane legend;
-    private final SkillTableElement element;
+    public final SkillTableElement element;
+    
+    private final ArrayList<SkillLine> skillLines = new ArrayList<>();
+    private ArrayList<Notation> notations = new ArrayList<>();
     
     public SkillTableGridPane(SkillTableElement element) {
         this.element = element;
@@ -45,63 +49,125 @@ public class SkillTableGridPane extends GridPane {
     
     // When data updated
     public void updateLayout(){
-        areDimensionsSetup = false;
-        System.out.println("----- LAYOUT GRID PANE -----");
         
         getChildren().clear();
         getRowConstraints().clear();
+        skillLines.clear();
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
         if(assessment == null){
             setVisible(false);
+            if(element.isSelected()) MainWindow.mainScreen.setSelected(null);
             return;
         }
         setVisible(true);
-        
-        addGridLabel(0, 0, TR.tr("skillTableElement.header.skill"), null);
-        addGridLabel(1, 0, TR.tr("skillTableElement.header.grade"), null);
+    
+        addHeaderLabel(0, TR.tr("skillTableElement.header.skill"));
+        addHeaderLabel(1, TR.tr("skillTableElement.header.grade"));
         
         AtomicInteger i = new AtomicInteger();
         assessment.getSkills().forEach(skill -> {
             EditionSkill editionSkill = element.getEditionSkills().stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
-            
-            Notation notation = null;
-            if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
-            
-            addGridLabel(0, i.incrementAndGet(), skill.getAcronym(), skill.getName());
-            addGridNotationGraph(1, i.get(), notation);
+            skillLines.add(new SkillLine(skill, editionSkill, i.incrementAndGet(), this, assessment));
         });
         if(i.get() == 0){
             setVisible(false);
+            if(element.isSelected()) MainWindow.mainScreen.setSelected(null);
             return;
         }
+    
+        updateSkillsNotation();
         
         legend = getGridCellPane(false, true);
+        updateLegend(true);
+        add(legend, 0, i.incrementAndGet(), 2, 1);
+    }
     
-        ArrayList<NotationLegend> notationsLegend = new ArrayList<>();
-        assessment.getNotations().forEach(notation -> notationsLegend.add(new NotationLegend(notation, legend)));
-        SkillsAssessment.getOtherNotations().forEach(notation -> {
-            boolean match = element.getEditionSkills().stream()
+    private ArrayList<NotationLegend> notationsLegend;
+    void updateLegend(boolean forceUpdate){
+        if(this.legend == null) return;
+        SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
+    
+        ArrayList<Notation> notations = new ArrayList<>();
+        notations.addAll(assessment.getNotations());
+        notations.addAll(SkillsAssessment.getOtherNotations().stream().filter(notation ->
+            element.getEditionSkills().stream()
                     .anyMatch(es -> es.getNotationId() == notation.getId() // Has a matching editionSkill
                             && assessment.getSkills().stream().anyMatch(skill ->
-                            es.getSkillId() == skill.getId())); // And this edition skill is linked to a Skill of this specific assessment
-            if(match)  notationsLegend.add(new NotationLegend(notation, legend));
-        });
+                            es.getSkillId() == skill.getId())) // And this edition skill is linked to a Skill of this specific assessment
+        ).toList());
     
-        legend.widthProperty().addListener((observable, oldValue, newValue) -> {
-            notationsLegend.get(0).regen(); // We need to regen at least one child to update cell height visually while dragging.
-    
-            AtomicInteger x = new AtomicInteger(H_PADDING);
-            AtomicInteger y = new AtomicInteger(V_PADDING);
-            for(NotationLegend notationLeg : notationsLegend){
-                int result = notationLeg.update(x.get(), y.get());
-                if(result >= 0) x.set(result);
-                else{ x.set(-result); y.addAndGet(TEXT_HEIGHT); }
-            }
-            legend.setPrefHeight(y.get() + TEXT_HEIGHT + V_PADDING + 1); // +1 for the border
-        });
-    
-        add(legend, 0, i.incrementAndGet(), 2, 1);
+        if(!forceUpdate && notations.equals(this.notations)) return; // Same notations -> no need to update
         
+        legend.getChildren().clear();
+        notationsLegend = new ArrayList<>(notations.stream().map(notation -> new NotationLegend(notation, legend)).toList());
+    
+        if(!this.notations.isEmpty()) layoutLegend(); // No need to layout legend the first time
+        legend.widthProperty().addListener((observable, oldValue, newValue) -> {
+            layoutLegend();
+        });
+        this.notations = notations;
+    }
+    private void layoutLegend(){
+        notationsLegend.get(0).regen(); // We need to regen at least one child to update cell height visually while dragging.
+    
+        AtomicInteger x = new AtomicInteger(H_PADDING);
+        AtomicInteger y = new AtomicInteger(V_PADDING);
+        for(NotationLegend notationLeg : notationsLegend){
+            int result = notationLeg.update(x.get(), y.get());
+            if(result >= 0) x.set(result);
+            else{ x.set(-result); y.addAndGet(TEXT_HEIGHT); }
+        }
+        legend.setPrefHeight(y.get() + TEXT_HEIGHT + V_PADDING + 1); // +1 for the border
+    }
+    
+    public void updateSkillsNotation(){
+        for(SkillLine skillLine : skillLines){
+            skillLine.updateNotation();
+        }
+    }
+    
+    private static class SkillLine{
+    
+        private final EditionSkill editionSkill;
+        private final SkillsAssessment assessment;
+        private final int y;
+        private final SkillTableGridPane gridPane;
+        private Pane graphPane;
+        public SkillLine(Skill skill, EditionSkill editionSkill, int y, SkillTableGridPane gridPane, SkillsAssessment assessment){
+            this.editionSkill = editionSkill;
+            this.assessment = assessment;
+            this.y = y;
+            this.gridPane = gridPane;
+            Pane pane = getGridCellPane(false, true);
+    
+            Text acrText = getText("", true, H_PADDING, V_PADDING);
+            Text descText = getText("", false, H_PADDING, TEXT_HEIGHT);
+    
+            pane.widthProperty().addListener((observable, o, n) -> {
+                acrText.setText(wrap(skill.getAcronym(), acrText.getFont(), (int) pane.getWidth()));
+                descText.setLayoutY(V_PADDING + acrText.getLayoutBounds().getHeight());
+                descText.setText(wrap(skill.getName(), descText.getFont(), (int) pane.getWidth()));
+                pane.setPrefHeight(descText.getLayoutY() + descText.getLayoutBounds().getHeight() + V_PADDING);
+            });
+            pane.getChildren().addAll(acrText, descText);
+    
+            gridPane.add(pane, 0, y);
+        }
+        
+        public void updateNotation(){
+            gridPane.getChildren().remove(graphPane);
+    
+            graphPane = getGridCellPane(false, false);
+            Notation notation = null;
+            if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
+            if(notation != null){
+                Region notationGraph = new NotationGraph(1.3, MainWindow.skillsTab.getCurrentAssessment().getNotationType(), notation, true);
+                graphPane.getChildren().setAll(notationGraph);
+                notationGraph.layoutXProperty().bind(graphPane.widthProperty().subtract(notationGraph.widthProperty()).divide(2));
+                notationGraph.layoutYProperty().bind(graphPane.heightProperty().subtract(notationGraph.heightProperty()).divide(2));
+            }
+            gridPane.add(graphPane, 1, y);
+        }
     }
     
     private static class NotationLegend{
@@ -146,39 +212,23 @@ public class SkillTableGridPane extends GridPane {
         }
     }
     
-    private void addGridLabel(int x, int y, String header, String text){
-        Pane pane = getGridCellPane(y == 0, x == 0);
-    
+    private void addHeaderLabel(int x, String header){
+        Pane pane = getGridCellPane(true, x == 0);
         Text acrText = getText("", true, H_PADDING, V_PADDING);
-        pane.getChildren().add(acrText);
-        if(text != null){
-            Text descText = getText("", false, H_PADDING, TEXT_HEIGHT);
-            
-            pane.widthProperty().addListener((observable, o, n) -> {
-                acrText.setText(wrap(header, acrText.getFont(), (int) pane.getWidth()));
-                descText.setLayoutY(V_PADDING + acrText.getLayoutBounds().getHeight());
-                descText.setText(wrap(text, descText.getFont(), (int) pane.getWidth()));
-                pane.setPrefHeight(descText.getLayoutY() + descText.getLayoutBounds().getHeight() + V_PADDING);
-            });
-            pane.getChildren().add(descText);
-        }else{
-            pane.widthProperty().addListener((observable) -> {
-                acrText.setText(wrap(header, acrText.getFont(), (int) pane.getWidth()));
-                pane.setPrefHeight(acrText.getLayoutBounds().getHeight() + 2*V_PADDING);
-            });
-            pane.setStyle("-fx-background-color: black, #e8e8e8");
-            
-        }
         
-        add(pane, x, y);
+        pane.widthProperty().addListener((observable) -> {
+            acrText.setText(wrap(header, acrText.getFont(), (int) pane.getWidth()));
+            pane.setPrefHeight(acrText.getLayoutBounds().getHeight() + 2*V_PADDING);
+        });
+        
+        pane.setStyle("-fx-background-color: black, #e8e8e8");
+        pane.getChildren().add(acrText);
+        add(pane, x, 0);
     }
-    
-    
-    private String wrap(String text, Font font, int width){
+    private static String wrap(String text, Font font, int width){
         return new TextWrapper(text, font, width - 2*H_PADDING).wrap();
     }
-    
-    private Pane getGridCellPane(boolean firstRow, boolean firstCol){
+    private static Pane getGridCellPane(boolean firstRow, boolean firstCol){
         Pane pane = new Pane();
         pane.getStyleClass().add("bordered-grid-cell");
         if(firstRow) pane.getStyleClass().add("first-row");
@@ -187,7 +237,7 @@ public class SkillTableGridPane extends GridPane {
         GridPane.setFillHeight(pane, true);
         return pane;
     }
-    private Text getText(String text, boolean bold, int x, int y){
+    private static Text getText(String text, boolean bold, int x, int y){
         return getText(text, bold,11, x, y);
     }
     private static Text getText(String text, boolean bold, int fontSize, int x, int y){
@@ -199,17 +249,6 @@ public class SkillTableGridPane extends GridPane {
         textText.setLayoutX(x);
         textText.setLayoutY(y);
         return textText;
-    }
-    
-    private void addGridNotationGraph(int x, int y, Notation notation){
-        Pane pane = getGridCellPane(y == 0, x == 0);
-        if(notation != null){
-            Region notationGraph = new NotationGraph(1.3, MainWindow.skillsTab.getCurrentAssessment().getNotationType(), notation, true);
-            pane.getChildren().add(notationGraph);
-            notationGraph.layoutXProperty().bind(pane.widthProperty().subtract(notationGraph.widthProperty()).divide(2));
-            notationGraph.layoutYProperty().bind(pane.heightProperty().subtract(notationGraph.heightProperty()).divide(2));
-        }
-        add(pane, x, y);
     }
     
     

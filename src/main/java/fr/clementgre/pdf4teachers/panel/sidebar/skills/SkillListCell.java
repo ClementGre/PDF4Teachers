@@ -123,7 +123,7 @@ public class SkillListCell extends ListCell<Skill> {
                 MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), editionSkill.getSkillId(), editionSkill.getNotationId()));
                 editionSkill.setNotationId(0);
                 MainWindow.skillsTab.refreshListView();
-                getSkillTableElement().updateLayout();
+                getSkillTableElement().updateSkillsNotation();
                 Edition.setUnsave("SkillListCell ComboBox notation changed");
             }
         });
@@ -141,7 +141,7 @@ public class SkillListCell extends ListCell<Skill> {
                 });
                 if(i.get() != 0){
                     MainWindow.skillsTab.refreshListView();
-                    getSkillTableElement().updateLayout();
+                    getSkillTableElement().updateSkillsNotation();
                     Edition.setUnsave("SkillListCell ComboBox notation changed");
                 }
             }
@@ -224,7 +224,7 @@ public class SkillListCell extends ListCell<Skill> {
                 if(editionSkill != null && editionSkill.getNotationId() != newId){
                     MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
                     editionSkill.setNotationId(newId);
-                    getSkillTableElement().updateLayout();
+                    getSkillTableElement().updateSkillsNotation();
                     Edition.setUnsave("SkillListCell ComboBox notation changed");
                 }
             });

@@ -9,7 +9,6 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
-import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -36,6 +35,7 @@ public class SkillTableElement extends GraphicElement{
     private static final double MIN_SCALE = 0.4;
     private double scale;
     
+    
     private final ListProperty<EditionSkill> editionSkills = new SimpleListProperty<>();
     private final SkillTableGridPane gridPane = new SkillTableGridPane(this);
     
@@ -58,7 +58,7 @@ public class SkillTableElement extends GraphicElement{
     
     private void setupPage(){
         
-        editionSkills.addListener((observable, oldValue, newValue) -> updateLayout());
+        editionSkills.addListener((observable, oldValue, newValue) -> updateSkillsNotation());
         assessmentId.addListener((observable, oldValue, newValue) -> updateLayout());
     
         setupGeneral(gridPane);
@@ -80,6 +80,8 @@ public class SkillTableElement extends GraphicElement{
             double newLayoutY = getLayoutY();
             if(getRealHeight() == 0){ // Height undefined => Default height
                 newHeight = newValue.doubleValue() * DEFAULT_SCALE;
+                updateGridPaneScale(DEFAULT_SCALE);
+                gridPane.areDimensionsSetup = true;
             }else{
                 if(newValue.doubleValue() == 0){
                     // Grid is now empty => Set the element's height to 0 so it can then be auto defined.
@@ -90,15 +92,11 @@ public class SkillTableElement extends GraphicElement{
                 }else{
                     // Values need one more step to fully setting up the element's height.
                     if(!gridPane.areDimensionsSetup){
-                        Platform.runLater(() -> updateGridPaneScale());
-                       PlatformUtils.runLaterOnUIThread(500, () -> {
-                            gridPane.areDimensionsSetup = true;
-                        });
+                        gridPane.areDimensionsSetup = true;
                         return;
                     }
                     // Grow the height of the element as the gridPane height grows
                     newHeight = getHeight() * newValue.doubleValue() / oldValue.doubleValue();
-                    System.out.println("gridPane height changed: " + oldValue.doubleValue() + " -> " + newValue.doubleValue());
                     // If the user is currently dragging the element, update the origin height & originY.
                     if(getCursor() == Cursor.S_RESIZE || getCursor() == Cursor.SE_RESIZE || getCursor() == Cursor.SW_RESIZE){
                         originHeight += newHeight - getHeight();
@@ -119,13 +117,16 @@ public class SkillTableElement extends GraphicElement{
     }
     
     public void updateGridPaneScale(){
-        this.scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        // If gridPane dimensions are not fully setup yet, use the last saved scale.
+        if(gridPane.areDimensionsSetup) this.scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        updateGridPaneScale(scale);
+    }
+    private void updateGridPaneScale(double scale){
         // Using scale transform to make sure the pivot point is always (0, 0)
         gridPane.getTransforms().setAll(new Scale(scale, scale));
         // Grid pane width always match the element width, considering the scaling.
         gridPane.setPrefWidth(getWidth() / scale);
         //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
-    
         getPage().layout(); // Required to update the visual bounds of the element
     }
     
@@ -150,6 +151,10 @@ public class SkillTableElement extends GraphicElement{
     
     public void updateLayout(){
         gridPane.updateLayout();
+    }
+    public void updateSkillsNotation(){
+        gridPane.updateSkillsNotation();
+        gridPane.updateLegend(false);
     }
     
     @Override

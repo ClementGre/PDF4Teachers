@@ -48,7 +48,7 @@ public class SkillUndoAction extends UndoAction{
         editionSkill.setNotationId(this.oldNotationId);
         this.oldNotationId = oldNotationId;
     
-        MainWindow.skillsTab.getSkillTableElement().updateLayout();
+        MainWindow.skillsTab.getSkillTableElement().updateSkillsNotation();
         MainWindow.skillsTab.refreshListView();
         Edition.setUnsave("SkillListCell ComboBox notation changed");
         

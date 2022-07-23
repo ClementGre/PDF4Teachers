@@ -212,12 +212,9 @@ public class SkillsTab extends SideTab {
         /* LINK WITH SkillTableElement */
     
         // Sync assessment id
-        assessmentCombo.valueProperty().addListener(o -> {
+        assessmentCombo.valueProperty().addListener((o, oldValue, newValue) -> {
             if(getSkillTableElement() != null){
-                if(getSkillTableElement().getAssessmentId() != getCurrentAssessmentIdOr0()){ // Needs update
-                    getSkillTableElement().setAssessmentId(getCurrentAssessmentIdOr0());
-                    Edition.setUnsave("Changed selected Assessment");
-                }
+                switchSkillTableElementAssessment(getCurrentAssessmentIdOr0());
             }else if(getCurrentAssessment() != null){
                 addSkillTableElement();
             }
@@ -234,6 +231,19 @@ public class SkillsTab extends SideTab {
             }
         });
         
+    }
+    
+    private void switchSkillTableElementAssessment(long id){
+        if(getSkillTableElement().getAssessmentId() != id){ // Needs update
+            // Sometimes, the id can be changed very quickly,
+            // then we need to check that the id is still the same before starting the element update process
+            Platform.runLater(() -> {
+                if(getCurrentAssessmentIdOr0() == id){
+                    getSkillTableElement().setAssessmentId(getCurrentAssessmentIdOr0());
+                    Edition.setUnsave("Changed selected Assessment");
+                }
+            });
+        }
     }
     
     // When added to document from edition, select the right options

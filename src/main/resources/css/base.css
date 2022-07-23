@@ -94,7 +94,7 @@
 /* SkillTableElement */
 
 .bordered-grid-cell {
-    -fx-background-color: black, white ;
+    -fx-background-color: black, white;
     -fx-background-insets: 0, 0 1 1 0 ;
     -fx-padding: 0 1 1 0;
 }
