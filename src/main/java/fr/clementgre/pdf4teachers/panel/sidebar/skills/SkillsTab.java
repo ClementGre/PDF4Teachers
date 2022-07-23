@@ -264,7 +264,7 @@ public class SkillsTab extends SideTab {
     
     // Generate the element
     private void addSkillTableElement(){
-        this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
+        this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, SkillTableElement.DEFAULT_SCALE, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
         MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), false, UType.NO_UNDO);
     }
     

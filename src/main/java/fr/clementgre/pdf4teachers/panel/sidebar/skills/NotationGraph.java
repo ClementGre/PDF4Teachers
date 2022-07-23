@@ -26,7 +26,7 @@ import java.util.Base64;
 public class NotationGraph extends Pane {
     
     private String style = "-fx-background-radius: 5px; -fx-alignment: center;";
-    private int size = 20;
+    private double size = 20;
     private double scale = 1;
     
     public NotationGraph(){
@@ -34,16 +34,16 @@ public class NotationGraph extends Pane {
     }
     public NotationGraph(double scale){
         this.scale = scale;
-        this.size = (int) (20*scale);
-        style = "-fx-background-radius: " + ((int) (scale*5)) + "px; -fx-alignment: center;";
+        this.size = 20*scale;
+        style = "-fx-background-radius: " + (scale*5) + "px; -fx-alignment: center;";
         setMinSize(size, size);
         setMaxSize(size, size);
     }
     
     public NotationGraph(double scale, Notation.NotationType notationType, Notation notation, boolean forceWhiteBackground){
         this.scale = scale;
-        this.size = (int) (20*scale);
-        style = "-fx-background-radius: " + ((int) (scale*5)) + "px; -fx-alignment: center;";
+        this.size = 20*scale;
+        style = "-fx-background-radius: " + (scale*5) + "px; -fx-alignment: center;";
         setMinSize(size, size);
         setMaxSize(size, size);
         
@@ -76,7 +76,7 @@ public class NotationGraph extends Pane {
             text = text.toUpperCase();
         
             Label label = new Label(text);
-            label.setStyle("-fx-alignment: center; -fx-text-fill: " + foregroundColor + "; -fx-font: " + fontStyle + " bold " + ((int) (scale*11)) + "px 'Open Sans' !important;");
+            label.setStyle("-fx-alignment: center; -fx-text-fill: " + foregroundColor + "; -fx-font: " + fontStyle + " bold " + (scale*11) + "px 'Open Sans' !important;");
             label.setMinSize(size, size);
             label.setMaxSize(size, size);
             

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -17,7 +18,7 @@ import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.Cursor;
 import javafx.scene.transform.Scale;
 
 import java.util.ArrayList;
@@ -29,13 +30,18 @@ public class SkillTableElement extends GraphicElement{
     
     private final LongProperty assessmentId = new SimpleLongProperty();
     private final LongProperty studentId = new SimpleLongProperty();
+    
+    public static final double DEFAULT_SCALE = .8;
+    private static final double MAX_SCALE = 1.4;
+    private static final double MIN_SCALE = 0.4;
+    private double scale;
+    
     private final ListProperty<EditionSkill> editionSkills = new SimpleListProperty<>();
-    
-    
     private final SkillTableGridPane gridPane = new SkillTableGridPane(this);
     
-    public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
+    public SkillTableElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, double scale, long assessmentId, long studentId, ArrayList<EditionSkill> editionSkills){
         super(x, y, pageNumber, width, height, RepeatMode.STRETCH, ResizeMode.CORNERS);
+        this.scale = scale; // scale is just a save of the last scale used for this element. It is used in the export process.
         this.assessmentId.set(assessmentId);
         this.studentId.set(studentId);
         this.editionSkills.set(FXCollections.observableList(editionSkills));
@@ -71,6 +77,7 @@ public class SkillTableElement extends GraphicElement{
         gridPane.heightProperty().addListener((observable, oldValue, newValue) -> {
             
             double newHeight;
+            double newLayoutY = getLayoutY();
             if(getRealHeight() == 0){ // Height undefined => Default height
                 newHeight = newValue.doubleValue() * DEFAULT_SCALE;
             }else{
@@ -81,12 +88,28 @@ public class SkillTableElement extends GraphicElement{
                     // Values are not defined => keep the current height.
                     return;
                 }else{
+                    // Values need one more step to fully setting up the element's height.
+                    if(!gridPane.areDimensionsSetup){
+                        Platform.runLater(() -> updateGridPaneScale());
+                       PlatformUtils.runLaterOnUIThread(500, () -> {
+                            gridPane.areDimensionsSetup = true;
+                        });
+                        return;
+                    }
                     // Grow the height of the element as the gridPane height grows
                     newHeight = getHeight() * newValue.doubleValue() / oldValue.doubleValue();
+                    System.out.println("gridPane height changed: " + oldValue.doubleValue() + " -> " + newValue.doubleValue());
+                    // If the user is currently dragging the element, update the origin height & originY.
+                    if(getCursor() == Cursor.S_RESIZE || getCursor() == Cursor.SE_RESIZE || getCursor() == Cursor.SW_RESIZE){
+                        originHeight += newHeight - getHeight();
+                        newLayoutY = originY -= newHeight - getHeight();
+                    }else if(getCursor() == Cursor.N_RESIZE || getCursor() == Cursor.NE_RESIZE || getCursor() == Cursor.NW_RESIZE || getCursor() == Cursor.E_RESIZE || getCursor() == Cursor.W_RESIZE){
+                        originHeight += newHeight - getHeight();
+                    }
                 }
             }
     
-            checkLocation(getLayoutX(), getLayoutY(), getWidth(), newHeight, false);
+            checkLocation(getLayoutX(), newLayoutY, getWidth(), newHeight, false);
             getPage().layout(); // Required to update the visual bounds of the element
             updateGridPaneScale();
         });
@@ -94,16 +117,14 @@ public class SkillTableElement extends GraphicElement{
         Platform.runLater(this::updateGridPaneScale);
         
     }
-    private final double DEFAULT_SCALE = .8;
-    private final double MAX_SCALE = 1.4;
-    private final double MIN_SCALE = 0.4;
-    private void updateGridPaneScale(){
-        double scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+    
+    public void updateGridPaneScale(){
+        this.scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
         // Using scale transform to make sure the pivot point is always (0, 0)
         gridPane.getTransforms().setAll(new Scale(scale, scale));
         // Grid pane width always match the element width, considering the scaling.
         gridPane.setPrefWidth(getWidth() / scale);
-        gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
+        //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
     
         getPage().layout(); // Required to update the visual bounds of the element
     }
@@ -147,6 +168,7 @@ public class SkillTableElement extends GraphicElement{
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
+        data.put("scale", scale);
         data.put("page", pageNumber);
         data.put("assessmentId", assessmentId.get());
         data.put("studentId", studentId.get());
@@ -167,6 +189,8 @@ public class SkillTableElement extends GraphicElement{
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
         
+        float scale = (float) Config.getDouble(data, "scale");
+        
         int page = (int)  Config.getLong(data, "page");
         
         long assessmentId = Config.getLong(data, "assessmentId");
@@ -177,7 +201,7 @@ public class SkillTableElement extends GraphicElement{
             if(skillData instanceof Map) skills.add(EditionSkill.getFromYAML((HashMap<String, Object>) skillData));
         }
         
-        return new SkillTableElement(x, y, page, hasPage, width, height, assessmentId, studentId, skills);
+        return new SkillTableElement(x, y, page, hasPage, width, height, scale, assessmentId, studentId, skills);
     }
     
     
@@ -195,6 +219,10 @@ public class SkillTableElement extends GraphicElement{
     @Override
     protected void onMouseRelease(){
         super.onMouseRelease();
+    }
+    @Override
+    public void simulateReleaseFromResize(){
+        super.simulateReleaseFromResize();
     }
     @Override
     public void onDoubleClick(){
