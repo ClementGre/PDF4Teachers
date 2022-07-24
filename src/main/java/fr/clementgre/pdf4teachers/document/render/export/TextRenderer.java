@@ -5,7 +5,6 @@
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
@@ -25,6 +24,7 @@ import org.apache.pdfbox.pdmodel.interactive.annotation.PDBorderStyleDictionary;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
@@ -38,23 +38,25 @@ public class TextRenderer {
         this.doc = doc;
     }
     
-    public record TextSpecs(float boundsHeight, float boundsWidth, float bottomMargin, float baseLineY,
-                            float realX, float realY, String text, Color color, boolean isURL) {}
+    public record TextSpecs(float boundsHeight, float boundsWidth, float getYTopOrigin, float baseLineY,
+                            float realX, float realY, String text, Color color, boolean isURL, float fontSize) {}
     
     // Returns false if the user cancelled the export process.
-    public boolean drawText(PDPage page, PDPageContentStream contentStream, Map.Entry<String, String> fontEntry, TextSpecs textSpecs, PageSpecs pageSpecs) throws IOException{
+    public boolean drawText(PDPage page, PDPageContentStream cs, Map.Entry<String, String> fontEntry, TextSpecs ts, PageSpecs ps) throws IOException{
         
-        int lineNumber = textSpecs.text().split("\\n").length;
-        double lineHeight = textSpecs.boundsHeight() / lineNumber;
+        int lineNumber = ts.text().split("\\n").length;
+        float lineHeight = ts.boundsHeight() / lineNumber;
         
-        contentStream.setNonStrokingColor(textSpecs.color());
-        contentStream.newLineAtOffset(pageSpecs.startX() + textSpecs.realX() / Element.GRID_WIDTH * pageSpecs.width(),
-                textSpecs.bottomMargin() + pageSpecs.realHeight() - textSpecs.baseLineY() - textSpecs.realY() / Element.GRID_HEIGHT * pageSpecs.height());
+        cs.setNonStrokingColor(ts.color());
+        cs.newLineAtOffset(ps.realXToPDCoo(ts.realX()),
+                ps.realYToPDCoo(ts.realY() + ps.layoutYToReal(ts.baseLineY())));
+        
+        ArrayList<PDRectangle> underlines = new ArrayList<>();
         
         int i = 0;
-        for(String line : textSpecs.text().split("\\n")){
+        for(String line : ts.text().split("\\n")){
             try{
-                contentStream.showText(line);
+                cs.showText(line);
             }catch(IllegalArgumentException e){
                 // A character isn't supported by the current font
     
@@ -65,7 +67,7 @@ public class TextRenderer {
                     return alert.getShowAndWaitIsCancelButton();
                 });
                 if(cancel){
-                    contentStream.endText();
+                    cs.endText();
                     return false;
                 }
                 
@@ -88,46 +90,61 @@ public class TextRenderer {
                         if(canRender(font, c)) newText.append(c);
                         else newText.append(replacements[0]);
                     }
-                    contentStream.showText(newText.toString());
+                    cs.showText(newText.toString());
         
                 }catch(IllegalArgumentException e2){
                     e2.printStackTrace();
                 }
             }
             
-            if(textSpecs.isURL()){
-                final PDAnnotationLink txtLink = new PDAnnotationLink();
-                txtLink.setColor(ExportRenderer.toPDColor(textSpecs.color()));
-                
-                // Border bottom
+            if(ts.isURL()){
+
+                // NO Border effect | PS: the rotation does not rotate the STYLE_UNDERLINE on all client (only Adobe).
+                // On some clients it will not appear correctly. => This is then made manually using lines.
                 final PDBorderStyleDictionary linkBorder = new PDBorderStyleDictionary();
-                
                 linkBorder.setStyle(PDBorderStyleDictionary.STYLE_UNDERLINE);
-                linkBorder.setWidth(2);
-                txtLink.setBorderStyle(linkBorder);
+                linkBorder.setWidth(0);
+
+                // Rectangle
+                PDRectangle position = new PDRectangle();
+                position.setLowerLeftX(ps.realXToPDCoo(ts.realX()));
+                position.setLowerLeftY(ps.realYToPDCoo(ts.realY() + ps.layoutYToReal((i+1)*lineHeight - (lineHeight-ts.baseLineY()) * .83f))); // .78f because the underline is between the bound and the baseline
+                position.setUpperRightX(ps.realXToPDCoo(ts.realX() + ps.layoutXToReal(ts.boundsWidth())));
+                position.setUpperRightY(ps.realYToPDCoo(ts.realY() + ps.layoutYToReal(i*lineHeight)));
+                underlines.add(position);
+                position = ExportRenderer.transformRectangle(position, ps.rotation());
                 
-                // Border color
-                final PDRectangle position = new PDRectangle();
-                position.setLowerLeftX(pageSpecs.startX() + textSpecs.realX() / Element.GRID_WIDTH * pageSpecs.width());
-                position.setLowerLeftY((float) (textSpecs.bottomMargin() + pageSpecs.realHeight() - textSpecs.boundsHeight() + i * lineHeight - textSpecs.realY() / Element.GRID_HEIGHT * pageSpecs.height()));
-                position.setUpperRightX(position.getLowerLeftX() + textSpecs.boundsWidth());
-                position.setUpperRightY((float) (position.getLowerLeftY() + lineHeight));
-                
-                txtLink.setRectangle(position);
-                page.getAnnotations().add(txtLink);
-                
+                // Action (link)
                 PDActionURI action = new PDActionURI();
-                action.setURI(textSpecs.text().replace("\n", "").split(" ")[0]);
+                action.setURI(ts.text().replace("\n", "").split(" ")[0]);
+                
+                // Anotation
+                final PDAnnotationLink txtLink = new PDAnnotationLink();
+                txtLink.setColor(ExportRenderer.toPDColor(ts.color()));
+                txtLink.setBorderStyle(linkBorder);
+                txtLink.setRectangle(position);
                 txtLink.setAction(action);
+    
+                page.getAnnotations().add(txtLink);
             }
             
-            contentStream.newLineAtOffset(0, (float) -lineHeight);
+            cs.newLineAtOffset(0, ps.layoutHToPDCoo(-lineHeight));
             i++;
         }
-        contentStream.endText();
+        cs.endText();
+    
+        cs.setStrokingColor(ts.color());
+        cs.setLineWidth(ps.layoutHToPDCoo(ts.fontSize()/21f));
+        for(PDRectangle rect : underlines){
+            cs.moveTo(rect.getLowerLeftX(), rect.getLowerLeftY());
+            cs.lineTo(rect.getUpperRightX(), rect.getLowerLeftY());
+            cs.stroke();
+        }
+        
         return true;
     }
     
+    // Entry: (Font family | weight and style)
     public Map.Entry<String, String> setContentStreamFont(PDPageContentStream contentStream, Font font, float pageWidth) throws IOException{
         boolean bold = FontUtils.getFontWeight(font) == FontWeight.BOLD;
         boolean italic = FontUtils.getFontPosture(font) == FontPosture.ITALIC;

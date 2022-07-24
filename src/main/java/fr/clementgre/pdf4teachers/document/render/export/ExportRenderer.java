@@ -12,11 +12,13 @@ import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.common.PDStream;
 import org.apache.pdfbox.pdmodel.graphics.color.PDColor;
 import org.apache.pdfbox.pdmodel.graphics.color.PDDeviceRGB;
 import org.apache.pdfbox.util.Matrix;
 
+import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Calendar;
@@ -46,6 +48,7 @@ public class ExportRenderer {
         GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc, textRenderer);
         ImageElementRenderer imageElementRenderer = new ImageElementRenderer(doc, imagesDPI);
         VectorElementRenderer vectorElementRenderer = new VectorElementRenderer(doc);
+        SkillTableElementRenderer skillTableElementRenderer = new SkillTableElementRenderer(doc, textRenderer);
         
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0; pageNumber < doc.getNumberOfPages(); pageNumber++){
@@ -71,14 +74,21 @@ public class ExportRenderer {
                 pageHeight = page.getCropBox().getWidth();
                 pageWidth = page.getCropBox().getHeight();
             }
+    
+            
             
             // ROTATE PAGES ADAPT
-            switch(page.getRotation()){
-                case 90 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0));
-                case 180 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight));
-                case 270 -> contentStream.transform(Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth));
+            Matrix rotation = Matrix.getRotateInstance(0, 0, 0);
+            if(page.getRotation() % 90 == 0){
+                switch((page.getRotation() / 90) % 4){
+                    case 1 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0);
+                    case 2 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight);
+                    case 3 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth);
+                }
             }
-            PageSpecs pageSpecs = new PageSpecs(pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+            System.out.println("Rotation: " + page.getRotation() + " -> " + rotation);
+            contentStream.transform(rotation);
+            PageSpecs pageSpecs = new PageSpecs(pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY, rotation);
             
             for(Element element : elements){
                 
@@ -100,6 +110,8 @@ public class ExportRenderer {
                 }else if(element instanceof VectorElement gElement){
                     if(drawElements)
                         vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                }else if(element instanceof SkillTableElement gElement){
+                    skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs);
                 }
             }
             
@@ -118,5 +130,16 @@ public class ExportRenderer {
     public static PDColor toPDColor(java.awt.Color color){
         final float[] components = new float[]{(float) color.getRed() / 255f, (float) color.getGreen() / 255f, (float) color.getBlue() / 255f};
         return new PDColor(components, PDDeviceRGB.INSTANCE);
+    }
+    
+    public static PDRectangle transformRectangle(PDRectangle rectangle, Matrix matrix){
+        Point2D.Float p0 = matrix.transformPoint(rectangle.getLowerLeftX(), rectangle.getLowerLeftY());
+        Point2D.Float p1 = matrix.transformPoint(rectangle.getUpperRightX(), rectangle.getUpperRightY());
+        PDRectangle newRectangle = new PDRectangle();
+        newRectangle.setLowerLeftX(p0.x);
+        newRectangle.setLowerLeftY(p0.y);
+        newRectangle.setUpperRightX(p1.x);
+        newRectangle.setUpperRightY(p1.y);
+        return newRectangle;
     }
 }

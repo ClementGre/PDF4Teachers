@@ -5,7 +5,6 @@
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
-import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -20,7 +19,7 @@ import java.util.Map;
 public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
     
     // Returns false if the user cancelled the export process.
-    public boolean renderElement(TextElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
+    public boolean renderElement(TextElement element, PDPageContentStream cs, PDPage page, PageSpecs ps) throws IOException{
         
         ////////// LATEX RENDER
         
@@ -32,26 +31,26 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
             
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, element.getLaTeXText());
             
-            float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
-            contentStream.drawImage(pdImage,
-                    pageSpecs.startX() + element.getRealX() / Element.GRID_WIDTH * pageSpecs.width(),
-                    (float) (bottomMargin + pageSpecs.realHeight() - ((pdImage.getHeight() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()) - element.getRealY() / Element.GRID_HEIGHT * pageSpecs.height()),
-                    (float) ((pdImage.getWidth() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()),
-                    (float) ((pdImage.getHeight() / TextElement.RENDER_FACTOR) / 596.0 * pageSpecs.width()));
+            
+            cs.drawImage(pdImage,
+                    ps.realXToPDCoo(element.getRealX()),
+                    ps.realYToPDCoo(element.getRealY() + ps.layoutYToReal(pdImage.getHeight() / TextElement.RENDER_FACTOR)),
+                    ps.layoutWToPDCoo(pdImage.getWidth() / TextElement.RENDER_FACTOR),
+                    ps.layoutHToPDCoo(pdImage.getHeight() / TextElement.RENDER_FACTOR));
             
             return true;
         }
         ////////// TEXT RENDER
         
         element.updateText();
-        float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), bottomMargin,
-                element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getTextNodeText(), element.getAwtColor(), element.isURL());
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.getYTopOrigin(),
+                element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getTextNodeText(), element.getAwtColor(), element.isURL(), (float) element.getFont().getSize());
         
         // FONT
-        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), pageSpecs.width());
+        // Entry: (Font family | weight and style)
+        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, element.getFont(), ps.width());
         // DRAW TEXT
-        return textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
+        return textRenderer.drawText(page, cs, fontEntry, textSpecs, ps);
         
     }
     

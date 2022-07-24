@@ -274,4 +274,7 @@ public class SkillTableElement extends GraphicElement{
     public void setEditionSkills(ObservableList<EditionSkill> editionSkills){
         this.editionSkills.set(editionSkills);
     }
+    public double getScale(){
+        return scale;
+    }
 }

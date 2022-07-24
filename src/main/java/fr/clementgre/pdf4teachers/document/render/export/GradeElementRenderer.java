@@ -16,19 +16,18 @@ import java.util.Map;
 public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
     
     // Returns false if the user cancelled the export process.
-    public boolean renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, PageSpecs pageSpecs) throws IOException{
+    public boolean renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, PageSpecs ps) throws IOException{
         
         if(!element.isShouldVisibleOnExport()) return true;
         
-        
-        float bottomMargin = pageSpecs.realHeight() - pageSpecs.height() - pageSpecs.startY();
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), bottomMargin,
-                element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getText(), element.getAwtColor(), false);
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.getYTopOrigin(),
+                element.getBaseLineY(), (float) element.getRealX(), (float) element.getRealY(), element.getText(), element.getAwtColor(), false, (float) element.getFont().getSize());
         
         // FONT
-        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), pageSpecs.width());
+        // Entry: (Font family | weight and style)
+        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(contentStream, element.getFont(), ps.width());
         // DRAW TEXT
-        return textRenderer.drawText(page, contentStream, fontEntry, textSpecs, pageSpecs);
+        return textRenderer.drawText(page, contentStream, fontEntry, textSpecs, ps);
         
     }
     
