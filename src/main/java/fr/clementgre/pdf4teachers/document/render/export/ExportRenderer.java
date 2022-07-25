@@ -48,7 +48,7 @@ public class ExportRenderer {
         GradeElementRenderer gradeElementRenderer = new GradeElementRenderer(doc, textRenderer);
         ImageElementRenderer imageElementRenderer = new ImageElementRenderer(doc, imagesDPI);
         VectorElementRenderer vectorElementRenderer = new VectorElementRenderer(doc);
-        SkillTableElementRenderer skillTableElementRenderer = new SkillTableElementRenderer(doc, textRenderer);
+        SkillTableElementRenderer skillTableElementRenderer = new SkillTableElementRenderer(doc, textRenderer, imagesDPI);
         
         Element[] elements = Edition.simpleLoad(editFile);
         for(int pageNumber = 0; pageNumber < doc.getNumberOfPages(); pageNumber++){

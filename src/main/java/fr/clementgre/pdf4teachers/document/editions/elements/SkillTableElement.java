@@ -70,7 +70,6 @@ public class SkillTableElement extends GraphicElement{
         // Update the gridPane scale
         widthProperty().addListener((observable) -> updateGridPaneScale());
         heightProperty().addListener((observable) -> updateGridPaneScale());
-    
         
     
         // Update element height when gridPane height changes. (Adding new skill or new row)
@@ -97,6 +96,7 @@ public class SkillTableElement extends GraphicElement{
                     }
                     // Grow the height of the element as the gridPane height grows
                     newHeight = getHeight() * newValue.doubleValue() / oldValue.doubleValue();
+                    
                     // If the user is currently dragging the element, update the origin height & originY.
                     if(getCursor() == Cursor.S_RESIZE || getCursor() == Cursor.SE_RESIZE || getCursor() == Cursor.SW_RESIZE){
                         originHeight += newHeight - getHeight();
@@ -106,7 +106,6 @@ public class SkillTableElement extends GraphicElement{
                     }
                 }
             }
-    
             checkLocation(getLayoutX(), newLayoutY, getWidth(), newHeight, false);
             getPage().layout(); // Required to update the visual bounds of the element
             updateGridPaneScale();
@@ -127,7 +126,7 @@ public class SkillTableElement extends GraphicElement{
         // Grid pane width always match the element width, considering the scaling.
         gridPane.setPrefWidth(getWidth() / scale);
         //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
-        getPage().layout(); // Required to update the visual bounds of the element
+        //getPage().layout(); // Required to update the visual bounds of the element
     }
     
     @Override
@@ -137,7 +136,7 @@ public class SkillTableElement extends GraphicElement{
         super.checkLocation(itemX, itemY, width, height, allowSwitchPage);
         
         // HEIGHT - min and max scale
-        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio())) return;
+        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio()) || !gridPane.areDimensionsSetup) return;
         double scale = getPage().fromGridY(getRealHeight()) / gridPane.getHeight(); // Not clamped
         double clampedScale = StringUtils.clamp(scale, MIN_SCALE, MAX_SCALE);
         if(scale != clampedScale){

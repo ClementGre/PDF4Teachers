@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,8 +7,8 @@ package fr.clementgre.pdf4teachers.utils;
 
 public class DPIManager{
     
-    // 1 in = 25.4 mm
-    // The width of 1 cm
+    
+    // The width of 1 cm, must be updated via the methods below.
     private double oneCmWidth = 1;
     
     private final int dpi;
@@ -29,7 +29,7 @@ public class DPIManager{
     
     public int getPixelsLength(double width){
         double mmWidth = 10d * width / oneCmWidth;
-    
+        // 1 in = 25.4 mm
         return (int) (dpi * mmWidth / 25.4);
     }
 }

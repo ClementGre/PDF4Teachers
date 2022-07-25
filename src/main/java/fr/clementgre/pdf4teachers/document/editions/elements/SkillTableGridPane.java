@@ -170,7 +170,7 @@ public class SkillTableGridPane extends GridPane {
         }
     }
     
-    private static class NotationLegend{
+    public static class NotationLegend{
         public static final int BLOCK_SPACING = 8;
         public static final int GRAPH_SIZE = 14;
         public static final int G_T_SPACING = 3;

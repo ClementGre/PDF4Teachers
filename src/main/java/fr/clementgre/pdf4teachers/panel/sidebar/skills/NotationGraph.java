@@ -9,8 +9,11 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -114,4 +117,13 @@ public class NotationGraph extends Pane {
         }
     }
     
+    public Image isolatedSnapshot(){
+        return PlatformUtils.runAndWait(() ->{
+            new Scene(this, size, size);
+            
+            SnapshotParameters sn = new SnapshotParameters();
+            sn.setFill(Color.TRANSPARENT);
+            return snapshot(sn, null);
+        });
+    }
 }
