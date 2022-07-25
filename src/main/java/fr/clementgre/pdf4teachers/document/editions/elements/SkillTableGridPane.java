@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.document.editions.elements;
 
+import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
@@ -65,10 +66,7 @@ public class SkillTableGridPane extends GridPane {
         addHeaderLabel(1, TR.tr("skillTableElement.header.grade"));
         
         AtomicInteger i = new AtomicInteger();
-        assessment.getSkills().forEach(skill -> {
-            EditionSkill editionSkill = element.getEditionSkills().stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
-            skillLines.add(new SkillLine(skill, editionSkill, i.incrementAndGet(), this, assessment));
-        });
+        assessment.getSkills().forEach(skill -> skillLines.add(new SkillLine(skill, i.incrementAndGet(), this, assessment)));
         if(i.get() == 0){
             setVisible(false);
             if(element.isSelected()) MainWindow.mainScreen.setSelected(null);
@@ -128,13 +126,13 @@ public class SkillTableGridPane extends GridPane {
     
     private static class SkillLine{
     
-        private final EditionSkill editionSkill;
+        private final Skill skill;
         private final SkillsAssessment assessment;
         private final int y;
         private final SkillTableGridPane gridPane;
         private Pane graphPane;
-        public SkillLine(Skill skill, EditionSkill editionSkill, int y, SkillTableGridPane gridPane, SkillsAssessment assessment){
-            this.editionSkill = editionSkill;
+        public SkillLine(Skill skill, int y, SkillTableGridPane gridPane, SkillsAssessment assessment){
+            this.skill = skill;
             this.assessment = assessment;
             this.y = y;
             this.gridPane = gridPane;
@@ -156,10 +154,10 @@ public class SkillTableGridPane extends GridPane {
         
         public void updateNotation(){
             gridPane.getChildren().remove(graphPane);
-    
             graphPane = getGridCellPane(false, false);
-            Notation notation = null;
-            if(editionSkill != null) notation = editionSkill.getMatchingNotation(assessment);
+            
+            EditionSkill editionSkill = MainWindow.skillsTab.getSkillTableElement().getEditionSkills().stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
+            Notation notation = editionSkill == null ? null : editionSkill.getMatchingNotation(assessment);
             if(notation != null){
                 Region notationGraph = new NotationGraph(1.3, MainWindow.skillsTab.getCurrentAssessment().getNotationType(), notation, true);
                 graphPane.getChildren().setAll(notationGraph);
@@ -239,7 +237,7 @@ public class SkillTableGridPane extends GridPane {
         return getText(text, bold,11, x, y);
     }
     private static Text getText(String text, boolean bold, int fontSize, int x, int y){
-        Text textText = new Text(text);
+        Text textText = new ScratchText(text);
         textText.setBoundsType(TextBoundsType.LOGICAL);
         textText.setTextOrigin(VPos.TOP);
         textText.setFont(FontUtils.getDefaultFont(false, bold, fontSize));

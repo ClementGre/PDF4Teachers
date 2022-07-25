@@ -140,6 +140,7 @@ public class NotationsListingPane extends Tab {
             notationRow.fillLineWithNotation(grid, row, () -> { // Delete notation
                 window.getAssessment().getNotations().remove(notation);
                 updateGrid();
+                grid.requestFocus();
             }, () -> { // Get next row NotationRow to select field
                 return (notationRows.size() > finalRow) ? notationRows.get(finalRow) : null;
             });
@@ -155,6 +156,7 @@ public class NotationsListingPane extends Tab {
             Notation notation = new Notation(window.getAssessment());
             window.getAssessment().getNotations().add(notation);
             updateGrid();
+            grid.requestFocus();
         });
         grid.add(addNotationButton, 0, row, 5, 1);
         row++;
@@ -282,7 +284,7 @@ public class NotationsListingPane extends Tab {
                     if(file == null || !file.exists()) return;
                     
                     try{
-                        notation.setData(ImageUtils.imageToBase64(ImageUtils.resizeImageToSquare(ImageIO.read(file), 40)));
+                        notation.setData(ImageUtils.imageToBase64(ImageUtils.resizeImageToSquare(ImageIO.read(file), 50)));
                         graph.updateGraph(assessment.getNotationType(), notation, false);
                     }catch(IOException ex){
                         ex.printStackTrace();

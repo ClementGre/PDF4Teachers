@@ -112,7 +112,7 @@ public class NotationGraph extends Pane {
             imageView.setLayoutX(leftRight);
             imageView.setLayoutY(topBottom);
     
-            setStyle(style);
+            setStyle(style + "-fx-background-color: transparent;");
             getChildren().add(imageView);
         }
     }

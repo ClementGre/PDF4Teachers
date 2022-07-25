@@ -126,7 +126,7 @@ public class SkillTableElement extends GraphicElement{
         // Grid pane width always match the element width, considering the scaling.
         gridPane.setPrefWidth(getWidth() / scale);
         //gridPane.setClip(new Rectangle(getWidth()/scale, getHeight()/scale));
-        //getPage().layout(); // Required to update the visual bounds of the element
+        getPage().layout(); // Required to update the visual bounds of the element
     }
     
     @Override
@@ -160,6 +160,10 @@ public class SkillTableElement extends GraphicElement{
     public void addedToDocument(boolean markAsUnsave){
         MainWindow.skillsTab.registerSkillTableElement(this);
         updateLayout();
+    }
+    @Override
+    protected void setupMenu(){
+        // No menu
     }
     @Override
     public void removedFromDocument(boolean markAsUnsave){

@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
+import fr.clementgre.pdf4teachers.components.ScratchText;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -192,7 +193,7 @@ public class SkillTableElementRenderer{
         Font font = FontUtils.getDefaultFont(false, bold, 11);
         text = new TextWrapper(text, font, (int) maxWidth).wrap();
         
-        Text textText = new Text(text);
+        Text textText = new ScratchText(text);
         textText.setBoundsType(TextBoundsType.LOGICAL);
         textText.setTextOrigin(VPos.TOP);
         textText.setFont(font);
@@ -224,7 +225,7 @@ public class SkillTableElementRenderer{
     }
     private Text getText(String text, boolean bold, float fontSize){
         Font font = FontUtils.getDefaultFont(false, bold, fontSize);
-        Text textText = new Text(text);
+        Text textText = new ScratchText(text);
         textText.setBoundsType(TextBoundsType.LOGICAL);
         textText.setTextOrigin(VPos.TOP);
         textText.setFont(font);
