@@ -95,10 +95,12 @@
 
 .bordered-grid-cell {
     -fx-background-color: black, white;
+    -fx-opacity: 0.5;
     -fx-background-insets: 0, 0 1 1 0 ;
     -fx-padding: 0 1 1 0;
 }
 .bordered-grid-cell.first-row {
+    -fx-background-color: black, #e8e8e8;
     -fx-background-insets: 0, 1 1 1 0;
     -fx-padding: 1 1 1 0;
 }

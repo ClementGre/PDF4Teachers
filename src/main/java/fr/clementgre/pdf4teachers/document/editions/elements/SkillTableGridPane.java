@@ -25,9 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkillTableGridPane extends GridPane {
     
-    private static final int H_PADDING = 5;
-    private static final int V_PADDING = 2;
-    private static final int TEXT_HEIGHT = 16;
+    public static final int H_PADDING = 5;
+    public static final int V_PADDING = 2;
+    public static final int TEXT_HEIGHT = 16;
     
     public boolean areDimensionsSetup = false;
     public Pane legend;
@@ -220,8 +220,6 @@ public class SkillTableGridPane extends GridPane {
             acrText.setText(wrap(header, acrText.getFont(), (int) pane.getWidth()));
             pane.setPrefHeight(acrText.getLayoutBounds().getHeight() + 2*V_PADDING);
         });
-        
-        pane.setStyle("-fx-background-color: black, #e8e8e8");
         pane.getChildren().add(acrText);
         add(pane, x, 0);
     }

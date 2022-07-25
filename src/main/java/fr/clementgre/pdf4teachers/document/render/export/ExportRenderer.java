@@ -86,7 +86,6 @@ public class ExportRenderer {
                     case 3 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth);
                 }
             }
-            System.out.println("Rotation: " + page.getRotation() + " -> " + rotation);
             contentStream.transform(rotation);
             PageSpecs pageSpecs = new PageSpecs(pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY, rotation);
             
