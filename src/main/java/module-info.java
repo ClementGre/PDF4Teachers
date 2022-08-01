@@ -63,6 +63,8 @@ open module fr.clementgre.pdf4teachers {
     
     exports fr.clementgre.pdf4teachers;
     exports fr.clementgre.pdf4teachers.components;
+    exports fr.clementgre.pdf4teachers.components.menus;
+    exports fr.clementgre.pdf4teachers.components.autocompletiontextfield;
     exports fr.clementgre.pdf4teachers.datasaving;
     exports fr.clementgre.pdf4teachers.datasaving.settings;
     exports fr.clementgre.pdf4teachers.document;
@@ -73,6 +75,9 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.panel;
     exports fr.clementgre.pdf4teachers.panel.MainScreen;
     exports fr.clementgre.pdf4teachers.panel.sidebar;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.skills;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
+    exports fr.clementgre.pdf4teachers.panel.sidebar.skills.parsers;
     exports fr.clementgre.pdf4teachers.panel.sidebar.files;
     exports fr.clementgre.pdf4teachers.panel.sidebar.texts;
     exports fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections;
@@ -93,13 +98,11 @@ open module fr.clementgre.pdf4teachers {
     exports fr.clementgre.pdf4teachers.utils.exceptions;
     exports fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
     exports fr.clementgre.pdf4teachers.utils.dialogs.alerts;
-    exports fr.clementgre.pdf4teachers.components.menus;
     exports fr.clementgre.pdf4teachers.interfaces.windows.settings;
     exports fr.clementgre.pdf4teachers.utils.svg;
     exports fr.clementgre.pdf4teachers.utils.panes;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine;
     exports fr.clementgre.pdf4teachers.utils.locking;
     exports fr.clementgre.pdf4teachers.document.editions.undoEngine.pages;
-    exports fr.clementgre.pdf4teachers.components.autocompletiontextfield;
 }
     

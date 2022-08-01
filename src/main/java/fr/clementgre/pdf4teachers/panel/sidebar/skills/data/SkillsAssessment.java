@@ -69,15 +69,19 @@ public class SkillsAssessment {
     
     public static SkillsAssessment loadFromConfig(HashMap<String, Object> map){
         return new SkillsAssessment(
+                Config.getLong(map, "id"),
                 Config.getString(map, "name"),
                 Config.getString(map, "date"),
                 Config.getString(map, "class"),
+                (int) Config.getLong(map, "prefPage"),
+                (int) Config.getLong(map, "prefRealX"),
+                (int) Config.getLong(map, "prefRealY"),
+                (int) Config.getLong(map, "prefWidth"),
+                (float) Config.getDouble(map, "prefScale"),
                 Notation.NotationType.valueOf(Config.getString(map, "notationType")),
                 getSkillsFromConfig(Config.getList(map, "skills")),
                 getNotationsFromConfig(Config.getList(map, "notations")),
-                getStudentsFromConfig(Config.getList(map, "students")),
-                Config.getLong(map, "id")
-        );
+                getStudentsFromConfig(Config.getList(map, "students")));
     }
     private static ArrayList<Skill> getSkillsFromConfig(List<Object> list){
         return new ArrayList<>(list.stream().filter(d -> d instanceof HashMap).map(s -> Skill.loadFromConfig((HashMap) s)).toList());
@@ -118,6 +122,11 @@ public class SkillsAssessment {
     private String name;
     private String date;
     private String clasz;
+    private int prefPage;
+    private int prefRealX;
+    private int prefRealY;
+    private int prefWidth;
+    private float prefScale;
     private Notation.NotationType notationType;
     private final ArrayList<Skill> skills;
     private final ArrayList<Notation> notations;
@@ -127,29 +136,38 @@ public class SkillsAssessment {
     public SkillsAssessment(){
         this("", "", "");
     }
-    public SkillsAssessment(String name){
-        this(name, "", "");
-    }
     public SkillsAssessment(String name, String date, String clasz){
-        this(name, date, clasz, getDefaultNotationsType(), new ArrayList<>(), getDefaultNotations(), new ArrayList<>(), getNewSkillsAssessmentUniqueId());
+        this(getNewSkillsAssessmentUniqueId(), name, date, clasz, getDefaultNotationsType(), new ArrayList<>(), getDefaultNotations(), new ArrayList<>());
     }
-    public SkillsAssessment(String name, String date, String clasz, Notation.NotationType notationType, ArrayList<Skill> skills, ArrayList<Notation> notations, ArrayList<Student> students, long id){
+    public SkillsAssessment(long id, String name, String date, String clasz, Notation.NotationType notationType, ArrayList<Skill> skills, ArrayList<Notation> notations, ArrayList<Student> students){
+        this(id, name, date, clasz, 0, -1, -1, -1, 0, notationType, skills, notations, students);
+    }
+    public SkillsAssessment(long id, String name, String date, String clasz, int prefPage, int prefRealX, int prefRealY, int prefWidth, float prefScale, Notation.NotationType notationType, ArrayList<Skill> skills, ArrayList<Notation> notations, ArrayList<Student> students){
+        this.id = id;
         this.name = name;
         this.date = date;
         this.clasz = clasz;
+        this.prefPage = prefPage;
+        this.prefRealX = prefRealX;
+        this.prefRealY = prefRealY;
+        this.prefWidth = prefWidth;
+        this.prefScale = prefScale;
         this.notationType = notationType;
         this.skills = skills;
         this.notations = notations;
         this.students = students;
-        this.id = id;
     }
-    
     public LinkedHashMap<String, Object> toYAML(){
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("id", id);
         map.put("name", name);
         map.put("date", date);
         map.put("class", clasz);
+        map.put("prefPage", prefPage);
+        map.put("prefRealX", prefRealX);
+        map.put("prefRealY", prefRealY);
+        map.put("prefWidth", prefWidth);
+        map.put("prefScale", prefScale);
         map.put("notationType", notationType.name());
         map.put("skills", skillsToYAML(skills));
         map.put("notations", notationsToYAML(notations));
@@ -198,5 +216,35 @@ public class SkillsAssessment {
     }
     public long getId(){
         return id;
+    }
+    public int getPrefPage(){
+        return prefPage;
+    }
+    public void setPrefPage(int prefPage){
+        this.prefPage = prefPage;
+    }
+    public int getPrefRealX(){
+        return prefRealX;
+    }
+    public void setPrefRealX(int prefRealX){
+        this.prefRealX = prefRealX;
+    }
+    public int getPrefRealY(){
+        return prefRealY;
+    }
+    public void setPrefRealY(int prefRealY){
+        this.prefRealY = prefRealY;
+    }
+    public int getPrefWidth(){
+        return prefWidth;
+    }
+    public void setPrefWidth(int prefWidth){
+        this.prefWidth = prefWidth;
+    }
+    public float getPrefScale(){
+        return prefScale;
+    }
+    public void setPrefScale(float prefScale){
+        this.prefScale = prefScale;
     }
 }

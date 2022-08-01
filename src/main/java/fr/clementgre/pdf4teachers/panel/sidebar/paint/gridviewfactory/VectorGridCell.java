@@ -107,11 +107,14 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             setContextMenu(null);
             setOnDragDetected(null);
     
-            Region icon = SVGPathIcons.generateImage(SVGPathIcons.PENCIL, "#0078d7", (int) getHeight()/2);
+            double height = getHeight() == 0 ? 47.5 : getHeight();
+            double width = getWidth() == 0 ? 47.5 : getWidth();
+    
+            Region icon = SVGPathIcons.generateImage(SVGPathIcons.PENCIL, "#0078d7", (int) (height/2));
             icon.maxWidthProperty().bind(icon.heightProperty());
             
             Text label = new Text(TR.tr("actions.new"));
-            label.setStyle("-fx-font-size: " + (12 * getWidth()/65) + "; -fx-background-color: red;");
+            label.setStyle("-fx-font-size: " + (12 * width/65) + "; -fx-background-color: red;");
             label.setTextAlignment(TextAlignment.CENTER);
             
             VBox root = new VBox(icon, label);

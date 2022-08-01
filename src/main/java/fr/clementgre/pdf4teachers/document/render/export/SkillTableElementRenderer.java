@@ -32,7 +32,6 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -179,10 +178,8 @@ public class SkillTableElementRenderer{
         BufferedImage bImg = SwingFXUtils.fromFXImage(image, null);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ImageIO.write(bImg, "png", bos);
-        ImageIO.write(bImg, "png", new File("C:\\Users\\Clement\\Downloads\\test.png"));
         byte[] data = bos.toByteArray();
         PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, "SkillTableElementRenderer image");
-        
         
         cs.drawImage(pdImage, innerXToPD(x), innerYToPD(y+height), innerWToPD(width), innerHToPD(height));
     }

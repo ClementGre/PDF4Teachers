@@ -649,7 +649,6 @@ public class PageRenderer extends Pane {
             if(imagesMenuItem != null) menu.getItems().add(imagesMenuItem);
         }
         
-        
         NodeMenuItem.setupMenu(menu);
         menu.show(this, screenX, screenY);
     }

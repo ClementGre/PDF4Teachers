@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,7 +11,6 @@ import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.stage.Stage;
-import javafx.stage.Window;
 
 public class StagesUtils {
     

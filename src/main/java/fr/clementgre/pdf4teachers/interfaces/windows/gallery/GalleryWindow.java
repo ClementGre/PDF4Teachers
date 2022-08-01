@@ -20,6 +20,7 @@ import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -146,8 +147,13 @@ public class GalleryWindow extends Stage {
         
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(settings, list);
-        list.addItems(getImages(list));
-        updateMessage();
+        // Necessary because of a bug in controlsfx GridView
+        // https://github.com/controlsfx/controlsfx/issues/1400
+        List<ImageGridElement> images = getImages(list);
+        Platform.runLater(() -> {
+            list.addItems(images);
+            updateMessage();
+        });
     }
     
     private void updateMessage(){

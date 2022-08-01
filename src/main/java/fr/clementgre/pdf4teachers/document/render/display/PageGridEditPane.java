@@ -57,11 +57,11 @@ public class PageGridEditPane extends Pane {
     
         Region leftRect = new Region();
         Region leftIcon = SVGPathIcons.generateImage(SVGPathIcons.UNDO, "#e4e4e4", padding, rectDim);
-        setupCorner(rectDim, padding, factor, leftRect, leftIcon, false);
+        setupCorner(rectDim, factor, leftRect, leftIcon, false);
         
         Region rightRect = new Region();
         Region rightIcon = SVGPathIcons.generateImage(SVGPathIcons.REDO, "#e4e4e4", padding, rectDim);
-        setupCorner(rectDim, padding, factor, rightRect, rightIcon, true);
+        setupCorner(rectDim, factor, rightRect, rightIcon, true);
         
         getChildren().setAll(leftRect, rightRect, leftIcon, rightIcon);
         if(!page.getChildren().contains(this)) page.getChildren().add(this);
@@ -70,7 +70,7 @@ public class PageGridEditPane extends Pane {
         else setOpacity(1);
     }
     
-    private void setupCorner(int rectDim, int padding, double factor, Region rect, Region icon, boolean right){
+    private void setupCorner(int rectDim, double factor, Region rect, Region icon, boolean right){
         rect.setCursor(Cursor.HAND);
         if(right) rect.setLayoutX(PageRenderer.PAGE_WIDTH - rectDim);
         rect.setPrefWidth(rectDim);
@@ -78,8 +78,7 @@ public class PageGridEditPane extends Pane {
         rect.setStyle("-fx-background-color: rgba(0, 0, 0, .5); -fx-background-radius: 0 0 " + (right ? 0 : 5/factor) + " " + (right ? 5/factor : 0) + ";");
         
         icon.setMouseTransparent(true);
-        icon.setLayoutX(padding + (right ? PageRenderer.PAGE_WIDTH - rectDim : 0));
-        icon.setLayoutY(padding);
+        icon.setLayoutX(right ? PageRenderer.PAGE_WIDTH - rectDim : 0);
         
         rect.setOnMouseEntered(e -> icon.setEffect(new ColorAdjust(0, 0, 1, 0)));
         rect.setOnMouseExited(e -> icon.setEffect(null));

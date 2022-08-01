@@ -110,7 +110,9 @@ public class ExportRenderer {
                     if(drawElements)
                         vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }else if(element instanceof SkillTableElement gElement){
-                    skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs);
+                    if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
+                        doc.close(); return false;
+                    }
                 }
             }
             

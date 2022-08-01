@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGrid
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridView;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.DefaultFavoriteVectors;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Slider;
@@ -118,9 +119,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         vectors.sort(VectorGridElement::compareUseWith);
         vectors = vectors.subList(0, Math.min(7, vectors.size()));
         vectors = vectors.stream().map(VectorGridElement::clone).toList();
-        
-        list.addItems(vectors);
-        list.addItems(Collections.singletonList(new VectorGridElement(true)));
+    
         HBox root = new HBox(list);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         // 12 is the default cell horizontal padding
@@ -136,8 +135,17 @@ public class VectorListPane extends ListPane<VectorGridElement>{
                 item.getParentPopup().hide();
             }
         });
+    
+        // Necessary because of a bug in controlsfx GridView
+        // https://github.com/controlsfx/controlsfx/issues/1400
+        List<VectorGridElement> finalVectors = vectors;
+        Platform.runLater(() -> {
+            list.addItems(finalVectors);
+            list.addItems(Collections.singletonList(new VectorGridElement(true)));
+        });
         
         return item;
     }
+    
     
 }

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -30,7 +31,7 @@ public class SkillTableElement extends GraphicElement{
     private final LongProperty assessmentId = new SimpleLongProperty();
     private final LongProperty studentId = new SimpleLongProperty();
     
-    public static final double DEFAULT_SCALE = .8;
+    public double defaultScale = .8;
     private static final double MAX_SCALE = 1.4;
     private static final double MIN_SCALE = 0.4;
     private double scale;
@@ -64,7 +65,26 @@ public class SkillTableElement extends GraphicElement{
         setupGeneral(gridPane);
         
         if(getRealWidth() == 0 && getRealHeight() == 0){
-            checkLocation(getPage().fromGridX(22700), getPage().fromGridX(22700), getPage().fromGridX(120000), 0, false);
+            // Default size
+            SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId.get()).findFirst().orElse(null);
+            
+            if(assessment != null && getPageNumber() != assessment.getPrefPage()){
+                switchPage(assessment.getPrefPage());
+                Platform.runLater(() -> switchPage(assessment.getPrefPage()));
+            }
+            int realX = assessment == null || assessment.getPrefRealX() < 0 ? 22700 : assessment.getPrefRealX();
+            int realY = assessment == null || assessment.getPrefRealY() < 0 ? 22700 : assessment.getPrefRealY();
+            int realWidth = assessment == null || assessment.getPrefWidth() < 0 ? 120000 : assessment.getPrefWidth();
+            
+            checkLocation(getPage().fromGridX(realX), getPage().fromGridY(realY), getPage().fromGridX(Math.max(6000, realWidth)), 0, false);
+            
+            if(assessment != null && assessment.getPrefScale() > 0){
+                defaultScale = assessment.getPrefScale();
+                Platform.runLater(() -> updateGridPaneScale(defaultScale));
+            }
+            else Platform.runLater(this::updateGridPaneScale);
+        }else{
+            Platform.runLater(this::updateGridPaneScale);
         }
     
         // Update the gridPane scale
@@ -78,8 +98,8 @@ public class SkillTableElement extends GraphicElement{
             double newHeight;
             double newLayoutY = getLayoutY();
             if(getRealHeight() == 0){ // Height undefined => Default height
-                newHeight = newValue.doubleValue() * DEFAULT_SCALE;
-                updateGridPaneScale(DEFAULT_SCALE);
+                newHeight = newValue.doubleValue() * defaultScale;
+                updateGridPaneScale(defaultScale);
                 gridPane.areDimensionsSetup = true;
             }else{
                 if(newValue.doubleValue() == 0){
@@ -110,9 +130,6 @@ public class SkillTableElement extends GraphicElement{
             getPage().layout(); // Required to update the visual bounds of the element
             updateGridPaneScale();
         });
-        
-        Platform.runLater(this::updateGridPaneScale);
-        
     }
     
     public void updateGridPaneScale(){
@@ -168,10 +185,23 @@ public class SkillTableElement extends GraphicElement{
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
+        saveDefaultSize();
     }
     @Override
     public void delete(boolean markAsUnsave, UType undoType){
         // SkillTableElement can't be deleted and should always be kept.
+    }
+    
+    public void saveDefaultSize(){
+        SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId.get()).findFirst().orElse(null);
+        if(assessment != null) saveDefaultSize(assessment);
+    }
+    public void saveDefaultSize(SkillsAssessment assessment){
+        assessment.setPrefPage(getPageNumber());
+        assessment.setPrefRealX(getRealX());
+        assessment.setPrefRealY(getRealY());
+        assessment.setPrefWidth(getRealWidth());
+        assessment.setPrefScale((float) getScale());
     }
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
@@ -227,6 +257,7 @@ public class SkillTableElement extends GraphicElement{
     @Override
     protected void onMouseRelease(){
         super.onMouseRelease();
+        saveDefaultSize(); // Resized
     }
     @Override
     public void simulateReleaseFromResize(){

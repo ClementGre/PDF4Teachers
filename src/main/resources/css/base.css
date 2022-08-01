@@ -95,7 +95,7 @@
 
 .bordered-grid-cell {
     -fx-background-color: black, white;
-    -fx-opacity: 0.5;
+    /*-fx-opacity: 0.5;*/
     -fx-background-insets: 0, 0 1 1 0 ;
     -fx-padding: 0 1 1 0;
 }

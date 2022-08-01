@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -14,6 +14,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridE
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridView;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ShapesGridView;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -138,7 +139,6 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         images = images.subList(0, Math.min(8, images.size()));
         //images = images.stream().map(ImageGridElement::clone).toList();
         
-        list.addItems(images);
         HBox root = new HBox(list);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         // 12 is the default cell horizontal padding
@@ -153,6 +153,13 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             if(item.getParentPopup() != null){
                 item.getParentPopup().hide();
             }
+        });
+    
+        // Necessary because of a bug in controlsfx GridView
+        // https://github.com/controlsfx/controlsfx/issues/1400
+        List<ImageGridElement> finalImages = images;
+        Platform.runLater(() -> {
+            list.addItems(finalImages);
         });
         
         return item;
