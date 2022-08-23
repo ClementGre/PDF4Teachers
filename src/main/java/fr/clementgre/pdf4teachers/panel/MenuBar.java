@@ -639,7 +639,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         if(isSystemMenuBarSupported()){
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
-            if(keyCombinaison != null) menuItem.setAccelerator(keyCombinaison);
+            if(keyCombinaison != null){
+                if(!Main.isOSX() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
+            }
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
             }

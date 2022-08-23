@@ -7,7 +7,7 @@ plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
-    id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+    id 'org.openjfx.javafxplugin' version '0.0.13'
     id "de.jjohannes.extra-java-module-info" version "0.8"
 }
 repositories {
@@ -103,6 +103,8 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 // set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32
 // $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32"
 def win32 = false
+def aarch64 = System.getProperty("os.arch") == "aarch64"
+
 
 version = "1.3.2"
 description = "PDF students assessments editor"
@@ -169,6 +171,7 @@ jlink {
             if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-17-Full
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
         }
+        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/azul-17.0.4/Contents/Home')
         else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
         else if(os.linux) javaHome.set('/opt/jdk-17')
         System.out.println("Using JDK: ".concat(javaHome.get()))
@@ -217,7 +220,7 @@ jlink {
     mergedModule{
 
         // JBig2
-        uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge"
+        //uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge"
         uses "org.apache.pdfbox.jbig2.util.cache.CacheBridge"
 
         // Generated automatically by gradle
@@ -261,7 +264,7 @@ jlink {
                 'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO'
         provides 'javax.imageio.spi.ImageInputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageInputStreamSpi'
         provides 'javax.xml.transform.URIResolver' with 'org.apache.xmlgraphics.util.uri.DataURIResolver'
-        provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge'
+        //provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge'
         provides 'javax.imageio.spi.ImageWriterSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi',
