@@ -168,6 +168,8 @@ public class UserData {
     public Color splitPdfMatchColor = Color.CYAN;
     @UserDataObject(path = "splitPdf.sensibility")
     public int splitSensibility = 50;
+    @UserDataObject(path = "splitPdf.keepSelectedPages")
+    public boolean splitPdfKeepSelectedPages = false;
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")
@@ -209,6 +211,7 @@ public class UserData {
     }, "userData AutoSaver");
     
     private static final ArrayList<SimpleConfig> simpleConfigs = new ArrayList<>();
+    
     public static void registerSimpleConfig(SimpleConfig simpleConfig){
         simpleConfigs.add(simpleConfig);
     }

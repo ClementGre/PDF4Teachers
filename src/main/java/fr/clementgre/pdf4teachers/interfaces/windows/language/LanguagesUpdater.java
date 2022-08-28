@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -178,13 +178,13 @@ public class LanguagesUpdater {
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(true);
+                con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
                 if(Main.DEBUG){
                     int responseCode = con.getResponseCode();
                     System.out.println("updating language with response code " + responseCode);
                     if(responseCode != 200) System.out.println(con.getResponseMessage());
                 }
-                
                 
                 JsonFactory jfactory = new JsonFactory();
                 JsonParser jParser = jfactory.createParser(con.getInputStream());

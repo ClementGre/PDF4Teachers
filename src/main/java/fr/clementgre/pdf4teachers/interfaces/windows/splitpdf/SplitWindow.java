@@ -38,6 +38,8 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     private final ColorPicker colorPicker = new ColorPicker(MainWindow.userData.splitPdfMatchColor);
     private final Slider slider = new Slider(0, 100, MainWindow.userData.splitSensibility);
     
+    private final CheckBox doKeepSelectedPages = new CheckBox(TR.tr("splitWindow.checkbox.keepSelectedPages"));
+    
     private final Button ok = new Button(TR.tr("actions.generate"));
     
     private final SplitEngine engine = new SplitEngine(this);
@@ -94,6 +96,17 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             
             root.getChildren().addAll(generateInfo(TR.tr("splitPdfWindow.signalPage"), true), signalPage, info);
         }
+    
+        // Options
+        
+        doKeepSelectedPages.setSelected(MainWindow.userData.splitPdfKeepSelectedPages);
+        doKeepSelectedPages.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            updateStatus();
+            MainWindow.userData.splitPdfKeepSelectedPages = newValue;
+        });
+        root.getChildren().addAll(generateInfo(TR.tr("options.title"), true), doKeepSelectedPages);
+        
+        // Buttons
         
         Button cancel = new Button(TR.tr("actions.cancel"));
         cancel.setOnAction(event -> close());
@@ -112,7 +125,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             }
         });
     
-        if(!selection) engine.updateDetectedPages(this::updateStatus);
+        if(!selection) engine.updatePagesColors(this::updateStatus);
     }
     @Override
     public void afterShown(){
@@ -159,6 +172,10 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         }catch(IOException e) {
             e.printStackTrace();
         }
+    }
+    
+    public boolean doKeepSelectedPages(){
+        return doKeepSelectedPages.isSelected();
     }
     
     public int getNamesCount(){

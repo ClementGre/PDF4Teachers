@@ -127,7 +127,7 @@ public class SplitEngine {
         });
     }
     
-    public void updateDetectedPages(CallBack callBack){
+    public void updatePagesColors(CallBack callBack){
         new Thread(() -> {
             for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
                 BufferedImage image = MainWindow.mainScreen.document.pdfPagesRender.renderPageBasic(page.getPage(), 12, (int) (12 / page.getRatio()));
@@ -141,6 +141,7 @@ public class SplitEngine {
         }, "Detect noticeable pages").start();
     }
     
+    // Get uniques colors of pages for propositions in the color chooser
     private List<Color> getColorsUnique(){
     
         List<Color> colors = new ArrayList<>(this.colors);
@@ -156,27 +157,34 @@ public class SplitEngine {
         return colors;
     }
     
+    // Update the sections bounds
     public int countMatchPages(){
+        int lastPage = MainWindow.mainScreen.document.totalPages - 1;
+        
         if(splitWindow.selection){
             sectionsBounds.clear();
             List<Integer> selected = MainWindow.mainScreen.document.getSelectedPages().stream().sorted().toList();
-            int max = MainWindow.mainScreen.document.totalPages - 1;
-            
-            if(selected.get(0) != 0) sectionsBounds.add(0);
+    
+            if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(0);
+            else if(selected.get(0) != 0) sectionsBounds.add(0);
     
             int lastSelected = -1;
             for(Integer page : selected){
-                if(lastSelected != page-1){ // Last page not selected -> end of section
+    
+                // Last page not selected -> end of section (and start of next section if option selected).
+                if(lastSelected != page-1){
                     sectionsBounds.add(page-1);
+    
+                    // Reopen a new section right after closing the last one (including the selected page in the next section).
+                    if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(page);
                 }
-                if(!selected.contains(page+1) && page+1 <= max){ // Next page not selected -> start of section
+                
+                // Next page not selected -> start of section
+                if(!splitWindow.doKeepSelectedPages() && !selected.contains(page+1) && page+1 <= lastPage){
                     sectionsBounds.add(page+1);
                 }
                 lastSelected = page;
             }
-    
-            if(selected.get(selected.size()-1) != max) sectionsBounds.add(max);
-            
         }else{
             if(colors.isEmpty()) return -1;
     
@@ -185,26 +193,32 @@ public class SplitEngine {
             sectionsBounds.clear();
             MainWindow.mainScreen.document.clearSelectedPages();
     
+            if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(0);
             int i = 0;
-            boolean doLastPageDetected = true;
+            boolean hasLastPageMatched = true;
             for(Color color : colors){
         
                 double diff = getColorDiff(color, match);
-                if(diff < sensibility){
-                    if(!doLastPageDetected) sectionsBounds.add(i-1); // End of section
-                    doLastPageDetected = true;
+                if(diff < sensibility){ // Matched
+                    if(!hasLastPageMatched){
+                        sectionsBounds.add(i-1); // End of section
+                        // Reopen a new section right after closing the last one (including the selected page in the next section).
+                        if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(i);
+                    }
+                    hasLastPageMatched = true;
                     MainWindow.mainScreen.document.addSelectedPage(i);
-                }else{
-                    if(doLastPageDetected) sectionsBounds.add(i); // Start of section
-                    doLastPageDetected = false;
+                }else{ // Not matched
+                    if(!splitWindow.doKeepSelectedPages() && hasLastPageMatched) sectionsBounds.add(i); // Start of section
+                    hasLastPageMatched = false;
                 }
                 i++;
             }
-            if(!doLastPageDetected) sectionsBounds.add(i-1);
         }
+        // Close last section if necessary
+        if(sectionsBounds.size() % 2 != 0) sectionsBounds.add(lastPage);
         
         if(sectionsBounds.isEmpty()) sectionsBounds = new ArrayList<>(Arrays.asList(0, colors.size()-1));
-        //System.out.println(Arrays.toString(sectionsBounds.stream().map((p) -> p+1).toArray()));
+        System.out.println(Arrays.toString(sectionsBounds.stream().map((p) -> p+1).toArray()));
         return sectionsBounds.size()/2;
     }
     

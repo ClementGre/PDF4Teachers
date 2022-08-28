@@ -13,6 +13,7 @@
     -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
+    -fx-line-spacing: 0;
 }
 
 .header .subHeaderText {
