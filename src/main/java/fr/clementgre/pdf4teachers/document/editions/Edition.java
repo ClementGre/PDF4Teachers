@@ -15,6 +15,8 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
@@ -305,35 +307,80 @@ public class Edition{
         }
     }
     
-    public static double[] countElements(File editFile) throws Exception{
+    public static int countElements(File editFile) throws Exception{
         
         if(!editFile.exists()){ //file does not exist
-            return new double[0];
+            return 0;
         }else{ // file already exist
-            
-            double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
-            int allGradesCount = 0; // All grade element count
-            int fillGradeCount = 0; // All entered grade
-            
             Config config = new Config(editFile);
             config.load();
             
-            int text = countSection(config.getSection("texts"));
-            int images = countSection(config.getSection("images"));
-            int vectors = countSection(config.getSection("vectors"));
+            int count = countSection(config.getSection("texts")) + countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
+            
+            for(Object data : config.getList("grades")){
+                if(data instanceof HashMap){
+                    double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
+                    if(stats[0] != -1) count++;
+                }
+            }
+            long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
+            if(assessmentId != 0) count++;
+            
+            return count;
+        }
+    }
+    
+    public static EditionStats getEditionStats(File editFile) throws Exception{
+        
+        if(!editFile.exists()){ //file does not exist
+            return null;
+            
+        }else{ // file already exist
+            Config config = new Config(editFile);
+            config.load();
+            
+            int texts = countSection(config.getSection("texts"));
+            int graphics = countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
+    
+            double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
+            int grades = 0; // All grade element count
+            int filledGrades = 0; // All entered grade
             
             for(Object data : config.getList("grades")){
                 if(data instanceof HashMap){
                     double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
                     if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
-                    if(stats[0] != -1) fillGradeCount++;
-                    allGradesCount++;
+                    if(stats[0] != -1) filledGrades++;
+                    grades++;
                 }
             }
             
-            return new double[]{text + fillGradeCount + images + vectors, text, fillGradeCount, images+vectors, totalGrade[0], totalGrade[1], allGradesCount};
+            int totalCount = texts + graphics + filledGrades;
+    
+            long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
+            int skills = 0;
+            int filledNotations = 0;
+            SkillsAssessment assessment = null;
+            if(assessmentId != 0){
+                assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId).findFirst().orElse(null);
+                if(assessment != null){
+                    skills = assessment.getSkills().size();
+                    ArrayList<Object> notationsData = Config.getList(config.getSection("skills"), "list");
+                    for(Object notationData : notationsData){
+                        if(notationData instanceof HashMap){
+                            long skillId = Config.getLong((HashMap<String, Object>) notationData, "skillId");
+                            if(Skill.getById(assessment, skillId) != null) filledNotations++; // Check the skill does not belong to another assessment
+                        }
+                    }
+                }
+            }
+            if(filledNotations > 0) totalCount++;
+            
+            return new EditionStats(totalCount, texts, graphics, grades, filledGrades, totalGrade[0], totalGrade[1], assessment, skills, filledNotations);
         }
     }
+    
+    public record EditionStats(int totalElements, int texts, int graphics, int grades, int filledGrades, double totalGradeValue, double totalGradeOutOf, SkillsAssessment assessment, int skills, int filledNotations){}
 
     public static <T> T convertInstanceOfObject(Object o, Class<T> clazz) {
         try {

@@ -19,14 +19,25 @@ public class Skill {
     private final StringProperty acronym = new SimpleStringProperty("");
     private final StringProperty name = new SimpleStringProperty("");
     
-    public Skill(String acronym, String name){
-        this(new Random().nextLong(9999999L), acronym, name);
+    public Skill(String acronym, String name, SkillsAssessment assessment){
+        this(getNewNotationUniqueId(assessment), acronym, name);
     }
     public Skill(long id, String acronym, String name){
         this.id = id;
         this.acronym.set(acronym);
         this.name.set(name);
     }
+    public static long getNewNotationUniqueId(SkillsAssessment assessment){
+        // Negative ids are reserved for default not editable notations.
+        // 0 id is reserved for not filled notations.
+        long id = Math.abs(new Random().nextLong());
+        while(id == 0 || getById(assessment, id) != null) id = new Random().nextLong();
+        return id;
+    }
+    public static Skill getById(SkillsAssessment assessment, long id){
+        return assessment.getSkills().stream().filter(s -> s.getId() == id).findAny().orElse(null);
+    }
+    
     public static Skill loadFromConfig(HashMap<String, Object> map){
         long id = Config.getLong(map, "id");
         String acronym = Config.getString(map, "acronym");

@@ -131,7 +131,7 @@ public class SkillsListingPane extends Tab {
         addSkill.setPadding(new Insets(0, 5, 0, 5));
         addSkill.disableProperty().bind(acronymField.textProperty().isEmpty().or(nameField.textProperty().isEmpty()));
         addSkill.setOnAction(e -> {
-            Skill skill = new Skill(acronymField.getText(), nameField.getText());
+            Skill skill = new Skill(acronymField.getText(), nameField.getText(), window.getAssessment());
             tableView.getItems().add(skill);
     
             acronymField.clear();

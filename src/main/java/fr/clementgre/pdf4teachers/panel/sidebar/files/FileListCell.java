@@ -94,36 +94,76 @@ public class FileListCell extends ListCell<File> {
             nameBox.getChildren().clear();
             
             try{
-                double[] elementsCount = Edition.countElements(Edition.getEditFile(file));
+                Edition.EditionStats stats = Edition.getEditionStats(Edition.getEditFile(file));
+    
                 
-                if(elementsCount.length > 0){ // has edit file
-                    String grade = (elementsCount[4] == -1 ? "?" : MainWindow.gradesDigFormat.format(elementsCount[4])) + "/" + MainWindow.gradesDigFormat.format(elementsCount[5]);
-                    
-                    if(elementsCount[0] > 0){ // Has Elements
-                        
-                        name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
-                        
-                        path.setText(path.getText() + " | " + MainWindow.twoDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade);
-                        setTooltip(PaneUtils.genToolTip(MainWindow.twoDigFormat.format(elementsCount[0]) + " " + TR.tr("elements.name") + " | " + grade + "\n" + MainWindow.twoDigFormat.format(elementsCount[1]) + " " + TR.tr("elements.name.texts") + "\n" + MainWindow.twoDigFormat.format(elementsCount[2]) + "/" + MainWindow.twoDigFormat.format(elementsCount[6]) + " " + TR.tr("elements.name.grades") + "\n" + MainWindow.twoDigFormat.format(elementsCount[3]) + " " + TR.tr("elements.name.paints")));
-                        
-                        if(elementsCount[2] == elementsCount[6]){ // Edition completed : Green check
-                            if(check.getImage() == null)
-                                check.setImage(new Image(getClass().getResource("/img/FilesTab/check.png") + ""));
-                            nameBox.getChildren().add(check);
-                        }else if(elementsCount[2] >= 1){ // Edition semi-completed : Orange check
-                            if(checkLow.getImage() == null)
-                                checkLow.setImage(new Image(getClass().getResource("/img/FilesTab/check_low.png") + ""));
-                            nameBox.getChildren().add(checkLow);
-                        }
-                        
-                    }else{ // Don't have elements
-                        path.setText(path.getText() + " | " + TR.tr("document.status.noEdit") + " | " + grade);
-                        setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit") + " | " + grade + "\n" + MainWindow.twoDigFormat.format(elementsCount[6]) + " " + TR.tr("elements.name.gradeScales")));
-                    }
-                }else{ // don't have edit file
+                
+                if(stats == null){ // don't have edit file
                     path.setText(path.getText() + " | " + TR.tr("document.status.noEdit"));
                     setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit")));
+                    
+                }else{
+                    String gradeInfo = null;
+                    String gradeCount = null;
+                    if(stats.totalGradeOutOf() != 0){
+                        gradeInfo = (stats.totalGradeValue() == -1 ? "?" : format(stats.totalGradeValue())) + "/" + format(stats.totalGradeOutOf());
+                        gradeCount = stats.filledGrades() + "/" + stats.grades();
+                    }
+                    String skillsCount = null;
+                    String assessmentName = null;
+                    if(stats.assessment() != null && stats.skills() != 0){
+                        skillsCount = stats.filledNotations() + "/" + stats.skills();
+                        assessmentName = stats.assessment().getName();
+                    }
+                    
+                    
+                    if(stats.totalElements() == 0 && gradeInfo == null && assessmentName == null){ // Don't have elements
+                        path.setText(path.getText() + " | " + TR.tr("document.status.noEdit"));
+                        setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit")));
+        
+                    }else{
+                        String after = "";
+                        if(gradeInfo != null) after += " | " + gradeInfo;
+                        if(assessmentName != null) after += " | " + assessmentName;
+                        
+                        if(stats.totalElements() == 0){ // Don't have elements but have a grade scale OR assessment
+                            
+                            path.setText(path.getText() + " | " + TR.tr("document.status.noEdit") + after);
+                            setTooltip(PaneUtils.genToolTip(TR.tr("document.status.noEdit") + after +
+                                    (assessmentName == null ? "" : "\n" + stats.skills() + " " + TR.tr("elements.name.skills")) +
+                                    (gradeInfo == null ? "" : "\n" + stats.grades() + " " + TR.tr("elements.name.gradeScales")) ));
+        
+                        }else{ // Have at least one visible element
+                            name.setStyle("-fx-font-size: 12; -fx-font-weight: bold;");
+        
+                            path.setText(path.getText() + " | " + stats.totalElements() + " " + TR.tr("elements.name") + after);
+        
+                            setTooltip(PaneUtils.genToolTip(stats.totalElements() + " " + TR.tr("elements.name") + after +
+                                    (assessmentName == null ? "" : "\n" + skillsCount + " " + TR.tr("elements.name.skills")) +
+                                    (gradeInfo == null ? "" : "\n" + gradeCount + " " + TR.tr("elements.name.grades")) +
+                                    "\n" + stats.texts() + " " + TR.tr("elements.name.texts") +
+                                    "\n" + stats.graphics() + " " + TR.tr("elements.name.paints") ));
+        
+        
+                            if(gradeInfo != null || assessmentName != null){
+                                
+                                if((gradeInfo == null || (stats.filledGrades() == stats.grades() && stats.grades() > 0))
+                                        && (assessmentName == null || (stats.filledNotations() == stats.skills() && stats.skills() > 0))){ // Edition completed : Green check
+        
+                                    if(check.getImage() == null)
+                                        check.setImage(new Image(getClass().getResource("/img/FilesTab/check.png") + ""));
+                                    nameBox.getChildren().add(check);
+                                }else if(stats.filledGrades() > 0 || stats.filledNotations() > 0){ // Edition semi-completed : Orange check
+                                    if(checkLow.getImage() == null)
+                                        checkLow.setImage(new Image(getClass().getResource("/img/FilesTab/check_low.png") + ""));
+                                    nameBox.getChildren().add(checkLow);
+                                }
+                                
+                            }
+                        }
+                    }
                 }
+                
             }catch(Exception e){
                 path.setText(path.getText() + " | " + TR.tr("document.status.unableToCheckStatus"));
                 setTooltip(PaneUtils.genWrappedToolTip(e.getMessage()));
@@ -195,6 +235,10 @@ public class FileListCell extends ListCell<File> {
             
             setContextMenu(menu);
         }
+    }
+    
+    private String format(double value){
+        return MainWindow.twoDigFormat.format(value);
     }
     
 }
