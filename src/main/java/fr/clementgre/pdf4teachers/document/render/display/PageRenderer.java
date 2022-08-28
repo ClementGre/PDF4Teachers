@@ -28,8 +28,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.animation.Animation;
@@ -181,7 +181,7 @@ public class PageRenderer extends Pane {
     
                 
                 if(toMove != 0){
-                    moveSelectedPages(StringUtils.clamp(toMove, -getPage(), MainWindow.mainScreen.document.totalPages - 1 - getPage()));
+                    moveSelectedPages(MathUtils.clamp(toMove, -getPage(), MainWindow.mainScreen.document.totalPages - 1 - getPage()));
                 }
                 e.consume();
                 
@@ -549,11 +549,11 @@ public class PageRenderer extends Pane {
         
         if(mainPage){
             double translateX = getTranslateX() + x;
-            translateX = StringUtils.clamp(translateX, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getWidth() - PageRenderer.getPageMargin() - PAGE_WIDTH);
+            translateX = MathUtils.clamp(translateX, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getWidth() - PageRenderer.getPageMargin() - PAGE_WIDTH);
             setTranslateX(translateX);
     
             double translateY = getTranslateY() + y;
-            translateY = StringUtils.clamp(translateY, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getHeight() - PageRenderer.getPageMargin() - getHeight());
+            translateY = MathUtils.clamp(translateY, PageRenderer.getPageMargin(), MainWindow.mainScreen.pane.getHeight() - PageRenderer.getPageMargin() - getHeight());
             setTranslateY(translateY);
             
             if(MainWindow.mainScreen.hasDocument(false)){
@@ -587,7 +587,7 @@ public class PageRenderer extends Pane {
             if(page > bottomPage) bottomPage = page;
         }
 
-        index = StringUtils.clamp(index, -topPage, MainWindow.mainScreen.document.totalPages - 1 - bottomPage);
+        index = MathUtils.clamp(index, -topPage, MainWindow.mainScreen.document.totalPages - 1 - bottomPage);
         if(index == 0) return;
     
         List<PageRenderer> pages = MainWindow.mainScreen.document.getSelectedPages().stream().map(i -> MainWindow.mainScreen.document.getPage(i)).toList();

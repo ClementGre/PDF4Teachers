@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
@@ -233,7 +234,7 @@ public class Edition{
     // addCallBack : Key : Page | Value : Element Data
     private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){
         for(Map.Entry<String, Object> pageData : data){
-            Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
 
             for(Object elementData : ((List<Object>) pageData.getValue())){
@@ -345,7 +346,7 @@ public class Edition{
     private static int countSection(HashMap<String, Object> sectionData){
         int count = 0;
         for(Map.Entry<String, Object> pageData : sectionData.entrySet()){
-            Integer page = StringUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
             count += ((List<Object>) pageData.getValue()).size();
         }

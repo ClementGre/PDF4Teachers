@@ -11,8 +11,8 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
@@ -242,12 +242,12 @@ public abstract class Element extends Region {
     
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
-                graphicElement.setRealHeight(StringUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
+                graphicElement.setRealHeight(MathUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
             }
             
             if(getWidth() != width){
                 int value = getPage().toGridX(width);
-                graphicElement.setRealWidth(StringUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
+                graphicElement.setRealWidth(MathUtils.clamp(value, 0, (int) Element.GRID_WIDTH));
             }
         }
     }

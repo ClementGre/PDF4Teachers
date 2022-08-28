@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2022. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.document.editions.undoEngine.pages;
 
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
@@ -5,7 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoAction;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 
 import java.lang.ref.WeakReference;
 
@@ -31,7 +36,7 @@ public class PageMoveUndoAction extends UndoAction {
             
             if(oldIndex == index) return false;
             
-            MainWindow.mainScreen.document.pdfPagesRender.editor.movePageByIndex(page, StringUtils.clamp(oldIndex, 0, MainWindow.mainScreen.document.getPagesNumber()-1));
+            MainWindow.mainScreen.document.pdfPagesRender.editor.movePageByIndex(page, MathUtils.clamp(oldIndex, 0, MainWindow.mainScreen.document.getPagesNumber()-1));
             return true;
         }
         return false;

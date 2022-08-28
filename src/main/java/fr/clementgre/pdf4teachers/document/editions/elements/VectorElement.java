@@ -18,6 +18,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGUtils;
@@ -604,7 +605,7 @@ public class VectorElement extends GraphicElement{
         }else{
             double imgWidth = noScaledSvgPath.getLayoutBounds().getWidth();
             double imgHeight = noScaledSvgPath.getLayoutBounds().getHeight();
-            width = StringUtils.clamp(imgWidth, 50, getPage().getWidth()/3);
+            width = MathUtils.clamp(imgWidth, 50, getPage().getWidth()/3);
             height = imgHeight * width/imgWidth;
         }
         

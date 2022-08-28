@@ -10,7 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -134,7 +134,7 @@ public class SkillTableElement extends GraphicElement{
     
     public void updateGridPaneScale(){
         // If gridPane dimensions are not fully setup yet, use the last saved scale.
-        if(gridPane.areDimensionsSetup) this.scale = StringUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        if(gridPane.areDimensionsSetup) this.scale = MathUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
         updateGridPaneScale(scale);
     }
     private void updateGridPaneScale(double scale){
@@ -155,7 +155,7 @@ public class SkillTableElement extends GraphicElement{
         // HEIGHT - min and max scale
         if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio()) || !gridPane.areDimensionsSetup) return;
         double scale = getPage().fromGridY(getRealHeight()) / gridPane.getHeight(); // Not clamped
-        double clampedScale = StringUtils.clamp(scale, MIN_SCALE, MAX_SCALE);
+        double clampedScale = MathUtils.clamp(scale, MIN_SCALE, MAX_SCALE);
         if(scale != clampedScale){
             int newRealHeight = getPage().toGridY(gridPane.getHeight() * clampedScale);
             if(getRealHeight() != newRealHeight){
@@ -193,8 +193,7 @@ public class SkillTableElement extends GraphicElement{
     }
     
     public void saveDefaultSize(){
-        SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId.get()).findFirst().orElse(null);
-        if(assessment != null) saveDefaultSize(assessment);
+        MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId.get()).findFirst().ifPresent(this::saveDefaultSize);
     }
     public void saveDefaultSize(SkillsAssessment assessment){
         assessment.setPrefPage(getPageNumber());
@@ -257,7 +256,7 @@ public class SkillTableElement extends GraphicElement{
     @Override
     protected void onMouseRelease(){
         super.onMouseRelease();
-        saveDefaultSize(); // Resized
+        saveDefaultSize(); // Resized or moved
     }
     @Override
     public void simulateReleaseFromResize(){

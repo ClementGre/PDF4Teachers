@@ -9,7 +9,10 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Random;
 
 public class Skill {
     private long id;
@@ -48,18 +51,6 @@ public class Skill {
     }
     
     
-    @Override
-    public boolean equals(Object o) {
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
-        Skill that = (Skill) o;
-        return getName().equals(that.getName()) && getAcronym().equals(that.getAcronym());
-    }
-    
-    @Override
-    public int hashCode(){
-        return Objects.hash(acronym.get(), name.get());
-    }
     
     public long getId(){
         return id;

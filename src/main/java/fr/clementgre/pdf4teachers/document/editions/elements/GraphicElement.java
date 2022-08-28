@@ -13,8 +13,8 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
@@ -226,7 +226,7 @@ public abstract class GraphicElement extends Element {
         checkLocation(false);
         if(getWidth() < 10 && getHeight() < 10){
             checkLocation(getLayoutX(), getLayoutY(),
-                    StringUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), StringUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
+                    MathUtils.clamp(getWidth(), 10, (int) GRID_WIDTH), MathUtils.clamp(getHeight(), 10, (int) GRID_HEIGHT), false);
         }
     }
     

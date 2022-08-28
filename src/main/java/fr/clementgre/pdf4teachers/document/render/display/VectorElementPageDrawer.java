@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyCode;
@@ -366,11 +367,11 @@ public class VectorElementPageDrawer extends Pane{
         appendAction("L", x, y);
     }
     public double checkX(double x){
-        x = StringUtils.clamp(x, vector.getSVGPadding(), page.getWidth()-vector.getSVGPadding());
+        x = MathUtils.clamp(x, vector.getSVGPadding(), page.getWidth()-vector.getSVGPadding());
         return x - getVectorShiftX();
     }
     public double checkY(double y){
-        y = StringUtils.clamp(y, vector.getSVGPadding(), page.getHeight()-vector.getSVGPadding());
+        y = MathUtils.clamp(y, vector.getSVGPadding(), page.getHeight()-vector.getSVGPadding());
         return y - getVectorShiftY();
     }
     

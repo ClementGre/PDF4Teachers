@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
+import fr.clementgre.pdf4teachers.utils.FilterUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.ClipboardContent;
@@ -65,6 +66,11 @@ public class SkillsListingPane extends Tab {
         
         tableView.setRowFactory(getRowFactory());
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setOnKeyPressed(e -> {
+            if(e.getCode().equals(KeyCode.DELETE)){
+                tableView.getItems().remove(tableView.getSelectionModel().getSelectedItem());
+            }
+        });
         
         VBox.setVgrow(tableView, Priority.ALWAYS);
         
@@ -78,7 +84,7 @@ public class SkillsListingPane extends Tab {
         AutoCompletionTextFieldBinding<Skill> acronymAuto = new AutoCompletionTextFieldBinding<>(acronymField, param -> {
             return MainWindow.skillsTab.getAllSkills().stream()
                     .filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText()))
-                    .unordered().distinct()
+                    .unordered().filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
                     .toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getAcronym(); }
@@ -92,7 +98,7 @@ public class SkillsListingPane extends Tab {
         AutoCompletionTextFieldBinding<Skill> nameAuto = new AutoCompletionTextFieldBinding<>(nameField, param -> {
             return MainWindow.skillsTab.getAllSkills().stream()
                     .filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText()))
-                    .unordered().distinct()
+                    .unordered().filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
                     .toList();
         }, new StringConverter<>() {
             @Override public String toString(Skill s){ return s.getName(); }
@@ -155,6 +161,12 @@ public class SkillsListingPane extends Tab {
                     text.wrappingWidthProperty().bind(column.widthProperty().subtract(25));
                     setGraphic(text);
                     setText(null);
+                    setOnKeyPressed(e -> {
+                        System.out.println("Key pressed");
+                        if(e.getCode() == KeyCode.DELETE){
+                            tableView.getItems().remove(getIndex());
+                        }
+                    });
                 }
             }
         };
@@ -167,7 +179,7 @@ public class SkillsListingPane extends Tab {
     private Callback<TableView<Skill>, TableRow<Skill>> getRowFactory(){
         return tv -> {
             TableRow<Skill> row = new TableRow<>();
-        
+            
             row.setOnDragDetected(event -> {
                 if(!row.isEmpty()) {
                     draggingIndex = row.getIndex();

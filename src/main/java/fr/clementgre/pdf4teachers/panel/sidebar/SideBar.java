@@ -7,8 +7,8 @@ package fr.clementgre.pdf4teachers.panel.sidebar;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.SplitPane;
@@ -90,7 +90,7 @@ public class SideBar extends TabPane {
                     
                     if(draggingTab.getTabPane() == this){ // Skip if tab is already in preview / already in this tabPane
                         int actualIndex = getTabs().indexOf(draggingTab);
-                        int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
+                        int targetIndex = MathUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
                         
                         if(actualIndex != targetIndex){
                             getTabs().remove(draggingTab);
@@ -105,7 +105,7 @@ public class SideBar extends TabPane {
                     previewTab.set(draggingTab);
                     
                     draggingTab.getTabPane().getTabs().remove(draggingTab);
-                    int targetIndex = StringUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
+                    int targetIndex = MathUtils.clamp((int) ((e.getX() - 5) / TAB_WIDTH), 0, getTabs().size() - 1);
                     getTabs().add(targetIndex, draggingTab);
                     getSelectionModel().select(draggingTab);
                     

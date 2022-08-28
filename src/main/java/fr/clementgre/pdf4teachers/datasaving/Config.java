@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.datasaving;
 
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.paint.Color;
 import org.yaml.snakeyaml.DumperOptions;
@@ -181,19 +182,19 @@ public class Config {
     }
     
     public static long getLong(HashMap<String, Object> base, String path){
-        return StringUtils.getAlwaysLong(getValue(base, path).toString());
+        return MathUtils.getAlwaysLong(getValue(base, path).toString());
     }
     
     public static Long getLongNull(HashMap<String, Object> base, String path){
-        return StringUtils.getLong(getValue(base, path).toString());
+        return MathUtils.getLong(getValue(base, path).toString());
     }
     
     public static double getDouble(HashMap<String, Object> base, String path){
-        return StringUtils.getAlwaysDouble(getValue(base, path).toString());
+        return MathUtils.getAlwaysDouble(getValue(base, path).toString());
     }
     
     public static Double getDoubleNull(HashMap<String, Object> base, String path){
-        return StringUtils.getDouble(getValue(base, path).toString());
+        return MathUtils.getDouble(getValue(base, path).toString());
     }
     
     public static Color getColor(HashMap<String, Object> base, String path){

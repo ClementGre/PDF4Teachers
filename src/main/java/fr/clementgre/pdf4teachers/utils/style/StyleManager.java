@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,7 +7,7 @@ package fr.clementgre.pdf4teachers.utils.style;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
@@ -218,9 +218,9 @@ public class StyleManager {
         }
         
         return Color.color(
-                StringUtils.clamp(nr / 255d, 0, 1),
-                StringUtils.clamp(ng / 255d, 0, 1),
-                StringUtils.clamp(nb / 255d, 0, 1)
+                MathUtils.clamp(nr / 255d, 0, 1),
+                MathUtils.clamp(ng / 255d, 0, 1),
+                MathUtils.clamp(nb / 255d, 0, 1)
         );
     }
     

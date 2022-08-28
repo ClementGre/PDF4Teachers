@@ -5,7 +5,7 @@
 
 package fr.clementgre.pdf4teachers.components;
 
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -69,7 +69,7 @@ public class SmoothishScrollpane extends ScrollPane {
                     transition = new SmoothishTransition(transition, e.getDeltaY(), vValue, finalVShift) {
                         @Override
                         protected void interpolate(double frac){
-                            double newVValue = StringUtils.clamp(vValue + getShift(), scroll.getVmin(), scroll.getVmax());
+                            double newVValue = MathUtils.clamp(vValue + getShift(), scroll.getVmin(), scroll.getVmax());
                             scroll.setVvalue(vInterp.interpolate(vValue, newVValue, frac));
                         }
                     };
@@ -91,7 +91,7 @@ public class SmoothishScrollpane extends ScrollPane {
                     transition = new SmoothishTransition(transition, e.getDeltaX(), hValue, finalHShift) {
                         @Override
                         protected void interpolate(double frac){
-                            double newHValue = StringUtils.clamp(hValue + getShift(), scroll.getHmin(), scroll.getHmax());
+                            double newHValue = MathUtils.clamp(hValue + getShift(), scroll.getHmin(), scroll.getHmax());
                             scroll.setHvalue(hInterp.interpolate(hValue, newHValue, frac));
                         }
                     };

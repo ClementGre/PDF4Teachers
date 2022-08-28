@@ -218,7 +218,7 @@ public class SplitEngine {
         if(sectionsBounds.size() % 2 != 0) sectionsBounds.add(lastPage);
         
         if(sectionsBounds.isEmpty()) sectionsBounds = new ArrayList<>(Arrays.asList(0, colors.size()-1));
-        System.out.println(Arrays.toString(sectionsBounds.stream().map((p) -> p+1).toArray()));
+        //System.out.println(Arrays.toString(sectionsBounds.stream().map((p) -> p+1).toArray()));
         return sectionsBounds.size()/2;
     }
     

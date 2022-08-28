@@ -20,6 +20,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
@@ -547,7 +548,7 @@ public class TextElement extends Element {
         return maxWidth;
     }
     public void setTextMaxWidth(double maxWidth){
-        this.maxWidth.set(StringUtils.clamp(maxWidth, 1, 100));
+        this.maxWidth.set(MathUtils.clamp(maxWidth, 1, 100));
     }
     public boolean isIsTextWrapped(){
         return isTextWrapped.get();

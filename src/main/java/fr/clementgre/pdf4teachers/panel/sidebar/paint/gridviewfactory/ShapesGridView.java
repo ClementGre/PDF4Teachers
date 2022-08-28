@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,7 +7,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -74,7 +74,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             e.consume();
             if(defineCellSizeAsRowNumber){
-                setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.averageNegativeOrPositive(e.getZoomFactor()-1, -1, 1)) );
+                setZoomSliderValue((int) (getZoomSliderValue() - MathUtils.averageNegativeOrPositive(e.getZoomFactor()-1, -1, 1)) );
             }else{
                 setZoomSliderValue((int) (getZoomSliderValue() * e.getZoomFactor()));
             }
@@ -83,7 +83,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
             if(e.isControlDown()){
                 e.consume();
                 if(defineCellSizeAsRowNumber){
-                    setZoomSliderValue((int) (getZoomSliderValue() - StringUtils.clamp(e.getDeltaY(), -1, 1)) );
+                    setZoomSliderValue((int) (getZoomSliderValue() - MathUtils.clamp(e.getDeltaY(), -1, 1)) );
                 }else{
                     setZoomSliderValue((int) (getZoomSliderValue() + e.getDeltaY()));
                 }

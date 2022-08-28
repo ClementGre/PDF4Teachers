@@ -9,8 +9,8 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -169,7 +169,7 @@ public class ZoomOperator {
             double vValue = (-getPaneY() + getPaneShiftY()) / getScrollableHeight();
             if(force) vScrollBar.setValue(Math.abs(vValue-.1));
             if(vValue != vScrollBar.getValue()){
-                vScrollBar.setValue(StringUtils.clamp(vValue, 0, 1));
+                vScrollBar.setValue(MathUtils.clamp(vValue, 0, 1));
             }
         }
     }
@@ -182,7 +182,7 @@ public class ZoomOperator {
             double hValue = (-getPaneX() + getPaneShiftX()) / getScrollableWidth();
             if(force) hScrollBar.setValue(Math.abs(hValue-.1));
             if(hValue != hScrollBar.getValue()){
-                hScrollBar.setValue(StringUtils.clamp(hValue, 0, 1));
+                hScrollBar.setValue(MathUtils.clamp(hValue, 0, 1));
             }
         }
     }
@@ -203,7 +203,7 @@ public class ZoomOperator {
             vScrollBar.setVisible(true);
             double vValue = (-pane.getHeight() + getPaneShiftY()) / getScrollableHeight();
             if(vValue != vScrollBar.getValue()){
-                vScrollBar.setValue(StringUtils.clamp(vValue, 0, 1));
+                vScrollBar.setValue(MathUtils.clamp(vValue, 0, 1));
             }
         }
         if(getScrollableWidth() <= 0){
@@ -213,13 +213,13 @@ public class ZoomOperator {
             hScrollBar.setVisible(true);
             double hValue = (-pane.getHeight() + getPaneShiftX()) / getScrollableWidth();
             if(hValue != hScrollBar.getValue()){
-                hScrollBar.setValue(StringUtils.clamp(hValue, 0, 1));
+                hScrollBar.setValue(MathUtils.clamp(hValue, 0, 1));
             }
         }
         
         // Repasse les bonnes valeurs
-        vScrollBar.setValue(StringUtils.clamp(newVValue, 0, 1));
-        hScrollBar.setValue(StringUtils.clamp(newHValue, 0, 1));
+        vScrollBar.setValue(MathUtils.clamp(newVValue, 0, 1));
+        hScrollBar.setValue(MathUtils.clamp(newHValue, 0, 1));
         
         vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight() * getPaneScale()));
         hScrollBar.setVisibleAmount(getMainScreenWidth() / (pane.getWidth() * getPaneScale()));
@@ -285,7 +285,7 @@ public class ZoomOperator {
         }else{
             // Vérifie les limites des translations
             hScrollBar.setVisible(true);
-            newTranslateX = StringUtils.clamp(getPaneX() - translateFactor * horizontal,
+            newTranslateX = MathUtils.clamp(getPaneX() - translateFactor * horizontal,
                     paneShiftX - scrollableWidth, paneShiftX);
         }
         // Y
@@ -296,7 +296,7 @@ public class ZoomOperator {
         }else{
             // Vérifie les limites des translations
             vScrollBar.setVisible(true);
-            newTranslateY = StringUtils.clamp(getPaneY() - translateFactor * vertical,
+            newTranslateY = MathUtils.clamp(getPaneY() - translateFactor * vertical,
                     paneShiftY - scrollableHeight, paneShiftY);
             
         }

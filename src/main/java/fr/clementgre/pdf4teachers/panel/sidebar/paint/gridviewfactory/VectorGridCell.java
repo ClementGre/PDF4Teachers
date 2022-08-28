@@ -15,7 +15,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.application.Platform;
@@ -192,7 +192,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
         noScaledSvgPath.setContent(data.getPath());
         double ratio = noScaledSvgPath.getLayoutBounds().getWidth() / noScaledSvgPath.getLayoutBounds().getHeight();
         
-        float elementWidth = StringUtils.clamp(data.getWidth() / Element.GRID_WIDTH * PageRenderer.PAGE_WIDTH, 25, 100);
+        float elementWidth = MathUtils.clamp(data.getWidth() / Element.GRID_WIDTH * PageRenderer.PAGE_WIDTH, 25, 100);
         float elementHeight = data.getHeight() * elementWidth/data.getWidth();
         double graphicsWidth = elementWidth + VectorElement.getClipPadding(data)*2;
         double graphicsHeight = elementHeight + VectorElement.getClipPadding(data)*2;

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
@@ -331,7 +332,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 definition.applyCss(); // Prevent the black text on black bg bug
                 
                 String data = StringUtils.removeAfterLastOccurrence(newValue, "Mp");
-                Double mp = StringUtils.getDouble(data);
+                Double mp = MathUtils.getDouble(data);
                 if(mp != null){
                     this.mp = mp;
                     updateWidthAndHeight();
@@ -343,8 +344,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 
                 String data = StringUtils.removeAfterLastOccurrence(newValue, " (");
                 if(data.split(":").length == 2){
-                    Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
-                    Integer heightFactor = StringUtils.getInt(data.split(":")[1]);
+                    Integer widthFactor = MathUtils.getInt(data.split(":")[0]);
+                    Integer heightFactor = MathUtils.getInt(data.split(":")[1]);
                     if(widthFactor != null && heightFactor != null){
                         this.widthFactor = widthFactor;
                         this.heightFactor = heightFactor;
@@ -390,7 +391,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             if(definitions.contains(MainWindow.userData.lastConvertDefinition))
                 definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
             else{
-                Double mp = StringUtils.getDouble(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
+                Double mp = MathUtils.getDouble(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
                 if(mp != null){
                     definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
                     
@@ -402,8 +403,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             else{
                 String data = StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertFormat, " (");
                 if(data.split(":").length == 2){
-                    Integer widthFactor = StringUtils.getInt(data.split(":")[0]);
-                    Integer heightFactor = StringUtils.getInt(data.split(":")[1]);
+                    Integer widthFactor = MathUtils.getInt(data.split(":")[0]);
+                    Integer heightFactor = MathUtils.getInt(data.split(":")[1]);
                     if(widthFactor != null && heightFactor != null){
                         format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
                         

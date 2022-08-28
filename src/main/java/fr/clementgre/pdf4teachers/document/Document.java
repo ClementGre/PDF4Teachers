@@ -17,8 +17,8 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PageStatus;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WarningAlert;
@@ -270,7 +270,7 @@ public class Document {
     }
     public void selectToPage(int index, boolean keepOldSelection){
         if(!keepOldSelection) selectedPages.clear();
-        lastSelectedPage = StringUtils.clamp(lastSelectedPage, 0, pages.size()-1);
+        lastSelectedPage = MathUtils.clamp(lastSelectedPage, 0, pages.size()-1);
         boolean forward = index >= lastSelectedPage;
         for(int i = lastSelectedPage; i != index; i += forward ? 1 : -1) selectedPages.add(i);
         selectedPages.add(index);

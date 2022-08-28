@@ -10,7 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChanged
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.utils.StringUtils;
+import fr.clementgre.pdf4teachers.utils.MathUtils;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -81,7 +81,7 @@ public class GrabLine extends Region {
             }
             
             double width = localToParent(line.localToParent(e.getX(), 0)).getX() - shiftX;
-            width = StringUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
+            width = MathUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
             
             element.setTextMaxWidth(width / PageRenderer.PAGE_WIDTH * 100d);
             element.checkLocation(false);
@@ -93,7 +93,7 @@ public class GrabLine extends Region {
             Edition.setUnsave("TextElementResize");
             
             double width = localToParent(line.localToParent(e.getX(), 0)).getX() - shiftX;
-            width = StringUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
+            width = MathUtils.clamp(width, 10, PageRenderer.PAGE_WIDTH);
             
             element.setTextMaxWidth(width / PageRenderer.PAGE_WIDTH * 100d);
             element.checkLocation(false);
