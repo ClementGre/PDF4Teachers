@@ -79,6 +79,10 @@ public class SkillTableElement extends GraphicElement{
             
             checkLocation(getPage().fromGridX(realX), getPage().fromGridY(realY), getPage().fromGridX(Math.max(6000, realWidth)), 0, false);
             
+            if(getPage() != MainWindow.mainScreen.document.getFirstTopVisiblePage()){
+                MainWindow.mainScreen.zoomOperator.scrollToPage(getPage());
+            }
+            
             if(assessment != null && assessment.getPrefScale() > 0){
                 defaultScale = assessment.getPrefScale();
                 Platform.runLater(() -> updateGridPaneScale(defaultScale));

@@ -681,6 +681,7 @@ public class MainScreen extends Pane {
             zoomOperator.scrollToPage(bottomPage);
         }
     }
+    
     private final static int ARROW_NAV_FACTOR = 300;
     public void navigateUp(){
         if(hasDocument(false)){

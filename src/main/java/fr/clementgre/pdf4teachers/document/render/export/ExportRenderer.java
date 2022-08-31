@@ -25,7 +25,7 @@ import java.util.Calendar;
 
 public class ExportRenderer {
     
-    public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements) throws Exception{
+    public boolean exportFile(File pdfFile, File toFile, int imagesDPI, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements) throws Exception{
         
         File editFile = Edition.getEditFile(pdfFile);
         
@@ -110,9 +110,10 @@ public class ExportRenderer {
                     if(drawElements)
                         vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
                 }else if(element instanceof SkillTableElement gElement){
-                    if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
-                        doc.close(); return false;
-                    }
+                    if(skillElements)
+                        if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
+                            doc.close(); return false;
+                        }
                 }
             }
             

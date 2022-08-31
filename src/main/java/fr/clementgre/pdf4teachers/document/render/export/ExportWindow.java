@@ -47,6 +47,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
     CheckBox textElements = new CheckBox(TR.tr("elements.name.texts"));
     CheckBox gradesElements = new CheckBox(TR.tr("elements.name.grades"));
     CheckBox drawElements = new CheckBox(TR.tr("elements.name.paints"));
+    CheckBox skillElements = new CheckBox(TR.tr("elements.name.skillsTable"));
     Button export;
     
     @Override
@@ -83,11 +84,13 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         textElements.setSelected(true);
         gradesElements.setSelected(true);
         drawElements.setSelected(true);
-        types.getChildren().addAll(textElements, gradesElements, drawElements);
+        skillElements.setSelected(true);
+        types.getChildren().addAll(textElements, gradesElements, drawElements, skillElements);
         
         HBox.setMargin(textElements, new Insets(20, 10, 0, 0));
         HBox.setMargin(gradesElements, new Insets(20, 10, 0, 0));
-        HBox.setMargin(drawElements, new Insets(20, 0, 0, 0));
+        HBox.setMargin(drawElements, new Insets(20, 10, 0, 0));
+        HBox.setMargin(skillElements, new Insets(20, 0, 0, 0));
         
         // BUTTONS
         export = new Button(TR.tr("actions.export"));
@@ -139,7 +142,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
             
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
-                    imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected());
+                    imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected());
         });
     }
     
@@ -228,7 +231,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         VBox.setMargin(onlyEdited, new Insets(20, 0, 5, 0));
         
         export.setOnAction(event -> startExportation(new File(filePath.getText()), prefix.getText(), suffix.getText(), replaceInput.getText(), byInput.getText(), "",
-                imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected()));
+                imagesDPI.getValue(), onlyEdited.isSelected(), textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected()));
         
         onlyEdited.selectedProperty().addListener((observable, oldValue, newValue) -> updateMultipleFilesTitle());
         updateMultipleFilesTitle();
@@ -243,7 +246,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
     }
     
     public void startExportation(File directory, String prefix, String suffix, String replaceText, String replaceByText, String customName,
-                                 int imagesDPI, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements){
+                                 int imagesDPI, boolean onlyEdited, boolean textElements, boolean gradesElements, boolean drawElements, boolean skillElements){
         
         directory.mkdirs();
         
@@ -296,7 +299,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             @Override
             public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive){
                 try{
-                    boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements);
+                    boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements, skillElements);
                     if(ok) return TwoStepListAction.ProcessResult.OK;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){
