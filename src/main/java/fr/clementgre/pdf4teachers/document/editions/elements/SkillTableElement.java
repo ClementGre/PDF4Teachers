@@ -267,7 +267,7 @@ public class SkillTableElement extends GraphicElement{
     @Override
     public void select(){
         super.select();
-        SideBar.selectTab(MainWindow.textTab);
+        SideBar.selectTab(MainWindow.skillsTab);
     }
     
     @Override

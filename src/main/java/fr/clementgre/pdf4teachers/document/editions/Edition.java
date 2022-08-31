@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
@@ -369,7 +370,12 @@ public class Edition{
                     for(Object notationData : notationsData){
                         if(notationData instanceof HashMap){
                             long skillId = Config.getLong((HashMap<String, Object>) notationData, "skillId");
-                            if(Skill.getById(assessment, skillId) != null) filledNotations++; // Check the skill does not belong to another assessment
+                            long notationId = Config.getLong((HashMap<String, Object>) notationData, "notationId");
+                            if(Skill.getById(assessment, skillId) != null){ // Check the skill does not belong to another assessment
+                                if(notationId < 0 || Notation.getById(assessment, notationId) != null){  // Check the notation belongs to the assessment
+                                    filledNotations++;
+                                }
+                            }
                         }
                     }
                 }

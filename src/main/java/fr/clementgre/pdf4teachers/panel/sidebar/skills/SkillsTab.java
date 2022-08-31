@@ -285,8 +285,10 @@ public class SkillsTab extends SideTab {
         // Update assessment name in the combo
         // This will also update the list element (updates assessmentCombo.getValue() changes)
         SkillsAssessment assessment = getCurrentAssessment();
+        Student student = getCurrentStudent();
         assessmentCombo.setValue(null);
         assessmentCombo.setValue(assessment);
+        studentCombo.setValue(student); // Preserve the student
         
         // Updating the list
         listView.refresh();

@@ -11,11 +11,13 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -33,13 +35,22 @@ public class SACocheWriter {
     }
     
     public void exportAndSave(){
+        
+        if(!MainWindow.mainScreen.document.save(true)) return;
+        
+        OKAlert alert = new OKAlert(TR.tr("skillsSettingsWindow.sacocheExport.dialog.header"), TR.tr("skillsSettingsWindow.sacocheExport.dialog.header"),
+                TR.tr("skillsSettingsWindow.sacocheExport.dialog.details"));
+        alert.addCancelButton(ButtonPosition.CLOSE);
+        if(alert.getShowAndWaitIsCancelButton()) return;
+        
         try{
     
+            List<StudentGrades> studentGrades = getMatchingEdits();
+            if(studentGrades == null) return;
+            
             File dest = getDestinationFile();
             if(dest == null) return;
-    
-            List<StudentGrades> studentGrades = getMatchingEdits();
-     
+            
             BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
             ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(';').build();
            
@@ -72,12 +83,13 @@ public class SACocheWriter {
             csvWriter.writeNext(new String[]{});
             
             // Notations
-            csvWriter.writeNext(new String[]{"PDF4Teachers"});
+            // Do not write the notations because it can give false information to the SACoche parser. (ex: "2";"R";... can put an R to the skill of ID 2)
+            /*csvWriter.writeNext(new String[]{"PDF4Teachers"});
             csvWriter.writeNext(new String[]{"CLAVIER", "SIGLE", "LEGENDE", "IMAGE"});
             assessment.getNotations().forEach(notation -> {
                 csvWriter.writeNext(new String[]{notation.getKeyboardChar(), notation.getAcronym(), notation.getName(),
                         (assessment.getNotationType() == Notation.NotationType.ICON ? "data:image/gif;base64," : "") + notation.getData()});
-            });
+            });*/
     
             csvWriter.close();
             writer.close();
@@ -95,12 +107,18 @@ public class SACocheWriter {
                 TR.tr("dialog.file.extensionType.csv"), ".csv");
     }
     
+    // Returns null if cancelled by user.
     private List<StudentGrades> getMatchingEdits(){
     
         ArrayList<StudentGrades> studentGrades = new ArrayList<>();
         
         File editDir = new File(Main.dataFolder + "editions");
         if(!editDir.exists()) return List.of();
+    
+        HashMap<String, ArrayList<String>> doubleAffectation = new HashMap<>();
+        ArrayList<String> aloneStudents = new ArrayList<>();
+        ArrayList<String> aloneDocuments = new ArrayList<>();
+        
         
         for(File edit : Objects.requireNonNull(editDir.listFiles())){
             Element[] elements = new Element[]{};
@@ -111,12 +129,70 @@ public class SACocheWriter {
             SkillTableElement skillTableElement = (SkillTableElement) Arrays.stream(elements).filter(e -> e instanceof SkillTableElement).findFirst().orElse(null);
             
             if(skillTableElement != null && skillTableElement.getAssessmentId() == assessment.getId()){
-                assessment.getStudents().stream().filter(s -> s.id() == skillTableElement.getStudentId()).findAny().ifPresent(student -> {
+                
+                Optional<Student> studentOptional = assessment.getStudents().stream().filter(s -> s.id() == skillTableElement.getStudentId()).findAny();
+                if(studentOptional.isPresent()){
+                    Student student = studentOptional.get();
+                    
+                    studentGrades.stream().filter(s -> s.studentName().equals(student.name())).forEach(sg -> {
+                        if(!doubleAffectation.containsKey(student.name())){
+                            doubleAffectation.put(student.name(), new ArrayList<>(Arrays.asList(sg.fileName(), Edition.getFileFromEdit(edit).getName())));
+                        }else{
+                            doubleAffectation.put(student.name(), new ArrayList<>(
+                                    Stream.concat(
+                                            doubleAffectation.get(student.name()).stream(),
+                                            Stream.of(sg.fileName(), Edition.getFileFromEdit(edit).getName())
+                                    ).distinct().collect(Collectors.toList())));
+                        }
+                    });
                     studentGrades.add(new StudentGrades(student.id(), student.name(), Edition.getFileFromEdit(edit).getName(), skillTableElement.getEditionSkills()));
-                });
+                }else{
+                    aloneDocuments.add(Edition.getFileFromEdit(edit).getName());
+                }
             }
-    
         }
+        assessment.getStudents().forEach(s -> {
+            if(studentGrades.stream().noneMatch(sg -> sg.studentId() == s.id())) aloneStudents.add(s.name());
+        });
+    
+        StringBuilder details = new StringBuilder();
+        if(doubleAffectation.size() > 0){
+            details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.doubleAffectation")).append("\n");
+            doubleAffectation.forEach((studentName, files) -> {
+                String lastFile = files.get(files.size() - 1);
+                files.remove(lastFile);
+                
+                details.append("  - ")
+                        .append(TR.tr("skillsSettingsWindow.export.cohesionError.details.doubleAffectation.details", String.join(", ", files), lastFile, studentName))
+                        .append("\n");
+            });
+            details.append("\n");
+        }
+        if(aloneStudents.size() > 0){
+            details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneStudent")).append("\n");
+            aloneStudents.forEach(file -> {
+                details.append("  - ").append(file).append("\n");
+            });
+            details.append("\n");
+        }
+        if(aloneDocuments.size() > 0){
+            details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneDocument")).append("\n");
+            aloneDocuments.forEach(file -> {
+                details.append("  - ").append(file).append("\n");
+            });
+            details.append("\n");
+        }
+        
+        if(!details.isEmpty()){
+            CustomAlert alert = new WrongAlert(TR.tr("skillsSettingsWindow.export.cohesionError.header"), details.toString(), false);
+            alert.getButtonTypes().clear();
+            alert.addIgnoreButton(ButtonPosition.CLOSE);
+            alert.addButton(TR.tr("dialog.actionError.cancelAll"), ButtonPosition.DEFAULT);
+            if(alert.getShowAndWaitIsDefaultButton()){
+                return null; // Cancelled by user.
+            }
+        }
+        
         return studentGrades.stream().sorted(Comparator.comparing(StudentGrades::studentName)).collect(Collectors.toList());
     }
 }

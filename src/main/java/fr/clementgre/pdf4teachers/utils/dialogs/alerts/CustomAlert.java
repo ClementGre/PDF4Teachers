@@ -123,6 +123,7 @@ public class CustomAlert extends Alert {
     }
     public boolean getShowAndWaitIsCancelButton(){
         Optional<ButtonType> result = showAndWait();
+        
         if(result.isEmpty()) return false;
         else return result.get().getButtonData().isCancelButton();
     }

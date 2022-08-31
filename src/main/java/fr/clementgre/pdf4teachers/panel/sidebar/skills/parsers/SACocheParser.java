@@ -57,6 +57,7 @@ public class SACocheParser {
         if(file == null || !file.exists()) return;
         try{
             SkillsAssessment loadedAssessment = getFromCsv();
+            String details = TR.tr("skillsSettingsWindow.sacocheImport.endDialog.details");
             if(loadedAssessment == null) return;
             // Assessment infos
             assessmentWindow.name.setText(loadedAssessment.getName());
@@ -71,10 +72,17 @@ public class SACocheParser {
                 assessment.getNotations().clear(); assessment.getNotations().addAll(loadedAssessment.getNotations());
                 assessmentWindow.notationsListingPane.updateNotationMode();
                 assessmentWindow.notationsListingPane.updateGrid();
+            }else{
+                details = TR.tr("skillsSettingsWindow.sacocheImport.endDialog.details.noNotations");
             }
             // Skills
             assessment.getSkills().clear(); assessment.getSkills().addAll(loadedAssessment.getSkills());
             assessmentWindow.skillsListingPane.updateList();
+            
+            
+            OKAlert alert = new OKAlert(TR.tr("skillsSettingsWindow.sacocheImport.endDialog.header"), TR.tr("skillsSettingsWindow.sacocheImport.endDialog.header"), details);
+            alert.show();
+            
         }catch(Exception ex){
             ex.printStackTrace();
             ErrorAlert.showErrorAlert(ex);
@@ -125,7 +133,6 @@ public class SACocheParser {
                     }
                 }
             }else{ // Skill line
-                System.out.println(Arrays.toString(line));
                 line = StringUtils.cleanArray(line);
                 long id = Long.parseLong(line[0]);
                 String[] textSplit = line[line.length-1].split("[\\[\\]]");

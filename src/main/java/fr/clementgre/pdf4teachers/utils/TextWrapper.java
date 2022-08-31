@@ -52,6 +52,7 @@ public class TextWrapper {
     }
     
     public String wrap(){
+        if(text == null) return "";
         
         // While there is still text, add the next line into wrappedLine and let the remaining text into text
         while(text.length() != 0){
