@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.scene.control.TextArea;
 import name.fraser.neil.plaintext.diff_match_patch;
 
@@ -243,4 +244,10 @@ public class StringUtils {
         InputContext is = InputContext.getInstance();
         return is.getLocale() != null && is.getLocale().getLanguage().equals("fr");
     }
+    
+    public static char getCsvSeparator(){
+        if(TR.tr("chars.csvSeparator").charAt(0) == ';') return ';';
+        return ',';
+    }
+    
 }

@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
+import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
 
@@ -93,6 +94,9 @@ public class SACocheWriter {
     
             csvWriter.close();
             writer.close();
+    
+            DialogBuilder.showAlertWithOpenDirOrFileButton(TR.tr("actions.export.completedMessage"), TR.tr("actions.export.completedMessage"),
+                    TR.tr("actions.export.fileAvailable"), dest.getParentFile().getAbsolutePath(), dest.getAbsolutePath());
             
         }catch(Exception e){
             e.printStackTrace();
@@ -103,7 +107,11 @@ public class SACocheWriter {
     
     private File getDestinationFile(){
         return FilesChooserManager.showSaveDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR,
-                "saisie_deportee_rempli_" + assessment.getClasz() + "_" + assessment.getName() + ".csv",
+                "saisie_deportee_rempli_"
+                        + (assessment.getClasz().isBlank() ? "" : "_" + assessment.getClasz())
+                        + (assessment.getName().isBlank() ? "" : "_" + assessment.getName())
+                        + (assessment.getDate().isBlank() ? "" : "_" + assessment.getDate().replaceAll("/", "-"))
+                        + ".csv",
                 TR.tr("dialog.file.extensionType.csv"), ".csv");
     }
     
