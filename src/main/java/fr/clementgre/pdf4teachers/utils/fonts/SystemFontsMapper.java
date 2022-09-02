@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.utils.fonts;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import javafx.application.Platform;
@@ -41,20 +42,20 @@ public class SystemFontsMapper {
     
     private String[] getSystemFontsDirs(){
         String[] result;
-        if(Main.isWindows()){
+        if(PlatformUtils.isWindows()){
             result = new String[2];
             result[0] = System.getenv("WINDIR") + File.separator + "Fonts";
             result[1] = System.getenv("LOCALAPPDATA") + File.separator + "Microsoft\\Windows\\Fonts";
             return result;
             
-        }else if(Main.isOSX()){
+        }else if(PlatformUtils.isOSX()){
             result = new String[3];
             result[0] = System.getProperty("user.home") + File.separator + "Library/Fonts";
             result[1] = "/Library/Fonts";
             result[2] = "/System/Library/Fonts";
             return result;
             
-        }else if(Main.isLinux()){
+        }else if(PlatformUtils.isLinux()){
             String[] pathsToCheck = {
                     System.getProperty("user.home") + File.separator + ".fonts",
                     "/usr/share/fonts/truetype",
@@ -96,7 +97,7 @@ public class SystemFontsMapper {
     
     public void loadFontsFromSystemFiles(){
         String[] systemFonts = getSystemFontNames();
-        System.out.println("Indexing system fonts... (" + systemFonts.length + " fonts)");
+        Log.i("Indexing system fonts... (" + systemFonts.length + " fonts)");
         
         new Thread(() -> {
             long time = System.currentTimeMillis();
@@ -115,11 +116,11 @@ public class SystemFontsMapper {
                             }
                         }
                     }
-                }catch(IOException e){e.printStackTrace();}
+                }catch(IOException e){Log.eNotified(e);}
             }
             
             double ping = (System.currentTimeMillis() - time) / 1000d;
-            System.out.println("Loaded " + systemFontMap.size() + "/" + systemFonts.length + " fonts in " + ping + "s (" + pdfBoxErrors + " unable to load due to PDFBox restrictions, usually missing tables)");
+            Log.i("Loaded " + systemFontMap.size() + "/" + systemFonts.length + " fonts in " + ping + "s (" + pdfBoxErrors + " unable to load due to PDFBox restrictions, usually missing tables)");
             
             Platform.runLater(FontUtils::fontsUpdated);
         }, "System fonts loader").start();
@@ -141,7 +142,7 @@ public class SystemFontsMapper {
         }catch(IOException e){
             try{
                 doc.close();
-            }catch(IOException ioException){ioException.printStackTrace();}
+            }catch(IOException ex){ Log.eNotified(ex); }
             return false;
         }
         

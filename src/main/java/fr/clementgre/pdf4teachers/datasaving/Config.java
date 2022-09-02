@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.datasaving;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.paint.Color;
@@ -129,7 +130,7 @@ public class Config {
                 return "";
             }
         }
-        System.err.println("WARNING: for loop return anything");
+        Log.w("for loop returned anything");
         return "";
     }
     

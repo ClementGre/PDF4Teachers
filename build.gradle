@@ -163,7 +163,7 @@ jlink {
     String platform = os.windows ? (win32 ? 'win32' : 'win') : (os.macOsX ? 'mac' : 'lin')
 
     if(jdkPath != null){ // Use ./gradlew jpackage -PjdkPath=xxx
-        System.out.println("Using JDK passed in property: ".concat(jdkPath))
+        project.logger.info("Using JDK passed in property: ".concat(jdkPath))
         javaHome.set(jdkPath)
 
     }else{
@@ -174,7 +174,7 @@ jlink {
         else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/azul-17.0.4/Contents/Home')
         else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
         else if(os.linux) javaHome.set('/opt/jdk-17')
-        System.out.println("Using JDK: ".concat(javaHome.get()))
+        project.logger.info("Using JDK: ".concat(javaHome.get()))
     }
 
     targetPlatform(platform, javaHome.get())

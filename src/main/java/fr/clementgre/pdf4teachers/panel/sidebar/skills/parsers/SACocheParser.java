@@ -11,6 +11,7 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvException;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
@@ -84,8 +85,7 @@ public class SACocheParser {
             alert.show();
             
         }catch(Exception ex){
-            ex.printStackTrace();
-            ErrorAlert.showErrorAlert(ex);
+            Log.eAlerted(ex);
         }
     }
     

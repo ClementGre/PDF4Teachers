@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.datasaving;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -83,13 +84,12 @@ public class SyncUserData {
                             field.set(this, config.getLinkedSection(field.getAnnotation(UserDataObject.class).path()));
                         }
                     }catch(Exception e){
-                        e.printStackTrace();
+                        Log.eNotified(e);
                     }
                 }
             }
         }catch(Exception e){
-            e.printStackTrace();
-            System.err.println("Unable to load " + FILE_NAME);
+            Log.eNotified(e, "Unable to load " + FILE_NAME);
         }
     }
     
@@ -103,15 +103,14 @@ public class SyncUserData {
                     try{
                         config.set(field.getAnnotation(UserDataObject.class).path(), field.get(this));
                     }catch(Exception e){
-                        e.printStackTrace();
+                        Log.eNotified(e);
                     }
                 }
             }
             
             config.save();
         }catch(Exception e){
-            e.printStackTrace();
-            System.err.println("Unable to save " + FILE_NAME);
+            Log.eNotified(e, "Unable to save " + FILE_NAME);
         }
     }
     

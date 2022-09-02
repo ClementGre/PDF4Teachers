@@ -26,7 +26,7 @@
             </VBox.margin>
         </ImageView>
         <Label text="PDF4Teachers">
-            <style>-fx-font-size: 23;</style>
+            <style>-fx-font: 23 'Arial Rounded MT Bold'; -fx-text-fill: #373737;</style>
         </Label>
         <Label fx:id="versionName">
             <style>-fx-font-size: 15;</style>

@@ -10,10 +10,10 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -119,8 +119,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
                 try{
                     engine.process();
                 }catch(IOException ex){
-                    new ErrorAlert(null, ex.getMessage(), false).showAndWait();
-                    ex.printStackTrace();
+                    Log.eAlerted(ex);
                 }
             }
         });
@@ -170,7 +169,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             reader.close();
             
         }catch(IOException e) {
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     

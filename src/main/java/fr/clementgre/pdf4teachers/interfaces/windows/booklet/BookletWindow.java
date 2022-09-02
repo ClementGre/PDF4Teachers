@@ -10,9 +10,9 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -104,8 +104,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
                     new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected(), doCopyOriginal.isSelected() ? copyName : null).convert(MainWindow.mainScreen.document);
                     close();
                 }catch(IOException ex){
-                    new ErrorAlert(null, ex.getMessage(), false).showAndWait();
-                    ex.printStackTrace();
+                    Log.eAlerted(ex);
                 }finally{
                     Platform.runLater(UndoEngine::unlock);
                 }

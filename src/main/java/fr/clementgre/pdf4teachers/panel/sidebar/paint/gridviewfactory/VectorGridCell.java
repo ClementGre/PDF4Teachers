@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
@@ -172,7 +173,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
                     Image snapshot = snapshot(item.getVectorData());
                     dragboard.setDragView(snapshot, snapshot.getWidth()/2, snapshot.getHeight()/2);
                 }catch(PathParseException ex){
-                    ex.printStackTrace();
+                    Log.eNotified(ex);
                 }
                 
         

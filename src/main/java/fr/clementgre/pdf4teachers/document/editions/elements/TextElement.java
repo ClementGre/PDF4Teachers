@@ -16,6 +16,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
@@ -465,9 +466,9 @@ public class TextElement extends Element {
             return image;
             
         }catch(ParseException ex){
-            if(Main.DEBUG) System.out.println("error rendering Latex");
+            Log.d("Error rendering Latex");
             if(calls >= 3){
-                ex.printStackTrace();
+                Log.eNotified(ex);
                 return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
             }
             if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){

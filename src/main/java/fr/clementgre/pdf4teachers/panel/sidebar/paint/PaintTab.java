@@ -20,6 +20,7 @@ import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageListPane;
@@ -346,7 +347,7 @@ public class PaintTab extends SideTab {
                         try{
                             path.setText(SVGUtils.rotatePath(element.getPath(), (float) ((double) inputAlert.getValue()), 4));
                         }catch(PathParseException ex){
-                            System.err.println(ex.getMessage());
+                            Log.eNotified(ex);
                         }
                     }
                 });
@@ -471,8 +472,8 @@ public class PaintTab extends SideTab {
                 return element;
                 
             }catch(ParserConfigurationException | XPathExpressionException | IOException | SAXException ex){
+                Log.e(ex);
                 new ErrorAlert(TR.tr("paintTab.vectorElements.browseSVG.error"), ex.getMessage(), false).show();
-                ex.printStackTrace();
             }
         }
         return null;

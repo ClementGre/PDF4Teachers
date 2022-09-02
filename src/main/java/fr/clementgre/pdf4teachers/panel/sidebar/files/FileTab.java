@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertRenderer;
 import fr.clementgre.pdf4teachers.document.render.display.PDFPagesRender;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -19,7 +20,6 @@ import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.TextInputAlert;
 import fr.clementgre.pdf4teachers.utils.sort.SortManager;
 import fr.clementgre.pdf4teachers.utils.sort.Sorter;
@@ -383,8 +383,7 @@ public class FileTab extends SideTab {
                         MainWindow.mainScreen.openFile(newFile);
                     }
                 }catch(IOException ex){
-                    ex.printStackTrace();
-                    ErrorAlert.showErrorAlert(ex);
+                    Log.eAlerted(ex);
                 }
             }
         

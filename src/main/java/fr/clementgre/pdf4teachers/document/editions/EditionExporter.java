@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeCopyGradeScaleDialog;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
@@ -80,8 +81,7 @@ public class EditionExporter {
                 MainWindow.mainScreen.document.updateEdition();
                 MainWindow.filesTab.refresh();
             }catch(Exception e){
-                e.printStackTrace();
-                new ErrorAlert(null, e.getMessage(), false).showAndWait();
+                Log.eAlerted(e);
             }
         }else{
             try{
@@ -159,7 +159,7 @@ public class EditionExporter {
                         try{
                             config.save();
                         }catch(IOException e){
-                            e.printStackTrace();
+                            Log.e(e);
                             boolean result = new ErrorAlert(TR.tr("dialog.importEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getFile()), config.getName()), e.getMessage(), recursive).execute();
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
@@ -185,8 +185,7 @@ public class EditionExporter {
                 MainWindow.filesTab.refresh();
                 
             }catch(Exception e){
-                e.printStackTrace();
-                new ErrorAlert(null, e.getMessage(), false).showAndWait();
+                Log.eAlerted(e);
             }
         }
         
@@ -302,7 +301,7 @@ public class EditionExporter {
                 try{
                     config.saveToDestFile();
                 }catch(IOException e){
-                    e.printStackTrace();
+                    Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("dialog.exportEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getDestFile()), config.getName()), e.getMessage(), recursive).execute();
                     if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     if(result) return TwoStepListAction.ProcessResult.STOP;
@@ -317,7 +316,7 @@ public class EditionExporter {
                     try{
                         oneFileConfig.save();
                     }catch(IOException e){
-                        e.printStackTrace();
+                        Log.e(e);
                         new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(oneFileConfig.getDestFile())), e.getMessage(), false).showAndWait();
                         return;
                     }

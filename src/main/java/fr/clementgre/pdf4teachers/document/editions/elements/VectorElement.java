@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawe
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorListPane;
@@ -247,7 +248,7 @@ public class VectorElement extends GraphicElement{
                 svgPath.setContent(getScaledPath((float) getLayoutBounds().getWidth(), (float) getLayoutBounds().getHeight(), (float) padding));
             }
         }catch(PathParseException e){
-            System.err.println(e.getMessage());
+            Log.e("PathParseException: " + e.getMessage());
         }
         
         svgPath.setClip(new Rectangle(-padding - getClipPadding(), -padding - getClipPadding(),
@@ -453,7 +454,7 @@ public class VectorElement extends GraphicElement{
             fill = Color.valueOf(Config.getString(data, "fill"));
             stroke = Color.valueOf(Config.getString(data, "stroke"));
         }catch(IllegalArgumentException e){
-            System.err.println("Error: Unable to parse VectorElement color: " + e.getMessage());
+            Log.e("Unable to parse VectorElement color: " + e.getMessage());
         }
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");
@@ -532,7 +533,7 @@ public class VectorElement extends GraphicElement{
             isPathScaledToPage = true;
             setPath(getScaledPath(getPath(), noScaledSvgPath, width, height, padding, false, false, 0, 6));
         }catch(PathParseException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }finally{
             isPathScaledToPage = false;
         }

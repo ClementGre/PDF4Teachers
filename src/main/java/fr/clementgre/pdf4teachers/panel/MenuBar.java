@@ -22,6 +22,7 @@ import fr.clementgre.pdf4teachers.interfaces.CopyPasteManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.booklet.BookletWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.splitpdf.SplitWindow;
@@ -197,7 +198,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     }
     
     public static boolean isSystemMenuBarSupported(){
-        return Main.isOSX();
+        return PlatformUtils.isOSX();
     }
     
     public void setup(){
@@ -213,7 +214,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2Split, tools4PdfTools3SplitSelection);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
-        if(Main.COPY_CONSOLE) tools8Debug.getItems().add(tools8Debug1OpenConsole);
+        tools8Debug.getItems().add(tools8Debug1OpenConsole);
         tools8Debug.getItems().addAll(tools8Debug2OpenAppFolder, tools8Debug3OpenEditionFile);
         
         tools.getItems().addAll(tools1Convert, /*tools2QRCode,*/ tools3AddPages, tools4PdfTools,
@@ -399,11 +400,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools8FullScreen.setOnAction((e) -> Main.window.setFullScreen(!Main.window.isFullScreen()));
         
         tools8Debug1OpenConsole.setOnAction((e) -> new LogWindow());
-        tools8Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openDirectory(Main.dataFolder));
+        tools8Debug2OpenAppFolder.setOnAction((e) -> PlatformUtils.openFile(Main.dataFolder));
         tools8Debug3OpenEditionFile.setOnAction((e) -> {
             File file = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
             if(!file.exists()){
-                try{file.createNewFile();}catch(IOException ioException){ioException.printStackTrace();}
+                try{file.createNewFile();}catch(IOException ex){ Log.eNotified(ex); }
             }
             PlatformUtils.openFile(file.getAbsolutePath());
         });
@@ -474,7 +475,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             try{
                 Desktop.getDesktop().browse(new URI("https://github.com/themsou/PDF4Teachers/issues/new"));
             }catch(IOException | URISyntaxException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
         });
         help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
@@ -488,7 +489,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         if(isSystemMenuBarSupported()){
             
-            if(Main.isOSX()){
+            if(PlatformUtils.isOSX()){
                 getMenus().addAll(file, tools, edit, help);
                 
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
@@ -580,7 +581,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                     ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
                     if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        System.err.println("MenuBar image " + image + " does not exist");
+                        Log.e("MenuBar image " + image + " does not exist");
                     else
                         ((NodeMenu) menu).setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
@@ -621,7 +622,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                     menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
                     if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        System.err.println("MenuBar image " + image + " does not exist");
+                        Log.e("MenuBar image " + image + " does not exist");
                     else
                         menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
                 }
@@ -640,7 +641,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
             if(keyCombinaison != null){
-                if(!Main.isOSX() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
+                if(!PlatformUtils.isOSX() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
             }
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));

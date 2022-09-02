@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -65,14 +66,14 @@ public class ImageGridElement extends ImageLambdaData{
             addToDocument();
         });
         openItem.setOnAction((event) -> {
-            PlatformUtils.openDirectory(getImageIdDirectory());
+            PlatformUtils.openFile(getImageIdDirectory());
         });
         deleteItem.setOnAction((event) -> {
             if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", getImageIdFileName())).execute()){
                 if(new File(getImageId()).delete()){
                     gridView.removeItems(Collections.singletonList(this));
                 }else{
-                    System.err.println("Unable to delete file " + getImageId());
+                    Log.e("Unable to delete file " + getImageId());
                 }
             }
         });

@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.utils.locking;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.application.Platform;
@@ -35,29 +36,29 @@ public class LockManager {
             toOpenPaths = getToOpenFiles(args).stream().map(File::getAbsolutePath).toList();
         }
         
-        System.out.println("Executing with toOpenPath = " + toOpenPaths.toString());
+        Log.d("Executing with toOpenPath = " + toOpenPaths);
         
         unique = new Unique4jList(Main.APP_ID, false) {
             
             @Override
             protected List<String> sendMessageList(){
-                System.out.println("Another instance is already running:");
+                Log.d("Another instance is already running:");
                 
                 LockMessage message = new LockMessage(messageType, toOpenPaths);
-                System.out.println("Sending message to other instance: " + message.toStringInfos());
+                Log.d("Sending message to other instance: " + message.toStringInfos());
                 return message.toList();
             }
             
             @Override
             protected void receiveMessageList(List<String> list){
                 LockMessage message = LockMessage.fromList(list);
-                System.out.println("Receiving message from another instance: " + message.toStringInfos());
+                Log.d("Receiving message from another instance: " + message.toStringInfos());
                 
                 if(message.type() == LockMessageType.REQUIRE_UNLOCK){
                     try{
-                        locked = unique.freeLock();
-                        System.out.println("Lock released: " + locked);
-                    }catch(Unique4jException e){e.printStackTrace();}
+                        locked = !unique.freeLock();
+                        Log.d("Lock released: " + !locked);
+                    }catch(Unique4jException e){Log.eNotified(e);}
                     
                 }else if(message.type() == LockMessageType.OPEN_FILES){
                     Platform.runLater(() -> tryToOpenFiles(getToOpenFiles(message.args())));
@@ -84,23 +85,23 @@ public class LockManager {
                     PlatformUtils.sleepThread(300);
                     locked = unique.acquireLock();
                 }
-                System.out.println("Instance locked: " + locked);
+                Log.d("Instance locked: " + locked);
                 return true;
                 
             }else{
-                System.out.println("Instance locked: " + locked);
+                Log.d("Instance locked: " + locked);
                 return locked; // If non-locked: the files has been opened on the locked instance.
             }
             
         }catch(Unique4jException e){
-            e.printStackTrace();
+            Log.eNotified(e);
             return false;
         }
     }
     public static void onCloseApp(){
         try{
-            locked = unique.freeLock();
-        }catch(Unique4jException e){e.printStackTrace();}
+            if(locked) locked = unique.freeLock();
+        }catch(Unique4jException e){Log.eNotified(e);}
     }
     
     public static void tryToOpenFiles(List<File> toOpenFiles){

@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -37,7 +38,7 @@ public class UndoEngine{
     public void registerNewAction(UndoAction action){
         if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) return;
     
-        if(VERBOSE) System.out.println("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) Log.t("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
         undoList.add(0, action);
         checkUndoStackLength();
     
@@ -47,7 +48,7 @@ public class UndoEngine{
     }
     
     public void undo(){
-        if(VERBOSE) System.out.println("Execute UNDO (stack has " + undoList.size() + " actions)");
+        if(VERBOSE) Log.t("Execute UNDO (stack has " + undoList.size() + " actions)");
         isUndoingThings = true;
         
         while(!undoLastAction());
@@ -63,7 +64,7 @@ public class UndoEngine{
     }
     
     public void redo(){
-        if(VERBOSE) System.out.println("Execute REDO (stack has " + redoList.size() + " actions)");
+        if(VERBOSE) Log.t("Execute REDO (stack has " + redoList.size() + " actions)");
         isUndoingThings = true;
         
         // doProcessNoCountRightAndLeft has no interest in redo because the first action in the list will always be a classic action
@@ -81,7 +82,7 @@ public class UndoEngine{
         if(undoList.size() == 0) return true;
         
         UndoAction action = undoList.get(0);
-        if(VERBOSE) System.out.println("Undoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) Log.t("Undoing: " + action + " [" + action.getUndoType() + "]");
         undoList.remove(0);
         boolean completed = action.undoAndInvert();
         redoList.add(0, action);
@@ -92,7 +93,7 @@ public class UndoEngine{
         if(redoList.size() == 0) return true;
     
         UndoAction action = redoList.get(0);
-        if(VERBOSE) System.out.println("Redoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) Log.t("Redoing: " + action + " [" + action.getUndoType() + "]");
         redoList.remove(0);
         boolean completed = action.undoAndInvert();
         undoList.add(0, action);

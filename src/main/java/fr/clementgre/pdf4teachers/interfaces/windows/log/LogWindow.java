@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows.log;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -23,14 +24,13 @@ import javafx.stage.Stage;
 import jfxtras.styles.jmetro.JMetro;
 import jfxtras.styles.jmetro.Style;
 
-import java.io.PrintStream;
-
 public class LogWindow extends Stage {
     
-    public static StringBuffer logs = new StringBuffer();
+    private final Label label = new Label(LogsManager.getLogs());
+    private final Pane pane = new Pane();
+    private final ScrollPane scrollPane = new ScrollPane(pane);
     
-    public static PrintStream newConsole = new CustomPrintStream(System.out, logs);
-    public static PrintStream newErrConsole = new CustomPrintStream(System.err, logs);
+    private boolean doScrollToBottom = false;
     
     public LogWindow(){
         
@@ -47,16 +47,23 @@ public class LogWindow extends Stage {
         });
         new JMetro(scene, Style.DARK);
         
-        Pane pane = new Pane();
         root.setStyle("-fx-background-color: black;");
-        ScrollPane scrollPane = new ScrollPane(pane);
         scrollPane.setStyle("-fx-background-color: black;");
         scrollPane.setFitToHeight(true);
         scrollPane.setFitToWidth(true);
         scrollPane.prefWidthProperty().bind(scene.widthProperty());
         scrollPane.prefHeightProperty().bind(scene.heightProperty());
-        pane.minHeightProperty().bind(text.heightProperty());
+        label.heightProperty().addListener((o, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                doScrollToBottom = scrollPane.getVvalue() == scrollPane.getVmax();
+                pane.setMinHeight(newValue.doubleValue());
+            });
+        });
+        pane.heightProperty().addListener((o, oldValue, newValue) -> {
+            if(doScrollToBottom) scrollPane.setVvalue(scrollPane.getVmax());
+        });
         root.getChildren().add(scrollPane);
+        
         setupUi(pane);
         
         Main.window.centerWindowIntoMe(this);
@@ -65,40 +72,40 @@ public class LogWindow extends Stage {
         MainWindow.preventStageOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
     }
     
-    private final Label text = new Label(logs.toString());
-    private boolean needToStopUpdater = false;
-    public void stopUpdater(){
-        needToStopUpdater = true;
-    }
-    private final Thread updater = new Thread(() -> {
-        needToStopUpdater = false;
-        try{
-            Thread.sleep(200);
-        }catch(InterruptedException e){e.printStackTrace();}
-        while(!needToStopUpdater){
-            Platform.runLater(() -> text.setText(logs.toString()));
-            try{
-                Thread.sleep(200);
-            }catch(InterruptedException e){e.printStackTrace();}
-        }
-    });
-    
     private void setupUi(Pane root){
         
-        text.setStyle("-fx-font-size: 12; -fx-text-fill: white; -fx-padding: 5;");
-        text.setWrapText(true);
-        text.prefWidthProperty().bind(root.widthProperty());
-        text.minHeight(Double.MAX_VALUE);
+        label.setStyle("-fx-text-fill: white; -fx-padding: 5; -fx-font: 13 'Courier Prime' !important;");
         
-        root.getChildren().add(text);
-        root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY)));
+        label.setWrapText(true);
+        label.prefWidthProperty().bind(root.widthProperty());
+        label.minHeight(Double.MAX_VALUE);
+        
+        root.getChildren().add(label);
+        root.setBackground(new Background(new BackgroundFill(Color.web("#2a2a31"), CornerRadii.EMPTY, Insets.EMPTY)));
         
         updater.start();
     }
     
-    public static void copyLogs(){
-        System.setOut(newConsole);
-        System.setErr(newErrConsole);
+    
+    private boolean needToStopUpdater = false;
+    public void stopUpdater(){
+        needToStopUpdater = true;
     }
+    
+    private final Thread updater = new Thread(() -> {
+        needToStopUpdater = false;
+        try{
+            Thread.sleep(200);
+        }catch(InterruptedException e){Log.eNotified(e);}
+        
+        int lastLen = 0;
+        while(!needToStopUpdater){
+            if(lastLen != LogsManager.getLogsLength()){
+                lastLen = LogsManager.getLogsLength();
+                Platform.runLater(() -> label.setText(LogsManager.getLogs()));
+            }
+            PlatformUtils.sleepThread(200);
+        }
+    });
     
 }

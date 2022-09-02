@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.style.Style;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.geometry.Point2D;
@@ -37,7 +38,7 @@ public class AutoTipTooltip extends PopOver {
     private static final int WIDTH = 300;
     
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
-        String contentText = Main.isOSX()
+        String contentText = PlatformUtils.isOSX()
                 ? TR.tr("autoTips." + name).replace("ctrl+", "Ctrl+").replace("Ctrl+", "Cmd+")
                 : TR.tr("autoTips." + name);
         text.setText(contentText);

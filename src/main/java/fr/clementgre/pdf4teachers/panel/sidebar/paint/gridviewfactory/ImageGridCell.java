@@ -9,6 +9,7 @@ import com.drew.imaging.ImageProcessingException;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
@@ -158,7 +159,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         
         try{
             image.setImage(getImageCropped(image, renderSize));
-        }catch(IOException | ImageProcessingException e){ e.printStackTrace(); }
+        }catch(IOException | ImageProcessingException e){ Log.eNotified(e); }
         
         Platform.runLater(callBack::call);
     }

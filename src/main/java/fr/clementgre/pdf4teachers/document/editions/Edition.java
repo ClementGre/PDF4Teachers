@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
@@ -19,6 +20,7 @@ import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ConfirmAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
@@ -87,7 +89,7 @@ public class Edition{
             
             return true;
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e, "Can't load edition");
             return false;
         }
     }
@@ -160,11 +162,11 @@ public class Edition{
             }
             
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e, "Can't save edition");
         }
         
         isSave.set(true);
-        if(toast) MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
+        if(toast) MainWindow.footerBar.showToast(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
         MainWindow.filesTab.files.refresh();
         
     }
@@ -179,7 +181,7 @@ public class Edition{
             
             config.save();
         }catch(Exception e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     
@@ -304,7 +306,7 @@ public class Edition{
             }
             
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     
@@ -420,10 +422,10 @@ public class Edition{
         path = path.replaceAll(Pattern.quote("!E!"), "\\" + File.separator).replaceAll(Pattern.quote("!P!"), ":");
         path = StringUtils.removeAfterLastOccurrence(path, ".yml");
         
-        if(!editFile.getName().contains("!P!") && Main.isWindows()){
+        if(!editFile.getName().contains("!P!") && PlatformUtils.isWindows()){
             return new File(File.separator + path);
         }
-        if(!editFile.getName().startsWith("!E!") && !Main.isWindows()){
+        if(!editFile.getName().startsWith("!E!") && !PlatformUtils.isWindows()){
             return new File(File.separator + path);
         }
         return new File(path);
@@ -433,7 +435,7 @@ public class Edition{
         try{
             Files.copy(fromEdit.toPath(), destEdit.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }catch(IOException e){
-            e.printStackTrace();
+            Log.e(e);
             new ErrorAlert(ErrorAlert.unableToCopyFileHeader(fromEdit.getAbsolutePath(), destEdit.getAbsolutePath(), true), e.getMessage(), false).showAndWait();
         }
     }
@@ -486,7 +488,7 @@ public class Edition{
     }
     
     public static void setUnsave(String sourceDebug){
-        if(false) System.out.println("Unsave Edition from: " + sourceDebug);
+        if(false) Log.t("Unsave Edition from: " + sourceDebug);
         
         isSave.set(false);
         MainWindow.footerBar.updateStats();

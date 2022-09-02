@@ -172,12 +172,24 @@ public class FooterBar extends StackPane {
             }
         });
     }
-    
-    public void showAlert(Color background, Color messageColor, String text){
+    public enum ToastDuration { SHORT(2000), LONG(10000);
+        private final int duration;
+        ToastDuration(int duration){
+            this.duration = duration;
+        }
+        public int getDuration(){
+            return duration;
+        }
+    }
+    public void showToast(Color background, Color messageColor, String text){
+        showToast(background, messageColor, ToastDuration.SHORT, text);
+    }
+    public void showToast(Color background, Color messageColor, ToastDuration duration, String text){
         if(!getChildren().contains(messagePane)){
             getChildren().add(messagePane);
             messagePane.setTranslateY(20);
         }
+        
         messagePane.setBackground(new Background(new BackgroundFill(background, CornerRadii.EMPTY, Insets.EMPTY)));
         messagePane.setOpacity(0);
         message.setTextFill(messageColor);
@@ -193,7 +205,7 @@ public class FooterBar extends StackPane {
             );
             timelineShow.play();
             
-            PlatformUtils.runLaterOnUIThread(2000, () -> {
+            PlatformUtils.runLaterOnUIThread(duration.duration, () -> {
                 Timeline timelineHide = new Timeline(60);
                 timelineHide.getKeyFrames().addAll(
                         new KeyFrame(Duration.millis(200), new KeyValue(messagePane.translateYProperty(), 20)),

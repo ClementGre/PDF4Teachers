@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -60,7 +62,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             }
             
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
             error = true;
             return false;
         }
@@ -109,7 +111,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             // Else, we will propose the last non-pre release
             
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
             error = true;
             return false;
         }
@@ -163,7 +165,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             }
             return true;
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
             error = true;
             return false;
         }
@@ -204,10 +206,10 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
         
         String platform = "Linux";
         String extension = "deb";
-        if(Main.isWindows()){
+        if(PlatformUtils.isWindows()){
             platform = "Windows";
             extension = "msi";
-        }else if(Main.isOSX()){
+        }else if(PlatformUtils.isOSX()){
             platform = "MacOSX";
             extension = "dmg";
         }

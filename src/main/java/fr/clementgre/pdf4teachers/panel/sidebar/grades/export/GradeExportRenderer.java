@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeRating;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
@@ -77,7 +78,7 @@ public class GradeExportRenderer {
                 }
                 if(!save(null)) return exported;
             }catch(Exception e){
-                e.printStackTrace();
+                Log.e(e);
                 new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.fatalError.title"), e.getMessage(), false).showAndWait();
                 return exported;
             }
@@ -98,7 +99,7 @@ public class GradeExportRenderer {
                     if(!save(file)) return exported;
                     
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true).execute();
                     if(result) return exported;
                 }
@@ -273,7 +274,7 @@ public class GradeExportRenderer {
             }
             
         }catch(Exception e){
-            e.printStackTrace();
+            Log.e(e);
             new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", MainWindow.mainScreen.document.getFileName()) + "\n" +
                     TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), false).showAndWait();
             return false;
@@ -296,7 +297,7 @@ public class GradeExportRenderer {
                     files.add(exportFile);
                     
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
                             TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), true).execute();
                     if(result) return false;

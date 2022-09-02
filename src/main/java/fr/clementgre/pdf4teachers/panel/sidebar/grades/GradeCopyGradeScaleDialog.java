@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
@@ -83,7 +84,7 @@ public class GradeCopyGradeScaleDialog {
                 }
             }
         }catch(Exception e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     
@@ -167,7 +168,7 @@ public class GradeCopyGradeScaleDialog {
             return 0;
             
         }catch(Exception e){
-            e.printStackTrace();
+            Log.eNotified(e);
             return 1;
         }
     }

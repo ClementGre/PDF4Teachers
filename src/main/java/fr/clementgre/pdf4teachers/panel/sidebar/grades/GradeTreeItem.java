@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
@@ -102,7 +103,7 @@ public class GradeTreeItem extends TreeItem<String> {
     public void updateCell(TreeCell<String> cell){
         if(cell == null) return;
         if(core == null){
-            System.err.println("Error: trying to update a GradeTreeItem which should be deleted (core == null).");
+            Log.e("Trying to update a GradeTreeItem which should be deleted (core == null).");
             return;
         }
         
@@ -141,7 +142,7 @@ public class GradeTreeItem extends TreeItem<String> {
         }
         
         // DEBUG
-        if(Main.DEBUG)
+        if(Log.doDebug())
             cell.setTooltip(PaneUtils.genToolTip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
         
     }

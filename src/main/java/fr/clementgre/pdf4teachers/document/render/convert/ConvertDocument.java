@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
 
@@ -33,7 +34,7 @@ public class ConvertDocument {
                             try{
                                 file.document.close();
                             }catch(IOException e){
-                                e.printStackTrace();
+                                Log.eNotified(e);
                             }
                             doBreak = true;
                         }
@@ -41,7 +42,7 @@ public class ConvertDocument {
                             try{
                                 file.document.close();
                             }catch(IOException e){
-                                e.printStackTrace();
+                                Log.eNotified(e);
                             }
                             continue;
                         }
@@ -59,7 +60,7 @@ public class ConvertDocument {
                     file.document.save(file.file);
                     file.document.close();
                 }catch(IOException e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
                 
                 

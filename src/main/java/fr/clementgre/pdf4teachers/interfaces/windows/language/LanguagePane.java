@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -41,7 +42,7 @@ public class LanguagePane extends HBox {
             try{
                 image = ImageUtils.buildImage(new FileInputStream(getPath(".png")), 88, 50);
             }catch(FileNotFoundException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
         }
         

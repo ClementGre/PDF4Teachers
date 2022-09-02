@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.utils.panes;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Insets;
@@ -22,8 +23,8 @@ public class PaneUtils {
     
     public static void printChildrenStructure(Parent parent, int depth){
         for(Node children : parent.getChildrenUnmodifiable()){
-            
-            System.out.println("   " + "|   ".repeat(Math.max(0, depth - 1)) + (depth == 0 ? "-" : "|- ") +
+    
+            Log.d("   " + "|   ".repeat(Math.max(0, depth - 1)) + (depth == 0 ? "-" : "|- ") +
                     children.getClass().getSimpleName() + " [" + children.getStyleClass().toString() + "]");
             
             if(children instanceof Parent newParent){
@@ -34,7 +35,7 @@ public class PaneUtils {
     public static void printParentsStructure(Parent parent, int depth){
         int i = 0;
         while(parent.getParent() != null && i < depth){
-            System.out.println("  ".repeat(i) + parent.getClass().getSimpleName() + " [" + parent.getStyleClass().toString() + "]");
+            Log.d("  ".repeat(i) + parent.getClass().getSimpleName() + " [" + parent.getStyleClass().toString() + "]");
             parent = parent.getParent();
             i++;
         }

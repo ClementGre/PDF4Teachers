@@ -12,6 +12,7 @@ import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTab;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.TiersFont;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextListItem;
@@ -180,7 +181,7 @@ public class UserData {
             try{
                 Thread.sleep(1000 * 60);
             }catch(InterruptedException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
             if(Main.window.isFocused()){
                 MainWindow.userData.foregroundTime++;
@@ -290,13 +291,12 @@ public class UserData {
                                 if(value != null) field.set(this, value);
                             }
                         }catch(Exception e){
-                            e.printStackTrace();
+                            Log.eNotified(e);
                         }
                     }
                 }
             }catch(Exception e){
-                e.printStackTrace();
-                System.err.println("Unable to load userdata.yml");
+                Log.eNotified(e, "Unable to load userdata.yml");
             }
             
             Platform.runLater(() -> {
@@ -415,15 +415,14 @@ public class UserData {
                         }
                         
                     }catch(Exception e){
-                        e.printStackTrace();
+                        Log.eNotified(e);
                     }
                 }
             }
             
             config.save();
         }catch(Exception e){
-            e.printStackTrace();
-            System.err.println("Unable to save userdata.yml");
+            Log.eNotified(e, "Unable to save userdata.yml");
         }
         
     }

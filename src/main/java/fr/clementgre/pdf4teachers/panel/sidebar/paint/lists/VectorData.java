@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridCell;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import javafx.scene.paint.Color;
@@ -130,7 +131,7 @@ public class VectorData{
             fill = Color.valueOf(Config.getString(data, "fill"));
             stroke = Color.valueOf(Config.getString(data, "stroke"));
         }catch(IllegalArgumentException e){
-            System.err.println("Error: Unable to parse VectorElement color: " + e.getMessage());
+            Log.e("Unable to parse VectorElement color: " + e.getMessage());
         }
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");

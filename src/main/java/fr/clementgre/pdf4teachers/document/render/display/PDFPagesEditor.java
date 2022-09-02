@@ -19,6 +19,7 @@ import fr.clementgre.pdf4teachers.document.render.convert.ConvertWindow;
 import fr.clementgre.pdf4teachers.document.render.convert.ConvertedFile;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
@@ -83,7 +84,7 @@ public class PDFPagesEditor {
             document.save(file);
             edited = false;
         }catch(IOException e){
-            e.printStackTrace();
+            Log.e(e);
             ErrorAlert alert = new ErrorAlert(TR.tr("dialog.error.unableToSavePDFPagesEdits"), e.getMessage(), false);
             alert.getButtonTypes().clear();
             alert.addIgnoreButton(ButtonPosition.CLOSE);
@@ -312,7 +313,7 @@ public class PDFPagesEditor {
                 PDDocument fileDoc = PDDocument.load(file);
                 addPdfDocument(fileDoc, index);
             }catch(IOException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
         }
         
@@ -329,7 +330,7 @@ public class PDFPagesEditor {
             merger.appendDocument(this.document, toAddDoc);
             merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
         
         edited = true;
@@ -359,7 +360,7 @@ public class PDFPagesEditor {
         try{
             toAddDoc.close();
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     
         // update coordinates of the pages
@@ -559,7 +560,7 @@ public class PDFPagesEditor {
                             try{
                                 ImageIO.write(image, "png", data.getKey());
                             }catch(IOException e){
-                                e.printStackTrace();
+                                Log.e(e);
                                 boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
                                 if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                                 if(result) return TwoStepListAction.ProcessResult.STOP;
@@ -578,7 +579,7 @@ public class PDFPagesEditor {
                         }
                         
                     }catch(Exception e){
-                        e.printStackTrace();
+                        Log.e(e);
                         boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(null, e.getMessage(), recursive).execute());
                         if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                         if(result) return TwoStepListAction.ProcessResult.STOP;
@@ -590,7 +591,7 @@ public class PDFPagesEditor {
                 @Override
                 public void finish(int originSize, int sortedSize, int completedSize, HashMap<Integer, Integer> excludedReasons, boolean recursive){
                     if(exportDir == null){
-                        MainWindow.footerBar.showAlert(Color.web("#008e00"), Color.WHITE, TR.tr("messages.copied"));
+                        MainWindow.footerBar.showToast(Color.web("#008e00"), Color.WHITE, TR.tr("messages.copied"));
                         return;
                     }
                     String alreadyExistText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("document.pageActions.capture.completedDialog.ignored.alreadyExisting", excludedReasons.get(1)) + ")";

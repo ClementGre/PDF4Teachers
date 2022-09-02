@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.utils.interfaces;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.LoadingAlert;
 import javafx.application.Platform;
@@ -76,7 +77,7 @@ public class TwoStepListAction<T, D>{
                     }
                 }
             }catch(Exception e){
-                e.printStackTrace();
+                Log.e(e);
                 boolean result = new ErrorAlert(null, e.getMessage(), data.size() > 1).execute();
                 if(data.size() <= 1) return false;
                 if(result) return false;

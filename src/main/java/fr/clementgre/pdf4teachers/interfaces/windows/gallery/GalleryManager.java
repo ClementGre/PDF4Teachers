@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.interfaces.windows.gallery;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageLambdaData;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -28,7 +29,7 @@ public class GalleryManager {
             try{
                 return new File(str).isDirectory();
             }catch(SecurityException e){
-                e.printStackTrace();
+                Log.eNotified(e);
                 return false;
             }
         }).distinct().collect(Collectors.toList());

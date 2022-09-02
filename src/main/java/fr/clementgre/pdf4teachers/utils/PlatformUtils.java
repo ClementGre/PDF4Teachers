@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.ReturnCallBack;
 import javafx.application.Platform;
@@ -20,27 +21,27 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils {
     
-    public static final Cursor CURSOR_MOVE = Main.isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
+    public static final Cursor CURSOR_MOVE = isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
     
     public static void sleepThread(long millis){
         try{
             Thread.sleep(millis);
         }catch(InterruptedException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     public static void sleepThreadSeconds(double seconds){
         try{
             Thread.sleep((long) (seconds * 1000));
         }catch(InterruptedException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     public static void sleepThreadMinutes(double minutes){
         try{
             Thread.sleep((long) (minutes * 60000));
         }catch(InterruptedException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     
@@ -49,7 +50,7 @@ public class PlatformUtils {
             try{
                 Thread.sleep(millis);
             }catch(InterruptedException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
             Platform.runLater(runnable);
         }, "runLaterOnUIThread").start();
@@ -61,7 +62,7 @@ public class PlatformUtils {
                 try{
                     Thread.sleep(millis);
                 }catch(InterruptedException e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
                 Platform.runLater(runnable);
             }
@@ -106,24 +107,24 @@ public class PlatformUtils {
                 printHeapStatus();
                 try{
                     Thread.sleep(printIntervalMs);
-                }catch(InterruptedException e){e.printStackTrace();}
+                }catch(InterruptedException e){Log.eNotified(e);}
             }
         }, "Heap debugger").start();
     }
     public static void printHeapStatus(){
         if(MainWindow.twoDigFormat != null)
-            System.out.println("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000d)
+            Log.d("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000d)
                     + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory() / 1000000d) + "MB");
         else
-            System.out.println("Heap: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000
+            Log.d("Heap: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000
                     + "MB / " + Runtime.getRuntime().maxMemory() / 1000000 + "MB");
     }
     public static void printActionTime(CallBack action, String name){
         long time = countActionTime(action);
-        System.out.println("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
+        Log.d("Executing action \"" + name + "\" in " + time + "ms (" + (time / 1000) + "s)");
     }
     public static void printActionTimeIfDebug(CallBack action, String name){
-        if(!Main.DEBUG){
+        if(!Log.doDebug()){
             action.call();
             return;
         }
@@ -135,39 +136,44 @@ public class PlatformUtils {
         return System.currentTimeMillis() - startTime;
     }
     
-    public static void openDirectory(String uri){
-        
-        if(Main.isOSX()){
-            try{
-                if(Desktop.isDesktopSupported()){
-                    Desktop.getDesktop().open(new File(uri));
-                }
-                //Runtime.getRuntime().exec("/usr/bin/open " + uri).waitFor();
-            }catch(IOException e){
-                System.out.println("unable to open URI directory");
-                e.printStackTrace();
-            }
-        }else{
-            Main.hostServices.showDocument(uri); // Doesn't work for OSX
-        }
-        
-    }
-    
     public static void openFile(String uri){
-        
-        if(Main.isOSX()){
+        if(isOSX()){
             try{
-                if(Desktop.isDesktopSupported()){
-                    Desktop.getDesktop().open(new File(uri));
-                }
-                //Runtime.getRuntime().exec("/usr/bin/open -a TextEdit " + uri).waitFor();
+                if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(new File(uri));
             }catch(IOException e){
-                System.out.println("unable to open URI file");
-                e.printStackTrace();
+                Log.eNotified(e, "unable to open URI file/directory: " + uri);
             }
         }else{
             Main.hostServices.showDocument(uri);// Doesn't work for OSX
         }
+    }
+    
+    public static boolean isWindows(){
+        return System.getProperty("os.name").toLowerCase().contains("windows");
+    }
+    public static boolean isOSX(){
+        return System.getProperty("os.name").toLowerCase().contains("mac os x");
+    }
+    public static boolean isLinux(){
+        return !isWindows() && !isOSX();
+    }
+    public static String getDataFolder(){
+        String dataFolder;
         
+        if(isWindows()){
+            dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
+        }else if(isOSX()){
+            dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
+            // Move data folder if needed
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
+        }else{
+            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
+            else dataFolder = System.getProperty("user.home") + "/.local/share/PDF4Teachers/";
+            // Move data folder if needed
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
+        }
+        
+        new File(dataFolder).mkdirs();
+        return dataFolder;
     }
 }

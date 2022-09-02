@@ -9,7 +9,7 @@
 }
 
 .header .headerText {
-    -fx-font: 35 "Open Sans";
+    -fx-font: 37 "Arial Rounded MT Bold";
     -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;
@@ -17,7 +17,7 @@
 }
 
 .header .subHeaderText {
-    -fx-font: 16 "Lato";
+    -fx-font: 16 "Arial Rounded MT Bold";
     -fx-font-weight: 700;
     -fx-wrap-text: true;
     -fx-font-smoothing-type: gray;

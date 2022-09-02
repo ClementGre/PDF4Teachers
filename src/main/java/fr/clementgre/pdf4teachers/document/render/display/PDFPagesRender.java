@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.document.render.display;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -72,7 +73,7 @@ public class PDFPagesRender {
             }
             try{
                 document.close();
-            }catch(IOException e){ e.printStackTrace(); }
+            }catch(IOException e){ Log.eNotified(e); }
             document = null;
             isClosed = true;
             
@@ -113,7 +114,7 @@ public class PDFPagesRender {
             }
             graphics.dispose();
         }catch(Exception e){
-            e.printStackTrace();
+            Log.eNotified(e);
             Platform.runLater(() -> renderPending.callBack.call(null));
         }
         
@@ -144,7 +145,7 @@ public class PDFPagesRender {
             
             return renderImage;
         }catch(Exception e){
-            e.printStackTrace();
+            Log.eNotified(e);
             return null;
         }
     }

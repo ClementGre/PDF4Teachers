@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.LoadingAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
@@ -133,7 +134,7 @@ public class LanguagesUpdater {
     
     public void updateStats(CallBack callBack){
         new Thread(() -> {
-            String uuid = Main.DEBUG ? "DEBUG" : MainWindow.userData.uuid;
+            String uuid = Log.doDebug() ? "DEBUG" : MainWindow.userData.uuid;
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                         "&starts=" + MainWindow.userData.startsCount +
@@ -145,12 +146,9 @@ public class LanguagesUpdater {
                 }
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setDoOutput(false);
-                if(Main.DEBUG){
-                    int responseCode = con.getResponseCode();
-                    System.out.println("updating stats with response code " + responseCode);
-                }
+                Log.d("updating stats with response code " + con.getResponseCode());
             }catch(IOException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
             if(callBack != null) callBack.call();
         }).start();
@@ -165,7 +163,7 @@ public class LanguagesUpdater {
             try{
                 URL url = new URL("https://api.pdf4teachers.org/startupdate/");
                 if(provideData){
-                    String uuid = Main.DEBUG ? "DEBUG" : MainWindow.userData.uuid;
+                    String uuid = Log.doDebug() ? "DEBUG" : MainWindow.userData.uuid;
                     if(Main.settings.sendStats.getValue()){
                         url = new URL("https://api.pdf4teachers.org/startupdate/?time=" + MainWindow.userData.foregroundTime +
                                 "&starts=" + MainWindow.userData.startsCount +
@@ -180,11 +178,10 @@ public class LanguagesUpdater {
                 con.setDoOutput(true);
                 con.setRequestProperty("Accept", "application/json");
                 con.setRequestProperty("Content-Type", "application/json; utf-8");
-                if(Main.DEBUG){
-                    int responseCode = con.getResponseCode();
-                    System.out.println("updating language with response code " + responseCode);
-                    if(responseCode != 200) System.out.println(con.getResponseMessage());
-                }
+                
+                int responseCode = con.getResponseCode();
+                Log.d("updating language with response code " + responseCode);
+                if(responseCode != 200) Log.d(con.getResponseMessage());
                 
                 JsonFactory jfactory = new JsonFactory();
                 JsonParser jParser = jfactory.createParser(con.getInputStream());
@@ -225,13 +222,13 @@ public class LanguagesUpdater {
                 
                 
                 List<Language> toDownloadLanguages = new ArrayList<>();
-                if(Main.DEBUG) System.out.println("Listing languages :");
+                Log.d("Listing languages :");
                 for(Language language : languages){
-                    if(Main.DEBUG) System.out.print(language.toString());
+                    Log.d(language.toString());
                     if(isLanguageAlreadyExisting(language)){
-                        if(Main.DEBUG) System.out.println(" (Already existing)");
+                        Log.d(" (Already existing)");
                     }else{
-                        if(Main.DEBUG) System.out.println(" (Will be downloaded)");
+                        Log.d(" (Will be downloaded)");
                         toDownloadLanguages.add(language);
                     }
                 }
@@ -253,7 +250,7 @@ public class LanguagesUpdater {
                 complete(callBack, toDownloadLanguages);
                 
             }catch(IOException e){
-                e.printStackTrace();
+                Log.eNotified(e);
                 complete(callBack, new ArrayList<>());
             }
             
@@ -317,7 +314,7 @@ public class LanguagesUpdater {
                 }
                 
             }catch(IOException | InterruptedException e){
-                e.printStackTrace();
+                Log.eNotified(e);
                 return false;
             }
         }

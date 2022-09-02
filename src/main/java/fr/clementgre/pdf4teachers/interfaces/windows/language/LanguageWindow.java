@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.event.ActionEvent;
@@ -20,13 +21,28 @@ import java.util.Objects;
 
 public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
     
-    public static void checkUpdatesAndShow(CallBackArg<String> callBack){
+    public static void showLanguageWindow(boolean firstStartBehaviour){
+    
         new LanguagesUpdater().update((downloaded) -> {
-            new LanguageWindow(callBack);
+            new LanguageWindow(selectedLanguage -> {
+                if(!selectedLanguage.isEmpty() && !selectedLanguage.equals(Main.settings.language.getValue())){
+                    String oldDocPath = TR.getDocFile().getAbsolutePath();
+        
+                    Main.settings.language.setValue(selectedLanguage);
+                    Main.settings.saveSettings();
+        
+                    if(!firstStartBehaviour){
+                        Main.window.restart(true, oldDocPath);
+                    }else{
+                        TR.updateLocale();
+                        Main.startMainWindowAuto();
+                    }
+                }
+            });
         }, false, false);
     }
     
-    CallBackArg<String> callBack;
+    private final CallBackArg<String> callBack;
     public LanguageWindow(CallBackArg<String> callBack){
         super(new ListView<>(), StageWidth.NORMAL, TR.tr("language.chooseLanguageWindow.title"), TR.tr("language.chooseLanguageWindow.title"));
         this.callBack = callBack;
@@ -87,9 +103,9 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
                         if(Main.settings.language.getValue().equals(languagePane.getShortName()))
                             root.getSelectionModel().select(languagePane);
                     }
-                }catch(Exception e){e.printStackTrace();}
+                }catch(Exception e){Log.eNotified(e);}
             }
-        }catch(Exception e){e.printStackTrace();}
+        }catch(Exception e){Log.eNotified(e);}
     }
     
 }

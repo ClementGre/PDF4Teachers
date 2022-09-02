@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.document.render.convert;
 import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.MetadataException;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.image.ExifUtils;
@@ -86,7 +87,7 @@ public class ConvertRenderer {
         for(ConvertedFile file : convertedFiles){
             try{
                 file.document.close();
-            }catch(IOException e){e.printStackTrace();}
+            }catch(IOException e){ Log.eNotified(e); }
         }
     }
     
@@ -132,7 +133,7 @@ public class ConvertRenderer {
                     // Rotate page in function of image EXIF data
                     page.setRotation(new ExifUtils(file).getImageExifRotation().getRotateAngle());
                 }catch(MetadataException | ImageProcessingException e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
                 
                 PDPageContentStream contentStream = new PDPageContentStream(convertedFile.document, page, PDPageContentStream.AppendMode.APPEND, true, true);

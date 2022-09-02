@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.datasaving.settings.Setting;
 import fr.clementgre.pdf4teachers.datasaving.settings.SettingsGroup;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -42,7 +43,7 @@ public class SettingsWindow extends AlternativeWindow<VBox> {
                     }
                     root.getChildren().add(groupPane);
                     i++;
-                }catch(IllegalAccessException e){e.printStackTrace();}
+                }catch(IllegalAccessException e){Log.eNotified(e);}
             }
         }
         

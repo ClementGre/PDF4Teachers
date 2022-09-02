@@ -9,12 +9,12 @@ import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.components.SyncColorPicker;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.NotationGraph;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.image.ColorUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
@@ -287,8 +287,7 @@ public class NotationsListingPane extends Tab {
                         notation.setData(ImageUtils.imageToBase64(ImageUtils.resizeImageToSquare(ImageIO.read(file), 50)));
                         graph.updateGraph(assessment.getNotationType(), notation, false);
                     }catch(IOException ex){
-                        ex.printStackTrace();
-                        new ErrorAlert(null, ex.getMessage(), false);
+                        Log.eAlerted(ex);
                     }
                 });
                 grid.addRow(line, browseButton);

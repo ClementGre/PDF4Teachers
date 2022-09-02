@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.utils.fonts;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.MoreCollectors;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.collections.FXCollections;
@@ -127,12 +128,12 @@ public class FontUtils {
             if(font != null){
                 return font;
             }
-            System.err.println("Error: Unable to load default font " + family + " italic: " + italic + " bold: " + bold + ". Returning system font or default font...");
+            Log.e("Unable to load default font " + family + " italic: " + italic + " bold: " + bold + ". Returning system font or default font...");
         }
         if(isSystemFont(family)){
             try{
                 return getSystemFontFiles(family, italic, bold);
-            }catch(FileNotFoundException e){e.printStackTrace();}
+            }catch(FileNotFoundException e){Log.eNotified(e);}
         }
         
         return getDefaultFontFile("Open Sans", italic, bold);
@@ -152,7 +153,7 @@ public class FontUtils {
                     fileFontName = "bold";
                 else fileFontName = "regular";
             }else{
-                System.err.println("Erreur : impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
+                Log.e("Impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
                 return null;
             }
             

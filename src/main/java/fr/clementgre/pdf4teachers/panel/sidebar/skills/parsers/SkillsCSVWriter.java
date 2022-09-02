@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
@@ -20,7 +21,6 @@ import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -98,8 +98,7 @@ public class SkillsCSVWriter {
                     TR.tr("actions.export.fileAvailable"), dest.getParentFile().getAbsolutePath(), dest.getAbsolutePath());
             
         }catch(Exception e){
-            e.printStackTrace();
-            ErrorAlert.showErrorAlert(e);
+            Log.eAlerted(e);
         }
     }
     
@@ -136,7 +135,7 @@ public class SkillsCSVWriter {
                 }
                 
                 
-            }catch(Exception e){ e.printStackTrace(); }
+            }catch(Exception e){ Log.eNotified(e); }
         }
         
         return fileGrades.stream().sorted(Comparator.comparing(EditionGrades::fileName)).collect(Collectors.toList());

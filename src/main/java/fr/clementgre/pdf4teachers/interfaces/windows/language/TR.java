@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows.language;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 
 import java.io.*;
@@ -61,12 +62,11 @@ public class TR {
             return getBundleByLocaleInCode(locale);
         }else{
             try{ // Load the locale from user files
-                if(Main.DEBUG) System.out.println("Loading locale " + locale.toString() + " from user files...");
+                Log.d("Loading locale " + locale.toString() + " from user files...");
                 FileInputStream fis = new FileInputStream(getLocaleFile(locale));
                 return new PropertyResourceBundle(fis);
             }catch(Exception e){
-                System.err.println("Unable to load translation in user files, trying to load from ressource...");
-                e.printStackTrace();
+                Log.eNotified(e, "Unable to load translation in user files, trying to load from ressource...");
                 return getBundleByLocaleInCode(locale);
             }
         }
@@ -74,23 +74,21 @@ public class TR {
     
     public static ResourceBundle getBundleByLocaleInCode(Locale locale){
         try{ // Load the locale from ressource
-            if(Main.DEBUG) System.out.println("Loading locale " + locale.toString() + " from code...");
+            Log.d("Loading locale " + locale.toString() + " from code...");
             return new PropertyResourceBundle(getCodeLocaleFile(locale));
-        }catch(IOException e2){
-            System.err.println("Unable to load translation in code");
-            e2.printStackTrace();
+        }catch(IOException ex){
+            Log.eNotified(ex, "Unable to load translation in code");
             
             if(locale != ENLocale){ // Load the EN locale
-                System.err.println("Trying to load the English locale from user files...");
+                Log.e("Trying to load the English locale from user files...");
                 return getBundleByLocale(ENLocale);
             }else{
-                System.err.println("Return empty ressourceBundle...");
+                Log.e("Return empty ressourceBundle...");
                 return new ResourceBundle() {
                     @Override
                     protected Object handleGetObject(String key){
                         return null;
                     }
-                    
                     @Override
                     public Enumeration<String> getKeys(){
                         return Collections.emptyEnumeration();
@@ -184,6 +182,9 @@ public class TR {
         return "[" + text + "]";
     }
     
+    public static String getColons(){
+        return (TR.trBoolean("chars.doPutSpaceBeforeDoublePunctuation") ? " :" : ":");
+    }
     
     //////////////////////////////////////////////////////////
     ////////////// Language config system ////////////////////
@@ -223,7 +224,7 @@ public class TR {
                 copyFile(name + ".odt", force);
             }
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
     }
     
@@ -320,7 +321,7 @@ public class TR {
             return new int[]{total, translated};
             
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
         return new int[]{0, 0};
         

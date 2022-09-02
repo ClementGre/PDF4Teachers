@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,6 +11,7 @@ import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifIFD0Directory;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
 
 import java.awt.*;
@@ -36,29 +37,29 @@ public class ExifUtils {
             try{
                 metadata = ImageMetadataReader.readMetadata(file);
             }catch(ImageProcessingException | IOException e){
-                e.printStackTrace();
+                Log.e(e);
             }
-            System.out.println(file.getName());
+            Log.d(file.getName());
             for(Directory directory : metadata.getDirectories()){
                 for(Tag tag : directory.getTags()){
                     if(tag.getTagName().toLowerCase().contains("rotate")
                     || tag.getTagName().toLowerCase().contains("date")
                     || tag.getDirectoryName().toLowerCase().contains("file")){
-                        System.out.println("[" + directory.getName() + "] - " + tag.getTagName() + " = " + tag.getDescription());
+                        Log.d("[" + directory.getName() + "] - " + tag.getTagName() + " = " + tag.getDescription());
                     }
                     
                 }
                 if(directory.hasErrors()){
                     for(String error : directory.getErrors()){
                         System.err.format("ERROR: %s", error);
-                        System.out.println();
+                        Log.b();
                     }
                 }
             }
     
-            System.out.println();
-            System.out.println("--------------------------------------------");
-            System.out.println();
+            Log.b();
+            Log.t("--------------------------------------------");
+            Log.b();
             
         });
     }*/
@@ -155,7 +156,7 @@ public class ExifUtils {
                 this.editDate = utils.getImageExifEditDate();
                 this.rotation = utils.getImageExifRotation();
             }catch(ImageProcessingException | IOException | MetadataException e){
-                e.printStackTrace();
+                Log.eNotified(e);
             }
         }
         

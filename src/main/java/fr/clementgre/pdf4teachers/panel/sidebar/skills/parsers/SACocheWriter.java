@@ -13,12 +13,16 @@ import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
 import fr.clementgre.pdf4teachers.utils.dialogs.DialogBuilder;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.CustomAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.OKAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -99,8 +103,7 @@ public class SACocheWriter {
                     TR.tr("actions.export.fileAvailable"), dest.getParentFile().getAbsolutePath(), dest.getAbsolutePath());
             
         }catch(Exception e){
-            e.printStackTrace();
-            ErrorAlert.showErrorAlert(e);
+            Log.eAlerted(e);
         }
     }
     
@@ -132,7 +135,7 @@ public class SACocheWriter {
             Element[] elements = new Element[]{};
             try{
                 elements = Edition.simpleLoad(edit);
-            }catch(Exception e){ e.printStackTrace(); }
+            }catch(Exception e){ Log.eNotified(e); }
             
             SkillTableElement skillTableElement = (SkillTableElement) Arrays.stream(elements).filter(e -> e instanceof SkillTableElement).findFirst().orElse(null);
             

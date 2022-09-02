@@ -206,7 +206,7 @@ public class PageRenderer extends Pane {
                 if(TextTab.draggingItem != null){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(TextTab.draggingElement == null){ // Add to document
                         TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
@@ -216,7 +216,7 @@ public class PageRenderer extends Pane {
                 if(PaintTab.draggingItem instanceof ImageGridElement item){
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument();
@@ -225,7 +225,7 @@ public class PageRenderer extends Pane {
                 }else if(PaintTab.draggingItem instanceof VectorGridElement item){ // Drag VectorElement
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
-                    if(!Main.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument(false);

@@ -9,6 +9,7 @@ package fr.clementgre.pdf4teachers.datasaving.simpleconfigs;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.datasaving.UserData;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 
 import java.io.File;
 
@@ -49,8 +50,7 @@ public abstract class SimpleConfig {
                 manageLoadedData(config); // Subclass cass
                 
             }catch(Exception e){
-                e.printStackTrace();
-                System.err.println("Unable to load " + filename);
+                Log.eNotified(e, "Unable to load " + filename);
                 unableToLoadConfig();
             }
         }, "SimpleConfigs loader").start();
@@ -64,8 +64,7 @@ public abstract class SimpleConfig {
             
             config.save();
         }catch(Exception e){
-            e.printStackTrace();
-            System.err.println("Unable to save " + filename);
+            Log.eNotified(e, "Unable to save " + filename);
         }
     }
     

@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.components.ScaledComboBox;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
@@ -511,7 +512,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                         end(convertedFiles);
                     });
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.e(e);
                     Platform.runLater(() -> {
                         loadingAlert.close();
                         new ErrorAlert(TR.tr("convertWindow.dialog.error.header"), e.getMessage(), false).showAndWait();

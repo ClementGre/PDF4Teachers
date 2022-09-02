@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.interfaces.windows.splitpdf;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
@@ -84,7 +85,7 @@ public class SplitEngine {
                 try{
                     exportPart(exportPart);
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.e(e);
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", exportPart.output.getName()), e.getMessage(), recursive).execute())){
                         return TwoStepListAction.ProcessResult.STOP;
                     }
@@ -218,7 +219,6 @@ public class SplitEngine {
         if(sectionsBounds.size() % 2 != 0) sectionsBounds.add(lastPage);
         
         if(sectionsBounds.isEmpty()) sectionsBounds = new ArrayList<>(Arrays.asList(0, colors.size()-1));
-        //System.out.println(Arrays.toString(sectionsBounds.stream().map((p) -> p+1).toArray()));
         return sectionsBounds.size()/2;
     }
     

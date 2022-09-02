@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.utils;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 
 import java.io.*;
@@ -116,7 +117,7 @@ public class FilesUtils {
                     copyFileUsingStream(file, destFile);
                     file.delete();
                 }catch(IOException e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
             }
         }

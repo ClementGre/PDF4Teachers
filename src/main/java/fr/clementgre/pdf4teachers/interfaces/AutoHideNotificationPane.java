@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.interfaces;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -162,7 +163,7 @@ public class AutoHideNotificationPane extends NotificationPane {
                 try{
                     Thread.sleep(autoHideTime * 1000L);
                 }catch(InterruptedException e){
-                    e.printStackTrace();
+                    Log.eNotified(e, "Hide thread sleep interrupted");
                 }
                 if(!hidden.get()) hide();
                 

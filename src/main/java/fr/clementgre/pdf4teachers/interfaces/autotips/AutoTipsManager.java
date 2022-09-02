@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.interfaces.autotips;
 
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -129,9 +130,9 @@ public class AutoTipsManager {
     private static final Thread autoTipsThread = new Thread(() -> {
         while(true){
             try{
-                Thread.sleep(Main.DEBUG ? 10000 : 3*60000);
+                Thread.sleep(3*60000);
             }catch(InterruptedException e){
-                e.printStackTrace();
+                Log.eNotified(e, "showRandom thread sleep interrupted");
             }
             
             Platform.runLater(AutoTipsManager::showRandom);
@@ -160,7 +161,7 @@ public class AutoTipsManager {
                     }
                     
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.eNotified(e, "Unable to load tips");
                 }
             }
         }
@@ -190,7 +191,7 @@ public class AutoTipsManager {
                     }
                     
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
             }
         }

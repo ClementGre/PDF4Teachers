@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.gallery.GalleryManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.ImageData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -283,7 +284,7 @@ public class ImageElement extends GraphicElement {
                 int rotate = new ExifUtils(new File(imageID)).getImageExifRotation().getRotateAngle();
                 return ImageUtils.rotateImage(image, rotate);
             }catch(Exception e){
-                e.printStackTrace();
+                Log.eNotified(e);
                 return null;
             }
         }

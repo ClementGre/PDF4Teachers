@@ -9,8 +9,11 @@ import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeView;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Button;
@@ -35,7 +38,7 @@ public class Settings {
     
     
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(!Main.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(!PlatformUtils.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "");
     @SettingObject
     public BooleanSetting animations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "animations",
@@ -172,7 +175,7 @@ public class Settings {
         });
         language.setGetEditPaneCallback(() -> {
             Button button = new Button(TR.tr("actions.choose"));
-            button.setOnAction((e) -> Main.showLanguageWindow(false));
+            button.setOnAction((e) -> LanguageWindow.showLanguageWindow(false));
             button.setDefaultButton(true);
             return new HBox(button);
         });
@@ -221,7 +224,7 @@ public class Settings {
                                 if(value != null) var.setValue(value.intValue());
                             }
                         }catch(Exception e){
-                            e.printStackTrace();
+                            Log.eNotified(e);
                         }
                     }
                 }
@@ -229,8 +232,7 @@ public class Settings {
                 if(settingsVersionID != Main.VERSION_ID) saveSettings();
             }
         }catch(Exception e){
-            e.printStackTrace();
-            System.err.println("Unable to load settings.yml");
+            Log.eNotified(e, "Unable to load settings.yml");
         }
     }
     
@@ -251,15 +253,14 @@ public class Settings {
                             Setting<?> setting = (Setting<?>) field.get(this);
                             config.set(setting.getPath(), setting.getValue());
                         }catch(Exception e){
-                            e.printStackTrace();
+                            Log.eNotified(e);
                         }
                     }
                 }
                 config.save();
                 
             }catch(Exception e){
-                e.printStackTrace();
-                System.err.println("Unable to save settings.yml");
+                Log.eNotified(e, "Unable to save settings.yml");
             }
         }, "settingsSaver").start();
         

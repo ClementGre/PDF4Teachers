@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
@@ -59,8 +60,7 @@ public class TextRenderer {
                 cs.showText(line);
             }catch(IllegalArgumentException e){
                 // A character isn't supported by the current font
-    
-    
+                
                 boolean cancel = PlatformUtils.runAndWait(() -> {
                     ErrorAlert alert = new ErrorAlert(TR.tr("export.missingGlyphError.header", fontEntry.getKey()), e.getMessage(), true);
                     alert.setContentText(TR.tr("export.missingGlyphError.description", line));
@@ -92,8 +92,8 @@ public class TextRenderer {
                     }
                     cs.showText(newText.toString());
         
-                }catch(IllegalArgumentException e2){
-                    e2.printStackTrace();
+                }catch(IllegalArgumentException ex){
+                    Log.eNotified(ex);
                 }
             }
             

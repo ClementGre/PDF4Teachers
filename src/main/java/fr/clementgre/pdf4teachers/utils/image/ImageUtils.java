@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.utils.image;
 
 import fr.clementgre.pdf4teachers.Main;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.effect.Effect;
@@ -67,9 +68,7 @@ public class ImageUtils {
             image = new Image(imgPath);
             imageView = new ImageView(image);
         }catch(IllegalArgumentException e){
-            e.printStackTrace();
-            System.err.println("Image " + imgPath + " does not exist");
-            System.err.println(e.getMessage());
+            Log.eNotified(e, "Image " + imgPath + " does not exist");
             imageView = new ImageView();
         }
         

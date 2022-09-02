@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2022. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
@@ -157,7 +158,7 @@ public class VectorGridElement{
     
             updateSVGSpecs();
         }catch(PathParseException e){
-            System.err.println(e.getMessage() + " (List Item)");
+            Log.e("PathParseException: " + e.getMessage() + " (List Item)");
         }
     }
     public void layoutSVGPath(double displayWidth){

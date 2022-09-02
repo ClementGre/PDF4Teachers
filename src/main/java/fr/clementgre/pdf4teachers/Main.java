@@ -8,12 +8,13 @@ package fr.clementgre.pdf4teachers;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
-import fr.clementgre.pdf4teachers.interfaces.windows.LicenseWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguageWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.LogLevel;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.LogsManager;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -50,20 +51,21 @@ public class Main extends Application {
     
     // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2 | 5 : 1.4.0
     
-    public static final int VERSION_ID = 5;
-    public static final String VERSION = "sn1-1.4.0";
-    public static final boolean IS_PRE_RELEASE = false;
-    public static final boolean DEBUG = true;
-    public static final boolean COPY_CONSOLE = false;
+    public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
+    public static final Mode mode = Mode.DEV;
+    
+    public static final int VERSION_ID = 4;
+    public static final String VERSION = getVersionName("1.4.0", 1);
+    public static LogLevel logLevel = getLogLevel();
+    
+    public static final boolean TRANSLATIONS_IN_CODE = mode == Mode.DEV;
     public static final boolean COPY_TRANSLATIONS_AT_START = false;
-    public static final boolean TRANSLATIONS_IN_CODE = true;
     
     public static boolean firstLaunch;
-
-    public static String systemShortcut = "Ctrl";
     public static List<String> params;
     
     public static DecimalFormatSymbols baseDecimalFormatSymbols = new DecimalFormatSymbols(Locale.ENGLISH);
+    
     static{
         baseDecimalFormatSymbols.setDecimalSeparator('.');
     }
@@ -73,8 +75,11 @@ public class Main extends Application {
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
     
     public static void main(String[] args){
-        if(COPY_CONSOLE) LogWindow.copyLogs();
-        System.out.println("Starting PDF4Teachers... (Java " + System.getProperty("java.version") + ")");
+        LogsManager.copyLogs();
+        
+        Log.i("Starting PDF4Teachers " + VERSION + " (Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + ")");
+        Log.i("Run mode: " + mode.name().toLowerCase() + " | Log level: " + logLevel.name().toLowerCase());
+        
         ImageIO.scanForPlugins();
         if(!LockManager.registerInstance(List.of(args))){
             Platform.exit();
@@ -82,123 +87,74 @@ public class Main extends Application {
             return;
         }
         
-        // Enable anti aliasing
-        //System.setProperty("prism.lcdtext", "false");
         ///// START APP /////
         launch(args);
     }
     
     @Override
     public void start(Stage stage){
+        try{
+            setup();
+        }catch(Exception e){
+            Log.e(e);
+        }
         
+    }
+    
+    private void setup(){
         // Check double instance
         params = getParameters().getRaw();
         if(LockManager.FAKE_OPEN_FILE) params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
-        
-        // define important vars
-        if(isWindows()){
-            dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
-        }else if(isOSX()){
-            dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
-            systemShortcut = "Cmd";
-            // Move data folder
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
-        }else{
-            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
-            else dataFolder = System.getProperty("user.home") + "/.local/share/PDF4Teachers/";
-            // Move data folder
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
-        }
-        new File(dataFolder).mkdirs();
+    
+        // Define important vars
+        dataFolder = PlatformUtils.getDataFolder();
         firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
-        
         hostServices = getHostServices();
-        
-        // read params
-        if(DEBUG && (!getParameters().getRaw().isEmpty() || !getParameters().getNamed().isEmpty())){
-            System.out.println("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
+    
+        // Read params
+        if(!getParameters().getRaw().isEmpty() || !getParameters().getNamed().isEmpty()){
+            Log.d("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
                     + "\n Unnamed: " + getParameters().getUnnamed().toString()
                     + "\n Named: " + getParameters().getNamed().toString());
         }
-        
-        // PREPARATION
-        
+    
+        // Data loading
         settings = new Settings();
         syncUserData = new SyncUserData();
-        
-        // setups
+    
+        // Setups
         TR.setup();
         StyleManager.setup();
         AutoTipsManager.setup();
         ImageUtils.setupListeners();
         FontUtils.setup();
-        AppFontsLoader.loadFont(AppFontsLoader.LATO);
-        AppFontsLoader.loadFont(AppFontsLoader.LATO_BOLD);
-        AppFontsLoader.loadFontPath(AppFontsLoader.OPEN_SANS);
-        
-        
+        AppFontsLoader.loadAppFonts();
+    
+        // Show app
         if(languageAsk()){
-            if(licenceAsk()){
-                startMainWindowAuto();
-            }
+            startMainWindowAuto();
         }
     }
     
     public boolean languageAsk(){
         if(settings.language.getValue().isEmpty()){
             String language = TR.getLanguageFromComputerLanguage();
-            
             if(language != null){
                 Main.settings.language.setValue(language);
                 Main.settings.saveSettings();
                 TR.updateLocale();
             }else{
-                showLanguageWindow(true);
+                LanguageWindow.showLanguageWindow(true);
                 return false;
             }
         }
         return true;
     }
     
-    public static void showLanguageWindow(boolean firstStartBehaviour){
-        LanguageWindow.checkUpdatesAndShow(value -> {
-            if(!value.isEmpty() && !value.equals(Main.settings.language.getValue())){
-                String oldDocPath = TR.getDocFile().getAbsolutePath();
-                
-                Main.settings.language.setValue(value);
-                Main.settings.saveSettings();
-                
-                if(!firstStartBehaviour){
-                    Main.window.restart(true, oldDocPath);
-                }else{
-                    TR.updateLocale();
-                    if(licenceAsk()){
-                        startMainWindowAuto();
-                    }
-                }
-            }
-        });
-    }
-    
     public static void showAboutWindow(){
         try{
             FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/fxml/AboutWindow.fxml")));
-        }catch(IOException e){e.printStackTrace();}
-    }
-    
-    public static boolean licenceAsk(){
-        
-        // Disabling the license
-        if(true) return true;
-        
-        if(firstLaunch){
-            new LicenseWindow(value -> {
-                startMainWindowAuto();
-            });
-            return false;
-        }else{
-            return true;
-        }
+        }catch(IOException e){Log.eNotified(e);}
     }
     
     public static void startMainWindow(boolean openDocumentation){
@@ -210,17 +166,17 @@ public class Main extends Application {
         window.setup(firstLaunch || settings.hasVersionChanged());
     }
     
-    public static boolean isWindows(){
-        return System.getProperty("os.name").toLowerCase().contains("windows");
+    private static String getVersionName(String version, int id){
+        if(mode == Mode.DEV) return "dv" + id + "-" + version;
+        else if(mode == Mode.SNAPSHOT) return "sn" + id + "-" + version;
+        else if(mode == Mode.PRE_RELEASE) return "pre" + id + "-" + version;
+        else return version;
     }
-    
-    public static boolean isOSX(){
-        return System.getProperty("os.name").toLowerCase().contains("mac os x");
+    private static LogLevel getLogLevel(){
+        if(mode == Mode.DEV) return LogLevel.TRACE;
+        else if(mode == Mode.SNAPSHOT) return LogLevel.DEBUG;
+        else if(mode == Mode.PRE_RELEASE) return LogLevel.DEBUG;
+        else return LogLevel.INFO;
     }
-    
-    public static boolean isLinux(){
-        return !isWindows() && !isOSX();
-    }
-    
     
 }

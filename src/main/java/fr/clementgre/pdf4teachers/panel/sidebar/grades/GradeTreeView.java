@@ -11,6 +11,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
@@ -177,8 +178,8 @@ public class GradeTreeView extends TreeView<String> {
             }
         }
         if(parent.equals(getRoot())){
-            System.err.println("L'element Note \"" + element.getName() + "\" a ete place dans Root car aucun parent ne lui a été retrouve.");
-            System.err.println("ParentPath = " + element.getParentPath());
+            Log.w("L'element Note \"" + element.getName() + "\" a ete place dans Root car aucun parent ne lui a été retrouve.");
+            Log.w("ParentPath = " + element.getParentPath());
         }
         return parent;
     }

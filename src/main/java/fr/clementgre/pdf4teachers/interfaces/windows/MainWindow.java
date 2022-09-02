@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.interfaces.KeyboardShortcuts;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.LanguagesUpdater;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
@@ -107,7 +108,7 @@ public class MainWindow extends Stage {
     }
     
     public static boolean requestCloseApp(){
-        System.out.println("Received close request");
+        Log.i("Received close request");
     
         userData.save();
         if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)) return false;
@@ -120,7 +121,7 @@ public class MainWindow extends Stage {
         
         
         LanguagesUpdater.backgroundStats(() -> {
-            System.out.println("Closing PDF4Teachers");
+            Log.i("Closing PDF4Teachers");
             Platform.exit();
             System.exit(0);
         });
@@ -161,7 +162,7 @@ public class MainWindow extends Stage {
         try{
             FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/PaintTab.fxml")));
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
         }
         
         menuBar = new MenuBar();
@@ -193,7 +194,6 @@ public class MainWindow extends Stage {
         
         //      CHECK UPDATES
         new Thread(() -> {
-            
             userData = new UserData();
             
             if(UpdateWindow.checkVersion()){
@@ -213,7 +213,7 @@ public class MainWindow extends Stage {
         }).start();
         
         // Pre-release
-        if(Main.IS_PRE_RELEASE){
+        if(Main.mode == Main.Mode.PRE_RELEASE){
             showNotification(AlertIconType.INFORMATION, TR.tr("pre-release.startInfo"), 30);
         }
         
@@ -343,7 +343,7 @@ public class MainWindow extends Stage {
             
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_URI)){
                 Desktop.getDesktop().setOpenURIHandler(e -> {
-                    System.out.println(e.getURI());
+                    Log.d(e.getURI().toString());
                     Platform.runLater(() -> {
                         File file = new File(e.getURI());
                         if(file.exists()){
@@ -357,7 +357,7 @@ public class MainWindow extends Stage {
             if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
                 Desktop.getDesktop().setOpenFileHandler(e -> {
                     Platform.runLater(() -> {
-                        System.out.println(e.getFiles().get(0).getAbsolutePath());
+                        Log.d(e.getFiles().get(0).getAbsolutePath());
                         MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
                         if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
                     });

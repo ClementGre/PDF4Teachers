@@ -162,7 +162,6 @@ public class SkillsListingPane extends Tab {
                     setGraphic(text);
                     setText(null);
                     setOnKeyPressed(e -> {
-                        System.out.println("Key pressed");
                         if(e.getCode() == KeyCode.DELETE){
                             tableView.getItems().remove(getIndex());
                         }

@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.utils.svg;
 
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import javafx.scene.paint.Color;
 
@@ -90,7 +91,7 @@ public class DefaultFavoriteVectors {
             if(field.getType() == VectorData.class){
                 try{
                     data.add((VectorData) field.get(DefaultFavoriteVectors.class));
-                }catch(IllegalAccessException e){e.printStackTrace();}
+                }catch(IllegalAccessException e){ Log.eNotified(e); }
             }
         }
         return data;

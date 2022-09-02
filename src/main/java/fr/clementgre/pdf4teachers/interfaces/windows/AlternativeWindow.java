@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.SmoothishScrollpane;
 import fr.clementgre.pdf4teachers.interfaces.AutoHideNotificationPane;
 import fr.clementgre.pdf4teachers.panel.MenuBar;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
@@ -152,7 +153,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         });
 
         // MenuBar on OSX Fix //
-        if(Main.isOSX() && MenuBar.isSystemMenuBarSupported()){
+        if(PlatformUtils.isOSX() && MenuBar.isSystemMenuBarSupported()){
             javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
             borderPane.setTop(menuBar);
             menuBar.setUseSystemMenuBar(true);
@@ -170,7 +171,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         headerText.getStyleClass().add("headerText");
         subHeaderText.getStyleClass().add("subHeaderText");
         
-        VBox.setMargin(headerText, new Insets(30, 20, -5, 20));
+        VBox.setMargin(headerText, new Insets(30, 20, -2, 20));
         VBox.setMargin(subHeaderText, new Insets(0, 20, 30, 20));
         subHeaderText.setMinHeight(Region.USE_PREF_SIZE);
         

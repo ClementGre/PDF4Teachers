@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StagesUtils;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
@@ -96,7 +97,7 @@ public class CustomAlert extends Alert {
         else if(data == ButtonBar.ButtonData.LEFT) return ButtonPosition.OTHER_LEFT;
         else{
             if(!acceptNull) return ButtonPosition.OTHER_RIGHT;
-            else if(Main.isOSX() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
+            else if(PlatformUtils.isOSX() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
             else if(data == ButtonData.BACK_PREVIOUS) return ButtonPosition.OTHER_RIGHT;
         }
         return null;
@@ -106,7 +107,7 @@ public class CustomAlert extends Alert {
         else if(pos == ButtonPosition.CLOSE) return ButtonBar.ButtonData.NO;
         else if(pos == ButtonPosition.OTHER_LEFT) return ButtonBar.ButtonData.LEFT;
         else{ // OTHER_RIGHT
-            if(Main.isOSX()) return ButtonBar.ButtonData.APPLY;
+            if(PlatformUtils.isOSX()) return ButtonBar.ButtonData.APPLY;
             else return ButtonData.BACK_PREVIOUS;
         }
     }

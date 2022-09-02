@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeFavorites;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeLasts;
@@ -61,7 +62,7 @@ public class TextTreeView extends TreeView<String> {
                 try{
                     Thread.sleep(200);
                 }catch(InterruptedException e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
                 Platform.runLater(() -> {
                     if(getWidth() == newValue.longValue()) updateListsGraphic();

@@ -22,6 +22,7 @@ import fr.clementgre.pdf4teachers.document.render.display.VectorElementPageDrawe
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.PaintTab;
 import fr.clementgre.pdf4teachers.utils.FilesUtils;
@@ -107,7 +108,7 @@ public class MainScreen extends Pane {
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){ex.printStackTrace();}
+                }catch(InterruptedException ex){Log.eNotified(ex);}
             }else if(dragNScrollFactorHorizontal != 0){
                 Platform.runLater(() -> {
                     if(dragNScrollFactorHorizontal < 0){
@@ -118,11 +119,11 @@ public class MainScreen extends Pane {
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){ex.printStackTrace();}
+                }catch(InterruptedException ex){Log.eNotified(ex);}
             }else{
                 try{
                     Thread.sleep(200);
-                }catch(InterruptedException ex){ex.printStackTrace();}
+                }catch(InterruptedException ex){Log.eNotified(ex);}
             }
             
         }
@@ -153,19 +154,22 @@ public class MainScreen extends Pane {
             
             if(status.get() == Status.CLOSED){
                 infoLink.setVisible(true);
+                info.setStyle("-fx-text-fill: white; -fx-font: 30 'Arial Rounded MT Bold' !important;");
                 info.setText(TR.tr("footerBar.documentStatus.noDocument"));
                 infoLink.setText(TR.tr("menuBar.tools.convertImages"));
                 infoLink.setOnAction(e -> new ConvertDocument());
                 
             }else if(status.get() == Status.ERROR){
+                info.setStyle("-fx-text-fill: white; -fx-font: 23 'Arial Rounded MT Bold' !important;");
                 info.setText(TR.tr("document.status.unableToLoadDocument"));
                 infoLink.setVisible(false);
                 
             }else if(status.get() == Status.ERROR_EDITION){
                 infoLink.setVisible(true);
+                info.setStyle("-fx-text-fill: white; -fx-font: 23 'Arial Rounded MT Bold' !important;");
                 info.setText(TR.tr("document.status.unableToLoadEdit"));
                 infoLink.setText(Main.dataFolder + "editions" + File.separator);
-                infoLink.setOnAction(e -> PlatformUtils.openDirectory(failedEditFile));
+                infoLink.setOnAction(e -> PlatformUtils.openFile(failedEditFile));
             }
         }else{
             info.setVisible(false);
@@ -180,9 +184,11 @@ public class MainScreen extends Pane {
     public static boolean isRotating = false;
     
     private long lastScaleChangedMs = 0;
+    
+    
     public void setup(){
         
-        setStyle("-fx-padding: 0; -fx-background-color: #484848;");
+        
         setBorder(Border.EMPTY);
     
         isGridView.bind(isMultiPagesMode.or(isEditPagesMode));
@@ -197,20 +203,23 @@ public class MainScreen extends Pane {
         zoomProperty().addListener((observable, oldValue, newValue) -> {
             if(hasDocument(false) && document != null) document.updateSelectedPages();
         });
+    
+        updateTheme();
+        Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> updateTheme());
         
-        pane.setStyle("-fx-background-color: #484848;");
+        
         pane.setBorder(Border.EMPTY);
         getChildren().add(pane);
         
-        info.setStyle("-fx-text-fill: white; -fx-font-size: 22;");
+        info.setStyle("-fx-text-fill: white; -fx-font: 30 'Arial Rounded MT Bold' !important;");
         info.setTextAlignment(TextAlignment.CENTER);
         
         info.translateXProperty().bind(widthProperty().divide(2).subtract(info.widthProperty().divide(2)));
         info.translateYProperty().bind(heightProperty().divide(2).subtract(info.heightProperty().divide(2)));
         getChildren().add(info);
         
-        infoLink.setStyle("-fx-text-fill: white; -fx-font-size: 15;");
-        infoLink.setLayoutY(60);
+        infoLink.setStyle("-fx-text-fill: white; -fx-font: 17 'Arial Rounded MT Bold' !important;");
+        infoLink.layoutYProperty().bind(info.heightProperty().divide(2).add(20));
         infoLink.setTextAlignment(TextAlignment.CENTER);
         
         infoLink.translateXProperty().bind(widthProperty().divide(2).subtract(infoLink.widthProperty().divide(2)));
@@ -479,6 +488,16 @@ public class MainScreen extends Pane {
         
     }
     
+    private void updateTheme(){
+        if(Main.settings.darkTheme.getValue()){ // Dark theme
+            setStyle("-fx-padding: 0; -fx-background-color: #3a3a3e;");
+            pane.setStyle("-fx-background-color: #3a3a3e;");
+        }else{ // Light theme
+            setStyle("-fx-padding: 0; -fx-background-color: #414145;");
+            pane.setStyle("-fx-background-color: #414145;");
+        }
+    }
+    
     public void initDragOrigin(MouseEvent e){
         dragStartX = e.getX();
         dragStartY = e.getY();
@@ -525,7 +544,7 @@ public class MainScreen extends Pane {
         try{
             document = new Document(file);
         }catch(IOException e){
-            e.printStackTrace();
+            Log.eNotified(e);
             failOpen();
             return;
         }
@@ -540,8 +559,7 @@ public class MainScreen extends Pane {
         try{
             document.loadEdition(!resetScrollValue);
         }catch(Exception e){
-            System.err.println("Error: Unable to load the edit file.");
-            e.printStackTrace();
+            Log.eNotified(e, "Unable to load the edit file.");
             closeFile(false, true);
             
             failedEditFile = Edition.getEditFile(file).getAbsolutePath();
@@ -722,7 +740,7 @@ public class MainScreen extends Pane {
         return selected;
     }
     public void setSelected(Element selected){
-        //System.out.println("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
+        //Log.d("select " + (selected == null ? "null " : selected.getClass().getSimpleName()));
         this.selected.set(selected);
     }
     

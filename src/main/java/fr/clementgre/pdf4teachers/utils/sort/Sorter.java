@@ -6,6 +6,7 @@
 package fr.clementgre.pdf4teachers.utils.sort;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 
 import java.io.File;
@@ -47,7 +48,7 @@ public class Sorter {
                 try{
                     file1Elements = Edition.countElements(Edition.getEditFile(file1));
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
             }
             int file2Elements = 0;
@@ -55,7 +56,7 @@ public class Sorter {
                 try{
                     file2Elements = Edition.countElements(Edition.getEditFile(file2));
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.eNotified(e);
                 }
             }
     

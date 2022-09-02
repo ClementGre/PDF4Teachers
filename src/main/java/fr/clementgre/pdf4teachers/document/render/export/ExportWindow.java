@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlreadyExistDialogManager;
@@ -303,7 +304,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                     if(ok) return TwoStepListAction.ProcessResult.OK;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){
-                    e.printStackTrace();
+                    Log.e(e);
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){
                         return TwoStepListAction.ProcessResult.STOP;
                     }
