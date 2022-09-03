@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.datasaving.settings;
 
+import com.jthemedetecor.OsThemeDetector;
 import de.jangassen.MenuToolkit;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.datasaving.Config;
@@ -38,8 +39,13 @@ public class Settings {
     
     
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(!PlatformUtils.isMac() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(false /* Default has no importance, managed by systemTheme by default */, true, SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "");
+    @SettingObject
+    public BooleanSetting systemTheme = new BooleanSetting(true, true, SVGPathIcons.LINK, "systemTheme",
+            "settings.systemTheme.title", "");
+    
+    
     @SettingObject
     public BooleanSetting animations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "animations",
             "settings.animations.title", "settings.animations.tooltip");
@@ -48,7 +54,7 @@ public class Settings {
             "settings.restoreLastSession.title", "settings.restoreLastSession.tooltip");
     
     @SettingsGroup(title = "settings.group.ergonomics")
-    public Setting<?>[] ergonomicsGroup = {darkTheme, restoreLastSession, animations};
+    public Setting<?>[] ergonomicsGroup = {darkTheme, systemTheme, restoreLastSession, animations};
     
     
     @SettingObject

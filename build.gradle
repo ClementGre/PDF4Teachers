@@ -13,9 +13,8 @@ plugins {
 repositories {
     mavenCentral()
     maven { url "https://clojars.org/repo" }
-    flatDir {
-        dirs 'locallibs'
-    }
+    maven { url 'https://jitpack.io' }
+    flatDir { dirs 'locallibs' }
 }
 
 extraJavaModuleInfo {
@@ -89,6 +88,9 @@ dependencies {
 
     // Unique4J
     implementation 'tk.pratanumandal:unique4j:1.4'
+
+    // OS Theme detector
+    implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.6'
 
 
 }

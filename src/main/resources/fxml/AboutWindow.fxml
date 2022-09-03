@@ -94,6 +94,7 @@
                 <Hyperlink text="Font Awesome Icons" id="https://fontawesome.com/license/free"/>
                 <Hyperlink text="Unique4J" id="https://github.com/prat-man/unique4j"/>
                 <Hyperlink text="Google Diff-Match-Patch" id="https://github.com/google/diff-match-patch"/>
+                <Hyperlink text="jSystemThemeDetector" id="https://github.com/Dansoftowner/jSystemThemeDetector"/>
             </VBox>
             <VBox fx:id="dependenciesRight">
                 <Hyperlink text="JLatexMath" id="https://github.com/opencollab/jlatexmath"/>
@@ -103,6 +104,7 @@
                 <Hyperlink text="Jackson Streaming API" id="https://github.com/FasterXML/jackson-core"/>
                 <Hyperlink text="Batik Parser" id="https://xmlgraphics.apache.org/batik/using/parsers.html"/>
                 <Hyperlink text="PDFBox Graphics2D" id="https://github.com/rototor/pdfbox-graphics2d"/>
+                <Hyperlink text="i18nDotPropertiesGui" id="https://github.com/ClementGre/i18nDotPropertiesGUI"/>
 
             </VBox>
         </HBox>

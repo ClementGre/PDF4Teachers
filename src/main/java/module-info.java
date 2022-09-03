@@ -56,6 +56,9 @@ open module fr.clementgre.pdf4teachers {
     requires google.diffmatchpatch;
     requires uniqueforj;
     
+    // Os Theme Detector
+    requires com.jthemedetector;
+    
     // IDE
     requires org.jetbrains.annotations;
     

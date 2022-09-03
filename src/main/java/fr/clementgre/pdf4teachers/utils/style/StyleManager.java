@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.utils.style;
 
+import com.jthemedetecor.OsThemeDetector;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
@@ -23,9 +24,19 @@ public class StyleManager {
     
     public static void setup(){
         
+        if(OsThemeDetector.isSupported()){
+            if(Main.settings.systemTheme.getValue()){
+                Main.settings.darkTheme.setValue(OsThemeDetector.getDetector().isDark());
+            }
+            OsThemeDetector.getDetector().registerListener(isDark -> {
+                if(Main.settings.systemTheme.getValue()) Main.settings.darkTheme.setValue(isDark);
+            });
+        }
+        
         if(Main.settings.darkTheme.getValue()){
             DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;
         }
+        
         Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 DEFAULT_STYLE = jfxtras.styles.jmetro.Style.DARK;

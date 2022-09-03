@@ -52,7 +52,7 @@ public class Main extends Application {
     // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2 | 5 : 1.4.0-pre1 | 6 : 1.4.0
     
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
-    public static final Mode mode = Mode.PRE_RELEASE;
+    public static final Mode mode = Mode.DEV;
     
     public static final int VERSION_ID = 5;
     public static final String VERSION = getVersionName("1.4.0", 1);

@@ -109,7 +109,9 @@ The application was developed with JavaFX framework, in Java SE 17 (1.4.0).
 - **[PdfBox Graphics2D 0.38](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
 - **[Google Diff-Match-Patch 0.1](https://github.com/google/diff-match-patch)** : Allow me to perform some actions on
   strings..
-- **[Unique4J](https://github.com/prat-man/unique4j)** : used to set up a single instance of the app when opening files
+- **[Unique4J 1.4](https://github.com/prat-man/unique4j)** : used to set up a single instance of the app when opening files
+  from system.
+- **[jSystemThemeDetector 3.8](https://github.com/Dansoftowner/jSystemThemeDetector)** : used to set up a single instance of the app when opening files
   from system.
 
 ### Gradle plugins
