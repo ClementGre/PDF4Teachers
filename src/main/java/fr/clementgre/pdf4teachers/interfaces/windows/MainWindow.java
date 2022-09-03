@@ -212,7 +212,11 @@ public class MainWindow extends Stage {
             }
         }).start();
         
-        // Pre-release
+        // Notifications
+    
+        if(PlatformUtils.isMacAArch64() && !PlatformUtils.isJDKMacAArch64()){
+            showNotification(AlertIconType.WARNING, TR.tr("macos.aarch64.warning"), -1);
+        }
         if(Main.mode == Main.Mode.PRE_RELEASE){
             showNotification(AlertIconType.INFORMATION, TR.tr("pre-release.startInfo"), 30);
         }
