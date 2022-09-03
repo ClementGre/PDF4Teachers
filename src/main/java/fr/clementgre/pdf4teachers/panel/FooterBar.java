@@ -250,9 +250,9 @@ public class FooterBar extends StackPane {
             zoomPercent.setDisable(false);
             editPagesMode.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
-                this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.totalPages);
+                this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.numberOfPages);
             }else
-                this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.totalPages);
+                this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.numberOfPages);
             
         }else{
             zoomController.setDisable(true);

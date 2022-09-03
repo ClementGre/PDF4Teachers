@@ -126,7 +126,7 @@ public class PageEditPane extends VBox {
         });
         
         
-        if(MainWindow.mainScreen.document.totalPages != 1){
+        if(MainWindow.mainScreen.document.numberOfPages != 1){
             
             boolean selectionCapture = MainWindow.mainScreen.isEditPagesMode() && MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getSelectedPages().size() > 1;
             
@@ -192,8 +192,8 @@ public class PageEditPane extends VBox {
     
     public void updateVisibility(){
         ascendButton.setDisable(page.getPage() == 0);
-        descendButton.setDisable(page.getPage() == MainWindow.mainScreen.document.totalPages - 1);
-        deleteButton.setDisable(MainWindow.mainScreen.document.totalPages == 1);
+        descendButton.setDisable(page.getPage() == MainWindow.mainScreen.document.numberOfPages - 1);
+        deleteButton.setDisable(MainWindow.mainScreen.document.numberOfPages == 1);
     }
     
     // Hide pane but only if no menu are visible.

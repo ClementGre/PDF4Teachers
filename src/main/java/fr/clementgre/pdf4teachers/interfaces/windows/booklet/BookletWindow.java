@@ -121,15 +121,15 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         
         
         if(convertKindMake.isSelected()){
-            if(MainWindow.mainScreen.document.totalPages % 4 != 0 && !doNotReorderPages.isSelected()){
+            if(MainWindow.mainScreen.document.numberOfPages % 4 != 0 && !doNotReorderPages.isSelected()){
                 updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.make.multipleOf4"));
                 convert.setDisable(true);
-            }else if(MainWindow.mainScreen.document.totalPages % 2 != 0 && doNotReorderPages.isSelected()){
+            }else if(MainWindow.mainScreen.document.numberOfPages % 2 != 0 && doNotReorderPages.isSelected()){
                 updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.make.multipleOf2"));
                 convert.setDisable(true);
             }
         }else{
-            if(MainWindow.mainScreen.document.totalPages % 2 != 0 && !doNotReorderPages.isSelected()){
+            if(MainWindow.mainScreen.document.numberOfPages % 2 != 0 && !doNotReorderPages.isSelected()){
                 updateInfoBox(AlertIconType.ERROR, TR.tr("bookletWindow.error.disassemble.multipleOf2"));
                 convert.setDisable(true);
             }

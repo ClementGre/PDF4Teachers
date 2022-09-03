@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.utils.ConsoleColors;
+import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import javafx.application.Platform;
@@ -39,7 +40,7 @@ public class Log {
     
         Platform.runLater(() -> MainWindow.footerBar.showToast(
                 Color.color(225/255f, 63/255f, 63/255f), Color.WHITE, FooterBar.ToastDuration.LONG,
-                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + s + " (Ctrl+Alt+C to open the console)"));
+                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + s + " " + getConsoleMessage()));
     }
     // Error with a notification
     public static void eNotified(Throwable e){
@@ -49,8 +50,12 @@ public class Log {
     
         Platform.runLater(() -> MainWindow.footerBar.showToast(
                 Color.color(225/255f, 63/255f, 63/255f), Color.WHITE, FooterBar.ToastDuration.LONG,
-                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + e.getMessage() + " (Ctrl+Alt+C to open the console)"));
+                "ERROR: " + StringUtils.removeBeforeLastOccurrence(className, ".") + "() " + e.getMessage() + " " + getConsoleMessage()));
     }
+    private static String getConsoleMessage(){
+        return PlatformUtils.isMac() ? "(Cmd+Opt+C to open the console)" : "(Ctrl+Alt+C to open the console)";
+    }
+    
     // Error with an alert
     public static void eAlerted(Throwable e){
         l(LogLevel.ERROR, Thread.currentThread().getStackTrace()[2].getClassName() + " " + Thread.currentThread().getStackTrace()[2].getMethodName(), e.getMessage());

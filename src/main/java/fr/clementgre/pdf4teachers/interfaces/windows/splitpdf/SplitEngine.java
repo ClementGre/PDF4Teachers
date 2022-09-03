@@ -160,7 +160,7 @@ public class SplitEngine {
     
     // Update the sections bounds
     public int countMatchPages(){
-        int lastPage = MainWindow.mainScreen.document.totalPages - 1;
+        int lastPage = MainWindow.mainScreen.document.numberOfPages - 1;
         
         if(splitWindow.selection){
             sectionsBounds.clear();

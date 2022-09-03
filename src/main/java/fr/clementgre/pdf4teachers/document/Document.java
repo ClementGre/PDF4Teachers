@@ -43,7 +43,7 @@ public class Document {
     private final HashSet<Integer> selectedPages = new HashSet<>();
     
     private int currentPage = -1;
-    public int totalPages;
+    public int numberOfPages;
     
     public PDFPagesRender pdfPagesRender;
     private UndoEngine undoEngine;
@@ -74,12 +74,12 @@ public class Document {
         
         pdfPagesRender = new PDFPagesRender(file);
         if(pdfPagesRender.getNumberOfPages() == 0) throw new IOException("Unable to load a document with 0 pages!");
-        totalPages = pdfPagesRender.getNumberOfPages();
+        numberOfPages = pdfPagesRender.getNumberOfPages();
     }
     
     public void showPages(){
         
-        for(int i = 0; i < totalPages; i++){
+        for(int i = 0; i < numberOfPages; i++){
             PageRenderer page = new PageRenderer(i);
             MainWindow.mainScreen.addPage(page);
             pages.add(page);
@@ -162,7 +162,7 @@ public class Document {
     
     public void close(){
         pdfPagesRender.close();
-        for(int i = 0; i < totalPages; i++){
+        for(int i = 0; i < numberOfPages; i++){
             if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
@@ -337,7 +337,7 @@ public class Document {
         if(MainWindow.mainScreen.isGridView() && match != null){
             // Detected page is the first one of the row.
             // Check pages horizontally.
-            for(int i = match.getPage(); i < Math.min(match.getPage()+MainWindow.mainScreen.getGridModePagesPerRow(), MainWindow.mainScreen.document.totalPages); i++){
+            for(int i = match.getPage(); i < Math.min(match.getPage()+MainWindow.mainScreen.getGridModePagesPerRow(), MainWindow.mainScreen.document.numberOfPages); i++){
                 PageRenderer page = MainWindow.mainScreen.document.getPage(i);
                 if(MainWindow.mainScreen.mouseX < page.getRightX()){
                     match = page; break;

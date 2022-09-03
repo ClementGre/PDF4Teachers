@@ -201,7 +201,10 @@ public class SkillsTab extends SideTab {
         skillTableElement.addListener((observable, oldValue, newValue) -> listView.refresh());
         listView.setCellFactory(param -> new SkillListCell(assessmentCombo.valueProperty(), skillTableElement));
         listView.itemsProperty().bind(Bindings.createObjectBinding(() -> {
-            if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getSkills());
+            if(getCurrentAssessment() != null){
+                Platform.runLater(this::trySelectStudent);
+                return FXCollections.observableArrayList(getCurrentAssessment().getSkills());
+            }
             return FXCollections.observableArrayList();
         }, assessmentCombo.valueProperty()));
         
@@ -212,7 +215,7 @@ public class SkillsTab extends SideTab {
         /* LINK WITH SkillTableElement */
     
         // Sync assessment id
-        assessmentCombo.valueProperty().addListener((o, oldValue, newValue) -> {
+        assessmentCombo.valueProperty().addListener(o -> {
             if(getSkillTableElement() != null){
                 switchSkillTableElementAssessment(getCurrentAssessmentIdOr0());
             }else if(getCurrentAssessment() != null){
@@ -221,7 +224,7 @@ public class SkillsTab extends SideTab {
         });
         // Sync student id
         studentCombo.valueProperty().addListener(o -> {
-            if(getSkillTableElement() != null){
+            if(getSkillTableElement() != null && getCurrentAssessmentIdOr0() != 0){
                 if(getSkillTableElement().getStudentId() != getCurrentStudentIdOr0()){ // Needs update
                     getSkillTableElement().setStudentId(getCurrentStudentIdOr0());
                     Edition.setUnsave("Changed selected Student");
@@ -264,7 +267,7 @@ public class SkillsTab extends SideTab {
         assessmentCombo.setValue(null);
     }
     private void trySelectStudent(){
-        if(getCurrentAssessment() == null) return;
+        if(getSkillTableElement() == null || getCurrentAssessment() == null) return;
         for(Student student : getCurrentAssessment().getStudents()){
             if(student.id() == getSkillTableElement().getStudentId()){
                 studentCombo.setValue(student);
@@ -276,7 +279,7 @@ public class SkillsTab extends SideTab {
     // Generate the element
     private void addSkillTableElement(){
         this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, 0.8, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
-        MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), false, UType.NO_UNDO);
+        MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), true, UType.NO_UNDO);
     }
     
     

@@ -29,7 +29,7 @@ public class SkillUndoAction extends UndoAction{
         
         // Changing the assessment linked to the document does not count as an UndoAction,
         // but when a notation change is undone, it will automatically switch on the right assessment.
-        if(MainWindow.skillsTab.getCurrentAssessment().getId() != assessmentId){
+        if(MainWindow.skillsTab.getCurrentAssessment() == null || MainWindow.skillsTab.getCurrentAssessment().getId() != assessmentId){
             SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId).findFirst().orElse(null);
             if(assessment == null) return false;
     
@@ -51,7 +51,6 @@ public class SkillUndoAction extends UndoAction{
         MainWindow.skillsTab.getSkillTableElement().updateSkillsNotation();
         MainWindow.skillsTab.refreshListView();
         Edition.setUnsave("SkillListCell ComboBox notation changed");
-        
         
         return true;
     }

@@ -298,7 +298,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools1Convert.setOnAction(e -> new ConvertDocument());
         
         tools3AddPages.setOnShowing(e -> {
-            tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.totalPages, true, isSystemMenuBarSupported()));
+            tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.numberOfPages, true, isSystemMenuBarSupported()));
             NodeMenuItem.setupMenu(tools3AddPages);
         });
     
@@ -309,7 +309,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         tools4PdfTools3SplitSelection.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
-            if(MainWindow.mainScreen.document.getSelectedPages().size() == 0 || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.totalPages){
+            if(MainWindow.mainScreen.document.getSelectedPages().size() == 0 || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
             }else new SplitWindow(true);
         });

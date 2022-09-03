@@ -168,20 +168,20 @@ public class PageRenderer extends Pane {
                 
                 int toMove = 0;
                 // Vertical : pass the number of pages in the row
-                if(getTranslateY() - defaultTranslateY > getHeight() * .75 && getPage() != MainWindow.mainScreen.document.totalPages - 1)
+                if(getTranslateY() - defaultTranslateY > getHeight() * .75 && getPage() != MainWindow.mainScreen.document.numberOfPages - 1)
                     toMove = MainWindow.mainScreen.getGridModePagesPerRow();
                 else if(getTranslateY() - defaultTranslateY < -getHeight() * .75 && getPage() != 0)
                     toMove = -MainWindow.mainScreen.getGridModePagesPerRow();
                 
                 // Horizontal
-                if(getTranslateX() - defaultTranslateX > getWidth() * .75 && getPage() != MainWindow.mainScreen.document.totalPages - 1)
+                if(getTranslateX() - defaultTranslateX > getWidth() * .75 && getPage() != MainWindow.mainScreen.document.numberOfPages - 1)
                     toMove = 1;
                 else if(getTranslateX() - defaultTranslateX < -getWidth() * .75 && getPage() != 0)
                     toMove = -1;
     
                 
                 if(toMove != 0){
-                    moveSelectedPages(MathUtils.clamp(toMove, -getPage(), MainWindow.mainScreen.document.totalPages - 1 - getPage()));
+                    moveSelectedPages(MathUtils.clamp(toMove, -getPage(), MainWindow.mainScreen.document.numberOfPages - 1 - getPage()));
                 }
                 e.consume();
                 
@@ -587,7 +587,7 @@ public class PageRenderer extends Pane {
             if(page > bottomPage) bottomPage = page;
         }
 
-        index = MathUtils.clamp(index, -topPage, MainWindow.mainScreen.document.totalPages - 1 - bottomPage);
+        index = MathUtils.clamp(index, -topPage, MainWindow.mainScreen.document.numberOfPages - 1 - bottomPage);
         if(index == 0) return;
     
         List<PageRenderer> pages = MainWindow.mainScreen.document.getSelectedPages().stream().map(i -> MainWindow.mainScreen.document.getPage(i)).toList();
@@ -720,7 +720,7 @@ public class PageRenderer extends Pane {
     
         defaultTranslateY = totalHeight;
         
-        if(MainWindow.mainScreen.document.totalPages > page + 1){
+        if(MainWindow.mainScreen.document.numberOfPages > page + 1){
             if(MainWindow.mainScreen.isGridView()){
                 if(rowCount+1 >= MainWindow.mainScreen.getGridModePagesPerRow()){ // Wrap
                     totalHeight += maxHeight;

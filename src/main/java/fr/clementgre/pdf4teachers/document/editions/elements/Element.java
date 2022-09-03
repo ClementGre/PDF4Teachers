@@ -225,7 +225,7 @@ public abstract class Element extends Region {
         // Negative Y
         if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage) if(itemY < 0) itemY = 0;
         // Positive Y
-        if(getPageNumber() >= MainWindow.mainScreen.document.totalPages-MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
+        if(getPageNumber() >= MainWindow.mainScreen.document.numberOfPages -MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
             
         // Negative X

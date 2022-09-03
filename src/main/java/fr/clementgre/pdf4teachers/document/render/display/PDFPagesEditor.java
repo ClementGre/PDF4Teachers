@@ -126,7 +126,7 @@ public class PDFPagesEditor {
         document.getPages().add(index, page);
         
         // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
         document.updatePagesPosition();
@@ -237,18 +237,18 @@ public class PDFPagesEditor {
         Document document = MainWindow.mainScreen.document;
         // remove page
         page.remove();
-        document.totalPages--;
+        document.numberOfPages--;
         document.getPages().remove(pageNumber);
         MainWindow.mainScreen.pane.getChildren().remove(page);
         
         // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
         document.updatePagesPosition();
         
         // update current page
-        document.setCurrentPage(document.totalPages == pageNumber ? pageNumber - 1 : pageNumber);
+        document.setCurrentPage(document.numberOfPages == pageNumber ? pageNumber - 1 : pageNumber);
         
         Edition.setUnsave("DeletePage");
         document.edition.save(false);
@@ -267,10 +267,10 @@ public class PDFPagesEditor {
         // add page
         document.getPages().add(index, page);
         MainWindow.mainScreen.addPage(page);
-        document.totalPages++;
+        document.numberOfPages++;
     
         // Update pages of all pages
-        for(int i = 0; i < document.totalPages; i++) document.getPage(i).setPage(i);
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
     
         // update coordinates of the pages
         document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
@@ -343,10 +343,10 @@ public class PDFPagesEditor {
             // add page
             document.getPages().add(index, page);
             MainWindow.mainScreen.addPage(page);
-            document.totalPages++;
+            document.numberOfPages++;
         
             // Update pages of all pages
-            for(int k = 0; k < document.totalPages; k++) document.getPage(k).setPage(k);
+            for(int k = 0; k < document.numberOfPages; k++) document.getPage(k).setPage(k);
         }
     
         MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, this.document.getPage(index), false));

@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
@@ -70,8 +71,9 @@ public class SkillTableElement extends GraphicElement{
             SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId.get()).findFirst().orElse(null);
             
             if(assessment != null && getPageNumber() != assessment.getPrefPage()){
-                switchPage(assessment.getPrefPage());
-                Platform.runLater(() -> switchPage(assessment.getPrefPage()));
+                int page = Math.min(MainWindow.mainScreen.document.numberOfPages - 1, assessment.getPrefPage());
+                switchPage(page);
+                Platform.runLater(() -> switchPage(page));
             }
             int realX = assessment == null || assessment.getPrefRealX() < 0 ? 22700 : assessment.getPrefRealX();
             int realY = assessment == null || assessment.getPrefRealY() < 0 ? 22700 : assessment.getPrefRealY();
@@ -250,7 +252,8 @@ public class SkillTableElement extends GraphicElement{
     
     @Override
     public String getElementName(boolean plural){
-        return null;
+        if(plural) return TR.tr("elements.name.skills");
+        else return TR.tr("elements.name.name.skill");
     }
     
     @Override

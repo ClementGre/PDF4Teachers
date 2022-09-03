@@ -134,12 +134,12 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
         // Adding new pages and removing old pages
         for(MergedPage pages : newPages){
-            PageRenderer pageRenderer = new PageRenderer(document.totalPages);
+            PageRenderer pageRenderer = new PageRenderer(document.numberOfPages);
             
             // add page
             document.getPages().add(pageRenderer);
             MainWindow.mainScreen.addPage(pageRenderer);
-            document.totalPages++;
+            document.numberOfPages++;
             
             // Move elements to new page
             while(pages.left.getElements().size() != 0){
@@ -222,13 +222,13 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             bounds.setLowerLeftX(bounds.getLowerLeftX() + bounds.getWidth() / 2);
             page.setCropBox(bounds);
     
-            PageRenderer pageRenderer = new PageRenderer(document.totalPages);
+            PageRenderer pageRenderer = new PageRenderer(document.numberOfPages);
             editor.getDocument().addPage(page);
     
             // add page
             document.getPages().add(pageRenderer);
             MainWindow.mainScreen.addPage(pageRenderer);
-            document.totalPages++;
+            document.numberOfPages++;
     
             pageRenderer.removeRender();
             Platform.runLater(pageRenderer::updateRender);
