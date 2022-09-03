@@ -93,11 +93,6 @@ dependencies {
 
 }
 
-javafx {
-    version = '17'
-    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
-}
-
 def os = org.gradle.internal.os.OperatingSystem.current()
 // On 32bits, JDK must include JavaFX (the default JavaFX is 64bits)
 // set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32
@@ -105,6 +100,12 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 def win32 = false
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
+
+javafx {
+    version = '17'
+    if(os.macOsX && aarch64) modules = []
+    else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
+}
 
 version = "1.4.0"
 description = "PDF students assessments editor"
@@ -177,7 +178,7 @@ jlink {
             if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-17-Full
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
         }
-        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/azul-17.0.4/Contents/Home')
+        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-17.0.4.1')
         else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
         else if(os.linux) javaHome.set('/opt/jdk-17')
         project.logger.info("Using JDK: ".concat(javaHome.get()))

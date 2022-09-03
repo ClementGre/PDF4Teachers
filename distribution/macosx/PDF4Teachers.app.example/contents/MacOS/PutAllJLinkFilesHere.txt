@@ -1,0 +1,1 @@
+/Users/clement/Code/JavaFX/PDF4Teachers/distribution/macosx/PDF4Teachers.app.example/contents/MacOS/
