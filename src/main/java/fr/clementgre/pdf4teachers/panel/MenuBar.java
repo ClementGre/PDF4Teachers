@@ -198,7 +198,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     }
     
     public static boolean isSystemMenuBarSupported(){
-        return PlatformUtils.isOSX();
+        return PlatformUtils.isMac();
     }
     
     public void setup(){
@@ -206,7 +206,12 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// FILE //////////
         
-        file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Rename, file6Delete, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll, new SeparatorMenuItem(), file10Exit);
+        if(PlatformUtils.isMac()){
+            file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Rename, file6Delete, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll);
+        }else{
+            file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Rename, file6Delete, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll, new SeparatorMenuItem(), file10Exit);
+        }
+        
         
         ////////// TOOLS //////////
         
@@ -489,7 +494,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         if(isSystemMenuBarSupported()){
             
-            if(PlatformUtils.isOSX()){
+            if(PlatformUtils.isMac()){
                 getMenus().addAll(file, tools, edit, help);
                 
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
@@ -641,7 +646,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
             if(keyCombinaison != null){
-                if(!PlatformUtils.isOSX() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
+                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
             }
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));

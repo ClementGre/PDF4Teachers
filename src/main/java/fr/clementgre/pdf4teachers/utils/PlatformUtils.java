@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class PlatformUtils {
     
-    public static final Cursor CURSOR_MOVE = isOSX() ? Cursor.OPEN_HAND : Cursor.MOVE;
+    public static final Cursor CURSOR_MOVE = isMac() ? Cursor.OPEN_HAND : Cursor.MOVE;
     
     public static void sleepThread(long millis){
         try{
@@ -137,7 +137,7 @@ public class PlatformUtils {
     }
     
     public static void openFile(String uri){
-        if(isOSX()){
+        if(isMac()){
             try{
                 if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(new File(uri));
             }catch(IOException e){
@@ -151,18 +151,25 @@ public class PlatformUtils {
     public static boolean isWindows(){
         return System.getProperty("os.name").toLowerCase().contains("windows");
     }
-    public static boolean isOSX(){
+    public static boolean isMac(){
         return System.getProperty("os.name").toLowerCase().contains("mac os x");
     }
     public static boolean isLinux(){
-        return !isWindows() && !isOSX();
+        return !isWindows() && !isMac();
     }
+    public static boolean isMacAArch64(){
+        return isMac() && System.getProperty("os.arch").toLowerCase().contains("aarch64");
+    }
+    public static boolean isJDKMacAArch64(){
+        return isMac() && "true".equals(System.getProperty("fr.clementgre.pdf4teachers.isaarch64"));
+    }
+    
     public static String getDataFolder(){
         String dataFolder;
         
         if(isWindows()){
             dataFolder = System.getenv("APPDATA") + "\\PDF4Teachers\\";
-        }else if(isOSX()){
+        }else if(isMac()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
             // Move data folder if needed
             if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();

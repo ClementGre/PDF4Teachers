@@ -97,7 +97,7 @@ public class CustomAlert extends Alert {
         else if(data == ButtonBar.ButtonData.LEFT) return ButtonPosition.OTHER_LEFT;
         else{
             if(!acceptNull) return ButtonPosition.OTHER_RIGHT;
-            else if(PlatformUtils.isOSX() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
+            else if(PlatformUtils.isMac() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
             else if(data == ButtonData.BACK_PREVIOUS) return ButtonPosition.OTHER_RIGHT;
         }
         return null;
@@ -107,7 +107,7 @@ public class CustomAlert extends Alert {
         else if(pos == ButtonPosition.CLOSE) return ButtonBar.ButtonData.NO;
         else if(pos == ButtonPosition.OTHER_LEFT) return ButtonBar.ButtonData.LEFT;
         else{ // OTHER_RIGHT
-            if(PlatformUtils.isOSX()) return ButtonBar.ButtonData.APPLY;
+            if(PlatformUtils.isMac()) return ButtonBar.ButtonData.APPLY;
             else return ButtonData.BACK_PREVIOUS;
         }
     }

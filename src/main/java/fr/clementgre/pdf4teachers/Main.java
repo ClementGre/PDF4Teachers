@@ -32,9 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 public class Main extends Application {
     
@@ -77,7 +75,10 @@ public class Main extends Application {
     public static void main(String[] args){
         LogsManager.copyLogs();
         
-        Log.i("Starting PDF4Teachers " + VERSION + " (Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + ")");
+        Log.i("Starting PDF4Teachers " + VERSION + " | Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + " on " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")");
+        if(PlatformUtils.isMacAArch64() && !PlatformUtils.isJDKMacAArch64()){
+            Log.w("You are using a build for amd64 on a AArch64 Mac. This will slow down the programm.");
+        }
         Log.i("Run mode: " + mode.name().toLowerCase() + " | Log level: " + logLevel.name().toLowerCase());
         
         ImageIO.scanForPlugins();
@@ -129,7 +130,7 @@ public class Main extends Application {
         ImageUtils.setupListeners();
         FontUtils.setup();
         AppFontsLoader.loadAppFonts();
-    
+        
         // Show app
         if(languageAsk()){
             startMainWindowAuto();

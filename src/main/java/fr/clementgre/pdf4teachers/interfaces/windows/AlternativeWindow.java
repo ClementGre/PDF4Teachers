@@ -153,7 +153,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         });
 
         // MenuBar on OSX Fix //
-        if(PlatformUtils.isOSX() && MenuBar.isSystemMenuBarSupported()){
+        if(PlatformUtils.isMac() && MenuBar.isSystemMenuBarSupported()){
             javafx.scene.control.MenuBar menuBar = new javafx.scene.control.MenuBar();
             borderPane.setTop(menuBar);
             menuBar.setUseSystemMenuBar(true);

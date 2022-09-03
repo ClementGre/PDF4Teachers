@@ -48,7 +48,7 @@ public class SystemFontsMapper {
             result[1] = System.getenv("LOCALAPPDATA") + File.separator + "Microsoft\\Windows\\Fonts";
             return result;
             
-        }else if(PlatformUtils.isOSX()){
+        }else if(PlatformUtils.isMac()){
             result = new String[3];
             result[0] = System.getProperty("user.home") + File.separator + "Library/Fonts";
             result[1] = "/Library/Fonts";

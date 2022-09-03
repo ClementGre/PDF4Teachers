@@ -38,7 +38,7 @@ public class Settings {
     
     
     @SettingObject
-    public BooleanSetting darkTheme = new BooleanSetting(!PlatformUtils.isOSX() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
+    public BooleanSetting darkTheme = new BooleanSetting(!PlatformUtils.isMac() || MenuToolkit.toolkit().systemUsesDarkMode(), true, SVGPathIcons.SUN, "darkTheme",
             "settings.darkTheme.title", "");
     @SettingObject
     public BooleanSetting animations = new BooleanSetting(true, true, SVGPathIcons.LAYERS, "animations",

@@ -94,7 +94,7 @@ dependencies {
 }
 
 javafx {
-    version = '18'
+    version = '17'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
@@ -133,9 +133,12 @@ run {
             '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls', // For controlsFX NotificationPane
             '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls', // For controlsFX SearchComboBox
     ]
-    if (os.macOsX) {
+    if(os.macOsX){
         // The dock icon works only when app is in /Applications
         jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+        if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
+    }else if(os.windows){
+        if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
     }
 }
 
@@ -153,9 +156,12 @@ jlink {
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
                 '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls'
         ]
-        if (os.macOsX) {
+        if(os.macOsX){
             // The dock icon works only when app is in /Applications
             jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+            if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
+        }else if(os.windows){
+            if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
         }
     }
 

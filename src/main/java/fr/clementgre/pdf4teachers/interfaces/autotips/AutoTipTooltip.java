@@ -38,7 +38,7 @@ public class AutoTipTooltip extends PopOver {
     private static final int WIDTH = 300;
     
     public AutoTipTooltip(String name, String actionKey, String prerequisiteKey, String objectWhereDisplay){
-        String contentText = PlatformUtils.isOSX()
+        String contentText = PlatformUtils.isMac()
                 ? TR.tr("autoTips." + name).replace("ctrl+", "Ctrl+").replace("Ctrl+", "Cmd+")
                 : TR.tr("autoTips." + name);
         text.setText(contentText);

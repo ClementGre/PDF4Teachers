@@ -118,8 +118,8 @@ public class MainWindow extends Stage {
         Main.window.close();
         if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
         AutoTipsManager.hideAll();
-        
-        
+    
+        Log.i("Sending Statistics...");
         LanguagesUpdater.backgroundStats(() -> {
             Log.i("Closing PDF4Teachers");
             Platform.exit();
