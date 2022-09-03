@@ -32,7 +32,9 @@ import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.*;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public class Main extends Application {
     
@@ -47,12 +49,12 @@ public class Main extends Application {
     public static final String APP_NAME = "PDF4Teachers";
     public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
-    // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2 | 5 : 1.4.0
+    // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2 | 5 : 1.4.0-pre1 | 6 : 1.4.0
     
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
-    public static final Mode mode = Mode.DEV;
+    public static final Mode mode = Mode.PRE_RELEASE;
     
-    public static final int VERSION_ID = 4;
+    public static final int VERSION_ID = 5;
     public static final String VERSION = getVersionName("1.4.0", 1);
     public static LogLevel logLevel = getLogLevel();
     
@@ -168,9 +170,9 @@ public class Main extends Application {
     }
     
     private static String getVersionName(String version, int id){
-        if(mode == Mode.DEV) return "dv" + id + "-" + version;
-        else if(mode == Mode.SNAPSHOT) return "sn" + id + "-" + version;
-        else if(mode == Mode.PRE_RELEASE) return "pre" + id + "-" + version;
+        if(mode == Mode.DEV) return version + "-dv" + id;
+        else if(mode == Mode.SNAPSHOT) return version + "-sn" + id;
+        else if(mode == Mode.PRE_RELEASE) return version + "-pre" + id;
         else return version;
     }
     private static LogLevel getLogLevel(){

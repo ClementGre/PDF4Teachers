@@ -106,7 +106,7 @@ def win32 = false
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 
-version = "1.3.2"
+version = "1.4.0"
 description = "PDF students assessments editor"
 
 //frenchDescription="Éditeur de copies PDF"
