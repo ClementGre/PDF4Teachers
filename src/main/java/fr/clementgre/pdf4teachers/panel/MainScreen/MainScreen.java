@@ -271,13 +271,13 @@ public class MainScreen extends Pane {
                 if(newValue) zoomOperator.overviewWidth(true);
                 else zoomOperator.fitWidth(true, false);
                 
-                document.updatePagesPosition();
+                document.updatePagesPosition(); // Anomation : 200ms
                 Platform.runLater(() -> {
                     if(document != null){
                         if(newValue){ // Entering GridView
-                            zoomOperator.scrollByTranslateY(0, false);
+                            zoomOperator.vScrollBar.setValue(0);
                         }else{ // Leaving GridView
-                            zoomOperator.scrollByTranslateY(-lastVScroll * zoomOperator.getScrollableHeight(zoomOperator.getAimScale()) + zoomOperator.getPaneShiftY(zoomOperator.getAimScale()), false);
+                            zoomOperator.vScrollBar.setValue(lastVScroll);
                         }
                     }
                 });

@@ -360,9 +360,11 @@ public class ZoomOperator {
         
         scrollByTranslateY(newTranslateY, !doRemoveScrollAnimations(factor, trackpad, removeTransition));
     }
+    // WARNING: technical functions that must take in account the pane shift due to the scaling.
     public void scrollByTranslateY(double newTranslateY){
         scrollByTranslateY(newTranslateY, Main.settings.animations.getValue());
     }
+    // WARNING: technical functions that must take in account the pane shift due to the scaling.
     public void scrollByTranslateY(double newTranslateY, boolean doAnimate){
         aimTranslateY = newTranslateY;
         if(doAnimate) animateY(newTranslateY);
@@ -406,7 +408,7 @@ public class ZoomOperator {
         //return !Main.settings.animations.getValue() || Math.abs(factor) < 0.05 || removeTransition || (trackpad && Main.settings.trackpadMode.getValue());
     }
     
-    // Renvoie le décalage entre les vrais coordonés de pane et entre les coordonés de sa partie visible.
+    // Renvoie le décalage entre les vrais coordonnés de pane et entre les coordonnés de sa partie visible.
     // Lors d'un zoom le shift est négatif | Lors d'un dé-zoom il est positif
     public double getPaneShiftY(){
         return (pane.getHeight() * getPaneScale() - pane.getHeight()) / 2;

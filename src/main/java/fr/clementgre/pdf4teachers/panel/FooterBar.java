@@ -281,7 +281,8 @@ public class FooterBar extends StackPane {
                 statsGraphics.setText(count[3] + " " + TR.tr("elements.name.paints"));
                 
                 if(GradeTreeView.getTotal() != null){
-                    statsTotalGrade.setText(MainWindow.gradesDigFormat.format(GradeTreeView.getTotal().getCore().getVisibleValue()) + "/" + MainWindow.gradesDigFormat.format(GradeTreeView.getTotal().getCore().getTotal()));
+                    statsTotalGrade.setText(MainWindow.twoDigFormat.format(GradeTreeView.getTotal().getCore().getVisibleValue() * GradeTreeView.getTotal().getCore().getOutOfTotal() / GradeTreeView.getTotal().getCore().getTotal())
+                            + "/" + MainWindow.twoDigFormat.format(GradeTreeView.getTotal().getCore().getOutOfTotal()));
                 }
             });
         }
