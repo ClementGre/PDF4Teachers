@@ -91,7 +91,8 @@ dependencies {
 
     // OS Theme detector
     implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.6'
-
+    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
+    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.0'
 
 }
 

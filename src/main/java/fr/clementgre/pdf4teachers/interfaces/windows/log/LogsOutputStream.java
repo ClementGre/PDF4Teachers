@@ -40,18 +40,23 @@ public class LogsOutputStream extends OutputStream {
         super.flush();
         
         if(buffer.length() > 0){
-            output.append(Log.formatConsoleLog(buffer.toString(), errorStream));
-            consoleOutput.print(Log.formatConsoleLogColored(buffer.toString(), errorStream));
+            if(onLineAdded(buffer.toString().replace('\n', Character.MIN_VALUE))){
+                output.append(Log.formatConsoleLog(buffer.toString(), errorStream));
+                consoleOutput.print(Log.formatConsoleLogColored(buffer.toString(), errorStream));
+            }
             
-            onLineAdded(buffer.toString());
             buffer.setLength(0);
         }
     }
     
-    private void onLineAdded(String line){
+    private boolean onLineAdded(String line){
         if(line.contains("GRAVE: GlyphDescription for index")){
             Platform.runLater(PDFPagesRender::renderAdvertisement);
+        }else if(line.startsWith("SLF4J:")){
+            Log.d(line);
+            return false;
         }
+        return true;
     }
     
     private String getColorization(){

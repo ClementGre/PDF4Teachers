@@ -89,6 +89,8 @@ public class SACocheParser {
         }
     }
     
+    private enum CsvBlock { SKILLS, DETAILS, NOTATIONS}
+    
     private SkillsAssessment getFromCsv() throws IOException, CsvException{
     
         BufferedReader reader = new BufferedReader(new FileReader(file, charset == null ? Charset.defaultCharset() : charset));
@@ -99,85 +101,55 @@ public class SACocheParser {
         csvReader.close();
         
         SkillsAssessment assessment = new SkillsAssessment();
-        
-        // Sections:
-        // 0: trash, blank lines
-        // 1: Skills & Students
-        // 2: Empty
-        // 3: Assessment Class/Date/Name
-        // 4: Authorized notation recap list
-        // 5: All notations with details (if exported checking PDF4Teachers).
-        AtomicInteger section = new AtomicInteger(1);
-        Map<Integer, List<String[]>> sections = list.stream().collect(Collectors.groupingBy(line -> { // Grouping lines, separated by blank lines
-            if(isBlankLine(line)){ // Blank line
-                section.incrementAndGet();
-                return 0;
-            }
-            return section.get();
-        }));
-        
-        // 1: Skills & Students
-        long[] studentIds = null;
-        for(String[] line : sections.get(1)){
-            // First/last line: Students ids/names
-            if(line[0].isBlank()){
-                line = StringUtils.cleanArray(line);
-                if(studentIds == null){ // Ids
-                    studentIds = new long[line.length];
-                    for(int i = 0; i < line.length; i++){ // First/last args are always empty
-                        if(!line[i].isBlank()) studentIds[i] = Long.parseLong(line[i]);
-                    }
-                }else{ // Names
-                    for(int i = 0; i < line.length; i++){ // First/last args are always empty
-                        if(!line[i].isBlank()) assessment.getStudents().add(new Student(line[i], studentIds[i]));
-                    }
-                }
-            }else{ // Skill line
-                line = StringUtils.cleanArray(line);
-                long id = Long.parseLong(line[0]);
-                String[] textSplit = line[line.length-1].split("[\\[\\]]");
-                assessment.getSkills().add(new Skill(id, textSplit[0].trim(), textSplit[textSplit.length-1].trim()));
-            }
-        }
-        
-        // 3: Assessment Class/Date/Name
-        for(String[] line : sections.get(3)){
-            if(assessment.getClasz().isBlank()) assessment.setClasz(line[0]);
-            else if(assessment.getDate().isBlank()) assessment.setDate(line[0]);
-            else assessment.setName(line[0]);
-        }
-        
-        // 4: Authorized notation recap list (Useless)
-        
-        // 5: All notations with details (if exported checking PDF4Teachers).
         assessment.setNotationType(Notation.NotationType.ICON);
         assessment.getNotations().clear();
         
-        if(sections.get(5) == null){ // Not exported checking PDF4Teachers export
+        CsvBlock block = CsvBlock.SKILLS;
+        long[] studentIds = null;
+        for(String[] line : list){
+            if(isBlankLine(line)) continue;
+            if(block == CsvBlock.SKILLS){
+                // First/last line: Students ids/names
+                if(line[0].isBlank()){
+                    line = StringUtils.cleanArray(line);
+                    if(studentIds == null){ // Ids
+                        studentIds = new long[line.length];
+                        for(int i = 0; i < line.length; i++){ // First/last args are always empty
+                            if(!line[i].isBlank()) studentIds[i] = Long.parseLong(line[i]);
+                        }
+                    }else{ // Names
+                        for(int i = 0; i < line.length; i++){ // First/last args are always empty
+                            if(!line[i].isBlank()) assessment.getStudents().add(new Student(line[i], studentIds[i]));
+                        }
+                        block = CsvBlock.DETAILS;
+                    }
+                }else{ // Skill line
+                    line = StringUtils.cleanArray(line);
+                    long id = Long.parseLong(line[0]);
+                    String[] textSplit = line[line.length-1].split("[\\[\\]]");
+                    assessment.getSkills().add(new Skill(id, textSplit[0].trim(), textSplit[textSplit.length-1].trim()));
+                }
+            }else if(block == CsvBlock.DETAILS){
+                if(assessment.getClasz().isBlank()) assessment.setClasz(line[0]);
+                else if(assessment.getDate().isBlank()) assessment.setDate(line[0]);
+                else if(assessment.getName().isBlank()) assessment.setName(line[0]);
+                else if(line[0].equals("PDF4Teachers")) block = CsvBlock.NOTATIONS;
+                
+            }else if(line.length >= 4){ // block = CsvBlock.NOTATIONS
+                if(line[0].equals("CLAVIER")) continue;
+                assessment.getNotations().add(new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", "")));
+            }
+        }
+        
+        if(assessment.getNotations().isEmpty()){ // Not exported checking PDF4Teachers export
             CustomAlert alert = new WrongAlert(TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.title"), TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.details"), false);
             alert.getButtonTypes().clear();
             alert.addIgnoreButton(ButtonPosition.CLOSE);
             alert.addButton(TR.tr("dialog.actionError.cancelAll"), ButtonPosition.DEFAULT);
             if(alert.getShowAndWaitIsDefaultButton()){
                 return null; // Cancelled by user.
-            }// else when notations are empty, old notations are not cleared.
-        }else{
-            int i = 0;
-            for(String[] line : sections.get(5)){
-        
-                // First line must be PDF4Teachers
-                if(i == 0 && !line[0].equalsIgnoreCase("PDF4Teachers")) break;
-        
-                // Data starts at line 2
-                if(i >= 2 && line.length >= 4){
-                    // Notation id has no importance (the keyboard char will be used).
-                    assessment.getNotations().add(new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", "")));
-                }
-                i++;
-            }
+            } // else when notations are empty, old notations are not cleared.
         }
-        
-        
         
         return assessment;
     }
