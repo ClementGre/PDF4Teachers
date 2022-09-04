@@ -10,11 +10,14 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public record Student(String name, long id){
+public record Student(String name, String supportModality, long id){
+    
+    
     
     public LinkedHashMap<String, Object> toYAML(){
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();
         map.put("id", id);
+        map.put("supportModality", supportModality);
         map.put("name", name);
         return map;
     }
@@ -22,6 +25,7 @@ public record Student(String name, long id){
     public static Student loadFromConfig(HashMap<String, Object> map){
         return new Student(
                 Config.getString(map, "name"),
+                Config.getString(map, "supportModality"),
                 Config.getLong(map, "id")
         );
     }

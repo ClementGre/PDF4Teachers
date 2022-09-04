@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
@@ -40,6 +41,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
 import javafx.util.StringConverter;
 
 import java.util.ArrayList;
@@ -97,6 +99,7 @@ public class SkillsTab extends SideTab {
     private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>(true);
     private final HBox studentPane = new HBox();
     private final ScaledSearchableComboBox<Student> studentCombo = new ScaledSearchableComboBox<>(true);
+    private final Label supportModality = new Label();
     
     private final ListView<Skill> listView = new ListView<>();
     
@@ -133,6 +136,7 @@ public class SkillsTab extends SideTab {
         
         optionPane.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         pane.getChildren().setAll(optionPane, listView);
+        pane.setAlignment(Pos.TOP_CENTER);
     
         MainWindow.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() != MainScreen.Status.OPEN){
@@ -187,7 +191,13 @@ public class SkillsTab extends SideTab {
             if(getCurrentAssessment() != null && getCurrentAssessment().getStudents().size() != 0){
                 pane.getChildren().setAll(optionPane, studentPane, listView);
             }else pane.getChildren().setAll(optionPane, listView);
+            updateSupportModalityMessage();
         });
+        
+        supportModality.setPadding(new Insets(5));
+        supportModality.setTextAlignment(TextAlignment.CENTER);
+        supportModality.setStyle("-fx-font-size: 14; -fx-font-weight: 800;");
+        supportModality.setWrapText(true);
         
         
         /* LIST VIEW */
@@ -232,8 +242,18 @@ public class SkillsTab extends SideTab {
             }else if(getCurrentAssessment() != null){
                 addSkillTableElement();
             }
+            updateSupportModalityMessage();
         });
         
+    }
+    private void updateSupportModalityMessage(){
+        if(getCurrentStudent() != null && !getCurrentStudent().supportModality().isBlank()){
+            supportModality.setText(TR.tr("skillsTab.student.supportModality", getCurrentStudent().supportModality()));
+            if(!pane.getChildren().contains(supportModality)) pane.getChildren().add(supportModality);
+        }else{
+            supportModality.setText("");
+            pane.getChildren().remove(supportModality);
+        }
     }
     
     private void switchSkillTableElementAssessment(long id){

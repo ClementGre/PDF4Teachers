@@ -96,7 +96,7 @@ public class SACocheParser {
         BufferedReader reader = new BufferedReader(new FileReader(file, charset == null ? Charset.defaultCharset() : charset));
         CSVParser parser = new CSVParserBuilder().withSeparator(';').build();
         CSVReader csvReader = new CSVReaderBuilder(reader).withCSVParser(parser).build();
-        List<String[]> list = csvReader.readAll();
+        List<String[]> lines = csvReader.readAll();
         reader.close();
         csvReader.close();
         
@@ -106,20 +106,28 @@ public class SACocheParser {
         
         CsvBlock block = CsvBlock.SKILLS;
         long[] studentIds = null;
-        for(String[] line : list){
+        for(int i = 0; i < lines.size(); i++){
+            String[] line = lines.get(i);
+            String[] nextLine = i+1 < lines.size() ? lines.get(i + 1) : new String[0];
             if(isBlankLine(line)) continue;
+            
             if(block == CsvBlock.SKILLS){
                 // First/last line: Students ids/names
                 if(line[0].isBlank()){
-                    line = StringUtils.cleanArray(line);
+                    line = StringUtils.cleanArray(line); // First args is always empty
                     if(studentIds == null){ // Ids
                         studentIds = new long[line.length];
-                        for(int i = 0; i < line.length; i++){ // First/last args are always empty
-                            if(!line[i].isBlank()) studentIds[i] = Long.parseLong(line[i]);
+                        for(int k = 0; k < line.length; k++){ // Array cleaned
+                            if(!line[k].isBlank()) studentIds[k] = Long.parseLong(line[k]);
                         }
                     }else{ // Names
-                        for(int i = 0; i < line.length; i++){ // First/last args are always empty
-                            if(!line[i].isBlank()) assessment.getStudents().add(new Student(line[i], studentIds[i]));
+                        for(int k = 0; k < line.length; k++){ // Array cleaned
+                            if(!line[k].isBlank()){
+                                // Next line is not cleaned because it can be blank for some students
+                                String supportModality = nextLine.length > k+1 && !nextLine[k+1].isBlank() ? nextLine[k+1] : "";
+                                Log.t("Student " + line[k] + " (" + studentIds[k] + ") with support modality " + supportModality);
+                                assessment.getStudents().add(new Student(line[k], supportModality, studentIds[k]));
+                            }
                         }
                         block = CsvBlock.DETAILS;
                     }

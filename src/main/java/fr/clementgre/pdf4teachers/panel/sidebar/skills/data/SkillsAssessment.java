@@ -27,7 +27,8 @@ public class SkillsAssessment {
                 new Notation("NE", TR.tr("skills.notation.notAssessed"), "E", "", -3), // non évalué
                 new Notation("NF", TR.tr("skills.notation.notMade"), "F", "", -4), // non fait
                 new Notation("NN", TR.tr("skills.notation.notGraded"), "N", "", -5), // non noté
-                new Notation("NR", TR.tr("skills.notation.notReturned"), "R", "", -6) // non rendu
+                new Notation("NR", TR.tr("skills.notation.notReturned"), "R", "", -6), // non rendu
+                new Notation("P", TR.tr("skills.notation.basket"), "P", "", -7) // Panier
         ));
     }
     public static ArrayList<Notation> getOtherNotations(){
