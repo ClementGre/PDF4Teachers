@@ -13,10 +13,7 @@ import com.opencsv.exceptions.CsvException;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Notation;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Skill;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
-import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.*;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.*;
@@ -27,9 +24,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -106,6 +101,8 @@ public class SACocheParser {
         
         CsvBlock block = CsvBlock.SKILLS;
         long[] studentIds = null;
+        HashMap<Long, ArrayList<Map.Entry<Long, String>>> studentsSkills = new HashMap<>(); // <StudentId, <SkillId, Notation>>
+        HashMap<Long, ArrayList<EditionSkill>> studentsEditionSkills = new HashMap<>(); // <StudentId, <SkillId, Notation>>
         for(int i = 0; i < lines.size(); i++){
             String[] line = lines.get(i);
             String[] nextLine = i+1 < lines.size() ? lines.get(i + 1) : new String[0];
@@ -125,17 +122,26 @@ public class SACocheParser {
                             if(!line[k].isBlank()){
                                 // Next line is not cleaned because it can be blank for some students
                                 String supportModality = nextLine.length > k+1 && !nextLine[k+1].isBlank() ? nextLine[k+1] : "";
-                                Log.t("Student " + line[k] + " (" + studentIds[k] + ") with support modality " + supportModality);
-                                assessment.getStudents().add(new Student(line[k], supportModality, studentIds[k]));
+                                assessment.getStudents().add(new Student(line[k], supportModality, studentIds[k], new ArrayList<>()));
                             }
                         }
                         block = CsvBlock.DETAILS;
                     }
                 }else{ // Skill line
-                    line = StringUtils.cleanArray(line);
-                    long id = Long.parseLong(line[0]);
-                    String[] textSplit = line[line.length-1].split("[\\[\\]]");
+                    if(studentIds == null) studentIds = new long[0];
+                    String[] cleanLine = StringUtils.cleanArray(line);
+                    
+                    long id = Long.parseLong(cleanLine[0]); // Skill ID
+                    String[] textSplit = cleanLine[cleanLine.length-1].split("[\\[\\]]");
                     assessment.getSkills().add(new Skill(id, textSplit[0].trim(), textSplit[textSplit.length-1].trim()));
+    
+                    for(int k = 1; k < line.length-1; k++){
+                        if(!line[k].isBlank()){
+                            long studentId = studentIds[k-1];
+                            if(!studentsSkills.containsKey(studentId)) studentsSkills.put(studentId, new ArrayList<>());
+                            studentsSkills.get(studentId).add(Map.entry(id, line[k]));
+                        }
+                    }
                 }
             }else if(block == CsvBlock.DETAILS){
                 if(assessment.getClasz().isBlank()) assessment.setClasz(line[0]);
@@ -145,9 +151,30 @@ public class SACocheParser {
                 
             }else if(line.length >= 4){ // block = CsvBlock.NOTATIONS
                 if(line[0].equals("CLAVIER")) continue;
-                assessment.getNotations().add(new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", "")));
+                Notation notation = new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", ""));
+    
+                studentsSkills.forEach((studentId, skills) -> {
+                    skills.forEach(skill -> {
+                        if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
+                            if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
+                            studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
+                        }
+                    });
+                });
+                assessment.getNotations().add(notation);
             }
         }
+        // For default notations
+        SkillsAssessment.getOtherNotations().forEach(notation -> {
+            studentsSkills.forEach((studentId, skills) -> {
+                skills.forEach(skill -> {
+                    if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
+                        if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
+                        studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
+                    }
+                });
+            });
+        });
         
         if(assessment.getNotations().isEmpty()){ // Not exported checking PDF4Teachers export
             CustomAlert alert = new WrongAlert(TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.title"), TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.details"), false);
@@ -158,6 +185,12 @@ public class SACocheParser {
                 return null; // Cancelled by user.
             } // else when notations are empty, old notations are not cleared.
         }
+    
+        assessment.getStudents().forEach(student -> {
+            if(studentsEditionSkills.containsKey(student.id())){
+                student.editionSkills().addAll(studentsEditionSkills.get(student.id()));
+            }
+        });
         
         return assessment;
     }

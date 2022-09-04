@@ -172,7 +172,7 @@ public class FooterBar extends StackPane {
             }
         });
     }
-    public enum ToastDuration { SHORT(2000), LONG(10000);
+    public enum ToastDuration { SHORT(2000), MEDIUM(6000), LONG(10000);
         private final int duration;
         ToastDuration(int duration){
             this.duration = duration;

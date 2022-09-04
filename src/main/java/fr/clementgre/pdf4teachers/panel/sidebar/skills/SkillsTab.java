@@ -13,7 +13,6 @@ import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.skillsassessment.SkillsAssessmentWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideTab;
@@ -233,10 +232,12 @@ public class SkillsTab extends SideTab {
             }
         });
         // Sync student id
-        studentCombo.valueProperty().addListener(o -> {
+        studentCombo.valueProperty().addListener((o, oldValue, newValue) -> {
             if(getSkillTableElement() != null && getCurrentAssessmentIdOr0() != 0){
                 if(getSkillTableElement().getStudentId() != getCurrentStudentIdOr0()){ // Needs update
                     getSkillTableElement().setStudentId(getCurrentStudentIdOr0());
+                    getSkillTableElement().tryLoadFromStudent(oldValue);
+                    
                     Edition.setUnsave("Changed selected Student");
                 }
             }else if(getCurrentAssessment() != null){

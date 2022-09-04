@@ -9,10 +9,15 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.panel.FooterBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
+import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallsBuffer;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallsBufferMemory;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -21,12 +26,11 @@ import javafx.beans.property.SimpleLongProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Cursor;
+import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SkillTableElement extends GraphicElement{
     
@@ -248,7 +252,36 @@ public class SkillTableElement extends GraphicElement{
         return new SkillTableElement(x, y, page, hasPage, width, height, scale, assessmentId, studentId, skills);
     }
     
-    
+    // Copy editionSkill from student
+    private final CallsBuffer<Student> callsBuffer = new CallsBufferMemory<>(300, oldStudent -> {
+        if(getStudentId() != 0 && (oldStudent == null || getStudentId() != oldStudent.id())){
+            tryLoadFromStudentInternal(MainWindow.skillsTab.getCurrentStudent());
+        }
+    });
+    public void tryLoadFromStudent(Student oldStudent){
+        callsBuffer.call(oldStudent);
+    }
+    private void tryLoadFromStudentInternal(Student student){
+        if(student.editionSkills().isEmpty()) return;
+        
+        AtomicInteger loaded = new AtomicInteger();
+        student.editionSkills().forEach(s -> {
+            if(s.getNotationId() != 0 && editionSkills.get().stream().noneMatch(es ->
+                    es.getNotationId() != 0 && es.getSkillId() == s.getSkillId() // Same skill and notation not null
+                            && SkillsAssessment.getById(getAssessmentId()).getNotationsWithDefaults().stream() // Notation exists
+                            .anyMatch(n -> n.getId() == es.getNotationId()))){
+                editionSkills.get().removeIf(es -> es.getSkillId() == s.getSkillId()); // Remove old one
+                editionSkills.get().add(new EditionSkill(s.getSkillId(), s.getNotationId()));
+                loaded.incrementAndGet();
+            }
+        });
+        
+        MainWindow.footerBar.showToast(Color.CORNFLOWERBLUE, Color.WHITE, FooterBar.ToastDuration.MEDIUM,
+                TR.tr("skillsTab.student.copiedFromSACocheImport", String.valueOf(loaded), String.valueOf(student.editionSkills().size()), student.name()));
+        
+        updateSkillsNotation();
+        MainWindow.skillsTab.refreshListView();
+    }
     
     @Override
     public String getElementName(boolean plural){
@@ -325,4 +358,5 @@ public class SkillTableElement extends GraphicElement{
     public double getScale(){
         return scale;
     }
+    
 }

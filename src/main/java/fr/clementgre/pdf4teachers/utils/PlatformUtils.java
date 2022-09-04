@@ -45,6 +45,16 @@ public class PlatformUtils {
         }
     }
     
+    public static void runLaterAnyThread(int millis, Runnable runnable){
+        new Thread(() -> {
+            try{
+                Thread.sleep(millis);
+            }catch(InterruptedException e){
+                Log.eNotified(e);
+            }
+            runnable.run();
+        }, "runLaterOnUIThread").start();
+    }
     public static void runLaterOnUIThread(int millis, Runnable runnable){
         new Thread(() -> {
             try{
