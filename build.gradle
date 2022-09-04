@@ -74,11 +74,13 @@ dependencies {
     implementation(name: 'writer2latex', ext: 'jar')
 
     // OSX
-    implementation 'de.jangassen:nsmenufx:3.1.0'
+    implementation ('de.jangassen:nsmenufx:3.1.0'){
+        exclude group: 'net.java.dev.jna'
+    }
 
     // SVG
     implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.14'
-    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.38'
+    implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.40'
 
     // PDF Box
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.26'
@@ -90,10 +92,13 @@ dependencies {
     implementation 'tk.pratanumandal:unique4j:1.4'
 
     // OS Theme detector
-    implementation 'com.github.Dansoftowner:jSystemThemeDetector:3.6'
-    testImplementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.0'
-    testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.0'
+    implementation ('com.github.Dansoftowner:jSystemThemeDetector:3.6'){
+        exclude group: 'net.java.dev.jna'
+    }
 
+    // Add transitive dependency JNA that must exist only under -jpms (for modular projects)
+    implementation 'net.java.dev.jna:jna:5.8.0'
+    implementation 'net.java.dev.jna:jna-platform:5.8.0'
 }
 
 def os = org.gradle.internal.os.OperatingSystem.current()
@@ -139,14 +144,40 @@ run {
     ]
     if(os.macOsX){
         // The dock icon works only when app is in /Applications
-        jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+        jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
         if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
     }else if(os.windows){
         if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
     }
 }
 
+task autoPackage {
+    dependsOn('jlink')
+
+    doLast {
+        exec {
+            workingDir './build'
+            commandLine 'bash', '-c', "rm -R ./AutoPackage ;" +
+                    "mkdir -p ./AutoPackage/PDF4Teachers.app/contents/Resources/ ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
+                    "cp ../distribution/macosx/logo.icns ./AutoPackage/PDF4Teachers.app/contents/Resources/logo.icns ;" +
+                    "cp -R ./image/PDF4Teachers-mac/* ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
+                    "sed 's/x.x.x/" + version + "/g' ../distribution/macosx/Info.plist > ./AutoPackage/PDF4Teachers.app/contents/Info.plist ;" +
+                    "/Applications/DMG\\ Canvas.app/Contents/Resources/dmgcanvas ../distribution/macosx/PDF4Teachers.dmgcanvas " +
+                            "./AutoPackage/PDF4Teachers-MacOSX-" + (aarch64 ? "AArch64" : "amd64") + "-" + version + ".dmg " +
+                            "-setFilePath PDF4Teachers.app ./AutoPackage/PDF4Teachers.app"
+        }
+    }
+}
+
+if(os.macOsX){
+    tasks.jlink.doLast {
+
+    }
+}
+
+
 jlink {
+
     options = [
             '--strip-debug',
             '--compress', '2',
@@ -162,7 +193,7 @@ jlink {
         ]
         if(os.macOsX){
             // The dock icon works only when app is in /Applications
-            jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/Contents/Resources/logo.icns'
+            jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
             if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
         }else if(os.windows){
             if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
