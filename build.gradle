@@ -7,6 +7,7 @@ plugins {
     id 'application'
     id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
+    // id 'com.dua3.javafxgradle7plugin' version '0.0.9' // 32 bits support (Anyway, JavaFX is into the JDK)
     id 'org.openjfx.javafxplugin' version '0.0.13'
     id "de.jjohannes.extra-java-module-info" version "0.8"
 }
@@ -102,6 +103,7 @@ dependencies {
 }
 
 def os = org.gradle.internal.os.OperatingSystem.current()
+// PDF4Teachers can be compiled in 32bits from a 64bits host, just set win32 = true.
 // On 32bits, JDK must include JavaFX (the default JavaFX is 64bits)
 // set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32
 // $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32"
@@ -151,32 +153,55 @@ run {
     }
 }
 
-task autoPackage {
-    dependsOn('jlink')
 
-    doLast {
-        exec {
-            workingDir './build'
-            commandLine 'bash', '-c', "rm -R ./AutoPackage ;" +
-                    "mkdir -p ./AutoPackage/PDF4Teachers.app/contents/Resources/ ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
-                    "cp ../distribution/macosx/logo.icns ./AutoPackage/PDF4Teachers.app/contents/Resources/logo.icns ;" +
-                    "cp -R ./image/PDF4Teachers-mac/* ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
-                    "sed 's/x.x.x/" + version + "/g' ../distribution/macosx/Info.plist > ./AutoPackage/PDF4Teachers.app/contents/Info.plist ;" +
-                    "/Applications/DMG\\ Canvas.app/Contents/Resources/dmgcanvas ../distribution/macosx/PDF4Teachers.dmgcanvas " +
-                            "./AutoPackage/PDF4Teachers-MacOSX-" + (aarch64 ? "AArch64" : "amd64") + "-" + version + ".dmg " +
-                            "-setFilePath PDF4Teachers.app ./AutoPackage/PDF4Teachers.app"
+if(os.windows){
+    task autoPackage {
+        dependsOn('jpackage')
+
+        doLast {
+            exec {
+                workingDir './build'
+                commandLine 'cmd', '/C', "if exist .\\AutoPackage (rmdir /s /q AutoPackage) && mkdir AutoPackage &&" +
+                        "copy .\\jpackage\\PDF4Teachers-" + version + ".msi .\\AutoPackage\\PDF4Teachers-Windows-" + version + ".msi &&" +
+                        "cd jpackage && jar -cfM ..\\AutoPackage\\PDF4Teachers-Windows-" + version + ".zip .\\PDF4Teachers"
+            }
+        }
+    }
+}else if(os.linux){
+    task autoPackage {
+        dependsOn('jpackage')
+
+        doLast {
+            exec {
+                workingDir './build'
+                commandLine 'cmd', '/C', "if exist .\\AutoPackage (rmdir /s /q AutoPackage) && mkdir AutoPackage &&" +
+                        "copy .\\jpackage\\PDF4Teachers-" + version + ".msi .\\AutoPackage\\PDF4Teachers-Windows-" + version + ".msi &&" +
+                        "cd jpackage && jar -cfM ..\\AutoPackage\\PDF4Teachers-Windows-" + version + ".zip .\\PDF4Teachers"
+            }
+        }
+    }
+}else if(os.macOsX){
+    task autoPackage {
+        dependsOn('jlink')
+
+        doLast {
+            exec {
+                workingDir './build'
+                commandLine 'bash', '-c', "rm -R ./AutoPackage ;" +
+                        "mkdir -p ./AutoPackage/PDF4Teachers.app/contents/Resources/ ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
+                        "cp ../distribution/macosx/logo.icns ./AutoPackage/PDF4Teachers.app/contents/Resources/logo.icns ;" +
+                        "cp -R ./image/PDF4Teachers-mac/* ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
+                        "sed 's/x.x.x/" + version + "/g' ../distribution/macosx/Info.plist > ./AutoPackage/PDF4Teachers.app/contents/Info.plist ;" +
+                        "/Applications/DMG\\ Canvas.app/Contents/Resources/dmgcanvas ../distribution/macosx/PDF4Teachers.dmgcanvas " +
+                        "./AutoPackage/PDF4Teachers-MacOSX-" + (aarch64 ? "AArch64" : "amd64") + "-" + version + ".dmg " +
+                        "-setFilePath PDF4Teachers.app ./AutoPackage/PDF4Teachers.app"
+            }
         }
     }
 }
 
-if(os.macOsX){
-    tasks.jlink.doLast {
 
-    }
-}
-
-
-jlink {
+    jlink {
 
     options = [
             '--strip-debug',
