@@ -15,6 +15,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogLevel;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogsManager;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.VersionIds;
 import fr.clementgre.pdf4teachers.utils.fonts.AppFontsLoader;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
 import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
@@ -49,12 +50,11 @@ public class Main extends Application {
     public static final String APP_NAME = "PDF4Teachers";
     public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
-    // Version IDs : 0: <=1.2.1 | 1: 1.3.0-pre1 | 2: 1.3.0 | 3: 1.3.1 | 4: 1.3.2 | 5 : 1.4.0-pre1 | 6 : 1.4.0
     
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
-    public static final Mode mode = Mode.DEV;
+    public static final Mode mode = Mode.SNAPSHOT;
     
-    public static final int VERSION_ID = 5;
+    public static final int VERSION_ID = VersionIds.SN1_1_4_0;
     public static final String VERSION = getVersionName("1.4.0", 1);
     public static LogLevel logLevel = getLogLevel();
     
