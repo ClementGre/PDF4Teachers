@@ -206,7 +206,6 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
         
         String platform = "Linux";
         String extension = "deb";
-        String suffix = "";
         if(PlatformUtils.isWindows()){
             platform = "Windows";
             extension = "msi";
@@ -214,11 +213,11 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             platform = "MacOSX";
             extension = "dmg";
             if(PlatformUtils.isMacAArch64()){
-                suffix = "-Aarch64";
+                platform = "MacOSX-Aarch64";
             }
         }
         String url = "https://github.com/ClementGre/PDF4Teachers/releases/download/" +
-                UpdateWindow.version + "/PDF4Teachers-" + platform + "-" + UpdateWindow.version + suffix + "." + extension;
+                UpdateWindow.version + "/PDF4Teachers-" + platform + "-" + UpdateWindow.version + "." + extension;
         
         Button maj = new Button(TR.tr("updateWindow.buttons.directDownload"));
         maj.setOnAction(t -> Main.hostServices.showDocument(url));
