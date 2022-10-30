@@ -48,11 +48,11 @@ dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
 
     // JAVA FX //
-    implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.15') {
+    implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.16') {
         exclude group: 'org.openjfx'
     }
     // ControlsFX
-    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.1'
+    implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.1.2'
 
     // Support special images format when render a PDF
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
@@ -66,9 +66,9 @@ dependencies {
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.18.0'
 
     // YAML & JSON & CSV
-    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.30'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.3'
-    implementation group: 'com.opencsv', name: 'opencsv', version: '5.6'
+    implementation group: 'org.yaml', name: 'snakeyaml', version: '1.33'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.13.4'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '5.7.1'
 
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
@@ -84,7 +84,7 @@ dependencies {
     implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '0.40'
 
     // PDF Box
-    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.26'
+    implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '2.0.27'
 
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
@@ -98,8 +98,8 @@ dependencies {
     }
 
     // Add transitive dependency JNA that must exist only under -jpms (for modular projects)
-    implementation 'net.java.dev.jna:jna:5.8.0'
-    implementation 'net.java.dev.jna:jna-platform:5.8.0'
+    implementation 'net.java.dev.jna:jna:5.12.1'
+    implementation 'net.java.dev.jna:jna-platform:5.12.1'
 }
 
 def os = org.gradle.internal.os.OperatingSystem.current()
@@ -112,7 +112,7 @@ def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 
 javafx {
-    version = '17'
+    version = '17.0.4'
     if(os.macOsX && aarch64) modules = []
     else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
@@ -201,7 +201,7 @@ if(os.windows){
                         "cp -R ./image/PDF4Teachers-mac/* ./AutoPackage/PDF4Teachers.app/contents/MacOS/ ;" +
                         "sed 's/x.x.x/" + version + "/g' ../distribution/macosx/Info.plist > ./AutoPackage/PDF4Teachers.app/contents/Info.plist ;" +
                         "/Applications/DMG\\ Canvas.app/Contents/Resources/dmgcanvas ../distribution/macosx/PDF4Teachers.dmgcanvas " +
-                        "./AutoPackage/PDF4Teachers-MacOSX-" + (aarch64 ? "AArch64" : "amd64") + "-" + version + ".dmg " +
+                        "./AutoPackage/PDF4Teachers-MacOSX-" + (aarch64 ? "AArch64-" : "") + version + ".dmg " +
                         "-setFilePath PDF4Teachers.app ./AutoPackage/PDF4Teachers.app"
             }
         }
@@ -245,7 +245,7 @@ if(os.windows){
             if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-17-Full
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
         }
-        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-17.0.4.1')
+        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-17.0.5')
         else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
         else if(os.linux) javaHome.set('/opt/jdk-17')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
