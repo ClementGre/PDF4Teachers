@@ -185,7 +185,6 @@ public class MainWindow extends Stage {
         
         //		SHOWING
         
-        setupDesktopEvents();
         updateStyle();
         mainScreen.repaint();
         
@@ -334,51 +333,6 @@ public class MainWindow extends Stage {
     }
     public static void showNotificationNow(AlertIconType type, String text, int autoHide){
         notificationPane.showNow(text, type, autoHide);
-    }
-    
-    public void setupDesktopEvents(){
-        
-        if(Desktop.isDesktopSupported()){
-            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_ABOUT)){
-                Desktop.getDesktop().setAboutHandler(e -> {
-                    Platform.runLater(Main::showAboutWindow);
-                });
-            }
-            
-            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_URI)){
-                Desktop.getDesktop().setOpenURIHandler(e -> {
-                    Log.d(e.getURI().toString());
-                    Platform.runLater(() -> {
-                        File file = new File(e.getURI());
-                        if(file.exists()){
-                            MainWindow.filesTab.openFiles(new File[]{file});
-                            MainWindow.mainScreen.openFile(file);
-                        }
-                    });
-                });
-            }
-            
-            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)){
-                Desktop.getDesktop().setOpenFileHandler(e -> {
-                    Platform.runLater(() -> {
-                        Log.d(e.getFiles().get(0).getAbsolutePath());
-                        MainWindow.filesTab.openFiles((File[]) e.getFiles().toArray());
-                        if(e.getFiles().size() == 1) MainWindow.mainScreen.openFile(e.getFiles().get(0));
-                    });
-                    
-                });
-            }
-            
-            if(Desktop.getDesktop().isSupported(Desktop.Action.APP_PREFERENCES)){
-                Desktop.getDesktop().setPreferencesHandler(e -> {
-                    Platform.runLater(() -> {
-                        menuBar.settings.fire();
-                    });
-                });
-            }
-            
-        }
-        
     }
     
     private static void setupDecimalFormat(){

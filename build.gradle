@@ -112,7 +112,7 @@ def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 
 javafx {
-    version = '17.0.4'
+    version = '17'
     if(os.macOsX && aarch64) modules = []
     else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
