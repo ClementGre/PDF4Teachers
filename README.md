@@ -26,9 +26,9 @@
 [![License](https://img.shields.io/badge/Licence-Apache%20Licence%202.0-red?label=Read%20license)](LICENSE)
 [![Release](https://img.shields.io/github/v/release/clementgre/PDF4Teachers?label=Download%20version)](https://github.com/clementgre/PDF4Teachers/releases/latest)
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.2%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/bug?color=d73a4a)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
 [![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/user%20issue?label=user%20issues&color=36ba1b)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
-[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.3.2%22+label%3A%22enhancement%22+)
+[![GitHub labels](https://img.shields.io/github/issues/clementgre/PDF4Teachers/enhancement?color=a2eeef)](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.0%22+label%3A%22enhancement%22+)
 
 # Presentation [EN]
 
@@ -146,6 +146,13 @@ plugins to manage dependencies :
 
 The installer can be build automatically using the custom ``autoPackage`` task on any platform.
 
+### Fonts for the documentations files
+
+If you have to work on a documentation translation, it is always better to have the right fonts installed to have the correct layout (and if you eventually have to generate the PDF from it).
+Then you will need these fonts :
+- Arial Rounded MT Bold
+- Calibri
+- Liberation Sans
 
 # [Code Organization](https://github.com/ClementGre/PDF4Teachers/tree/master/src/main/java/fr/clementgre/pdf4teachers)
 
