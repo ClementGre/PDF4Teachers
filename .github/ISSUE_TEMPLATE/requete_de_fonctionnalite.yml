@@ -1,0 +1,33 @@
+name: Requête de fonctionnalité
+description: Suggérer une idée d'amélioration ou de fonctionnalité pour PDF4Teachers
+labels: ["enhancement"]
+assignees:
+  - ClementGre
+body:
+  - type: checkboxes
+    id: alreadyRequested
+    attributes:
+      label: Prérequis
+      options:
+        - label: J'ai vérifié que cette fonctionnalité n'a pas déjà été suggéré [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.0%22+label%3A%22enhancement%22+)
+          required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Votre demande de fonctionnalité est-elle relative à un problème ? Décrivez.
+      placeholder: Ex. Je suis toujours frustré quand [...]
+  - type: textarea
+    id: solutionLiked
+    attributes:
+      label: Décrivez la solution que vous aimeriez
+      placeholder: Une description claire et concise du nouveau comportement que vous aimeriez.
+  - type: textarea
+    id: alternative
+    attributes:
+      label: Décrivez les alternatives que vous avez envisagées.
+      placeholder: Une description claire et concise des solutions alternatives ou fonctionnalités que vous avez envisagées.
+  - type: textarea
+    id: additionalContext
+    attributes:
+      label: Contexte additionnel
+      placeholder: Ajoutez n'importe quel autre élément de contexte ou une capture d'écran.
