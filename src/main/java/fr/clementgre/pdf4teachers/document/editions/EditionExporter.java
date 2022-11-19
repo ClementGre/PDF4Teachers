@@ -52,13 +52,13 @@ public class EditionExporter {
         File file = null;
         boolean recursive = false;
         if(MainWindow.mainScreen.hasDocument(true)){
-            if(MainWindow.mainScreen.document.save(true)){
-                if(option == ButtonPosition.DEFAULT){
-                    file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
-                }else if(option == ButtonPosition.OTHER_RIGHT){
-                    file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
-                    recursive = true;
-                }
+            MainWindow.mainScreen.document.edition.clearEdit(false);
+            
+            if(option == ButtonPosition.DEFAULT){
+                file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+            }else if(option == ButtonPosition.OTHER_RIGHT){
+                file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.YAMLEditFile"), "*.yml");
+                recursive = true;
             }
         }
         

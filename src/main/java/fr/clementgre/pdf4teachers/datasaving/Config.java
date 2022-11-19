@@ -10,6 +10,7 @@ import fr.clementgre.pdf4teachers.utils.MathUtils;
 import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.scene.paint.Color;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
@@ -42,7 +43,12 @@ public class Config {
     private void setupYAML(){
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setWidth(120);
-        yaml = new Yaml(new SafeConstructor());
+        
+        LoaderOptions options = new LoaderOptions();
+        options.setMaxAliasesForCollections(Integer.MAX_VALUE);
+        options.setAllowRecursiveKeys(true);
+        
+        yaml = new Yaml(new SafeConstructor(options));
     }
     
     public void load() throws IOException{

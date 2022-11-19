@@ -7,6 +7,7 @@ package fr.clementgre.pdf4teachers.document.editions.elements;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
@@ -227,8 +228,21 @@ public class SkillTableElement extends GraphicElement{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data){
         SkillTableElement element = readYAMLDataAndGive(data, true);
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber()){
+            // There can't be more than one SkillTableElement element in the document
+            MainWindow.mainScreen.document.getPages().forEach(page -> {
+                int i = 0;
+                while(i < page.getElements().size()){
+                    if(page.getElements().get(i) instanceof SkillTableElement elem){
+                        if(elem.equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
+                        page.removeElement(elem, false, UType.NO_UNDO);
+                        MainWindow.skillsTab.clearEditRelatedData();
+                    }else i++;
+                }
+            });
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
+    
+        }
     }
     
     public static SkillTableElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage){
