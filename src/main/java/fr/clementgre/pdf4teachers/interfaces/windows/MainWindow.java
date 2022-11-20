@@ -278,6 +278,7 @@ public class MainWindow extends Stage {
     public void centerWindowIntoMe(Window window, double w, double h){
         double x = getX() + getWidth() / 2 - w / 2;
         double y = getY() + getHeight() / 2 - h / 2;
+        
         window.setX(x);
         window.setY(y);
     }

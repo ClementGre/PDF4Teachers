@@ -58,10 +58,7 @@ public class CustomAlert extends Alert {
             setOnShown((e) -> {
                 if(alreadyShown[0]) return;
                 alreadyShown[0] = true;
-                StagesUtils.trysScaleAlertUntilDoable(this, getDialogPane().getScene(), () -> {
-                    PaneUtils.setupScaling(getDialogPane(), true, false);
-                    if(Main.window != null) Main.window.centerWindowIntoMe(getDialogPane().getScene().getWindow());
-                });
+                StagesUtils.scaleAndCenterAlert(this, getDialogPane().getScene());
             });
         }
     }

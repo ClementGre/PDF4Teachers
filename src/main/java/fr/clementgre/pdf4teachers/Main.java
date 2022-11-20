@@ -50,17 +50,17 @@ public class Main extends Application {
     public static final String APP_NAME = "PDF4Teachers";
     public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
-    
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
-    public static final Mode mode = Mode.DEV;
     
-    public static final int VERSION_ID = VersionIds.DV1_1_4_1;
+    /********** Version parameters **********/
+    public static final Mode mode = Mode.SNAPSHOT;
+    public static final int VERSION_ID = VersionIds.SN1_1_4_1;
     public static final String VERSION = getVersionName("1.4.1", 1);
     public static LogLevel logLevel = getLogLevel();
+    /****************************************/
     
     public static final boolean TRANSLATIONS_IN_CODE = mode == Mode.DEV;
     public static final boolean COPY_TRANSLATIONS_AT_START = false;
-    
     public static boolean firstLaunch;
     public static List<String> params;
     

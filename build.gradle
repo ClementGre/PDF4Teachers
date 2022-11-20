@@ -117,7 +117,7 @@ javafx {
     else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
-version = "1.4.0"
+version = "1.4.1"
 description = "PDF students assessments editor"
 
 //frenchDescription="Éditeur de copies PDF"
