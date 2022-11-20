@@ -52,10 +52,10 @@ public class Main extends Application {
     
     
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
-    public static final Mode mode = Mode.RELEASE;
+    public static final Mode mode = Mode.DEV;
     
-    public static final int VERSION_ID = VersionIds.RL_1_4_0;
-    public static final String VERSION = getVersionName("1.4.0", 1);
+    public static final int VERSION_ID = VersionIds.DV1_1_4_1;
+    public static final String VERSION = getVersionName("1.4.1", 1);
     public static LogLevel logLevel = getLogLevel();
     
     public static final boolean TRANSLATIONS_IN_CODE = mode == Mode.DEV;

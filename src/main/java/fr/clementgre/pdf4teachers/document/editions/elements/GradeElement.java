@@ -521,6 +521,9 @@ public class GradeElement extends Element {
     public double getTotal(){
         return total.get();
     }
+    public double getVisibleTotal(){
+        return Math.max(0, total.get());
+    }
     
     public DoubleProperty totalProperty(){
         return total;

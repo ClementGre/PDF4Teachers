@@ -126,7 +126,11 @@ public class FilesUtils {
     
     // Moves from ~/.PDF4Teachers/ to Main.dataFolder
     public static void moveDataFolder(){
-        File oldDataFolder = new File(System.getProperty("user.home") + "/.PDF4Teachers/");
+        File oldDataFolder = new File(System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator);
+        Log.t(oldDataFolder.getAbsolutePath() + "  --- " + Main.dataFolder);
+        
+        if(oldDataFolder.getAbsolutePath().equals(Main.dataFolder)) return;
+        
         FilesUtils.moveDir(oldDataFolder, new File(Main.dataFolder));
         
         PlatformUtils.runLaterOnUIThread(5000, () -> {
