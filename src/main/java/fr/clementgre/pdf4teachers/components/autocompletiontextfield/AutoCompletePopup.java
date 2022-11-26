@@ -169,17 +169,18 @@ public class AutoCompletePopup<T> extends PopupControl {
     public final ObjectProperty<EventHandler<AutoCompletePopup.SuggestionEvent<T>>> onSuggestionProperty() { return onSuggestion; }
     public final void setOnSuggestion(EventHandler<AutoCompletePopup.SuggestionEvent<T>> value) { onSuggestionProperty().set(value); }
     public final EventHandler<AutoCompletePopup.SuggestionEvent<T>> getOnSuggestion() { return onSuggestionProperty().get(); }
-    private final ObjectProperty<EventHandler<AutoCompletePopup.SuggestionEvent<T>>> onSuggestion = new ObjectPropertyBase<EventHandler<SuggestionEvent<T>>>() {
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        @Override protected void invalidated() {
-            setEventHandler(AutoCompletePopup.SuggestionEvent.SUGGESTION, (EventHandler<AutoCompletePopup.SuggestionEvent>)(Object)get());
+    private final ObjectProperty<EventHandler<AutoCompletePopup.SuggestionEvent<T>>> onSuggestion = new ObjectPropertyBase<>() {
+        @SuppressWarnings({"rawtypes", "unchecked"})
+        @Override
+        protected void invalidated() {
+            setEventHandler(AutoCompletePopup.SuggestionEvent.SUGGESTION, (EventHandler<AutoCompletePopup.SuggestionEvent>) (Object) get());
         }
-        
+
         @Override
         public Object getBean() {
             return AutoCompletePopup.this;
         }
-        
+
         @Override
         public String getName() {
             return "onSuggestion"; //$NON-NLS-1$
@@ -196,7 +197,7 @@ public class AutoCompletePopup<T> extends PopupControl {
     
     @Override
     protected Skin<?> createDefaultSkin() {
-        return new AutoCompletePopupSkin<T>(this);
+        return new AutoCompletePopupSkin<>(this);
     }
     
 }

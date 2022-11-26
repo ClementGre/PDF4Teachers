@@ -173,7 +173,7 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
     }
     
     private FilteredList<T> createFilteredList() {
-        return new FilteredList<T>(getSkinnable().getItems(), predicate());
+        return new FilteredList<>(getSkinnable().getItems(), predicate());
     }
     
     /**
