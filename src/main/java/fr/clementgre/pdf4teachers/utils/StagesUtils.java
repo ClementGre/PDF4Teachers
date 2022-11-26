@@ -6,7 +6,6 @@
 package fr.clementgre.pdf4teachers.utils;
 
 import fr.clementgre.pdf4teachers.Main;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

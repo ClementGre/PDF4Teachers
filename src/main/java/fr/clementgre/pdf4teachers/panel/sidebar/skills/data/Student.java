@@ -6,8 +6,6 @@
 package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 
 import fr.clementgre.pdf4teachers.datasaving.Config;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
 
 import java.util.*;
 

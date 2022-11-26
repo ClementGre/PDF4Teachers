@@ -46,8 +46,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import jfxtras.styles.jmetro.JMetro;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
