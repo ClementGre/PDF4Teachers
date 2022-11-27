@@ -15,12 +15,15 @@ import java.util.Collection;
 public class AutoCompletionTextFieldBinding<T> extends AutoCompletionBinding<T> {
 
     private static <T> StringConverter<T> defaultStringConverter() {
-        return new StringConverter<T>() {
-            @Override public String toString(T t) {
+        return new StringConverter<>() {
+            @Override
+            public String toString(T t) {
                 return t == null ? null : t.toString();
             }
+
             @SuppressWarnings("unchecked")
-            @Override public T fromString(String string) {
+            @Override
+            public T fromString(String string) {
                 return (T) string;
             }
         };
