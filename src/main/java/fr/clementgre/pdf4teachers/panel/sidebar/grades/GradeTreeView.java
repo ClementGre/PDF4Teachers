@@ -75,17 +75,14 @@ public class GradeTreeView extends TreeView<String> {
         getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         
         // Update cells max-width (system to prevent horizontal scroll)
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            refresh();
-        });
+        widthProperty().addListener((observable, oldValue, newValue) -> refresh());
     
         Platform.runLater(() -> {
             verticalScrollbar = getVerticalScrollbar();
             if(verticalScrollbar != null){
                 // Setup listener for updating view when bar visibility changes (So system to prevent horizontal scroll can update its max-width)
-                verticalScrollbar.visibleProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-                    refresh();
-                });
+                verticalScrollbar.visibleProperty()
+                        .addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> refresh());
             }
         });
     }

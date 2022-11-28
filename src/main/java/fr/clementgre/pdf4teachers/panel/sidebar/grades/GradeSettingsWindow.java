@@ -43,9 +43,7 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox> {
     public void setupBtns(){
         
         Button ok = new Button(TR.tr("actions.ok"));
-        ok.setOnAction(event -> {
-            close();
-        });
+        ok.setOnAction(event -> close());
         
         setButtons(ok);
     }

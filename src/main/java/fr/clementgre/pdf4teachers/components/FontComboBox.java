@@ -32,9 +32,9 @@ public class FontComboBox extends ComboBox<String> {
             super();
             
             if(bind){
-                Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
-                    setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + lastFontName + "\";");
-                });
+                Main.settings.zoom.valueProperty()
+                        .addListener((o, oldValue, newValue) ->
+                                setStyle("-fx-font: " + (14 * Main.settings.zoom.getValue()) + " \"" + lastFontName + "\";"));
             }
         }
         

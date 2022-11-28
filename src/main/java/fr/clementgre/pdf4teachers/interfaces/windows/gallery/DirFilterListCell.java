@@ -49,18 +49,16 @@ public class DirFilterListCell extends ListCell<String> {
             Button add = new Button(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
             PaneUtils.setHBoxPosition(add, 0, 30, 10, 2);
             
-            add.setOnMousePressed((e) -> {
-                PlatformUtils.runLaterOnUIThread(100, () -> {
-                    File dir = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, gallery);
-                    if(dir != null){
-                        PlatformUtils.runLaterOnUIThread(100, () -> {
-                            GalleryManager.addSavePath(dir.getAbsolutePath());
-                            gallery.updateComboBoxItems();
-                            gallery.reloadImageList();
-                        });
-                    }
-                });
-            });
+            add.setOnMousePressed((e) -> PlatformUtils.runLaterOnUIThread(100, () -> {
+                File dir = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, gallery);
+                if(dir != null){
+                    PlatformUtils.runLaterOnUIThread(100, () -> {
+                        GalleryManager.addSavePath(dir.getAbsolutePath());
+                        gallery.updateComboBoxItems();
+                        gallery.reloadImageList();
+                    });
+                }
+            }));
             
             HBox root = new HBox();
             root.getChildren().addAll(new HBoxSpacer(), add, new HBoxSpacer());
