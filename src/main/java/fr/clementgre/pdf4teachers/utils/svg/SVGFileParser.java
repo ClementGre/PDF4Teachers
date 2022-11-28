@@ -17,6 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SVGFileParser{
     
@@ -41,12 +43,9 @@ public class SVGFileParser{
         XPathExpression expression = xpath.compile("//path/@d");
         NodeList svgPaths = (NodeList) expression.evaluate(document, XPathConstants.NODESET);
     
-        StringBuilder finalPath = new StringBuilder();
-        for(int i = 0; i < svgPaths.getLength() ; i++){
-            finalPath.append(svgPaths.item(i).getNodeValue());
-        }
-    
-        return finalPath.toString();
+        return IntStream.range(0, svgPaths.getLength())
+                .mapToObj(i -> svgPaths.item(i).getNodeValue())
+                .collect(Collectors.joining());
     }
     
     public Color getFillColor() throws XPathExpressionException{
