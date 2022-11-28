@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -208,8 +209,9 @@ public class ConvertRenderer {
     private boolean isValidDir(File dir){
         if(!dir.isDirectory() || dir.isHidden()) return false;
         if(!convertPane.convertVoidFiles.isSelected()){
-            int compatibleFiles = 0;
-            for(File file : Objects.requireNonNull(dir.listFiles())) if(isValidFile(file)) compatibleFiles++;
+            int compatibleFiles = (int) Arrays.stream(Objects.requireNonNull(dir.listFiles()))
+                    .filter(this::isValidFile)
+                    .count();
             return compatibleFiles != 0;
         }
         return true;
@@ -230,14 +232,10 @@ public class ConvertRenderer {
     public int getFilesLength(){
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
-            int i = 0;
             if(mainDir.listFiles() == null) throw new RuntimeException("The input directory contains no files.");
-            for(File dir : Objects.requireNonNull(mainDir.listFiles())){
-                if(isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected())){
-                    i++;
-                }
-            }
-            return i;
+            return (int) Arrays.stream(Objects.requireNonNull(mainDir.listFiles()))
+                    .filter(dir -> isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected()))
+                    .count();
         }else{
             return 1;
         }

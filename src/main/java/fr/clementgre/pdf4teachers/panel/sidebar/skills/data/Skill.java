@@ -55,10 +55,10 @@ public class Skill {
     }
     
     public EditionSkill getMatchingEditionSkill(List<EditionSkill> editionSkills){
-        for(EditionSkill editionSkill : editionSkills){
-            if(editionSkill.getSkillId() == id) return editionSkill;
-        }
-        return null;
+        return editionSkills.stream()
+                .filter(editionSkill -> editionSkill.getSkillId() == id)
+                .findFirst()
+                .orElse(null);
     }
     
     

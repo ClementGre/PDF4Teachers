@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class FavouriteImageData extends SimpleConfig {
@@ -24,13 +25,13 @@ public class FavouriteImageData extends SimpleConfig {
     @Override
     protected void manageLoadedData(Config config){
         
-        ArrayList<ImageData> favouriteImageData = new ArrayList<>();
-        for(Object data : config.getList("favorites")){
-            if(data instanceof HashMap map){
-                favouriteImageData.add(ImageData.readYAMLDataAndGive(map));
-            }
-        }
-        
+        ArrayList<ImageData> favouriteImageData = config.getList("favorites")
+                .stream()
+                .filter(data -> data instanceof HashMap)
+                .map(data -> (HashMap) data)
+                .map(ImageData::readYAMLDataAndGive)
+                .collect(Collectors.toCollection(ArrayList::new));
+
         PlatformUtils.printActionTimeIfDebug(() -> MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData, false), "Load favorites images");
         
     }
@@ -42,11 +43,13 @@ public class FavouriteImageData extends SimpleConfig {
     
     @Override
     protected void addDataToConfig(Config config){
-        ArrayList<Object> favorites = new ArrayList<>();
-        for(ImageGridElement item : MainWindow.paintTab.favouriteImages.getList().getAllItems()){
-            if(item.hasLinkedImageData()) favorites.add(item.getLinkedImageData().getYAMLData());
-        }
-        
+        ArrayList<Object> favorites = MainWindow.paintTab.favouriteImages.getList()
+                .getAllItems()
+                .stream()
+                .filter(ImageGridElement::hasLinkedImageData)
+                .map(item -> item.getLinkedImageData().getYAMLData())
+                .collect(Collectors.toCollection(ArrayList::new));
+
         config.set("favorites", favorites);
     }
     

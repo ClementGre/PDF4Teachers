@@ -35,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class Edition{
@@ -180,12 +181,10 @@ public class Edition{
     }
     
     private ArrayList<Object> getPageDataFromElements(ArrayList<Element> elements, Class<? extends Element> acceptedElements){
-        ArrayList<Object> pageData = new ArrayList<>();
-        for(Element element : elements){
-            if(acceptedElements.isInstance(element)){
-                pageData.add(element.getYAMLData());
-            }
-        }
+        ArrayList<Object> pageData = elements.stream()
+                .filter(acceptedElements::isInstance)
+                .map(Element::getYAMLData)
+                .collect(Collectors.toCollection(ArrayList::new));
         if(pageData.size() >= 1) return pageData;
         else return null;
     }
@@ -307,13 +306,13 @@ public class Edition{
             config.load();
             
             int count = countSection(config.getSection("texts")) + countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
-            
-            for(Object data : config.getList("grades")){
-                if(data instanceof HashMap){
-                    double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
-                    if(stats[0] != -1) count++;
-                }
-            }
+
+            count += config.getList("grades")
+                    .stream()
+                    .filter(data -> data instanceof HashMap)
+                    .map(data -> GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class)))
+                    .filter(stats -> stats[0] != -1)
+                    .count();
             long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
             if(assessmentId != 0) count++;
             
