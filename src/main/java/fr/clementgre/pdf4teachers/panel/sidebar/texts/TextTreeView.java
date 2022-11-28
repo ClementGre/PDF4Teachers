@@ -70,14 +70,14 @@ public class TextTreeView extends TreeView<String> {
             }).start();
         });
         
-        getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue instanceof TextTreeItem textTreeItem){
-                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue)
-                        textTreeItem.onSelected();
-                }
-            });
-        });
+        getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+                    if(newValue instanceof TextTreeItem textTreeItem){
+                        if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue)
+                            textTreeItem.onSelected();
+                    }
+                }));
         
         setCellFactory((TreeView<String> param) -> new TreeCell<>() {
             @Override
@@ -120,12 +120,8 @@ public class TextTreeView extends TreeView<String> {
         if(Main.settings.textSmall.getValue()){
             Platform.runLater(this::refresh);
         }
-        Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> {
-            refresh();
-        });
-        Main.settings.textOnlyStart.valueProperty().addListener((observable, oldValue, newValue) -> {
-            refresh();
-        });
+        Main.settings.textSmall.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
+        Main.settings.textOnlyStart.valueProperty().addListener((observable, oldValue, newValue) -> refresh());
     }
     
     public static ContextMenu getCategoryMenu(TextTreeSection section){
@@ -152,9 +148,7 @@ public class TextTreeView extends TreeView<String> {
             item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
             menu.getItems().addAll(item1, item2);
             
-            item1.setOnAction(e -> {
-                section.clearElements(true);
-            });
+            item1.setOnAction(e -> section.clearElements(true));
             item2.setOnAction(e -> {
                 for(Object element : section.getChildren()){
                     if(element instanceof TextTreeItem){
@@ -244,9 +238,7 @@ public class TextTreeView extends TreeView<String> {
         int realIndex = getSelectionModel().getSelectedIndices().get(index);
         
         if(getTreeItem(realIndex) instanceof TextTreeItem textTreeItem){
-            PlatformUtils.runLaterOnUIThread(25, () -> {
-                getSelectionModel().select(textTreeItem);
-            });
+            PlatformUtils.runLaterOnUIThread(25, () -> getSelectionModel().select(textTreeItem));
         }
     }
     
@@ -305,12 +297,16 @@ public class TextTreeView extends TreeView<String> {
                 }
             }
         });
-        item4.setOnAction((e) -> {
-            addSavedElement(new TextTreeItem(element.getFont(), element.getText(), element.getColor(), element.getMaxWidth(), TextTreeSection.LAST_TYPE, 0, System.currentTimeMillis() / 1000));
-        });
-        item5.setOnAction((e) -> {
-            element.unLink(true);
-        });
+        item4.setOnAction((e) -> addSavedElement(
+                                    new TextTreeItem(element.getFont(),
+                                            element.getText(),
+                                            element.getColor(),
+                                            element.getMaxWidth(),
+                                            TextTreeSection.LAST_TYPE,
+                                            0,
+                                            System.currentTimeMillis() / 1000))
+        );
+        item5.setOnAction((e) -> element.unLink(true));
         return menu;
         
     }

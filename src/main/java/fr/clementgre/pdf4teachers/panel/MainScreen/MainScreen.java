@@ -294,9 +294,7 @@ public class MainScreen extends Pane {
             if(newValue != null) setToPlace(null);
         });
         
-        setOnZoomStarted(event -> {
-            hasZoomStartEndEvents = true;
-        });
+        setOnZoomStarted(event -> hasZoomStartEndEvents = true);
         setOnZoomFinished(event -> {
             hasZoomStartEndEvents = false;
             lastFinishedZoomingTime = System.currentTimeMillis();
@@ -314,9 +312,7 @@ public class MainScreen extends Pane {
             }
         });
         
-        setOnScrollStarted(event -> {
-            hasScrollStartEndEvents = true;
-        });
+        setOnScrollStarted(event -> hasScrollStartEndEvents = true);
         setOnScrollFinished(event -> {
             hasScrollStartEndEvents = false;
             lastFinishedScrollingTime = System.currentTimeMillis();
@@ -463,9 +459,7 @@ public class MainScreen extends Pane {
             mouseY = e.getY();
             mouseX = e.getX();
         });
-        setOnKeyPressed((e) -> {
-            MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
-        });
+        setOnKeyPressed((e) -> MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e));
         pane.setOnMouseMoved(e -> {
             paneMouseY = e.getY();
             paneMouseX = e.getX();
@@ -476,12 +470,8 @@ public class MainScreen extends Pane {
         });
         
         // window's name
-        status.addListener((observable, oldValue, newValue) -> {
-            updateWindowName();
-        });
-        Edition.isSaveProperty().addListener((observable, oldValue, newValue) -> {
-            updateWindowName();
-        });
+        status.addListener((observable, oldValue, newValue) -> updateWindowName());
+        Edition.isSaveProperty().addListener((observable, oldValue, newValue) -> updateWindowName());
         
         // Start the Drag and Scroll Thread
         if(!dragNScrollThread.isAlive()) dragNScrollThread.start();

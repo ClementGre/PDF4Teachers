@@ -79,9 +79,7 @@ public class FileListCell extends ListCell<File> {
             
             if(!file.exists()){
                 // Can't remove item in an update item event -> runLater
-                Platform.runLater(() -> {
-                    MainWindow.filesTab.removeFile(file);
-                });
+                Platform.runLater(() -> MainWindow.filesTab.removeFile(file));
                 return;
             }
             

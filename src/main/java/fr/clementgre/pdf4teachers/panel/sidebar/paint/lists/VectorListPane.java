@@ -57,9 +57,11 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     
         if(isFavouriteVectors()){
             setEmptyMessage(TR.tr("paintTab.favouriteVectors.emptyList"));
-            setEmptyLink(TR.tr("paintTab.favouriteVectors.loadDefaultVectors"), () -> {
-                list.addItems(DefaultFavoriteVectors.getDefaultFavoriteVectors().stream().map(VectorGridElement::new).toList());
-            });
+            setEmptyLink(TR.tr("paintTab.favouriteVectors.loadDefaultVectors"),
+                    () -> list.addItems(DefaultFavoriteVectors.getDefaultFavoriteVectors()
+                                                                .stream()
+                                                                .map(VectorGridElement::new)
+                                                                .toList()));
         }
         else if(isLastVectors()) setEmptyMessage(TR.tr("paintTab.lastVectors.emptyList"));
         list.getItems().addListener((InvalidationListener) o -> updateMessage());

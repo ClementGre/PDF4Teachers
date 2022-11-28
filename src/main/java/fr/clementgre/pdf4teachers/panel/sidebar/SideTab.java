@@ -81,9 +81,7 @@ public class SideTab extends Tab {
             e.consume();
         });
         
-        getGraphic().setOnDragDone(e -> {
-            SideBar.hideDragSpaces();
-        });
+        getGraphic().setOnDragDone(e -> SideBar.hideDragSpaces());
         
     }
     

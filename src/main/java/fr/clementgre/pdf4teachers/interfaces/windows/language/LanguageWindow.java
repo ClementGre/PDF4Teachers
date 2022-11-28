@@ -23,23 +23,21 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
     
     public static void showLanguageWindow(boolean firstStartBehaviour){
     
-        new LanguagesUpdater().update((downloaded) -> {
-            new LanguageWindow(selectedLanguage -> {
-                if(!selectedLanguage.isEmpty() && !selectedLanguage.equals(Main.settings.language.getValue())){
-                    String oldDocPath = TR.getDocFile().getAbsolutePath();
-        
-                    Main.settings.language.setValue(selectedLanguage);
-                    Main.settings.saveSettings();
-        
-                    if(!firstStartBehaviour){
-                        Main.window.restart(true, oldDocPath);
-                    }else{
-                        TR.updateLocale();
-                        Main.startMainWindowAuto();
-                    }
+        new LanguagesUpdater().update((downloaded) -> new LanguageWindow(selectedLanguage -> {
+            if(!selectedLanguage.isEmpty() && !selectedLanguage.equals(Main.settings.language.getValue())){
+                String oldDocPath = TR.getDocFile().getAbsolutePath();
+
+                Main.settings.language.setValue(selectedLanguage);
+                Main.settings.saveSettings();
+
+                if(!firstStartBehaviour){
+                    Main.window.restart(true, oldDocPath);
+                }else{
+                    TR.updateLocale();
+                    Main.startMainWindowAuto();
                 }
-            });
-        }, false, false);
+            }
+        }), false, false);
     }
     
     private final CallBackArg<String> callBack;

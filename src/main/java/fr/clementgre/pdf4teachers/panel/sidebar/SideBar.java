@@ -144,11 +144,7 @@ public class SideBar extends TabPane {
             }
         });
         
-        Platform.runLater(() -> {
-            getTabs().addListener((ListChangeListener<Tab>) c -> {
-                saveBarsOrganization();
-            });
-        });
+        Platform.runLater(() -> getTabs().addListener((ListChangeListener<Tab>) c -> saveBarsOrganization()));
         
     }
     

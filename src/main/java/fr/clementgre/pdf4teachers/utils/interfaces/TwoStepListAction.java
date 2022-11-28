@@ -45,9 +45,8 @@ public class TwoStepListAction<T, D>{
         
         if(sortData(caller)){
             if(async){
-                processDataAsync(caller, () -> {
-                    caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive());
-                });
+                processDataAsync(caller,
+                        () -> caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive()));
             }else{
                 if(processData(caller)){
                     caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive());

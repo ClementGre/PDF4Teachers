@@ -67,15 +67,9 @@ public class Edition{
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
             if(lastScrollValue != null && updateScrollValue) document.setCurrentScrollValue(lastScrollValue);
     
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
-            });
-            loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
-                ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
-            });
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid);
-            });
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey()));
+            loadItemsInPage(config.getSection("images").entrySet(), elementData -> ImageElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey()));
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> TextElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey(), upscaleGrid));
             // There is only one SkillTableElement (the grid) that contains all the skills
             SkillTableElement.readYAMLDataAndCreate(config.getSection("skills"));
             
@@ -213,15 +207,9 @@ public class Edition{
             
             ArrayList<Element> elements = new ArrayList<>();
     
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
-            });
-            loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
-                elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
-            });
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
-            });
+            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey())));
+            loadItemsInPage(config.getSection("images").entrySet(), elementData -> elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey())));
+            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid)));
             
             for(Object data : config.getList("grades")){
                 if(data instanceof Map)

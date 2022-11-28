@@ -59,9 +59,7 @@ public class ImageElement extends GraphicElement {
             this.resizeMode.addListener((observable, oldValue, newValue) -> {
                 if(this.linkedImageData != null) this.linkedImageData.setResizeMode(newValue);
             });
-            this.imageId.addListener((observable, oldValue, newValue) -> {
-                this.linkedImageData = null;
-            });
+            this.imageId.addListener((observable, oldValue, newValue) -> this.linkedImageData = null);
         }
         
         if(hasPage && getPage() != null){
@@ -130,13 +128,9 @@ public class ImageElement extends GraphicElement {
         NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
         
         menu.getItems().addAll(isFavoriteItem);
-        menu.setOnShowing(e -> {
-            isFavoriteItem.setSelected(MainWindow.paintTab.favouriteImages.isFavoriteImage(this));
-        });
+        menu.setOnShowing(e -> isFavoriteItem.setSelected(MainWindow.paintTab.favouriteImages.isFavoriteImage(this)));
         
-        isFavoriteItem.setOnAction((event) -> {
-            linkedImageData = MainWindow.paintTab.favouriteImages.toggleFavoriteImage(this);
-        });
+        isFavoriteItem.setOnAction((event) -> linkedImageData = MainWindow.paintTab.favouriteImages.toggleFavoriteImage(this));
     }
     
     // ACTIONS

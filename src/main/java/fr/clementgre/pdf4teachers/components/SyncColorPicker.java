@@ -31,9 +31,9 @@ public class SyncColorPicker extends ColorPicker {
         getCustomColors().setAll(customColors);
         
         valueProperty().addListener(new NonLeakingListener<>(this, SyncColorPicker::updateFavoriteColors));
-        setOnHiding((value) -> {
-            updateFavoriteColors(new NonLeakingListener.ChangeEvent<>(null, null, null, this));
-        });
+        setOnHiding((value) -> updateFavoriteColors(
+                new NonLeakingListener.ChangeEvent<>(null, null, null, this))
+        );
     }
     
     public static void updateFavoriteColors(NonLeakingListener.ChangeEvent<Color, SyncColorPicker> changeEvent){

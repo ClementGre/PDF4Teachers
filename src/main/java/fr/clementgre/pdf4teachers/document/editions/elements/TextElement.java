@@ -119,16 +119,11 @@ public class TextElement extends Element {
             updateText();
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fontProperty(), oldValue, UType.UNDO));
         });
-        widthProperty().addListener((observable, oldValue, newValue) -> {
-            checkLocation(getLayoutX(), getLayoutY(), false);
-        });
+        widthProperty()
+                .addListener((observable, oldValue, newValue) -> checkLocation(getLayoutX(), getLayoutY(), false));
         
-        isTextWrappedProperty().addListener((observable, oldValue, newValue) -> {
-            setGrabLineMaxed(newValue);
-        });
-        textMaxWidthProperty().addListener((observable, oldValue, newValue) -> {
-            updateText();
-        });
+        isTextWrappedProperty().addListener((observable, oldValue, newValue) -> setGrabLineMaxed(newValue));
+        textMaxWidthProperty().addListener((observable, oldValue, newValue) -> updateText());
     }
     
     @Override
@@ -380,14 +375,12 @@ public class TextElement extends Element {
                 getChildren().remove(textNode);
                 getChildren().add(image);
             }
-            renderLatex((render) -> {
-                Platform.runLater(() -> {
-                    image.setImage(render);
-                    image.setVisible(true);
-                    image.setFitWidth(render.getWidth() / RENDER_FACTOR);
-                    image.setFitHeight(render.getHeight() / RENDER_FACTOR);
-                });
-            });
+            renderLatex((render) -> Platform.runLater(() -> {
+                image.setImage(render);
+                image.setVisible(true);
+                image.setFitWidth(render.getWidth() / RENDER_FACTOR);
+                image.setFitHeight(render.getHeight() / RENDER_FACTOR);
+            }));
             
         }else{ // Lambda Text
             

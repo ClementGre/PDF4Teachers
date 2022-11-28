@@ -77,12 +77,10 @@ public class TextTreeItem extends TreeItem<String> {
         setText(newValue);
         updateGraphic(true);
     };
-    private final ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
-        setColor((Color) newValue);
-    };
-    private final ChangeListener<Number> defaultMathChangeListener = (observable, oldValue, newValue) -> {
-        updateGraphic(false);
-    };
+    private final ChangeListener<Paint> colorChangeListener
+            = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> setColor((Color) newValue);
+    private final ChangeListener<Number> defaultMathChangeListener
+            = (observable, oldValue, newValue) -> updateGraphic(false);
     
     
     public TextTreeItem(Font font, String text, Color color, double maxWidth, int type, long uses, long creationDate){
@@ -149,11 +147,10 @@ public class TextTreeItem extends TreeItem<String> {
             }
         };
         name.setFill(StyleManager.shiftColorWithTheme(color.get()));
-        colorProperty().addListener((observable, oldValue, newValue) -> {
-            name.setFill(StyleManager.shiftColorWithTheme(newValue));
-        });
+        colorProperty().addListener((observable, oldValue, newValue) -> name.setFill(StyleManager.shiftColorWithTheme(newValue)));
         
-        name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
+        name.fontProperty()
+                .bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
         
         pane.setAlignment(Pos.CENTER_LEFT);
         pane.setFocusTraversable(false);

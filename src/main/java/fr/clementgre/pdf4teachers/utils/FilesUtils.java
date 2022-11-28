@@ -128,9 +128,7 @@ public class FilesUtils {
         
         FilesUtils.moveDir(oldDataFolder, new File(Main.dataFolder));
         
-        PlatformUtils.runLaterOnUIThread(5000, () -> {
-            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("moveDataFolderNotification", FilesUtils.getPathReplacingUserHome(Main.dataFolder)), 20);
-        });
+        PlatformUtils.runLaterOnUIThread(5000, () -> MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("moveDataFolderNotification", FilesUtils.getPathReplacingUserHome(Main.dataFolder)), 20));
     }
     
    

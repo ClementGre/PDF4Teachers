@@ -97,9 +97,7 @@ public class GradeElement extends Element {
             if(newValue && !isShouldVisible()) setVisible(false);
         });
         
-        text.textProperty().addListener((observable, oldValue, newValue) -> {
-            checkLocation(false);
-        });
+        text.textProperty().addListener((observable, oldValue, newValue) -> checkLocation(false));
         nameProperty().addListener((observable, oldValue, newValue) -> {
             updateText();
             Edition.setUnsave("GradeNameChanged");
@@ -248,16 +246,13 @@ public class GradeElement extends Element {
         item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilled.tooltip"));
         
         
-        menu.setOnShowing((e) -> {
-            Platform.runLater(() -> {
-                MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
-                
-                if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
-                else menu.getItems().set(0, menuItem);
-                NodeMenuItem.setupMenuNow(menu);
-            });
-            
-        });
+        menu.setOnShowing((e) -> Platform.runLater(() -> {
+            MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
+
+            if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
+            else menu.getItems().set(0, menuItem);
+            NodeMenuItem.setupMenuNow(menu);
+        }));
         
         menu.getItems().addAll(item1, item4, item2, item3);
         if(isAlwaysVisible() && getValue() == -1) menu.getItems().add(item5);
@@ -286,9 +281,7 @@ public class GradeElement extends Element {
                 AutoTipsManager.showByAction("gradereset");
             }
         });
-        item5.setOnAction(e -> {
-            setAlwaysVisible(false, true);
-        });
+        item5.setOnAction(e -> setAlwaysVisible(false, true));
     }
     
     @Override

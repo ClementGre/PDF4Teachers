@@ -151,28 +151,25 @@ public class SACocheParser {
                 if(line[0].equals("CLAVIER")) continue;
                 Notation notation = new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", ""));
     
-                studentsSkills.forEach((studentId, skills) -> {
-                    skills.forEach(skill -> {
-                        if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
-                            if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
-                            studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
-                        }
-                    });
-                });
-                assessment.getNotations().add(notation);
-            }
-        }
-        // For default notations
-        SkillsAssessment.getOtherNotations().forEach(notation -> {
-            studentsSkills.forEach((studentId, skills) -> {
-                skills.forEach(skill -> {
+                studentsSkills.forEach((studentId, skills) -> skills.forEach(skill -> {
                     if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
                         if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
                         studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
                     }
-                });
-            });
-        });
+                }));
+                assessment.getNotations().add(notation);
+            }
+        }
+        // For default notations
+        SkillsAssessment.getOtherNotations()
+                .forEach(notation -> studentsSkills.forEach((studentId, skills) -> skills.forEach(skill -> {
+                    if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
+                        if(!studentsEditionSkills.containsKey(studentId)) {
+                            studentsEditionSkills.put(studentId, new ArrayList<>());
+                        }
+                        studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
+                    }
+        })));
         
         if(assessment.getNotations().isEmpty()){ // Not exported checking PDF4Teachers export
             CustomAlert alert = new WrongAlert(TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.title"), TR.tr("skillsSettingsWindow.sacocheImport.notPDF4TeachersImport.details"), false);

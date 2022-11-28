@@ -39,16 +39,14 @@ public class GradeTreeItemField extends ShortcutsTextArea {
         
         
         // Select & deselect
-        focusedProperty().addListener((observable, oldValue, newValue) -> {
-            Platform.runLater(() -> {
-                if(newValue){
-                    if(getCaretPosition() == getText().length() || getCaretPosition() == 0 || type != GradeTreeItem.FieldType.NAME){
-                        positionCaret(getText().length());
-                        selectAll();
-                    }
-                }else deselect();
-            });
-        });
+        focusedProperty().addListener((observable, oldValue, newValue) -> Platform.runLater(() -> {
+            if(newValue){
+                if(getCaretPosition() == getText().length() || getCaretPosition() == 0 || type != GradeTreeItem.FieldType.NAME){
+                    positionCaret(getText().length());
+                    selectAll();
+                }
+            }else deselect();
+        }));
         
         // Text listener
         ScratchText meter = new ScratchText();

@@ -119,9 +119,7 @@ public class PageEditPane extends VBox {
             page.quitVectorEditMode();
             PageZoneSelector recorder = page.getPageZoneSelector();
             recorder.setSelectionZoneType(PageZoneSelector.SelectionZoneType.PDF_ON_DARK);
-            recorder.setupSelectionZoneOnce(positionDimensions -> {
-                MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), false, false, positionDimensions);
-            });
+            recorder.setupSelectionZoneOnce(positionDimensions -> MainWindow.mainScreen.document.pdfPagesRender.editor.capture(page.getPage(), false, false, positionDimensions));
             recorder.setDoShow(true);
         });
         

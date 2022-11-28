@@ -42,9 +42,7 @@ public class NodeRadioMenuItem extends NodeMenuItem {
         });
         
         if(autoUpdate){
-            getNode().setOnMouseClicked((e) -> {
-                setSelected(!isSelected());
-            });
+            getNode().setOnMouseClicked((e) -> setSelected(!isSelected()));
         }
         
         if(isSelected()) setLeftData(SELECTED_IMAGE);

@@ -81,29 +81,35 @@ public class SkillsListingPane extends Tab {
         inputs.setSpacing(5);
         inputs.getStyleClass().add("noTextFieldClear");
         
-        AutoCompletionTextFieldBinding<Skill> acronymAuto = new AutoCompletionTextFieldBinding<>(acronymField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream()
-                    .filter(skill -> skill.getAcronym().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getAcronym().equals(param.getUserText()))
-                    .unordered().filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
-                    .toList();
-        }, new StringConverter<>() {
-            @Override public String toString(Skill s){ return s.getAcronym(); }
-            @Override public Skill fromString(String s){ return null; }
-        });
+        AutoCompletionTextFieldBinding<Skill> acronymAuto =
+                new AutoCompletionTextFieldBinding<>(acronymField, param -> MainWindow.skillsTab.getAllSkills()
+                        .stream()
+                        .filter(skill -> skill.getAcronym()
+                                .toLowerCase()
+                                .contains(param.getUserText().toLowerCase())
+                                                && !skill.getAcronym().equals(param.getUserText()))
+                        .unordered()
+                        .filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
+                        .toList(), new StringConverter<>() {
+                            @Override public String toString(Skill s){ return s.getAcronym(); }
+                            @Override public Skill fromString(String s){ return null; }
+                        });
         acronymAuto.setOnAutoCompleted(e -> {
             if(nameField.getText().isBlank()) nameField.setText(e.getCompletion().getName());
         });
         // TODO : scale auto completion popup
     
-        AutoCompletionTextFieldBinding<Skill> nameAuto = new AutoCompletionTextFieldBinding<>(nameField, param -> {
-            return MainWindow.skillsTab.getAllSkills().stream()
-                    .filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase()) && !skill.getName().equals(param.getUserText()))
-                    .unordered().filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
-                    .toList();
-        }, new StringConverter<>() {
-            @Override public String toString(Skill s){ return s.getName(); }
-            @Override public Skill fromString(String s){ return null; }
-        });
+        AutoCompletionTextFieldBinding<Skill> nameAuto =
+                new AutoCompletionTextFieldBinding<>(nameField, param -> MainWindow.skillsTab.getAllSkills()
+                        .stream()
+                        .filter(skill -> skill.getName().toLowerCase().contains(param.getUserText().toLowerCase())
+                                && !skill.getName().equals(param.getUserText()))
+                        .unordered()
+                        .filter(FilterUtils.distinctByKeys(Skill::getName, Skill::getAcronym))
+                        .toList(), new StringConverter<>() {
+                            @Override public String toString(Skill s){ return s.getName(); }
+                            @Override public Skill fromString(String s){ return null; }
+                        });
         nameAuto.setOnAutoCompleted(e -> {
             if(acronymField.getText().isBlank()) acronymField.setText(e.getCompletion().getAcronym());
         });
@@ -233,9 +239,7 @@ public class SkillsListingPane extends Tab {
             menu.getItems().add(delete);
             NodeMenuItem.setupMenu(menu);
             
-            delete.setOnAction(e -> {
-                tableView.getItems().remove(row.getItem());
-            });
+            delete.setOnAction(e -> tableView.getItems().remove(row.getItem()));
             
             row.setContextMenu(menu);
             

@@ -31,9 +31,8 @@ public class ScaledComboBox<T> extends ComboBox<T> {
     private void setup(boolean bind){
         
         if(bind){
-            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
-                setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
-            });
+            Main.settings.zoom.valueProperty()
+                    .addListener((o, oldValue, newValue) -> setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue()));
         }
         
         setCellFactory(new Callback<>() {
