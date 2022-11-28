@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 public class FontUtils {
@@ -31,7 +32,7 @@ public class FontUtils {
                     "Open Sans", "Jost", "Lato Black", "Lato", "Lato Light", "Roboto Medium", "Roboto", "Roboto Light", "Hind Guntur", "Shanti",
                     "Karma", "Noto Serif", "Crimson Text", "Bitter",
                     "Ubuntu Condensed", "Bellota", "Balsamiq Sans", "MuseoModerno", "Averia Libre", "Indie Flower", "Sriracha", "Arrows")
-            .collect(MoreCollectors.toLinkedMap((s) -> s, (s) -> false));
+            .collect(MoreCollectors.toLinkedMap(Function.identity(), (s) -> false));
     
     private static final SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
     private static boolean loaded = false;
