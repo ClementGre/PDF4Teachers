@@ -96,9 +96,7 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         field.setRight(emptyImage);
         
         
-        emptyImage.setOnMousePressed(event -> {
-            getSkinnable().getSelectionModel().select(null);
-        });
+        emptyImage.setOnMousePressed(event -> getSkinnable().getSelectionModel().select(null));
         
         return field;
     }

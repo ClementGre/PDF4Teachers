@@ -55,15 +55,11 @@ public class LanguagesUpdater {
     }
     
     public static void backgroundStats(){
-        Platform.runLater(() -> {
-            new LanguagesUpdater().updateStats(null);
-        });
+        Platform.runLater(() -> new LanguagesUpdater().updateStats(null));
     }
     
     public static void backgroundStats(CallBack callBack){
-        Platform.runLater(() -> {
-            new LanguagesUpdater().updateStats(callBack);
-        });
+        Platform.runLater(() -> new LanguagesUpdater().updateStats(callBack));
     }
     
     public static class Language {
