@@ -414,11 +414,10 @@ public class TextElement extends Element {
     }
     
     private void setGrabLineMaxed(boolean maxed){
-        getChildren().forEach((n) -> {
-            if(n instanceof GrabLine grabLine){
-                grabLine.setMaxed(maxed);
-            }
-        });
+        getChildren().stream()
+                .filter(n -> n instanceof GrabLine)
+                .map(n -> (GrabLine) n)
+                .forEach(grabLine -> grabLine.setMaxed(maxed));
     }
     
     public void renderLatex(CallBackArg<Image> callback){
