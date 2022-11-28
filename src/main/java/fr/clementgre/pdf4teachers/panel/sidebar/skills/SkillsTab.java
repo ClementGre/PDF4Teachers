@@ -274,13 +274,11 @@ public class SkillsTab extends SideTab {
     // When added to document from edition, select the right options
     public void registerSkillTableElement(SkillTableElement skillTableElement){
         this.skillTableElement.set(skillTableElement);
-        
-        for(SkillsAssessment assessment : assessments){
-            if(assessment.getId() == skillTableElement.getAssessmentId()){
-                assessmentCombo.setValue(assessment);
-                break;
-            }
-        }
+
+        assessments.stream()
+                .filter(assessment -> assessment.getId() == skillTableElement.getAssessmentId())
+                .findFirst()
+                .ifPresent(assessmentCombo::setValue);
         trySelectStudent();
     }
     public void clearEditRelatedData(){
@@ -289,12 +287,12 @@ public class SkillsTab extends SideTab {
     }
     private void trySelectStudent(){
         if(getSkillTableElement() == null || getCurrentAssessment() == null) return;
-        for(Student student : getCurrentAssessment().getStudents()){
-            if(student.id() == getSkillTableElement().getStudentId()){
-                studentCombo.setValue(student);
-                break;
-            }
-        }
+        getCurrentAssessment()
+                .getStudents()
+                .stream()
+                .filter(student -> student.id() == getSkillTableElement().getStudentId())
+                .findFirst()
+                .ifPresent(studentCombo::setValue);
     }
     
     // Generate the element

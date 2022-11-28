@@ -30,6 +30,8 @@ import javafx.scene.text.Text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @SuppressWarnings("unchecked")
 public abstract class TextTreeSection extends TreeItem<String> {
@@ -73,12 +75,10 @@ public abstract class TextTreeSection extends TreeItem<String> {
         
         sortManager = new SortManager((sortType, order) -> {
             
-            List<TextTreeItem> toSort = new ArrayList<>();
-            for(int i = 0; i < getChildren().size(); i++){
-                if(getChildren().get(i) instanceof TextTreeItem){
-                    toSort.add((TextTreeItem) getChildren().get(i));
-                }
-            }
+            List<TextTreeItem> toSort = IntStream.range(0, getChildren().size())
+                    .filter(i -> getChildren().get(i) instanceof TextTreeItem)
+                    .mapToObj(i -> (TextTreeItem) getChildren().get(i))
+                    .collect(Collectors.toList());
             clearElements(false); // unlink = false because the element are just reordered, not replaced.
             for(TextTreeItem item : TextTreeView.autoSortList(toSort, sortType, order)) getChildren().add(item);
         }, null);

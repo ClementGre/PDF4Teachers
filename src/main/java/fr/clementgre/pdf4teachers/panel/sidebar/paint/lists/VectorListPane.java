@@ -98,10 +98,11 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     }
     
     public boolean isFavoriteVector(VectorElement element){
-        for(VectorGridElement gridElement : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            if(!gridElement.isFake()) if(gridElement.equals(element)) return true;
-        }
-        return false;
+        return MainWindow.paintTab.favouriteVectors.getList()
+                .getAllItems()
+                .stream()
+                .filter(gridElement -> !gridElement.isFake())
+                .anyMatch(gridElement -> gridElement.equals(element));
     }
     @Override
     public void updateGraphics(){

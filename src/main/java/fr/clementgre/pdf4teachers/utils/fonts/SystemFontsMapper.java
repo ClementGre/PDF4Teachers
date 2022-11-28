@@ -22,8 +22,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Originally created by azakhary on 4/24/2015
@@ -86,13 +88,12 @@ public class SystemFontsMapper {
         // only retrieving ttf files
         String[] extensions = new String[]{"ttf", "otf", "ttc"};
         String[] paths = getSystemFontsDirs();
-        ArrayList<File> files = new ArrayList<>();
-        
-        for(String path : paths){
-            File fontDirectory = new File(path);
-            if(fontDirectory.exists()) files.addAll(FilesUtils.listFiles(fontDirectory, extensions, true));
-        }
-        return files;
+        return Arrays.stream(paths)
+                .map(File::new)
+                .filter(File::exists)
+                .flatMap(fontDirectory -> FilesUtils.listFiles(fontDirectory, extensions, true)
+                        .stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     public void loadFontsFromSystemFiles(){
@@ -108,13 +109,10 @@ public class SystemFontsMapper {
                 try{
                     Font[] fonts = Font.loadFonts(new FileInputStream(file.getAbsolutePath()), -1);
                     if(fonts == null) continue;
-                    for(Font font : fonts){
-                        if(StringUtils.contains(systemFonts, font.getFamily())){
-                            if(!addFontToMap(font, file.getAbsolutePath())){
-                                pdfBoxErrors++;
-                                break;
-                            }
-                        }
+                    if (Arrays.stream(fonts)
+                            .filter(font -> StringUtils.contains(systemFonts, font.getFamily()))
+                            .anyMatch(font -> !addFontToMap(font, file.getAbsolutePath()))) {
+                        pdfBoxErrors++;
                     }
                 }catch(IOException e){Log.eNotified(e);}
             }

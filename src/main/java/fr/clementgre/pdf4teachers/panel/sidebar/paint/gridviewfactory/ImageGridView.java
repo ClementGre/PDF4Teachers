@@ -63,19 +63,17 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
         List<ImageGridElement> actualImages = getAllItems();
     
         // Remove images that are not anymore into the list
-        List<ImageGridElement> toRemove = new ArrayList<>();
-        
-        for(ImageGridElement image : actualImages){
-            if(!newImagesList.contains(image)) toRemove.add(image);
-        }
+        List<ImageGridElement> toRemove = actualImages.stream()
+                .filter(image -> !newImagesList.contains(image))
+                .collect(Collectors.toList());
+
         removeItems(toRemove);
         
         // Add images that was added to the list
-        List<ImageGridElement> toAdd = new ArrayList<>();
-        
-        for(ImageGridElement image : newImagesList){
-            if(!actualImages.contains(image)) toAdd.add(image);
-        }
+        List<ImageGridElement> toAdd = newImagesList.stream()
+                .filter(image -> !actualImages.contains(image))
+                .collect(Collectors.toList());
+
         addItems(toAdd);
     }
     

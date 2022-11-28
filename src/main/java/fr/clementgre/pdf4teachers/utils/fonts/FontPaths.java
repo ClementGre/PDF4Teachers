@@ -56,21 +56,17 @@ public class FontPaths{
         if(weight == FontWeight.NORMAL){
             return this.regular;
         }
-        for(FontPath fontPath : otherStyles){
-            if(fontPath.isItalic() == italic && fontPath.getWeight().equals(weight)){
-                return fontPath;
-            }
-        }
-        return null;
+        return otherStyles.stream()
+                .filter(fontPath -> fontPath.isItalic() == italic && fontPath.getWeight().equals(weight))
+                .findFirst()
+                .orElse(null);
     }
     
     public FontPath getOtherStyles(FontWeight weight, boolean italic){
-        for(FontPath fontPath : otherStyles){
-            if(fontPath.isItalic() == italic && fontPath.getWeight().equals(weight)){
-                return fontPath;
-            }
-        }
-        return null;
+        return otherStyles.stream()
+                .filter(fontPath -> fontPath.isItalic() == italic && fontPath.getWeight().equals(weight))
+                .findFirst()
+                .orElse(null);
     }
     public void addOtherStyles(FontPath path){
         this.otherStyles.add(path);

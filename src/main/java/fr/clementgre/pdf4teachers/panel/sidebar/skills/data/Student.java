@@ -8,6 +8,7 @@ package fr.clementgre.pdf4teachers.panel.sidebar.skills.data;
 import fr.clementgre.pdf4teachers.datasaving.Config;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public record Student(String name, String supportModality, long id,
                       ArrayList<EditionSkill> editionSkills /* Temporary, must be automatically added to the associated edition */){
@@ -22,11 +23,12 @@ public record Student(String name, String supportModality, long id,
     }
     
     public static Student loadFromConfig(HashMap<String, Object> map){
-        ArrayList<EditionSkill> editionSkills = new ArrayList<>();
-        for(Object skillData : Config.getList(map, "editionSkills")){
-            if(skillData instanceof Map) editionSkills.add(EditionSkill.getFromYAML((HashMap<String, Object>) skillData));
-        }
-        
+        ArrayList<EditionSkill> editionSkills = Config.getList(map, "editionSkills")
+                .stream()
+                .filter(skillData -> skillData instanceof Map)
+                .map(skillData -> EditionSkill.getFromYAML((HashMap<String, Object>) skillData))
+                .collect(Collectors.toCollection(ArrayList::new));
+
         return new Student(
                 Config.getString(map, "name"),
                 Config.getString(map, "supportModality"),

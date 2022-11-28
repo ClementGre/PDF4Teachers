@@ -18,6 +18,7 @@ import tk.pratanumandal.unique4j.exception.Unique4jException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LockManager {
     
@@ -120,15 +121,9 @@ public class LockManager {
     }
     
     public static List<File> getToOpenFiles(List<String> rawArgs){
-        List<File> toOpenFiles = new ArrayList<>();
-        
-        for(String param : rawArgs){
-            File file = new File(param);
-            if(file.exists() && FilesUtils.getExtension(file).equals("pdf")){
-                toOpenFiles.add(file);
-            }
-        }
-        
-        return toOpenFiles;
+        return rawArgs.stream()
+                .map(File::new)
+                .filter(file -> file.exists() && FilesUtils.getExtension(file).equals("pdf"))
+                .collect(Collectors.toList());
     }
 }

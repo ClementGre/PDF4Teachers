@@ -33,6 +33,8 @@ import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class TextTreeView extends TreeView<String> {
     
@@ -361,12 +363,10 @@ public class TextTreeView extends TreeView<String> {
     
     public static List<TextTreeItem> getMostUseElements(){
         
-        List<TextTreeItem> toSort = new ArrayList<>();
-        for(int i = 0; i < MainWindow.textTab.treeView.favoritesSection.getChildren().size(); i++){
-            if(MainWindow.textTab.treeView.favoritesSection.getChildren().get(i) instanceof TextTreeItem){
-                toSort.add((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i));
-            }
-        }
+        List<TextTreeItem> toSort = IntStream.range(0, MainWindow.textTab.treeView.favoritesSection.getChildren().size())
+                .filter(i -> MainWindow.textTab.treeView.favoritesSection.getChildren().get(i) instanceof TextTreeItem)
+                .mapToObj(i -> (TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i))
+                .collect(Collectors.toList());
         for(int i = 0; i < MainWindow.textTab.treeView.lastsSection.getChildren().size(); i++){
             if(MainWindow.textTab.treeView.lastsSection.getChildren().get(i) instanceof TextTreeItem){
                 toSort.add((TextTreeItem) MainWindow.textTab.treeView.lastsSection.getChildren().get(i));

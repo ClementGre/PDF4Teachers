@@ -186,16 +186,11 @@ public class StringUtils {
     
     public static <T> boolean contains(final T[] array, final T v){
         if(v == null){
-            for(final T e : array)
-                if(e == null)
-                    return true;
+            return Arrays.stream(array).anyMatch(Objects::isNull);
         }else{
-            for(final T e : array)
-                if(e == v || v.equals(e))
-                    return true;
+            return Arrays.stream(array).anyMatch(e -> e == v || v.equals(e));
         }
-        
-        return false;
+
     }
     public static boolean endsIn(final String[] array, String v, boolean kase){
         if(!kase) v = v.toLowerCase();

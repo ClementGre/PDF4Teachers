@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TextElementsData extends SimpleConfig {
     
@@ -67,20 +68,24 @@ public class TextElementsData extends SimpleConfig {
     
     @Override
     protected void addDataToConfig(Config config){
-        ArrayList<Object> favorites = new ArrayList<>();
-        for(Object item : MainWindow.textTab.treeView.favoritesSection.getChildren()){
-            if(item instanceof TextTreeItem) favorites.add(((TextTreeItem) item).getYAMLData());
-        }
-        
-        ArrayList<Object> lasts = new ArrayList<>();
-        for(Object item : MainWindow.textTab.treeView.lastsSection.getChildren()){
-            if(item instanceof TextTreeItem) lasts.add(((TextTreeItem) item).getYAMLData());
-        }
-        
+        ArrayList<Object> favorites = MainWindow.textTab.treeView.favoritesSection.getChildren()
+                .stream()
+                .filter(item -> item instanceof TextTreeItem)
+                .map(item -> ((TextTreeItem) item).getYAMLData())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Object> lasts = MainWindow.textTab.treeView.lastsSection.getChildren()
+                .stream()
+                .filter(item -> item instanceof TextTreeItem)
+                .map(item -> ((TextTreeItem) item).getYAMLData())
+                .collect(Collectors.toCollection(ArrayList::new));
+
         LinkedHashMap<String, Object> lists = new LinkedHashMap<>();
         for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
-            List<Object> listTexts = new ArrayList<>();
-            for(TextListItem item : list.getValue()) listTexts.add(item.getYAMLData());
+            List<Object> listTexts = list.getValue()
+                    .stream()
+                    .map(TextListItem::getYAMLData)
+                    .collect(Collectors.toList());
             lists.put(list.getKey(), listTexts);
         }
         

@@ -121,10 +121,7 @@ public class LanguagesUpdater {
         }
         
         public boolean containsPropertiesFile(){
-            for(String fileName : urls.keySet()){
-                if(fileName.endsWith(".properties")) return true;
-            }
-            return false;
+            return urls.keySet().stream().anyMatch(fileName -> fileName.endsWith(".properties"));
         }
     }
     

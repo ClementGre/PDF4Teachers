@@ -35,17 +35,19 @@ public class EditionSkill{
     }
     
     public Skill getMatchingSkill(SkillsAssessment assessment){
-        for(Skill skill : assessment.getSkills()){
-            if(skill.getId() == skillId) return skill;
-        }
-        return null;
+        return assessment.getSkills()
+                .stream()
+                .filter(skill -> skill.getId() == skillId)
+                .findFirst()
+                .orElse(null);
     }
     
     public Notation getMatchingNotation(SkillsAssessment assessment){
-        for(Notation notation : assessment.getNotationsWithDefaults()){
-            if(notation.getId() == notationId) return notation;
-        }
-        return null;
+        return assessment.getNotationsWithDefaults()
+                .stream()
+                .filter(notation -> notation.getId() == notationId)
+                .findFirst()
+                .orElse(null);
     }
     
     

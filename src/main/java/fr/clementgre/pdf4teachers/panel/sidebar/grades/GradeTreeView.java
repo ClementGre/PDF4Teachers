@@ -25,8 +25,10 @@ import javafx.scene.control.TreeView;
 import javafx.util.Callback;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GradeTreeView extends TreeView<String> {
     
@@ -200,14 +202,12 @@ public class GradeTreeView extends TreeView<String> {
     private void addToList(GradeTreeItem parent, GradeTreeItem element){
         
         int index = element.getCore().getIndex();
-        int before = 0;
-        
-        for(int i = 0; i < parent.getChildren().size(); i++){
-            GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
-            if(children.getCore().getIndex() < index){
-                before++;
-            }
-        }
+        int before = (int) parent.getChildren()
+                .stream()
+                .map(stringTreeItem -> (GradeTreeItem) stringTreeItem)
+                .filter(children -> children.getCore().getIndex() < index)
+                .count();
+
         parent.getChildren().add(before, element);
     }
     
@@ -243,11 +243,11 @@ public class GradeTreeView extends TreeView<String> {
     }
     
     public static GradeTreeItem getNextLogicGrade(){
-        ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
-        for(GradeTreeItem grade : items){
-            if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
-        }
-        return null;
+        return getGradesArray(GradeTreeView.getTotal())
+                .stream()
+                .filter(grade -> !grade.hasSubGrade() && grade.getCore().getValue() == -1)
+                .findFirst()
+                .orElse(null);
     }
     
     public static GradeTreeItem getNextLogicGradeNonNull(){
@@ -338,18 +338,16 @@ public class GradeTreeView extends TreeView<String> {
     
     public static ArrayList<GradeElement> getGradesArrayByCoordinates(){
         
-        ArrayList<GradeElement> grades = new ArrayList<>();
-        
-        for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
-            ArrayList<GradeElement> pageGrades = new ArrayList<>();
-            for(Element element : page.getElements()){
-                if(element instanceof GradeElement) pageGrades.add((GradeElement) element);
-            }
-            
-            pageGrades.sort(Comparator.comparingInt(Element::getRealY));
-            grades.addAll(pageGrades);
-        }
-        return grades;
+        return MainWindow.mainScreen.document.getPages()
+                .stream()
+                .map(page -> page.getElements()
+                        .stream()
+                        .filter(element -> element instanceof GradeElement)
+                        .map(element -> (GradeElement) element)
+                        .sorted(Comparator.comparingInt(Element::getRealY))
+                        .collect(Collectors.toCollection(ArrayList::new)))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     
@@ -377,14 +375,12 @@ public class GradeTreeView extends TreeView<String> {
     }
     
     private ScrollBar getVerticalScrollbar(){
-        for(Node node : lookupAll(".scroll-bar")) {
-            if(node instanceof ScrollBar bar){
-                if(bar.getOrientation().equals(Orientation.VERTICAL)){
-                    return bar;
-                }
-            }
-        }
-        return null;
+        return lookupAll(".scroll-bar").stream()
+                .filter(node -> node instanceof ScrollBar)
+                .map(node -> (ScrollBar) node)
+                .filter(bar -> bar.getOrientation().equals(Orientation.VERTICAL))
+                .findFirst()
+                .orElse(null);
     }
     
     public double getVScrollbarVisibleWidth(){
