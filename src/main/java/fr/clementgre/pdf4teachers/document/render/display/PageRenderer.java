@@ -415,9 +415,7 @@ public class PageRenderer extends Pane {
                 placingElement.setupMousePressVars(e.getX() - shiftX - 1, e.getY() - shiftY - 1, null, true, true);
                 placingElement.simulateDragToResize(e.getX() - placingElement.getLayoutX(), e.getY() - placingElement.getLayoutY(), e.isShiftDown());
                 
-                Platform.runLater(() -> {
-                    placingElement.select();
-                });
+                Platform.runLater(() -> placingElement.select());
                 
                 setCursor(Cursor.CROSSHAIR);
             }else{
@@ -853,9 +851,7 @@ public class PageRenderer extends Pane {
         
         // Wait a bit before removing the page because else, the render could be leaked
         // JavaFX Bug : When the parent of the ImageView is removed from its parent too fast, the ImageView (NGImageView) is leaked.
-        PlatformUtils.runLaterOnUIThread(10000, () -> {
-            MainWindow.mainScreen.pane.getChildren().remove(this);
-        });
+        PlatformUtils.runLaterOnUIThread(10000, () -> MainWindow.mainScreen.pane.getChildren().remove(this));
         
         for(Node child : getChildren()){
             if(child instanceof Element e) e.removedFromDocument(false);
