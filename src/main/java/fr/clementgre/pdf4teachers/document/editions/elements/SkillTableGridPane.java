@@ -100,7 +100,9 @@ public class SkillTableGridPane extends GridPane {
         notationsLegend = new ArrayList<>(notations.stream().map(notation -> new NotationLegend(notation, legend)).toList());
     
         if(!this.notations.isEmpty()) layoutLegend(); // No need to layout legend the first time
-        legend.widthProperty().addListener((observable, oldValue, newValue) -> layoutLegend());
+        legend.widthProperty().addListener((observable, oldValue, newValue) -> {
+            layoutLegend();
+        });
         this.notations = notations;
     }
     private void layoutLegend(){

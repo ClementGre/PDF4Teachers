@@ -53,10 +53,12 @@ public class LogWindow extends Stage {
         scrollPane.setFitToWidth(true);
         scrollPane.prefWidthProperty().bind(scene.widthProperty());
         scrollPane.prefHeightProperty().bind(scene.heightProperty());
-        label.heightProperty().addListener((o, oldValue, newValue) -> Platform.runLater(() -> {
-            doScrollToBottom = scrollPane.getVvalue() == scrollPane.getVmax();
-            pane.setMinHeight(newValue.doubleValue());
-        }));
+        label.heightProperty().addListener((o, oldValue, newValue) -> {
+            Platform.runLater(() -> {
+                doScrollToBottom = scrollPane.getVvalue() == scrollPane.getVmax();
+                pane.setMinHeight(newValue.doubleValue());
+            });
+        });
         pane.heightProperty().addListener((o, oldValue, newValue) -> {
             if(doScrollToBottom) scrollPane.setVvalue(scrollPane.getVmax());
         });
