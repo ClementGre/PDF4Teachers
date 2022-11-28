@@ -47,7 +47,7 @@ public class StringUtils {
     
     public static Entry<String, Integer> getLastInt(String expression){
         String stringResult = expression;
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         
         for(int i = expression.length() - 1; i >= 0; i--){
             try{
