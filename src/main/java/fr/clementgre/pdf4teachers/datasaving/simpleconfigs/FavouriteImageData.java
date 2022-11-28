@@ -32,7 +32,9 @@ public class FavouriteImageData extends SimpleConfig {
                 .map(ImageData::readYAMLDataAndGive)
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        PlatformUtils.printActionTimeIfDebug(() -> MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData, false), "Load favorites images");
+        PlatformUtils.printActionTimeIfDebug(() -> {
+            MainWindow.paintTab.favouriteImages.reloadFavouritesImageList(favouriteImageData, false);
+        }, "Load favorites images");
         
     }
     

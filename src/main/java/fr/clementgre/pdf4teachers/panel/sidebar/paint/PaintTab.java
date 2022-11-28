@@ -253,8 +253,9 @@ public class PaintTab extends SideTab {
             doFillButton.setSelected(true);
             MainWindow.userData.vectorsLastFill = newValue;
         });
-        doFillButton.selectedProperty()
-                .addListener((observable, oldValue, newValue) -> MainWindow.userData.vectorsLastDoFIll = newValue);
+        doFillButton.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.vectorsLastDoFIll = newValue;
+        });
         vectorStrokeColor.valueProperty().addListener((observable, oldValue, newValue) -> {
             MainWindow.userData.vectorsLastStroke = newValue;
             if(MainWindow.mainScreen.getSelected() instanceof VectorElement element && element.isEditMode()){ // Edit mode
@@ -279,7 +280,9 @@ public class PaintTab extends SideTab {
         newImage.getItems().addAll(browseImage, newImageEmpty, openGallery);
         //NodeMenuItem.setupMenu(newImage);
         
-        browseImage.setOnAction(ae -> browseImagePath(this::newImageElementFromPath));
+        browseImage.setOnAction(ae -> {
+            browseImagePath(this::newImageElementFromPath);
+        });
         newImageEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             
@@ -290,7 +293,9 @@ public class PaintTab extends SideTab {
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
         });
-        openGallery.setOnAction(ae -> openGallery());
+        openGallery.setOnAction(ae -> {
+            openGallery();
+        });
         
         ////////// New Vector menu //////////
         
@@ -300,7 +305,9 @@ public class PaintTab extends SideTab {
         newVector.getItems().addAll(newVectorDrawing, newVectorEmpty, browseVector);
         //NodeMenuItem.setupMenu(menu);
         
-        newVectorDrawing.setOnAction(ae -> newVectorDrawing(false));
+        newVectorDrawing.setOnAction(ae -> {
+            newVectorDrawing(false);
+        });
         newVectorEmpty.setOnAction(ae -> {
             PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
             

@@ -36,15 +36,18 @@ public class ScaledSearchableComboBox<T> extends SearchableComboBox<T> {
         // Remove border of children (inner combobox & textfield)
         getChildrenUnmodifiable().addListener((ListChangeListener<Node>) c -> {
             while(c.next()){
-                c.getAddedSubList().forEach(n -> n.setStyle("-fx-background-insets: 0, 0, 0; -fx-padding: 0"));
+                c.getAddedSubList().forEach(n -> {
+                    n.setStyle("-fx-background-insets: 0, 0, 0; -fx-padding: 0");
+                });
             }
         });
         
         
         if(bind){
             // TODO: fix dynamic upscale issues.
-            Main.settings.zoom.valueProperty()
-                    .addListener((o, oldValue, newValue) -> setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue()));
+            Main.settings.zoom.valueProperty().addListener((o, oldValue, newValue) -> {
+                setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
+            });
         }
         
         setCellFactory(new Callback<>() {

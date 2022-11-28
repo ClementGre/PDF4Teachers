@@ -126,7 +126,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         imagesDPI.setEditable(true);
         imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
         PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
-        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsExportImagesDPI = newValue);
+        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.settingsExportImagesDPI = newValue;
+        });
         
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
         
@@ -209,7 +211,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         imagesDPI.setEditable(true);
         imagesDPI.getValueFactory().setConverter(new StringToIntConverter((int) MainWindow.userData.settingsExportImagesDPI));
         PaneUtils.setHBoxPosition(imagesDPI, 85, 25, 0);
-        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.settingsExportImagesDPI = newValue);
+        imagesDPI.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MainWindow.userData.settingsExportImagesDPI = newValue;
+        });
         
         HBox dpiSettings = new HBox(10, dpiLabel, imagesDPI);
         VBox settings = new VBox(10, onlyEdited, dpiSettings);

@@ -140,7 +140,9 @@ public class NodeMenuItem extends CustomMenuItem {
                 }
             }
         });
-        menu.addEventHandler(Menu.ON_SHOWN, e -> setupMenuNow(menu));
+        menu.addEventHandler(Menu.ON_SHOWN, e -> {
+            setupMenuNow(menu);
+        });
     }
     public static void setupMenuNow(Menu menu){
         
@@ -182,7 +184,9 @@ public class NodeMenuItem extends CustomMenuItem {
     }
     
     public static void setupMenu(ContextMenu menu){
-        menu.setOnShown(e -> setupMenuNow(menu));
+        menu.setOnShown(e -> {
+            setupMenuNow(menu);
+        });
     }
     public static void setupMenuNow(ContextMenu menu){
         double maxWidth = 0;

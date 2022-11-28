@@ -59,9 +59,15 @@ public class ImageGridElement extends ImageLambdaData{
     
     private void setup(ImageGridView gridView){
     
-        isFavoriteItem.setOnAction((event) -> toggleFavorite());
-        addItem.setOnAction((event) -> addToDocument());
-        openItem.setOnAction((event) -> PlatformUtils.openFile(getImageIdDirectory()));
+        isFavoriteItem.setOnAction((event) -> {
+            toggleFavorite();
+        });
+        addItem.setOnAction((event) -> {
+            addToDocument();
+        });
+        openItem.setOnAction((event) -> {
+            PlatformUtils.openFile(getImageIdDirectory());
+        });
         deleteItem.setOnAction((event) -> {
             if(new ConfirmAlert(true, TR.tr("dialog.confirmation.deleteFile.header", getImageIdFileName())).execute()){
                 if(new File(getImageId()).delete()){

@@ -107,8 +107,12 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         setHorizontalCellSpacing(0);
         setVerticalCellSpacing(0);
     
-        widthProperty().addListener((observable, oldValue, newValue) -> updateCellSize());
-        cellSize.addListener((observable, oldValue, newValue) -> updateCellSize());
+        widthProperty().addListener((observable, oldValue, newValue) -> {
+            updateCellSize();
+        });
+        cellSize.addListener((observable, oldValue, newValue) -> {
+            updateCellSize();
+        });
         updateCellSize();
     }
     

@@ -49,7 +49,9 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             ExportPane pane = (ExportPane) root.getSelectionModel().getSelectedItem();
             end(new GradeExportRenderer(pane).start(), pane);
         });
-        cancel.setOnAction(event -> close());
+        cancel.setOnAction(event -> {
+            close();
+        });
         
         setButtons(cancel, export);
     }

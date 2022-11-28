@@ -65,7 +65,9 @@ public class AutoTipTooltip extends PopOver {
         graphic.getStyleClass().addAll("tooltip-autotip-pane", "content-pane");
         getStyleClass().add("tooltip-autotip");
         
-        setOnAutoHide((e) -> closedByAutoHide = true);
+        setOnAutoHide((e) -> {
+            closedByAutoHide = true;
+        });
         setOnHidden((e) -> {
             if(!closedByAutoHide){
                 AutoTipsManager.removeTip(name);

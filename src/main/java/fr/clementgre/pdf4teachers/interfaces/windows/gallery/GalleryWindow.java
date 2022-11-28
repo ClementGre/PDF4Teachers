@@ -83,7 +83,9 @@ public class GalleryWindow extends Stage {
         Main.window.centerWindowIntoMe(this);
         MainWindow.preventStageOverflowScreen(this, MainWindow.getScreen().getVisualBounds());
         show();
-        PlatformUtils.runLaterOnUIThread(1000, () -> AutoTipsManager.showByAction("opengallery", this));
+        PlatformUtils.runLaterOnUIThread(1000, () -> {
+            AutoTipsManager.showByAction("opengallery", this);
+        });
         
     }
     
@@ -139,7 +141,9 @@ public class GalleryWindow extends Stage {
         emptyGalleryLabel.setTextAlignment(TextAlignment.CENTER);
         messageContainer.setAlignment(Pos.CENTER);
         VBox.setVgrow(messageContainer, Priority.ALWAYS);
-        list.getItems().addListener((ListChangeListener<ImageGridElement>) c -> updateMessage());
+        list.getItems().addListener((ListChangeListener<ImageGridElement>) c -> {
+            updateMessage();
+        });
         
         root.setAlignment(Pos.CENTER);
         root.getChildren().addAll(settings, list);

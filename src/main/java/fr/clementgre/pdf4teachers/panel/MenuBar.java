@@ -254,7 +254,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 MainWindow.filesTab.openFiles(new File[]{directory});
             }
         });
-        file3Clear.setOnAction((ActionEvent actionEvent) -> MainWindow.filesTab.clearFiles());
+        file3Clear.setOnAction((ActionEvent actionEvent) -> {
+            MainWindow.filesTab.clearFiles();
+        });
         file4Save.setOnAction((ActionEvent actionEvent) -> {
             if(MainWindow.mainScreen.hasDocument(true)){
                 MainWindow.mainScreen.document.edition.save(true);
@@ -541,7 +543,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             getMenus().addAll(file, tools, edit, help, settings, about);
             
             setupMenus();
-            Main.settings.menuForceOpen.valueProperty().addListener((observable, oldValue, newValue) -> setupMenus());
+            Main.settings.menuForceOpen.valueProperty().addListener((observable, oldValue, newValue) -> {
+                setupMenus();
+            });
         }
         
     }
@@ -604,9 +608,14 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             //OSX selects radioMenuItems upon click, but doesn't unselect it on click :
             AtomicBoolean selected = new AtomicBoolean(false);
-            menuItem.selectedProperty()
-                    .addListener((observable, oldValue, newValue) -> Platform.runLater(() -> selected.set(newValue)));
-            menuItem.setOnAction((e) -> menuItem.setSelected(!selected.get()));
+            menuItem.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                Platform.runLater(() -> {
+                    selected.set(newValue);
+                });
+            });
+            menuItem.setOnAction((e) -> {
+                menuItem.setSelected(!selected.get());
+            });
             
             return menuItem;
             

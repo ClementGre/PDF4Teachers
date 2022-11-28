@@ -142,12 +142,20 @@ public class ZoomOperator {
         });
         
         // Modifie la valeur de la scrollBar lorsque translateY est modifié.
-        pane.translateYProperty().addListener((observable, oldValue, newValue) -> updateVScrollBar(false));
+        pane.translateYProperty().addListener((observable, oldValue, newValue) -> {
+            updateVScrollBar(false);
+        });
         // Modifie la valeur de la scrollBar lorsque translateX est modifié.
-        pane.translateXProperty().addListener((observable) -> updateHScrollBar(false));
+        pane.translateXProperty().addListener((observable) -> {
+            updateHScrollBar(false);
+        });
         
-        pane.heightProperty().addListener((observable) -> updatePaneDimensions(vScrollBar.getValue(), hScrollBar.getValue()));
-        pane.widthProperty().addListener((observable) -> updatePaneDimensions(vScrollBar.getValue(), hScrollBar.getValue()));
+        pane.heightProperty().addListener((observable) -> {
+            updatePaneDimensions(vScrollBar.getValue(), hScrollBar.getValue());
+        });
+        pane.widthProperty().addListener((observable) -> {
+            updatePaneDimensions(vScrollBar.getValue(), hScrollBar.getValue());
+        });
         
         
     }
@@ -330,7 +338,9 @@ public class ZoomOperator {
         zoom(.505, removeTransition);
     
         // Reset the scroll value to the original before the zoom animation
-        PlatformUtils.runLaterOnUIThread(500, () -> this.lastVScrollValue = lastVScrollValue);
+        PlatformUtils.runLaterOnUIThread(500, () ->  {
+            this.lastVScrollValue = lastVScrollValue;
+        });
     }
     
     // V SCROLL

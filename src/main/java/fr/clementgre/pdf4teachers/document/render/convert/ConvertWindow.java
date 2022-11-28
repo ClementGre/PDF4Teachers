@@ -119,7 +119,9 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             if(convertDirs.isSelected()) convertDirs.export();
             else if(convertFiles.isSelected()) convertFiles.export();
         });
-        cancel.setOnAction(event -> close());
+        cancel.setOnAction(event -> {
+            close();
+        });
         
         setButtons(cancel, export);
     }
@@ -494,17 +496,21 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                     loadingAlert.setTotal(renderer.getFilesLength());
                     
                     // entry : String current document name | Double document internal advancement (range 0 ; 1)
-                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement -> Platform.runLater(() -> {
-                        if(documentAndAdvancement.getKey().isBlank()){
-                            loadingAlert.setProgress(-1);
-                            loadingAlert.setCurrentTaskText("");
-                        }else{
-                            loadingAlert.setProgress(converted + Math.max(0, documentAndAdvancement.getValue()));
-                            loadingAlert.setCurrentTaskText(documentAndAdvancement.getKey());
-                        }
-                        if(documentAndAdvancement.getValue() == -1) converted++;
-                    }));
-                    Platform.runLater(() -> end(convertedFiles));
+                    ArrayList<ConvertedFile> convertedFiles = renderer.start(documentAndAdvancement -> {
+                        Platform.runLater(() -> {
+                            if(documentAndAdvancement.getKey().isBlank()){
+                                loadingAlert.setProgress(-1);
+                                loadingAlert.setCurrentTaskText("");
+                            }else{
+                                loadingAlert.setProgress(converted + Math.max(0, documentAndAdvancement.getValue()));
+                                loadingAlert.setCurrentTaskText(documentAndAdvancement.getKey());
+                            }
+                            if(documentAndAdvancement.getValue() == -1) converted++;
+                        });
+                    });
+                    Platform.runLater(() -> {
+                        end(convertedFiles);
+                    });
                 }catch(Exception e){
                     Log.e(e);
                     Platform.runLater(() -> {

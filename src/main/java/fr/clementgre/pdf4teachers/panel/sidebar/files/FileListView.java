@@ -21,7 +21,9 @@ public class FileListView extends ListView<File>{
         setPadding(new Insets(0));
         
         VBox.setVgrow(this, Priority.SOMETIMES);
-        setOnMouseClicked((MouseEvent event) -> refresh());
+        setOnMouseClicked((MouseEvent event) -> {
+            refresh();
+        });
         
         setCellFactory(param -> new FileListCell());
     }

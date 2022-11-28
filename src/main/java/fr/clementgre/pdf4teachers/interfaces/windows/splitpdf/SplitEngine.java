@@ -123,7 +123,9 @@ public class SplitEngine {
         PDDocument extracted = MainWindow.mainScreen.document.pdfPagesRender.editor.extractPages(exportPart.startIndex, exportPart.endIndex);
         extracted.save(exportPart.output);
         extracted.close();
-        Platform.runLater(() -> MainWindow.filesTab.openFiles(new File[]{exportPart.output}));
+        Platform.runLater(() -> {
+            MainWindow.filesTab.openFiles(new File[]{exportPart.output});
+        });
     }
     
     public void updatePagesColors(CallBack callBack){

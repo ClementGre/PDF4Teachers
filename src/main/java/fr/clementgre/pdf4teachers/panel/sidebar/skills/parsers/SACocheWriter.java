@@ -181,12 +181,16 @@ public class SACocheWriter {
         }
         if(aloneStudents.size() > 0){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneStudent")).append("\n");
-            aloneStudents.forEach(file -> details.append("  - ").append(file).append("\n"));
+            aloneStudents.forEach(file -> {
+                details.append("  - ").append(file).append("\n");
+            });
             details.append("\n");
         }
         if(aloneDocuments.size() > 0){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneDocument")).append("\n");
-            aloneDocuments.forEach(file -> details.append("  - ").append(file).append("\n"));
+            aloneDocuments.forEach(file -> {
+                details.append("  - ").append(file).append("\n");
+            });
             details.append("\n");
         }
         

@@ -566,7 +566,9 @@ public abstract class GraphicElement extends Element {
     
     @Override
     protected void setupBindings(){
-        resizeMode.addListener((observable, oldValue, newValue) -> updateGrabIndicators(true));
+        resizeMode.addListener((observable, oldValue, newValue) -> {
+            updateGrabIndicators(true);
+        });
     }
     
     @Override
@@ -584,7 +586,9 @@ public abstract class GraphicElement extends Element {
         item2.setToolTip(TR.tr("elements.duplicate.tooltip"));
         
         NodeMenuItem item3 = new NodeMenuItem(TR.tr("paintTab.resetRatio"), false);
-        item3.setOnAction(e -> checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth() / getRatio(), false));
+        item3.setOnAction(e -> {
+            checkLocation(getLayoutX(), getLayoutY(), getWidth(), getWidth() / getRatio(), false);
+        });
         
         menu.getItems().addAll(item1, item2, item3);
         NodeMenuItem.setupMenu(menu);

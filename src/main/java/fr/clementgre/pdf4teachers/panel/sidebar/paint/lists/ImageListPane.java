@@ -158,7 +158,9 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         // Necessary because of a bug in controlsfx GridView
         // https://github.com/controlsfx/controlsfx/issues/1400
         List<ImageGridElement> finalImages = images;
-        Platform.runLater(() -> list.addItems(finalImages));
+        Platform.runLater(() -> {
+            list.addItems(finalImages);
+        });
         
         return item;
     }

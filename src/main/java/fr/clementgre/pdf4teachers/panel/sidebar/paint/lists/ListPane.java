@@ -116,8 +116,12 @@ public abstract class ListPane<T> extends TitledPane{
         item2.setToolTip(TR.tr("textTab.listMenu.clear.resetUseData.tooltip"));
         menu.getItems().addAll(item1, item2);
     
-        item1.setOnAction(e -> list.clear());
-        item2.setOnAction(e -> list.resetUseData());
+        item1.setOnAction(e -> {
+            list.clear();
+        });
+        item2.setOnAction(e -> {
+            list.resetUseData();
+        });
         NodeMenuItem.setupMenu(menu);
         setContextMenu(menu);
     }
@@ -127,7 +131,9 @@ public abstract class ListPane<T> extends TitledPane{
     }
     protected void setEmptyLink(String text, CallBack onClick){
         emptyListLink.setText(text);
-        emptyListLink.setOnAction((e) -> onClick.call());
+        emptyListLink.setOnAction((e) -> {
+            onClick.call();
+        });
     }
     protected void updateMessage(boolean empty){
         if(empty){
