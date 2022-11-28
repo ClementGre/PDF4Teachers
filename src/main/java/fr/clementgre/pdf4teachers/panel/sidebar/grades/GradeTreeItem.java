@@ -420,11 +420,11 @@ public class GradeTreeItem extends TreeItem<String> {
     
     public boolean doExistTwice(String name){
         if(isRoot()) return false;
-        int k = 0;
-        for(int i = 0; i < getChildren().size(); i++){
-            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
-            if(children.getCore().getName().equals(name)) k++;
-        }
+        int k = (int) getChildren()
+                .stream()
+                .map(stringTreeItem -> (GradeTreeItem) stringTreeItem)
+                .filter(children -> children.getCore().getName().equals(name))
+                .count();
         return k >= 2;
     }
     

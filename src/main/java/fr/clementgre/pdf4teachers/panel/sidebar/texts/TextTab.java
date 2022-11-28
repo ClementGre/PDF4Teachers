@@ -349,14 +349,12 @@ public class TextTab extends SideTab {
     }
     
     private ScrollBar getHorizontalSB(final TextArea scrollPane){
-        Set<Node> nodes = scrollPane.lookupAll(".scroll-bar");
-        for(final Node node : nodes){
-            if(node instanceof ScrollBar sb){
-                if(sb.getOrientation() == Orientation.HORIZONTAL){
-                    return sb;
-                }
-            }
-        }
-        return null;
+        return scrollPane.lookupAll(".scroll-bar")
+                .stream()
+                .filter(node -> node instanceof ScrollBar)
+                .map(node -> (ScrollBar) node)
+                .filter(sb -> sb.getOrientation() == Orientation.HORIZONTAL)
+                .findFirst()
+                .orElse(null);
     }
 }

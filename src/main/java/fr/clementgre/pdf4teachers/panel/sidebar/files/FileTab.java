@@ -89,12 +89,10 @@ public class FileTab extends SideTab {
                     }
                 }
                 // Test for conversion
-                ArrayList<File> toConvertFiles = new ArrayList<>();
-                for(File file : db.getFiles()){
-                    if(ConvertRenderer.isGoodFormat(file)){
-                        toConvertFiles.add(file);
-                    }
-                }
+                ArrayList<File> toConvertFiles = db.getFiles()
+                        .stream()
+                        .filter(ConvertRenderer::isGoodFormat)
+                        .collect(Collectors.toCollection(ArrayList::new));
                 if(toConvertFiles.size() != 0){
                     
                     ConvertDocument converter = new ConvertDocument();
