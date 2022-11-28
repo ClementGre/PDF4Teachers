@@ -501,9 +501,9 @@ public abstract class GraphicElement extends Element {
             getChildren().removeIf((node) -> node instanceof GrabPoint);
             
         }else{
-            getChildren().forEach((node) -> {
-                if(node instanceof GrabPoint) node.setVisible(false);
-            });
+            getChildren().stream()
+                    .filter(node -> node instanceof GrabPoint)
+                    .forEach(node -> node.setVisible(false));
             
             switch(getResizeMode()){
                 case CORNERS -> {

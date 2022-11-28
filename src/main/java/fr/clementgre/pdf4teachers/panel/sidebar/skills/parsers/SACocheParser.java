@@ -180,12 +180,12 @@ public class SACocheParser {
                 return null; // Cancelled by user.
             } // else when notations are empty, old notations are not cleared.
         }
-    
-        assessment.getStudents().forEach(student -> {
-            if(studentsEditionSkills.containsKey(student.id())){
-                student.editionSkills().addAll(studentsEditionSkills.get(student.id()));
-            }
-        });
+
+        assessment.getStudents()
+                .stream()
+                .filter(student -> studentsEditionSkills.containsKey(student.id()))
+                .forEach(student -> student.editionSkills()
+                        .addAll(studentsEditionSkills.get(student.id())));
         
         return assessment;
     }
