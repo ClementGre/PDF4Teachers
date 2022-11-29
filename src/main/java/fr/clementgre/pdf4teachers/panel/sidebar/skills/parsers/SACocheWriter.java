@@ -132,7 +132,7 @@ public class SACocheWriter {
         
         
         for(File edit : Objects.requireNonNull(editDir.listFiles())){
-            Element[] elements = new Element[]{};
+            Element[] elements = {};
             try{
                 elements = Edition.simpleLoad(edit);
             }catch(Exception e){ Log.eNotified(e); }
