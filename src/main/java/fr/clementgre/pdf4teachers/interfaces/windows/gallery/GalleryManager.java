@@ -13,6 +13,7 @@ import fr.clementgre.pdf4teachers.utils.image.ImageUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -56,20 +57,15 @@ public class GalleryManager {
     // IMAGES
     
     public static ArrayList<ImageLambdaData> getImages(){
-        ArrayList<ImageLambdaData> images = new ArrayList<>();
-        for(File dir : getSavePathsFiles()){
-            images.addAll(getImagesInDir(dir));
-        }
-        return images;
+        return getSavePathsFiles().stream()
+                .flatMap(dir -> getImagesInDir(dir).stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     public static ArrayList<ImageLambdaData> getImagesInDir(File dir){
-        ArrayList<ImageLambdaData> images = new ArrayList<>();
-        for(File file : Objects.requireNonNull(dir.listFiles())){
-            if(isAcceptableImage(file.getName()) && !file.isHidden()){
-                images.add(new ImageLambdaData(dir.getAbsolutePath() + File.separator + file.getName()));
-            }
-        }
-        return images;
+        return Arrays.stream(Objects.requireNonNull(dir.listFiles()))
+                .filter(file -> isAcceptableImage(file.getName()) && !file.isHidden())
+                .map(file -> new ImageLambdaData(dir.getAbsolutePath() + File.separator + file.getName()))
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     public static ArrayList<ImageData> getFavoritesImages(){

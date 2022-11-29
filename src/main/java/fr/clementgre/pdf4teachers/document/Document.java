@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class Document {
     
@@ -130,11 +131,9 @@ public class Document {
     }
     
     public ArrayList<Element> getElements(){
-        ArrayList<Element> elements = new ArrayList<>();
-        for(PageRenderer page : pages){
-            elements.addAll(page.getElements());
-        }
-        return elements;
+        return pages.stream()
+                .flatMap(page -> page.getElements().stream())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     // [1] : Elements
     // [2] : Texts

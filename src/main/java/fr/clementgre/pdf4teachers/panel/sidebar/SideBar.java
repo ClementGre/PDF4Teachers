@@ -20,6 +20,7 @@ import javafx.scene.input.TransferMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class SideBar extends TabPane {
     
@@ -258,14 +259,11 @@ public class SideBar extends TabPane {
     }
     
     public List<String> getTabsList(){
-        ArrayList<String> tabs = new ArrayList<>();
-        
-        for(Tab tab : getTabs()){
-            SideTab sideTab = (SideTab) tab;
-            tabs.add(sideTab.getName());
-        }
-        
-        return tabs;
+        return getTabs()
+                .stream()
+                .map(tab -> (SideTab) tab)
+                .map(SideTab::getName)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     public void loadTabsList(List<String> tabsName){

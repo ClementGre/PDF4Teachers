@@ -25,6 +25,8 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolean tookPages4by4, boolean invertOrder, String copyName) {
     
@@ -284,9 +286,12 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
                 editor.movePageByIndex(toMove.getKey(), toMove.getValue());
             }
         }else{
-            for(int i = 0; i < oldNumPages; i++){
-                pagesToMove.put(document.getPage(i + oldNumPages), 2 * i + 1);
-            }
+            pagesToMove = IntStream.range(0, oldNumPages)
+                    .boxed()
+                    .collect(Collectors.toMap(i -> document.getPage(i + oldNumPages),
+                                                                    i -> 2 * i + 1,
+                                                                    (a, b) -> b,
+                                                                    LinkedHashMap::new));
         }
         // Really move pages
         for(Map.Entry<PageRenderer, Integer> toMove : pagesToMove.entrySet()){

@@ -22,6 +22,7 @@ import javafx.scene.control.MenuButton;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ListsManager {
     
@@ -119,12 +120,11 @@ public class ListsManager {
     
     public void saveList(String listName){
         TextTreeSection.lists.remove(listName);
-        ArrayList<TextListItem> list = new ArrayList<>();
-        for(Object item : section.getChildren()){
-            if(item instanceof TextTreeItem){
-                list.add(((TextTreeItem) item).toTextItem());
-            }
-        }
+        ArrayList<TextListItem> list = section.getChildren()
+                .stream()
+                .filter(item -> item instanceof TextTreeItem)
+                .map(item -> ((TextTreeItem) item).toTextItem())
+                .collect(Collectors.toCollection(ArrayList::new));
         if(list.size() == 0){
             new WrongAlert(Alert.AlertType.ERROR, TR.tr("textTab.lists.save.voidListDialog.title"),
                     TR.tr("textTab.lists.save.voidListDialog.header"), TR.tr("textTab.lists.save.voidListDialog.details"), false).showAndWait();

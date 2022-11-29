@@ -170,16 +170,20 @@ public class Main extends Application {
     }
     
     private static String getVersionName(String version, int id){
-        if(mode == Mode.DEV) return version + "-dv" + id;
-        else if(mode == Mode.SNAPSHOT) return version + "-sn" + id;
-        else if(mode == Mode.PRE_RELEASE) return version + "-pre" + id;
-        else return version;
+        return switch (mode) {
+            case DEV -> version + "-dv" + id;
+            case SNAPSHOT -> version + "-sn" + id;
+            case PRE_RELEASE -> version + "-pre" + id;
+            default -> version;
+        };
     }
     private static LogLevel getLogLevel(){
-        if(mode == Mode.DEV) return LogLevel.TRACE;
-        else if(mode == Mode.SNAPSHOT) return LogLevel.DEBUG;
-        else if(mode == Mode.PRE_RELEASE) return LogLevel.DEBUG;
-        else return LogLevel.INFO;
+        return switch (mode) {
+            case DEV -> LogLevel.TRACE;
+            case SNAPSHOT -> LogLevel.DEBUG;
+            case PRE_RELEASE -> LogLevel.DEBUG;
+            default -> LogLevel.INFO;
+        };
     }
     
 }

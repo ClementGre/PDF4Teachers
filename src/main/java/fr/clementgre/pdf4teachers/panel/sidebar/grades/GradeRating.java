@@ -56,21 +56,14 @@ public class GradeRating {
     }
     
     public boolean containsIn(ArrayList<GradeRating> array){
-        for(GradeRating element : array){
-            if(equals(element)){
-                return true;
-            }
-        }
-        return false;
+        return array.stream().anyMatch(this::equals);
     }
     
     public GradeElement getSamePathIn(ArrayList<GradeElement> array){
-        
-        for(GradeElement element : array){
-            if(name.equals(element.getName()) && parentPath.equals(element.getParentPath())){
-                return element;
-            }
-        }
-        return null;
+
+        return array.stream()
+                .filter(element -> name.equals(element.getName()) && parentPath.equals(element.getParentPath()))
+                .findFirst()
+                .orElse(null);
     }
 }

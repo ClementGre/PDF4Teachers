@@ -12,10 +12,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class FilesUtils {
@@ -32,11 +29,9 @@ public class FilesUtils {
         File[] files = f.listFiles();
         if (files == null) return 0;
 
-        long x = 0L;
-        for (int i = 0; i < files.length; i++) {
-            x += getSize(files[i]);
-        }
-        return (x);
+        return Arrays.stream(files)
+                .mapToLong(FilesUtils::getSize)
+                .sum();
     }
 
     public static float convertOctetToMo(long octet) {

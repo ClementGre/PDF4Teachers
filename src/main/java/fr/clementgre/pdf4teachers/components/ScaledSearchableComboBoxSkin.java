@@ -209,7 +209,7 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         return value ->
         {
             String lowerCaseDisplayText = getDisplayText(value).toLowerCase();
-            return Arrays.stream(lowerCaseSearchWords).allMatch(word -> lowerCaseDisplayText.contains(word));
+            return Arrays.stream(lowerCaseSearchWords).allMatch(lowerCaseDisplayText::contains);
         };
     }
     

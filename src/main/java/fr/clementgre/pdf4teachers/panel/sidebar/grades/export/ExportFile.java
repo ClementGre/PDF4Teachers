@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class ExportFile {
     
@@ -53,12 +54,12 @@ public class ExportFile {
         if(grade.isRoot()) return 0;
         
         int index = (int) (-grade.getIndex() * Math.pow(10, parentPath.length));
-        
-        for(GradeElement parent : grades){
-            if((parent.getParentPath() + "\\" + parent.getName()).equals(grade.getParentPath())){ // parent is direct parent of grade
-                index += getGradeSortIndex(parent);
-            }
-        }
+
+        // parent is direct parent of grade
+        index += grades.stream()
+                .filter(parent -> (parent.getParentPath() + "\\" + parent.getName()).equals(grade.getParentPath()))
+                .mapToInt(this::getGradeSortIndex)
+                .sum();
         
         return index;
     }
@@ -76,19 +77,15 @@ public class ExportFile {
     
     public ArrayList<GradeRating> generateGradeScale(){
         
-        ArrayList<GradeRating> gradesRating = new ArrayList<>();
-        for(GradeElement grade : grades){
-            gradesRating.add(grade.toGradeRating());
-        }
-        return gradesRating;
+        return grades.stream()
+                .map(GradeElement::toGradeRating)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
     
     public boolean isCompleted(){
-        
-        for(GradeElement grade : grades){
-            if(grade.getValue() == -1) return false;
-        }
-        return true;
+
+        return grades.stream()
+                .noneMatch(grade -> grade.getValue() == -1);
         
     }
 }

@@ -85,10 +85,11 @@ public class Notation {
         CHAR, COLOR, ICON;
         
         public String getText(){
-            if(this == CHAR) return TR.tr("skillsSettingsWindow.notationMode.chars");
-            else if(this == COLOR) return TR.tr("skillsSettingsWindow.notationMode.colors");
-            else if(this == ICON) return TR.tr("skillsSettingsWindow.notationMode.icons");
-            else return "";
+            return switch (this) {
+                case CHAR -> TR.tr("skillsSettingsWindow.notationMode.chars");
+                case COLOR -> TR.tr("skillsSettingsWindow.notationMode.colors");
+                case ICON -> TR.tr("skillsSettingsWindow.notationMode.icons");
+            };
         }
     }
     

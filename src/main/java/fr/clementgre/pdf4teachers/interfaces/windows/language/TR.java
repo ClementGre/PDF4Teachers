@@ -191,25 +191,23 @@ public class TR {
     //////////////////////////////////////////////////////////
     
     public static String getLanguageName(String shortName){
-        HashMap<String, Object> languages = getLanguagesConfig();
-        for(Map.Entry<String, Object> language : languages.entrySet()){
-            if(shortName.equals(language.getKey())){
-                HashMap<?, ?> data = (HashMap<?, ?>) language.getValue();
-                return (String) data.get("name");
-            }
-        }
-        return shortName;
+        return getLanguagesConfig().entrySet()
+                .stream()
+                .filter(language -> shortName.equals(language.getKey()))
+                .map(language -> (HashMap<?, ?>) language.getValue())
+                .findFirst()
+                .map(data -> (String) data.get("name"))
+                .orElse(shortName);
     }
     
     public static int getLanguageVersion(String shortName){
-        HashMap<String, Object> languages = getLanguagesConfig();
-        for(Map.Entry<String, Object> language : languages.entrySet()){
-            if(shortName.equals(language.getKey())){
-                HashMap<?, ?> data = (HashMap<?, ?>) language.getValue();
-                return (int) data.get("version");
-            }
-        }
-        return 0;
+        return getLanguagesConfig().entrySet()
+                .stream()
+                .filter(language -> shortName.equals(language.getKey()))
+                .map(language -> (HashMap<?, ?>) language.getValue())
+                .findFirst()
+                .map(data -> (int) data.get("version"))
+                .orElse(0);
     }
     
     public static void copyFiles(boolean force){

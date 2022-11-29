@@ -59,6 +59,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PageRenderer extends Pane {
     
@@ -992,10 +993,11 @@ public class PageRenderer extends Pane {
     // ELEMENTS
     
     public void clearElements(){
-        ArrayList<Element> toRemove = new ArrayList<>();
-        for(Object children : getChildren()){
-            if(children instanceof Element) toRemove.add((Element) children);
-        }
+        ArrayList<Element> toRemove = getChildren()
+                .stream()
+                .filter(children -> children instanceof Element)
+                .map(children -> (Element) children)
+                .collect(Collectors.toCollection(ArrayList::new));
         for(Element element : toRemove){
             getChildren().remove(element);
             elements.remove(element);
@@ -1004,10 +1006,11 @@ public class PageRenderer extends Pane {
     }
     
     public void clearTextElements(){
-        ArrayList<TextElement> toRemove = new ArrayList<>();
-        for(Object children : getChildren()){
-            if(children instanceof TextElement) toRemove.add((TextElement) children);
-        }
+        ArrayList<TextElement> toRemove = getChildren()
+                .stream()
+                .filter(children -> children instanceof TextElement)
+                .map(children -> (TextElement) children)
+                .collect(Collectors.toCollection(ArrayList::new));
         for(TextElement element : toRemove){
             getChildren().remove(element);
             elements.remove(element);

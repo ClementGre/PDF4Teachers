@@ -112,10 +112,10 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         return linkedImageData;
     }
     public boolean isFavoriteImage(ImageElement element){
-        for(ImageGridElement gridElement : MainWindow.paintTab.favouriteImages.getList().getAllItems()){
-            if(gridElement.getImageId().equals(element.getImageId())) return true;
-        }
-        return false;
+        return MainWindow.paintTab.favouriteImages.getList()
+                .getAllItems()
+                .stream()
+                .anyMatch(gridElement -> gridElement.getImageId().equals(element.getImageId()));
     }
     
     

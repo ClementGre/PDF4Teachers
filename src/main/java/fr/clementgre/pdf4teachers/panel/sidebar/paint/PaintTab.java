@@ -226,23 +226,19 @@ public class PaintTab extends SideTab {
         repeatMode.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                for(GraphicElement.RepeatMode mode : GraphicElement.RepeatMode.values()){
-                    if(TR.tr(mode.getKey()).equals(newValue)){
-                        element.setRepeatMode(mode);
-                        break;
-                    }
-                }
+                Arrays.stream(GraphicElement.RepeatMode.values())
+                        .filter(mode -> TR.tr(mode.getKey()).equals(newValue))
+                        .findFirst()
+                        .ifPresent(element::setRepeatMode);
             }
         });
         resizeMode.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                for(GraphicElement.ResizeMode mode : GraphicElement.ResizeMode.values()){
-                    if(TR.tr(mode.getKey()).equals(newValue)){
-                        element.setResizeMode(mode);
-                        break;
-                    }
-                }
+                Arrays.stream(GraphicElement.ResizeMode.values())
+                        .filter(mode -> TR.tr(mode.getKey()).equals(newValue))
+                        .findFirst()
+                        .ifPresent(element::setResizeMode);
             }
         });
         spinnerArrowLength.valueProperty().addListener((observable, oldValue, newValue) -> {

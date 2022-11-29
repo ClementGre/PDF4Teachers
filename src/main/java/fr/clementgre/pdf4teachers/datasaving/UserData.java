@@ -218,12 +218,10 @@ public class UserData {
     }
     
     public SimpleConfig getSimpleConfig(Class<? extends SimpleConfig> clazz){
-        for(SimpleConfig simpleConfig : simpleConfigs){
-            if(simpleConfig.getClass().equals(clazz)){
-                return simpleConfig;
-            }
-        }
-        return null;
+        return simpleConfigs.stream()
+                .filter(simpleConfig -> simpleConfig.getClass().equals(clazz))
+                .findFirst()
+                .orElse(null);
     }
     
     public UserData(){
@@ -336,10 +334,10 @@ public class UserData {
                     
                     for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){
                         if(list.getValue() instanceof List){
-                            ArrayList<TextListItem> listTexts = new ArrayList<>();
-                            for(Object data : ((List<?>) list.getValue())){
-                                listTexts.add(TextListItem.readYAMLDataAndGive(Config.castSection(data)));
-                            }
+                            ArrayList<TextListItem> listTexts = ((List<?>) list.getValue())
+                                    .stream()
+                                    .map(data -> TextListItem.readYAMLDataAndGive(Config.castSection(data)))
+                                    .collect(Collectors.toCollection(ArrayList::new));
                             TextTreeSection.lists.put(list.getKey().toString(), listTexts);
                         }
                     }

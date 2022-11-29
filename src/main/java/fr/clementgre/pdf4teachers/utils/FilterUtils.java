@@ -10,6 +10,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class FilterUtils {
     
@@ -22,11 +24,10 @@ public class FilterUtils {
     @SafeVarargs
     public static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
         
-        ArrayList<Set<Object>> sets = new ArrayList<>();
-        for(int i = 0; i < keyExtractors.length; i++){
-            sets.add(ConcurrentHashMap.newKeySet());
-        }
-        
+        ArrayList<Set<Object>> sets = IntStream.range(0, keyExtractors.length)
+                .mapToObj(i -> ConcurrentHashMap.newKeySet())
+                .collect(Collectors.toCollection(ArrayList::new));
+
         return t -> {
             boolean atLeastOneDifferent = false;
             for(int i = 0; i < keyExtractors.length; i++){

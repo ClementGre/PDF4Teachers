@@ -16,6 +16,7 @@ import javafx.application.Platform;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unchecked")
 public class VectorElementsData extends SimpleConfig {
@@ -28,22 +29,20 @@ public class VectorElementsData extends SimpleConfig {
     protected void manageLoadedData(Config config){
         Platform.runLater(() -> {
             
-            ArrayList<VectorData> favouriteVectorsData = new ArrayList<>();
-            ArrayList<VectorData> lastVectorsData = new ArrayList<>();
-            
-            for(Object data : config.getList("favorites")){
-                if(data instanceof HashMap map){
-                    VectorData vectorData = VectorData.readYAMLDataAndGive(map);
-                    if(!vectorData.getPath().isEmpty()) favouriteVectorsData.add(vectorData);
-                }
-            }
-            for(Object data : config.getList("lasts")){
-                if(data instanceof HashMap map){
-                    VectorData vectorData = VectorData.readYAMLDataAndGive(map);
-                    if(!vectorData.getPath().isEmpty()) lastVectorsData.add(vectorData);
-                }
-            }
-            
+            ArrayList<VectorData> favouriteVectorsData = config.getList("favorites")
+                    .stream().filter(data -> data instanceof HashMap)
+                    .map(data -> (HashMap) data)
+                    .map(VectorData::readYAMLDataAndGive)
+                    .filter(vectorData -> !vectorData.getPath().isEmpty())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
+            ArrayList<VectorData> lastVectorsData = config.getList("lasts")
+                    .stream().filter(data -> data instanceof HashMap)
+                    .map(data -> (HashMap) data)
+                    .map(VectorData::readYAMLDataAndGive)
+                    .filter(vectorData -> !vectorData.getPath().isEmpty())
+                    .collect(Collectors.toCollection(ArrayList::new));
+
             PlatformUtils.printActionTimeIfDebug(() -> {
                 MainWindow.paintTab.favouriteVectors.loadVectorsList(favouriteVectorsData, false);
                 MainWindow.paintTab.lastVectors.loadVectorsList(lastVectorsData, false);
@@ -59,16 +58,20 @@ public class VectorElementsData extends SimpleConfig {
     
     @Override
     protected void addDataToConfig(Config config){
-        ArrayList<Object> favorites = new ArrayList<>();
-        for(VectorGridElement item : MainWindow.paintTab.favouriteVectors.getList().getAllItems()){
-            if(!item.isFake()) favorites.add(item.getVectorData().getYAMLData());
-        }
-        
-        ArrayList<Object> lasts = new ArrayList<>();
-        for(VectorGridElement item : MainWindow.paintTab.lastVectors.getList().getAllItems()){
-            if(!item.isFake()) lasts.add(item.getVectorData().getYAMLData());
-        }
-        
+        ArrayList<Object> favorites = MainWindow.paintTab.favouriteVectors.getList()
+                .getAllItems()
+                .stream()
+                .filter(item -> !item.isFake())
+                .map(item -> item.getVectorData().getYAMLData())
+                .collect(Collectors.toCollection(ArrayList::new));
+
+        ArrayList<Object> lasts = MainWindow.paintTab.lastVectors.getList()
+                .getAllItems()
+                .stream()
+                .filter(item -> !item.isFake())
+                .map(item -> item.getVectorData().getYAMLData())
+                .collect(Collectors.toCollection(ArrayList::new));
+
         config.set("favorites", favorites);
         config.set("lasts", lasts);
     }

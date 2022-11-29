@@ -30,6 +30,7 @@ import javafx.scene.transform.Scale;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public class SkillTableElement extends GraphicElement{
     
@@ -256,11 +257,12 @@ public class SkillTableElement extends GraphicElement{
         long assessmentId = Config.getLong(data, "assessmentId");
         long studentId = Config.getLong(data, "studentId");
     
-        ArrayList<EditionSkill> skills = new ArrayList<>();
-        for(Object skillData : Config.getList(data, "list")){
-            if(skillData instanceof Map) skills.add(EditionSkill.getFromYAML((HashMap<String, Object>) skillData));
-        }
-        
+        ArrayList<EditionSkill> skills = Config.getList(data, "list")
+                .stream()
+                .filter(skillData -> skillData instanceof Map)
+                .map(skillData -> EditionSkill.getFromYAML((HashMap<String, Object>) skillData))
+                .collect(Collectors.toCollection(ArrayList::new));
+
         return new SkillTableElement(x, y, page, hasPage, width, height, scale, assessmentId, studentId, skills);
     }
     
