@@ -141,11 +141,11 @@ public class StringUtils {
             }
         }
         
-        Optional<Map.Entry<Integer, String>> first = indices.entrySet().stream().max(Comparator.comparingInt(Entry::getKey));
-        if(first.isPresent()){
-            return string.substring(0, first.get().getKey());
-        }
-        return string;
+        return indices.entrySet()
+                .stream()
+                .max(Comparator.comparingInt(Entry::getKey))
+                .map(optionalEntry -> string.substring(0, optionalEntry.getKey()))
+                .orElse(string);
     }
     
     public static String removeAfter(String string, String rejex){
