@@ -18,7 +18,7 @@ import java.util.Map.Entry;
 
 public class TwoStepListAction<T, D>{
     
-    private int completedSize = 0;
+    private int completedSize;
     private boolean recursive;
     private final List<T> data;
     private final List<D> sortedData = new ArrayList<>();
@@ -96,7 +96,7 @@ public class TwoStepListAction<T, D>{
         return true;
     }
     
-    private boolean shouldStop = false;
+    private boolean shouldStop;
     public void processDataAsync(TwoStepListInterface<T, D> caller, CallBack callBack){
         LoadingAlert loadingAlert = new LoadingAlert(true, TR.tr("dialogs.asyncAction.header.title"), TR.tr("dialogs.asyncAction.header"));
         loadingAlert.setTotal(sortedData.size());

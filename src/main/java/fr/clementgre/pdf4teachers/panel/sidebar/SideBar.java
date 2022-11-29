@@ -26,7 +26,7 @@ public class SideBar extends TabPane {
     
     public static final String TAB_DRAG_KEY = "SideBarTabDrag";
     
-    public static Tab draggingTab = null;
+    public static Tab draggingTab;
     
     public static final int DEFAULT_WIDTH = 270;
     public static final int MAX_WIDTH = 450;
@@ -35,7 +35,7 @@ public class SideBar extends TabPane {
     private static final String STYLE = "-fx-tab-max-width: 22px;";
     
     private final boolean left;
-    private boolean loaded = false;
+    private boolean loaded;
     
     public SideBar(boolean left){
         this.left = left;

@@ -37,9 +37,9 @@ public abstract class AutoCompletionBinding<T> {
     private final AutoCompletePopup<T> autoCompletionPopup;
     private final Object suggestionsTaskLock = new Object();
     
-    private FetchSuggestionsTask suggestionsTask = null;
+    private FetchSuggestionsTask suggestionsTask;
     private final Callback<AutoCompletionBinding.ISuggestionRequest, Collection<T>> suggestionProvider;
-    private boolean ignoreInputChanges = false;
+    private boolean ignoreInputChanges;
     private long delay = 250;
     
     /***************************************************************************

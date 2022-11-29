@@ -30,7 +30,7 @@ public class SkillTableGridPane extends GridPane {
     public static final int V_PADDING = 2;
     public static final int TEXT_HEIGHT = 16;
     
-    public boolean areDimensionsSetup = false;
+    public boolean areDimensionsSetup;
     public Pane legend;
     public final SkillTableElement element;
     

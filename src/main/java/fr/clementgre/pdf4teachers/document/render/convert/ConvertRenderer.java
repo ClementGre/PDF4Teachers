@@ -241,7 +241,7 @@ public class ConvertRenderer {
         }
     }
     
-    private boolean shouldStop = false;
+    private boolean shouldStop;
     
     public void stop(){
         shouldStop = true;

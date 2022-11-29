@@ -30,7 +30,7 @@ public class PageGridSeparator extends Pane {
     private final Timeline timeline = new Timeline(60);
     
     private final ContextMenu menu = new ContextMenu();
-    private boolean mouseOn = false;
+    private boolean mouseOn;
     
     private final PageRenderer page;
     private final boolean before;

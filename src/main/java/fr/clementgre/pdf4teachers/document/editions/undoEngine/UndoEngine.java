@@ -22,8 +22,8 @@ public class UndoEngine{
     private ArrayList<UndoAction> redoList = new ArrayList<>();
     
     // Prevent adding actions while reversing an action.
-    public static boolean isUndoingThings = false;
-    private static boolean isLocked = false;
+    public static boolean isUndoingThings;
+    private static boolean isLocked;
     
     private static final boolean VERBOSE = false;
     

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class LockManager {
     
-    public static boolean locked = false;
+    public static boolean locked;
     private static LockMessageType messageType = LockMessageType.CHECK;
     
     private static Unique4j unique;

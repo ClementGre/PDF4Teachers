@@ -507,7 +507,7 @@ public class VectorElement extends GraphicElement{
      *  The path is scaled to have a width getWidth() and a height getHeight(), which are the JavaFX region dimensions.
      *  Since the UndoAction must be a {@link UType#NO_COUNT}, {@link #isPathScaledToPage} is set to {@code true}
      */
-    private boolean isPathScaledToPage = false;
+    private boolean isPathScaledToPage;
     public void formatNoScaledSvgPathToPage(){
         float padding = (float) getSVGPadding();
         float width = (float) getWidth();

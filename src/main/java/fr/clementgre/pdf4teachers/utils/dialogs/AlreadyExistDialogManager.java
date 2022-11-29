@@ -18,7 +18,7 @@ import java.io.File;
 
 public class AlreadyExistDialogManager{
 
-    private ResultType memorizedResult = null;
+    private ResultType memorizedResult;
     public CustomAlert alert;
 
     private final ButtonType stopAll;

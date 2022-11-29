@@ -24,10 +24,10 @@ public class GrabLine extends Region {
     
     private static final Region line = new Region();
     
-    private boolean maxed = false;
-    private boolean wasInEditPagesModeWhenMousePressed = false;
-    private boolean dragAlreadyDetected = false;
-    private double shiftX = 0;
+    private boolean maxed;
+    private boolean wasInEditPagesModeWhenMousePressed;
+    private boolean dragAlreadyDetected;
+    private double shiftX;
     
     public static final double LINE_WIDTH = 3.5;
     public static final double LINE_OUTER = 1;

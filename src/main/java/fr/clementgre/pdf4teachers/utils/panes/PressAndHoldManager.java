@@ -13,8 +13,8 @@ import javafx.scene.input.MouseEvent;
 
 public class PressAndHoldManager{
     
-    private long startMillis = 0;
-    private boolean pressed = false;
+    private long startMillis;
+    private boolean pressed;
     
     public PressAndHoldManager(Node node, long actionInterval, CallBack handler){
         

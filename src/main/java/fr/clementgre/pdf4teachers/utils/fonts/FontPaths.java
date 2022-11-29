@@ -15,10 +15,10 @@ import java.util.HashMap;
 public class FontPaths{
     
     private String name;
-    private FontPath regular = null;
-    private FontPath italic = null;
-    private FontPath bold = null;
-    private FontPath boldItalic = null;
+    private FontPath regular;
+    private FontPath italic;
+    private FontPath bold;
+    private FontPath boldItalic;
     private ArrayList<FontPath> otherStyles = new ArrayList<>();
     
     public FontPaths(String name){

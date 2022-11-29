@@ -27,8 +27,8 @@ public class GradeCopyGradeScaleDialog {
     
     public ArrayList<GradeRating> ratings = new ArrayList<>();
     
-    boolean ignoreAlreadyExist = false;
-    boolean ignoreErase = false;
+    boolean ignoreAlreadyExist;
+    boolean ignoreErase;
     
     public void show(){
         

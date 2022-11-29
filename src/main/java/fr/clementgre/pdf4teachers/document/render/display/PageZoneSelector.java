@@ -28,11 +28,11 @@ public class PageZoneSelector extends Pane {
     private SelectionZoneType selectionZoneType;
     private Region selectionZone = new Region();
     
-    private double startX = 0;
-    private double startY = 0;
+    private double startX;
+    private double startY;
     private CallBackArg<PositionDimensions> callBack;
     
-    private boolean isActive = false;
+    private boolean isActive;
     
     public PageZoneSelector(PageRenderer page){
         super();

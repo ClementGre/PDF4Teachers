@@ -30,10 +30,10 @@ public class VectorElementPageDrawer extends Pane{
     private VectorElement vector;
     private final SVGPath svgPath = new SVGPath();
     
-    private long lastClickTime = 0;
+    private long lastClickTime;
     // When dynamically creating a new element to split drawing into different drawings,
     // this var should be true to not reset the vars when re-entering in draw mode.
-    private boolean doSwitchElementMode = false;
+    private boolean doSwitchElementMode;
     
     public VectorElementPageDrawer(PageRenderer page){
         this.page = page;
@@ -42,17 +42,17 @@ public class VectorElementPageDrawer extends Pane{
     }
     
     // Last coordinate of click AND release
-    private double lastClickX = 0;
-    private double lastClickY = 0;
+    private double lastClickX;
+    private double lastClickY;
     // Last coordinate of the mouse (onMove and not drag), of the last action or of the last initialized segment (initSegment())
     // It is used mainly by initSegment() (and moveTo()/lineTo()) to add a M (move) instruction when the cursor has moved
-    private double lastX = 0;
-    private double lastY = 0;
-    private double lastLineAngle = 0;
+    private double lastX;
+    private double lastY;
+    private double lastLineAngle;
     // Is true when the next action will have to move to (lastX, lastY) before being added
     private boolean hasToMove = true;
     private boolean lastLineMode = isPerpendicularLineMode();
-    private boolean spaceDown = false;
+    private boolean spaceDown;
     private void setup(){
         
         // UI

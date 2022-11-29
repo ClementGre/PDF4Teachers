@@ -38,9 +38,9 @@ public class PDFPagesRender {
     
     private final ArrayList<RenderPending> rendersPending = new ArrayList<>();
     
-    public boolean advertisement = false;
-    private boolean shouldClose = false;
-    private boolean isClosed = false;
+    public boolean advertisement;
+    private boolean shouldClose;
+    private boolean isClosed;
     
     public PDFPagesRender(File file) throws IOException{
         this.file = file;

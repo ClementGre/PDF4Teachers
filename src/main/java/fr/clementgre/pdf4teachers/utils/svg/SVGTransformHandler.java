@@ -23,8 +23,8 @@ public abstract class SVGTransformHandler implements PathHandler{
     protected abstract float manageX(float x, float y, boolean rel);
     protected abstract float manageY(float y, float x, boolean rel);
     
-    protected float lastX = 0;
-    protected float lastY = 0;
+    protected float lastX;
+    protected float lastY;
     
     private DecimalFormat format;
     public SVGTransformHandler(int decimals){

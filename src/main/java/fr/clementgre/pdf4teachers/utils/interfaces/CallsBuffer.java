@@ -14,7 +14,7 @@ public class CallsBuffer<T> {
         this.callBack = callback;
     }
     
-    private long lastCallDate = 0;
+    private long lastCallDate;
     public void call(T arg){
         lastCallDate = System.nanoTime();
         long localLastCallDate = lastCallDate;

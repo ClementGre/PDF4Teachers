@@ -27,7 +27,7 @@ public class SmoothishScrollpane extends ScrollPane {
     private static final int TRANSITION_DURATION = 200;
     private static final double SCROLL_FACTOR = 1.5;
 
-    private boolean hasScrollStartEndEvents = false;
+    private boolean hasScrollStartEndEvents;
 
     public VBox wrapper;
     

@@ -74,19 +74,19 @@ public class TextTab extends SideTab {
     public Button newBtn = new Button(TR.tr("actions.new"));
     
     public static final String TEXT_TREE_ITEM_DRAG_KEY = "TextTreeItemDrag";
-    public static TextTreeItem draggingItem = null;
-    public static TextElement draggingElement = null;
+    public static TextTreeItem draggingItem;
+    public static TextElement draggingElement;
     
     // FIELDS
     
-    public boolean isNew = false;
+    public boolean isNew;
     
     // TREEVIEW
     public TextTreeView treeView;
     
     // OTHER
     
-    private boolean txtAreaScrollBarListenerIsSetup = false;
+    private boolean txtAreaScrollBarListenerIsSetup;
     
     public TextTab(){
         super("text", SVGPathIcons.TEXT_LETTER, 26, 460/500d);

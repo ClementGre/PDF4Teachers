@@ -117,12 +117,12 @@ public class PaintTab extends SideTab {
     
     // WINDOWS
     
-    public GalleryWindow galleryWindow = null;
+    public GalleryWindow galleryWindow;
     
     // DRAG'N DROP
     public static final String PAINT_ITEM_DRAG_KEY = "PaintItemDrag";
-    public static Object draggingItem = null; // Could be either ImageGridElement or VectorGridElement
-    public static GraphicElement draggingElement = null;
+    public static Object draggingItem; // Could be either ImageGridElement or VectorGridElement
+    public static GraphicElement draggingElement;
     
     public PaintTab(){
         super("paint", SVGPathIcons.DRAW_POLYGON, 28, 0);
@@ -599,7 +599,7 @@ public class PaintTab extends SideTab {
             advancedOptionsContent.getChildren().add(vectorsAdvancedOptions);
         }
     }
-    private boolean advancedOptionsPaneWasOpen = false;
+    private boolean advancedOptionsPaneWasOpen;
     public void setGlobalDisable(boolean disable){
         if(disable){
             advancedOptionsPaneWasOpen = advancedOptionsPane.isExpanded();

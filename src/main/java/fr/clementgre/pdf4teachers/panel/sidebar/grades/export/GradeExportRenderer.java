@@ -33,7 +33,7 @@ public class GradeExportRenderer {
     private final ArrayList<ExportFile> files = new ArrayList<>();
     private final int exportTier;
     
-    private int exported = 0;
+    private int exported;
     private final DecimalFormat decimalFormat;
     private final String separator;
     

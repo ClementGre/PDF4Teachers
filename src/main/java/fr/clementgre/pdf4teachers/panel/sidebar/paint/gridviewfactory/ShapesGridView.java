@@ -46,7 +46,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     
     public IntegerProperty cellSize = new SimpleIntegerProperty();
     public final boolean defineCellSizeAsRowNumber;
-    protected String filterType = null;
+    protected String filterType;
     
     private final Slider zoomSlider;
     private final SortManager sortManager;

@@ -23,7 +23,7 @@ import java.util.Map;
 
 public class Settings {
     
-    private int settingsVersionID = 0;
+    private int settingsVersionID;
     private String settingsVersionCode = "";
     
     

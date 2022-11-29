@@ -27,9 +27,9 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
     
     public static String version = "";
     public static String description = "";
-    public static boolean newVersion = false;
-    public static boolean newPre = false;
-    public static boolean error = false;
+    public static boolean newVersion;
+    public static boolean newPre;
+    public static boolean error;
     
     public static boolean checkVersion(){
         

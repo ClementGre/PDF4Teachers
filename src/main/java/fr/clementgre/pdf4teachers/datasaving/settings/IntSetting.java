@@ -39,8 +39,8 @@ public class IntSetting extends Setting<Integer> {
     }
     
     private ToggleSwitch toggle;
-    private SliderWithoutPopup slider = null;
-    private Spinner<Integer> spinner = null;
+    private SliderWithoutPopup slider;
+    private Spinner<Integer> spinner;
     @Override
     public HBox getDefaultEditPane(){
         HBox root = new HBox();

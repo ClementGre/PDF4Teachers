@@ -72,7 +72,7 @@ public class TextTreeItem extends TreeItem<String> {
     public EventHandler<MouseEvent> onMouseCLick;
     
     // Link
-    private TextElement core = null;
+    private TextElement core;
     private final ChangeListener<String> textChangeListener = (ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
         setText(newValue);
         updateGraphic(true);
@@ -240,7 +240,7 @@ public class TextTreeItem extends TreeItem<String> {
         pane.requestFocus();
     }
     
-    static long lastKeyPressTime = 0;
+    static long lastKeyPressTime;
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
         if(maxWidth < 0) return;

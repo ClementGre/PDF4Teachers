@@ -33,11 +33,11 @@ public class ZoomOperator {
     public ScrollBar vScrollBar = new ScrollBar();
     public ScrollBar hScrollBar = new ScrollBar();
     
-    private double aimTranslateY = 0;
-    private double aimTranslateX = 0;
-    private double aimScale = 0;
+    private double aimTranslateY;
+    private double aimTranslateX;
+    private double aimScale;
     
-    private double lastVScrollValue = 0;
+    private double lastVScrollValue;
     
     public ZoomOperator(Pane pane, MainScreen mainScreen){
         this.pane = pane;

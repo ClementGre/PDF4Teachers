@@ -43,8 +43,8 @@ public class GradeTreeItem extends TreeItem<String> {
     }
     
     private GradeElement core;
-    private ContextMenu pageContextMenu = null;
-    private boolean deleted = false;
+    private ContextMenu pageContextMenu;
+    private boolean deleted;
     
     // UI
     private TreeCell<String> cell;
@@ -56,7 +56,7 @@ public class GradeTreeItem extends TreeItem<String> {
     private ChangeListener<Boolean> selectedListener;
     private EventHandler<MouseEvent> mouseEnteredEvent;
     private EventHandler<MouseEvent> mouseExitedEvent;
-    private boolean isMouseOver = false;
+    private boolean isMouseOver;
     
     public GradeTreeItem(GradeElement core){
         this.core = core;

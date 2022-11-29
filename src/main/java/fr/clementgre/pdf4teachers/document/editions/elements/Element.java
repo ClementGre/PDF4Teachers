@@ -44,9 +44,9 @@ public abstract class Element extends Region {
     protected IntegerProperty realY = new SimpleIntegerProperty();
     
     protected int pageNumber;
-    protected double shiftX = 0;
-    protected double shiftY = 0;
-    protected boolean wasInEditPagesModeWhenMousePressed = false;
+    protected double shiftX;
+    protected double shiftY;
+    protected boolean wasInEditPagesModeWhenMousePressed;
     
     public ContextMenu menu = new ContextMenu();
     
@@ -64,9 +64,9 @@ public abstract class Element extends Region {
     };
     
     public static final String ELEMENT_CLIPBOARD_KEY = "ElementsClipboard";
-    public static Element elementClipboard = null;
+    public static Element elementClipboard;
     
-    boolean dragAlreadyDetected = false;
+    boolean dragAlreadyDetected;
     protected void setupGeneral(boolean setupEvents, Node... components){
         if(components != null) getChildren().setAll(components);
         

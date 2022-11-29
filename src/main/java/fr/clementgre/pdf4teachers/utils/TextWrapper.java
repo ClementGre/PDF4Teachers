@@ -17,7 +17,7 @@ public class TextWrapper {
     private final int maxWidth;
     
     private String wrappedLine;
-    private boolean hasWrapped = false;
+    private boolean hasWrapped;
     
     public TextWrapper(String text, Font font, int maxWidth){
         this.font = font;

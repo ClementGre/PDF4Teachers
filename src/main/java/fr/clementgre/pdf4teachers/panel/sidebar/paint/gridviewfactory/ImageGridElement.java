@@ -29,7 +29,7 @@ import java.util.Collections;
 public class ImageGridElement extends ImageLambdaData{
     
     private final ObjectProperty<Image> image = new SimpleObjectProperty<>(null);
-    private boolean rendering = false;
+    private boolean rendering;
     private ExifUtils.BasicExifData exifData;
     
     private ImageData linkedImageData;

@@ -476,7 +476,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         
         private LoadingAlert loadingAlert;
         private int converted;
-        private boolean shouldStop = false;
+        private boolean shouldStop;
         
         private void startConversion(){
             

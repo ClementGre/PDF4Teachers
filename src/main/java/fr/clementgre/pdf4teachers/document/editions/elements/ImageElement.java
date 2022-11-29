@@ -36,7 +36,7 @@ public class ImageElement extends GraphicElement {
     
     // imageId
     
-    private boolean notFound = false;
+    private boolean notFound;
     private Image image;
     private final StringProperty imageId = new SimpleStringProperty();
     private ImageData linkedImageData;

@@ -168,8 +168,8 @@ public class FileTab extends SideTab {
     }
     
     public class DirOpener {
-        boolean alreadyAsked = false;
-        boolean recursive = false;
+        boolean alreadyAsked;
+        boolean recursive;
         
         public DirOpener(File file){
             for(File childrenFile : Objects.requireNonNull(file.listFiles())){

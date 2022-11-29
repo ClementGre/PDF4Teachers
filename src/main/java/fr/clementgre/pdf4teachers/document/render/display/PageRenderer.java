@@ -73,8 +73,8 @@ public class PageRenderer extends Pane {
     
     private int page;
     private ArrayList<Element> elements = new ArrayList<>();
-    private double mouseX = 0;
-    private double mouseY = 0;
+    private double mouseX;
+    private double mouseY;
     
     private ProgressBar loader = new ProgressBar();
     private ContextMenu menu = new ContextMenu();
@@ -90,15 +90,15 @@ public class PageRenderer extends Pane {
     private PageGridEditPane pageGridEditPane;
     private PageGridNumber pageGridNumber;
     
-    private GraphicElement placingElement = null;
+    private GraphicElement placingElement;
     
-    private double shiftY = 0;
-    private double shiftX = 0;
-    private double defaultTranslateY = 0;
-    private double defaultTranslateX = 0;
-    private boolean hasDragged = false;
+    private double shiftY;
+    private double shiftX;
+    private double defaultTranslateY;
+    private double defaultTranslateX;
+    private boolean hasDragged;
     
-    private boolean removed = false;
+    private boolean removed;
     
     private final InvalidationListener translateYListener = e -> updateShowStatus();
     

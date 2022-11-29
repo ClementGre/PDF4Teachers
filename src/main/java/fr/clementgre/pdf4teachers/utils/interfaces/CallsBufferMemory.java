@@ -9,8 +9,8 @@ public class CallsBufferMemory<T> extends CallsBuffer<T>{
         super(waitTime, callback);
     }
     
-    private long lastCallDate = 0;
-    private T olderArg = null;
+    private long lastCallDate;
+    private T olderArg;
     public void call(T arg){
         if(Math.abs(System.nanoTime() - lastCallDate) > waitTimeNs){ // First call
             olderArg = arg;

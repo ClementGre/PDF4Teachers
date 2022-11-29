@@ -24,7 +24,7 @@ public class LanguagePane extends HBox {
     private final String name;
     private int perMilleCompleted = -1;
     private final int version;
-    private ImageView image = null;
+    private ImageView image;
     
     public LanguagePane(File txtFile){
         shortName = txtFile.getName().replace(".properties", "");

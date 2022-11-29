@@ -27,12 +27,12 @@ public class VectorGridElement{
     
     private final SVGPath svgPath = new SVGPath();
     private final Scale svgScale = new Scale();
-    private double lastDisplayWidth = 0;
+    private double lastDisplayWidth;
     
     private VectorData vectorData;
     
     private static final int RENDER_WIDTH = 75;
-    private boolean fake = false;
+    private boolean fake;
     float width, height = 1;
     
     public VectorGridElement(VectorData vectorData){

@@ -66,7 +66,7 @@ public class PDFPagesEditor {
     
     private final PDDocument document;
     private final File file;
-    private boolean edited = false;
+    private boolean edited;
     
     private final UndoEngine undoEngine = new UndoEngine(false);
     
@@ -499,7 +499,7 @@ public class PDFPagesEditor {
             boolean finalSelection = selection;
             int finalPageIndex = pageIndex;
             new TwoStepListAction<>(true, allPages || selection, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
-                File exportDir = null;
+                File exportDir;
                 
                 @Override
                 public List<Integer> prepare(boolean recursive){
