@@ -70,8 +70,11 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             }
         });
         
-        if(isFavouriteImages()) setEmptyMessage(TR.tr("paintTab.favouriteImages.emptyList"));
-        else if(isGallery()) setEmptyMessage(TR.tr("paintTab.gallery.emptyList"));
+        if(isFavouriteImages()) {
+            setEmptyMessage(TR.tr("paintTab.favouriteImages.emptyList"));
+        } else if(isGallery()) {
+            setEmptyMessage(TR.tr("paintTab.gallery.emptyList"));
+        }
         list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
     }
@@ -134,7 +137,9 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         ImageGridView list = new ImageGridView(true, 150, new Slider(2, 6, 4), false);
         
         List<ImageGridElement> images = MainWindow.paintTab.favouriteImages.getList().getAllItems();
-        if(images.isEmpty()) return null;
+        if(images.isEmpty()) {
+            return null;
+        }
         images.sort(ImageGridElement::compareUseWith);
         images = images.subList(0, Math.min(8, images.size()));
         //images = images.stream().map(ImageGridElement::clone).toList();

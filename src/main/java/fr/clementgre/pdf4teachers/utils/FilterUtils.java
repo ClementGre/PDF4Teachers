@@ -31,7 +31,9 @@ public class FilterUtils {
         return t -> {
             boolean atLeastOneDifferent = false;
             for(int i = 0; i < keyExtractors.length; i++){
-                if(sets.get(i).add(keyExtractors[i].apply(t))) atLeastOneDifferent = true;
+                if(sets.get(i).add(keyExtractors[i].apply(t))) {
+                    atLeastOneDifferent = true;
+                }
             }
             return atLeastOneDifferent;
         };

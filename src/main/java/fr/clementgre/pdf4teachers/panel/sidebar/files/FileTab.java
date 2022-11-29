@@ -82,7 +82,9 @@ public class FileTab extends SideTab {
                     if(isFilePdf(file) || file.isDirectory()){
                         File[] files = db.getFiles().toArray(new File[0]);
                         openFiles(files);
-                        if(files.length == 1 && isFilePdf(file)) MainWindow.mainScreen.openFile(file);
+                        if(files.length == 1 && isFilePdf(file)) {
+                            MainWindow.mainScreen.openFile(file);
+                        }
                         e.setDropCompleted(true);
                         e.consume();
                         break;
@@ -183,16 +185,23 @@ public class FileTab extends SideTab {
         
         private void openFileSubDir(File file, int depth){
             int DEPTH_LIMIT = 2;
-            if(!isRecursive() || depth > DEPTH_LIMIT || file.listFiles() == null) return;
+            if(!isRecursive() || depth > DEPTH_LIMIT || file.listFiles() == null) {
+                return;
+            }
             
             for(File childrenFile : Objects.requireNonNull(file.listFiles())){
-                if(childrenFile.isDirectory()) openFileSubDir(childrenFile, depth + 1);
-                else openFileNonDir(childrenFile);
+                if(childrenFile.isDirectory()) {
+                    openFileSubDir(childrenFile, depth + 1);
+                } else {
+                    openFileNonDir(childrenFile);
+                }
             }
         }
         
         private boolean isRecursive(){
-            if(alreadyAsked) return recursive;
+            if(alreadyAsked) {
+                return recursive;
+            }
             
             CustomAlert alert = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"),
                     TR.tr("dialog.confirmation.openRecursively.header"), TR.tr("dialog.confirmation.openRecursively.details"));
@@ -227,14 +236,18 @@ public class FileTab extends SideTab {
         for(File file : files){
             openFile(file);
         }
-        if(files.length != 0) SideBar.selectTab(this);
+        if(files.length != 0) {
+            SideBar.selectTab(this);
+        }
     }
     
     public void openFiles(List<File> files){
         for(File file : files){
             openFile(file);
         }
-        if(!files.isEmpty()) SideBar.selectTab(this);
+        if(!files.isEmpty()) {
+            SideBar.selectTab(this);
+        }
     }
     
     public void clearFiles(){
@@ -250,8 +263,9 @@ public class FileTab extends SideTab {
     public static boolean isFilePdf(File file){
         String fileName = file.getName();
         String ext = "";
-        if(fileName.lastIndexOf(".") != -1)
+        if(fileName.lastIndexOf(".") != -1) {
             ext = fileName.substring(fileName.lastIndexOf(".") + 1);
+        }
         
         return ext.equalsIgnoreCase("pdf");
     }
@@ -259,12 +273,18 @@ public class FileTab extends SideTab {
     // Can be used if a file is renamed for example
     public void replaceFile(File oldFile, File newFile){
         files.getItems().replaceAll(testFile -> {
-            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
-            else return testFile;
+            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) {
+                return newFile;
+            } else {
+                return testFile;
+            }
         });
         originalFiles.replaceAll(testFile -> {
-            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
-            else return testFile;
+            if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) {
+                return newFile;
+            } else {
+                return testFile;
+            }
         });
         sortManager.simulateCall();
     }
@@ -278,7 +298,9 @@ public class FileTab extends SideTab {
     public void backOpenFilesList(boolean reverse){
         files.getItems().clear();
         ArrayList<File> openedFilesList = (ArrayList<File>) originalFiles.clone();
-        if(reverse) Collections.reverse(openedFilesList);
+        if(reverse) {
+            Collections.reverse(openedFilesList);
+        }
         for(File file : openedFilesList){
             files.getItems().add(file);
         }
@@ -290,7 +312,9 @@ public class FileTab extends SideTab {
                 return MainWindow.mainScreen.document.getFile().getParentFile();
             }
         }
-        if(!files.getItems().isEmpty()) return files.getItems().get(0).getParentFile();
+        if(!files.getItems().isEmpty()) {
+            return files.getItems().get(0).getParentFile();
+        }
         return null;
     }
     public File getCurrentDirAlways(){
@@ -310,7 +334,9 @@ public class FileTab extends SideTab {
         }
         
         File toOpen = files.getItems().get(selected - 1);
-        if(toOpen == null) return;
+        if(toOpen == null) {
+            return;
+        }
         MainWindow.mainScreen.openFile(toOpen);
     }
     public void loadNextFile(){
@@ -321,7 +347,9 @@ public class FileTab extends SideTab {
         }
         
         File toOpen = files.getItems().get(selected + 1);
-        if(toOpen == null) return;
+        if(toOpen == null) {
+            return;
+        }
         MainWindow.mainScreen.openFile(toOpen);
     }
     
@@ -348,14 +376,18 @@ public class FileTab extends SideTab {
             // Already exist dialog
             AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(false);
             AlreadyExistDialogManager.ResultType resultType = newFile.exists() ? alreadyExistDialogManager.showAndWait(newFile) : AlreadyExistDialogManager.ResultType.ERASE;
-            if(resultType == AlreadyExistDialogManager.ResultType.RENAME) newFile = AlreadyExistDialogManager.rename(newFile);
+            if(resultType == AlreadyExistDialogManager.ResultType.RENAME) {
+                newFile = AlreadyExistDialogManager.rename(newFile);
+            }
             if(resultType == AlreadyExistDialogManager.ResultType.RENAME || resultType == AlreadyExistDialogManager.ResultType.ERASE){
                 try{
                     // Close file if it is open
                     boolean documentOpen = MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.getAbsolutePath());
                     if(documentOpen){
                         PDFPagesRender renderer = MainWindow.mainScreen.document.pdfPagesRender;
-                        if(!MainWindow.mainScreen.closeFile(true, false)) return; // Close file cancelled.
+                        if(!MainWindow.mainScreen.closeFile(true, false)) {
+                            return; // Close file cancelled.
+                        }
                         while(!renderer.isClosed()){
                             PlatformUtils.sleepThread(100);
                         }
@@ -363,10 +395,14 @@ public class FileTab extends SideTab {
                     // Copy/move files
                     if(move){
                         Files.move(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        if(Edition.getEditFile(file).exists()) Files.move(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        if(Edition.getEditFile(file).exists()) {
+                            Files.move(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }else{ // copy
                         Files.copy(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                        if(Edition.getEditFile(file).exists()) Files.copy(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        if(Edition.getEditFile(file).exists()) {
+                            Files.copy(Edition.getEditFile(file).toPath(), Edition.getEditFile(newFile).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        }
                     }
                     
                     // AddRename file in files list

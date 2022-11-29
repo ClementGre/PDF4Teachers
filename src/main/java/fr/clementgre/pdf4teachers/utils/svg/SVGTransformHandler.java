@@ -28,21 +28,33 @@ public abstract class SVGTransformHandler implements PathHandler{
     
     private DecimalFormat format;
     public SVGTransformHandler(int decimals){
-        if(decimals != -1) format = new DecimalFormat("0." + ("#".repeat(decimals)), Main.baseDecimalFormatSymbols);
+        if(decimals != -1) {
+            format = new DecimalFormat("0." + ("#".repeat(decimals)), Main.baseDecimalFormatSymbols);
+        }
     }
     
     protected String preManageX(float x, float y, boolean rel){
-        if(!rel) lastX = x;
-        else lastX += x;
+        if(!rel) {
+            lastX = x;
+        } else {
+            lastX += x;
+        }
         
-        if(format != null) return format.format(manageX(x, y, rel));
+        if(format != null) {
+            return format.format(manageX(x, y, rel));
+        }
         return String.valueOf(manageX(x, y, rel));
     }
     protected String preManageY(float y, float x, boolean rel){
-        if(!rel) lastY = y;
-        else lastY += y;
+        if(!rel) {
+            lastY = y;
+        } else {
+            lastY += y;
+        }
     
-        if(format != null) return format.format(manageY(y, x, rel));
+        if(format != null) {
+            return format.format(manageY(y, x, rel));
+        }
         return String.valueOf(manageY(y, x, rel));
     }
     

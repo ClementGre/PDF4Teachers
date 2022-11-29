@@ -151,8 +151,9 @@ public class NodeMenuItem extends CustomMenuItem {
         int extra = 0;
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                if(nodeItem.getNode().getWidth() > itemMaxWidth)
+                if(nodeItem.getNode().getWidth() > itemMaxWidth) {
                     itemMaxWidth = nodeItem.getNode().getWidth();
+                }
             }else if(item instanceof Menu){
                 
                 if(item.getStyleableNode() != null){
@@ -164,8 +165,9 @@ public class NodeMenuItem extends CustomMenuItem {
                 }
                 
                 if(item instanceof NodeMenu nodeItem){
-                    if(nodeItem.getNode().getWidth() > menuMaxWidth)
+                    if(nodeItem.getNode().getWidth() > menuMaxWidth) {
                         menuMaxWidth = nodeItem.getNode().getWidth();
+                    }
                     extra = (int) (50 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 }else{
                     extra = (int) (25 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
@@ -193,8 +195,9 @@ public class NodeMenuItem extends CustomMenuItem {
         int extra = 0;
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                if(nodeItem.getNode().getWidth() > maxWidth)
+                if(nodeItem.getNode().getWidth() > maxWidth) {
                     maxWidth = nodeItem.getNode().getWidth();
+                }
             }else if(item instanceof Menu){
                 extra = (int) (20 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 
@@ -218,8 +221,9 @@ public class NodeMenuItem extends CustomMenuItem {
         int extra = 0;
         for(MenuItem item : menu.getItems()){
             if(item instanceof NodeMenuItem nodeItem){
-                if(nodeItem.getNode().getWidth() > maxWidth)
+                if(nodeItem.getNode().getWidth() > maxWidth) {
                     maxWidth = nodeItem.getNode().getWidth();
+                }
             }else if(item instanceof Menu){
                 extra = (int) (20 * Main.settings.zoom.getValue()); // Menus has a little Arrow, this add some px
                 

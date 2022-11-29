@@ -64,7 +64,9 @@ public class FontUtils {
      */
     public static Font getFont(String family, boolean italic, boolean bold, double size){
         if(isDefaultFont(family)){
-            if(!isFontAlreadyLoaded(family)) loadFont(family);
+            if(!isFontAlreadyLoaded(family)) {
+                loadFont(family);
+            }
             return initFont(family, italic, bold, size);
         }else if(isSystemFont(family)){
             AutoTipsManager.showByAction("useSystemFont");
@@ -94,13 +96,21 @@ public class FontUtils {
     private static void loadFont(String family){
         if(isDefaultFont(family)){
             InputStream font = getDefaultFontFile(family, false, false);
-            if(font != null) Font.loadFont(font, -1);
+            if(font != null) {
+                Font.loadFont(font, -1);
+            }
             font = getDefaultFontFile(family, true, false);
-            if(font != null) Font.loadFont(font, -1);
+            if(font != null) {
+                Font.loadFont(font, -1);
+            }
             font = getDefaultFontFile(family, false, true);
-            if(font != null) Font.loadFont(font, -1);
+            if(font != null) {
+                Font.loadFont(font, -1);
+            }
             font = getDefaultFontFile(family, true, true);
-            if(font != null) Font.loadFont(font, -1);
+            if(font != null) {
+                Font.loadFont(font, -1);
+            }
             DEFAULT_FONTS.put(family, true); // mark the font as loaded.
         }
     }
@@ -114,7 +124,9 @@ public class FontUtils {
         return DEFAULT_FONTS.containsKey(family);
     }
     public static boolean isSystemFont(String family){
-        if(!loaded) return true;
+        if(!loaded) {
+            return true;
+        }
         return systemFontsMapper.hasFont(family);
     }
     
@@ -148,11 +160,13 @@ public class FontUtils {
             if(fileFontName.equals("bold") || fileFontName.equals("italic")){
                 fileFontName = "regular";
             }else if(fileFontName.equals("bolditalic")){
-                if(TextElement.class.getResourceAsStream("/fonts/" + family + "/italic.ttf") != null)
+                if(TextElement.class.getResourceAsStream("/fonts/" + family + "/italic.ttf") != null) {
                     fileFontName = "italic";
-                else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null)
+                } else if(TextElement.class.getResourceAsStream("/fonts/" + family + "/bold.ttf") != null) {
                     fileFontName = "bold";
-                else fileFontName = "regular";
+                } else {
+                    fileFontName = "regular";
+                }
             }else{
                 Log.e("Impossible de charger le font : " + family + " en bold=" + bold + " et italic=" + italic + " (fileFontName = " + fileFontName + " )");
                 return null;
@@ -189,9 +203,15 @@ public class FontUtils {
     public static String getDefaultFontFileName(boolean italic, boolean bold){
         
         String fileName = "";
-        if(bold) fileName += "bold";
-        if(italic) fileName += "italic";
-        if(fileName.isEmpty()) fileName = "regular";
+        if(bold) {
+            fileName += "bold";
+        }
+        if(italic) {
+            fileName += "italic";
+        }
+        if(fileName.isEmpty()) {
+            fileName = "regular";
+        }
         
         return fileName;
     }
@@ -214,8 +234,11 @@ public class FontUtils {
             
             FontWeight fontWeight = FontWeight.findByName(name);
             if(fontWeight != null && fontWeight != FontWeight.NORMAL){
-                if(onlyOneBold) return FontWeight.BOLD;
-                else return fontWeight;
+                if(onlyOneBold) {
+                    return FontWeight.BOLD;
+                } else {
+                    return fontWeight;
+                }
             }
         }
         return FontWeight.NORMAL;

@@ -15,13 +15,17 @@ public class FontComboBox extends ComboBox<String> {
     
     public FontComboBox(boolean bind){
         super();
-        if(FontUtils.isFontsLoaded()) updateFonts();
+        if(FontUtils.isFontsLoaded()) {
+            updateFonts();
+        }
         setCellFactory((ListView<String> stringListView) -> new FontCell(bind));
     }
     
     public void updateFonts(){
         setItems(FontUtils.getAllFonts());
-        if(getSelectionModel().getSelectedItem() == null) getSelectionModel().select("Open Sans");
+        if(getSelectionModel().getSelectedItem() == null) {
+            getSelectionModel().select("Open Sans");
+        }
     }
     
     public static class FontCell extends ListCell<String> {

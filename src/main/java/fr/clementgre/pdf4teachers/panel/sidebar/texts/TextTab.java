@@ -108,7 +108,9 @@ public class TextTab extends SideTab {
         fontCombo.setMaxHeight(25);
         fontCombo.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         fontCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(isNew) MainWindow.userData.textLastFontName = newValue;
+            if(isNew) {
+                MainWindow.userData.textLastFontName = newValue;
+            }
         });
         
         PaneUtils.setHBoxPosition(sizeSpinner, 95, 30, 2.5);
@@ -118,7 +120,9 @@ public class TextTab extends SideTab {
         sizeSpinner.getValueFactory().setConverter(new StringToDoubleConverter(14));
         sizeSpinner.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         sizeSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(isNew) MainWindow.userData.textLastFontSize = newValue;
+            if(isNew) {
+                MainWindow.userData.textLastFontSize = newValue;
+            }
         });
         
         PaneUtils.setHBoxPosition(colorPicker, -1, 30, 2.5);
@@ -126,7 +130,9 @@ public class TextTab extends SideTab {
         colorPicker.setValue(Color.BLACK);
         colorPicker.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         colorPicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if(isNew) MainWindow.userData.textLastFontColor = newValue.toString();
+            if(isNew) {
+                MainWindow.userData.textLastFontColor = newValue.toString();
+            }
         });
         
         PaneUtils.setHBoxPosition(boldBtn, 45, 29, 2.5);
@@ -134,7 +140,9 @@ public class TextTab extends SideTab {
         boldBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/bold.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
         boldBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         boldBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(isNew) MainWindow.userData.textLastFontBold = newValue;
+            if(isNew) {
+                MainWindow.userData.textLastFontBold = newValue;
+            }
         });
         
         PaneUtils.setHBoxPosition(itBtn, 45, 29, 2.5);
@@ -142,12 +150,17 @@ public class TextTab extends SideTab {
         itBtn.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/TextTab/italic.png") + "", 0, 0, ImageUtils.defaultFullDarkColorAdjust));
         itBtn.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.selectedProperty().get() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         itBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(isNew) MainWindow.userData.textLastFontItalic = newValue;
+            if(isNew) {
+                MainWindow.userData.textLastFontItalic = newValue;
+            }
         });
         
         PaneUtils.setHBoxPosition(txtArea, -1, 30, 0);
-        if(Main.settings.textSmall.getValue()) txtArea.setStyle("-fx-font-size: 12");
-        else txtArea.setStyle("-fx-font-size: 13");
+        if(Main.settings.textSmall.getValue()) {
+            txtArea.setStyle("-fx-font-size: 12");
+        } else {
+            txtArea.setStyle("-fx-font-size: 13");
+        }
         txtArea.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.getSelected() == null || !(MainWindow.mainScreen.getSelected() instanceof TextElement), MainWindow.mainScreen.selectedProperty()));
         updateTextAreaPromptText();
         Main.settings.defaultTextMode.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -188,7 +201,9 @@ public class TextTab extends SideTab {
                     oldElement.delete(true, UType.NO_COUNT);
                 }
                 
-                if(!(newElement instanceof TextElement)) txtArea.clear();
+                if(!(newElement instanceof TextElement)) {
+                    txtArea.clear();
+                }
             }
             if(newElement instanceof TextElement current){
                 
@@ -230,7 +245,9 @@ public class TextTab extends SideTab {
                     txtAreaScrollBarListenerIsSetup = true;
                 }
                 element.setText(newValue);
-                if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("textedit");
+                if(new Random().nextInt(10) == 0) {
+                    AutoTipsManager.showByAction("textedit");
+                }
             }
         });
         txtArea.setOnKeyPressed(e -> {
@@ -249,16 +266,22 @@ public class TextTab extends SideTab {
                 
             }else if(e.getCode() == KeyCode.DOWN && txtArea.getText().split("\n").length == 1){
                 e.consume();
-                if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) {
+                    return;
+                } else {
+                    TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                }
                 pane.requestFocus();
                 if(!treeView.selectNextInSelection()){
                     txtArea.requestFocus();
                 }
             }else if(e.getCode() == KeyCode.UP && txtArea.getText().split("\n").length == 1){
                 e.consume();
-                if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) {
+                    return;
+                } else {
+                    TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                }
                 pane.requestFocus();
                 if(!treeView.selectPreviousInSelection()){
                     txtArea.requestFocus();
@@ -301,7 +324,9 @@ public class TextTab extends SideTab {
         isNew = true;
     
         txtArea.setText("");
-        if(addToLasts) TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
+        if(addToLasts) {
+            TextTreeView.addSavedElement(current.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true));
+        }
         txtArea.requestFocus();
     
         AutoTipsManager.showByAction("newtextelement");
@@ -325,7 +350,9 @@ public class TextTab extends SideTab {
         int lineNumber = txtArea.getParagraphs().size();
         int height = lineNumber >= 3 ? 70 : lineNumber * 20 + 10;
         
-        if(sbIsVisible) height += 16;
+        if(sbIsVisible) {
+            height += 16;
+        }
         
         if(txtArea.getHeight() != height){
             txtArea.minHeightProperty().bind(new SimpleDoubleProperty(height));

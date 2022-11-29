@@ -83,16 +83,20 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
         
         setWidth(width.getWidth());
         setMaxHeight(width.getWidth() * 1.75);
-        if(height != 0) setHeight(height);
+        if(height != 0) {
+            setHeight(height);
+        }
         
         setTitle(title + " - PDF4Teachers");
         setScene(scene);
         StyleManager.putStyle(scene, Style.DEFAULT);
         StyleManager.putStyle(borderPane, Style.DEFAULT);
         StyleManager.putCustomStyle(scene, "alternativeWindow.css");
-        if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT)
+        if(StyleManager.DEFAULT_STYLE == jfxtras.styles.jmetro.Style.LIGHT) {
             StyleManager.putCustomStyle(scene, "alternativeWindow-light.css");
-        else StyleManager.putCustomStyle(scene, "alternativeWindow-dark.css");
+        } else {
+            StyleManager.putCustomStyle(scene, "alternativeWindow-dark.css");
+        }
         PaneUtils.setupScaling(borderPane, true, false);
         
         setOnShown(e -> {
@@ -102,9 +106,13 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             setMinHeight(300 * Main.settings.zoom.getValue());
             setMaxWidth(width.getWidth() * 2 * Main.settings.zoom.getValue());
             
-            if(getHeight() > 1.6 * getWidth()) setHeight(1.6 * getWidth());
+            if(getHeight() > 1.6 * getWidth()) {
+                setHeight(1.6 * getWidth());
+            }
     
-            if(Main.window != null) Main.window.centerWindowIntoMe(this);
+            if(Main.window != null) {
+                Main.window.centerWindowIntoMe(this);
+            }
             MainWindow.preventStageOverflowScreen(this);
     
             if(toRequestFocus != null){
@@ -127,7 +135,9 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
                 });
             }
             Platform.runLater(() -> {
-                if(Main.window != null) Main.window.centerWindowIntoMe(this);
+                if(Main.window != null) {
+                    Main.window.centerWindowIntoMe(this);
+                }
                 MainWindow.preventStageOverflowScreen(this);
                 afterShown();
             });
@@ -229,8 +239,9 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     // Must be called after setButtons(), only once
     public void setLeftButtons(Button... buttons){
         buttonsBox.getChildren().add(0, new HBoxSpacer());
-        for(int i = buttons.length-1; i >= 0; i--)
+        for(int i = buttons.length-1; i >= 0; i--) {
             buttonsBox.getChildren().add(0, buttons[i]);
+        }
     }
     // Should be called only once
     public void setButtons(Button... buttons){
@@ -240,8 +251,11 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     }
     
     public void setContentMinWidth(int width, boolean affectWindow){
-        if(affectWindow) setMinWidth((width + 20 + 16) * Main.settings.zoom.getValue());
-        else container.setMinWidth(width * Main.settings.zoom.getValue());
+        if(affectWindow) {
+            setMinWidth((width + 20 + 16) * Main.settings.zoom.getValue());
+        } else {
+            container.setMinWidth(width * Main.settings.zoom.getValue());
+        }
     }
     
     public void setHeaderText(String text){

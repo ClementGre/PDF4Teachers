@@ -159,8 +159,9 @@ public class TextElement extends Element {
     
     private void updateGrabIndicator(boolean selected){
         if(selected && !isMath()){
-            if(getChildren().stream().noneMatch((n) -> n instanceof GrabLine))
+            if(getChildren().stream().noneMatch((n) -> n instanceof GrabLine)) {
                 getChildren().add(new GrabLine(this, isIsTextWrapped()));
+            }
         }else{
             getChildren().removeIf((n) -> n instanceof GrabLine);
         }
@@ -199,13 +200,17 @@ public class TextElement extends Element {
     }
     @Override
     public void addedToDocument(boolean markAsUnsave){
-        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.addElement(this);
+        if(markAsUnsave) {
+            MainWindow.textTab.treeView.onFileSection.addElement(this);
+        }
     }
     
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
-        if(markAsUnsave) MainWindow.textTab.treeView.onFileSection.removeElement(this);
+        if(markAsUnsave) {
+            MainWindow.textTab.treeView.onFileSection.removeElement(this);
+        }
     }
     @Override
     public void size(double scale){
@@ -232,8 +237,9 @@ public class TextElement extends Element {
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page, boolean upscaleGrid){
         TextElement element = readYAMLDataAndGive(data, true, page, upscaleGrid);
         
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber()) {
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
+        }
     }
     
     public static TextElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page, boolean upscaleGrid){
@@ -296,11 +302,15 @@ public class TextElement extends Element {
         return value;
     }
     public static @NotNull String invertLatex(@NotNull String value){
-        if(value.startsWith("$$")) return value.substring(2);
+        if(value.startsWith("$$")) {
+            return value.substring(2);
+        }
         return "$$" + value;
     }
     public static @NotNull String invertStarMath(@NotNull String value){
-        if(value.startsWith(STARMATH_CHAR)) return value.substring(2);
+        if(value.startsWith(STARMATH_CHAR)) {
+            return value.substring(2);
+        }
         return STARMATH_CHAR + value;
     }
     public static String invertBySettings(String text, int defaultTextMode){
@@ -320,10 +330,14 @@ public class TextElement extends Element {
         
         boolean isLatex = text.startsWith("$$");
         boolean isStarmath = text.startsWith(STARMATH_CHAR);
-        if(isLatex || isStarmath) text = text.substring(2);
+        if(isLatex || isStarmath) {
+            text = text.substring(2);
+        }
         
         for(String latexPart : text.split(Pattern.quote("$$"))){
-            if(isLatex) latexPart = latexPart.replace(STARMATH_CHAR, STARMATH_CHAR_IN_LATEX);
+            if(isLatex) {
+                latexPart = latexPart.replace(STARMATH_CHAR, STARMATH_CHAR_IN_LATEX);
+            }
             
             String[] latexPartSplit = latexPart.split(Pattern.quote(STARMATH_CHAR));
             for(int i = 0; i < latexPartSplit.length; i++){
@@ -345,8 +359,11 @@ public class TextElement extends Element {
                 
             }
             // If in starmath, do not invert
-            if(isStarmath && !isLatex) output.append("$$");
-            else isLatex = !isLatex;
+            if(isStarmath && !isLatex) {
+                output.append("$$");
+            } else {
+                isLatex = !isLatex;
+            }
         }
         
         return output.toString();
@@ -437,8 +454,12 @@ public class TextElement extends Element {
     public BufferedImage renderAwtLatex(){
         int style = 0;
         
-        if(FontUtils.getFontWeight(getFont()) == FontWeight.BOLD) style = style | TeXFormula.BOLD;
-        if(FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC) style = style | TeXFormula.ITALIC;
+        if(FontUtils.getFontWeight(getFont()) == FontWeight.BOLD) {
+            style = style | TeXFormula.BOLD;
+        }
+        if(FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC) {
+            style = style | TeXFormula.ITALIC;
+        }
         
         return renderLatex(getLaTeXText(), getAwtColor(), getFont().getFamily(), style, (int) getFont().getSize(), 0);
     }
@@ -488,7 +509,9 @@ public class TextElement extends Element {
         
         int i = 0;
         for(String part : starMath.split(Pattern.quote("\n"))){
-            if(i != 0) output.append(" \\\\ ");
+            if(i != 0) {
+                output.append(" \\\\ ");
+            }
             output.append(converter.convert(part));
             i++;
         }
@@ -502,8 +525,11 @@ public class TextElement extends Element {
         return getElementNameStatic(plural);
     }
     public static String getElementNameStatic(boolean plural){
-        if(plural) return TR.tr("elements.name.texts");
-        else return TR.tr("elements.name.text");
+        if(plural) {
+            return TR.tr("elements.name.texts");
+        } else {
+            return TR.tr("elements.name.text");
+        }
     }
     
     public String getText(){
@@ -568,10 +594,11 @@ public class TextElement extends Element {
     }
     
     public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
-        if(hasCore)
+        if(hasCore) {
             return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000, this);
-        else
+        } else {
             return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
+        }
     }
     
 }

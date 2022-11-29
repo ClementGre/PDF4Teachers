@@ -160,22 +160,29 @@ public class TextTreeItem extends TreeItem<String> {
         
         pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
         pane.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue)
+            if(newValue) {
                 pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 1), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
-            else
+            } else {
                 pane.setBorder(new Border(new BorderStroke(Color.web("#0078d7", 0), BorderStrokeStyle.SOLID, CornerRadii.EMPTY, new BorderWidths(2))));
+            }
         });
         
         pane.setOnKeyPressed(e -> {
             if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT){
                 e.consume();
-                if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else lastKeyPressTime = System.currentTimeMillis();
+                if(lastKeyPressTime > System.currentTimeMillis() - 100) {
+                    return;
+                } else {
+                    lastKeyPressTime = System.currentTimeMillis();
+                }
                 MainWindow.textTab.treeView.selectNextInSelection();
             }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
                 e.consume();
-                if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else lastKeyPressTime = System.currentTimeMillis();
+                if(lastKeyPressTime > System.currentTimeMillis() - 100) {
+                    return;
+                } else {
+                    lastKeyPressTime = System.currentTimeMillis();
+                }
                 MainWindow.textTab.treeView.selectPreviousInSelection();
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
@@ -243,7 +250,9 @@ public class TextTreeItem extends TreeItem<String> {
     static long lastKeyPressTime;
     public void updateGraphic(boolean updateParentHeight){ // Re calcule le Text
         int maxWidth = (int) (MainWindow.textTab.treeView.getWidth() - 42);
-        if(maxWidth < 0) return;
+        if(maxWidth < 0) {
+            return;
+        }
         
         Font font = getListFont();
         String wrappedText = "";
@@ -260,11 +269,15 @@ public class TextTreeItem extends TreeItem<String> {
                 if(!text.isBlank()){
                     String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
                     wrappedText += "\n" + wrapped;
-                    if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+                    if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) {
+                        wrappedText += "...";
+                    }
                 }else if(splitText.length > 1){
                     String wrapped = new TextWrapper(splitText[1], font, maxWidth - 13).wrapFirstLine();
                     wrappedText += "\n" + wrapped;
-                    if(!splitText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+                    if(!splitText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) {
+                        wrappedText += "...";
+                    }
                 }
             }else{
                 for(String text : splitText){
@@ -325,8 +338,12 @@ public class TextTreeItem extends TreeItem<String> {
     }
     
     public void updateCell(TreeCell<String> cell){ // Réattribue une cell à la pane
-        if(cell == null) return;
-        if(name.getText().isEmpty()) updateGraphic(false);
+        if(cell == null) {
+            return;
+        }
+        if(name.getText().isEmpty()) {
+            updateGraphic(false);
+        }
         
         name.setFill(StyleManager.shiftColorWithTheme(color.get()));
         rect.setFill(StyleManager.invertColorWithTheme(Color.WHITE));
@@ -343,7 +360,9 @@ public class TextTreeItem extends TreeItem<String> {
         cell.setContextMenu(menu);
         cell.setOnMouseClicked(onMouseCLick);
         
-        if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
+        if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) {
+            pane.requestFocus();
+        }
     }
     
     private Font getListFont(){
@@ -436,7 +455,9 @@ public class TextTreeItem extends TreeItem<String> {
             }
             
             page.addElement(realElement, true, UType.UNDO);
-            if(centerOnY) realElement.centerOnCoordinatesY();
+            if(centerOnY) {
+                realElement.centerOnCoordinatesY();
+            }
             MainWindow.mainScreen.selectedProperty().setValue(realElement);
             return realElement;
         }
@@ -451,7 +472,9 @@ public class TextTreeItem extends TreeItem<String> {
             core.fillProperty().removeListener(colorChangeListener);
             core = null;
         }
-        if(reSetupLayout) setup();
+        if(reSetupLayout) {
+            setup();
+        }
     }
     
     public Font getFont(){

@@ -52,7 +52,9 @@ public class SmoothishScrollpane extends ScrollPane {
             @Override
             public void handle(ScrollEvent e){
 
-                if(e.isInertia() || hasScrollStartEndEvents) return;
+                if(e.isInertia() || hasScrollStartEndEvents) {
+                    return;
+                }
 
                 ///// VERTICAL SCROLL /////
                 

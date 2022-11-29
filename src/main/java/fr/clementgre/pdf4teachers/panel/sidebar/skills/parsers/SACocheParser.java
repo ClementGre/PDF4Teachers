@@ -45,14 +45,20 @@ public class SACocheParser {
         charsetChooser.addCancelButton(ButtonPosition.CLOSE);
         charsetChooser.addDefaultButton(TR.tr("file.choose"));
         charset = charsetChooser.execute();
-        if(charset == null) return;
+        if(charset == null) {
+            return;
+        }
     
         file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_OPEN_DIR, TR.tr("dialog.file.extensionType.csv"), "*.csv");
-        if(file == null || !file.exists()) return;
+        if(file == null || !file.exists()) {
+            return;
+        }
         try{
             SkillsAssessment loadedAssessment = getFromCsv();
             String details = TR.tr("skillsSettingsWindow.sacocheImport.endDialog.details");
-            if(loadedAssessment == null) return;
+            if(loadedAssessment == null) {
+                return;
+            }
             // Assessment infos
             assessmentWindow.name.setText(loadedAssessment.getName());
             assessmentWindow.clasz.setText(loadedAssessment.getClasz());
@@ -104,7 +110,9 @@ public class SACocheParser {
         for(int i = 0; i < lines.size(); i++){
             String[] line = lines.get(i);
             String[] nextLine = i+1 < lines.size() ? lines.get(i + 1) : new String[0];
-            if(isBlankLine(line)) continue;
+            if(isBlankLine(line)) {
+                continue;
+            }
             
             if(block == CsvBlock.SKILLS){
                 // First/last line: Students ids/names
@@ -113,7 +121,9 @@ public class SACocheParser {
                     if(studentIds == null){ // Ids
                         studentIds = new long[line.length];
                         for(int k = 0; k < line.length; k++){ // Array cleaned
-                            if(!line[k].isBlank()) studentIds[k] = Long.parseLong(line[k]);
+                            if(!line[k].isBlank()) {
+                                studentIds[k] = Long.parseLong(line[k]);
+                            }
                         }
                     }else{ // Names
                         for(int k = 0; k < line.length; k++){ // Array cleaned
@@ -126,7 +136,9 @@ public class SACocheParser {
                         block = CsvBlock.DETAILS;
                     }
                 }else{ // Skill line
-                    if(studentIds == null) studentIds = new long[0];
+                    if(studentIds == null) {
+                        studentIds = new long[0];
+                    }
                     String[] cleanLine = StringUtils.cleanArray(line);
                     
                     long id = Long.parseLong(cleanLine[0]); // Skill ID
@@ -136,25 +148,36 @@ public class SACocheParser {
                     for(int k = 1; k < line.length-1; k++){
                         if(!line[k].isBlank()){
                             long studentId = studentIds[k-1];
-                            if(!studentsSkills.containsKey(studentId)) studentsSkills.put(studentId, new ArrayList<>());
+                            if(!studentsSkills.containsKey(studentId)) {
+                                studentsSkills.put(studentId, new ArrayList<>());
+                            }
                             studentsSkills.get(studentId).add(Map.entry(id, line[k]));
                         }
                     }
                 }
             }else if(block == CsvBlock.DETAILS){
-                if(assessment.getClasz().isBlank()) assessment.setClasz(line[0]);
-                else if(assessment.getDate().isBlank()) assessment.setDate(line[0]);
-                else if(assessment.getName().isBlank()) assessment.setName(line[0]);
-                else if(line[0].equals("PDF4Teachers")) block = CsvBlock.NOTATIONS;
+                if(assessment.getClasz().isBlank()) {
+                    assessment.setClasz(line[0]);
+                } else if(assessment.getDate().isBlank()) {
+                    assessment.setDate(line[0]);
+                } else if(assessment.getName().isBlank()) {
+                    assessment.setName(line[0]);
+                } else if(line[0].equals("PDF4Teachers")) {
+                    block = CsvBlock.NOTATIONS;
+                }
                 
             }else if(line.length >= 4){ // block = CsvBlock.NOTATIONS
-                if(line[0].equals("CLAVIER")) continue;
+                if(line[0].equals("CLAVIER")) {
+                    continue;
+                }
                 Notation notation = new Notation(assessment, line[1], line[2], line[0], line[3].replace("data:image/gif;base64,", ""));
     
                 studentsSkills.forEach((studentId, skills) -> {
                     skills.forEach(skill -> {
                         if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
-                            if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
+                            if(!studentsEditionSkills.containsKey(studentId)) {
+                                studentsEditionSkills.put(studentId, new ArrayList<>());
+                            }
                             studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
                         }
                     });
@@ -167,7 +190,9 @@ public class SACocheParser {
             studentsSkills.forEach((studentId, skills) -> {
                 skills.forEach(skill -> {
                     if(skill.getValue().equalsIgnoreCase(notation.getKeyboardChar())){
-                        if(!studentsEditionSkills.containsKey(studentId)) studentsEditionSkills.put(studentId, new ArrayList<>());
+                        if(!studentsEditionSkills.containsKey(studentId)) {
+                            studentsEditionSkills.put(studentId, new ArrayList<>());
+                        }
                         studentsEditionSkills.get(studentId).add(new EditionSkill(skill.getKey(), notation.getId()));
                     }
                 });

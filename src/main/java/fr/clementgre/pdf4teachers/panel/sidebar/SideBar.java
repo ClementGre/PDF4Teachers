@@ -154,8 +154,11 @@ public class SideBar extends TabPane {
     }
     
     public static SideBar getTabSideBar(SideTab tab){
-        if(isIntoLeftBar(tab)) return MainWindow.leftBar;
-        else return MainWindow.rightBar;
+        if(isIntoLeftBar(tab)) {
+            return MainWindow.leftBar;
+        } else {
+            return MainWindow.rightBar;
+        }
     }
     
     public void setWidthByEditingDivider(double width){
@@ -192,7 +195,9 @@ public class SideBar extends TabPane {
                 MainWindow.mainPane.getItems().add(0, this);
                 
                 MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
-            }else MainWindow.mainPane.getItems().add(this);
+            }else {
+                MainWindow.mainPane.getItems().add(this);
+            }
         }
     }
     private void removeToPane(){
@@ -270,7 +275,9 @@ public class SideBar extends TabPane {
         for(String tabName : tabsName){
             SideTab tab = SideTab.getByName(tabName);
             if(tab != null){
-                if(tab.getTabPane() != null) tab.getTabPane().getTabs().remove(tab);
+                if(tab.getTabPane() != null) {
+                    tab.getTabPane().getTabs().remove(tab);
+                }
                 getTabs().add(tab);
             }
         }

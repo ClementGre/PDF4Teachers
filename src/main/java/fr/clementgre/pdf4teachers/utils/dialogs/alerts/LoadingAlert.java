@@ -35,8 +35,11 @@ public class LoadingAlert extends CustomAlert{
         pane.getChildren().addAll(label, loadingBar);
         getDialogPane().setContent(pane);
         
-        if(cancelButton) addCancelButton(ButtonPosition.DEFAULT);
-        else addCloseButton(TR.tr("actions.hide"));
+        if(cancelButton) {
+            addCancelButton(ButtonPosition.DEFAULT);
+        } else {
+            addCloseButton(TR.tr("actions.hide"));
+        }
         
         updateLabel();
         updateProgressBar();
@@ -47,25 +50,37 @@ public class LoadingAlert extends CustomAlert{
     public void showAsync(CallBack cancel){
         setOnHiding((e) -> {
             if(getResult() != null){
-                if(getResult().getButtonData().isDefaultButton()) cancel.call();
+                if(getResult().getButtonData().isDefaultButton()) {
+                    cancel.call();
+                }
             }
         });
         show();
     }
     
     private void updateProgressBar(){
-        if(progress == -1) loadingBar.setProgress(-1);
-        else loadingBar.setProgress(progress / ((float) total));
+        if(progress == -1) {
+            loadingBar.setProgress(-1);
+        } else {
+            loadingBar.setProgress(progress / ((float) total));
+        }
     }
     private void updateLabel(){
-        if(progress == -1) label.setText(currentTaskText);
-        else{
+        if(progress == -1) {
+            label.setText(currentTaskText);
+        } else{
             if(intPrintProgress){
-                if(currentTaskText.isBlank()) label.setText(((int) progress) + "/" + ((int) total));
-                else label.setText(currentTaskText + " (" + ((int) progress) + "/" + ((int) total) + ")");
+                if(currentTaskText.isBlank()) {
+                    label.setText(((int) progress) + "/" + ((int) total));
+                } else {
+                    label.setText(currentTaskText + " (" + ((int) progress) + "/" + ((int) total) + ")");
+                }
             }else{
-                if(currentTaskText.isBlank()) label.setText(progress + "/" + total);
-                else label.setText(currentTaskText + " (" + progress + "/" + total + ")");
+                if(currentTaskText.isBlank()) {
+                    label.setText(progress + "/" + total);
+                } else {
+                    label.setText(currentTaskText + " (" + progress + "/" + total + ")");
+                }
             }
         }
     }

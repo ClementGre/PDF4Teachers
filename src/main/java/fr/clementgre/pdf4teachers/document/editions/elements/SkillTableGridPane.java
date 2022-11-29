@@ -57,7 +57,9 @@ public class SkillTableGridPane extends GridPane {
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
         if(assessment == null){
             setVisible(false);
-            if(element.isSelected()) MainWindow.mainScreen.setSelected(null);
+            if(element.isSelected()) {
+                MainWindow.mainScreen.setSelected(null);
+            }
             return;
         }
         setVisible(true);
@@ -69,7 +71,9 @@ public class SkillTableGridPane extends GridPane {
         assessment.getSkills().forEach(skill -> skillLines.add(new SkillLine(skill, i.incrementAndGet(), this, assessment)));
         if(i.get() == 0){
             setVisible(false);
-            if(element.isSelected()) MainWindow.mainScreen.setSelected(null);
+            if(element.isSelected()) {
+                MainWindow.mainScreen.setSelected(null);
+            }
             return;
         }
     
@@ -82,7 +86,9 @@ public class SkillTableGridPane extends GridPane {
     
     private ArrayList<NotationLegend> notationsLegend;
     void updateLegend(boolean forceUpdate){
-        if(this.legend == null) return;
+        if(this.legend == null) {
+            return;
+        }
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
     
         ArrayList<Notation> notations = new ArrayList<>();
@@ -94,12 +100,16 @@ public class SkillTableGridPane extends GridPane {
                             es.getSkillId() == skill.getId())) // And this edition skill is linked to a Skill of this specific assessment
         ).toList());
     
-        if(!forceUpdate && notations.equals(this.notations)) return; // Same notations -> no need to update
+        if(!forceUpdate && notations.equals(this.notations)) {
+            return; // Same notations -> no need to update
+        }
         
         legend.getChildren().clear();
         notationsLegend = new ArrayList<>(notations.stream().map(notation -> new NotationLegend(notation, legend)).toList());
     
-        if(!this.notations.isEmpty()) layoutLegend(); // No need to layout legend the first time
+        if(!this.notations.isEmpty()) {
+            layoutLegend(); // No need to layout legend the first time
+        }
         legend.widthProperty().addListener((observable, oldValue, newValue) -> {
             layoutLegend();
         });
@@ -112,8 +122,9 @@ public class SkillTableGridPane extends GridPane {
         AtomicInteger y = new AtomicInteger(V_PADDING);
         for(NotationLegend notationLeg : notationsLegend){
             int result = notationLeg.update(x.get(), y.get());
-            if(result >= 0) x.set(result);
-            else{ x.set(-result); y.addAndGet(TEXT_HEIGHT); }
+            if(result >= 0) {
+                x.set(result);
+            } else{ x.set(-result); y.addAndGet(TEXT_HEIGHT); }
         }
         legend.setPrefHeight(y.get() + TEXT_HEIGHT + V_PADDING + 1); // +1 for the border
     }
@@ -227,8 +238,12 @@ public class SkillTableGridPane extends GridPane {
     private static Pane getGridCellPane(boolean firstRow, boolean firstCol){
         Pane pane = new Pane();
         pane.getStyleClass().add("bordered-grid-cell");
-        if(firstRow) pane.getStyleClass().add("first-row");
-        if(firstCol) pane.getStyleClass().add("first-column");
+        if(firstRow) {
+            pane.getStyleClass().add("first-row");
+        }
+        if(firstCol) {
+            pane.getStyleClass().add("first-column");
+        }
         GridPane.setFillWidth(pane, true);
         GridPane.setFillHeight(pane, true);
         return pane;

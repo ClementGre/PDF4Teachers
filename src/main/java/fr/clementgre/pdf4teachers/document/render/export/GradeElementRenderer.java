@@ -18,7 +18,9 @@ public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
     // Returns false if the user cancelled the export process.
     public boolean renderElement(GradeElement element, PDPageContentStream contentStream, PDPage page, PageSpecs ps) throws IOException{
         
-        if(!element.isShouldVisibleOnExport()) return true;
+        if(!element.isShouldVisibleOnExport()) {
+            return true;
+        }
         
         TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.getYTopOrigin(),
                 element.getBaseLineY(), (float) element.getRealX(), (float) element.getRealY(), element.getText(), element.getAwtColor(), false, (float) element.getFont().getSize());

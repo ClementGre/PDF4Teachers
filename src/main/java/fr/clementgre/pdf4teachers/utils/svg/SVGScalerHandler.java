@@ -37,11 +37,17 @@ public class SVGScalerHandler extends SVGSimpleTransformHandler{
     }
     
     protected float manageX(float x, boolean rel){
-        if(rel) return x * scaleX;
-        else return (x+translateX) * scaleX;
+        if(rel) {
+            return x * scaleX;
+        } else {
+            return (x+translateX) * scaleX;
+        }
     }
     protected float manageY(float y, boolean rel){
-        if(rel) return y * scaleY;
-        else return (y+translateY) * scaleY;
+        if(rel) {
+            return y * scaleY;
+        } else {
+            return (y+translateY) * scaleY;
+        }
     }
 }

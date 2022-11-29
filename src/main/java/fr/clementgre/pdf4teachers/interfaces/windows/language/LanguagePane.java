@@ -53,8 +53,9 @@ public class LanguagePane extends HBox {
         setStyle("-fx-padding: -5;");
         
         Label name = new Label(getName());
-        if(getPerMilleCompleted() != -1 && getPerMilleCompleted() != 1000)
+        if(getPerMilleCompleted() != -1 && getPerMilleCompleted() != 1000) {
             name.setText(name.getText() + " (" + TR.tr("language.chooseLanguageWindow.translationPercentageInfo", String.valueOf(getPerMilleCompleted() / 10d)) + ")");
+        }
         
         name.setPrefHeight(50);
         HBox.setMargin(name, new Insets(0, 5, 0, 10));

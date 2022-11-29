@@ -67,7 +67,9 @@ public class TextTreeView extends TreeView<String> {
                     Log.eNotified(e);
                 }
                 Platform.runLater(() -> {
-                    if(getWidth() == newValue.longValue()) updateListsGraphic();
+                    if(getWidth() == newValue.longValue()) {
+                        updateListsGraphic();
+                    }
                 });
             }).start();
         });
@@ -75,8 +77,9 @@ public class TextTreeView extends TreeView<String> {
         getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> {
                 if(newValue instanceof TextTreeItem textTreeItem){
-                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue)
+                    if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == newValue) {
                         textTreeItem.onSelected();
+                    }
                 }
             });
         });
@@ -210,8 +213,11 @@ public class TextTreeView extends TreeView<String> {
                 int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) + 1;
                 
-                if(toSelectIndex > lastIndex) selectTextField();
-                else selectFromSelectedIndex(toSelectIndex);
+                if(toSelectIndex > lastIndex) {
+                    selectTextField();
+                } else {
+                    selectFromSelectedIndex(toSelectIndex);
+                }
             }
             return true;
         }
@@ -227,8 +233,11 @@ public class TextTreeView extends TreeView<String> {
             }else{
                 int toSelectIndex = getSelectionModel().getSelectedIndices().indexOf(getSelectionModel().getSelectedIndex()) - 1;
                 
-                if(toSelectIndex < 0) selectTextField();
-                else selectFromSelectedIndex(toSelectIndex);
+                if(toSelectIndex < 0) {
+                    selectTextField();
+                } else {
+                    selectFromSelectedIndex(toSelectIndex);
+                }
             }
             return true;
         }
@@ -269,12 +278,19 @@ public class TextTreeView extends TreeView<String> {
         
         
         // Ajouter les items en fonction du type
-        if(element.getType() != TextTreeSection.ONFILE_TYPE) menu.getItems().add(item1);
+        if(element.getType() != TextTreeSection.ONFILE_TYPE) {
+            menu.getItems().add(item1);
+        }
         menu.getItems().add(item2);
-        if(element.getType() != TextTreeSection.FAVORITE_TYPE) menu.getItems().add(item3); // onFile & lasts
-        if(element.getType() == TextTreeSection.ONFILE_TYPE) menu.getItems().add(item4); // onFile
-        if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null)
+        if(element.getType() != TextTreeSection.FAVORITE_TYPE) {
+            menu.getItems().add(item3); // onFile & lasts
+        }
+        if(element.getType() == TextTreeSection.ONFILE_TYPE) {
+            menu.getItems().add(item4); // onFile
+        }
+        if(element.getType() != TextTreeSection.ONFILE_TYPE && element.getCore() != null) {
             menu.getItems().add(item5); // élément précédent qui est lié
+        }
         
         NodeMenuItem.setupMenu(menu);
         

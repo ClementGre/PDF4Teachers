@@ -202,25 +202,33 @@ public class PaintTab extends SideTab {
         spinnerX.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                if(element.getRealX() != newValue) element.setRealX(newValue);
+                if(element.getRealX() != newValue) {
+                    element.setRealX(newValue);
+                }
             }
         });
         spinnerY.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                if(element.getRealY() != newValue) element.setRealY(newValue);
+                if(element.getRealY() != newValue) {
+                    element.setRealY(newValue);
+                }
             }
         });
         spinnerWidth.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                if(element.getRealWidth() != newValue) element.setRealWidth(newValue);
+                if(element.getRealWidth() != newValue) {
+                    element.setRealWidth(newValue);
+                }
             }
         });
         spinnerHeight.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(isPaintTabElement(MainWindow.mainScreen.getSelected())){
                 GraphicElement element = (GraphicElement) MainWindow.mainScreen.getSelected();
-                if(element.getRealHeight() != newValue) element.setRealHeight(newValue);
+                if(element.getRealHeight() != newValue) {
+                    element.setRealHeight(newValue);
+                }
             }
         });
         repeatMode.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -243,7 +251,9 @@ public class PaintTab extends SideTab {
         });
         spinnerArrowLength.valueProperty().addListener((observable, oldValue, newValue) -> {
             if(MainWindow.mainScreen.getSelected() instanceof VectorElement element){
-                if(element.getArrowLength() != newValue) element.setArrowLength(newValue);
+                if(element.getArrowLength() != newValue) {
+                    element.setArrowLength(newValue);
+                }
             }
         });
         
@@ -358,12 +368,14 @@ public class PaintTab extends SideTab {
         vectorStraightLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorPerpendicularLineMode.disableProperty().bind(vectorEditMode.selectedProperty().not());
         vectorUndoPath.setOnAction((e) -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement)
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) {
                 vectorElement.undoLastAction();
+            }
         });
         new PressAndHoldManager(vectorUndoPath, 30, () -> {
-            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement)
+            if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement) {
                 vectorElement.undoLastAction();
+            }
         });
         
         
@@ -391,7 +403,9 @@ public class PaintTab extends SideTab {
         MainWindow.mainScreen.setSelected(element);
         
         // Drawing elements are not added to previous elements by default
-        if(Main.settings.saveLastDrawings.getValue() != doInvertAddToPrevious) element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        if(Main.settings.saveLastDrawings.getValue() != doInvertAddToPrevious) {
+            element.setLinkedVectorData(VectorListPane.addLastVector(element));
+        }
         
         // Let the time update coordinates correctly, otherwise it can create shifts.
         element.setVisible(false); // prevent a flashing element due to the runLater.
@@ -423,8 +437,11 @@ public class PaintTab extends SideTab {
         File file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
                 ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
         if(file != null){
-            if(callBack == null) path.setText(file.getAbsolutePath());
-            else callBack.call(file.getAbsolutePath());
+            if(callBack == null) {
+                path.setText(file.getAbsolutePath());
+            } else {
+                callBack.call(file.getAbsolutePath());
+            }
         }
     }
     private void browseSVGPath(CallBackArg<String> callBack){
@@ -450,8 +467,9 @@ public class PaintTab extends SideTab {
                 Color fillColor = parser.getFillColor();
                 Color strokeColor = parser.getStrokeColor();
                 int strokeWidth = parser.getStrokeWidth();
-                if((strokeWidth == 0 || strokeColor == null) && fillColor == null)
+                if((strokeWidth == 0 || strokeColor == null) && fillColor == null) {
                     fillColor = MainWindow.userData.vectorsLastFill;
+                }
                 
                 PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
                 
@@ -549,22 +567,32 @@ public class PaintTab extends SideTab {
     
     // Advanced options spinners listeners
     public void editSpinXEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
-        if(!spinnerX.getValue().equals(newValue)) spinnerX.getValueFactory().setValue(newValue.intValue());
+        if(!spinnerX.getValue().equals(newValue)) {
+            spinnerX.getValueFactory().setValue(newValue.intValue());
+        }
     }
     public void editSpinYEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
-        if(!spinnerY.getValue().equals(newValue)) spinnerY.getValueFactory().setValue(newValue.intValue());
+        if(!spinnerY.getValue().equals(newValue)) {
+            spinnerY.getValueFactory().setValue(newValue.intValue());
+        }
     }
     public void editSpinWidthEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
-        if(!spinnerWidth.getValue().equals(newValue)) spinnerWidth.getValueFactory().setValue(newValue.intValue());
+        if(!spinnerWidth.getValue().equals(newValue)) {
+            spinnerWidth.getValueFactory().setValue(newValue.intValue());
+        }
     }
     public void editSpinHeightEvent(ObservableValue<? extends Number> observable, Number oldValue, Number newValue){
-        if(!spinnerHeight.getValue().equals(newValue)) spinnerHeight.getValueFactory().setValue(newValue.intValue());
+        if(!spinnerHeight.getValue().equals(newValue)) {
+            spinnerHeight.getValueFactory().setValue(newValue.intValue());
+        }
     }
     
     private void vectorDrawModeChanged(ObservableValue<? extends Boolean> o, Boolean oldValue, Boolean newValue){
         if(MainWindow.mainScreen.getSelected() instanceof VectorElement vectorElement){
             if(!oldValue){
-                if(newValue && !vectorElement.isEditMode()) vectorElement.enterEditMode();
+                if(newValue && !vectorElement.isEditMode()) {
+                    vectorElement.enterEditMode();
+                }
             }else if(vectorElement.isEditMode()){
                 vectorElement.quitEditMode();
             }
@@ -613,7 +641,9 @@ public class PaintTab extends SideTab {
         browsePath.setDisable(disable);
     }
     public void setAllDisable(boolean disable){
-        if(disable) setGlobalDisable(true);
+        if(disable) {
+            setGlobalDisable(true);
+        }
         newImage.setDisable(disable);
         newVector.setDisable(disable);
     }

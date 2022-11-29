@@ -36,9 +36,13 @@ public class UndoEngine{
     }
     
     public void registerNewAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) return;
+        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) {
+            return;
+        }
     
-        if(VERBOSE) Log.t("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) {
+            Log.t("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
+        }
         undoList.add(0, action);
         checkUndoStackLength();
     
@@ -48,10 +52,14 @@ public class UndoEngine{
     }
     
     public void undo(){
-        if(VERBOSE) Log.t("Execute UNDO (stack has " + undoList.size() + " actions)");
+        if(VERBOSE) {
+            Log.t("Execute UNDO (stack has " + undoList.size() + " actions)");
+        }
         isUndoingThings = true;
         
-        while(!undoLastAction());
+        while(!undoLastAction()) {
+            ;
+        }
         
         // After having undoing last action, undo all next NO_COUNT actions
         // Do not process next NO_COUNT actions if doProcessNoCountRightAndLeft is true
@@ -64,11 +72,15 @@ public class UndoEngine{
     }
     
     public void redo(){
-        if(VERBOSE) Log.t("Execute REDO (stack has " + redoList.size() + " actions)");
+        if(VERBOSE) {
+            Log.t("Execute REDO (stack has " + redoList.size() + " actions)");
+        }
         isUndoingThings = true;
         
         // doProcessNoCountRightAndLeft has no interest in redo because the first action in the list will always be a classic action
-        while(!redoLastAction());
+        while(!redoLastAction()) {
+            ;
+        }
     
         // After having undoing last action, undo all next NO_COUNT actions
         while(!redoList.isEmpty() && redoList.get(0).getUndoType() == UType.NO_COUNT){
@@ -79,10 +91,14 @@ public class UndoEngine{
         isUndoingThings = false;
     }
     private boolean undoLastAction(){
-        if(undoList.isEmpty()) return true;
+        if(undoList.isEmpty()) {
+            return true;
+        }
         
         UndoAction action = undoList.get(0);
-        if(VERBOSE) Log.t("Undoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) {
+            Log.t("Undoing: " + action + " [" + action.getUndoType() + "]");
+        }
         undoList.remove(0);
         boolean completed = action.undoAndInvert();
         redoList.add(0, action);
@@ -90,10 +106,14 @@ public class UndoEngine{
         return completed && action.getUndoType() == UType.UNDO;
     }
     private boolean redoLastAction(){
-        if(redoList.isEmpty()) return true;
+        if(redoList.isEmpty()) {
+            return true;
+        }
     
         UndoAction action = redoList.get(0);
-        if(VERBOSE) Log.t("Redoing: " + action + " [" + action.getUndoType() + "]");
+        if(VERBOSE) {
+            Log.t("Redoing: " + action + " [" + action.getUndoType() + "]");
+        }
         redoList.remove(0);
         boolean completed = action.undoAndInvert();
         undoList.add(0, action);
@@ -104,7 +124,9 @@ public class UndoEngine{
     
     
     private boolean computeAction(ArrayList<UndoAction> redoList, ArrayList<UndoAction> undoList){
-        if(redoList.isEmpty()) return true;
+        if(redoList.isEmpty()) {
+            return true;
+        }
         
         UndoAction action = redoList.get(0);
         boolean completed = action.undoAndInvert();

@@ -53,7 +53,9 @@ public class SkillTableElement extends GraphicElement{
         this.studentId.set(studentId);
         this.editionSkills.set(FXCollections.observableList(editionSkills));
         
-        if(hasPage && getPage() != null) setupPage();
+        if(hasPage && getPage() != null) {
+            setupPage();
+        }
     }
     
     @Override
@@ -93,7 +95,9 @@ public class SkillTableElement extends GraphicElement{
                 defaultScale = assessment.getPrefScale();
                 Platform.runLater(() -> updateGridPaneScale(defaultScale));
             }
-            else Platform.runLater(this::updateGridPaneScale);
+            else {
+                Platform.runLater(this::updateGridPaneScale);
+            }
         }else{
             Platform.runLater(this::updateGridPaneScale);
         }
@@ -145,7 +149,9 @@ public class SkillTableElement extends GraphicElement{
     
     public void updateGridPaneScale(){
         // If gridPane dimensions are not fully setup yet, use the last saved scale.
-        if(gridPane.areDimensionsSetup) this.scale = MathUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        if(gridPane.areDimensionsSetup) {
+            this.scale = MathUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        }
         updateGridPaneScale(scale);
     }
     private void updateGridPaneScale(double scale){
@@ -164,13 +170,17 @@ public class SkillTableElement extends GraphicElement{
         super.checkLocation(itemX, itemY, width, height, allowSwitchPage);
         
         // HEIGHT - min and max scale
-        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio()) || !gridPane.areDimensionsSetup) return;
+        if(getWidth() == 0 || getHeight() == 0 || Double.isNaN(getRatio()) || Double.isInfinite(getRatio()) || !gridPane.areDimensionsSetup) {
+            return;
+        }
         double scale = getPage().fromGridY(getRealHeight()) / gridPane.getHeight(); // Not clamped
         double clampedScale = MathUtils.clamp(scale, MIN_SCALE, MAX_SCALE);
         if(scale != clampedScale){
             int newRealHeight = getPage().toGridY(gridPane.getHeight() * clampedScale);
             if(getRealHeight() != newRealHeight){
-                if(itemYChanged) setRealY(getRealY() + getRealHeight() - newRealHeight); // When resized from north or west
+                if(itemYChanged) {
+                    setRealY(getRealY() + getRealHeight() - newRealHeight); // When resized from north or west
+                }
                 setRealHeight(newRealHeight);
             }
         }
@@ -233,10 +243,14 @@ public class SkillTableElement extends GraphicElement{
                 int i = 0;
                 while(i < page.getElements().size()){
                     if(page.getElements().get(i) instanceof SkillTableElement elem){
-                        if(elem.equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
+                        if(elem.equals(MainWindow.mainScreen.getSelected())) {
+                            MainWindow.mainScreen.setSelected(null);
+                        }
                         page.removeElement(elem, false, UType.NO_UNDO);
                         MainWindow.skillsTab.clearEditRelatedData();
-                    }else i++;
+                    }else {
+                        i++;
+                    }
                 }
             });
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
@@ -276,7 +290,9 @@ public class SkillTableElement extends GraphicElement{
         callsBuffer.call(oldStudent);
     }
     private void tryLoadFromStudentInternal(Student student){
-        if(student.editionSkills().isEmpty()) return;
+        if(student.editionSkills().isEmpty()) {
+            return;
+        }
         
         AtomicInteger loaded = new AtomicInteger();
         student.editionSkills().forEach(s -> {
@@ -299,8 +315,11 @@ public class SkillTableElement extends GraphicElement{
     
     @Override
     public String getElementName(boolean plural){
-        if(plural) return TR.tr("elements.name.skills");
-        else return TR.tr("elements.name.name.skill");
+        if(plural) {
+            return TR.tr("elements.name.skills");
+        } else {
+            return TR.tr("elements.name.name.skill");
+        }
     }
     
     @Override

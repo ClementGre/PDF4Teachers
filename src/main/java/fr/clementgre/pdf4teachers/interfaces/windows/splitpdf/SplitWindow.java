@@ -67,7 +67,9 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     
         browseNames.setOnAction(e -> {
             File selected = FilesChooserManager.showFileDialog(null, TR.tr("dialog.file.extensionType.txt"), "*.txt");
-            if(selected != null) loadNames(selected);
+            if(selected != null) {
+                loadNames(selected);
+            }
         });
         
         
@@ -124,7 +126,9 @@ public class SplitWindow extends AlternativeWindow<VBox> {
             }
         });
     
-        if(!selection) engine.updatePagesColors(this::updateStatus);
+        if(!selection) {
+            engine.updatePagesColors(this::updateStatus);
+        }
     }
     @Override
     public void afterShown(){
@@ -156,14 +160,18 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     }
     
     private void loadNames(File file){
-        if(!file.exists()) return;
+        if(!file.exists()) {
+            return;
+        }
     
         try{
             BufferedReader reader = new BufferedReader(new FileReader(file));
             String line = reader.readLine();
             
             while(line != null){
-                if(!line.isBlank()) names.appendText((names.getText().endsWith("\n") || names.getText().isEmpty() ? "" : "\n") + line);
+                if(!line.isBlank()) {
+                    names.appendText((names.getText().endsWith("\n") || names.getText().isEmpty() ? "" : "\n") + line);
+                }
                 line = reader.readLine();
             }
             reader.close();

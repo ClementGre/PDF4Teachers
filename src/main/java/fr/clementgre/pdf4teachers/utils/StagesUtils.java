@@ -56,7 +56,9 @@ public class StagesUtils {
         scene.heightProperty().addListener(sceneListener);
     
     
-        if(Main.window == null) return;
+        if(Main.window == null) {
+            return;
+        }
     
         final boolean[] stageFirstDimensionUpdated = {false};
         InvalidationListener stageListener = new InvalidationListener() {

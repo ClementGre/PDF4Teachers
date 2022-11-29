@@ -65,7 +65,9 @@ public class SkillTableElementRenderer{
         
         // Find assessment
         SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == element.getAssessmentId()).findAny().orElse(null);
-        if(assessment == null) return true;
+        if(assessment == null) {
+            return true;
+        }
     
         // Map skills with their matching notation.
         LinkedHashMap<Skill, Notation> skills = new LinkedHashMap<>();
@@ -74,7 +76,9 @@ public class SkillTableElementRenderer{
             Notation notation = editionSkill == null ? null : editionSkill.getMatchingNotation(assessment);
             skills.put(skill, notation);
         });
-        if(skills.isEmpty()) return true;
+        if(skills.isEmpty()) {
+            return true;
+        }
     
         
         // HEADER
@@ -86,11 +90,15 @@ public class SkillTableElementRenderer{
         
         float y1 = drawWrappedTextAt(H_PADDING, V_PADDING, getSkillsColWidth() - 2*H_PADDING,
                 TR.tr("skillTableElement.header.skill"), true);
-        if(y1 == -1) return false;
+        if(y1 == -1) {
+            return false;
+        }
     
         float y2 = drawWrappedTextAt(getSkillsColWidth() + H_PADDING, V_PADDING, getNotationColWidth() - 2*H_PADDING,
                 TR.tr("skillTableElement.header.grade"), true);
-        if(y2 == -1) return false;
+        if(y2 == -1) {
+            return false;
+        }
         
         float y = Math.max(y1, y2) + V_PADDING;
     
@@ -109,15 +117,21 @@ public class SkillTableElementRenderer{
             float topY = y;
             y = drawWrappedTextAt(H_PADDING, y + V_PADDING, getSkillsColWidth() - 2*H_PADDING,
                     skill.getAcronym(), true);
-            if(y == -1) return false;
+            if(y == -1) {
+                return false;
+            }
             y = drawWrappedTextAt(H_PADDING, y, getSkillsColWidth() - 2*H_PADDING,
                     skill.getName(), false);
-            if(y == -1) return false;
+            if(y == -1) {
+                return false;
+            }
             
             y += V_PADDING;
             drawHLine(y - 1); // -1 because the border is on the top cell, and we pass the TOP y.
     
-            if(notation == null) continue;
+            if(notation == null) {
+                continue;
+            }
             float size = 20*1.3f;
             Image graph = new NotationGraph(dpiManager.getPixelsLength(1.3 * getScale()), assessment.getNotationType(), notation, true).isolatedSnapshot();
             
@@ -142,9 +156,12 @@ public class SkillTableElementRenderer{
         float ly = y + V_PADDING;
         for(Notation notation : notations){
             float result = addLegend(lx, ly, notation);
-            if(result == Float.MIN_VALUE) return false;
-            if(result >= 0) lx = result;
-            else{ lx = -result; ly += TEXT_HEIGHT; }
+            if(result == Float.MIN_VALUE) {
+                return false;
+            }
+            if(result >= 0) {
+                lx = result;
+            } else{ lx = -result; ly += TEXT_HEIGHT; }
         }
         
         return true;
@@ -160,14 +177,18 @@ public class SkillTableElementRenderer{
         
         if(newX + H_PADDING > getLayoutWidth()){ // WRAP
             newX = drawTextAt(H_PADDING + graphSize + gTSpacing, y+TEXT_HEIGHT+2, notation.getName());
-            if(newX == -1) return Float.MIN_VALUE;
+            if(newX == -1) {
+                return Float.MIN_VALUE;
+            }
             drawImage(graph, H_PADDING, y+TEXT_HEIGHT+1, graphSize, graphSize);
             
             return -newX - NotationLegend.BLOCK_SPACING; // New row => negative new x
             
         }else{
             newX = drawTextAt(x+graphSize+gTSpacing, y+2, notation.getName());
-            if(newX == -1) return Float.MIN_VALUE;
+            if(newX == -1) {
+                return Float.MIN_VALUE;
+            }
             drawImage(graph, x, y+1, graphSize, graphSize);
             
             return newX + NotationLegend.BLOCK_SPACING;
@@ -200,7 +221,9 @@ public class SkillTableElementRenderer{
         
         Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, bold, 11 * getScale()), ps.realWidth());
         
-        if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) return -1;
+        if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) {
+            return -1;
+        }
         return (float) (y + textText.getLayoutBounds().getHeight());
     }
     
@@ -217,7 +240,9 @@ public class SkillTableElementRenderer{
         
         Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, false, 9 * getScale()), ps.realWidth());
         
-        if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) return -1;
+        if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) {
+            return -1;
+        }
         return (float) (x + textText.getLayoutBounds().getWidth());
     }
     private Text getText(String text, boolean bold, float fontSize){

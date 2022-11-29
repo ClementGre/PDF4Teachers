@@ -101,7 +101,9 @@ public class GalleryWindow extends Stage {
         filter.getSelectionModel().select(0);
         
         filter.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == null) return;
+            if(newValue == null) {
+                return;
+            }
             if(newValue.equals(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton")) && !newValue.equals(oldValue)){
                 filter.getSelectionModel().select(oldValue);
                 return;
@@ -179,8 +181,11 @@ public class GalleryWindow extends Stage {
         items.add(0, TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
         items.add(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
         filter.getItems().setAll(items);
-        if(filter.getItems().contains(selected)) filter.getSelectionModel().select(selected);
-        else filter.getSelectionModel().select(TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
+        if(filter.getItems().contains(selected)) {
+            filter.getSelectionModel().select(selected);
+        } else {
+            filter.getSelectionModel().select(TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
+        }
     }
     public void reloadImageList(){
         list.editImages(getImages(list));

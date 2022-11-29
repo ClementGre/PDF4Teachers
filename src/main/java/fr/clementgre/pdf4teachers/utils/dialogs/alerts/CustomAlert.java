@@ -33,14 +33,20 @@ public class CustomAlert extends Alert {
         super(type);
         setTitle(title);
         setHeaderText(header);
-        if(details != null) setContentText(details);
+        if(details != null) {
+            setContentText(details);
+        }
         getButtonTypes().clear();
         
         // OWNER
         if(Main.window != null){
-            if(Main.window.getScene() != null) initOwner(Main.window);
+            if(Main.window.getScene() != null) {
+                initOwner(Main.window);
+            }
             if(MainWindow.paintTab.galleryWindow != null){
-                if(MainWindow.paintTab.galleryWindow.isFocused()) initOwner(MainWindow.paintTab.galleryWindow);
+                if(MainWindow.paintTab.galleryWindow.isFocused()) {
+                    initOwner(MainWindow.paintTab.galleryWindow);
+                }
             }
         }
         
@@ -56,7 +62,9 @@ public class CustomAlert extends Alert {
             // Alert is only scaled the first time it shows up
             final boolean[] alreadyShown = {false};
             setOnShown((e) -> {
-                if(alreadyShown[0]) return;
+                if(alreadyShown[0]) {
+                    return;
+                }
                 alreadyShown[0] = true;
                 StagesUtils.scaleAndCenterAlert(this, getDialogPane().getScene());
             });
@@ -75,55 +83,85 @@ public class CustomAlert extends Alert {
     
     public ButtonType getShowAndWait(){
         Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return null;
-        else return result.get();
+        if(result.isEmpty()) {
+            return null;
+        } else {
+            return result.get();
+        }
     }
     public ButtonPosition getShowAndWaitGetButtonPosition(ButtonPosition defaultPosition){
         Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return defaultPosition;
+        if(result.isEmpty()) {
+            return defaultPosition;
+        }
         ButtonPosition pos = buttonDataToPosition(result.get().getButtonData(), true);
-        if(pos == null) return defaultPosition;
-        else return pos;
+        if(pos == null) {
+            return defaultPosition;
+        } else {
+            return pos;
+        }
     }
     // LINUX: NO - YES - BACK
     // WINDOWS: BACK - YES - NO
     // OSX: NO - YES - APPLY
     public ButtonPosition buttonDataToPosition(ButtonBar.ButtonData data, boolean acceptNull){
-        if(data == ButtonBar.ButtonData.YES) return ButtonPosition.DEFAULT;
-        else if(data == ButtonBar.ButtonData.NO) return ButtonPosition.CLOSE;
-        else if(data == ButtonBar.ButtonData.LEFT) return ButtonPosition.OTHER_LEFT;
-        else{
-            if(!acceptNull) return ButtonPosition.OTHER_RIGHT;
-            else if(PlatformUtils.isMac() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
-            else if(data == ButtonData.BACK_PREVIOUS) return ButtonPosition.OTHER_RIGHT;
+        if(data == ButtonBar.ButtonData.YES) {
+            return ButtonPosition.DEFAULT;
+        } else if(data == ButtonBar.ButtonData.NO) {
+            return ButtonPosition.CLOSE;
+        } else if(data == ButtonBar.ButtonData.LEFT) {
+            return ButtonPosition.OTHER_LEFT;
+        } else{
+            if(!acceptNull) {
+                return ButtonPosition.OTHER_RIGHT;
+            } else if(PlatformUtils.isMac() && data == ButtonBar.ButtonData.APPLY) {
+                return ButtonPosition.OTHER_RIGHT;
+            } else if(data == ButtonData.BACK_PREVIOUS) {
+                return ButtonPosition.OTHER_RIGHT;
+            }
         }
         return null;
     }
     public ButtonData buttonPositionToData(ButtonPosition pos){
-        if(pos == ButtonPosition.DEFAULT) return ButtonBar.ButtonData.YES;
-        else if(pos == ButtonPosition.CLOSE) return ButtonBar.ButtonData.NO;
-        else if(pos == ButtonPosition.OTHER_LEFT) return ButtonBar.ButtonData.LEFT;
-        else{ // OTHER_RIGHT
-            if(PlatformUtils.isMac()) return ButtonBar.ButtonData.APPLY;
-            else return ButtonData.BACK_PREVIOUS;
+        if(pos == ButtonPosition.DEFAULT) {
+            return ButtonData.YES;
+        } else if(pos == ButtonPosition.CLOSE) {
+            return ButtonData.NO;
+        } else if(pos == ButtonPosition.OTHER_LEFT) {
+            return ButtonData.LEFT;
+        } else{ // OTHER_RIGHT
+            if(PlatformUtils.isMac()) {
+                return ButtonData.APPLY;
+            } else {
+                return ButtonData.BACK_PREVIOUS;
+            }
         }
     }
     
     public boolean getShowAndWaitIsDefaultButton(){
         Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return false;
-        else return result.get().getButtonData().isDefaultButton();
+        if(result.isEmpty()) {
+            return false;
+        } else {
+            return result.get().getButtonData().isDefaultButton();
+        }
     }
     public boolean getShowAndWaitIsCancelCloseButton(){
         Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return true;
-        else return result.get().getButtonData().isCancelButton();
+        if(result.isEmpty()) {
+            return true;
+        } else {
+            return result.get().getButtonData().isCancelButton();
+        }
     }
     public boolean getShowAndWaitIsCancelButton(){
         Optional<ButtonType> result = showAndWait();
         
-        if(result.isEmpty()) return false;
-        else return result.get().getButtonData().isCancelButton();
+        if(result.isEmpty()) {
+            return false;
+        } else {
+            return result.get().getButtonData().isCancelButton();
+        }
     }
     public void callBackShow(CallBackArg<ButtonType> callback){
         new Thread(() -> callback.call(getShowAndWait()), "CustomAlertThread").start();

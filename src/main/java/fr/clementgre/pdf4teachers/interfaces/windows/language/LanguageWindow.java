@@ -47,7 +47,9 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
         super(new ListView<>(), StageWidth.NORMAL, TR.tr("language.chooseLanguageWindow.title"), TR.tr("language.chooseLanguageWindow.title"));
         this.callBack = callBack;
         
-        if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
+        if(Main.settings.language.getValue().isEmpty()) {
+            Main.settings.language.setValue("en_us");
+        }
     }
     
     @Override
@@ -58,8 +60,9 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
         root.setPrefHeight(500);
         root.setBorder(null);
         
-        if(Main.settings.darkTheme.getValue())
+        if(Main.settings.darkTheme.getValue()) {
             root.setStyle("-fx-background-color: #262626;"); // Default background color defined in css
+        }
         
         // Force the root pane to fit all the height
         // (Therefore, there is no scroll with the Alternative Window scrollPane.)
@@ -100,8 +103,9 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
                         LanguagePane languagePane = new LanguagePane(file);
                         root.getItems().add(languagePane);
                         
-                        if(Main.settings.language.getValue().equals(languagePane.getShortName()))
+                        if(Main.settings.language.getValue().equals(languagePane.getShortName())) {
                             root.getSelectionModel().select(languagePane);
+                        }
                     }
                 }catch(Exception e){Log.eNotified(e);}
             }

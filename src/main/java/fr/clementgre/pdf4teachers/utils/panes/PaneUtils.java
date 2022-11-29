@@ -126,7 +126,9 @@ public class PaneUtils {
         setupScaling(pane, false, bind, false, true);
     }
     public static void setupScaling(Region pane, boolean listeners, boolean bind, boolean updatePadding, boolean paddingAround){
-        if(Main.settings.zoom.getValue() == 1 && !bind) return;
+        if(Main.settings.zoom.getValue() == 1 && !bind) {
+            return;
+        }
         double nonBindScaleValue = Main.settings.zoom.getValue();
         
         pane.setScaleX(Main.settings.zoom.getValue());

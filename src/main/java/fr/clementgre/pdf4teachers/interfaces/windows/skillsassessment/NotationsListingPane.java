@@ -213,11 +213,15 @@ public class NotationsListingPane extends Tab {
             keyboardChar.getStyleClass().add("noTextFieldClear");
             
             acronym.textProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue.length() > 2) newValue = newValue.substring(newValue.length() - 2);
+                if(newValue.length() > 2) {
+                    newValue = newValue.substring(newValue.length() - 2);
+                }
                 newValue = newValue.toUpperCase();
                 acronym.setText(newValue);
                 notation.setAcronym(newValue);
-                if(assessment.getNotationType() == Notation.NotationType.CHAR) graph.updateGraph(assessment.getNotationType(), notation, false);
+                if(assessment.getNotationType() == Notation.NotationType.CHAR) {
+                    graph.updateGraph(assessment.getNotationType(), notation, false);
+                }
                 
             });
             name.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -228,7 +232,9 @@ public class NotationsListingPane extends Tab {
                 notation.setName(newValue);
             });
             keyboardChar.textProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue.length() > 1) newValue = newValue.substring(newValue.length() - 1);
+                if(newValue.length() > 1) {
+                    newValue = newValue.substring(newValue.length() - 1);
+                }
                 newValue = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(newValue).toUpperCase();
                 keyboardChar.setText(newValue);
                 notation.setKeyboardChar(newValue);
@@ -237,21 +243,29 @@ public class NotationsListingPane extends Tab {
             // Enter and tab support to move to next field
             focusNextField(acronym, () -> {
                 NotationRow nextRow = getNextRow.call();
-                if(nextRow != null) return nextRow.acronym;
+                if(nextRow != null) {
+                    return nextRow.acronym;
+                }
                 return null;
             }, () -> name);
             focusNextField(name, () -> {
                 NotationRow nextRow = getNextRow.call();
-                if(nextRow != null) return nextRow.name;
+                if(nextRow != null) {
+                    return nextRow.name;
+                }
                 return null;
             }, () -> keyboardChar);
             focusNextField(keyboardChar, () -> {
                 NotationRow nextRow = getNextRow.call();
-                if(nextRow != null) return nextRow.keyboardChar;
+                if(nextRow != null) {
+                    return nextRow.keyboardChar;
+                }
                 return null;
             },  () -> {
                 NotationRow nextRow = getNextRow.call();
-                if(nextRow != null) return nextRow.acronym;
+                if(nextRow != null) {
+                    return nextRow.acronym;
+                }
                 return null;
             });
     
@@ -281,7 +295,9 @@ public class NotationsListingPane extends Tab {
     
                     File file = FilesChooserManager.showFileDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR, TR.tr("dialog.file.extensionType.image"),
                             ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
-                    if(file == null || !file.exists()) return;
+                    if(file == null || !file.exists()) {
+                        return;
+                    }
                     
                     try{
                         notation.setData(ImageUtils.imageToBase64(ImageUtils.resizeImageToSquare(ImageIO.read(file), 50)));
@@ -307,11 +323,15 @@ public class NotationsListingPane extends Tab {
             field.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
                 if(e.getCode() == KeyCode.ENTER){
                     TextField nextRow = getNextRowField.call();
-                    if(nextRow != null) nextRow.requestFocus();
+                    if(nextRow != null) {
+                        nextRow.requestFocus();
+                    }
                     e.consume();
                 }else if(e.getCode() == KeyCode.TAB){
                     TextField nextCol = getNextColumnField.call();
-                    if(nextCol != null) nextCol.requestFocus();
+                    if(nextCol != null) {
+                        nextCol.requestFocus();
+                    }
                     e.consume();
                 }
             });

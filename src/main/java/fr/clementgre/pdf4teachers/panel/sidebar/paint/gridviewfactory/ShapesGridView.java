@@ -61,7 +61,9 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         this.zoomSlider = zoomSlider;
         sortManager = new SortManager(this::sort, null);
         
-        if(hideScrollBarSpace) scrollBarWidth = 14;
+        if(hideScrollBarSpace) {
+            scrollBarWidth = 14;
+        }
         
         setCellSize(getZoomSliderValue());
         zoomSlider.valueProperty().bindBidirectional(cellSizeProperty());
@@ -96,8 +98,11 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     protected abstract void sort(String sortType, boolean order);
     protected abstract List<T> filter(List<T> items);
     public void updateItemsFiltered(){
-        if(filterType == null || filterType.isEmpty()) getItems().setAll(nonFilteredItems);
-        else getItems().setAll(filter(nonFilteredItems));
+        if(filterType == null || filterType.isEmpty()) {
+            getItems().setAll(nonFilteredItems);
+        } else {
+            getItems().setAll(filter(nonFilteredItems));
+        }
         sort();
     }
     
@@ -129,7 +134,9 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     public void setItems(List<T> items, boolean updateVisual){
         nonFilteredItems.clear();
         nonFilteredItems.addAll(items);
-        if(updateVisual) updateItemsFiltered();
+        if(updateVisual) {
+            updateItemsFiltered();
+        }
     }
     public void addItems(List<T> items){
         nonFilteredItems.addAll(items);
@@ -150,8 +157,11 @@ public abstract class ShapesGridView<T> extends GridView<T>{
     
     private void updateCellSize(){
         int columns;
-        if(defineCellSizeAsRowNumber) columns = getCellSize();
-        else columns = Math.max(1, ((int) getWidth() - getScrollBarWidth() - 6) / cellSize.get());
+        if(defineCellSizeAsRowNumber) {
+            columns = getCellSize();
+        } else {
+            columns = Math.max(1, ((int) getWidth() - getScrollBarWidth() - 6) / cellSize.get());
+        }
     
         double newCellSize = (getWidth() - getScrollBarWidth() - 6) / columns;
         setCellWidth(newCellSize);

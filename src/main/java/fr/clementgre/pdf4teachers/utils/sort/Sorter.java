@@ -21,7 +21,9 @@ public class Sorter {
         files.sort((file1, file2) -> {
             int result = file1.getName().compareToIgnoreCase(file2.getName());
             
-            if(order) return result;
+            if(order) {
+                return result;
+            }
             return result * -1;
         });
         return files;
@@ -31,9 +33,13 @@ public class Sorter {
         
         files.sort((file1, file2) -> {
             int result = file1.getParent().compareToIgnoreCase(file2.getParent());
-            if(result == 0) result = file1.getName().compareToIgnoreCase(file2.getName());
+            if(result == 0) {
+                result = file1.getName().compareToIgnoreCase(file2.getName());
+            }
             
-            if(order) return result;
+            if(order) {
+                return result;
+            }
             return result * -1;
         });
         return files;
@@ -61,7 +67,9 @@ public class Sorter {
             }
     
             int result = ((file1Elements - 9999) + file1.getName() + file1.getParentFile().getAbsolutePath()).compareToIgnoreCase((file2Elements - 9999) + file2.getName() + file2.getParentFile().getAbsolutePath());
-            if(order) return result;
+            if(order) {
+                return result;
+            }
             return result * -1;
         });
         return files;
@@ -72,8 +80,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByDate(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order)
+            if(!order) {
                 return ((element1.getCreationDate() - 999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate() - 999999999999L) + element2.getText()) * -1;
+            }
             return ((element1.getCreationDate() - 999999999999L) + element1.getText()).compareToIgnoreCase((element2.getCreationDate() - 999999999999L) + element2.getText());
         });
         return elements;
@@ -82,7 +91,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByName(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order) return element1.getText().compareToIgnoreCase(element2.getText()) * -1;
+            if(!order) {
+                return element1.getText().compareToIgnoreCase(element2.getText()) * -1;
+            }
             return element1.getText().compareToIgnoreCase(element2.getText());
         });
         return elements;
@@ -91,8 +102,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByUtils(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order)
+            if(!order) {
                 return ((element1.getUses() - 99999) + element1.getText()).compareToIgnoreCase((element2.getUses() - 99999) + element2.getText()) * -1;
+            }
             return ((element1.getUses() - 99999) + element1.getText()).compareToIgnoreCase((element2.getUses() - 99999) + element2.getText());
         });
         return elements;
@@ -101,8 +113,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByPolice(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order)
+            if(!order) {
                 return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText())) * -1;
+            }
             return ((element1.getFont().getFamily() + element1.getFont().getStyle() + element1.getText()).compareToIgnoreCase(element2.getFont().getFamily() + element2.getFont().getStyle() + element2.getText()));
         });
         return elements;
@@ -111,8 +124,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsBySize(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order)
+            if(!order) {
                 return ((element1.getFont().getSize() - 999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize() - 999.0) + element2.getText()) * -1;
+            }
             return ((element1.getFont().getSize() - 999.0) + element1.getText()).compareToIgnoreCase((element2.getFont().getSize() - 999.0) + element2.getText());
         });
         return elements;
@@ -120,8 +134,9 @@ public class Sorter {
     
     public static List<TextTreeItem> sortElementsByColor(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
-            if(!order)
+            if(!order) {
                 return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText())) * -1;
+            }
             return ((element1.getColor() + element1.getText()).compareToIgnoreCase(element2.getColor() + element2.getText()));
         });
         return elements;
@@ -130,8 +145,9 @@ public class Sorter {
     public static List<TextTreeItem> sortElementsByCorePosition(List<TextTreeItem> elements, boolean order){
         elements.sort((element1, element2) -> {
             
-            if(!order)
+            if(!order) {
                 return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 233900)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 233900));
+            }
             return (element1.getCore().getPageNumber() - 999 + "" + (element1.getCore().getRealY() - 233900)).compareToIgnoreCase(element2.getCore().getPageNumber() - 999 + "" + (element2.getCore().getRealY() - 233900)) * -1;
             
         });

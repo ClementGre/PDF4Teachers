@@ -142,7 +142,9 @@ public class AutoTipsManager {
     public static void load(){
         uiTips.clear();
         
-        if(!Main.settings.allowAutoTips.getValue()) return;
+        if(!Main.settings.allowAutoTips.getValue()) {
+            return;
+        }
         
         boolean stillHasAuto = false;
         
@@ -156,7 +158,9 @@ public class AutoTipsManager {
                         ToolTipVar data = field.getAnnotation(ToolTipVar.class);
                         uiTips.put(name, new AutoTipTooltip(name, data.actionKey(), data.prerequisiteKey(), data.objectWhereDisplay()));
                         
-                        if(data.actionKey().isEmpty()) stillHasAuto = true;
+                        if(data.actionKey().isEmpty()) {
+                            stillHasAuto = true;
+                        }
                         
                     }
                     
@@ -166,8 +170,12 @@ public class AutoTipsManager {
             }
         }
         
-        if(!stillHasAuto) return;
-        if(!autoTipsThread.isAlive()) autoTipsThread.start();
+        if(!stillHasAuto) {
+            return;
+        }
+        if(!autoTipsThread.isAlive()) {
+            autoTipsThread.start();
+        }
         
     }
     
@@ -204,7 +212,9 @@ public class AutoTipsManager {
     public static boolean showRandom(Stage stage){
         for(AutoTipTooltip uiTip : uiTips.values()){
             if(uiTip.getActionKey().isEmpty()){
-                if(showByObject(uiTip, stage)) return true;
+                if(showByObject(uiTip, stage)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -216,7 +226,9 @@ public class AutoTipsManager {
     public static boolean showByAction(String actionKey, Stage stage){
         for(AutoTipTooltip uiTip : uiTips.values()){
             if(uiTip.getActionKey().equalsIgnoreCase(actionKey)){
-                if(showByObject(uiTip, stage)) return true;
+                if(showByObject(uiTip, stage)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -254,7 +266,9 @@ public class AutoTipsManager {
     }
     
     private static boolean isPrerequisiteValid(String prerequisiteKey){
-        if(prerequisiteKey.isEmpty()) return true;
+        if(prerequisiteKey.isEmpty()) {
+            return true;
+        }
         switch(prerequisiteKey){
             case "document" -> {
                 return MainWindow.mainScreen.hasDocument(false);

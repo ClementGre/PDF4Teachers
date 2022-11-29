@@ -23,17 +23,27 @@ public class CopyPasteManager {
     public enum CopyPasteType {CUT, COPY, PASTE}
     
     public static CopyPasteType getCopyPasteTypeByKeyEvent(KeyEvent e){
-        if(KEY_COMB_CUT.match(e)) return CopyPasteType.CUT;
-        if(KEY_COMB_COPY.match(e)) return CopyPasteType.COPY;
-        if(KEY_COMB_PASTE.match(e)) return CopyPasteType.PASTE;
+        if(KEY_COMB_CUT.match(e)) {
+            return CopyPasteType.CUT;
+        }
+        if(KEY_COMB_COPY.match(e)) {
+            return CopyPasteType.COPY;
+        }
+        if(KEY_COMB_PASTE.match(e)) {
+            return CopyPasteType.PASTE;
+        }
         return null;
     }
     
     public static void execute(CopyPasteType type){
-        if(!Main.window.isFocused()) return;
+        if(!Main.window.isFocused()) {
+            return;
+        }
         // Field Action
         if(doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), type)){
-            if(executeOnNode(Main.window.getScene().getFocusOwner(), type)) return;
+            if(executeOnNode(Main.window.getScene().getFocusOwner(), type)) {
+                return;
+            }
         }
         // App Feature Action
         executeOnAppFeatures(type);
@@ -44,21 +54,31 @@ public class CopyPasteManager {
             case CUT, COPY -> {
                 if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
                     Element.copy(MainWindow.mainScreen.getSelected());
-                    if(type == CopyPasteType.CUT) MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
+                    if(type == CopyPasteType.CUT) {
+                        MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
+                    }
                 }
             }
             case PASTE -> {
                 // Element paste
                 final Clipboard clipboard = Clipboard.getSystemClipboard();
                 if(Element.ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
-                    if(Element.paste()) return;
+                    if(Element.paste()) {
+                        return;
+                    }
                 }
                 
                 // New TextElement paste
                 String string = clipboard.getString();
-                if(string == null) string = clipboard.getRtf();
-                if(string == null) string = clipboard.getUrl();
-                if(string == null) string = clipboard.getHtml();
+                if(string == null) {
+                    string = clipboard.getRtf();
+                }
+                if(string == null) {
+                    string = clipboard.getUrl();
+                }
+                if(string == null) {
+                    string = clipboard.getHtml();
+                }
                 if(string != null){
                     MainWindow.mainScreen.pasteText(string);
                 }
@@ -71,7 +91,9 @@ public class CopyPasteManager {
         if(node instanceof TextInputControl textInputControl){
             field = textInputControl;
         }else if(node instanceof Spinner<?> spinner){
-            if(spinner.isEditable()) field = spinner.getEditor();
+            if(spinner.isEditable()) {
+                field = spinner.getEditor();
+            }
         }
         
         if(field != null){
@@ -95,7 +117,9 @@ public class CopyPasteManager {
             return field.getSelection().getLength() != 0;
             
         }else if(node instanceof Spinner<?> spinner){
-            if(!spinner.isEditable()) return true;
+            if(!spinner.isEditable()) {
+                return true;
+            }
             return spinner.getEditor().getSelection().getLength() != 0;
         }
         

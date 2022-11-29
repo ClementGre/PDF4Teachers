@@ -11,7 +11,9 @@ public class ConfirmAlert extends CustomAlert{
     
     public ConfirmAlert(boolean irreversible, String header){
         super(AlertType.CONFIRMATION, TR.tr("dialog.confirmation.title"), header);
-        if(irreversible) setContentText(TR.tr("dialog.confirmation.irreversible"));
+        if(irreversible) {
+            setContentText(TR.tr("dialog.confirmation.irreversible"));
+        }
         
         addConfirmButton(ButtonPosition.DEFAULT);
         addCancelButton(ButtonPosition.CLOSE);

@@ -58,7 +58,9 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
             }else if(element.get() instanceof VectorElement element && observable.get() == element.pathProperty()){ // VectorElement path
                 // Dimensions must not be corrected if element is in edit mode
                 // When element scale to page is performed, UndoType is UType.NO_COUNT. And in this case, dimensions must not be corrected.
-                if(vectorElementBeforeBounds != null && !element.isEditMode() && getUndoType() == UType.UNDO) element.correctDimensions(vectorElementBeforeBounds);
+                if(vectorElementBeforeBounds != null && !element.isEditMode() && getUndoType() == UType.UNDO) {
+                    element.correctDimensions(vectorElementBeforeBounds);
+                }
             }
     
             Edition.setUnsave("ObservableChangedUndoAction");
@@ -69,7 +71,9 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
     
     @Override
     public String toString(){
-        if(element.get() == null) return TR.tr("actions.edit") + " " + getElementName().toLowerCase();
+        if(element.get() == null) {
+            return TR.tr("actions.edit") + " " + getElementName().toLowerCase();
+        }
         
         if(value instanceof String && element.get() instanceof GraphicElement){
             return TR.tr("actions.edit") + " " + getElementName().toLowerCase();

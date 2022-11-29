@@ -80,7 +80,9 @@ public class SkillListCell extends ListCell<Skill> {
         root.setPadding(new Insets(-5));
         
         selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) requestFocus();
+            if(newValue) {
+                requestFocus();
+            }
         });
         
         // LISTENERS
@@ -89,18 +91,24 @@ public class SkillListCell extends ListCell<Skill> {
                 int selected = getListView().getSelectionModel().getSelectedIndex(); // Index of this cell
                 if(getListView().getItems().size() > selected+1){
                     getListView().getSelectionModel().select(selected+1);
-                }else getListView().getSelectionModel().select(0);
+                }else {
+                    getListView().getSelectionModel().select(0);
+                }
                 
                 e.consume();
                 
             }else if(e.getCode() == KeyCode.DELETE || e.getCode() == KeyCode.BACK_SPACE){
-                if(getSkillAssessment() == null || editionSkill == null) return;
+                if(getSkillAssessment() == null || editionSkill == null) {
+                    return;
+                }
                 comboBox.setValue(null); // editionSkill notationId will be updated in the ComboBox listener
                 e.consume();
             }
         });
         setOnKeyTyped(e -> {
-            if(getSkillAssessment() == null || editionSkill == null) return;
+            if(getSkillAssessment() == null || editionSkill == null) {
+                return;
+            }
             
             String text = StringUtils.replaceSymbolsToDigitsIfFrenchLayout(e.getCharacter());
             for(Notation notation : getSkillAssessment().getNotationsWithDefaults()){
@@ -134,7 +142,9 @@ public class SkillListCell extends ListCell<Skill> {
                 getSkillAssessment().getSkills().forEach(skill -> {
                     EditionSkill editionSkill = getSkillTableElement().getEditionSkills().stream().filter(es -> es.getSkillId() == skill.getId()).findFirst().orElse(null);
                     // null, this one, or already the same notation
-                    if(editionSkill == null || editionSkill == this.editionSkill || editionSkill.getNotationId() == this.editionSkill.getNotationId()) return;
+                    if(editionSkill == null || editionSkill == this.editionSkill || editionSkill.getNotationId() == this.editionSkill.getNotationId()) {
+                        return;
+                    }
                     
                     MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(i.getAndIncrement() == 0 ? UType.UNDO : UType.NO_COUNT, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
                     editionSkill.setNotationId(this.editionSkill.getNotationId());
@@ -181,8 +191,11 @@ public class SkillListCell extends ListCell<Skill> {
                 // Negative ids are reserved for default not editable notations. => Italic
                 graph.updateGraph(getNotationType(notation), notation, false);
                 if(!popup && getNotationType(notation) == Notation.NotationType.ICON){ // Force the background to cover the combo arrow
-                    if(Main.settings.darkTheme.getValue()) graph.setStyle(graph.getStyle() + " -fx-background-color: #111111;");
-                    else graph.setStyle(graph.getStyle() + " -fx-background-color: white;");
+                    if(Main.settings.darkTheme.getValue()) {
+                        graph.setStyle(graph.getStyle() + " -fx-background-color: #111111;");
+                    } else {
+                        graph.setStyle(graph.getStyle() + " -fx-background-color: white;");
+                    }
                 }
                 
                 setGraphic(root);
@@ -190,8 +203,11 @@ public class SkillListCell extends ListCell<Skill> {
             }
         }
         private Notation.NotationType getNotationType(Notation notation){
-            if(notation.isDefaultNotation()) return Notation.NotationType.CHAR; // Negative ids are reserved for default not editable notations.
-            else return skillAssessment.get().getNotationType();
+            if(notation.isDefaultNotation()) {
+                return Notation.NotationType.CHAR; // Negative ids are reserved for default not editable notations.
+            } else {
+                return skillAssessment.get().getNotationType();
+            }
         }
     }
     

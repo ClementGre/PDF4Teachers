@@ -27,7 +27,9 @@ public class FilesUtils {
         // DIR
 
         File[] files = f.listFiles();
-        if (files == null) return 0;
+        if (files == null) {
+            return 0;
+        }
 
         return Arrays.stream(files)
                 .mapToLong(FilesUtils::getSize)
@@ -51,7 +53,9 @@ public class FilesUtils {
     // Always return lower case extension without the dot.
     public static String getExtension(String fileName) {
         String[] splitted = fileName.split(Pattern.quote("."));
-        if(splitted.length == 0 || splitted.length == 1) return "";
+        if(splitted.length == 0 || splitted.length == 1) {
+            return "";
+        }
         return splitted[splitted.length - 1].toLowerCase();
     }
 
@@ -66,12 +70,16 @@ public class FilesUtils {
     public static String getPathReplacingUserHome(String path) {
         if (path.startsWith(System.getProperty("user.home"))) {
             return path.replaceFirst(Pattern.quote(System.getProperty("user.home")), "~");
-        } else return path;
+        } else {
+            return path;
+        }
     }
 
     public static List<File> listFiles(File dir, String[] extensions, boolean recursive) {
         File[] allFiles = dir.listFiles();
-        if (allFiles == null) return Collections.emptyList();
+        if (allFiles == null) {
+            return Collections.emptyList();
+        }
 
         ArrayList<File> files = new ArrayList<>();
         for (File file : allFiles) {
@@ -101,7 +109,9 @@ public class FilesUtils {
     }
     
     public static void moveDir(File source, File output){
-        if(!output.mkdirs()) throw new RuntimeException("Unable to create dir " + output.getAbsolutePath());
+        if(!output.mkdirs()) {
+            throw new RuntimeException("Unable to create dir " + output.getAbsolutePath());
+        }
         
         for(File file : Objects.requireNonNull(source.listFiles())){
             File destFile = new File(output.getAbsolutePath() + "/" + file.getName());
@@ -124,7 +134,9 @@ public class FilesUtils {
         File oldDataFolder = new File(System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator);
         Log.t(oldDataFolder.getAbsolutePath() + "  --- " + Main.dataFolder);
         
-        if(oldDataFolder.getAbsolutePath().equals(Main.dataFolder)) return;
+        if(oldDataFolder.getAbsolutePath().equals(Main.dataFolder)) {
+            return;
+        }
         
         FilesUtils.moveDir(oldDataFolder, new File(Main.dataFolder));
         

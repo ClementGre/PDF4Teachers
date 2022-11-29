@@ -72,9 +72,11 @@ public class GradeElement extends Element {
         
         if(hasPage){
             if(getPage() == null){
-                if(MainWindow.mainScreen.hasDocument(false))
+                if(MainWindow.mainScreen.hasDocument(false)) {
                     this.pageNumber = MainWindow.mainScreen.document.getPagesNumber() - 1;
-                else return;
+                } else {
+                    return;
+                }
             }
             setupGeneral(true, this.text);
         }
@@ -94,7 +96,9 @@ public class GradeElement extends Element {
         
         // Forse to be hide when value == -1
         visibleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && !isShouldVisible()) setVisible(false);
+            if(newValue && !isShouldVisible()) {
+                setVisible(false);
+            }
         });
         
         text.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -117,12 +121,17 @@ public class GradeElement extends Element {
             }
             
             // Redefine children parentPath
-            if(treeItemElement.hasSubGrade()) treeItemElement.resetParentPathChildren();
+            if(treeItemElement.hasSubGrade()) {
+                treeItemElement.resetParentPathChildren();
+            }
             
             // Update total if switch/unSwitch to Bonus
             if(GradeElement.isBonus(oldValue) != GradeElement.isBonus(newValue)){
-                if(treeItemElement.hasSubGrade() && getValue() == -1) treeItemElement.resetChildrenValues();
-                else if(!treeItemElement.isRoot()) ((GradeTreeItem) treeItemElement.getParent()).makeSum(false);
+                if(treeItemElement.hasSubGrade() && getValue() == -1) {
+                    treeItemElement.resetChildrenValues();
+                } else if(!treeItemElement.isRoot()) {
+                    ((GradeTreeItem) treeItemElement.getParent()).makeSum(false);
+                }
             }
             
             // When this is called due to a undo action, need to update GradeTreeItem
@@ -168,9 +177,11 @@ public class GradeElement extends Element {
             }
             
             GradeTreeItem treeItem = getGradeTreeItem();
-            if(treeItem.hasSubGrade() && newValue.intValue() == -1) treeItem.resetChildrenValues();
-            else if(!treeItem.isRoot())
+            if(treeItem.hasSubGrade() && newValue.intValue() == -1) {
+                treeItem.resetChildrenValues();
+            } else if(!treeItem.isRoot()) {
                 ((GradeTreeItem) treeItem.getParent()).makeSum(getPageNumber(), getRealY());
+            }
             
             // When this is called due to a undo action, need to update GradeTreeItem
             if(UndoEngine.isUndoingThings){
@@ -186,15 +197,18 @@ public class GradeElement extends Element {
             Edition.setUnsave("GradeTotalChanged");
             updateText();
             
-            if((GradeTreeView.getTotal()).getCore().equals(this)) return; // This is Root
+            if((GradeTreeView.getTotal()).getCore().equals(this)) {
+                return; // This is Root
+            }
             ((GradeTreeItem) MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this).getParent()).makeSum(false);
             
             
             // When this is called due to an undo action, need to update GradeTreeItem
             if(UndoEngine.isUndoingThings){
                 GradeTreeItem treeItem = getGradeTreeItem();
-                if(treeItem != null)
+                if(treeItem != null) {
                     treeItem.getPanel().totalField.setText(MainWindow.gradesDigFormat.format(newValue));
+                }
                 
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined total so otherwise, this is useless
                 // This is the first registration of this action/property.
@@ -211,8 +225,9 @@ public class GradeElement extends Element {
             // When this is called due to an undo action, need to update GradeTreeItem
             if(UndoEngine.isUndoingThings){
                 GradeTreeItem treeItem = getGradeTreeItem();
-                if(treeItem != null && treeItem.hasOutOfPanel())
+                if(treeItem != null && treeItem.hasOutOfPanel()) {
                     treeItem.getOutOfPanel().totalField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
+                }
                 
             }else{
                 // This is the first registration of this action/property.
@@ -252,15 +267,20 @@ public class GradeElement extends Element {
             Platform.runLater(() -> {
                 MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
                 
-                if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
-                else menu.getItems().set(0, menuItem);
+                if(menu.getItems().size() == 4) {
+                    menu.getItems().add(0, menuItem);
+                } else {
+                    menu.getItems().set(0, menuItem);
+                }
                 NodeMenuItem.setupMenuNow(menu);
             });
             
         });
         
         menu.getItems().addAll(item1, item4, item2, item3);
-        if(isAlwaysVisible() && getValue() == -1) menu.getItems().add(item5);
+        if(isAlwaysVisible() && getValue() == -1) {
+            menu.getItems().add(item5);
+        }
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -276,7 +296,9 @@ public class GradeElement extends Element {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 MainWindow.gradeTab.treeView.clearElements(true, true);
-            }else delete(true, UType.UNDO);
+            }else {
+                delete(true, UType.UNDO);
+            }
         });
         item4.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -364,15 +386,21 @@ public class GradeElement extends Element {
         double outOfTotal = Config.getDouble(data, "outOfTotal");
         if(outOfTotal > 0){
             if(total > 0){
-                if(value >= 0) value = value / total * outOfTotal;
-            }else value = 0;
+                if(value >= 0) {
+                    value = value / total * outOfTotal;
+                }
+            }else {
+                value = 0;
+            }
             
             total = outOfTotal;
         }
         
-        if(StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0)
+        if(StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0) {
             return new double[]{value, total};
-        else return new double[]{value};
+        } else {
+            return new double[]{value};
+        }
     }
     
     public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, boolean upscaleGrid){
@@ -399,8 +427,9 @@ public class GradeElement extends Element {
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, boolean upscaleGrid){
         GradeElement element = readYAMLDataAndGive(data, true, upscaleGrid);
         
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber()) {
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
+        }
     }
     
     
@@ -410,8 +439,11 @@ public class GradeElement extends Element {
         String outOfText = "";
         if(isRoot() && getOutOfTotal() > 0){
             outOfText = "\n=> ";
-            if(getTotal() <= 0) outOfText += "0/";
-            else outOfText += MainWindow.twoDigFormat.format(getValue() / getTotal() * getOutOfTotal()) + "/";
+            if(getTotal() <= 0) {
+                outOfText += "0/";
+            } else {
+                outOfText += MainWindow.twoDigFormat.format(getValue() / getTotal() * getOutOfTotal()) + "/";
+            }
             outOfText += MainWindow.twoDigFormat.format(getOutOfTotal());
         }
         
@@ -444,8 +476,11 @@ public class GradeElement extends Element {
     
     public GradeTreeItem getGradeTreeItem(){
         GradeTreeItem treeItemElement;
-        if(isRoot()) treeItemElement = GradeTreeView.getTotal();
-        else treeItemElement = MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+        if(isRoot()) {
+            treeItemElement = GradeTreeView.getTotal();
+        } else {
+            treeItemElement = MainWindow.gradeTab.treeView.getGradeTreeItem(GradeTreeView.getTotal(), this);
+        }
         
         return treeItemElement;
     }
@@ -486,8 +521,11 @@ public class GradeElement extends Element {
         return getElementNameStatic(plural);
     }
     public static String getElementNameStatic(boolean plural){
-        if(plural) return TR.tr("elements.name.grades");
-        else return TR.tr("elements.name.grade");
+        if(plural) {
+            return TR.tr("elements.name.grades");
+        } else {
+            return TR.tr("elements.name.grade");
+        }
     }
     
     public String getName(){
@@ -573,8 +611,9 @@ public class GradeElement extends Element {
     }
     
     public void setAlwaysVisible(boolean alwaysVisible, boolean registerUndo){
-        if(registerUndo)
+        if(registerUndo) {
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.alwaysVisible, this.alwaysVisible.get(), UType.UNDO));
+        }
         this.alwaysVisible.set(alwaysVisible);
     }
     
@@ -689,13 +728,15 @@ public class GradeElement extends Element {
         while(!grade1Parent.getParentPath().equals(grade2Parent.getParentPath())){
             if(grade1Parent.getParentPathArray().length < grade2Parent.getParentPathArray().length){ // grade1Parent is at a higher level
                 for(GradeElement parent : grades){
-                    if((parent.getPath()).equals(grade2Parent.getParentPath()))
+                    if((parent.getPath()).equals(grade2Parent.getParentPath())) {
                         grade2Parent = parent; // get the parent of grade2Parent
+                    }
                 }
             }else{
                 for(GradeElement parent : grades){
-                    if((parent.getPath()).equals(grade1Parent.getParentPath()))
+                    if((parent.getPath()).equals(grade1Parent.getParentPath())) {
                         grade1Parent = parent; // get the parent of grade1Parent
+                    }
                 }
             }
         }

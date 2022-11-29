@@ -38,7 +38,9 @@ public class PageAddRemoveUndoAction extends UndoAction {
         this.deleted = deleted;
         this.originallyDeleted = deleted;
         
-        if(deleted && pageRenderer != null) loadElements(pageRenderer);
+        if(deleted && pageRenderer != null) {
+            loadElements(pageRenderer);
+        }
     }
     @Override
     public boolean undoAndInvert(){
@@ -71,11 +73,15 @@ public class PageAddRemoveUndoAction extends UndoAction {
             
             
             // GradeElements are not deleted, just reset
-            if(element instanceof GradeElement) return;
+            if(element instanceof GradeElement) {
+                return;
+            }
             
             // Move element if it has been moved on another page (e.g. SkillTableElement).
             if(element.getParent() != null){
-                if(!page.getElements().contains(element)) element.switchPage(pageIndex);
+                if(!page.getElements().contains(element)) {
+                    element.switchPage(pageIndex);
+                }
                 return;
             }
             
@@ -109,7 +115,9 @@ public class PageAddRemoveUndoAction extends UndoAction {
                 .filter((g) -> Objects.equals(g.total, gradeElement.getTotal())).findFirst();
     
         if(gradeRating.isPresent()){
-            if(!gradeTreeItem.hasSubGrade()) gradeElement.setValue(gradeRating.get().originalValue);
+            if(!gradeTreeItem.hasSubGrade()) {
+                gradeElement.setValue(gradeRating.get().originalValue);
+            }
             gradeElement.switchPage(gradeRating.get().page);
             gradeElement.setRealX(gradeRating.get().x);
             gradeElement.setRealY(gradeRating.get().y);

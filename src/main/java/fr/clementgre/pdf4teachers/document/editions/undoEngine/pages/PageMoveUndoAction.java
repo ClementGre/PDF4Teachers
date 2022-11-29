@@ -34,7 +34,9 @@ public class PageMoveUndoAction extends UndoAction {
             int oldIndex = index;
             index = page.getPage();
             
-            if(oldIndex == index) return false;
+            if(oldIndex == index) {
+                return false;
+            }
             
             MainWindow.mainScreen.document.pdfPagesRender.editor.movePageByIndex(page, MathUtils.clamp(oldIndex, 0, MainWindow.mainScreen.document.getPagesNumber()-1));
             return true;
@@ -44,7 +46,9 @@ public class PageMoveUndoAction extends UndoAction {
     
     @Override
     public String toString(){
-        if(page.get() == null) return null;
+        if(page.get() == null) {
+            return null;
+        }
         
         return TR.tr("actions.movePage", page.get().getPage()+1);
     }

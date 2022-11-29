@@ -26,7 +26,9 @@ public class DialogBuilder {
         alert.addOKButton(ButtonPosition.CLOSE);
         alert.addButton(TR.tr("dialog.file.openFolderButton"), ButtonPosition.DEFAULT);
         
-        if(alert.getShowAndWaitIsDefaultButton()) PlatformUtils.openFile(pathToBrowse);
+        if(alert.getShowAndWaitIsDefaultButton()) {
+            PlatformUtils.openFile(pathToBrowse);
+        }
     }
     
     public static void showAlertWithOpenDirOrFileButton(String title, String header, String details, String pathToDir, String pathToFile){
@@ -36,7 +38,10 @@ public class DialogBuilder {
         ButtonType openFileButton = alert.addButton(TR.tr("dialog.file.openFileButton"), ButtonPosition.OTHER_RIGHT);
     
         ButtonType buttonType = alert.getShowAndWait();
-        if(buttonType == openFolderButton) PlatformUtils.openFile(pathToDir);
-        else if(buttonType == openFileButton) PlatformUtils.openFile(pathToFile);
+        if(buttonType == openFolderButton) {
+            PlatformUtils.openFile(pathToDir);
+        } else if(buttonType == openFileButton) {
+            PlatformUtils.openFile(pathToFile);
+        }
     }
 }

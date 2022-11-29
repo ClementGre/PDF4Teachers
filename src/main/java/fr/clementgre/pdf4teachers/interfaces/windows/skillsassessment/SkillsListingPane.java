@@ -91,7 +91,9 @@ public class SkillsListingPane extends Tab {
             @Override public Skill fromString(String s){ return null; }
         });
         acronymAuto.setOnAutoCompleted(e -> {
-            if(nameField.getText().isBlank()) nameField.setText(e.getCompletion().getName());
+            if(nameField.getText().isBlank()) {
+                nameField.setText(e.getCompletion().getName());
+            }
         });
         // TODO : scale auto completion popup
     
@@ -105,7 +107,9 @@ public class SkillsListingPane extends Tab {
             @Override public Skill fromString(String s){ return null; }
         });
         nameAuto.setOnAutoCompleted(e -> {
-            if(acronymField.getText().isBlank()) acronymField.setText(e.getCompletion().getAcronym());
+            if(acronymField.getText().isBlank()) {
+                acronymField.setText(e.getCompletion().getAcronym());
+            }
         });
         acronymField.setPrefWidth(150);
         HBox.setHgrow(nameField, Priority.ALWAYS);
@@ -198,8 +202,11 @@ public class SkillsListingPane extends Tab {
                         Skill draggedSkill = tableView.getItems().remove(draggingIndex);
                         
                         int dropIndex;
-                        if(row.isEmpty()) dropIndex = tableView.getItems().size();
-                        else dropIndex = row.getIndex();
+                        if(row.isEmpty()) {
+                            dropIndex = tableView.getItems().size();
+                        } else {
+                            dropIndex = row.getIndex();
+                        }
                         
                         tableView.getItems().add(dropIndex, draggedSkill);
                         tableView.getSelectionModel().select(dropIndex);
@@ -217,8 +224,11 @@ public class SkillsListingPane extends Tab {
                         Skill draggedSkill = tableView.getItems().remove(draggingIndex);
     
                         int dropIndex;
-                        if(row.isEmpty()) dropIndex = tableView.getItems().size();
-                        else dropIndex = row.getIndex();
+                        if(row.isEmpty()) {
+                            dropIndex = tableView.getItems().size();
+                        } else {
+                            dropIndex = row.getIndex();
+                        }
     
                         tableView.getItems().add(dropIndex, draggedSkill);
                     }
@@ -240,7 +250,9 @@ public class SkillsListingPane extends Tab {
             row.setContextMenu(menu);
             
             row.setOnMouseClicked(e -> {
-                if(row.getItem() == null) return;
+                if(row.getItem() == null) {
+                    return;
+                }
                 acronymField.setText(row.getItem().getAcronym());
                 nameField.setText(row.getItem().getName());
             });

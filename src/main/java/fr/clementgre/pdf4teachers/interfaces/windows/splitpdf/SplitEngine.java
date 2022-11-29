@@ -52,7 +52,9 @@ public class SplitEngine {
                 ArrayList<ExportPart> exportParts = new ArrayList<>();
                 for(int i = 0; i < sectionsBounds.size(); i+=2){
                     String path = out.getAbsolutePath() + File.separator + splitWindow.getNames()[i/2];
-                    if(!path.toLowerCase().endsWith(".pdf")) path += ".pdf";
+                    if(!path.toLowerCase().endsWith(".pdf")) {
+                        path += ".pdf";
+                    }
                     
                     exportParts.add(new ExportPart(new File(path), sectionsBounds.get(i), sectionsBounds.get(i+1)));
                 }
@@ -64,12 +66,13 @@ public class SplitEngine {
                 
                 if(exportPart.output.exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(exportPart.output);
-                    if(result == AlreadyExistDialogManager.ResultType.SKIP)
+                    if(result == AlreadyExistDialogManager.ResultType.SKIP) {
                         return Map.entry(exportPart, TwoStepListAction.CODE_SKIP_2); // SKIP
-                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
+                    } else if(result == AlreadyExistDialogManager.ResultType.STOP) {
                         return Map.entry(exportPart, TwoStepListAction.CODE_STOP); // STOP
-                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                    } else if(result == AlreadyExistDialogManager.ResultType.RENAME) {
                         exportPart = new ExportPart(AlreadyExistDialogManager.rename(exportPart.output), exportPart.startIndex, exportPart.endIndex());
+                    }
                 }
             
                 return Map.entry(exportPart, TwoStepListAction.CODE_OK);
@@ -103,9 +106,13 @@ public class SplitEngine {
                 SideBar.selectTab(MainWindow.filesTab);
             
                 String header;
-                if(completedSize == 0) header = TR.tr("splitEngine.dialogs.completed.header.noDocument");
-                else if(completedSize == 1) header = TR.tr("splitEngine.dialogs.completed.header.oneDocument");
-                else header = TR.tr("splitEngine.dialogs.completed.header.multipleDocument", completedSize);
+                if(completedSize == 0) {
+                    header = TR.tr("splitEngine.dialogs.completed.header.noDocument");
+                } else if(completedSize == 1) {
+                    header = TR.tr("splitEngine.dialogs.completed.header.oneDocument");
+                } else {
+                    header = TR.tr("splitEngine.dialogs.completed.header.multipleDocument", completedSize);
+                }
             
                 String details;
                 String alreadyExistText = !excludedReasons.containsKey(TwoStepListAction.CODE_SKIP_2) ? "" : "\n(" + TR.tr("exportWindow.dialogs.completed.ignored.alreadyExisting", excludedReasons.get(2)) + ")";
@@ -166,8 +173,11 @@ public class SplitEngine {
             sectionsBounds.clear();
             List<Integer> selected = MainWindow.mainScreen.document.getSelectedPages().stream().sorted().toList();
     
-            if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(0);
-            else if(selected.get(0) != 0) sectionsBounds.add(0);
+            if(splitWindow.doKeepSelectedPages()) {
+                sectionsBounds.add(0);
+            } else if(selected.get(0) != 0) {
+                sectionsBounds.add(0);
+            }
     
             int lastSelected = -1;
             for(Integer page : selected){
@@ -177,7 +187,9 @@ public class SplitEngine {
                     sectionsBounds.add(page-1);
     
                     // Reopen a new section right after closing the last one (including the selected page in the next section).
-                    if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(page);
+                    if(splitWindow.doKeepSelectedPages()) {
+                        sectionsBounds.add(page);
+                    }
                 }
                 
                 // Next page not selected -> start of section
@@ -187,14 +199,18 @@ public class SplitEngine {
                 lastSelected = page;
             }
         }else{
-            if(colors.isEmpty()) return -1;
+            if(colors.isEmpty()) {
+                return -1;
+            }
     
             Color match = splitWindow.getColor();
             double sensibility = splitWindow.getSensibility();
             sectionsBounds.clear();
             MainWindow.mainScreen.document.clearSelectedPages();
     
-            if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(0);
+            if(splitWindow.doKeepSelectedPages()) {
+                sectionsBounds.add(0);
+            }
             int i = 0;
             boolean hasLastPageMatched = true;
             for(Color color : colors){
@@ -204,21 +220,29 @@ public class SplitEngine {
                     if(!hasLastPageMatched){
                         sectionsBounds.add(i-1); // End of section
                         // Reopen a new section right after closing the last one (including the selected page in the next section).
-                        if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(i);
+                        if(splitWindow.doKeepSelectedPages()) {
+                            sectionsBounds.add(i);
+                        }
                     }
                     hasLastPageMatched = true;
                     MainWindow.mainScreen.document.addSelectedPage(i);
                 }else{ // Not matched
-                    if(!splitWindow.doKeepSelectedPages() && hasLastPageMatched) sectionsBounds.add(i); // Start of section
+                    if(!splitWindow.doKeepSelectedPages() && hasLastPageMatched) {
+                        sectionsBounds.add(i); // Start of section
+                    }
                     hasLastPageMatched = false;
                 }
                 i++;
             }
         }
         // Close last section if necessary
-        if(sectionsBounds.size() % 2 != 0) sectionsBounds.add(lastPage);
+        if(sectionsBounds.size() % 2 != 0) {
+            sectionsBounds.add(lastPage);
+        }
         
-        if(sectionsBounds.isEmpty()) sectionsBounds = new ArrayList<>(Arrays.asList(0, colors.size()-1));
+        if(sectionsBounds.isEmpty()) {
+            sectionsBounds = new ArrayList<>(Arrays.asList(0, colors.size()-1));
+        }
         return sectionsBounds.size()/2;
     }
     

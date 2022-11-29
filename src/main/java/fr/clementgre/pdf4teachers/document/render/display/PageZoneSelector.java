@@ -92,8 +92,12 @@ public class PageZoneSelector extends Pane {
     
     private void updateSelectionPositionDimensions(MouseEvent e){
         
-        if(startX < 0) startX = 0;
-        if(startY < 0) startY = 0;
+        if(startX < 0) {
+            startX = 0;
+        }
+        if(startY < 0) {
+            startY = 0;
+        }
         
         double x = e.getX() > getWidth() + 1 ? getWidth() + 1 : (e.getX() < -1 ? -1 : e.getX());
         double y = e.getY() > getHeight() + 1 ? getHeight() + 1 : (e.getY() < -1 ? -1 : e.getY());

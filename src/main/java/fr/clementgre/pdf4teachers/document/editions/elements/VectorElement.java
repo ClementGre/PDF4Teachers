@@ -68,9 +68,13 @@ public class VectorElement extends GraphicElement{
         this.arrowLength.set(arrowLength);
         noScaledSvgPath.setContent(getPath());
     
-        if(linkedVectorData != null) setLinkedVectorData(linkedVectorData);
+        if(linkedVectorData != null) {
+            setLinkedVectorData(linkedVectorData);
+        }
         
-        if(hasPage && getPage() != null) setupPage(true);
+        if(hasPage && getPage() != null) {
+            setupPage(true);
+        }
     }
     
     private void setupPage(boolean checkSize){
@@ -111,7 +115,9 @@ public class VectorElement extends GraphicElement{
         super.setupBindings();
         
         path.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setPath(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setPath(newValue);
+            }
             noScaledSvgPath.setContent(getPath());
             svgPath.setContent(newValue);
             onSizeChanged();
@@ -126,26 +132,34 @@ public class VectorElement extends GraphicElement{
         });
         
         fill.addListener((observable, oldValue, newValue) ->{
-            if(linkedVectorData != null) linkedVectorData.setFill(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setFill(newValue);
+            }
             updateFill();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, fill, oldValue, UType.UNDO));
         });
         doFill.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setDoFill(newValue);
+            }
             updateFill();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, doFill, oldValue, UType.UNDO));
         });
         
         stroke.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setStroke(newValue);
+            }
             updateStroke();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, stroke, oldValue, UType.UNDO));
         });
         strokeWidth.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
+            if(linkedVectorData != null) {
+                linkedVectorData.setStrokeWidth(newValue.intValue());
+            }
             updateStroke();
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
@@ -153,40 +167,54 @@ public class VectorElement extends GraphicElement{
         });
     
         repeatModeProperty().addListener((o, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setRepeatMode(newValue);
+            }
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.UNDO));
         });
         resizeModeProperty().addListener((o, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setResizeMode(newValue);
+            }
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
         });
         
         invertXProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setInvertX(newValue);
+            }
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
         });
         invertYProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
+            if(linkedVectorData != null) {
+                linkedVectorData.setInvertY(newValue);
+            }
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
         });
         
         realWidthProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
+            if(linkedVectorData != null) {
+                linkedVectorData.setWidth(newValue.intValue());
+            }
             Edition.setUnsave("VectorElement changed");
         });
         realHeightProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
+            if(linkedVectorData != null) {
+                linkedVectorData.setHeight(newValue.intValue());
+            }
             Edition.setUnsave("VectorElement changed");
         });
         
         arrowLength.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
+            if(linkedVectorData != null) {
+                linkedVectorData.setArrowLength(newValue.intValue());
+            }
             onSizeChanged();
             Edition.setUnsave("VectorElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, arrowLength, oldValue, UType.UNDO));
@@ -229,7 +257,9 @@ public class VectorElement extends GraphicElement{
     }
     
     private void onSizeChanged(){
-        if(getWidth() == 0 && getHeight() == 0) return;
+        if(getWidth() == 0 && getHeight() == 0) {
+            return;
+        }
     
         double padding = getSVGPadding();
         svgPath.setLayoutX(padding);
@@ -398,8 +428,11 @@ public class VectorElement extends GraphicElement{
             drawer.quitEditMode();
             
             getPage().getVectorElementPageDrawer().quitEditMode();
-            if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
-            else requestFocus();
+            if(path.isEmpty().get()) {
+                delete(true, UType.NO_COUNT);
+            } else {
+                requestFocus();
+            }
             MainWindow.paintTab.vectorEditMode.setSelected(false);
         }
         
@@ -437,8 +470,9 @@ public class VectorElement extends GraphicElement{
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         VectorElement element = readYAMLDataAndGive(data, true, page);
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber()) {
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
+        }
     }
     
     public static VectorElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
@@ -493,8 +527,11 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }
-        if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
-        else requestFocus();
+        if(path.isEmpty().get()) {
+            delete(true, UType.NO_COUNT);
+        } else {
+            requestFocus();
+        }
     }
     public boolean isEditMode(){
         return getPage().isVectorEditMode() && getPage().getVectorElementPageDrawer().getVectorElement() == this;
@@ -572,7 +609,9 @@ public class VectorElement extends GraphicElement{
         
         // The dimensions are corrected only if the element is on the page coordinate context (aka come from the EditMode)
         // Math.round(a * 100.0) / 100.0; gets the rounded value at 3 digits.
-        if(Math.round(scaleRatioX * 1000.0) / 1000.0 != 1 || Math.round(scaleRatioY * 1000.0) / 1000.0 != 1) return;
+        if(Math.round(scaleRatioX * 1000.0) / 1000.0 != 1 || Math.round(scaleRatioY * 1000.0) / 1000.0 != 1) {
+            return;
+        }
     
         double xShift = afterBounds.getMinX() - beforeBounds.getMinX();
         double yShift = afterBounds.getMinY() - beforeBounds.getMinY();
@@ -632,8 +671,11 @@ public class VectorElement extends GraphicElement{
         return getElementNameStatic(plural);
     }
     public static String getElementNameStatic(boolean plural){
-        if(plural) return TR.tr("elements.name.vectors");
-        else return TR.tr("elements.name.vector");
+        if(plural) {
+            return TR.tr("elements.name.vectors");
+        } else {
+            return TR.tr("elements.name.vector");
+        }
     }
     
     public SVGPath getSvgPath(){

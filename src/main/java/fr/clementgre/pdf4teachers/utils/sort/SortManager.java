@@ -31,7 +31,9 @@ public class SortManager {
     private final SortEvent updateSort;
     
     public SortManager(SortEvent updateSort, String selectedColor){
-        if(selectedColor != null) this.selectedColor = selectedColor;
+        if(selectedColor != null) {
+            this.selectedColor = selectedColor;
+        }
         this.updateSort = updateSort;
     }
     
@@ -59,7 +61,9 @@ public class SortManager {
             if(selectedButtonName.equals(buttonName)){
                 selectedButton.set(button);
                 button.setStyle(BUTTON_STYLE + "; -fx-background-color: " + selectedColor + ";");
-            }else button.setStyle(BUTTON_STYLE + "; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            }else {
+                button.setStyle(BUTTON_STYLE + "; -fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            }
             
             // Image de l'ordre
             order.addListener(new ChangeListener<>() {
@@ -74,7 +78,9 @@ public class SortManager {
                 if(selectedButton.get() == button){
                     order.set(!order.get());
                     updateSort.call(button.getText(), order.get());
-                }else selectedButton.set(button);
+                }else {
+                    selectedButton.set(button);
+                }
             });
         }
         if(selectedButton.get() == null){
@@ -91,14 +97,17 @@ public class SortManager {
     }
     
     public void updateGraphics(){
-        for(Button button : buttons.keySet())
-            if(button != selectedButton.get())
+        for(Button button : buttons.keySet()) {
+            if(button != selectedButton.get()) {
                 button.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
+            }
+        }
     }
     
     public void simulateCall(){
-        if(selectedButton.get() != null && !buttons.isEmpty())
+        if(selectedButton.get() != null && !buttons.isEmpty()) {
             updateSort.call(selectedButton.get().getText(), buttons.get(selectedButton.get()).get());
+        }
     }
     public String getSortKey(){
         return selectedButton.get().getText();

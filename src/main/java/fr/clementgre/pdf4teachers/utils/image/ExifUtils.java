@@ -115,8 +115,9 @@ public class ExifUtils {
         private int rotateAngle;
         
         public void applyTransformToGraphics2D(Graphics2D g, int width, int height){
-            if(rotateAngle != 0)
+            if(rotateAngle != 0) {
                 g.rotate(Math.toRadians(rotateAngle), width / 2d, height / 2d);
+            }
         }
         
         public ImageTransform(boolean flip, int rotateAngle){

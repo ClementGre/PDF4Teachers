@@ -37,8 +37,11 @@ public class TextInputAlert extends CustomAlert{
         addCancelButton(ButtonPosition.CLOSE);
     
         StyleManager.putCustomStyle(getDialogPane(), "someDialogs.css");
-        if(StyleManager.DEFAULT_STYLE == Style.LIGHT) StyleManager.putCustomStyle(getDialogPane(), "someDialogs-light.css");
-        else StyleManager.putCustomStyle(getDialogPane(), "someDialogs-dark.css");
+        if(StyleManager.DEFAULT_STYLE == Style.LIGHT) {
+            StyleManager.putCustomStyle(getDialogPane(), "someDialogs-light.css");
+        } else {
+            StyleManager.putCustomStyle(getDialogPane(), "someDialogs-dark.css");
+        }
         
         getDialogPane().setContent(box);
     

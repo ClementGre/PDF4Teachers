@@ -80,15 +80,20 @@ public class TextRenderer {
                             .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] == '?')
                             .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                             .toString().toCharArray();
-                    if(replacements.length == 0) replacements = new char[]{'?'};
+                    if(replacements.length == 0) {
+                        replacements = new char[]{'?'};
+                    }
                 }
     
                 try{
                     // Add chars one by one, only if they can print.
                     StringBuilder newText = new StringBuilder();
                     for(char c : line.toCharArray()){
-                        if(canRender(font, c)) newText.append(c);
-                        else newText.append(replacements[0]);
+                        if(canRender(font, c)) {
+                            newText.append(c);
+                        } else {
+                            newText.append(replacements[0]);
+                        }
                     }
                     cs.showText(newText.toString());
         

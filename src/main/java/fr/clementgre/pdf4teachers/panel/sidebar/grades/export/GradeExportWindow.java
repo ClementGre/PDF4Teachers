@@ -60,9 +60,13 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
         close();
         
         String header;
-        if(exported == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
-        else if(exported == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
-        else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", exported);
+        if(exported == 0) {
+            header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
+        } else if(exported == 1) {
+            header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
+        } else {
+            header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", exported);
+        }
         
         DialogBuilder.showAlertWithOpenDirButton(TR.tr("actions.export.completedMessage"), header, null, pane.filePath.getText());
         
@@ -170,8 +174,9 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
                 fileNameSimple = new TextField(MainWindow.userData.lastExportFileName.isEmpty() || type == 2 ? StringUtils.removeAfterLastOccurrence(MainWindow.mainScreen.document.getFileName(), ".pdf") + ".csv" : MainWindow.userData.lastExportFileName);
                 fileNameSimple.setPromptText(TR.tr("file.documentName"));
                 PaneUtils.setHBoxPosition(fileNameSimple, 0, 30, 0, 2.5);
-                if(type != 2)
+                if(type != 2) {
                     fileNameSimple.textProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.lastExportFileName = newValue);
+                }
                 root.getChildren().addAll(info, fileNameSimple);
                 
             }
@@ -239,7 +244,9 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
                 chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(MainWindow.mainScreen.document.getFile().getParentFile().getPath() + File.separator)));
                 
                 File file = chooser.showDialog(Main.window);
-                if(file != null) filePath.setText(file.getAbsolutePath() + File.separator);
+                if(file != null) {
+                    filePath.setText(file.getAbsolutePath() + File.separator);
+                }
             });
             
         }
@@ -275,7 +282,9 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
                 settingsOnlySameDir.setSelected(MainWindow.userData.settingsOnlySameDir);
                 settingsAttributeAverageLine.setSelected(MainWindow.userData.settingsAttributeMoyLine);
                 root.getChildren().addAll(settingsOnlySameGradeScale, settingsOnlyCompleted, settingsOnlySameDir, settingsAttributeTotalLine, settingsAttributeAverageLine);
-            }else root.getChildren().add(settingsAttributeTotalLine);
+            }else {
+                root.getChildren().add(settingsAttributeTotalLine);
+            }
             
             if(canExportTextElements){
                 settingsWithTxtElements.setSelected(MainWindow.userData.settingsWithTxtElements);
@@ -295,7 +304,9 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
         public void setupExportLanguageSettings(){
             ToggleGroup separatorGroup = new ToggleGroup();
             separatorGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue == null) separatorGroup.selectToggle(oldValue);
+                if(newValue == null) {
+                    separatorGroup.selectToggle(oldValue);
+                }
             });
     
             Label separatorLabel = new Label(TR.tr("gradeTab.gradeExportWindow.options.csvSeparator"));
@@ -311,12 +322,16 @@ public class GradeExportWindow extends AlternativeWindow<TabPane> {
             
             if(TR.tr("chars.csvSeparator").charAt(0) == ';'){
                 settingsCSVSeparatorSemicolon.setSelected(true);
-            }else settingsCSVSeparatorComma.setSelected(true);
+            }else {
+                settingsCSVSeparatorComma.setSelected(true);
+            }
             
             if(!Main.settings.language.getValue().equals("en_us")){
                 ToggleGroup formulaGroup = new ToggleGroup();
                 formulaGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-                    if(newValue == null) formulaGroup.selectToggle(oldValue);
+                    if(newValue == null) {
+                        formulaGroup.selectToggle(oldValue);
+                    }
                 });
                 settingsCSVFormulaEnglish.setToggleGroup(formulaGroup);
                 settingsCSVFormulaLanguage.setToggleGroup(formulaGroup);

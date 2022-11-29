@@ -97,8 +97,11 @@ public class GradeTreeView extends TreeView<String> {
         if(getRoot() != null){
             getRootTreeItem().delete(true, markAsUnsave, markAsUnsave ? UType.UNDO : UType.NO_UNDO);
         }
-        if(regenerateRoot) generateRoot(false);
-        else setRoot(null);
+        if(regenerateRoot) {
+            generateRoot(false);
+        } else {
+            setRoot(null);
+        }
     }
     
     private void generateRoot(boolean update){
@@ -109,8 +112,9 @@ public class GradeTreeView extends TreeView<String> {
         
         if(element.getParentPath().isEmpty()){ // ROOT
             // If is root, we need to delete the old root.
-            if(getRoot() != null && getRootTreeItem().getCore() != null)
+            if(getRoot() != null && getRootTreeItem().getCore() != null) {
                 getRootTreeItem().delete(true, false, UType.NO_UNDO);
+            }
             
             GradeTreeItem item = element.toGradeTreeItem();
             item.setExpanded(true);
@@ -132,15 +136,21 @@ public class GradeTreeView extends TreeView<String> {
         if(element.getParentPath().isEmpty()){ // ROOT
             
             // Delete only if it wasn't already deleted (See comment above).
-            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.UNDO);
+            if(!getRootTreeItem().isDeleted()) {
+                getRootTreeItem().delete(false, markAsUnsave, UType.UNDO);
+            }
             // Remove the item from its parent
             setRoot(null);
             
         }else{ // CHILD
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
-            if(treeElement == null) return;
+            if(treeElement == null) {
+                return;
+            }
             // Delete only if it wasn't already deleted (See comment above).
-            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.UNDO);
+            if(!treeElement.isDeleted()) {
+                treeElement.delete(false, markAsUnsave, UType.UNDO);
+            }
             
             // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();
@@ -195,7 +205,9 @@ public class GradeTreeView extends TreeView<String> {
             }else if(children.hasSubGrade()){
                 // Si l'élément a des enfants, on refait le test sur ses enfants
                 GradeTreeItem testChildren = getGradeTreeItem(children, element);
-                if(testChildren != null) return testChildren;
+                if(testChildren != null) {
+                    return testChildren;
+                }
             }
         }
         return null;
@@ -256,10 +268,14 @@ public class GradeTreeView extends TreeView<String> {
     public static GradeTreeItem getNextLogicGradeNonNull(){
         ArrayList<GradeTreeItem> items = getGradesArray(GradeTreeView.getTotal());
         for(GradeTreeItem grade : items){
-            if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) return grade;
+            if(!grade.hasSubGrade() && grade.getCore().getValue() == -1) {
+                return grade;
+            }
         }
         for(GradeTreeItem grade : items){
-            if(!grade.hasSubGrade()) return grade;
+            if(!grade.hasSubGrade()) {
+                return grade;
+            }
         }
         return items.get(0);
     }
@@ -273,7 +289,9 @@ public class GradeTreeView extends TreeView<String> {
         for(GradeTreeItem item : items){
             
             if(!item.getCore().isFilled() && item.isRoot()){ // ramène le root tout en haut si il n'a pas de valeur
-                if(item.getCore().getPageNumber() != 0) item.getCore().switchPage(0);
+                if(item.getCore().getPageNumber() != 0) {
+                    item.getCore().switchPage(0);
+                }
                 item.getCore().setRealY(0);
             }
             
@@ -281,8 +299,9 @@ public class GradeTreeView extends TreeView<String> {
             if(item.getCore().isFilled()){
                 // Ramène tous les éléments au niveau de celui-ci
                 for(GradeTreeItem itemToSend : itemsToSend){
-                    if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber())
+                    if(itemToSend.getCore().getPageNumber() != item.getCore().getPageNumber()) {
                         itemToSend.getCore().switchPage(item.getCore().getPageNumber());
+                    }
                     itemToSend.getCore().setRealY(item.getCore().getPage().toGridY(item.getCore().getLayoutY() - itemToSend.getCore().getLayoutBounds().getHeight()));
                 }
                 itemsToSend = new ArrayList<>();
@@ -387,7 +406,9 @@ public class GradeTreeView extends TreeView<String> {
     }
     
     public double getVScrollbarVisibleWidth(){
-        if(verticalScrollbar == null) return 0;
+        if(verticalScrollbar == null) {
+            return 0;
+        }
         return verticalScrollbar.isVisible() ? verticalScrollbar.getWidth() : 0;
     }
 }

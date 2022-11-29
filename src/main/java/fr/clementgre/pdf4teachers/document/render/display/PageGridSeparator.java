@@ -54,12 +54,16 @@ public class PageGridSeparator extends Pane {
         });
         setOnMouseExited(event -> {
             mouseOn = false;
-            if(!menu.isShowing()) fadeOut();
+            if(!menu.isShowing()) {
+                fadeOut();
+            }
         });
         setOpacity(0);
         
         menu.setOnHidden(e -> {
-            if(!mouseOn) fadeOut();
+            if(!mouseOn) {
+                fadeOut();
+            }
         });
         
         MainWindow.mainScreen.pane.getChildren().add(this);
@@ -72,7 +76,9 @@ public class PageGridSeparator extends Pane {
         MainWindow.mainScreen.pane.getChildren().remove(this);
     }
     public void updateZoom(){
-        if(!getChildren().isEmpty() && getOpacity() != 0) show(false);
+        if(!getChildren().isEmpty() && getOpacity() != 0) {
+            show(false);
+        }
     }
     private void show(boolean fadeIn){
         getChildren().clear();
@@ -122,7 +128,9 @@ public class PageGridSeparator extends Pane {
             triggerMenu(circle.getCenterX() + circleRadius, circle.getCenterY() - circleRadius);
         });
         
-        if(fadeIn) fadeIn();
+        if(fadeIn) {
+            fadeIn();
+        }
     }
     private void fadeIn(){
         timeline.stop();
@@ -138,8 +146,11 @@ public class PageGridSeparator extends Pane {
     }
     
     private int getIndex(){
-        if(before) return page.getPage();
-        else return page.getPage() + 1;
+        if(before) {
+            return page.getPage();
+        } else {
+            return page.getPage() + 1;
+        }
     }
     public void triggerMenu(double x, double y){
         menu.hide();

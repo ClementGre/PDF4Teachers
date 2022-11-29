@@ -48,7 +48,9 @@ public class KeyboardShortcuts {
                     }catch(NumberFormatException ignored){}
                     
                     if(e.getCode() == KeyCode.T){
-                        if(!MainWindow.mainScreen.hasDocument(false)) return;
+                        if(!MainWindow.mainScreen.hasDocument(false)) {
+                            return;
+                        }
                         
                         SideBar.selectTab(MainWindow.textTab);
                         TextElement element = MainWindow.textTab.newTextElement(!e.isShiftDown());
@@ -61,15 +63,21 @@ public class KeyboardShortcuts {
                         return;
                         
                     }else if(e.getCode() == KeyCode.N){
-                        if(!MainWindow.mainScreen.hasDocument(false)) return;
+                        if(!MainWindow.mainScreen.hasDocument(false)) {
+                            return;
+                        }
                         
                         SideBar.selectTab(MainWindow.gradeTab);
                         MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
                         return;
                         
                     }else if(e.getCode() == KeyCode.G){
-                        if(!MainWindow.mainScreen.hasDocument(false)) return;
-                        if(!MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
+                        if(!MainWindow.mainScreen.hasDocument(false)) {
+                            return;
+                        }
+                        if(!MainWindow.gradeTab.isSelected()) {
+                            MainWindow.gradeTab.select();
+                        }
                         
                         GradeTreeItem item = (GradeTreeItem) MainWindow.gradeTab.treeView.getSelectionModel().getSelectedItem();
                         if(item == null || item.isRoot()){
@@ -90,7 +98,9 @@ public class KeyboardShortcuts {
                         return;
                     }else if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.KP_DOWN){
                         e.consume();
-                        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.zoomOperator.fitWidth(false, false);
+                        if(MainWindow.mainScreen.hasDocument(false)) {
+                            MainWindow.mainScreen.zoomOperator.fitWidth(false, false);
+                        }
                         return;
                     }
                     
@@ -210,7 +220,9 @@ public class KeyboardShortcuts {
         
         if(shortcut){
             if(alt){
-                if(!MainWindow.mainScreen.hasDocument(false)) return;
+                if(!MainWindow.mainScreen.hasDocument(false)) {
+                    return;
+                }
                 
                 if(i == 0){ // save
                     MainWindow.textTab.treeView.favoritesSection.listsManager.saveListBtn.fire();
@@ -229,9 +241,13 @@ public class KeyboardShortcuts {
                 }
                 
             }else{ // Shortcut without Alt
-                if(!MainWindow.mainScreen.hasDocument(false)) return;
+                if(!MainWindow.mainScreen.hasDocument(false)) {
+                    return;
+                }
                 
-                if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) i++;
+                if(MainWindow.textTab.treeView.favoritesSection.sortToggleBtn.isSelected()) {
+                    i++;
+                }
                 if(i <= MainWindow.textTab.treeView.favoritesSection.getChildren().size() && i != 0){
                     ((TextTreeItem) MainWindow.textTab.treeView.favoritesSection.getChildren().get(i - 1)).addToDocument(false, false);
                     MainWindow.textTab.selectItem();
@@ -242,8 +258,9 @@ public class KeyboardShortcuts {
     }
     
     private boolean canBeginEndOnNode(Node node){
-         if(node instanceof TextInputControl) return true;
-         else if(node instanceof Spinner<?> spinner){
+         if(node instanceof TextInputControl) {
+             return true;
+         } else if(node instanceof Spinner<?> spinner){
              return spinner.isEditable();
          }
          return false;

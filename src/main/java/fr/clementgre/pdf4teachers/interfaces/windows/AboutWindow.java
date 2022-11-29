@@ -110,7 +110,9 @@ public class AboutWindow extends Stage {
         designerLabel.setText(TR.tr("aboutWindow.info.designer") + " ");
         if(!TR.tr("aboutWindow.info.translator").equals("Traducteur : <Votre nom>")){
             translatorText.setText(TR.tr("aboutWindow.info.translator"));
-        }else root.getChildren().remove(translatorText);
+        }else {
+            root.getChildren().remove(translatorText);
+        }
         
         githubLabel.setText(TR.tr("aboutWindow.info.gitHubProject") + " ");
         

@@ -84,7 +84,9 @@ public class VectorElementPageDrawer extends Pane{
         
         // Events
         setOnMousePressed((e) -> {
-            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) {
+                return;
+            }
     
     
             if(e.getButton() == MouseButton.PRIMARY){
@@ -104,12 +106,15 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseReleased((e) -> {
-            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) {
+                return;
+            }
             
             if(e.getClickCount() == 1 && e.getButton() == MouseButton.PRIMARY){
                 e.consume();
-                if((lastX != e.getX() && lastY != e.getY()) || hasToMove)
+                if((lastX != e.getX() && lastY != e.getY()) || hasToMove) {
                     appendPoint(e.getX(), e.getY(), true);
+                }
             }
             lastClickTime = System.currentTimeMillis();
             lastClickX = e.getX();
@@ -117,10 +122,14 @@ public class VectorElementPageDrawer extends Pane{
             setCursor(Cursor.CROSSHAIR);
         });
         setOnDragDetected(e -> {
-            if(e.getButton() == MouseButton.MIDDLE) setCursor(Cursor.CLOSED_HAND);
+            if(e.getButton() == MouseButton.MIDDLE) {
+                setCursor(Cursor.CLOSED_HAND);
+            }
         });
         setOnMouseDragged((e) -> {
-            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) {
+                return;
+            }
     
             if(e.getButton() == MouseButton.PRIMARY){
                 e.consume();
@@ -131,7 +140,9 @@ public class VectorElementPageDrawer extends Pane{
             }
         });
         setOnMouseMoved((e) -> {
-            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) return;
+            if(vector == null || MainWindow.mainScreen.isEditPagesMode()) {
+                return;
+            }
             
             if(spaceDown){
                 if(lastX == 0 && lastY == 0){
@@ -149,13 +160,19 @@ public class VectorElementPageDrawer extends Pane{
             
             if(e.getCode() == KeyCode.ESCAPE || e.getCode() == KeyCode.ENTER){
                 e.consume();
-                if(vector != null) vector.quitEditMode();
+                if(vector != null) {
+                    vector.quitEditMode();
+                }
             }else if(e.getCode() == KeyCode.BACK_SPACE){
                 e.consume();
-                if(vector != null) vector.undoLastAction();
+                if(vector != null) {
+                    vector.undoLastAction();
+                }
             }else if(e.getCode() == KeyCode.DELETE){
                 e.consume();
-                if(vector != null) vector.undoLastLines();
+                if(vector != null) {
+                    vector.undoLastLines();
+                }
             }else if(e.getCode() == KeyCode.L){
                 e.consume();
                 MainWindow.paintTab.vectorStraightLineMode.setSelected(true);
@@ -213,10 +230,14 @@ public class VectorElementPageDrawer extends Pane{
     }
     private boolean doSplitElement(double x, double y){
         if(Main.settings.drawingMaxTime.getValue() != -1){
-            if(System.currentTimeMillis() - lastClickTime > Main.settings.drawingMaxTime.getValue()*1000) return true;
+            if(System.currentTimeMillis() - lastClickTime > Main.settings.drawingMaxTime.getValue()*1000) {
+                return true;
+            }
         }
         if(Main.settings.drawingMaxDistance.getValue() != -1){
-            if(Math.sqrt(Math.pow(lastClickX - x, 2) + Math.pow(lastClickY - y, 2)) > Main.settings.drawingMaxDistance.getValue()/100d * PageRenderer.PAGE_WIDTH && !hasToMove) return true;
+            if(Math.sqrt(Math.pow(lastClickX - x, 2) + Math.pow(lastClickY - y, 2)) > Main.settings.drawingMaxDistance.getValue()/100d * PageRenderer.PAGE_WIDTH && !hasToMove) {
+                return true;
+            }
         }
         if(Main.settings.drawingMaxLength.getValue() != -1){
             return vector.getPath().length() > Main.settings.drawingMaxLength.getValue();
@@ -246,7 +267,9 @@ public class VectorElementPageDrawer extends Pane{
     }
     
     public void enterEditMode(VectorElement vector){
-        if(isEditMode()) quitEditMode();
+        if(isEditMode()) {
+            quitEditMode();
+        }
     
         setCursor(Cursor.CROSSHAIR);
         page.getChildren().add(this);
@@ -268,9 +291,13 @@ public class VectorElementPageDrawer extends Pane{
         
         getChildren().setAll(svgPath);
         
-        if(!doSwitchElementMode) lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        if(!doSwitchElementMode) {
+            lastX = lastY = lastClickX = lastClickY = lastLineAngle = 0;
+        }
         hasToMove = true; // Anyway, we will need to move. This can also prevent some bugs where the first move is missing.
-        if(!doSwitchElementMode) spaceDown = false;
+        if(!doSwitchElementMode) {
+            spaceDown = false;
+        }
         lastLineMode = isPerpendicularLineMode();
         
         lastClickTime = Long.MAX_VALUE;
@@ -329,8 +356,11 @@ public class VectorElementPageDrawer extends Pane{
             }
             
             if(isPerpendicularLineMode()){
-                if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) y = lastClickY;
-                else x = lastClickX;
+                if(Math.abs(x - lastClickX) >= Math.abs(y - lastClickY)) {
+                    y = lastClickY;
+                } else {
+                    x = lastClickX;
+                }
             }
             if(lastAction.equalsIgnoreCase("L")){
                 removeLastAction("L");
@@ -341,7 +371,9 @@ public class VectorElementPageDrawer extends Pane{
             // Do the line only if it has a min length
             if(!force){
                 double dist = Math.sqrt(Math.pow(moveX, 2) + Math.pow(moveY, 2));
-                if(dist < LINE_MIN_LENGTH) return;
+                if(dist < LINE_MIN_LENGTH) {
+                    return;
+                }
             }
             
             if(lastLineMode){ // exit straight line mode
@@ -354,10 +386,15 @@ public class VectorElementPageDrawer extends Pane{
             // Merge with last line if there is a small angle
             if(lastAction.equalsIgnoreCase("L")){
                 double angle = -Math.atan(moveX == 0 ? 0 : (moveY / moveX));
-                if(moveX < 0) angle += Math.PI;
+                if(moveX < 0) {
+                    angle += Math.PI;
+                }
         
-                if(Math.abs(angle - lastLineAngle) < MERGE_LINE_MAX_ANGLE) removeLastAction("L");
-                else lastLineAngle = angle;
+                if(Math.abs(angle - lastLineAngle) < MERGE_LINE_MAX_ANGLE) {
+                    removeLastAction("L");
+                } else {
+                    lastLineAngle = angle;
+                }
             }
             
         }

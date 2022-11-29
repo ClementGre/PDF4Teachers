@@ -95,8 +95,11 @@ public class DirFilterListCell extends ListCell<String> {
                 }
             });
             
-            if(Main.settings.zoom.getValue() == 1) root.setStyle("-fx-padding: -4 0;");
-            else PaneUtils.setupScaling(root, true, false);
+            if(Main.settings.zoom.getValue() == 1) {
+                root.setStyle("-fx-padding: -4 0;");
+            } else {
+                PaneUtils.setupScaling(root, true, false);
+            }
             
             PaneUtils.setHBoxPosition(text, 0, 26, 0);
             PaneUtils.setHBoxPosition(delete, 26, 26, new Insets(0, 5, 0, 5));

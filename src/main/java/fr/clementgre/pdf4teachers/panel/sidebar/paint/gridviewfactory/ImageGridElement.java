@@ -103,11 +103,15 @@ public class ImageGridElement extends ImageLambdaData{
     }
     
     public ImageElement addToDocument(){
-        if(MainWindow.mainScreen.hasDocument(false)) return getImageData().addToDocument(hasLinkedImageData());
+        if(MainWindow.mainScreen.hasDocument(false)) {
+            return getImageData().addToDocument(hasLinkedImageData());
+        }
         return null;
     }
     public void setAsToPlaceElement(){
-        if(MainWindow.mainScreen.hasDocument(false)) getImageData().setAsToPlaceElement(hasLinkedImageData());
+        if(MainWindow.mainScreen.hasDocument(false)) {
+            getImageData().setAsToPlaceElement(hasLinkedImageData());
+        }
     }
     
     public ImageData getImageData(){
@@ -125,7 +129,9 @@ public class ImageGridElement extends ImageLambdaData{
     public int compareTimeWith(ImageGridElement element){
         int value = element.getExifData().getEditDate().compareTo(exifData.getEditDate());
     
-        if(value == 0) return compareDirectoryWith(element);
+        if(value == 0) {
+            return compareDirectoryWith(element);
+        }
         return value;
     }
     public int compareUseWith(ImageGridElement element){
@@ -133,10 +139,16 @@ public class ImageGridElement extends ImageLambdaData{
         if(isFavorite()){
             if(element.isFavorite()){
                 value = element.getImageData().getUseCount() - getImageData().getUseCount();
-            }else value = -1;
-        }else if(element.isFavorite()) value = 1;
+            }else {
+                value = -1;
+            }
+        }else if(element.isFavorite()) {
+            value = 1;
+        }
 
-        if(value == 0) return compareDirectoryWith(element);
+        if(value == 0) {
+            return compareDirectoryWith(element);
+        }
         return value;
     }
     public int compareLastUseTimeWith(ImageGridElement element){
@@ -145,28 +157,40 @@ public class ImageGridElement extends ImageLambdaData{
             if(element.isFavorite()){
                 long val = (element.getImageData().getLastUse() - getImageData().getLastUse());
                 value = val > 0 ? 1 : (val < 0 ? -1 : 0);
-            }else value = -1;
-        }else if(element.isFavorite()) value = 1;
+            }else {
+                value = -1;
+            }
+        }else if(element.isFavorite()) {
+            value = 1;
+        }
         
-        if(value == 0) return compareDirectoryWith(element);
+        if(value == 0) {
+            return compareDirectoryWith(element);
+        }
         return value;
     }
     public int compareSizeWith(ImageGridElement element){
         int value = Long.compare(element.getExifData().getSize(), exifData.getSize());
     
-        if(value == 0) return compareDirectoryWith(element);
+        if(value == 0) {
+            return compareDirectoryWith(element);
+        }
         return value;
     }
     public int compareDirectoryWith(ImageGridElement element){
         int value = getImageIdDirectory().compareTo(element.getImageIdDirectory());
     
-        if(value == 0) value = getImageIdFileName().compareTo(element.getImageIdFileName());
+        if(value == 0) {
+            value = getImageIdFileName().compareTo(element.getImageIdFileName());
+        }
         return value;
     }
     public int compareNameWith(ImageGridElement element){
         int value = getImageIdFileName().compareTo(element.getImageIdFileName());
         
-        if(value == 0) return compareDirectoryWith(element);
+        if(value == 0) {
+            return compareDirectoryWith(element);
+        }
         return value;
     }
     

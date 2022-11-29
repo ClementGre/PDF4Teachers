@@ -60,7 +60,9 @@ public class LogWindow extends Stage {
             });
         });
         pane.heightProperty().addListener((o, oldValue, newValue) -> {
-            if(doScrollToBottom) scrollPane.setVvalue(scrollPane.getVmax());
+            if(doScrollToBottom) {
+                scrollPane.setVvalue(scrollPane.getVmax());
+            }
         });
         root.getChildren().add(scrollPane);
         

@@ -79,8 +79,12 @@ public class TwoStepListAction<T, D>{
             }catch(Exception e){
                 Log.e(e);
                 boolean result = new ErrorAlert(null, e.getMessage(), data.size() > 1).execute();
-                if(data.size() <= 1) return false;
-                if(result) return false;
+                if(data.size() <= 1) {
+                    return false;
+                }
+                if(result) {
+                    return false;
+                }
             }
         }
         return true;
@@ -89,9 +93,13 @@ public class TwoStepListAction<T, D>{
     public boolean processData(TwoStepListInterface<T, D> caller){
         for(D value : sortedData){
             TwoStepListAction.ProcessResult result = caller.completeData(value, isRecursive());
-            if(result == ProcessResult.OK) completedSize++;
-            else if(result == ProcessResult.STOP) break;
-            else if(result == ProcessResult.STOP_WITHOUT_ALERT) return false;
+            if(result == ProcessResult.OK) {
+                completedSize++;
+            } else if(result == ProcessResult.STOP) {
+                break;
+            } else if(result == ProcessResult.STOP_WITHOUT_ALERT) {
+                return false;
+            }
         }
         return true;
     }
@@ -114,9 +122,11 @@ public class TwoStepListAction<T, D>{
                 }
                 
                 ProcessResult result = caller.completeData(value, isRecursive());
-                if(result == ProcessResult.OK) completedSize++;
-                else if(result == ProcessResult.STOP) break;
-                else if(result == ProcessResult.STOP_WITHOUT_ALERT){
+                if(result == ProcessResult.OK) {
+                    completedSize++;
+                } else if(result == ProcessResult.STOP) {
+                    break;
+                } else if(result == ProcessResult.STOP_WITHOUT_ALERT){
                     isCanceled = true;
                     break;
                 }

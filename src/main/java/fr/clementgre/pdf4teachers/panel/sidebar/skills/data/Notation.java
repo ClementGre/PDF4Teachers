@@ -51,7 +51,9 @@ public class Notation {
         // Negative ids are reserved for default not editable notations.
         // 0 id is reserved for not filled notations.
         long id = Math.abs(new Random().nextLong());
-        while(id == 0 || getById(assessment, id) != null) id = new Random().nextLong();
+        while(id == 0 || getById(assessment, id) != null) {
+            id = new Random().nextLong();
+        }
         return id;
     }
     public static Notation getById(SkillsAssessment assessment, long id){
@@ -107,15 +109,27 @@ public class Notation {
     
     @Override
     public boolean equals(Object o){
-        if(this == o) return true;
-        if(o == null || getClass() != o.getClass()) return false;
+        if(this == o) {
+            return true;
+        }
+        if(o == null || getClass() != o.getClass()) {
+            return false;
+        }
         
         Notation notation = (Notation) o;
         
-        if(id != notation.id) return false;
-        if(!acronym.equals(notation.acronym)) return false;
-        if(!name.equals(notation.name)) return false;
-        if(!keyboardChar.equals(notation.keyboardChar)) return false;
+        if(id != notation.id) {
+            return false;
+        }
+        if(!acronym.equals(notation.acronym)) {
+            return false;
+        }
+        if(!name.equals(notation.name)) {
+            return false;
+        }
+        if(!keyboardChar.equals(notation.keyboardChar)) {
+            return false;
+        }
         return data.equals(notation.data);
     }
     @Override

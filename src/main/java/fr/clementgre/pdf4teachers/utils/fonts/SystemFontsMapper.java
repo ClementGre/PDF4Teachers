@@ -108,7 +108,9 @@ public class SystemFontsMapper {
             for(File file : getAllSystemFontFiles()){
                 try{
                     Font[] fonts = Font.loadFonts(new FileInputStream(file.getAbsolutePath()), -1);
-                    if(fonts == null) continue;
+                    if(fonts == null) {
+                        continue;
+                    }
                     if (Arrays.stream(fonts)
                             .filter(font -> StringUtils.contains(systemFonts, font.getFamily()))
                             .anyMatch(font -> !addFontToMap(font, file.getAbsolutePath()))) {

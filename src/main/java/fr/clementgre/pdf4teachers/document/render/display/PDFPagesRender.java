@@ -191,9 +191,11 @@ public class PDFPagesRender {
     public PDRectangle getPageCropBox(int pageNumber){
         PDPage page = document.getPage(pageNumber);
         PDRectangle pageSize;
-        if(page.getRotation() == 90 || page.getRotation() == 270)
+        if(page.getRotation() == 90 || page.getRotation() == 270) {
             pageSize = new PDRectangle(page.getCropBox().getHeight(), page.getCropBox().getWidth());
-        else pageSize = page.getCropBox();
+        } else {
+            pageSize = page.getCropBox();
+        }
         
         return pageSize;
     }

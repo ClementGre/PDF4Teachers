@@ -17,7 +17,9 @@ public abstract class SVGSimpleTransformHandler implements PathHandler{
     
     private DecimalFormat format;
     public SVGSimpleTransformHandler(int decimals){
-         if(decimals != -1) format = new DecimalFormat("0." + ("#".repeat(decimals)), Main.baseDecimalFormatSymbols);
+         if(decimals != -1) {
+             format = new DecimalFormat("0." + ("#".repeat(decimals)), Main.baseDecimalFormatSymbols);
+         }
     }
     
     public String getTransformedPath(){

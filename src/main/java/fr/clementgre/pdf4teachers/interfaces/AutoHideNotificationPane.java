@@ -73,21 +73,30 @@ public class AutoHideNotificationPane extends NotificationPane {
     
     public void showNow(String text, AlertIconType iconType, int autoHideTime){
         pendingList.add(0, new Notification(text, iconType, autoHideTime));
-        if(isShowing()) hide();
-        else checkPending();
+        if(isShowing()) {
+            hide();
+        } else {
+            checkPending();
+        }
     }
     
     public void showNow(String text, AlertIconType iconType, TextField input){
         pendingList.add(0, new Notification(text, iconType, input));
-        if(isShowing()) hide();
-        else checkPending();
+        if(isShowing()) {
+            hide();
+        } else {
+            checkPending();
+        }
     }
     
     private void checkPending(){
         if(!pendingList.isEmpty() && !isShowing()){
             Notification notif = pendingList.get(0);
-            if(notif.input == null) show(notif.text, notif.iconType, notif.autoHideTime);
-            else showWithInput(notif.text, notif.input, notif.iconType, notif.autoHideTime);
+            if(notif.input == null) {
+                show(notif.text, notif.iconType, notif.autoHideTime);
+            } else {
+                showWithInput(notif.text, notif.input, notif.iconType, notif.autoHideTime);
+            }
             pendingList.remove(0);
         }
     }
@@ -165,7 +174,9 @@ public class AutoHideNotificationPane extends NotificationPane {
                 }catch(InterruptedException e){
                     Log.eNotified(e, "Hide thread sleep interrupted");
                 }
-                if(!hidden.get()) hide();
+                if(!hidden.get()) {
+                    hide();
+                }
                 
             }, "notification auto hide").start();
         }

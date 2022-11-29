@@ -42,8 +42,12 @@ public class IconButton extends Button {
         setCursor(Cursor.HAND);
         
         
-        if(tooltip != null) setTooltip(PaneUtils.genWrappedToolTip(tooltip));
-        if(onAction != null) setOnAction(onAction);
+        if(tooltip != null) {
+            setTooltip(PaneUtils.genWrappedToolTip(tooltip));
+        }
+        if(onAction != null) {
+            setOnAction(onAction);
+        }
         
     }
     

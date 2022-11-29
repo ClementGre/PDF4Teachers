@@ -48,7 +48,9 @@ public class IntSetting extends Setting<Integer> {
         if(hasSlider){
             slider = new SliderWithoutPopup(min, max, getValue() == -1 ? step : getValue());
             slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if(!slider.isDisable()) setValue(newValue.intValue());
+                if(!slider.isDisable()) {
+                    setValue(newValue.intValue());
+                }
             });
             slider.setMinorTickCount(0);
             slider.setMajorTickUnit(step);
@@ -62,12 +64,16 @@ public class IntSetting extends Setting<Integer> {
             valueDisplay.setStyle("-fx-wrap-text: false;");
             valueDisplay.setTextOverrun(OverrunStyle.CLIP);
             valueDisplay.textProperty().bind(Bindings.createStringBinding(() -> getValueOrStep()+"", valueProperty()));
-            if(disableInMinus1) valueDisplay.disableProperty().bind(valueProperty().isEqualTo(-1));
+            if(disableInMinus1) {
+                valueDisplay.disableProperty().bind(valueProperty().isEqualTo(-1));
+            }
             root.getChildren().setAll(valueDisplay, slider);
         }else{
             spinner = new Spinner<>(min, max, getValueOrStep());
             spinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-                if(!spinner.isDisable()) setValue(newValue);
+                if(!spinner.isDisable()) {
+                    setValue(newValue);
+                }
             });
             spinner.setEditable(true);
             spinner.getValueFactory().setConverter(new StringToIntConverter(getValueOrStep()));
@@ -84,12 +90,18 @@ public class IntSetting extends Setting<Integer> {
             ChangeListener<Boolean> selectedListener = (observable, oldValue, newValue) -> {
                 setValue(-1);
                 if(newValue){
-                    if(slider != null) setValue((int) slider.getValue());
-                    else if(spinner != null) setValue(spinner.getValue());
+                    if(slider != null) {
+                        setValue((int) slider.getValue());
+                    } else if(spinner != null) {
+                        setValue(spinner.getValue());
+                    }
                 }
                 
-                if(slider != null) slider.setDisable(!newValue);
-                else if(spinner != null) spinner.setDisable(!newValue);
+                if(slider != null) {
+                    slider.setDisable(!newValue);
+                } else if(spinner != null) {
+                    spinner.setDisable(!newValue);
+                }
             };
             selectedListener.changed(null, getValue() == -1, getValue() != -1);
             toggle.selectedProperty().addListener(selectedListener);
@@ -102,7 +114,9 @@ public class IntSetting extends Setting<Integer> {
     
     public int getValueOrStep(){
         if(getValue() == -1 && disableInMinus1){
-            if(slider != null && slider.getValue() != -1) return (int) slider.getValue(); // For slider, return selected value even when disabled
+            if(slider != null && slider.getValue() != -1) {
+                return (int) slider.getValue(); // For slider, return selected value even when disabled
+            }
             return step;
         }
         return getValue();
