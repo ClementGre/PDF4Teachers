@@ -16,7 +16,7 @@ public class UndoEngine{
     
     public static final KeyCombination KEY_COMB_UNDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
     public static final KeyCombination KEY_COMB_REDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
-    private final static int MAX_STACK_LENGTH = 200;
+    private static final int MAX_STACK_LENGTH = 200;
     
     private ArrayList<UndoAction> undoList = new ArrayList<>();
     private ArrayList<UndoAction> redoList = new ArrayList<>();

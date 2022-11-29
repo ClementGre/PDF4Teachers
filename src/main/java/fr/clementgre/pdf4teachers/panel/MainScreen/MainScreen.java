@@ -700,7 +700,7 @@ public class MainScreen extends Pane {
         }
     }
     
-    private final static int ARROW_NAV_FACTOR = 300;
+    private static final int ARROW_NAV_FACTOR = 300;
     public void navigateUp(){
         if(hasDocument(false)){
             zoomOperator.scrollUp(ARROW_NAV_FACTOR, false, false);
