@@ -207,19 +207,19 @@ public class GradeExportRenderer {
                 int minY = lastGrade.getRealY();
                 
                 // For each element of this document, if they are after the grade, add them to the ArrayList
-                TextElement element = file.comments.size() > 0 ? file.comments.get(0) : null;
+                TextElement element = !file.comments.isEmpty() ? file.comments.get(0) : null;
                 while(element != null){
                     if(element.getPageNumber() == minPage && element.getRealY() > minY || element.getPageNumber() > minPage){
                         comments.add(element.getText());
                         file.comments.remove(0);
-                        element = file.comments.size() > 0 ? file.comments.get(0) : null;
+                        element = !file.comments.isEmpty() ? file.comments.get(0) : null;
                     }else{
                         element = null;
                     }
                 }
             }
             // Adding all others comments
-            while(file.comments.size() > 0 && lastGrade != null){
+            while(!file.comments.isEmpty() && lastGrade != null){
                 matches.get(lastGrade).add(file.comments.get(0).getText());
                 file.comments.remove(0);
             }

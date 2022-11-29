@@ -116,7 +116,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         VectorGridView list = new VectorGridView(new Slider(2, 6, 4), true, false);
         
         List<VectorGridElement> vectors = MainWindow.paintTab.favouriteVectors.getList().getAllItems();
-        if(vectors.size() == 0) return null;
+        if(vectors.isEmpty()) return null;
         vectors.sort(VectorGridElement::compareUseWith);
         vectors = vectors.subList(0, Math.min(7, vectors.size()));
         vectors = vectors.stream().map(VectorGridElement::clone).toList();

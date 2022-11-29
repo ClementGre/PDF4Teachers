@@ -57,7 +57,7 @@ public class PDFPagesRender {
             
             while(!shouldClose){ // not closed
                 
-                if(rendersPending.size() != 0 && !rendersPending.get(0).page.isRemoved()){ // Render
+                if(!rendersPending.isEmpty() && !rendersPending.get(0).page.isRemoved()){ // Render
                     renderPage(rendersPending.get(0));
                     rendersPending.remove(0);
                     

@@ -70,7 +70,7 @@ public class LockManager {
         
         try{
             
-            if(toOpenPaths.size() == 0){
+            if(toOpenPaths.isEmpty()){
                 messageType = LockMessageType.REQUIRE_UNLOCK;
             }else{
                 messageType = LockMessageType.OPEN_FILES;

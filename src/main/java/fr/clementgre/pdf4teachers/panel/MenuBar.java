@@ -309,7 +309,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         tools4PdfTools3SplitSelection.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
-            if(MainWindow.mainScreen.document.getSelectedPages().size() == 0 || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
+            if(MainWindow.mainScreen.document.getSelectedPages().isEmpty() || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
             }else new SplitWindow(true);
         });

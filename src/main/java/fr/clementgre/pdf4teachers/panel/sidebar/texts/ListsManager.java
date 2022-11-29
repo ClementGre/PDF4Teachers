@@ -125,7 +125,7 @@ public class ListsManager {
                 .filter(item -> item instanceof TextTreeItem)
                 .map(item -> ((TextTreeItem) item).toTextItem())
                 .collect(Collectors.toCollection(ArrayList::new));
-        if(list.size() == 0){
+        if(list.isEmpty()){
             new WrongAlert(Alert.AlertType.ERROR, TR.tr("textTab.lists.save.voidListDialog.title"),
                     TR.tr("textTab.lists.save.voidListDialog.header"), TR.tr("textTab.lists.save.voidListDialog.details"), false).showAndWait();
             return;

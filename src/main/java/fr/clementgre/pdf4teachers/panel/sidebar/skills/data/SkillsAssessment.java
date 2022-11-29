@@ -48,7 +48,7 @@ public class SkillsAssessment {
         ));
     }
     public static ArrayList<Notation> getDefaultNotations(){
-        if(userDefaultNotations.size() == 0) return cloneNotations(getGlobalDefaultNotations());
+        if(userDefaultNotations.isEmpty()) return cloneNotations(getGlobalDefaultNotations());
         return cloneNotations(userDefaultNotations);
     }
     public static void setDefaultNotations(ArrayList<Notation> notations){

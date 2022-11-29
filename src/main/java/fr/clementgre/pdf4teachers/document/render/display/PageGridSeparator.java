@@ -72,7 +72,7 @@ public class PageGridSeparator extends Pane {
         MainWindow.mainScreen.pane.getChildren().remove(this);
     }
     public void updateZoom(){
-        if(getChildren().size() != 0 && getOpacity() != 0) show(false);
+        if(!getChildren().isEmpty() && getOpacity() != 0) show(false);
     }
     private void show(boolean fadeIn){
         getChildren().clear();

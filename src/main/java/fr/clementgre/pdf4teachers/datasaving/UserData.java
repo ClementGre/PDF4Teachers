@@ -226,7 +226,7 @@ public class UserData {
     
     public UserData(){
         // if: check the actions wasn't already done in case of app restart.
-        if(simpleConfigs.size() == 0) SimpleConfig.registerClasses();
+        if(simpleConfigs.isEmpty()) SimpleConfig.registerClasses();
         if(!userDataSaver.isAlive()) userDataSaver.start();
         
         Platform.runLater(() -> {

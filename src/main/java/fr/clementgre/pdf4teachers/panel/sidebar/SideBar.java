@@ -52,7 +52,7 @@ public class SideBar extends TabPane {
         
         getTabs().addListener((ListChangeListener<Tab>) c -> {
             c.next();
-            if(getTabs().size() == 0){ // No tab in this pane
+            if(getTabs().isEmpty()){ // No tab in this pane
                 if(draggingTab != null){
                     showDragSpace();
                 }else{
@@ -237,7 +237,7 @@ public class SideBar extends TabPane {
     }
     
     public void showDragSpace(){
-        if(getTabs().size() == 0){
+        if(getTabs().isEmpty()){
             addToPane();
             setStyle(STYLE + "-fx-background-color: #0078d7");
             setWidthByEditingDivider(30);
@@ -253,7 +253,7 @@ public class SideBar extends TabPane {
     
     public void hideDragSpace(){
         setStyle(STYLE);
-        if(getTabs().size() == 0){
+        if(getTabs().isEmpty()){
             removeToPane();
         }
     }

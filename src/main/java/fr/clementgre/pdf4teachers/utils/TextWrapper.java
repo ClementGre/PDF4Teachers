@@ -28,7 +28,7 @@ public class TextWrapper {
     public String wrapFirstLine(){
         
         // While there is still text, add the next line into wrappedLine and let the remaining text into text
-        if(text.length() == 0){
+        if(text.isEmpty()){
             return "";
         }
         
@@ -55,7 +55,7 @@ public class TextWrapper {
         if(text == null) return "";
         
         // While there is still text, add the next line into wrappedLine and let the remaining text into text
-        while(text.length() != 0){
+        while(!text.isEmpty()){
             
             if(text.split(" ", -1).length == 0) break;
             String firstWord = text.split(" ", -1)[0];
@@ -149,7 +149,7 @@ public class TextWrapper {
     
     private String[] fillLineWithChar(String word){
         
-        if(word.length() == 0) return new String[]{"", ""};
+        if(word.isEmpty()) return new String[]{"", ""};
         String line = word.substring(0, 1);
         
         for(int i = 1; i < word.length(); i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne

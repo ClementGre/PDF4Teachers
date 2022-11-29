@@ -603,7 +603,7 @@ public class PageRenderer extends Pane {
     }
     
     public void showContextMenu(double pageY, double screenX, double screenY){
-        if(MainWindow.gradeTab.treeView.getRoot().getChildren().size() != 0){
+        if(!MainWindow.gradeTab.treeView.getRoot().getChildren().isEmpty()){
             GradeTreeView.defineNaNLocations();
             GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
             if(logicalNextGrade != null){

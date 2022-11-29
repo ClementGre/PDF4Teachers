@@ -230,14 +230,14 @@ public class MainScreen extends Pane {
     
         // Update show status when scroll level change
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 Platform.runLater(() -> {
                     if(document != null) document.updateShowsStatus();
                 });
             }
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
     
                 // Redraw pages when zooming while being in grid mode
                 if(isGridView()){
@@ -259,7 +259,7 @@ public class MainScreen extends Pane {
         });
         
         isEditPagesModeProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 double lastVScroll = document.getLastScrollValue();
                 
                 if(newValue){
@@ -284,7 +284,7 @@ public class MainScreen extends Pane {
             }
         });
         isGridViewProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 document.updatePagesPosition();
             }
         });

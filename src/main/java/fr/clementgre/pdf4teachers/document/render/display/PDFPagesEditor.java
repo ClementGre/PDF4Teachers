@@ -224,7 +224,7 @@ public class PDFPagesEditor {
         int pageNumber = page.getPage();
         
         // remove page elements
-        while(page.getElements().size() != 0){
+        while(!page.getElements().isEmpty()){
             if(page.getElements().get(0) instanceof GradeElement grade){
                 grade.setValue(-1);
                 grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
@@ -293,7 +293,7 @@ public class PDFPagesEditor {
     
     public void newConvertPage(int originalPage, int index){
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage), (convertedFiles) -> {
-            if(convertedFiles.size() == 0) return;
+            if(convertedFiles.isEmpty()) return;
             ConvertedFile file = convertedFiles.get(0);
             addPdfDocument(file.document, index);
         });
@@ -455,7 +455,7 @@ public class PDFPagesEditor {
         List<Image> images = new ArrayList<>();
         PageRenderer page;
         
-        if(selection && MainWindow.mainScreen.document.getSelectedPages().size() == 0){
+        if(selection && MainWindow.mainScreen.document.getSelectedPages().isEmpty()){
             selection = false;
             pageIndex = 0;
         }

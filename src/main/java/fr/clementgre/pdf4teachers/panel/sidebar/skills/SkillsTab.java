@@ -187,7 +187,7 @@ public class SkillsTab extends SideTab {
         }, assessmentCombo.valueProperty()));
     
         assessmentCombo.valueProperty().addListener(o -> {
-            if(getCurrentAssessment() != null && getCurrentAssessment().getStudents().size() != 0){
+            if(getCurrentAssessment() != null && !getCurrentAssessment().getStudents().isEmpty()){
                 pane.getChildren().setAll(optionPane, studentPane, listView);
             }else pane.getChildren().setAll(optionPane, listView);
             updateSupportModalityMessage();

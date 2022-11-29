@@ -45,7 +45,7 @@ public class PageGridEditPane extends Pane {
         page.getChildren().remove(this);
     }
     public void updateZoom(){
-        if(getChildren().size() != 0 && getOpacity() != 0) show(false);
+        if(!getChildren().isEmpty() && getOpacity() != 0) show(false);
     }
     public void show(boolean fadeIn){
         

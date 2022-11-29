@@ -167,7 +167,7 @@ public class SACocheWriter {
         });
     
         StringBuilder details = new StringBuilder();
-        if(doubleAffectation.size() > 0){
+        if(!doubleAffectation.isEmpty()){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.doubleAffectation")).append("\n");
             doubleAffectation.forEach((studentName, files) -> {
                 String lastFile = files.get(files.size() - 1);
@@ -179,14 +179,14 @@ public class SACocheWriter {
             });
             details.append("\n");
         }
-        if(aloneStudents.size() > 0){
+        if(!aloneStudents.isEmpty()){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneStudent")).append("\n");
             aloneStudents.forEach(file -> {
                 details.append("  - ").append(file).append("\n");
             });
             details.append("\n");
         }
-        if(aloneDocuments.size() > 0){
+        if(!aloneDocuments.isEmpty()){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.aloneDocument")).append("\n");
             aloneDocuments.forEach(file -> {
                 details.append("  - ").append(file).append("\n");

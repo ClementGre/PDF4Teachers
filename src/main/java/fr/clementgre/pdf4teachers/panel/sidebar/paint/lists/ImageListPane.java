@@ -134,7 +134,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         ImageGridView list = new ImageGridView(true, 150, new Slider(2, 6, 4), false);
         
         List<ImageGridElement> images = MainWindow.paintTab.favouriteImages.getList().getAllItems();
-        if(images.size() == 0) return null;
+        if(images.isEmpty()) return null;
         images.sort(ImageGridElement::compareUseWith);
         images = images.subList(0, Math.min(8, images.size()));
         //images = images.stream().map(ImageGridElement::clone).toList();

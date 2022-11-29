@@ -338,7 +338,7 @@ public class GradeTreeItem extends TreeItem<String> {
         else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
     public void makeSum(int previousPage, int previousRealY){
-        if(!deleted && getChildren().size() != 0){
+        if(!deleted && !getChildren().isEmpty()){
             boolean hasValue = false;
             double value = 0;
             double total = 0;
@@ -473,7 +473,7 @@ public class GradeTreeItem extends TreeItem<String> {
     /////////////// GETTERS ///////////////
     
     public boolean hasSubGrade(){
-        return getChildren().size() != 0;
+        return !getChildren().isEmpty();
     }
     public boolean isRoot(){
         return StringUtils.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;

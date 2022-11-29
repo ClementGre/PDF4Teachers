@@ -144,7 +144,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             document.numberOfPages++;
             
             // Move elements to new page
-            while(pages.left.getElements().size() != 0){
+            while(!pages.left.getElements().isEmpty()){
                 Element element = pages.left.getElements().get(0);
                 element.switchPage(pageRenderer.getPage());
                 element.setRealX(element.getRealX()/2);
@@ -154,7 +154,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
                 });
     
             }
-            while(pages.right.getElements().size() != 0){
+            while(!pages.right.getElements().isEmpty()){
                 Element element = pages.right.getElements().get(0);
                 element.switchPage(pageRenderer.getPage());
                 element.setRealX((int) (Element.GRID_WIDTH/2d + element.getRealX()/2d));
