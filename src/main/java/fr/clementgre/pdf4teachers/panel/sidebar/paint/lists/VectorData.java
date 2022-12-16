@@ -36,8 +36,8 @@ public class VectorData{
     private long lastUse;
     private int useCount;
     
-    private CallBack specsChangesCallback = null;
-    private CallBack displayChangesCallback = null;
+    private CallBack specsChangesCallback;
+    private CallBack displayChangesCallback;
     
     public VectorData(int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode,
                       boolean doFill, Color fill, Color stroke, int strokeWidth,

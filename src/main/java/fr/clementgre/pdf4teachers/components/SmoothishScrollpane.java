@@ -24,10 +24,10 @@ import javafx.util.Duration;
  * From https://gist.github.com/Col-E/7d31b6b8684669cf1997831454681b85
  */
 public class SmoothishScrollpane extends ScrollPane {
-    private final static int TRANSITION_DURATION = 200;
-    private final static double SCROLL_FACTOR = 1.5;
+    private static final int TRANSITION_DURATION = 200;
+    private static final double SCROLL_FACTOR = 1.5;
 
-    private boolean hasScrollStartEndEvents = false;
+    private boolean hasScrollStartEndEvents;
 
     public VBox wrapper;
     

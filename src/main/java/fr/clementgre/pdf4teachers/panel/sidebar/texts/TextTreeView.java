@@ -202,7 +202,7 @@ public class TextTreeView extends TreeView<String> {
     }
     
     public boolean selectNextInSelection(){
-        if(getSelectionModel().getSelectedIndices().size() != 0){
+        if(!getSelectionModel().getSelectedIndices().isEmpty()){
             
             if(getSelectionModel().getSelectedItem() == null){
                 selectFromSelectedIndex(0);
@@ -219,7 +219,7 @@ public class TextTreeView extends TreeView<String> {
     }
     
     public boolean selectPreviousInSelection(){
-        if(getSelectionModel().getSelectedIndices().size() != 0){
+        if(!getSelectionModel().getSelectedIndices().isEmpty()){
             int lastIndex = getSelectionModel().getSelectedIndices().size() - 1;
             
             if(getSelectionModel().getSelectedItem() == null){

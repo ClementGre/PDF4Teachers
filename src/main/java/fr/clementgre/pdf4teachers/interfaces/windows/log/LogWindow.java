@@ -30,7 +30,7 @@ public class LogWindow extends Stage {
     private final Pane pane = new Pane();
     private final ScrollPane scrollPane = new ScrollPane(pane);
     
-    private boolean doScrollToBottom = false;
+    private boolean doScrollToBottom;
     
     public LogWindow(){
         
@@ -87,7 +87,7 @@ public class LogWindow extends Stage {
     }
     
     
-    private boolean needToStopUpdater = false;
+    private boolean needToStopUpdater;
     public void stopUpdater(){
         needToStopUpdater = true;
     }

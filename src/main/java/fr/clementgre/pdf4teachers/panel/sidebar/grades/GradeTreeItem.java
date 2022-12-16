@@ -43,8 +43,8 @@ public class GradeTreeItem extends TreeItem<String> {
     }
     
     private GradeElement core;
-    private ContextMenu pageContextMenu = null;
-    private boolean deleted = false;
+    private ContextMenu pageContextMenu;
+    private boolean deleted;
     
     // UI
     private TreeCell<String> cell;
@@ -56,7 +56,7 @@ public class GradeTreeItem extends TreeItem<String> {
     private ChangeListener<Boolean> selectedListener;
     private EventHandler<MouseEvent> mouseEnteredEvent;
     private EventHandler<MouseEvent> mouseExitedEvent;
-    private boolean isMouseOver = false;
+    private boolean isMouseOver;
     
     public GradeTreeItem(GradeElement core){
         this.core = core;
@@ -338,7 +338,7 @@ public class GradeTreeItem extends TreeItem<String> {
         else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
     public void makeSum(int previousPage, int previousRealY){
-        if(!deleted && getChildren().size() != 0){
+        if(!deleted && !getChildren().isEmpty()){
             boolean hasValue = false;
             double value = 0;
             double total = 0;
@@ -473,7 +473,7 @@ public class GradeTreeItem extends TreeItem<String> {
     /////////////// GETTERS ///////////////
     
     public boolean hasSubGrade(){
-        return getChildren().size() != 0;
+        return !getChildren().isEmpty();
     }
     public boolean isRoot(){
         return StringUtils.cleanArray(core.getParentPath().split(Pattern.quote("\\"))).length == 0;

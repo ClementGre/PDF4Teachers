@@ -43,18 +43,18 @@ public class UserData {
     public String uuid = UUID.randomUUID().toString();
     
     @UserDataObject(path = "stats.foregroundTime")
-    public long foregroundTime = 0;
+    public long foregroundTime;
     @UserDataObject(path = "stats.startsCount")
-    public long startsCount = 0;
+    public long startsCount;
     
     // OTHER
     @UserDataObject(path = "languages")
     public HashMap<String, Object> languages = new HashMap<>();
     
     @UserDataObject(path = "mainScreen.multiPagesMode")
-    public boolean multiPagesMode = false;
+    public boolean multiPagesMode;
     @UserDataObject(path = "mainScreen.editPagesMode")
-    public boolean editPagesMode = false;
+    public boolean editPagesMode;
     
     // FILES (FilesTab)
     @UserDataObject(path = "files.lastFile")
@@ -76,13 +76,13 @@ public class UserData {
     @UserDataObject(path = "texts.lastFont.color")
     public String textLastFontColor = "";
     @UserDataObject(path = "texts.lastFont.bold")
-    public boolean textLastFontBold = false;
+    public boolean textLastFontBold;
     @UserDataObject(path = "texts.lastFont.italic")
-    public boolean textLastFontItalic = false;
+    public boolean textLastFontItalic;
     
     // GradesTab
     @UserDataObject(path = "grades.lockGradeScale")
-    public boolean lockGradeScale = false;
+    public boolean lockGradeScale;
     @UserDataObject(path = "grades.tiersFont")
     public LinkedHashMap<Object, Object> gradesTiersFont = new LinkedHashMap<>();
     
@@ -124,15 +124,15 @@ public class UserData {
     @UserDataObject(path = "export.settings.onlySameGradeScale")
     public boolean settingsOnlySameGradeScale = true;
     @UserDataObject(path = "export.settings.onlyCompleted")
-    public boolean settingsOnlyCompleted = false;
+    public boolean settingsOnlyCompleted;
     @UserDataObject(path = "export.settings.onlySameDir")
-    public boolean settingsOnlySameDir = false;
+    public boolean settingsOnlySameDir;
     @UserDataObject(path = "export.settings.attributeTotalLine")
-    public boolean settingsAttributeTotalLine = false;
+    public boolean settingsAttributeTotalLine;
     @UserDataObject(path = "export.settings.attributeMoyLine")
     public boolean settingsAttributeMoyLine = true;
     @UserDataObject(path = "export.settings.withTxtElements")
-    public boolean settingsWithTxtElements = false;
+    public boolean settingsWithTxtElements;
     @UserDataObject(path = "export.settings.tiersExportSlider")
     public long settingsTiersExportSlider = 2;
     @UserDataObject(path = "export.settings.imagesDPI")
@@ -154,13 +154,13 @@ public class UserData {
     
     // Booklet params
     @UserDataObject(path = "booklet.doMakeBooklet")
-    public boolean bookletDoMakeBooklet = false;
+    public boolean bookletDoMakeBooklet;
     @UserDataObject(path = "booklet.doNotReorderPages")
-    public boolean bookletDoNotReorderPages = false;
+    public boolean bookletDoNotReorderPages;
     @UserDataObject(path = "booklet.doTookPages4by4")
     public boolean bookletDoTookPages4by4 = true;
     @UserDataObject(path = "booklet.doReverseOrder")
-    public boolean bookletDoReverseOrder = false;
+    public boolean bookletDoReverseOrder;
     @UserDataObject(path = "booklet.doCopyOriginal")
     public boolean bookletDoCopyOriginal = true;
     
@@ -170,7 +170,7 @@ public class UserData {
     @UserDataObject(path = "splitPdf.sensibility")
     public int splitSensibility = 50;
     @UserDataObject(path = "splitPdf.keepSelectedPages")
-    public boolean splitPdfKeepSelectedPages = false;
+    public boolean splitPdfKeepSelectedPages;
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")
@@ -226,7 +226,7 @@ public class UserData {
     
     public UserData(){
         // if: check the actions wasn't already done in case of app restart.
-        if(simpleConfigs.size() == 0) SimpleConfig.registerClasses();
+        if(simpleConfigs.isEmpty()) SimpleConfig.registerClasses();
         if(!userDataSaver.isAlive()) userDataSaver.start();
         
         Platform.runLater(() -> {

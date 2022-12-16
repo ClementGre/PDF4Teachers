@@ -30,7 +30,7 @@ public class PageGridSeparator extends Pane {
     private final Timeline timeline = new Timeline(60);
     
     private final ContextMenu menu = new ContextMenu();
-    private boolean mouseOn = false;
+    private boolean mouseOn;
     
     private final PageRenderer page;
     private final boolean before;
@@ -72,7 +72,7 @@ public class PageGridSeparator extends Pane {
         MainWindow.mainScreen.pane.getChildren().remove(this);
     }
     public void updateZoom(){
-        if(getChildren().size() != 0 && getOpacity() != 0) show(false);
+        if(!getChildren().isEmpty() && getOpacity() != 0) show(false);
     }
     private void show(boolean fadeIn){
         getChildren().clear();

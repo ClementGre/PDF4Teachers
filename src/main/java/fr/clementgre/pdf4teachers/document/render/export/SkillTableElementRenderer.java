@@ -74,7 +74,7 @@ public class SkillTableElementRenderer{
             Notation notation = editionSkill == null ? null : editionSkill.getMatchingNotation(assessment);
             skills.put(skill, notation);
         });
-        if(skills.size() == 0) return true;
+        if(skills.isEmpty()) return true;
     
         
         // HEADER

@@ -57,7 +57,7 @@ public class FooterBar extends StackPane {
     
     private final Region spacer = new Region();
     
-    private int oldWidth = 0;
+    private int oldWidth;
     private final int widthLimit = 1350;
     
     public FooterBar(){

@@ -84,13 +84,13 @@ public abstract class GraphicElement extends Element {
     }
     
     private Cursor dragType = PlatformUtils.CURSOR_MOVE;
-    protected double shiftXFromEnd = 0;
-    protected double shiftYFromEnd = 0;
-    protected double originWidth = 0;
-    protected double originHeight = 0;
-    protected double originX = 0;
-    protected double originY = 0;
-    protected double ratio = 0;
+    protected double shiftXFromEnd;
+    protected double shiftYFromEnd;
+    protected double originWidth;
+    protected double originHeight;
+    protected double originX;
+    protected double originY;
+    protected double ratio;
     
     public abstract void initializePage(int page, double x, double y);
     public abstract void defineSizeAuto();

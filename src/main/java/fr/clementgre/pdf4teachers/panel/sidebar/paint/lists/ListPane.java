@@ -30,7 +30,7 @@ import javafx.scene.text.TextAlignment;
 public abstract class ListPane<T> extends TitledPane{
     
     private final IntegerProperty type = new SimpleIntegerProperty();
-    private boolean isLoaded = false;
+    private boolean isLoaded;
     
     // TITLE
     protected final Label title = new Label();

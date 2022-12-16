@@ -84,7 +84,7 @@ public class AutoHideNotificationPane extends NotificationPane {
     }
     
     private void checkPending(){
-        if(pendingList.size() > 0 && !isShowing()){
+        if(!pendingList.isEmpty() && !isShowing()){
             Notification notif = pendingList.get(0);
             if(notif.input == null) show(notif.text, notif.iconType, notif.autoHideTime);
             else showWithInput(notif.text, notif.input, notif.iconType, notif.autoHideTime);

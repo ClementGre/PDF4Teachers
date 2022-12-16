@@ -40,7 +40,7 @@ public class Document {
     public Edition edition;
     private final ArrayList<PageRenderer> pages = new ArrayList<>();
     
-    private int lastSelectedPage = 0;
+    private int lastSelectedPage;
     private final HashSet<Integer> selectedPages = new HashSet<>();
     
     private int currentPage = -1;
@@ -49,7 +49,7 @@ public class Document {
     public PDFPagesRender pdfPagesRender;
     private UndoEngine undoEngine;
     
-    private boolean documentSaverNeedToStop = false;
+    private boolean documentSaverNeedToStop;
     public void stopDocumentSaver(){
         documentSaverNeedToStop = true;
     }

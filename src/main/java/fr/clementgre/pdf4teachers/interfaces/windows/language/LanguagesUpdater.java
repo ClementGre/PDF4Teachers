@@ -231,7 +231,7 @@ public class LanguagesUpdater {
                 }
                 
                 
-                if(toDownloadLanguages.size() != 0){
+                if(!toDownloadLanguages.isEmpty()){
                     Platform.runLater(loadingAlert::show);
                 }
                 

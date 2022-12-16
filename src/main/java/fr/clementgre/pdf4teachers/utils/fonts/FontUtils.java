@@ -35,7 +35,7 @@ public class FontUtils {
             .collect(MoreCollectors.toLinkedMap(Function.identity(), (s) -> false));
     
     private static final SystemFontsMapper systemFontsMapper = new SystemFontsMapper();
-    private static boolean loaded = false;
+    private static boolean loaded;
     
     public static void setup(){
         //systemFontsMapper.loadFontsFromSystemFiles();

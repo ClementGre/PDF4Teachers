@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public class LockManager {
     
-    public static boolean locked = false;
+    public static boolean locked;
     private static LockMessageType messageType = LockMessageType.CHECK;
     
     private static Unique4j unique;
@@ -70,7 +70,7 @@ public class LockManager {
         
         try{
             
-            if(toOpenPaths.size() == 0){
+            if(toOpenPaths.isEmpty()){
                 messageType = LockMessageType.REQUIRE_UNLOCK;
             }else{
                 messageType = LockMessageType.OPEN_FILES;

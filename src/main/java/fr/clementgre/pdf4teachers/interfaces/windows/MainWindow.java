@@ -126,7 +126,7 @@ public class MainWindow extends Stage {
         return true;
     }
     
-    public boolean doOpenDocumentation = false; // Will be used by userData to auto load the documentation.
+    public boolean doOpenDocumentation; // Will be used by userData to auto load the documentation.
     public void setup(boolean openDocumentation){
         doOpenDocumentation = openDocumentation;
         // WINDOW DIMENSIONS
@@ -254,7 +254,7 @@ public class MainWindow extends Stage {
         preventStageOverflowScreen(this);
     }
     
-    private boolean saveDimensionRunning = false;
+    private boolean saveDimensionRunning;
     public void saveDimensions(){
         if(saveDimensionRunning) return;
         
@@ -318,7 +318,7 @@ public class MainWindow extends Stage {
     }
     public static Screen getScreen(Window window){
         ObservableList<Screen> screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
-        if(screens.size() == 0){
+        if(screens.isEmpty()){
             if(window == Main.window) return Screen.getPrimary();
             else return getScreen();
         }else return screens.get(0);

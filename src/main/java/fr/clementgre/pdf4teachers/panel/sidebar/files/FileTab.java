@@ -93,7 +93,7 @@ public class FileTab extends SideTab {
                         .stream()
                         .filter(ConvertRenderer::isGoodFormat)
                         .collect(Collectors.toCollection(ArrayList::new));
-                if(toConvertFiles.size() != 0){
+                if(!toConvertFiles.isEmpty()){
                     
                     ConvertDocument converter = new ConvertDocument();
                     converter.convertWindow.root.getSelectionModel().select(1);
@@ -168,8 +168,8 @@ public class FileTab extends SideTab {
     }
     
     public class DirOpener {
-        boolean alreadyAsked = false;
-        boolean recursive = false;
+        boolean alreadyAsked;
+        boolean recursive;
         
         public DirOpener(File file){
             for(File childrenFile : Objects.requireNonNull(file.listFiles())){
@@ -234,7 +234,7 @@ public class FileTab extends SideTab {
         for(File file : files){
             openFile(file);
         }
-        if(files.size() != 0) SideBar.selectTab(this);
+        if(!files.isEmpty()) SideBar.selectTab(this);
     }
     
     public void clearFiles(){
@@ -290,7 +290,7 @@ public class FileTab extends SideTab {
                 return MainWindow.mainScreen.document.getFile().getParentFile();
             }
         }
-        if(files.getItems().size() != 0) return files.getItems().get(0).getParentFile();
+        if(!files.getItems().isEmpty()) return files.getItems().get(0).getParentFile();
         return null;
     }
     public File getCurrentDirAlways(){

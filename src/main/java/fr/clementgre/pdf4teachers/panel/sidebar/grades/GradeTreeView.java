@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 
 public class GradeTreeView extends TreeView<String> {
     
-    private ScrollBar verticalScrollbar = null;
+    private ScrollBar verticalScrollbar;
     
     public GradeTreeView(GradeTab gradeTab){
         getStyleClass().add("grade-tree-view");

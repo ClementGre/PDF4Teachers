@@ -39,8 +39,8 @@ public class DoubleSetting extends Setting<Double> {
     }
     
     private ToggleSwitch toggle;
-    private SliderWithoutPopup slider = null;
-    private Spinner<Double> spinner = null;
+    private SliderWithoutPopup slider;
+    private Spinner<Double> spinner;
     @Override
     public HBox getDefaultEditPane(){
         HBox root = new HBox();

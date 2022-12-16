@@ -66,7 +66,7 @@ public class PDFPagesEditor {
     
     private final PDDocument document;
     private final File file;
-    private boolean edited = false;
+    private boolean edited;
     
     private final UndoEngine undoEngine = new UndoEngine(false);
     
@@ -224,7 +224,7 @@ public class PDFPagesEditor {
         int pageNumber = page.getPage();
         
         // remove page elements
-        while(page.getElements().size() != 0){
+        while(!page.getElements().isEmpty()){
             if(page.getElements().get(0) instanceof GradeElement grade){
                 grade.setValue(-1);
                 grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
@@ -293,7 +293,7 @@ public class PDFPagesEditor {
     
     public void newConvertPage(int originalPage, int index){
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage), (convertedFiles) -> {
-            if(convertedFiles.size() == 0) return;
+            if(convertedFiles.isEmpty()) return;
             ConvertedFile file = convertedFiles.get(0);
             addPdfDocument(file.document, index);
         });
@@ -455,7 +455,7 @@ public class PDFPagesEditor {
         List<Image> images = new ArrayList<>();
         PageRenderer page;
         
-        if(selection && MainWindow.mainScreen.document.getSelectedPages().size() == 0){
+        if(selection && MainWindow.mainScreen.document.getSelectedPages().isEmpty()){
             selection = false;
             pageIndex = 0;
         }
@@ -499,7 +499,7 @@ public class PDFPagesEditor {
             boolean finalSelection = selection;
             int finalPageIndex = pageIndex;
             new TwoStepListAction<>(true, allPages || selection, new TwoStepListInterface<Integer, Map.Entry<File, Integer>>() {
-                File exportDir = null;
+                File exportDir;
                 
                 @Override
                 public List<Integer> prepare(boolean recursive){

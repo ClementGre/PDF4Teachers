@@ -344,7 +344,7 @@ public class Edition{
             int texts = countSection(config.getSection("texts"));
             int graphics = countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
     
-            double[] totalGrade = new double[]{-1, 0}; // Root grade value and total
+            double[] totalGrade = {-1, 0}; // Root grade value and total
             int grades = 0; // All grade element count
             int filledGrades = 0; // All entered grade
             

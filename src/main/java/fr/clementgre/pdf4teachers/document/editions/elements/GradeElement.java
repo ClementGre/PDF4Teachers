@@ -49,7 +49,7 @@ public class GradeElement extends Element {
     private String parentPath;
     private final BooleanProperty alwaysVisible;
     
-    public int nextRealYToUse = 0;
+    public int nextRealYToUse;
     
     public GradeElement(int x, int y, int pageNumber, boolean hasPage, double value, double total, double outOfTotal, int index, String parentPath, String name, boolean alwaysVisible){
         super(x, y, pageNumber);

@@ -139,7 +139,7 @@ public class ExifUtils {
     }
     
     public static class BasicExifData {
-        private long size = 0;
+        private long size;
         private Date editDate = new Date();
         private ImageTransform rotation = ImageTransform.NONE;
         

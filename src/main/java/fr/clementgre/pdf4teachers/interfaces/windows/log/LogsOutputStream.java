@@ -39,7 +39,7 @@ public class LogsOutputStream extends OutputStream {
     public void flush() throws IOException{
         super.flush();
         
-        if(buffer.length() > 0){
+        if(!buffer.isEmpty()){
             if(onLineAdded(buffer.toString().replace('\n', Character.MIN_VALUE))){
                 output.append(Log.formatConsoleLog(buffer.toString(), errorStream));
                 consoleOutput.print(Log.formatConsoleLogColored(buffer.toString(), errorStream));

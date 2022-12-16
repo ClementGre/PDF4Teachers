@@ -61,11 +61,11 @@ public class MainScreen extends Pane {
     public Pane pane = new Pane();
     public ZoomOperator zoomOperator;
     
-    public double paneMouseX = 0;
-    public double paneMouseY = 0;
+    public double paneMouseX;
+    public double paneMouseY;
     
-    public double mouseX = 0;
-    public double mouseY = 0;
+    public double mouseX;
+    public double mouseY;
     
     private final IntegerProperty status = new SimpleIntegerProperty(Status.CLOSED);
     private final ObjectProperty<Element> selected = new SimpleObjectProperty<>();
@@ -87,8 +87,8 @@ public class MainScreen extends Pane {
         public static final int ERROR_EDITION = 3;
     }
     
-    private static int dragNScrollFactorVertical = 0;
-    private static int dragNScrollFactorHorizontal = 0;
+    private static int dragNScrollFactorVertical;
+    private static int dragNScrollFactorHorizontal;
     double dragStartX;
     double dragStartY;
     
@@ -177,13 +177,13 @@ public class MainScreen extends Pane {
         }
     }
     
-    private long lastFinishedScrollingTime = 0;
-    private boolean hasScrollStartEndEvents = false;
-    private long lastFinishedZoomingTime = 0;
-    private boolean hasZoomStartEndEvents = false;
-    public static boolean isRotating = false;
+    private long lastFinishedScrollingTime;
+    private boolean hasScrollStartEndEvents;
+    private long lastFinishedZoomingTime;
+    private boolean hasZoomStartEndEvents;
+    public static boolean isRotating;
     
-    private long lastScaleChangedMs = 0;
+    private long lastScaleChangedMs;
     
     
     public void setup(){
@@ -230,14 +230,14 @@ public class MainScreen extends Pane {
     
         // Update show status when scroll level change
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 Platform.runLater(() -> {
                     if(document != null) document.updateShowsStatus();
                 });
             }
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
     
                 // Redraw pages when zooming while being in grid mode
                 if(isGridView()){
@@ -259,7 +259,7 @@ public class MainScreen extends Pane {
         });
         
         isEditPagesModeProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 double lastVScroll = document.getLastScrollValue();
                 
                 if(newValue){
@@ -284,7 +284,7 @@ public class MainScreen extends Pane {
             }
         });
         isGridViewProperty().addListener((observable, oldValue, newValue) -> {
-            if(document != null && document.getPages().size() != 0){
+            if(document != null && !document.getPages().isEmpty()){
                 document.updatePagesPosition();
             }
         });
@@ -700,7 +700,7 @@ public class MainScreen extends Pane {
         }
     }
     
-    private final static int ARROW_NAV_FACTOR = 300;
+    private static final int ARROW_NAV_FACTOR = 300;
     public void navigateUp(){
         if(hasDocument(false)){
             zoomOperator.scrollUp(ARROW_NAV_FACTOR, false, false);

@@ -56,7 +56,7 @@ public class FilesChooserManager{
         }
         
         if(listFiles != null){
-            if(listFiles.size() == 0) return null;
+            if(listFiles.isEmpty()) return null;
             File[] files = new File[listFiles.size()];
             files = listFiles.toArray(files);
             setPathFromSyncVar(syncVar, listFiles.get(0).getParentFile().getAbsolutePath());

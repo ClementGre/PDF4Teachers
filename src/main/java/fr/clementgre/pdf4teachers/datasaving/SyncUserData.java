@@ -32,7 +32,7 @@ public class SyncUserData {
     @UserDataObject(path = "mainWindowSize.y")
     public long mainWindowY = -1;
     @UserDataObject(path = "mainWindowSize.fullScreen")
-    public boolean mainWindowMaximized = false;
+    public boolean mainWindowMaximized;
     
     //////
     

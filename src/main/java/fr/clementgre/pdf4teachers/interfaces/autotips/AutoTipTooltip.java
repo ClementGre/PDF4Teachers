@@ -32,7 +32,7 @@ public class AutoTipTooltip extends PopOver {
     
     private final Label text = new Label();
     
-    private boolean closedByAutoHide = false;
+    private boolean closedByAutoHide;
     private JMetro jMetro;
     
     private static final int WIDTH = 300;

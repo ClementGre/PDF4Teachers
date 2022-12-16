@@ -74,7 +74,7 @@ public class TextRenderer {
                 
                 PDType0Font font = fonts.get(fontEntry);
                 // Find an "Unknown char" in the Unicode attributed interval
-                char[] replacements = new char[]{'�'};
+                char[] replacements = {'�'};
                 if(!canRender(font, '�')){
                     replacements = IntStream.range(0, 1 << 16)
                             .map(c -> canRender(font, c) ? c : '?').filter(c -> Character.toChars(c)[0] == '?')

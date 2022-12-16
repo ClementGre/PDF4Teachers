@@ -166,7 +166,7 @@ public class StyleManager {
         }
     }
     
-    static int i = 0;
+    static int i;
     
     public static Color shiftColorWithTheme(Color color){
         return shiftColorWithTheme(color, 0.8, 0.2);

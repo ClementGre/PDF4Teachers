@@ -86,7 +86,7 @@ public class SystemFontsMapper {
     }
     public List<File> getAllSystemFontFiles(){
         // only retrieving ttf files
-        String[] extensions = new String[]{"ttf", "otf", "ttc"};
+        String[] extensions = {"ttf", "otf", "ttc"};
         String[] paths = getSystemFontsDirs();
         return Arrays.stream(paths)
                 .map(File::new)

@@ -16,14 +16,14 @@ public class UndoEngine{
     
     public static final KeyCombination KEY_COMB_UNDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHORTCUT_DOWN);
     public static final KeyCombination KEY_COMB_REDO = new KeyCodeCombination(KeyCode.Z, KeyCombination.SHIFT_DOWN, KeyCombination.SHORTCUT_DOWN);
-    private final static int MAX_STACK_LENGTH = 200;
+    private static final int MAX_STACK_LENGTH = 200;
     
     private ArrayList<UndoAction> undoList = new ArrayList<>();
     private ArrayList<UndoAction> redoList = new ArrayList<>();
     
     // Prevent adding actions while reversing an action.
-    public static boolean isUndoingThings = false;
-    private static boolean isLocked = false;
+    public static boolean isUndoingThings;
+    private static boolean isLocked;
     
     private static final boolean VERBOSE = false;
     
@@ -55,7 +55,7 @@ public class UndoEngine{
         
         // After having undoing last action, undo all next NO_COUNT actions
         // Do not process next NO_COUNT actions if doProcessNoCountRightAndLeft is true
-        while(doProcessNoCountRightAndLeft && undoList.size() != 0 && undoList.get(0).getUndoType() == UType.NO_COUNT){
+        while(doProcessNoCountRightAndLeft && !undoList.isEmpty() && undoList.get(0).getUndoType() == UType.NO_COUNT){
             undoLastAction();
         }
         
@@ -71,7 +71,7 @@ public class UndoEngine{
         while(!redoLastAction());
     
         // After having undoing last action, undo all next NO_COUNT actions
-        while(redoList.size() != 0 && redoList.get(0).getUndoType() == UType.NO_COUNT){
+        while(!redoList.isEmpty() && redoList.get(0).getUndoType() == UType.NO_COUNT){
             redoLastAction();
         }
         
@@ -79,7 +79,7 @@ public class UndoEngine{
         isUndoingThings = false;
     }
     private boolean undoLastAction(){
-        if(undoList.size() == 0) return true;
+        if(undoList.isEmpty()) return true;
         
         UndoAction action = undoList.get(0);
         if(VERBOSE) Log.t("Undoing: " + action + " [" + action.getUndoType() + "]");
@@ -90,7 +90,7 @@ public class UndoEngine{
         return completed && action.getUndoType() == UType.UNDO;
     }
     private boolean redoLastAction(){
-        if(redoList.size() == 0) return true;
+        if(redoList.isEmpty()) return true;
     
         UndoAction action = redoList.get(0);
         if(VERBOSE) Log.t("Redoing: " + action + " [" + action.getUndoType() + "]");
@@ -104,7 +104,7 @@ public class UndoEngine{
     
     
     private boolean computeAction(ArrayList<UndoAction> redoList, ArrayList<UndoAction> undoList){
-        if(redoList.size() == 0) return true;
+        if(redoList.isEmpty()) return true;
         
         UndoAction action = redoList.get(0);
         boolean completed = action.undoAndInvert();
@@ -114,19 +114,19 @@ public class UndoEngine{
         return completed && action.getUndoType() == UType.UNDO;
     }
     public UndoAction getUndoNextAction(){
-        if(undoList.size() > 0){
+        if(!undoList.isEmpty()){
             return undoList.get(0);
         }
         return null;
     }
     public String getUndoNextName(){
-        if(undoList.size() > 0){
+        if(!undoList.isEmpty()){
             return undoList.get(0).toString();
         }
         return null;
     }
     public String getRedoNextName(){
-        if(redoList.size() > 0){
+        if(!redoList.isEmpty()){
             return redoList.get(0).toString();
         }
         return null;
