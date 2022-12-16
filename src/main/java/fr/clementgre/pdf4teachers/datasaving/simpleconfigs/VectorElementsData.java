@@ -52,9 +52,8 @@ public class VectorElementsData extends SimpleConfig {
     
     @Override
     protected void unableToLoadConfig(){
-        if(Main.firstLaunch || Main.settings.hasVersionChanged()) {
+        if(Main.firstLaunch || Main.settings.hasVersionChanged())
             MainWindow.paintTab.favouriteVectors.loadVectorsList(DefaultFavoriteVectors.getDefaultFavoriteVectors(), false);
-        }
     }
     
     @Override

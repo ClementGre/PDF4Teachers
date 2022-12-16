@@ -47,35 +47,23 @@ public class GradeCopyGradeScaleDialog {
             prepareCopyEditions();
             boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
-                if(MainWindow.mainScreen.document.getFile().equals(file)) {
-                    continue;
-                }
+                if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 if(MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())){
                     int result = copyToFile(file, recursive, copyLocations.isSelected());
-                    if(result == 0) {
-                        copiedEditions++;
-                    } else if(result == 2) {
-                        break;
-                    }
+                    if(result == 0) copiedEditions++;
+                    else if(result == 2) break;
                 }
             }
         }else if(option == ButtonPosition.OTHER_RIGHT){
             prepareCopyEditions();
             boolean recursive = MainWindow.filesTab.getOpenedFiles().size() != 1;
             for(File file : MainWindow.filesTab.getOpenedFiles()){
-                if(MainWindow.mainScreen.document.getFile().equals(file)) {
-                    continue;
-                }
+                if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
                 int result = copyToFile(file, recursive, copyLocations.isSelected());
-                if(result == 0) {
-                    copiedEditions++;
-                } else if(result == 2) {
-                    break;
-                }
+                if(result == 0) copiedEditions++;
+                else if(result == 2) break;
             }
-        }else {
-            return;
-        }
+        }else return;
         
         new OKAlert(TR.tr("gradeTab.copyGradeScaleDialog.completed.title"),
                 TR.tr("gradeTab.copyGradeScaleDialog.completed.header"), "(" + TR.tr("gradeTab.copyGradeScaleDialog.completed.details", copiedEditions) + ")").show();
@@ -85,9 +73,7 @@ public class GradeCopyGradeScaleDialog {
     }
     
     public void prepareCopyEditions(){
-        if(MainWindow.mainScreen.hasDocument(false)) {
-            MainWindow.mainScreen.document.save(true);
-        }
+        if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.save(true);
         File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
         
         try{
@@ -111,11 +97,8 @@ public class GradeCopyGradeScaleDialog {
             ArrayList<GradeElement> gradeElements = new ArrayList<>();
             List<Element> otherElements = new ArrayList<>();
             for(Element element : elementsArray){
-                if(element instanceof GradeElement) {
-                    gradeElements.add((GradeElement) element);
-                } else {
-                    otherElements.add(element);
-                }
+                if(element instanceof GradeElement) gradeElements.add((GradeElement) element);
+                else otherElements.add(element);
             }
             
             if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
@@ -127,11 +110,8 @@ public class GradeCopyGradeScaleDialog {
                 ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
                 ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
                 
-                if(recursive) {
-                    alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
-                } else {
-                    alert.getButtonTypes().setAll(ignore, stop);
-                }
+                if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else alert.getButtonTypes().setAll(ignore, stop);
                 
                 ButtonType option = alert.getShowAndWait();
                 if(option == stop){
@@ -172,20 +152,13 @@ public class GradeCopyGradeScaleDialog {
                 ButtonType stop = alert.getButton(TR.tr("dialog.actionError.skip"), ButtonPosition.CLOSE);
                 ButtonType stopAll = alert.getButton(TR.tr("dialog.actionError.stopAll"), ButtonPosition.CLOSE);
                 
-                if(recursive) {
-                    alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
-                } else {
-                    alert.getButtonTypes().setAll(ignore, stop);
-                }
+                if(recursive) alert.getButtonTypes().setAll(ignore, ignoreAll, stop, stopAll);
+                else alert.getButtonTypes().setAll(ignore, stop);
                 
                 ButtonType option = alert.getShowAndWait();
-                if(option == stop) {
-                    return 1;
-                } else if(option == stopAll) {
-                    return 2;
-                } else if(option == ignoreAll) {
-                    ignoreErase = true;
-                }
+                if(option == stop) return 1;
+                else if(option == stopAll) return 2;
+                else if(option == ignoreAll) ignoreErase = true;
                 
             }
             

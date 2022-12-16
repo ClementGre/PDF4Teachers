@@ -59,11 +59,8 @@ public abstract class Element extends Region {
     // SETUP / EVENTS CALLBACK
     
     private final ChangeListener<Element> mainScreenSelectedListener = (observable, oldElement, newElement) -> {
-        if(oldElement == this && newElement != this) {
-            onDeSelected();
-        } else if(oldElement != this && newElement == this) {
-            onSelected();
-        }
+        if(oldElement == this && newElement != this) onDeSelected();
+        else if(oldElement != this && newElement == this) onSelected();
     };
     
     public static final String ELEMENT_CLIPBOARD_KEY = "ElementsClipboard";
@@ -71,9 +68,7 @@ public abstract class Element extends Region {
     
     boolean dragAlreadyDetected;
     protected void setupGeneral(boolean setupEvents, Node... components){
-        if(components != null) {
-            getChildren().setAll(components);
-        }
+        if(components != null) getChildren().setAll(components);
         
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
         layoutYProperty().bind(getPage().heightProperty().multiply(realY.divide(Element.GRID_HEIGHT)));
@@ -88,17 +83,11 @@ public abstract class Element extends Region {
             
             AtomicBoolean lastClickSelected = new AtomicBoolean(false);
             setOnMousePressed(e -> {
-                if(e.getButton() == MouseButton.MIDDLE) {
-                    setCursor(Cursor.CLOSED_HAND);
-                }
-                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) {
-                    return;
-                }
+                if(e.getButton() == MouseButton.MIDDLE) setCursor(Cursor.CLOSED_HAND);
+                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
                 
                 wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
-                if(wasInEditPagesModeWhenMousePressed) {
-                    return;
-                }
+                if(wasInEditPagesModeWhenMousePressed) return;
                 e.consume();
                 dragAlreadyDetected = false;
                 
@@ -117,12 +106,8 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseClicked(e -> {
-                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) {
-                    return;
-                }
-                if(MainWindow.mainScreen.isEditPagesMode()) {
-                    return;
-                }
+                if(!(e.getButton() == MouseButton.PRIMARY || e.getButton() == MouseButton.SECONDARY)) return;
+                if(MainWindow.mainScreen.isEditPagesMode()) return;
                 e.consume();
                 if(e.getClickCount() == 2 && e.getButton() == MouseButton.PRIMARY){
                     onDoubleClick();
@@ -132,9 +117,7 @@ public abstract class Element extends Region {
                 }
             });
             setOnMouseDragged(e -> {
-                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) {
-                    return;
-                }
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 
                 if(!dragAlreadyDetected){
                     MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
@@ -147,9 +130,7 @@ public abstract class Element extends Region {
             });
             setOnMouseReleased(e -> {
                 setCursor(PlatformUtils.CURSOR_MOVE);
-                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) {
-                    return;
-                }
+                if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 Edition.setUnsave("ElementMouseRelease");
                 
                 double itemX = getLayoutX() + e.getX() - shiftX;
@@ -182,9 +163,7 @@ public abstract class Element extends Region {
     }
     
     public static void copy(Element element){
-        if(element instanceof GradeElement || element instanceof SkillTableElement) {
-            return;
-        }
+        if(element instanceof GradeElement || element instanceof SkillTableElement) return;
         
         final ClipboardContent clipboardContent = new ClipboardContent();
         clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);
@@ -194,9 +173,7 @@ public abstract class Element extends Region {
         clipboard.setContent(clipboardContent);
     }
     public static boolean paste(){
-        if(!MainWindow.mainScreen.hasDocument(false)) {
-            return false;
-        }
+        if(!MainWindow.mainScreen.hasDocument(false)) return false;
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         
         if(ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && elementClipboard != null){
@@ -208,9 +185,7 @@ public abstract class Element extends Region {
                 page.addElement(element, true, UType.UNDO);
                 element.checkLocation(page.getMouseX(), page.getMouseY(), false);
                 element.centerOnCoordinatesY();
-                if(element instanceof GraphicElement) {
-                    element.centerOnCoordinatesX();
-                }
+                if(element instanceof GraphicElement) element.centerOnCoordinatesX();
                 element.select();
                 
                 return true;
@@ -248,30 +223,17 @@ public abstract class Element extends Region {
     public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
         
         // Negative Y
-        if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage) {
-            if(itemY < 0) {
-                itemY = 0;
-            }
-        }
+        if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage) if(itemY < 0) itemY = 0;
         // Positive Y
-        if(getPageNumber() >= MainWindow.mainScreen.document.numberOfPages -MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage) {
-            if(itemY > getPage().getHeight() - height) {
-                itemY = getPage().getHeight() - height;
-            }
-        }
+        if(getPageNumber() >= MainWindow.mainScreen.document.numberOfPages -MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
+            if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
             
         // Negative X
-        if(getPageNumber() % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage) {
-            if(itemX < 0) {
-                itemX = 0;
-            }
-        }
+        if(getPageNumber() % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
+            if(itemX < 0) itemX = 0;
         // Positive X
-        if((getPageNumber() +1) % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage) {
-            if(itemX > getPage().getWidth() - width) {
-                itemX = getPage().getWidth() - width;
-            }
-        }
+        if((getPageNumber() +1) % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
+            if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
         
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));
@@ -321,9 +283,7 @@ public abstract class Element extends Region {
     
     public void delete(boolean markAsUnsave, UType undoType){
         if(getPage() != null){
-            if(equals(MainWindow.mainScreen.getSelected())) {
-                MainWindow.mainScreen.setSelected(null);
-            }
+            if(equals(MainWindow.mainScreen.getSelected())) MainWindow.mainScreen.setSelected(null);
             getPage().removeElement(this, markAsUnsave, undoType);
         }
     }
@@ -402,9 +362,7 @@ public abstract class Element extends Region {
     // PAGE GETTERS AND SETTERS
     
     public PageRenderer getPage(){
-        if(MainWindow.mainScreen.document == null) {
-            return null;
-        }
+        if(MainWindow.mainScreen.document == null) return null;
         if(MainWindow.mainScreen.document.getPagesNumber() > pageNumber){
             return MainWindow.mainScreen.document.getPage(pageNumber);
         }

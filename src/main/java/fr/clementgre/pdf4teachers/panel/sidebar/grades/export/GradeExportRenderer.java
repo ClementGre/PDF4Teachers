@@ -49,9 +49,7 @@ public class GradeExportRenderer {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.ENGLISH);
             decimalFormat = new DecimalFormat("0.###", symbols);
             decimalFormat.setMaximumIntegerDigits(4);
-        }else {
-            decimalFormat = MainWindow.gradesDigFormat;
-        }
+        }else decimalFormat = MainWindow.gradesDigFormat;
         
         separator = pane.settingsCSVSeparatorComma.isSelected() ? "," : ";";
         
@@ -78,9 +76,7 @@ public class GradeExportRenderer {
                 for(ExportFile file : files){
                     generateStudentLine(file);
                 }
-                if(!save(null)) {
-                    return exported;
-                }
+                if(!save(null)) return exported;
             }catch(Exception e){
                 Log.e(e);
                 new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.fatalError.title"), e.getMessage(), false).showAndWait();
@@ -100,16 +96,12 @@ public class GradeExportRenderer {
                     }
                     generateStudentLine(file);
                     
-                    if(!save(file)) {
-                        return exported;
-                    }
+                    if(!save(file)) return exported;
                     
                 }catch(Exception e){
                     Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.error.title", file.file.getName()), e.getMessage(), true).execute();
-                    if(result) {
-                        return exported;
-                    }
+                    if(result) return exported;
                 }
             }
             
@@ -125,11 +117,8 @@ public class GradeExportRenderer {
         
         for(GradeRating rating : gradeScale){
             if(rating.isRoot() && rating.outOfTotal > 0){
-                if(includeGradeScale) {
-                    content += separator + rating.name + " /" + decimalFormat.format(rating.outOfTotal);
-                } else {
-                    content += separator + rating.name + " (/" + decimalFormat.format(rating.outOfTotal) + ")";
-                }
+                if(includeGradeScale) content += separator + rating.name + " /" + decimalFormat.format(rating.outOfTotal);
+                else content += separator + rating.name + " (/" + decimalFormat.format(rating.outOfTotal) + ")";
             }
             content += separator + rating.name + (includeGradeScale ? " /" + decimalFormat.format(rating.total) : "");
         }
@@ -252,20 +241,14 @@ public class GradeExportRenderer {
                 Collections.reverse(reversedComments);
                 
                 for(String comment : reversedComments){
-                    if(rows.size() <= rowNumber) {
-                        rows.add(separator + comment);
-                    } else {
-                        rows.set(rowNumber, rows.get(rowNumber) + separator + comment);
-                    }
+                    if(rows.size() <= rowNumber) rows.add(separator + comment);
+                    else rows.set(rowNumber, rows.get(rowNumber) + separator + comment);
                     rowNumber++;
                 }
                 // Fill rows until rowNumber == 100 (it is needed to add semicolon even for void cells)
                 while(rowNumber < 100){
-                    if(rows.size() <= rowNumber) {
-                        rows.add(separator);
-                    } else {
-                        rows.set(rowNumber, rows.get(rowNumber) + separator);
-                    }
+                    if(rows.size() <= rowNumber) rows.add(separator);
+                    else rows.set(rowNumber, rows.get(rowNumber) + separator);
                     rowNumber++;
                 }
             }
@@ -274,9 +257,7 @@ public class GradeExportRenderer {
             for(String line : rows){
                 content += (hasOutOfColumn ? separator : "") + line + "\n";
             }
-        }else {
-            content += "\n";
-        }
+        }else content += "\n";
     }
     
     // OTHERS
@@ -303,21 +284,15 @@ public class GradeExportRenderer {
         if(pane.type != 2){
             for(File file : MainWindow.filesTab.files.getItems()){
                 try{
-                    if(MainWindow.mainScreen.document.getFile().equals(file)) {
+                    if(MainWindow.mainScreen.document.getFile().equals(file)) continue;
+                    if(pane.settingsOnlySameDir.isSelected() && !MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent()))
                         continue;
-                    }
-                    if(pane.settingsOnlySameDir.isSelected() && !MainWindow.mainScreen.document.getFile().getParent().equals(file.getParent())) {
-                        continue;
-                    }
                     
                     ExportFile exportFile = new ExportFile(file, exportTier, pane.settingsWithTxtElements.isSelected());
                     
-                    if(pane.settingsOnlySameGradeScale.isSelected() && !exportFile.isSameGradeScale(gradeScale)) {
+                    if(pane.settingsOnlySameGradeScale.isSelected() && !exportFile.isSameGradeScale(gradeScale))
                         continue;
-                    }
-                    if(pane.settingsOnlyCompleted.isSelected() && !exportFile.isCompleted()) {
-                        continue;
-                    }
+                    if(pane.settingsOnlyCompleted.isSelected() && !exportFile.isCompleted()) continue;
                     
                     files.add(exportFile);
                     
@@ -325,9 +300,7 @@ public class GradeExportRenderer {
                     Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header", file.getName()) + "\n" +
                             TR.tr("gradeTab.gradeExportWindow.unableToReadEditionError.header.sourceDocument"), e.getMessage(), true).execute();
-                    if(result) {
-                        return false;
-                    }
+                    if(result) return false;
                 }
             }
         }
@@ -351,13 +324,10 @@ public class GradeExportRenderer {
         
         if(file.exists()){
             AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
-            if(result == AlreadyExistDialogManager.ResultType.SKIP) {
-                return true;
-            } else if(result == AlreadyExistDialogManager.ResultType.STOP) {
-                return false;
-            } else if(result == AlreadyExistDialogManager.ResultType.RENAME) {
+            if(result == AlreadyExistDialogManager.ResultType.SKIP) return true;
+            else if(result == AlreadyExistDialogManager.ResultType.STOP) return false;
+            else if(result == AlreadyExistDialogManager.ResultType.RENAME)
                 file = AlreadyExistDialogManager.rename(file);
-            }
         }
         
         file.createNewFile();

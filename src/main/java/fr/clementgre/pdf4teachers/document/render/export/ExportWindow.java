@@ -100,11 +100,8 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         
         setButtons(cancel, export);
         
-        if(files.size() == 1) {
-            setupSimplePanel();
-        } else {
-            setupComplexPanel();
-        }
+        if(files.size() == 1) setupSimplePanel();
+        else setupComplexPanel();
     }
     
     @Override
@@ -143,9 +140,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         
         export.setOnAction(event -> {
             
-            if(!fileName.getText().endsWith(".pdf")) {
-                fileName.setText(fileName.getText() + ".pdf");
-            }
+            if(!fileName.getText().endsWith(".pdf")) fileName.setText(fileName.getText() + ".pdf");
             
             startExportation(new File(filePath.getText()), "", "", "", "", fileName.getText(),
                     imagesDPI.getValue(), false, textElements.isSelected(), gradesElements.isSelected(), drawElements.isSelected(), skillElements.isSelected());
@@ -244,11 +239,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
     }
     private void updateMultipleFilesTitle(){
         String title;
-        if(onlyEdited.isSelected()) {
+        if(onlyEdited.isSelected())
             title = TR.tr("exportWindow.title.multipleFiles", files.stream().filter((f) -> Edition.getEditFile(f).exists()).toArray().length);
-        } else {
-            title = TR.tr("exportWindow.title.multipleFiles", files.size());
-        }
+        else title = TR.tr("exportWindow.title.multipleFiles", files.size());
         setHeaderText(title);
         setTitle(title);
     }
@@ -288,13 +281,12 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                 
                 if(toFile.exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(toFile);
-                    if(result == AlreadyExistDialogManager.ResultType.SKIP) {
+                    if(result == AlreadyExistDialogManager.ResultType.SKIP)
                         return Map.entry(Map.entry(new File(""), new File("")), 2);
-                    } else if(result == AlreadyExistDialogManager.ResultType.STOP) {
+                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
-                    } else if(result == AlreadyExistDialogManager.ResultType.RENAME) {
+                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
                         toFile = AlreadyExistDialogManager.rename(toFile);
-                    }
                 }
                 
                 return Map.entry(Map.entry(pdfFile, toFile), TwoStepListAction.CODE_OK);
@@ -309,11 +301,8 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             public TwoStepListAction.ProcessResult completeData(Map.Entry<File, File> data, boolean recursive){
                 try{
                     boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements, skillElements);
-                    if(ok) {
-                        return TwoStepListAction.ProcessResult.OK;
-                    } else {
-                        return TwoStepListAction.ProcessResult.SKIPPED;
-                    }
+                    if(ok) return TwoStepListAction.ProcessResult.OK;
+                    else return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){
                     Log.e(e);
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){
@@ -331,13 +320,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                 close();
                 
                 String header;
-                if(completedSize == 0) {
-                    header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
-                } else if(completedSize == 1) {
-                    header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
-                } else {
-                    header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", completedSize);
-                }
+                if(completedSize == 0) header = TR.tr("exportWindow.dialogs.completed.header.noDocument");
+                else if(completedSize == 1) header = TR.tr("exportWindow.dialogs.completed.header.oneDocument");
+                else header = TR.tr("exportWindow.dialogs.completed.header.multipleDocument", completedSize);
                 
                 String details;
                 String noEditText = !excludedReasons.containsKey(1) ? "" : "\n(" + TR.tr("exportWindow.dialogs.completed.ignored.noEdit", excludedReasons.get(1)) + ")";

@@ -77,15 +77,9 @@ public class AutoTipTooltip extends PopOver {
     
     
     public void showAuto(Stage owner){
-        if(owner == null) {
-            return;
-        }
-        if(!owner.isFocused()) {
-            return;
-        }
-        if(isShowing()) {
-            return;
-        }
+        if(owner == null) return;
+        if(!owner.isFocused()) return;
+        if(isShowing()) return;
         closedByAutoHide = false;
         
         jMetro = StyleManager.putStyle(getRoot(), Style.DEFAULT, jMetro);
@@ -142,13 +136,9 @@ public class AutoTipTooltip extends PopOver {
     }
     
     private void showOnNode(Node node, Stage owner){
-        if(node == null) {
-            return;
-        }
+        if(node == null) return;
         final Scene scene = node.getScene();
-        if((scene == null) || (scene.getWindow() == null)) {
-            return;
-        }
+        if((scene == null) || (scene.getWindow() == null)) return;
         
         Point2D origin = node.localToScreen(node.getLayoutBounds().getWidth() / 2 - WIDTH / 2d, node.getLayoutBounds().getHeight() / 2);
         super.show(node, origin.getX(), origin.getY());

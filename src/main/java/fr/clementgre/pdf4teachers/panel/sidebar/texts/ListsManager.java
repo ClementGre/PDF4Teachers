@@ -66,9 +66,7 @@ public class ListsManager {
                     }else{
                         saveList(inputAlert.getText());
                     }
-                }else {
-                    saveList(inputAlert.getText());
-                }
+                }else saveList(inputAlert.getText());
             }
         });
     }
@@ -103,13 +101,9 @@ public class ListsManager {
                     ButtonType delete = alert.addButton(TR.tr("actions.delete"), ButtonPosition.OTHER_LEFT);
                     
                     ButtonType result = alert.getShowAndWait();
-                    if(result == load) {
-                        loadList(list.getValue(), false);
-                    } else if(result == loadReplace) {
-                        loadList(list.getValue(), true);
-                    } else if(result == delete) {
-                        deleteList(list.getKey());
-                    }
+                    if(result == load) loadList(list.getValue(), false);
+                    else if(result == loadReplace) loadList(list.getValue(), true);
+                    else if(result == delete) deleteList(list.getKey());
                     
                 });
             }
@@ -119,12 +113,8 @@ public class ListsManager {
     }
     
     public void loadList(ArrayList<TextListItem> items, boolean flush){
-        if(flush) {
-            section.clearElements(true);
-        }
-        for(TextListItem item : items) {
-            section.getChildren().add(item.toTextTreeItem(section.sectionType));
-        }
+        if(flush) section.clearElements(true);
+        for(TextListItem item : items) section.getChildren().add(item.toTextTreeItem(section.sectionType));
         section.sortManager.simulateCall();
     }
     

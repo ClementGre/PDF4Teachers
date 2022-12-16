@@ -44,27 +44,19 @@ public class FilesChooserManager{
     public static File[] showFilesDialog(SyncVar syncVar, boolean multiple, String extensionsName, String... extensions){
         final FileChooser chooser = new FileChooser();
         chooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter(extensionsName, extensions));
-        if(multiple) {
-            chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
-        } else {
-            chooser.setTitle(TR.tr(""));
-        }
+        if(multiple) chooser.setTitle(TR.tr("dialog.file.selectFiles.title"));
+        else chooser.setTitle(TR.tr(""));
         chooser.setInitialDirectory(pathToExistingFile(getPathFromSyncVar(syncVar)));
         
         List<File> listFiles = null;
-        if(multiple) {
-            listFiles = chooser.showOpenMultipleDialog(Main.window);
-        } else{
+        if(multiple) listFiles = chooser.showOpenMultipleDialog(Main.window);
+        else{
             File file = chooser.showOpenDialog(Main.window);
-            if(file != null) {
-                listFiles = Collections.singletonList(file);
-            }
+            if(file != null) listFiles = Collections.singletonList(file);
         }
         
         if(listFiles != null){
-            if(listFiles.isEmpty()) {
-                return null;
-            }
+            if(listFiles.isEmpty()) return null;
             File[] files = new File[listFiles.size()];
             files = listFiles.toArray(files);
             setPathFromSyncVar(syncVar, listFiles.get(0).getParentFile().getAbsolutePath());
@@ -140,23 +132,15 @@ public class FilesChooserManager{
         LAST_GALLERY_OPEN_DIR
     }
     public static String getPathFromSyncVar(SyncVar syncVar){
-        if(syncVar == SyncVar.LAST_OPEN_DIR) {
-            return MainWindow.userData.lastOpenDir;
-        } else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) {
-            return MainWindow.userData.lastConvertSrcDir;
-        } else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) {
-            return MainWindow.userData.galleryLastOpenPath;
-        }
+        if(syncVar == SyncVar.LAST_OPEN_DIR) return MainWindow.userData.lastOpenDir;
+        else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) return MainWindow.userData.lastConvertSrcDir;
+        else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) return MainWindow.userData.galleryLastOpenPath;
         return null;
     }
     public static void setPathFromSyncVar(SyncVar syncVar, String value){
-        if(syncVar == SyncVar.LAST_OPEN_DIR) {
-            MainWindow.userData.lastOpenDir = value;
-        } else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) {
-            MainWindow.userData.lastConvertSrcDir = value;
-        } else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) {
-            MainWindow.userData.galleryLastOpenPath = value;
-        }
+        if(syncVar == SyncVar.LAST_OPEN_DIR) MainWindow.userData.lastOpenDir = value;
+        else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) MainWindow.userData.lastConvertSrcDir = value;
+        else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) MainWindow.userData.galleryLastOpenPath = value;
     }
     
     
@@ -178,9 +162,7 @@ public class FilesChooserManager{
     }
     public static String pathToExistingPath(String... paths){
         for(String path : paths){
-            if(path != null && new File(path).exists()) {
-                return path;
-            }
+            if(path != null && new File(path).exists()) return path;
         }
         return System.getProperty("user.home");
     }

@@ -74,11 +74,8 @@ public class NotationGraph extends Pane {
         if(notationType == Notation.NotationType.CHAR || notation.isDefaultNotation()){
             
             String text = notation.getAcronym();
-            if(text.isBlank()) {
-                text = "?";
-            } else if(text.length() > 1) {
-                text = text.substring(0, 2);
-            }
+            if(text.isBlank()) text = "?";
+            else if(text.length() > 1) text = text.substring(0, 2);
             text = text.toUpperCase();
         
             Label label = new Label(text);

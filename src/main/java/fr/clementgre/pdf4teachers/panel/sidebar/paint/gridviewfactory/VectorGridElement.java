@@ -40,9 +40,7 @@ public class VectorGridElement{
         setup();
     }
     public VectorGridElement(boolean fake){
-        if(!fake) {
-            throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
-        }
+        if(!fake) throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
         this.fake = true;
     }
     
@@ -65,15 +63,11 @@ public class VectorGridElement{
     
     public void addToFavorite(VectorGridView gridView){
         MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(clone()));
-        if(Main.settings.listsMoveAndDontCopy.getValue()) {
-            removeFromList(gridView);
-        }
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
     }
     public void addToLast(VectorGridView gridView){
         MainWindow.paintTab.lastVectors.getList().addItems(Collections.singletonList(clone()));
-        if(Main.settings.listsMoveAndDontCopy.getValue()) {
-            removeFromList(gridView);
-        }
+        if(Main.settings.listsMoveAndDontCopy.getValue()) removeFromList(gridView);
     }
     
     public void removeFromList(VectorGridView gridView){
@@ -81,15 +75,11 @@ public class VectorGridElement{
     }
     
     public VectorElement addToDocument(boolean link){
-        if(MainWindow.mainScreen.hasDocument(false)) {
-            return vectorData.addToDocument(link);
-        }
+        if(MainWindow.mainScreen.hasDocument(false)) return vectorData.addToDocument(link);
         return null;
     }
     public void setAsToPlaceElement(boolean link){
-        if(MainWindow.mainScreen.hasDocument(false)) {
-            vectorData.setAsToPlaceElement(link);
-        }
+        if(MainWindow.mainScreen.hasDocument(false)) vectorData.setAsToPlaceElement(link);
     }
     
     public boolean equals(VectorElement element){
@@ -99,15 +89,11 @@ public class VectorGridElement{
     // SORTER
     
     public int compareUseWith(VectorGridElement element){
-        if(isFake()) {
-            return -1;
-        }
+        if(isFake()) return -1;
         return element.getVectorData().getUseCount() - vectorData.getUseCount();
     }
     public int compareLastUseTimeWith(VectorGridElement element){
-        if(isFake()) {
-            return -1;
-        }
+        if(isFake()) return -1;
         long val = (element.getVectorData().getLastUse() - vectorData.getLastUse());
         return val > 0 ? 1 : (val < 0 ? -1 : 0);
     }
@@ -177,16 +163,12 @@ public class VectorGridElement{
     }
     public void layoutSVGPath(double displayWidth){
         lastDisplayWidth = displayWidth;
-        if(svgPath.getContent().isEmpty()) {
-            renderSvgPath();
-        }
+        if(svgPath.getContent().isEmpty()) renderSvgPath();
         updateSVGSpecs();
     
         double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
         double clipPadding = 0;
-        if(vectorData.getArrowLength() != 0) {
-            clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
-        }
+        if(vectorData.getArrowLength() != 0) clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
         displayWidth = displayWidth - padding*2;
         
         // SCALE

@@ -35,27 +35,19 @@ public class EditionExporter {
     
     public static void showImportDialog(boolean onlyGrades){
         CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"));
-        if(!onlyGrades) {
-            dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.header"));
-        } else {
-            dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.onlyGrades.header"));
-        }
+        if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.header"));
+        else dialog.setHeaderText(TR.tr("dialog.importEdit.confirm.onlyGrades.header"));
         
         CheckBox copyLocations = new CheckBox(TR.tr("gradeTab.copyGradeScaleDialog.confirmation.copyLocations"));
-        if(onlyGrades) {
-            dialog.getDialogPane().setContent(copyLocations);
-        }
+        if(onlyGrades) dialog.getDialogPane().setContent(copyLocations);
         
         dialog.addCancelButton(ButtonPosition.CLOSE);
         dialog.addButton(TR.tr("dialog.importEdit.confirm.YesOneFile"), ButtonPosition.DEFAULT);
-        if(!onlyGrades) {
+        if(!onlyGrades)
             dialog.addButton(TR.tr("dialog.importEdit.confirm.YesMultipleFiles"), ButtonPosition.OTHER_RIGHT);
-        }
         
         ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
-        if(option == ButtonPosition.CLOSE) {
-            return;
-        }
+        if(option == ButtonPosition.CLOSE) return;
         
         File file = null;
         boolean recursive = false;
@@ -70,9 +62,7 @@ public class EditionExporter {
             }
         }
         
-        if(file == null) {
-            return;
-        }
+        if(file == null) return;
         
         GradeCopyGradeScaleDialog gradeCopyGradeScale;
         if(onlyGrades){
@@ -152,11 +142,9 @@ public class EditionExporter {
                                 return Map.entry(config, TwoStepListAction.CODE_OK);
                             }else{
                                 boolean result = new WrongAlert(TR.tr("dialog.importEdit.errorNoMatch.header", fileName), TR.tr("dialog.importEdit.errorNoMatch.details"), true).execute();
-                                if(result) {
+                                if(result)
                                     return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
-                                } else {
-                                    return Map.entry(new Config(), 2); // No match
-                                }
+                                else return Map.entry(new Config(), 2); // No match
                             }
                         }
                     }
@@ -173,14 +161,9 @@ public class EditionExporter {
                         }catch(IOException e){
                             Log.e(e);
                             boolean result = new ErrorAlert(TR.tr("dialog.importEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getFile()), config.getName()), e.getMessage(), recursive).execute();
-                            if(!recursive) {
-                                return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                            }
-                            if(result) {
-                                return TwoStepListAction.ProcessResult.STOP;
-                            } else {
-                                return TwoStepListAction.ProcessResult.SKIPPED;
-                            }
+                            if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                            if(result) return TwoStepListAction.ProcessResult.STOP;
+                            else return TwoStepListAction.ProcessResult.SKIPPED;
                         }
                         if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
                             MainWindow.mainScreen.document.loadEdition(false);
@@ -211,11 +194,8 @@ public class EditionExporter {
     
     public static void showExportDialog(final boolean onlyGrades){
         CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.exportEdit.confirm.title"));
-        if(!onlyGrades) {
-            dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.header"));
-        } else {
-            dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.onlyGrades.header"));
-        }
+        if(!onlyGrades) dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.header"));
+        else dialog.setHeaderText(TR.tr("dialog.exportEdit.confirm.onlyGrades.header"));
         
         dialog.addCancelButton(ButtonPosition.CLOSE);
         dialog.addButton(TR.tr("dialog.exportEdit.confirm.YesThisFile"), ButtonPosition.DEFAULT);
@@ -231,9 +211,7 @@ public class EditionExporter {
         }
         
         ButtonType option = dialog.getShowAndWait();
-        if(option == null || option.getButtonData().isCancelButton()) {
-            return;
-        }
+        if(option == null || option.getButtonData().isCancelButton()) return;
         
         File directory = null;
         boolean recursive = !option.getButtonData().isDefaultButton();
@@ -253,9 +231,7 @@ public class EditionExporter {
                 }
             }
         }
-        if(directory == null) {
-            return; // check isPresent btw
-        }
+        if(directory == null) return; // check isPresent btw
         
         final File finalDirectory = directory;
         AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(recursive);
@@ -272,14 +248,11 @@ public class EditionExporter {
             @SuppressWarnings("unchecked")
             @Override
             public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{
-                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile())) {
+                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile()))
                     return Map.entry(new Config(), 1); // Check same dir
-                }
                 
                 File editFile = Edition.getEditFile(pdfFile);
-                if(!editFile.exists()) {
-                    return Map.entry(new Config(), 2); // Check HasEdit
-                }
+                if(!editFile.exists()) return Map.entry(new Config(), 2); // Check HasEdit
                 
                 Config config = new Config(editFile);
                 config.load();
@@ -306,13 +279,11 @@ public class EditionExporter {
                 config.setDestFile(new File(finalDirectory.getAbsolutePath() + File.separator + pdfFile.getName() + ".yml"));
                 if(config.getDestFile().exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(config.getDestFile());
-                    if(result == AlreadyExistDialogManager.ResultType.SKIP) {
-                        return Map.entry(new Config(), 3);
-                    } else if(result == AlreadyExistDialogManager.ResultType.STOP) {
+                    if(result == AlreadyExistDialogManager.ResultType.SKIP) return Map.entry(new Config(), 3);
+                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(new Config(), TwoStepListAction.CODE_STOP);
-                    } else if(result == AlreadyExistDialogManager.ResultType.RENAME) {
+                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
                         config.setDestFile(AlreadyExistDialogManager.rename(config.getDestFile()));
-                    }
                 }
                 
                 return Map.entry(config, TwoStepListAction.CODE_OK);
@@ -325,23 +296,16 @@ public class EditionExporter {
             
             @Override
             public TwoStepListAction.ProcessResult completeData(Config config, boolean recursive){
-                if(oneFile) {
-                    return TwoStepListAction.ProcessResult.OK;
-                }
+                if(oneFile) return TwoStepListAction.ProcessResult.OK;
                 
                 try{
                     config.saveToDestFile();
                 }catch(IOException e){
                     Log.e(e);
                     boolean result = new ErrorAlert(TR.tr("dialog.exportEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getDestFile()), config.getName()), e.getMessage(), recursive).execute();
-                    if(!recursive) {
-                        return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                    }
-                    if(result) {
-                        return TwoStepListAction.ProcessResult.STOP;
-                    } else {
-                        return TwoStepListAction.ProcessResult.SKIPPED;
-                    }
+                    if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                    if(result) return TwoStepListAction.ProcessResult.STOP;
+                    else return TwoStepListAction.ProcessResult.SKIPPED;
                 }
                 return TwoStepListAction.ProcessResult.OK;
             }

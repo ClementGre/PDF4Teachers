@@ -81,9 +81,7 @@ public class LockManager {
                 // In this case, the last instance should have freeLock()
                 int i = 0;
                 while(!locked){
-                    if(i > 5) {
-                        break;
-                    }
+                    if(i > 5) break;
                     i++;
                     PlatformUtils.sleepThread(300);
                     locked = unique.acquireLock();
@@ -103,9 +101,7 @@ public class LockManager {
     }
     public static void onCloseApp(){
         try{
-            if(locked) {
-                locked = unique.freeLock();
-            }
+            if(locked) locked = unique.freeLock();
         }catch(Unique4jException e){Log.eNotified(e);}
     }
     

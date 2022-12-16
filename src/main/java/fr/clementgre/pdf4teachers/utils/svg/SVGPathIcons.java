@@ -120,9 +120,7 @@ public class SVGPathIcons {
         imageRegion.setStyle("-fx-background-color: " + bgColor + ";");
         imageRegion.getStyleClass().add("image-icon");
         
-        if(effect != null) {
-            imageRegion.setEffect(effect);
-        }
+        if(effect != null) imageRegion.setEffect(effect);
         
         
         maxDimension = maxDimension - padding * 2;
@@ -131,9 +129,7 @@ public class SVGPathIcons {
     
         double rw = image.getLayoutBounds().getWidth();
         double rh = image.getLayoutBounds().getHeight();
-        if(ratio <= 0) {
-            ratio = rw / rh;
-        }
+        if(ratio <= 0) ratio = rw / rh;
         
         double topBottomPadding = padding;
         double leftRightPadding = padding;
@@ -145,9 +141,7 @@ public class SVGPathIcons {
             topBottomPadding += (maxDimension - (maxDimension / ratio)) / 2d;
         }else{
             setRegionDimension(imageRegion, maxDimension, maxDimension);
-            if(padding == 0) {
-                return imageRegion;
-            }
+            if(padding == 0) return imageRegion;
         }
         imagePane.setPadding(new Insets(topBottomPadding, leftRightPadding, topBottomPadding, leftRightPadding));
         imagePane.getChildren().add(imageRegion);
@@ -168,16 +162,12 @@ public class SVGPathIcons {
         SVGPath svg = new SVGPath();
         svg.setContent(path);
         svg.setFill(color);
-        if(effect != null) {
-            svg.setEffect(effect);
-        }
+        if(effect != null) svg.setEffect(effect);
         
         SnapshotParameters sn = new SnapshotParameters();
         sn.setFill(Color.TRANSPARENT);
         
-        if(scaleFactor == 1) {
-            return svg.snapshot(sn, null);
-        }
+        if(scaleFactor == 1) return svg.snapshot(sn, null);
         
         // With a scaleFactor
         WritableImage resized = new WritableImage((int) (svg.getLayoutBounds().getWidth() * scaleFactor), (int) (svg.getLayoutBounds().getHeight() * scaleFactor));

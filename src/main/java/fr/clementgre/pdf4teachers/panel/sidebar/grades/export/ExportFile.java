@@ -29,9 +29,7 @@ public class ExportFile {
     public ExportFile(File file, int exportTier, boolean comments) throws Exception{
         this.file = file;
         
-        if(comments) {
-            this.comments = new ArrayList<>();
-        }
+        if(comments) this.comments = new ArrayList<>();
         File editFile = Edition.getEditFile(file);
         
         Element[] elements = Edition.simpleLoad(editFile);
@@ -53,9 +51,7 @@ public class ExportFile {
     private int getGradeSortIndex(GradeElement grade){
         String[] parentPath = StringUtils.cleanArray(grade.getParentPath().split(Pattern.quote("\\")));
         
-        if(grade.isRoot()) {
-            return 0;
-        }
+        if(grade.isRoot()) return 0;
         
         int index = (int) (-grade.getIndex() * Math.pow(10, parentPath.length));
 

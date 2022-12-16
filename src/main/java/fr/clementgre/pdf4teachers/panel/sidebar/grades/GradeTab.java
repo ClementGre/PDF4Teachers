@@ -45,9 +45,7 @@ public class GradeTab extends SideTab {
     private final Button settings = new IconButton(SVGPathIcons.GEAR, TR.tr("gradeTab.gradeFormatWindow.accessButton.tooltip"), e -> new GradeSettingsWindow(), true);
     private final Button link = new IconButton(SVGPathIcons.LINK, TR.tr("gradeTab.copyGradeScaleDialog.accessButton.tooltip"), e -> new GradeCopyGradeScaleDialog().show(), true);
     private final Button export = new IconButton(SVGPathIcons.EXPORT, TR.tr("gradeTab.gradeExportWindow.accessButton"), e -> {
-        if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.save(true)) {
-            new GradeExportWindow();
-        }
+        if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.save(true)) new GradeExportWindow();
     }, true);
     
     public GradeTab(){
@@ -67,9 +65,7 @@ public class GradeTab extends SideTab {
         
         lockGradeScale.setSelected(false);
         lockGradeScale.selectedProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue) {
-                AutoTipsManager.showByAction("gradescalelock");
-            }
+            if(newValue) AutoTipsManager.showByAction("gradescalelock");
             // Update the selected cell
             if(treeView.getSelectionModel().getSelectedItem() != null){
                 int selected = treeView.getSelectionModel().getSelectedIndex();
@@ -96,9 +92,7 @@ public class GradeTab extends SideTab {
         if(parent.getChildren().size() >= 1){
             String lastName = ((GradeTreeItem) parent.getChildren().get(parent.getChildren().size() - 1)).getCore().getName();
             String newName = StringUtils.incrementName(lastName);
-            if(!lastName.equals(newName)) {
-                name = newName;
-            }
+            if(!lastName.equals(newName)) name = newName;
         }
         
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
@@ -113,31 +107,23 @@ public class GradeTab extends SideTab {
     
     public void newGradeElement(String name, double value, double total, int index, String parentPath, boolean update){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-        if(page == null) {
-            return;
-        }
+        if(page == null) return;
         
-        if(update) {
-            MainWindow.mainScreen.setSelected(null);
-        }
+        if(update) MainWindow.mainScreen.setSelected(null);
         
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, value, total, -1, index, parentPath, name, false);
         
         page.addElement(current, update, UType.NO_UNDO);
         current.centerOnCoordinatesY();
-        if(update) {
-            MainWindow.mainScreen.setSelected(current);
-        }
+        if(update) MainWindow.mainScreen.setSelected(current);
         
     }
     
     public void updateElementsFont(){
         if(treeView.getRoot() != null){
             GradeTreeItem root = ((GradeTreeItem) treeView.getRoot());
-            if(root.hasSubGrade()) {
-                updateElementFont(root);
-            }
+            if(root.hasSubGrade()) updateElementFont(root);
             root.getCore().updateFont();
         }
     }
@@ -148,9 +134,7 @@ public class GradeTab extends SideTab {
             GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
             
             children.getCore().updateFont();
-            if(children.hasSubGrade()) {
-                updateElementFont(children);
-            }
+            if(children.hasSubGrade()) updateElementFont(children);
         }
     }
     

@@ -42,25 +42,16 @@ public class FontPaths{
     
     public FontPath getPath(FontWeight weight, boolean italic){
         if(weight == FontWeight.BOLD && italic){
-            if(boldItalic != null) {
-                return boldItalic;
-            } else {
-                return getPath(FontWeight.NORMAL, false);
-            }
+            if(boldItalic != null) return boldItalic;
+            else return getPath(FontWeight.NORMAL, false);
         }
         if(weight == FontWeight.BOLD){
-            if(bold != null) {
-                return bold;
-            } else {
-                return getPath(FontWeight.NORMAL, false);
-            }
+            if(bold != null) return bold;
+            else return getPath(FontWeight.NORMAL, false);
         }
         if(italic && weight == FontWeight.NORMAL){
-            if(this.italic != null) {
-                return this.italic;
-            } else {
-                return getPath(FontWeight.NORMAL, false);
-            }
+            if(this.italic != null) return this.italic;
+            else return getPath(FontWeight.NORMAL, false);
         }
         if(weight == FontWeight.NORMAL){
             return this.regular;
@@ -84,34 +75,18 @@ public class FontPaths{
     
     public HashMap<String, Object> serialize(){
         HashMap<String, Object> map = new HashMap<>();
-        if(regular != null) {
-            map.put("regular", regular.serialize());
-        }
-        if(boldItalic != null) {
-            map.put("boldItalic", boldItalic.serialize());
-        }
-        if(bold != null) {
-            map.put("bold", bold.serialize());
-        }
-        if(italic != null) {
-            map.put("italic", italic.serialize());
-        }
+        if(regular != null) map.put("regular", regular.serialize());
+        if(boldItalic != null) map.put("boldItalic", boldItalic.serialize());
+        if(bold != null) map.put("bold", bold.serialize());
+        if(italic != null) map.put("italic", italic.serialize());
         return map;
     }
     public void deSerialize(HashMap<String, Object> map){
         
-        if(map.containsKey("regular")) {
-            setRegular(FontPath.deSerialize(Config.getSection(map, "regular")));
-        }
-        if(map.containsKey("boldItalic")) {
-            setBoldItalic(FontPath.deSerialize(Config.getSection(map, "boldItalic")));
-        }
-        if(map.containsKey("bold")) {
-            setBold(FontPath.deSerialize(Config.getSection(map, "bold")));
-        }
-        if(map.containsKey("italic")) {
-            setItalic(FontPath.deSerialize(Config.getSection(map, "italic")));
-        }
+        if(map.containsKey("regular")) setRegular(FontPath.deSerialize(Config.getSection(map, "regular")));
+        if(map.containsKey("boldItalic")) setBoldItalic(FontPath.deSerialize(Config.getSection(map, "boldItalic")));
+        if(map.containsKey("bold")) setBold(FontPath.deSerialize(Config.getSection(map, "bold")));
+        if(map.containsKey("italic")) setItalic(FontPath.deSerialize(Config.getSection(map, "italic")));
         
     }
     
@@ -176,14 +151,10 @@ public class FontPaths{
         }
         public static FontPath deSerialize(HashMap<String, Object> data){
             String path = Config.getString(data, "path");
-            if(path == null || path.isBlank()) {
-                return null;
-            }
+            if(path == null || path.isBlank()) return null;
             
             FontWeight weight = FontWeight.findByName(Config.getString(data, "weight"));
-            if(weight == null) {
-                weight = FontWeight.NORMAL;
-            }
+            if(weight == null) weight = FontWeight.NORMAL;
             
             boolean italic = Config.getBoolean(data, "italic");
             

@@ -42,17 +42,13 @@ public class ShortcutsTextField extends TextField {
         if(UndoEngine.KEY_COMB_UNDO.match(e)){ // UNDO
             e.consume();
             if(!MenuBar.isSystemMenuBarSupported()){
-                if(e.getEventType() == KeyEvent.KEY_PRESSED) {
-                    MainWindow.mainScreen.undo();
-                }
+                if(e.getEventType() == KeyEvent.KEY_PRESSED) MainWindow.mainScreen.undo();
             }
             
         }else if(UndoEngine.KEY_COMB_REDO.match(e)){ // REDO
             e.consume();
             if(!MenuBar.isSystemMenuBarSupported()){
-                if(e.getEventType() == KeyEvent.KEY_PRESSED) {
-                    MainWindow.mainScreen.redo();
-                }
+                if(e.getEventType() == KeyEvent.KEY_PRESSED) MainWindow.mainScreen.redo();
             }
             
         }else if(e.getSource() instanceof TextInputControl){ // Cut / Copy / Paste

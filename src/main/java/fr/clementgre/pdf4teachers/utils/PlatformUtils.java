@@ -82,9 +82,8 @@ public class PlatformUtils {
     // Run code on JavaFX Application Thread from another Thread
     // and wait until action completes before continuing the other Thread
     public static <T> T runAndWait(ReturnCallBack<T> action){
-        if(action == null) {
+        if(action == null)
             throw new NullPointerException("action");
-        }
         
         // run synchronously on JavaFX thread
         if(Platform.isFxApplicationThread()){
@@ -123,13 +122,12 @@ public class PlatformUtils {
         }, "Heap debugger").start();
     }
     public static void printHeapStatus(){
-        if(MainWindow.twoDigFormat != null) {
+        if(MainWindow.twoDigFormat != null)
             Log.d("Heap: " + MainWindow.twoDigFormat.format((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000d)
                     + "MB / " + MainWindow.twoDigFormat.format(Runtime.getRuntime().maxMemory() / 1000000d) + "MB");
-        } else {
+        else
             Log.d("Heap: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1000000
                     + "MB / " + Runtime.getRuntime().maxMemory() / 1000000 + "MB");
-        }
     }
     public static void printActionTime(CallBack action, String name){
         long time = countActionTime(action);
@@ -151,9 +149,7 @@ public class PlatformUtils {
     public static void openFile(String uri){
         if(isMac()){
             try{
-                if(Desktop.isDesktopSupported()) {
-                    Desktop.getDesktop().open(new File(uri));
-                }
+                if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(new File(uri));
             }catch(IOException e){
                 Log.eNotified(e, "unable to open URI file/directory: " + uri);
             }
@@ -186,19 +182,12 @@ public class PlatformUtils {
         }else if(isMac()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
             // Move data folder if needed
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) {
-                FilesUtils.moveDataFolder();
-            }
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
         }else{
-            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) {
-                dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
-            } else {
-                dataFolder = System.getProperty("user.home") + "/.local/share/PDF4Teachers/";
-            }
+            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
+            else dataFolder = System.getProperty("user.home") + "/.local/share/PDF4Teachers/";
             // Move data folder if needed
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) {
-                FilesUtils.moveDataFolder();
-            }
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
         }
         
         new File(dataFolder).mkdirs();

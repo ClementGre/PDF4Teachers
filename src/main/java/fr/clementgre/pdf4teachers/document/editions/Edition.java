@@ -58,9 +58,7 @@ public class Edition{
         MainWindow.gradeTab.treeView.clearElements(true, false); // Generate root in case of no root in edition
         
         try{
-            if(!editFile.exists()) {
-                return true; // File does not exist
-            }
+            if(!editFile.exists()) return true; // File does not exist
             Config config = new Config(editFile);
             config.load();
             int versionID = (int) config.getLong("versionID");
@@ -68,9 +66,7 @@ public class Edition{
             boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
             
             Double lastScrollValue = config.getDoubleNull("lastScrollValue");
-            if(lastScrollValue != null && updateScrollValue) {
-                document.setCurrentScrollValue(lastScrollValue);
-            }
+            if(lastScrollValue != null && updateScrollValue) document.setCurrentScrollValue(lastScrollValue);
     
             loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
                 VectorElement.readYAMLDataAndCreate(elementData.getValue(), elementData.getKey());
@@ -85,9 +81,7 @@ public class Edition{
             SkillTableElement.readYAMLDataAndCreate(config.getSection("skills"));
             
             for(Object data : config.getList("grades")){
-                if(data instanceof Map) {
-                    GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
-                }
+                if(data instanceof Map) GradeElement.readYAMLDataAndCreate((HashMap<String, Object>) data, upscaleGrid);
             }
             
             isSave.set(true);
@@ -150,17 +144,14 @@ public class Edition{
             // GRADES ELEMENTS
             for(GradeTreeItem element : GradeTreeView.getGradesArray(GradeTreeView.getTotal())){
                 grades.add(element.getCore().getYAMLData());
-                if(!element.getCore().isDefaultGrade()) {
-                    counter++;
-                }
+                if(!element.getCore().isDefaultGrade()) counter++;
             }
             
             
             
             // delete edit file if edition is empty
-            if(counter == 0) {
-                editFile.delete();
-            } else{
+            if(counter == 0) editFile.delete();
+            else{
                 config.base.put("lastScrollValue", document.getLastScrollValue());
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
@@ -176,17 +167,13 @@ public class Edition{
         }
         
         isSave.set(true);
-        if(toast) {
-            MainWindow.footerBar.showToast(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
-        }
+        if(toast) MainWindow.footerBar.showToast(Color.web("#008e00"), Color.WHITE, TR.tr("footerBar.messages.saved"));
         MainWindow.filesTab.files.refresh();
         
     }
     
     public void saveLastScrollValue(){
-        if(!editFile.exists()) {
-            return;
-        }
+        if(!editFile.exists()) return;
         try{
             Config config = new Config(editFile);
             config.load();
@@ -204,11 +191,8 @@ public class Edition{
                 .filter(acceptedElements::isInstance)
                 .map(Element::getYAMLData)
                 .collect(Collectors.toCollection(ArrayList::new));
-        if(pageData.size() >= 1) {
-            return pageData;
-        } else {
-            return null;
-        }
+        if(pageData.size() >= 1) return pageData;
+        else return null;
     }
     
     ///////////////////////////////////////////////////////////////////
@@ -239,9 +223,8 @@ public class Edition{
             });
             
             for(Object data : config.getList("grades")){
-                if(data instanceof Map) {
+                if(data instanceof Map)
                     elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
-                }
             }
     
             // There is only one SkillTableElement (the grid) that contains all the skills
@@ -256,14 +239,10 @@ public class Edition{
     private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){
         for(Map.Entry<String, Object> pageData : data){
             Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-            if(page == null || !(pageData.getValue() instanceof List)) {
-                break;
-            }
+            if(page == null || !(pageData.getValue() instanceof List)) break;
 
             for(Object elementData : ((List<Object>) pageData.getValue())){
-                if(elementData instanceof HashMap) {
-                    addCallBack.call(Map.entry(page, (HashMap<String, Object>) elementData));
-                }
+                if(elementData instanceof HashMap) addCallBack.call(Map.entry(page, (HashMap<String, Object>) elementData));
             }
         }
     }
@@ -305,22 +284,17 @@ public class Edition{
                     }else if(element instanceof SkillTableElement skillTableElement){
                         if(skillTableElement.getAssessmentId() != 0){
                             skills = element.getYAMLData();
-                        }else {
-                            counter--;
-                        }
+                        }else counter--;
                     }
                     counter++;
                 }else{
                     grades.add(element.getYAMLData());
-                    if(!((GradeElement) element).isDefaultGrade()) {
-                        counter++;
-                    }
+                    if(!((GradeElement) element).isDefaultGrade()) counter++;
                 }
             }
             // delete edit file if edition is empty
-            if(counter == 0) {
-                editFile.delete();
-            } else{
+            if(counter == 0) editFile.delete();
+            else{
                 config.base.put("texts", texts);
                 config.base.put("grades", grades);
                 config.base.put("images", images);
@@ -352,9 +326,7 @@ public class Edition{
                     .filter(stats -> stats[0] != -1)
                     .count();
             long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
-            if(assessmentId != 0) {
-                count++;
-            }
+            if(assessmentId != 0) count++;
             
             return count;
         }
@@ -379,12 +351,8 @@ public class Edition{
             for(Object data : config.getList("grades")){
                 if(data instanceof HashMap){
                     double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
-                    if(stats.length == 2) {
-                        totalGrade = stats; // get the root grade value and the root grade total
-                    }
-                    if(stats[0] != -1) {
-                        filledGrades++;
-                    }
+                    if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
+                    if(stats[0] != -1) filledGrades++;
                     grades++;
                 }
             }
@@ -413,9 +381,7 @@ public class Edition{
                     }
                 }
             }
-            if(filledNotations > 0) {
-                totalCount++;
-            }
+            if(filledNotations > 0) totalCount++;
             
             return new EditionStats(totalCount, texts, graphics, grades, filledGrades, totalGrade[0], totalGrade[1], assessment, skills, filledNotations);
         }
@@ -435,9 +401,7 @@ public class Edition{
         int count = 0;
         for(Map.Entry<String, Object> pageData : sectionData.entrySet()){
             Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
-            if(page == null || !(pageData.getValue() instanceof List)) {
-                break;
-            }
+            if(page == null || !(pageData.getValue() instanceof List)) break;
             count += ((List<Object>) pageData.getValue()).size();
         }
         return count;
@@ -523,9 +487,7 @@ public class Edition{
     }
     
     public static void setUnsave(String sourceDebug){
-        if(false) {
-            Log.t("Unsave Edition from: " + sourceDebug);
-        }
+        if(false) Log.t("Unsave Edition from: " + sourceDebug);
         
         isSave.set(false);
         MainWindow.footerBar.updateStats();

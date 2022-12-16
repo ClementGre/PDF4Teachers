@@ -31,9 +31,7 @@ public class Skill {
         // Negative ids are reserved for default not editable notations.
         // 0 id is reserved for not filled notations.
         long id = Math.abs(new Random().nextLong());
-        while(id == 0 || getById(assessment, id) != null) {
-            id = new Random().nextLong();
-        }
+        while(id == 0 || getById(assessment, id) != null) id = new Random().nextLong();
         return id;
     }
     public static Skill getById(SkillsAssessment assessment, long id){

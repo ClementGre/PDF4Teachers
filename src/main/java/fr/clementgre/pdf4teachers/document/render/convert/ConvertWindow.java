@@ -87,9 +87,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         
         // HEADER
         
-        if(defaultSize == null) {
-            setSubHeaderText(TR.tr("convertWindow.convertMode.toPDF"));
-        } else{
+        if(defaultSize == null) setSubHeaderText(TR.tr("convertWindow.convertMode.toPDF"));
+        else{
             setSubHeaderText(TR.tr("convertWindow.convertMode.toPDFPages"));
             int gcd = GCD((int) defaultSize.getWidth(), (int) defaultSize.getHeight());
             int heightFactor = (int) (gcd == 0 ? defaultSize.getHeight() : defaultSize.getHeight() / gcd);
@@ -103,9 +102,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         convertDirs = new ConvertPane(this, TR.tr("convertWindow.convertMode.toPDF.convertDirs.tabName"), true);
         convertFiles = new ConvertPane(this, defaultSize == null ? TR.tr("convertWindow.convertMode.toPDF.convertFiles.tabName") : TR.tr("convertWindow.convertMode.toPDFPages.tabName"), false);
         
-        if(defaultSize == null) {
-            root.getTabs().add(convertDirs);
-        }
+        if(defaultSize == null) root.getTabs().add(convertDirs);
         root.getTabs().add(convertFiles);
         setupBtns();
     }
@@ -119,11 +116,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         Button export = new Button(TR.tr("actions.convert"));
         
         export.setOnAction(event -> {
-            if(convertDirs.isSelected()) {
-                convertDirs.export();
-            } else if(convertFiles.isSelected()) {
-                convertFiles.export();
-            }
+            if(convertDirs.isSelected()) convertDirs.export();
+            else if(convertFiles.isSelected()) convertFiles.export();
         });
         cancel.setOnAction(event -> {
             close();
@@ -204,9 +198,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 
                 PaneUtils.setHBoxPosition(srcDir, -1, 30, 0, 2.5);
                 srcDir.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if(new File(srcDir.getText()).exists()) {
-                        MainWindow.userData.lastConvertSrcDir = srcDir.getText();
-                    }
+                    if(new File(srcDir.getText()).exists()) MainWindow.userData.lastConvertSrcDir = srcDir.getText();
                 });
                 
                 Button changePath = new Button(TR.tr("file.browse"));
@@ -219,9 +211,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 
                 changePath.setOnAction(event -> {
                     File file = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_CONVERT_SRC_DIR);
-                    if(file != null) {
-                        srcDir.setText(file.getAbsolutePath() + File.separator);
-                    }
+                    if(file != null) srcDir.setText(file.getAbsolutePath() + File.separator);
                 });
                 
             }else{
@@ -232,9 +222,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 srcFiles = new TextArea();
                 PaneUtils.setHBoxPosition(srcFiles, -1, 0, 0, 2.5);
                 srcFiles.textProperty().addListener((observable, oldValue, newValue) -> {
-                    if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists()) {
+                    if(!srcFiles.getText().isBlank() && new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).exists())
                         MainWindow.userData.lastConvertSrcDir = new File(srcFiles.getText().split(Pattern.quote("\n"))[0]).getParentFile().getAbsolutePath() + File.separator;
-                    }
                 });
                 
                 Button changePath = new Button(TR.tr("file.browse"));
@@ -249,9 +238,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                             TR.tr("dialog.file.extensionType.image"), ImageUtils.ACCEPTED_EXTENSIONS.stream().map((s) -> "*." + s).toList().toArray(new String[0]));
                     
                     if(files != null){
-                        for(File file : files) {
-                            srcFiles.appendText(file.getAbsolutePath() + "\n");
-                        }
+                        for(File file : files) srcFiles.appendText(file.getAbsolutePath() + "\n");
                     }
                 });
                 
@@ -297,9 +284,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 
                 changePath.setOnAction(event -> {
                     File file = FilesChooserManager.showDirectoryDialog(outDir.getText(), MainWindow.userData.lastConvertSrcDir);
-                    if(file != null) {
-                        outDir.setText(file.getAbsolutePath() + File.separator);
-                    }
+                    if(file != null) outDir.setText(file.getAbsolutePath() + File.separator);
                 });
             }else{
                 // Not used with document conversion since the pages are directly added to the current document
@@ -404,21 +389,19 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         
         private void setDefaultValues(){
             
-            if(definitions.contains(MainWindow.userData.lastConvertDefinition)) {
+            if(definitions.contains(MainWindow.userData.lastConvertDefinition))
                 definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
-            } else{
+            else{
                 Double mp = MathUtils.getDouble(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
                 if(mp != null){
                     definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
                     
-                }else {
-                    definition.getSelectionModel().select(3);
-                }
+                }else definition.getSelectionModel().select(3);
             }
             
-            if(formats.contains(MainWindow.userData.lastConvertFormat)) {
+            if(formats.contains(MainWindow.userData.lastConvertFormat))
                 format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
-            } else{
+            else{
                 String data = StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertFormat, " (");
                 if(data.split(":").length == 2){
                     Integer widthFactor = MathUtils.getInt(data.split(":")[0]);
@@ -426,12 +409,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                     if(widthFactor != null && heightFactor != null){
                         format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
                         
-                    }else {
-                        format.getSelectionModel().select(0);
-                    }
-                }else {
-                    format.getSelectionModel().select(0);
-                }
+                    }else format.getSelectionModel().select(0);
+                }else format.getSelectionModel().select(0);
             }
         }
         
@@ -526,9 +505,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                                 loadingAlert.setProgress(converted + Math.max(0, documentAndAdvancement.getValue()));
                                 loadingAlert.setCurrentTaskText(documentAndAdvancement.getKey());
                             }
-                            if(documentAndAdvancement.getValue() == -1) {
-                                converted++;
-                            }
+                            if(documentAndAdvancement.getValue() == -1) converted++;
                         });
                     });
                     Platform.runLater(() -> {
@@ -548,17 +525,13 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         private void end(ArrayList<ConvertedFile> files){
             loadingAlert.close();
             close();
-            if(!shouldStop) {
-                callBack.call(files);
-            }
+            if(!shouldStop) callBack.call(files);
         }
         
     }
     
     public static int GCD(int a, int b){
-        if(b == 0) {
-            return a;
-        }
+        if(b == 0) return a;
         return GCD(b, a % b);
     }
 }

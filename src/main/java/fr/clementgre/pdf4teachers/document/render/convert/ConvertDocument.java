@@ -47,16 +47,12 @@ public class ConvertDocument {
                             continue;
                         }
                     }
-                    if(doBreak) {
-                        break;
-                    }
+                    if(doBreak) break;
                 }
                 
                 if(MainWindow.mainScreen.hasDocument(false)){
                     if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(file.file.getAbsolutePath())){
-                        if(!MainWindow.mainScreen.closeFile(true, false)) {
-                            continue;
-                        }
+                        if(!MainWindow.mainScreen.closeFile(true, false)) continue;
                     }
                 }
                 
@@ -74,20 +70,13 @@ public class ConvertDocument {
             
             OKAlert alert = new OKAlert(TR.tr("convertWindow.dialog.completed.title"));
             
-            if(converted == 0) {
-                alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.noDocument"));
-            } else if(converted == 1) {
-                alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.oneDocument"));
-            } else {
-                alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.multipleDocuments", converted));
-            }
+            if(converted == 0) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.noDocument"));
+            else if(converted == 1) alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.oneDocument"));
+            else alert.setHeaderText(TR.tr("convertWindow.dialog.completed.header.multipleDocuments", converted));
             
             
-            if(converted > 1) {
-                alert.setContentText(TR.tr("convertWindow.dialog.completed.details.multipleDocuments"));
-            } else if(converted != 0) {
-                alert.setContentText(TR.tr("convertWindow.dialog.completed.details.oneDocument"));
-            }
+            if(converted > 1) alert.setContentText(TR.tr("convertWindow.dialog.completed.details.multipleDocuments"));
+            else if(converted != 0) alert.setContentText(TR.tr("convertWindow.dialog.completed.details.oneDocument"));
             
             alert.show();
         });

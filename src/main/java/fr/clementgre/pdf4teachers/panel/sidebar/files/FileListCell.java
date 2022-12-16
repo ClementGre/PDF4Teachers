@@ -43,9 +43,8 @@ public class FileListCell extends ListCell<File> {
     private final ImageView checkLow = new ImageView();
     
     private final EventHandler<MouseEvent> onClick = e -> {
-        if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2) {
+        if(e.getButton().equals(MouseButton.PRIMARY) && e.getClickCount() == 2)
             MainWindow.mainScreen.openFile(getItem());
-        }
     };
     
     public FileListCell(){
@@ -89,9 +88,7 @@ public class FileListCell extends ListCell<File> {
             path.setText(FilesUtils.getPathReplacingUserHome(getItem().getParent()));
             
             name.setText(StringUtils.removeAfterLastOccurrence(file.getName(), ".pdf"));
-            if(file.getName().equals(".pdf")) {
-                name.setText(".pdf");
-            }
+            if(file.getName().equals(".pdf")) name.setText(".pdf");
             name.setStyle("-fx-font-size: 13;");
             
             nameBox.getChildren().clear();
@@ -126,12 +123,8 @@ public class FileListCell extends ListCell<File> {
         
                     }else{
                         String after = "";
-                        if(gradeInfo != null) {
-                            after += " | " + gradeInfo;
-                        }
-                        if(assessmentName != null) {
-                            after += " | " + assessmentName;
-                        }
+                        if(gradeInfo != null) after += " | " + gradeInfo;
+                        if(assessmentName != null) after += " | " + assessmentName;
                         
                         if(stats.totalElements() == 0){ // Don't have elements but have a grade scale OR assessment
                             
@@ -157,14 +150,12 @@ public class FileListCell extends ListCell<File> {
                                 if((gradeInfo == null || (stats.filledGrades() == stats.grades() && stats.grades() > 0))
                                         && (assessmentName == null || (stats.filledNotations() == stats.skills() && stats.skills() > 0))){ // Edition completed : Green check
         
-                                    if(check.getImage() == null) {
+                                    if(check.getImage() == null)
                                         check.setImage(new Image(getClass().getResource("/img/FilesTab/check.png") + ""));
-                                    }
                                     nameBox.getChildren().add(check);
                                 }else if(stats.filledGrades() > 0 || stats.filledNotations() > 0){ // Edition semi-completed : Orange check
-                                    if(checkLow.getImage() == null) {
+                                    if(checkLow.getImage() == null)
                                         checkLow.setImage(new Image(getClass().getResource("/img/FilesTab/check_low.png") + ""));
-                                    }
                                     nameBox.getChildren().add(checkLow);
                                 }
                                 

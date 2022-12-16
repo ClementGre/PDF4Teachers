@@ -39,9 +39,7 @@ public class PageRotateUndoAction extends UndoAction {
     
     @Override
     public String toString(){
-        if(page.get() == null) {
-            return null;
-        }
+        if(page.get() == null) return null;
     
         return TR.tr("actions.rotatePage", page.get().getPage()+1);
     }

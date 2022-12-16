@@ -57,9 +57,7 @@ public class CreateDeleteUndoAction extends UndoAction{
         }
     
         // Do not add the element if it already has a parent.
-        if(MainWindow.mainScreen.document.getPage(page).getElements().contains(element) || element.getParent() != null) {
-            return;
-        }
+        if(MainWindow.mainScreen.document.getPage(page).getElements().contains(element) || element.getParent() != null) return;
         
         
         MainWindow.mainScreen.document.getPage(page).addElement(element, true, UType.NO_UNDO);

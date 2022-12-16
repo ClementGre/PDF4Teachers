@@ -30,9 +30,7 @@ public class DirSelector extends HBox {
     }
     
     public DirSelector(String defaultPath, CallBackArg<String> changeDefaultPath){
-        if(defaultPath == null || defaultPath.isBlank() || !new File(defaultPath).exists()) {
-            defaultPath = getDefaultPath();
-        }
+        if(defaultPath == null || defaultPath.isBlank() || !new File(defaultPath).exists()) defaultPath = getDefaultPath();
         
         path = new TextField(defaultPath);
         path.setPromptText(TR.tr("file.destinationFolder"));
@@ -51,9 +49,7 @@ public class DirSelector extends HBox {
             File file = FilesChooserManager.showDirectoryDialog(changePath.getText(), null, finalDefaultPath);
             if(file != null){
                 path.setText(file.getAbsolutePath() + File.separator);
-                if(changeDefaultPath != null) {
-                    changeDefaultPath.call(file.getAbsolutePath() + File.separator);
-                }
+                if(changeDefaultPath != null) changeDefaultPath.call(file.getAbsolutePath() + File.separator);
             }
         });
         

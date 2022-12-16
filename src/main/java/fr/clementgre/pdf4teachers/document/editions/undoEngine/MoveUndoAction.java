@@ -33,9 +33,7 @@ public class MoveUndoAction extends UndoAction{
         if(element != null){
     
             // Quit edit mode if enabled
-            if(this.element.get() instanceof VectorElement vectorElement && vectorElement.isEditMode()) {
-                vectorElement.quitEditMode();
-            }
+            if(this.element.get() instanceof VectorElement vectorElement && vectorElement.isEditMode()) vectorElement.quitEditMode();
             
             int oldRealX = element.getRealX();
             int oldRealY = element.getRealY();
@@ -60,9 +58,7 @@ public class MoveUndoAction extends UndoAction{
     }
     
     public String toString(){
-        if(element.get() == null) {
-            return null;
-        }
+        if(element.get() == null) return null;
     
         return TR.tr("actions.move") + " " + element.get().getElementName(false).toLowerCase();
     }

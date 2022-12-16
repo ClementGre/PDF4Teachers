@@ -60,11 +60,8 @@ public class LogsOutputStream extends OutputStream {
     }
     
     private String getColorization(){
-        if(errorStream) {
-            return ConsoleColors.RED;
-        } else {
-            return "";
-        }
+        if(errorStream) return ConsoleColors.RED;
+        else return "";
     }
     
 }

@@ -37,13 +37,9 @@ public class ToggleGroupSetting extends Setting<Integer> {
         valuesNames.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getKey)).forEach(valueName -> {
             
             ToggleButton toggle = new ToggleButton(valueName.getValue());
-            if(Objects.equals(getValue(), valueName.getKey())) {
-                toggle.setSelected(true);
-            }
+            if(Objects.equals(getValue(), valueName.getKey())) toggle.setSelected(true);
             toggle.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                if(newValue) {
-                    setValue(valueName.getKey());
-                }
+                if(newValue) setValue(valueName.getKey());
             });
             toggle.setToggleGroup(group);
             box.getChildren().add(toggle);
@@ -52,15 +48,11 @@ public class ToggleGroupSetting extends Setting<Integer> {
         
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null){
-                if(zeroAsNothing) {
-                    setValue(0);
-                } else{
+                if(zeroAsNothing) setValue(0);
+                else{
                     // Select a toggle that is not the one disabled
-                    if(group.getToggles().get(0) != oldValue) {
-                        group.getToggles().get(0).setSelected(true);
-                    } else {
-                        group.getToggles().get(1).setSelected(true);
-                    }
+                    if(group.getToggles().get(0) != oldValue) group.getToggles().get(0).setSelected(true);
+                    else group.getToggles().get(1).setSelected(true);
                 }
             }
         });

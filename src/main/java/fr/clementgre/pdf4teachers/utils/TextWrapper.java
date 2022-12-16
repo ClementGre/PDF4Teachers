@@ -32,50 +32,38 @@ public class TextWrapper {
             return "";
         }
         
-        if(text.split(" ", -1).length == 0) {
-            return "";
-        }
+        if(text.split(" ", -1).length == 0) return "";
         String firstWord = text.split(" ", -1)[0];
         
         if(!test(firstWord)){ // Split between chars
             
             String[] results = fillLineWithChar(text);
-            if(!results[1].isEmpty()) {
-                hasWrapped = true;
-            }
+            if(!results[1].isEmpty()) hasWrapped = true;
             return results[0]; // Line generated
             
             
         }else{ // Split between words
             
             String[] results = fillLineWithWord(text);
-            if(!results[1].isEmpty()) {
-                hasWrapped = true;
-            }
+            if(!results[1].isEmpty()) hasWrapped = true;
             return results[0]; // Line generated
         }
         
     }
     
     public String wrap(){
-        if(text == null) {
-            return "";
-        }
+        if(text == null) return "";
         
         // While there is still text, add the next line into wrappedLine and let the remaining text into text
         while(!text.isEmpty()){
             
-            if(text.split(" ", -1).length == 0) {
-                break;
-            }
+            if(text.split(" ", -1).length == 0) break;
             String firstWord = text.split(" ", -1)[0];
             
             if(!test(firstWord)){ // Split between chars
                 
                 String[] results = fillLineWithChar(text);
-                if(!results[1].isEmpty()) {
-                    hasWrapped = true;
-                }
+                if(!results[1].isEmpty()) hasWrapped = true;
                 
                 appendLine(results[0]); // Line generated
                 text = results[1]; // Remaining text
@@ -83,9 +71,7 @@ public class TextWrapper {
             }else{ // Split between words
                 
                 String[] results = fillLineWithWord(text);
-                if(!results[1].isEmpty()) {
-                    hasWrapped = true;
-                }
+                if(!results[1].isEmpty()) hasWrapped = true;
                 
                 appendLine(results[0]); // Line generated
                 text = results[1]; // Remaining text
@@ -115,9 +101,7 @@ public class TextWrapper {
         if(!text.isBlank()){
             String wrapped = new TextWrapper(text, font, (int) (maxWidth - font.getSize() * 1.1)).wrapFirstLine();
             wrappedText = wrappedText.trim() + "\n" + wrapped.trim();
-            if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) {
-                wrappedText += "...";
-            }
+            if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
         }
         
         return wrappedText.trim();
@@ -128,11 +112,8 @@ public class TextWrapper {
     }
     
     private void appendLine(String text){
-        if(wrappedLine == null) {
-            wrappedLine = text;
-        } else {
-            wrappedLine += "\n" + text;
-        }
+        if(wrappedLine == null) wrappedLine = text;
+        else wrappedLine += "\n" + text;
     }
     private String getWrappedLine(){
         return wrappedLine == null ? "" : wrappedLine;
@@ -168,9 +149,7 @@ public class TextWrapper {
     
     private String[] fillLineWithChar(String word){
         
-        if(word.isEmpty()) {
-            return new String[]{"", ""};
-        }
+        if(word.isEmpty()) return new String[]{"", ""};
         String line = word.substring(0, 1);
         
         for(int i = 1; i < word.length(); i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne

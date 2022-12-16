@@ -80,9 +80,7 @@ public abstract class TextTreeSection extends TreeItem<String> {
                     .mapToObj(i -> (TextTreeItem) getChildren().get(i))
                     .collect(Collectors.toList());
             clearElements(false); // unlink = false because the element are just reordered, not replaced.
-            for(TextTreeItem item : TextTreeView.autoSortList(toSort, sortType, order)) {
-                getChildren().add(item);
-            }
+            for(TextTreeItem item : TextTreeView.autoSortList(toSort, sortType, order)) getChildren().add(item);
         }, null);
         
         setupSortManager();
@@ -97,17 +95,11 @@ public abstract class TextTreeSection extends TreeItem<String> {
         sortToggleBtn.setGraphic(SVGPathIcons.generateImage(SVGPathIcons.SORT, "black", 0, 18, ImageUtils.defaultDarkColorAdjust));
         sortToggleBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("sorting.name")));
         
-        if(sortToggleBtn.isSelected()) {
-            sortToggleBtn.setStyle("");
-        } else {
-            sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
-        }
+        if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
+        else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue) {
-                sortToggleBtn.setStyle("");
-            } else {
-                sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
-            }
+            if(newValue) sortToggleBtn.setStyle("");
+            else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
         });
         
         pane.setAlignment(Pos.CENTER);
@@ -128,11 +120,8 @@ public abstract class TextTreeSection extends TreeItem<String> {
     }
     
     public void updateGraphics(){
-        if(sortToggleBtn.isSelected()) {
-            sortToggleBtn.setStyle("");
-        } else {
-            sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
-        }
+        if(sortToggleBtn.isSelected()) sortToggleBtn.setStyle("");
+        else sortToggleBtn.setStyle("-fx-background-color: " + StyleManager.getHexAccentColor() + ";");
         
         sortManager.updateGraphics();
         
@@ -163,9 +152,7 @@ public abstract class TextTreeSection extends TreeItem<String> {
         for(int i = items.size() - 1; i >= 0; i--){
             if(items.get(i) instanceof TextTreeItem textTreeItem){
                 items.remove(i);
-                if(unlink) {
-                    textTreeItem.unLink(false);
-                }
+                if(unlink) textTreeItem.unLink(false);
             }
         }
     }

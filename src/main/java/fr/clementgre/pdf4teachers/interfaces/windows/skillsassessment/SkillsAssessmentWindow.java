@@ -135,9 +135,7 @@ public class SkillsAssessmentWindow extends AlternativeWindow<VBox> {
             }
         });
         date.setOnKeyPressed(e -> {
-            if(e.getCode() == KeyCode.ENTER) {
-                e.consume();
-            }
+            if(e.getCode() == KeyCode.ENTER) e.consume();
         });
     
         skillsListingPane = new SkillsListingPane(this);

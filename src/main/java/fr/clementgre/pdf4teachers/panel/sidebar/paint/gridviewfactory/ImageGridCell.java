@@ -91,9 +91,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 }
             }
             imageView.imageProperty().bind(item.imageProperty());
-            if(hasContextMenu) {
-                setContextMenu(item.getMenu());
-            }
+            if(hasContextMenu) setContextMenu(item.getMenu());
             updateTooltip(item);
             
             setGraphic(imageView);
@@ -111,9 +109,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
                 Dragboard dragboard = startDragAndDrop(TransferMode.COPY);
                 
                 Image image = ImageElement.renderImage(item.getImageId(), 100, -1);
-                if(image != null) {
-                    dragboard.setDragView(image, image.getWidth()/2, image.getHeight()/2);
-                }
+                if(image != null) dragboard.setDragView(image, image.getWidth()/2, image.getHeight()/2);
         
                 ClipboardContent clipboardContent = new ClipboardContent();
                 clipboardContent.put(Main.INTERNAL_FORMAT, PaintTab.PAINT_ITEM_DRAG_KEY);
@@ -159,9 +155,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
     // IMAGE RENDER
     
     private static void loadImage(ImageGridElement image, int renderSize, CallBack callBack){
-        if(image == null) {
-            return;
-        }
+        if(image == null) return;
         
         try{
             image.setImage(getImageCropped(image, renderSize));

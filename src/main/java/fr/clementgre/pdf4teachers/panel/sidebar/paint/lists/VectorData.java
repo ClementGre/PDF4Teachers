@@ -161,18 +161,14 @@ public class VectorData{
     }
     public void setWidth(int width){
         this.width = width;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public int getHeight(){
         return height;
     }
     public void setHeight(int height){
         this.height = height;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public GraphicElement.RepeatMode getRepeatMode(){
@@ -180,18 +176,14 @@ public class VectorData{
     }
     public void setRepeatMode(GraphicElement.RepeatMode repeatMode){
         this.repeatMode = repeatMode;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public GraphicElement.ResizeMode getResizeMode(){
         return resizeMode;
     }
     public void setResizeMode(GraphicElement.ResizeMode resizeMode){
         this.resizeMode = resizeMode;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public boolean isDoFill(){
@@ -199,18 +191,14 @@ public class VectorData{
     }
     public void setDoFill(boolean doFill){
         this.doFill = doFill;
-        if(specsChangesCallback != null) {
-            specsChangesCallback.call();
-        }
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     public Color getFill(){
         return fill;
     }
     public void setFill(Color fill){
         this.fill = fill;
-        if(specsChangesCallback != null) {
-            specsChangesCallback.call();
-        }
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     
     public Color getStroke(){
@@ -218,18 +206,14 @@ public class VectorData{
     }
     public void setStroke(Color stroke){
         this.stroke = stroke;
-        if(specsChangesCallback != null) {
-            specsChangesCallback.call();
-        }
+        if(specsChangesCallback != null) specsChangesCallback.call();
     }
     public int getStrokeWidth(){
         return strokeWidth;
     }
     public void setStrokeWidth(int strokeWidth){
         this.strokeWidth = strokeWidth;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public String getPath(){
@@ -237,9 +221,7 @@ public class VectorData{
     }
     public void setPath(String path){
         this.path = path;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public boolean isInvertX(){
@@ -247,18 +229,14 @@ public class VectorData{
     }
     public void setInvertX(boolean invertX){
         this.invertX = invertX;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     public boolean isInvertY(){
         return invertY;
     }
     public void setInvertY(boolean invertY){
         this.invertY = invertY;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public int getArrowLength(){
@@ -266,9 +244,7 @@ public class VectorData{
     }
     public void setArrowLength(int arrowLength){
         this.arrowLength = arrowLength;
-        if(displayChangesCallback != null) {
-            displayChangesCallback.call();
-        }
+        if(displayChangesCallback != null) displayChangesCallback.call();
     }
     
     public long getLastUse(){

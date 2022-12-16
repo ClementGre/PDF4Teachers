@@ -41,28 +41,20 @@ public class SACocheWriter {
     
     public void exportAndSave(){
         
-        if(!MainWindow.mainScreen.document.save(true)) {
-            return;
-        }
+        if(!MainWindow.mainScreen.document.save(true)) return;
         
         OKAlert alert = new OKAlert(TR.tr("skillsSettingsWindow.sacocheExport.dialog.header"), TR.tr("skillsSettingsWindow.sacocheExport.dialog.header"),
                 TR.tr("skillsSettingsWindow.sacocheExport.dialog.details"));
         alert.addCancelButton(ButtonPosition.CLOSE);
-        if(alert.getShowAndWaitIsCancelButton()) {
-            return;
-        }
+        if(alert.getShowAndWaitIsCancelButton()) return;
         
         try{
     
             List<StudentGrades> studentGrades = getMatchingEdits();
-            if(studentGrades == null) {
-                return;
-            }
+            if(studentGrades == null) return;
             
             File dest = getDestinationFile();
-            if(dest == null) {
-                return;
-            }
+            if(dest == null) return;
             
             BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
             ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(';').build();
@@ -132,9 +124,7 @@ public class SACocheWriter {
         ArrayList<StudentGrades> studentGrades = new ArrayList<>();
         
         File editDir = new File(Main.dataFolder + "editions");
-        if(!editDir.exists()) {
-            return List.of();
-        }
+        if(!editDir.exists()) return List.of();
     
         HashMap<String, ArrayList<String>> doubleAffectation = new HashMap<>();
         ArrayList<String> aloneStudents = new ArrayList<>();
@@ -173,9 +163,7 @@ public class SACocheWriter {
             }
         }
         assessment.getStudents().forEach(s -> {
-            if(studentGrades.stream().noneMatch(sg -> sg.studentId() == s.id())) {
-                aloneStudents.add(s.name());
-            }
+            if(studentGrades.stream().noneMatch(sg -> sg.studentId() == s.id())) aloneStudents.add(s.name());
         });
     
         StringBuilder details = new StringBuilder();

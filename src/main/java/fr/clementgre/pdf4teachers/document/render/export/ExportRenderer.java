@@ -91,36 +91,29 @@ public class ExportRenderer {
             
             for(Element element : elements){
                 
-                if(element.getPageNumber() != pageNumber) {
-                    continue;
-                }
+                if(element.getPageNumber() != pageNumber) continue;
                 
                 if(element instanceof TextElement tElement){
-                    if(textElements) {
+                    if(textElements)
                         if(!textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs)){
                             doc.close(); return false;
                         }
-                    }
                 }else if(element instanceof GradeElement gElement){
-                    if(gradesElements) {
+                    if(gradesElements)
                         if(!gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
                             doc.close(); return false;
                         }
-                    }
                 }else if(element instanceof ImageElement gElement){
-                    if(drawElements) {
+                    if(drawElements)
                         imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
-                    }
                 }else if(element instanceof VectorElement gElement){
-                    if(drawElements) {
+                    if(drawElements)
                         vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
-                    }
                 }else if(element instanceof SkillTableElement gElement){
-                    if(skillElements) {
+                    if(skillElements)
                         if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
                             doc.close(); return false;
                         }
-                    }
                 }
             }
             

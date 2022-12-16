@@ -121,21 +121,13 @@ public class FooterBar extends StackPane {
         columnView.setSelected(true);
         
         viewGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue == null) {
-                viewGroup.selectToggle(oldValue);
-            }
+            if(newValue == null) viewGroup.selectToggle(oldValue);
             boolean gridView = viewGroup.getSelectedToggle() == this.gridView;
-            if(MainWindow.mainScreen.isMultiPagesMode() != gridView) {
-                MainWindow.mainScreen.setIsMultiPagesMode(gridView);
-            }
+            if(MainWindow.mainScreen.isMultiPagesMode() != gridView) MainWindow.mainScreen.setIsMultiPagesMode(gridView);
         });
         MainWindow.mainScreen.isMultiPagesModeProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && viewGroup.getSelectedToggle() != this.gridView) {
-                this.gridView.setSelected(true);
-            }
-            if(!newValue && viewGroup.getSelectedToggle() != this.columnView) {
-                this.columnView.setSelected(true);
-            }
+            if(newValue && viewGroup.getSelectedToggle() != this.gridView) this.gridView.setSelected(true);
+            if(!newValue && viewGroup.getSelectedToggle() != this.columnView) this.columnView.setSelected(true);
         });
         
         editPagesMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.editPages.tooltip")));
@@ -259,9 +251,8 @@ public class FooterBar extends StackPane {
             editPagesMode.setDisable(false);
             if(MainWindow.mainScreen.document.getLastCursorOverPage() == -1){
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.numberOfPages);
-            }else {
+            }else
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.numberOfPages);
-            }
             
         }else{
             zoomController.setDisable(true);
@@ -282,9 +273,7 @@ public class FooterBar extends StackPane {
     public void updateStats(){
         if(MainWindow.mainScreen.hasDocument(false)){
             Platform.runLater(() -> {
-                if(MainWindow.mainScreen.document == null) {
-                    return;
-                }
+                if(MainWindow.mainScreen.document == null) return;
                 int[] count = MainWindow.mainScreen.document.countElements();
                 statsElements.setText(count[0] + " " + TR.tr("elements.name"));
                 statsTexts.setText(count[1] + " " + TR.tr("elements.name.texts"));

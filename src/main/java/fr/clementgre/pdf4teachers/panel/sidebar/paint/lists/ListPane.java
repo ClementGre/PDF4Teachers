@@ -66,11 +66,8 @@ public abstract class ListPane<T> extends TitledPane{
         sortToggleBtn.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("sorting.name")));
         PaneUtils.setVBoxPosition(sortPanel, 0, 26, 0);
     
-        if(!sortToggleBtn.isSelected()) {
-            sortToggleBtn.setStyle("-fx-background-color: null;");
-        } else {
-            sortToggleBtn.setStyle("");
-        }
+        if(!sortToggleBtn.isSelected()) sortToggleBtn.setStyle("-fx-background-color: null;");
+        else sortToggleBtn.setStyle("");
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 sortToggleBtn.setStyle("");
@@ -145,9 +142,8 @@ public abstract class ListPane<T> extends TitledPane{
                 sortToggleBtn.setDisable(true);
             }
     
-            if(!root.getChildren().contains(messageContainer)) {
+            if(!root.getChildren().contains(messageContainer))
                 root.getChildren().add(messageContainer);
-            }
         }else{
             sortToggleBtn.setDisable(false);
     
@@ -181,18 +177,10 @@ public abstract class ListPane<T> extends TitledPane{
         return this.type.get();
     }
     public ListPane<?> getFromType(int type){
-        if(type == 0) {
-            return paintTab.favouriteVectors;
-        }
-        if(type == 1) {
-            return paintTab.favouriteImages;
-        }
-        if(type == 2) {
-            return paintTab.lastVectors;
-        }
-        if(type == 3) {
-            return paintTab.gallery;
-        }
+        if(type == 0) return paintTab.favouriteVectors;
+        if(type == 1) return paintTab.favouriteImages;
+        if(type == 2) return paintTab.lastVectors;
+        if(type == 3) return paintTab.gallery;
         throw new IllegalArgumentException("type " + type + " is not between 0 and 3");
     }
     public boolean isFavouriteVectors(){

@@ -41,9 +41,8 @@ public class TR {
         
         // Delete Old files
         if(Main.settings.getSettingsVersionCode().startsWith("1.2") || Main.settings.getSettingsVersionCode().startsWith("1.1") || Main.settings.getSettingsVersionCode().startsWith("1.0")){
-            for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles())) {
+            for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles()))
                 file.delete();
-            }
         }
         // Copy files if version has changed
         copyFiles(Main.settings.hasVersionChanged() || Main.COPY_TRANSLATIONS_AT_START);
@@ -111,16 +110,12 @@ public class TR {
     }
     
     public static String getSettingsLocaleLanguage(){
-        if(Main.settings.language.getValue().split("[-_]").length < 2) {
-            return "en";
-        }
+        if(Main.settings.language.getValue().split("[-_]").length < 2) return "en";
         return Main.settings.language.getValue().split("[-_]")[0].toLowerCase();
     }
     
     public static String getSettingsLocaleCountry(){
-        if(Main.settings.language.getValue().split("[-_]").length < 2) {
-            return "us";
-        }
+        if(Main.settings.language.getValue().split("[-_]").length < 2) return "us";
         return Main.settings.language.getValue().split("[-_]")[1].toLowerCase();
     }
     
@@ -146,11 +141,8 @@ public class TR {
     // translate with arguments
     public static String tr(String key, ResourceBundle bundle, boolean trEn){
         if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
-            if(trEn) {
-                return tr(key, ENBundle, false);
-            } else {
-                return key;
-            }
+            if(trEn) return tr(key, ENBundle, false);
+            else return key;
         }
         return bundle.getString(key);
     }
@@ -158,11 +150,8 @@ public class TR {
     public static String tr(String key, ResourceBundle bundle, boolean trEn, String... args){
         if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
             if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
-                if(trEn) {
-                    return tr(key, ENBundle, false, args);
-                } else {
-                    return key + " {" + String.join(", ", args) + "}";
-                }
+                if(trEn) return tr(key, ENBundle, false, args);
+                else return key + " {" + String.join(", ", args) + "}";
             }
         }
         MessageFormat formatter = new MessageFormat("");
@@ -238,9 +227,7 @@ public class TR {
     }
     
     private static void copyFile(String fileName, boolean force) throws IOException{
-        if(LanguageWindow.class.getResource("/translations/" + fileName) == null) {
-            return;
-        }
+        if(LanguageWindow.class.getResource("/translations/" + fileName) == null) return;
         
         File dest = new File(Main.dataFolder + "translations" + File.separator + fileName);
         if(!dest.exists() || force){
@@ -263,15 +250,11 @@ public class TR {
     
     public static void loadLanguagesConfig(HashMap<String, Object> data){
         // if the version has changed, keep the default values
-        if(Main.settings.hasVersionChanged()) {
-            return;
-        }
+        if(Main.settings.hasVersionChanged()) return;
         
         // Add default languages if they were deleted
         for(Map.Entry<String, Object> language : getLanguagesDefaultConfig().entrySet()){
-            if(!data.containsKey(language.getKey())) {
-                data.put(language.getKey(), language.getValue());
-            }
+            if(!data.containsKey(language.getKey())) data.put(language.getKey(), language.getValue());
         }
         languages = data;
     }
@@ -313,9 +296,7 @@ public class TR {
             while((line = reader.readLine()) != null){
                 
                 if(!line.isBlank()){
-                    if(line.startsWith("#")) {
-                        continue;
-                    }
+                    if(line.startsWith("#")) continue;
                     
                     String key = line.split(Pattern.quote("="))[0];
                     String value = StringUtils.removeBeforeNotEscaped(line, "=");

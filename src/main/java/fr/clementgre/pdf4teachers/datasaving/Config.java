@@ -52,24 +52,18 @@ public class Config {
     }
     
     public void load() throws IOException{
-        if(file == null) {
-            return;
-        }
+        if(file == null) return;
         
         InputStream input = new FileInputStream(file);
         base = yaml.load(input);
         input.close();
         
         
-        if(base == null) {
-            base = new HashMap<>();
-        }
+        if(base == null) base = new HashMap<>();
     }
     
     public void save() throws IOException{
-        if(file == null) {
-            return;
-        }
+        if(file == null) return;
         Writer output = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
@@ -82,9 +76,7 @@ public class Config {
     }
     
     public void saveToDestFile() throws IOException{
-        if(destFile == null) {
-            return;
-        }
+        if(destFile == null) return;
         Writer output = new OutputStreamWriter(new FileOutputStream(destFile), StandardCharsets.UTF_8);
         yaml.dump(base, output);
         output.close();
@@ -117,16 +109,12 @@ public class Config {
     // GET SECTION / CASTS
     
     public static ArrayList<Object> castList(Object list){
-        if(list instanceof List) {
-            return (ArrayList<Object>) list;
-        }
+        if(list instanceof List) return (ArrayList<Object>) list;
         return new ArrayList<>();
     }
     
     public static HashMap<String, Object> castSection(Object list){
-        if(list instanceof Map) {
-            return (HashMap<String, Object>) list;
-        }
+        if(list instanceof Map) return (HashMap<String, Object>) list;
         return new HashMap<>();
     }
     
@@ -139,15 +127,10 @@ public class Config {
         for(String key : splitedPath){
             if(section.containsKey(key)){ // Key exist
                 Object value = section.get(key);
-                if(value == null) {
-                    return "";
-                } else if(i == 1) {
-                    return value; // Value is a value or this is the last iteration : return value
-                } else if(!(section.get(key) instanceof Map)) {
-                    return "";
-                } else {
-                    section = (HashMap<String, Object>) value; // Continue loop
-                }
+                if(value == null) return "";
+                else if(i == 1) return value; // Value is a value or this is the last iteration : return value
+                else if(!(section.get(key) instanceof Map)) return "";
+                else section = (HashMap<String, Object>) value; // Continue loop
                 i--;
             }else{
                 return "";
@@ -246,17 +229,13 @@ public class Config {
     
     public static ArrayList<Object> getList(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof List) {
-            return (ArrayList<Object>) value;
-        }
+        if(value instanceof List) return (ArrayList<Object>) value;
         return new ArrayList<>();
     }
     
     public static ArrayList<Object> getListNull(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof List) {
-            return (ArrayList<Object>) value;
-        }
+        if(value instanceof List) return (ArrayList<Object>) value;
         return null;
     }
     
@@ -291,28 +270,22 @@ public class Config {
     
     public static HashMap<String, Object> getSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) {
-            return new HashMap<>(((Map<?, ?>) value).entrySet()
-                    .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
-        }
+        if(value instanceof Map) return new HashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return new HashMap<>();
     }
     
     public static LinkedHashMap<String, Object> getLinkedSection(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) {
-            return new LinkedHashMap<>(((Map<?, ?>) value).entrySet()
-                    .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
-        }
+        if(value instanceof Map) return new LinkedHashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return new LinkedHashMap<>();
     }
     
     public static HashMap<String, Object> getSectionNull(HashMap<String, Object> base, String path){
         Object value = getValue(base, path);
-        if(value instanceof Map) {
-            return new HashMap<>(((Map<?, ?>) value).entrySet()
-                    .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
-        }
+        if(value instanceof Map) return new HashMap<>(((Map<?, ?>) value).entrySet()
+                .stream().collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
         return null;
     }
     

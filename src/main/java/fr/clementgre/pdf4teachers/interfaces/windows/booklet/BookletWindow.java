@@ -51,11 +51,8 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         convertKindGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null){
                 // Select a toggle that is not the one disabled
-                if(convertKindGroup.getToggles().get(0) != oldValue) {
-                    convertKindGroup.getToggles().get(0).setSelected(true);
-                } else {
-                    convertKindGroup.getToggles().get(1).setSelected(true);
-                }
+                if(convertKindGroup.getToggles().get(0) != oldValue) convertKindGroup.getToggles().get(0).setSelected(true);
+                else convertKindGroup.getToggles().get(1).setSelected(true);
             }
         });
         convertKindGroup.selectToggle(MainWindow.userData.bookletDoMakeBooklet ? convertKindMake : convertKindDisassemble);

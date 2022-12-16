@@ -74,9 +74,7 @@ public class Document {
         this.file = file;
         
         pdfPagesRender = new PDFPagesRender(file);
-        if(pdfPagesRender.getNumberOfPages() == 0) {
-            throw new IOException("Unable to load a document with 0 pages!");
-        }
+        if(pdfPagesRender.getNumberOfPages() == 0) throw new IOException("Unable to load a document with 0 pages!");
         numberOfPages = pdfPagesRender.getNumberOfPages();
     }
     
@@ -118,9 +116,7 @@ public class Document {
     public boolean loadEdition(boolean updateScrollValue){
         this.edition = new Edition(file, this);
         if(edition.load(updateScrollValue)){
-            if(!documentSaver.isAlive()) {
-                documentSaver.start();
-            }
+            if(!documentSaver.isAlive()) documentSaver.start();
             this.undoEngine = new UndoEngine(true);
             return true;
         }
@@ -166,9 +162,7 @@ public class Document {
     public void close(){
         pdfPagesRender.close();
         for(int i = 0; i < numberOfPages; i++){
-            if(pages.size() > i) {
-                pages.get(i).remove();
-            }
+            if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
         this.undoEngine = null;
@@ -198,9 +192,7 @@ public class Document {
         ButtonType ignore = alert.addIgnoreButton(ButtonPosition.OTHER_RIGHT);
         
         ButtonType option = alert.getShowAndWait();
-        if(option == null) {
-            return false; // Window close button (null)
-        }
+        if(option == null) return false; // Window close button (null)
         if(option.getButtonData().isDefaultButton()){ // Save button (Default)
             edition.save(true);
             return true;
@@ -214,9 +206,7 @@ public class Document {
                         TR.tr("dialog.unsavedEdit.ignoreWarningDialog.header"),
                         TR.tr("dialog.unsavedEdit.ignoreWarningDialog.details"))
                         .execute();
-                if(!exportAnyway) {
-                    return false;
-                }
+                if(!exportAnyway) return false;
             }
             edition.saveLastScrollValue();
             return true;
@@ -247,11 +237,8 @@ public class Document {
         return selectedPages;
     }
     public void invertSelectedPage(int index){
-        if(selectedPages.contains(index)) {
-            selectedPages.remove(index);
-        } else {
-            selectedPages.add(index);
-        }
+        if(selectedPages.contains(index)) selectedPages.remove(index);
+        else selectedPages.add(index);
         
         lastSelectedPage = index;
         updateSelectedPages();
@@ -281,32 +268,23 @@ public class Document {
         lastSelectedPage = index;
     }
     public void selectToPage(int index, boolean keepOldSelection){
-        if(!keepOldSelection) {
-            selectedPages.clear();
-        }
+        if(!keepOldSelection) selectedPages.clear();
         lastSelectedPage = MathUtils.clamp(lastSelectedPage, 0, pages.size()-1);
         boolean forward = index >= lastSelectedPage;
-        for(int i = lastSelectedPage; i != index; i += forward ? 1 : -1) {
-            selectedPages.add(i);
-        }
+        for(int i = lastSelectedPage; i != index; i += forward ? 1 : -1) selectedPages.add(i);
         selectedPages.add(index);
         updateSelectedPages();
     }
     public void selectAll(){
         selectedPages.clear();
-        for(int i = 0; i < pages.size(); i++) {
-            selectedPages.add(i);
-        }
+        for(int i = 0; i < pages.size(); i++) selectedPages.add(i);
         updateSelectedPages();
     }
     public void updateSelectedPages(){
         
         for(PageRenderer page : pages){
-            if(MainWindow.mainScreen.isEditPagesMode() && selectedPages.contains(page.getPage())) {
-                page.setEffect(MainWindow.mainScreen.selectedShadow);
-            } else {
-                page.setEffect(MainWindow.mainScreen.notSelectedShadow);
-            }
+            if(MainWindow.mainScreen.isEditPagesMode() && selectedPages.contains(page.getPage())) page.setEffect(MainWindow.mainScreen.selectedShadow);
+            else page.setEffect(MainWindow.mainScreen.notSelectedShadow);
         }
     }
     public boolean isPageSelected(PageRenderer page){
@@ -352,9 +330,7 @@ public class Document {
         for(PageRenderer page : pages){
             if(MainWindow.mainScreen.mouseY < page.getBottomY()){
                 match = page; break;
-            }else {
-                match = page;
-            }
+            }else match = page;
         }
         
         if(MainWindow.mainScreen.isGridView() && match != null){
@@ -364,9 +340,7 @@ public class Document {
                 PageRenderer page = MainWindow.mainScreen.document.getPage(i);
                 if(MainWindow.mainScreen.mouseX < page.getRightX()){
                     match = page; break;
-                }else {
-                    match = page;
-                }
+                }else match = page;
             }
         }
         

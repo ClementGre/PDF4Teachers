@@ -34,9 +34,8 @@ public class GradeSettingsWindow extends AlternativeWindow<HBox> {
     @Override
     public void setupSubClass(){
         
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < 5; i++)
             root.getChildren().add(new TierPane(i));
-        }
         
         setupBtns();
     }

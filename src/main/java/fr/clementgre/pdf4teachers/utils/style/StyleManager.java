@@ -29,9 +29,7 @@ public class StyleManager {
                 Main.settings.darkTheme.setValue(OsThemeDetector.getDetector().isDark());
             }
             OsThemeDetector.getDetector().registerListener(isDark -> {
-                if(Main.settings.systemTheme.getValue()) {
-                    Main.settings.darkTheme.setValue(isDark);
-                }
+                if(Main.settings.systemTheme.getValue()) Main.settings.darkTheme.setValue(isDark);
             });
         }
         
@@ -51,46 +49,29 @@ public class StyleManager {
     
     public static JMetro putStyle(Scene scene, Style style, JMetro jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
-        if(style == Style.DEFAULT) {
-            toApplyStyle = DEFAULT_STYLE;
-        } else if(style == Style.ACCENT) {
-            toApplyStyle = ACCENT_STYLE;
-        } else {
-            toApplyStyle = DEFAULT_STYLE;
-        }
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
         
-        if(jMetro == null) {
-            jMetro = new JMetro(scene, toApplyStyle);
-        } else {
-            jMetro.setStyle(toApplyStyle);
-        }
+        if(jMetro == null) jMetro = new JMetro(scene, toApplyStyle);
+        else jMetro.setStyle(toApplyStyle);
         
         putCustomStyle(scene, "base.css");
-        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) {
-            putCustomStyle(scene, "base-dark.css");
-        } else {
-            putCustomStyle(scene, "base-light.css");
-        }
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
+        else putCustomStyle(scene, "base-light.css");
         return jMetro;
     }
     public static void putStyle(Scene scene, Style style){
         jfxtras.styles.jmetro.Style toApplyStyle;
-        if(style == Style.DEFAULT) {
-            toApplyStyle = DEFAULT_STYLE;
-        } else if(style == Style.ACCENT) {
-            toApplyStyle = ACCENT_STYLE;
-        } else {
-            toApplyStyle = DEFAULT_STYLE;
-        }
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
         
         new JMetro(scene, toApplyStyle);
         
         putCustomStyle(scene, "base.css");
-        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) {
-            putCustomStyle(scene, "base-dark.css");
-        } else {
-            putCustomStyle(scene, "base-light.css");
-        }
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(scene, "base-dark.css");
+        else putCustomStyle(scene, "base-light.css");
     }
     
     public static void putStyle(Parent parent, Style style){
@@ -99,38 +80,25 @@ public class StyleManager {
     
     public static JMetro putStyle(Parent parent, Style style, JMetro jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
-        if(style == Style.DEFAULT) {
-            toApplyStyle = DEFAULT_STYLE;
-        } else if(style == Style.ACCENT) {
-            toApplyStyle = ACCENT_STYLE;
-        } else {
-            toApplyStyle = DEFAULT_STYLE;
-        }
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
         
         if(jMetro == null){
             jMetro = new JMetro(parent, toApplyStyle);
             parent.getStyleClass().add(JMetroStyleClass.BACKGROUND);
-        }else {
-            jMetro.setStyle(toApplyStyle);
-        }
+        }else jMetro.setStyle(toApplyStyle);
         
         putCustomStyle(parent, "base.css");
-        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) {
-            putCustomStyle(parent, "base-dark.css");
-        } else {
-            putCustomStyle(parent, "base-light.css");
-        }
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
+        else putCustomStyle(parent, "base-light.css");
         return jMetro;
     }
     public static void putStyle(Parent parent, Style style, boolean jMetro){
         jfxtras.styles.jmetro.Style toApplyStyle;
-        if(style == Style.DEFAULT) {
-            toApplyStyle = DEFAULT_STYLE;
-        } else if(style == Style.ACCENT) {
-            toApplyStyle = ACCENT_STYLE;
-        } else {
-            toApplyStyle = DEFAULT_STYLE;
-        }
+        if(style == Style.DEFAULT) toApplyStyle = DEFAULT_STYLE;
+        else if(style == Style.ACCENT) toApplyStyle = ACCENT_STYLE;
+        else toApplyStyle = DEFAULT_STYLE;
         
         if(jMetro){
             new JMetro(parent, toApplyStyle);
@@ -138,11 +106,8 @@ public class StyleManager {
         }
         
         putCustomStyle(parent, "base.css");
-        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) {
-            putCustomStyle(parent, "base-dark.css");
-        } else {
-            putCustomStyle(parent, "base-light.css");
-        }
+        if(toApplyStyle == jfxtras.styles.jmetro.Style.DARK) putCustomStyle(parent, "base-dark.css");
+        else putCustomStyle(parent, "base-light.css");
     }
     
     public static void putCustomStyle(Scene scene, String name){
@@ -158,9 +123,7 @@ public class StyleManager {
     }
     
     private static void putStylesAuto(){
-        if(MainWindow.paintTab.galleryWindow != null) {
-            MainWindow.paintTab.galleryWindow.updateStyle();
-        }
+        if(MainWindow.paintTab.galleryWindow != null) MainWindow.paintTab.galleryWindow.updateStyle();
         Main.window.updateStyle();
         
         MainWindow.textTab.treeView.lastsSection.updateGraphics();
@@ -193,17 +156,13 @@ public class StyleManager {
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             if(color.getBrightness() <= 0.4){
                 return Color.WHITE;
-            }else {
-                return color;
-            }
+            }else return color;
         }else{
             double targetBrightness = 0.8;
             
             if(color.getBrightness() >= 0.9){
                 return Color.BLACK;
-            }else {
-                return color;
-            }
+            }else return color;
         }
     }
     
@@ -251,9 +210,7 @@ public class StyleManager {
                 nr = r + rDifBrt + (difBrt * (1 - keepRatioPerOne));
                 ng = g + gDifBrt + (difBrt * (1 - keepRatioPerOne));
                 nb = b + bDifBrt + (difBrt * (1 - keepRatioPerOne));
-            }else {
-                return color;
-            }
+            }else return color;
         }else{
             
             double maxBrt = (int) (255 * lightMaxBrt);
@@ -268,9 +225,7 @@ public class StyleManager {
                 nr = r - rDifBrt - (difBrt * (1 - keepRatioPerOne));
                 ng = g - gDifBrt - (difBrt * (1 - keepRatioPerOne));
                 nb = b - bDifBrt - (difBrt * (1 - keepRatioPerOne));
-            }else {
-                return color;
-            }
+            }else return color;
         }
         
         return Color.color(

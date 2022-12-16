@@ -201,9 +201,7 @@ public class MainScreen extends Pane {
         notSelectedShadow.radiusProperty().bind(Bindings.min(40, Bindings.divide(10, zoomProperty())));
         selectedShadow.radiusProperty().bind(Bindings.min(25, Bindings.divide(6, zoomProperty())));
         zoomProperty().addListener((observable, oldValue, newValue) -> {
-            if(hasDocument(false) && document != null) {
-                document.updateSelectedPages();
-            }
+            if(hasDocument(false) && document != null) document.updateSelectedPages();
         });
     
         updateTheme();
@@ -234,9 +232,7 @@ public class MainScreen extends Pane {
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             if(document != null && !document.getPages().isEmpty()){
                 Platform.runLater(() -> {
-                    if(document != null) {
-                        document.updateShowsStatus();
-                    }
+                    if(document != null) document.updateShowsStatus();
                 });
             }
         });
@@ -272,11 +268,8 @@ public class MainScreen extends Pane {
                 }
                 document.clearSelectedPages();
     
-                if(newValue) {
-                    zoomOperator.overviewWidth(true);
-                } else {
-                    zoomOperator.fitWidth(true, false);
-                }
+                if(newValue) zoomOperator.overviewWidth(true);
+                else zoomOperator.fitWidth(true, false);
                 
                 document.updatePagesPosition(); // Anomation : 200ms
                 Platform.runLater(() -> {
@@ -298,9 +291,7 @@ public class MainScreen extends Pane {
         
         selectedProperty().addListener((observable, oldValue, newValue) -> {
             // Reset toPlace only if the user select something (and not de-select)
-            if(newValue != null) {
-                setToPlace(null);
-            }
+            if(newValue != null) setToPlace(null);
         });
         
         setOnZoomStarted(event -> {
@@ -311,9 +302,7 @@ public class MainScreen extends Pane {
             lastFinishedZoomingTime = System.currentTimeMillis();
         });
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
-            if(isRotating) {
-                return;
-            }
+            if(isRotating) return;
             
             // Trackpad detection, see https://stackoverflow.com/questions/31589678/how-to-detect-if-the-source-of-a-scroll-or-mouse-event-is-a-trackpad-or-a-mouse
             long timeDiff = System.currentTimeMillis() - lastFinishedZoomingTime;
@@ -333,9 +322,7 @@ public class MainScreen extends Pane {
             lastFinishedScrollingTime = System.currentTimeMillis();
         });
         addEventFilter(ScrollEvent.SCROLL, e -> {
-            if(isRotating) {
-                return;
-            }
+            if(isRotating) return;
             
             // Trackpad detection, see https://stackoverflow.com/questions/31589678/how-to-detect-if-the-source-of-a-scroll-or-mouse-event-is-a-trackpad-or-a-mouse
             long timeDiff = System.currentTimeMillis() - lastFinishedScrollingTime;
@@ -378,18 +365,14 @@ public class MainScreen extends Pane {
         heightProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
-                    if(document != null) {
-                        document.updatePagesPosition();
-                    }
+                    if(document != null) document.updatePagesPosition();
                 });
             }
         });
         widthProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null){
                 Platform.runLater(() -> {
-                    if(document != null && isGridView()) {
-                        document.updatePagesPosition();
-                    }
+                    if(document != null && isGridView()) document.updatePagesPosition();
                 });
             }
         });
@@ -469,9 +452,7 @@ public class MainScreen extends Pane {
         // consumed by PageRenderer, but can be called if click is released outside the page
         setOnMouseClicked(e -> {
             // prevent dragged clicks by using checking e.isStillSincePress()
-            if(e.isStillSincePress() && hasDocument(false)) {
-                document.clearSelectedPages();
-            }
+            if(e.isStillSincePress() && hasDocument(false)) document.clearSelectedPages();
         });
         setOnMouseReleased(e -> {
             dragNScrollFactorVertical = 0;
@@ -503,9 +484,7 @@ public class MainScreen extends Pane {
         });
         
         // Start the Drag and Scroll Thread
-        if(!dragNScrollThread.isAlive()) {
-            dragNScrollThread.start();
-        }
+        if(!dragNScrollThread.isAlive()) dragNScrollThread.start();
         
     }
     
@@ -572,11 +551,8 @@ public class MainScreen extends Pane {
         status.set(Status.OPEN);
         MainWindow.filesTab.files.getSelectionModel().select(file);
     
-        if(MainWindow.userData.editPagesMode) {
-            zoomOperator.overviewWidth(true);
-        } else {
-            zoomOperator.fitWidth(true, false);
-        }
+        if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
+        else zoomOperator.fitWidth(true, false);
         
         zoomOperator.vScrollBar.setValue(0);
         document.showPages();
@@ -634,9 +610,7 @@ public class MainScreen extends Pane {
                 if(!document.save(false)){
                     return false;
                 }
-            }else if(!forceNotToSave) {
-                document.edition.save(true);
-            }
+            }else if(!forceNotToSave) document.edition.save(true);
     
             MainWindow.userData.multiPagesMode = isMultiPagesMode();
             MainWindow.userData.editPagesMode = isEditPagesMode();
@@ -836,24 +810,17 @@ public class MainScreen extends Pane {
     }
     
     public UndoEngine getUndoEngine(){
-        if(hasDocument(false) && document.hasUndoEngine()) {
-            return document.getUndoEngine();
-        }
+        if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
         return null;
     }
     // The UndoEngine of the PDF pages editor
     public UndoEngine getPagesUndoEngine(){
-        if(hasDocument(false)) {
-            return document.pdfPagesRender.editor.getUndoEngine();
-        }
+        if(hasDocument(false)) return document.pdfPagesRender.editor.getUndoEngine();
         return null;
     }
     public UndoEngine getUndoEngineAuto(){
-        if(isEditPagesMode()) {
-            return getPagesUndoEngine();
-        } else {
-            return getUndoEngine();
-        }
+        if(isEditPagesMode()) return getPagesUndoEngine();
+        else return getUndoEngine();
     }
     
     public <T> boolean isNextUndoActionProperty(Property<T> property){
@@ -868,43 +835,31 @@ public class MainScreen extends Pane {
     }
     
     public void registerNewAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO) {
-            return;
-        }
+        if(action.getUndoType() == UType.NO_UNDO) return;
         if(getUndoEngine() != null){
             getUndoEngine().registerNewAction(action);
         }
     }
     // The UndoEngine of the PDF pages editor
     public void registerNewPageAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO) {
-            return;
-        }
+        if(action.getUndoType() == UType.NO_UNDO) return;
         if(getPagesUndoEngine() != null){
             getPagesUndoEngine().registerNewAction(action);
         }
     }
     public void undo(){
         if(isEditPagesMode()){
-            if(getPagesUndoEngine() != null && Main.window.isFocused()) {
-                getPagesUndoEngine().undo();
-            }
+            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().undo();
         }else{
-            if(getUndoEngine() != null && Main.window.isFocused()) {
-                getUndoEngine().undo();
-            }
+            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
         }
         
     }
     public void redo(){
         if(isEditPagesMode()){
-            if(getPagesUndoEngine() != null && Main.window.isFocused()) {
-                getPagesUndoEngine().redo();
-            }
+            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().redo();
         }else{
-            if(getUndoEngine() != null && Main.window.isFocused()) {
-                getUndoEngine().redo();
-            }
+            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
         }
     }
     

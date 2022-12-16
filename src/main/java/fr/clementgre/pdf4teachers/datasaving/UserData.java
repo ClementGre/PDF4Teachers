@@ -226,12 +226,8 @@ public class UserData {
     
     public UserData(){
         // if: check the actions wasn't already done in case of app restart.
-        if(simpleConfigs.isEmpty()) {
-            SimpleConfig.registerClasses();
-        }
-        if(!userDataSaver.isAlive()) {
-            userDataSaver.start();
-        }
+        if(simpleConfigs.isEmpty()) SimpleConfig.registerClasses();
+        if(!userDataSaver.isAlive()) userDataSaver.start();
         
         Platform.runLater(() -> {
             loadDataFromYAML();
@@ -271,38 +267,26 @@ public class UserData {
                         try{
                             if(field.getType() == String.class){
                                 String value = config.getString(field.getAnnotation(UserDataObject.class).path());
-                                if(!value.isEmpty()) {
-                                    field.set(this, value);
-                                }
+                                if(!value.isEmpty()) field.set(this, value);
                             }else if(field.getType() == boolean.class){
                                 Boolean value = config.getBooleanNull(field.getAnnotation(UserDataObject.class).path());
-                                if(value != null) {
-                                    field.set(this, value);
-                                }
+                                if(value != null) field.set(this, value);
                             }else if(field.getType() == long.class){
                                 Long value = config.getLongNull(field.getAnnotation(UserDataObject.class).path());
-                                if(value != null) {
-                                    field.set(this, value);
-                                }
+                                if(value != null) field.set(this, value);
                             }else if(field.getType() == double.class){
                                 Double value = config.getDoubleNull(field.getAnnotation(UserDataObject.class).path());
-                                if(value != null) {
-                                    field.set(this, value);
-                                }
+                                if(value != null) field.set(this, value);
                             }else if(field.getType() == List.class){
                                 List<Object> value = config.getListNull(field.getAnnotation(UserDataObject.class).path());
-                                if(value != null) {
-                                    field.set(this, value);
-                                }
+                                if(value != null) field.set(this, value);
                             }else if(field.getType() == HashMap.class){
                                 field.set(this, config.getSection(field.getAnnotation(UserDataObject.class).path()));
                             }else if(field.getType() == LinkedHashMap.class){
                                 field.set(this, config.getLinkedSection(field.getAnnotation(UserDataObject.class).path()));
                             }else if(field.getType() == Color.class){
                                 Color value = config.getColorNull(field.getAnnotation(UserDataObject.class).path());
-                                if(value != null) {
-                                    field.set(this, value);
-                                }
+                                if(value != null) field.set(this, value);
                             }
                         }catch(Exception e){
                             Log.eNotified(e);
@@ -319,9 +303,7 @@ public class UserData {
                     for(Object filePath : lastOpenedFiles){
                         Platform.runLater(() -> {
                             File lastFile = new File(filePath.toString());
-                            if(lastFile.exists()) {
-                                MainWindow.filesTab.openFileNonDir(lastFile);
-                            }
+                            if(lastFile.exists()) MainWindow.filesTab.openFileNonDir(lastFile);
                         });
                     }
                     // Opened file
@@ -341,15 +323,13 @@ public class UserData {
                 if(Main.settings.getSettingsVersionCode().equals("1.2.0")){
                     // TEXTS
                     for(Object data : favoritesTextElements){
-                        if(data instanceof Map) {
+                        if(data instanceof Map)
                             MainWindow.textTab.treeView.favoritesSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE));
-                        }
                     }
                     
                     for(Object data : lastsTextElements){
-                        if(data instanceof Map) {
+                        if(data instanceof Map)
                             MainWindow.textTab.treeView.lastsSection.getChildren().add(TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE));
-                        }
                     }
                     
                     for(Map.Entry<Object, Object> list : listsOfTextElements.entrySet()){

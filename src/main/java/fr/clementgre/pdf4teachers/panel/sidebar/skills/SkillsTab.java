@@ -103,9 +103,7 @@ public class SkillsTab extends SideTab {
     private final ListView<Skill> listView = new ListView<>();
     
     private final Button settings = new IconButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
-        if(getCurrentAssessment() != null) {
-            new SkillsAssessmentWindow(getCurrentAssessment());
-        }
+        if(getCurrentAssessment() != null) new SkillsAssessmentWindow(getCurrentAssessment());
     });
     private final Button deleteAssessment = new IconButton(SVGPathIcons.TRASH, TR.tr("skillsTab.deleteAssessment.tooltip"), e -> {
         if(getCurrentAssessment() != null){
@@ -153,16 +151,10 @@ public class SkillsTab extends SideTab {
         PaneUtils.setHBoxPosition(assessmentCombo, -1, 30, 0);
         assessmentCombo.setConverter(new StringConverter<>() {
             @Override public String toString(SkillsAssessment assessment){
-                if(assessment == null) {
-                    return null;
-                }
+                if(assessment == null) return null;
                 String text = assessment.getName();
-                if(!assessment.getClasz().isBlank()) {
-                    text += " - " + assessment.getClasz();
-                }
-                if(!assessment.getDate().isBlank()) {
-                    text += " | " + assessment.getDate();
-                }
+                if(!assessment.getClasz().isBlank()) text += " - " + assessment.getClasz();
+                if(!assessment.getDate().isBlank()) text += " | " + assessment.getDate();
                 return text;
             }
             @Override public SkillsAssessment fromString(String assessmentName){ return null; }
@@ -190,18 +182,14 @@ public class SkillsTab extends SideTab {
             @Override public Student fromString(String name){ return null; }
         });
         studentCombo.itemsProperty().bind(Bindings.createObjectBinding(() -> {
-            if(getCurrentAssessment() != null) {
-                return FXCollections.observableArrayList(getCurrentAssessment().getStudents());
-            }
+            if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getStudents());
             return FXCollections.observableArrayList();
         }, assessmentCombo.valueProperty()));
     
         assessmentCombo.valueProperty().addListener(o -> {
             if(getCurrentAssessment() != null && !getCurrentAssessment().getStudents().isEmpty()){
                 pane.getChildren().setAll(optionPane, studentPane, listView);
-            }else {
-                pane.getChildren().setAll(optionPane, listView);
-            }
+            }else pane.getChildren().setAll(optionPane, listView);
             updateSupportModalityMessage();
         });
         
@@ -262,9 +250,7 @@ public class SkillsTab extends SideTab {
     private void updateSupportModalityMessage(){
         if(getCurrentStudent() != null && !getCurrentStudent().supportModality().isBlank()){
             supportModality.setText(TR.tr("skillsTab.student.supportModality", getCurrentStudent().supportModality()));
-            if(!pane.getChildren().contains(supportModality)) {
-                pane.getChildren().add(supportModality);
-            }
+            if(!pane.getChildren().contains(supportModality)) pane.getChildren().add(supportModality);
         }else{
             supportModality.setText("");
             pane.getChildren().remove(supportModality);
@@ -300,9 +286,7 @@ public class SkillsTab extends SideTab {
         assessmentCombo.setValue(null);
     }
     private void trySelectStudent(){
-        if(getSkillTableElement() == null || getCurrentAssessment() == null) {
-            return;
-        }
+        if(getSkillTableElement() == null || getCurrentAssessment() == null) return;
         getCurrentAssessment()
                 .getStudents()
                 .stream()

@@ -76,9 +76,7 @@ public class PDFPagesEditor {
     }
     
     public void saveEditsIfNeeded(){
-        if(edited) {
-            saveEdits();
-        }
+        if(edited) saveEdits();
     }
     public void saveEdits(){
         try{
@@ -92,11 +90,8 @@ public class PDFPagesEditor {
             alert.addIgnoreButton(ButtonPosition.CLOSE);
             alert.addDefaultButton(TR.tr("actions.retry"));
             
-            if(alert.getShowAndWaitIsDefaultButton()) {
-                saveEdits();
-            } else {
-                edited = false;
-            }
+            if(alert.getShowAndWaitIsDefaultButton()) saveEdits();
+            else edited = false;
         }
     }
     
@@ -115,9 +110,7 @@ public class PDFPagesEditor {
         movePageByIndex(page, page.getPage() + pagesToPass);
     }
     public void movePageByIndex(PageRenderer page, int index){
-        if(page.getPage() == index) {
-            return;
-        }
+        if(page.getPage() == index) return;
         List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         page.quitVectorEditMode();
@@ -133,9 +126,7 @@ public class PDFPagesEditor {
         document.getPages().add(index, page);
         
         // Update pages of all pages
-        for(int i = 0; i < document.numberOfPages; i++) {
-            document.getPage(i).setPage(i);
-        }
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
         document.updatePagesPosition();
@@ -158,11 +149,8 @@ public class PDFPagesEditor {
         
         if(!animated){
             // If grid mode, one need to update all the pages.
-            if(MainWindow.mainScreen.isGridView()) {
-                MainWindow.mainScreen.document.updatePagesPosition();
-            } else {
-                page.updatePosition(-1, true);
-            }
+            if(MainWindow.mainScreen.isGridView()) MainWindow.mainScreen.document.updatePagesPosition();
+            else page.updatePosition(-1, true);
             
             page.updateRender();
         }else{
@@ -178,15 +166,11 @@ public class PDFPagesEditor {
             // The last event to be called will call endRotateAnimation()
             timeline.setOnFinished((e) -> {
                 timelineFinished.set(true);
-                if(renderFinished.get()) {
-                    endRotateAnimation(page, timeline);
-                }
+                if(renderFinished.get()) endRotateAnimation(page, timeline);
             });
             page.updateRenderAsync(() -> {
                 renderFinished.set(true);
-                if(timelineFinished.get()) {
-                    endRotateAnimation(page, timeline);
-                }
+                if(timelineFinished.get()) endRotateAnimation(page, timeline);
             }, false);
         }
     }
@@ -195,11 +179,8 @@ public class PDFPagesEditor {
         timeline.stop();
         page.setRotate(0);
         // If grid mode, one need to update all the pages.
-        if(MainWindow.mainScreen.isGridView()) {
-            MainWindow.mainScreen.document.updatePagesPosition();
-        } else {
-            page.updatePosition(-1, true);
-        }
+        if(MainWindow.mainScreen.isGridView()) MainWindow.mainScreen.document.updatePagesPosition();
+        else page.updatePosition(-1, true);
     }
     
     public void deleteSelectedPages(){
@@ -210,15 +191,10 @@ public class PDFPagesEditor {
             int i = 0;
             
             for(PageRenderer page : savedSelectedPages){
-                if(MainWindow.mainScreen.document.getPages().size() == 1) {
-                    return;
-                }
+                if(MainWindow.mainScreen.document.getPages().size() == 1) return;
                 
-                if(i == 0) {
-                    MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
-                } else {
-                    MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, page.getPage(), page, document.getPage(page.getPage()), true));
-                }
+                if(i == 0) MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
+                else MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, page.getPage(), page, document.getPage(page.getPage()), true));
                 i++;
                 
                 page.quitVectorEditMode();
@@ -266,9 +242,7 @@ public class PDFPagesEditor {
         MainWindow.mainScreen.pane.getChildren().remove(page);
         
         // Update pages of all pages
-        for(int i = 0; i < document.numberOfPages; i++) {
-            document.getPage(i).setPage(i);
-        }
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
         
         // update coordinates of the pages
         document.updatePagesPosition();
@@ -296,9 +270,7 @@ public class PDFPagesEditor {
         document.numberOfPages++;
     
         // Update pages of all pages
-        for(int i = 0; i < document.numberOfPages; i++) {
-            document.getPage(i).setPage(i);
-        }
+        for(int i = 0; i < document.numberOfPages; i++) document.getPage(i).setPage(i);
     
         // update coordinates of the pages
         document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
@@ -321,9 +293,7 @@ public class PDFPagesEditor {
     
     public void newConvertPage(int originalPage, int index){
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageSize(originalPage), (convertedFiles) -> {
-            if(convertedFiles.isEmpty()) {
-                return;
-            }
+            if(convertedFiles.isEmpty()) return;
             ConvertedFile file = convertedFiles.get(0);
             addPdfDocument(file.document, index);
         });
@@ -338,9 +308,7 @@ public class PDFPagesEditor {
         
         File file = chooser.showOpenDialog(Main.window);
         if(file != null){
-            if(file.getParentFile().exists()) {
-                MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
-            }
+            if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
             try{
                 PDDocument fileDoc = PDDocument.load(file);
                 addPdfDocument(fileDoc, index);
@@ -378,9 +346,7 @@ public class PDFPagesEditor {
             document.numberOfPages++;
         
             // Update pages of all pages
-            for(int k = 0; k < document.numberOfPages; k++) {
-                document.getPage(k).setPage(k);
-            }
+            for(int k = 0; k < document.numberOfPages; k++) document.getPage(k).setPage(k);
         }
     
         MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, this.document.getPage(index), false));
@@ -414,36 +380,28 @@ public class PDFPagesEditor {
         MainWindow.mainScreen.document.getSelectedPages().clear();
         for(PageRenderer page : savedPages){
             if(MainWindow.mainScreen.document.getPages().contains(page)) // Check page still exists
-            {
                 MainWindow.mainScreen.document.getSelectedPages().add(page.getPage());
-            }
         }
         MainWindow.mainScreen.document.updateSelectedPages();
     }
     
     public void addDocumentPage(final int index, final PDPage page){
 
-        if(index >= document.getNumberOfPages()) {
+        if(index >= document.getNumberOfPages())
             document.addPage(page);
-        } else{
+        else{
             ArrayList<PDPage> pages = new ArrayList<>();
             
             // save pages
             for(int i = 0; i < document.getPages().getCount(); i++){
-                if(index == i) {
-                    pages.add(page);
-                }
+                if(index == i) pages.add(page);
                 pages.add(document.getPage(i));
             }
             // remove pages
-            while(document.getPages().getCount() != 0) {
-                document.removePage(0);
-            }
+            while(document.getPages().getCount() != 0) document.removePage(0);
             
             // add pages
-            for(PDPage pageToAdd : pages) {
-                document.addPage(pageToAdd);
-            }
+            for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         }
         edited = true;
     }
@@ -454,22 +412,16 @@ public class PDFPagesEditor {
         
         // save non-from pages
         for(int i = 0; i < document.getPages().getCount(); i++){
-            if(i != from) {
-                pages.add(document.getPage(i));
-            }
+            if(i != from) pages.add(document.getPage(i));
         }
         // save from page
         pages.add(to, document.getPages().get(from));
         
         // remove pages
-        while(document.getPages().getCount() != 0) {
-            document.removePage(0);
-        }
+        while(document.getPages().getCount() != 0) document.removePage(0);
         
         // add pages
-        for(PDPage pageToAdd : pages) {
-            document.addPage(pageToAdd);
-        }
+        for(PDPage pageToAdd : pages) document.addPage(pageToAdd);
         edited = true;
     }
     
@@ -483,9 +435,8 @@ public class PDFPagesEditor {
     
         
         for(int index : indices){
-            if(output == null) {
-                output = documents.get(index);
-            } else{
+            if(output == null) output = documents.get(index);
+            else{
                 merger.appendDocument(output, documents.get(index));
                 merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
                 documents.get(index).close();
@@ -536,14 +487,10 @@ public class PDFPagesEditor {
         alert.getButtonTypes().clear();
         alert.addDefaultButton(TR.tr("actions.save"));
         alert.addCancelButton(ButtonPosition.CLOSE);
-        if(!allPages && !selection) {
-            alert.addRightButton(TR.tr("actions.copyClipboard"));
-        }
+        if(!allPages && !selection) alert.addRightButton(TR.tr("actions.copyClipboard"));
         
         ButtonPosition buttonPos = alert.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
-        if(buttonPos == ButtonPosition.CLOSE) {
-            return;
-        }
+        if(buttonPos == ButtonPosition.CLOSE) return;
         String choosed = alert.getSelected();
         if(choosed != null){
             int definition = (int) (Double.parseDouble(choosed.split("Mp")[0]) * 1000000);
@@ -581,23 +528,19 @@ public class PDFPagesEditor {
                     }else{
                         if(exportDir == null){
                             exportDir = FilesChooserManager.showDirectoryDialog(FilesChooserManager.SyncVar.LAST_GALLERY_OPEN_DIR);
-                            if(exportDir == null) {
+                            if(exportDir == null)
                                 return Map.entry(Map.entry(new File(""), pageIndex), TwoStepListAction.CODE_STOP);
-                            }
                         }
                         file = new File(exportDir.getAbsolutePath() + File.separator + MainWindow.mainScreen.document.getFileName() + " (" + (pageIndex + 1) + "-" + MainWindow.mainScreen.document.getPagesNumber() + ").png");
                     }
                     if(file.exists() && recursive){
                         AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
-                        if(result == AlreadyExistDialogManager.ResultType.SKIP) {
+                        if(result == AlreadyExistDialogManager.ResultType.SKIP)
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_SKIP_1);
-                        }
-                        if(result == AlreadyExistDialogManager.ResultType.STOP) {
+                        if(result == AlreadyExistDialogManager.ResultType.STOP)
                             return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_STOP);
-                        }
-                        if(result == AlreadyExistDialogManager.ResultType.RENAME) {
+                        if(result == AlreadyExistDialogManager.ResultType.RENAME)
                             file = AlreadyExistDialogManager.rename(file);
-                        }
                     }
                     return Map.entry(Map.entry(file, pageIndex), TwoStepListAction.CODE_OK);
                 }
@@ -619,14 +562,9 @@ public class PDFPagesEditor {
                             }catch(IOException e){
                                 Log.e(e);
                                 boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
-                                if(!recursive) {
-                                    return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                                }
-                                if(result) {
-                                    return TwoStepListAction.ProcessResult.STOP;
-                                } else {
-                                    return TwoStepListAction.ProcessResult.SKIPPED;
-                                }
+                                if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                                if(result) return TwoStepListAction.ProcessResult.STOP;
+                                else return TwoStepListAction.ProcessResult.SKIPPED;
                             }
                         }else{ // clipboard copy
                             Image image = capturePageInFXImage(page, dimensions, definition);
@@ -643,14 +581,9 @@ public class PDFPagesEditor {
                     }catch(Exception e){
                         Log.e(e);
                         boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(null, e.getMessage(), recursive).execute());
-                        if(!recursive) {
-                            return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
-                        }
-                        if(result) {
-                            return TwoStepListAction.ProcessResult.STOP;
-                        } else {
-                            return TwoStepListAction.ProcessResult.SKIPPED;
-                        }
+                        if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
+                        if(result) return TwoStepListAction.ProcessResult.STOP;
+                        else return TwoStepListAction.ProcessResult.SKIPPED;
                     }
                     return TwoStepListAction.ProcessResult.OK;
                 }
@@ -673,9 +606,8 @@ public class PDFPagesEditor {
     }
     
     private Image capturePagePreview(PageRenderer page, PositionDimensions dimensions){
-        if(!page.hasRenderedImage()) {
+        if(!page.hasRenderedImage())
             return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
-        }
         if(dimensions == null){
             return page.getRenderedImage();
         }else{

@@ -63,9 +63,7 @@ public class GrabLine extends Region {
         
         line.setOnMousePressed(e -> {
             wasInEditPagesModeWhenMousePressed = MainWindow.mainScreen.isEditPagesMode();
-            if(wasInEditPagesModeWhenMousePressed) {
-                return;
-            }
+            if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             dragAlreadyDetected = false;
             if(e.getClickCount() == 1){
@@ -75,9 +73,7 @@ public class GrabLine extends Region {
         });
         line.setOnMouseDragged(e -> {
             e.consume();
-            if(wasInEditPagesModeWhenMousePressed) {
-                return;
-            }
+            if(wasInEditPagesModeWhenMousePressed) return;
             
             if(!dragAlreadyDetected){
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(element, element.textMaxWidthProperty(), element.getTextMaxWidth(), UType.UNDO));
@@ -92,9 +88,7 @@ public class GrabLine extends Region {
             element.setPrefWidth(width);
         });
         line.setOnMouseReleased(e -> {
-            if(wasInEditPagesModeWhenMousePressed) {
-                return;
-            }
+            if(wasInEditPagesModeWhenMousePressed) return;
             e.consume();
             Edition.setUnsave("TextElementResize");
             

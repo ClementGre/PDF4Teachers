@@ -147,18 +147,14 @@ public class LanguagesUpdater {
             }catch(IOException e){
                 Log.eNotified(e);
             }
-            if(callBack != null) {
-                callBack.call();
-            }
+            if(callBack != null) callBack.call();
         }).start();
         
     }
     
     public void update(CallBackArg<List<Language>> callBack, boolean hideFirstDialogState, boolean provideData){
         
-        if(!hideFirstDialogState) {
-            loadingAlert.show();
-        }
+        if(!hideFirstDialogState) loadingAlert.show();
         
         new Thread(() -> {
             try{
@@ -182,9 +178,7 @@ public class LanguagesUpdater {
                 
                 int responseCode = con.getResponseCode();
                 Log.d("updating language with response code " + responseCode);
-                if(responseCode != 200) {
-                    Log.d(con.getResponseMessage());
-                }
+                if(responseCode != 200) Log.d(con.getResponseMessage());
                 
                 JsonFactory jfactory = new JsonFactory();
                 JsonParser jParser = jfactory.createParser(con.getInputStream());
@@ -218,12 +212,8 @@ public class LanguagesUpdater {
                         currentLanguage = null;
                     }
                     
-                    if(token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) {
-                        indentLevel++;
-                    }
-                    if(token == JsonToken.END_OBJECT || token == JsonToken.END_ARRAY) {
-                        indentLevel--;
-                    }
+                    if(token == JsonToken.START_OBJECT || token == JsonToken.START_ARRAY) indentLevel++;
+                    if(token == JsonToken.END_OBJECT || token == JsonToken.END_ARRAY) indentLevel--;
                 }
                 jParser.close();
                 
@@ -275,9 +265,7 @@ public class LanguagesUpdater {
     
     private boolean isLanguageAlreadyExisting(Language language){
         
-        if(!Main.VERSION.equals(language.getRelease())) {
-            return true;
-        }
+        if(!Main.VERSION.equals(language.getRelease())) return true;
         
         if(TR.getLanguagesConfig().containsKey(language.getName())){
             Object existing = TR.getLanguagesConfig().get(language.getName());

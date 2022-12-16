@@ -48,9 +48,7 @@ public class SkillsAssessment {
         ));
     }
     public static ArrayList<Notation> getDefaultNotations(){
-        if(userDefaultNotations.isEmpty()) {
-            return cloneNotations(getGlobalDefaultNotations());
-        }
+        if(userDefaultNotations.isEmpty()) return cloneNotations(getGlobalDefaultNotations());
         return cloneNotations(userDefaultNotations);
     }
     public static void setDefaultNotations(ArrayList<Notation> notations){
@@ -115,9 +113,7 @@ public class SkillsAssessment {
     }
     public static long getNewSkillsAssessmentUniqueId(){
         long id = new Random().nextLong();
-        while(id == 0 || getById(id) != null) {
-            id = new Random().nextLong();
-        }
+        while(id == 0 || getById(id) != null) id = new Random().nextLong();
         return id;
     }
     

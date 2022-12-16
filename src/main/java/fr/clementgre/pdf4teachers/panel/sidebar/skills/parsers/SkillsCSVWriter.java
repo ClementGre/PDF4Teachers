@@ -39,17 +39,13 @@ public class SkillsCSVWriter {
     
     public void exportAndSave(){
         
-        if(!MainWindow.mainScreen.document.save(true)) {
-            return;
-        }
+        if(!MainWindow.mainScreen.document.save(true)) return;
         
         try{
             List<EditionGrades> editionGrades = getMatchingEdits();
             
             File dest = getDestinationFile();
-            if(dest == null) {
-                return;
-            }
+            if(dest == null) return;
             
             BufferedWriter writer  = new BufferedWriter(new FileWriter(dest, Charset.defaultCharset()));
             ICSVWriter csvWriter = new CSVWriterBuilder(writer).withSeparator(StringUtils.getCsvSeparator()).build();
@@ -125,9 +121,7 @@ public class SkillsCSVWriter {
         ArrayList<EditionGrades> fileGrades = new ArrayList<>();
         
         File editDir = new File(Main.dataFolder + "editions");
-        if(!editDir.exists()) {
-            return List.of();
-        }
+        if(!editDir.exists()) return List.of();
         
         
         for(File edit : Objects.requireNonNull(editDir.listFiles())){

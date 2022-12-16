@@ -32,9 +32,7 @@ public class TextElementsData extends SimpleConfig {
             for(Object data : config.getList("favorites")){
                 if(data instanceof Map){
                     TextTreeItem item = TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.FAVORITE_TYPE);
-                    if(!item.getText().isBlank()) {
-                        MainWindow.textTab.treeView.favoritesSection.getChildren().add(item);
-                    }
+                    if(!item.getText().isBlank()) MainWindow.textTab.treeView.favoritesSection.getChildren().add(item);
                 }
                 
             }
@@ -42,9 +40,7 @@ public class TextElementsData extends SimpleConfig {
             for(Object data : config.getList("lasts")){
                 if(data instanceof Map){
                     TextTreeItem item = TextTreeItem.readYAMLDataAndGive(Config.castSection(data), TextTreeSection.LAST_TYPE);
-                    if(!item.getText().isBlank()) {
-                        MainWindow.textTab.treeView.lastsSection.getChildren().add(item);
-                    }
+                    if(!item.getText().isBlank()) MainWindow.textTab.treeView.lastsSection.getChildren().add(item);
                 }
             }
             

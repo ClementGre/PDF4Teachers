@@ -101,9 +101,7 @@ public class MainWindow extends Stage {
         keyboardShortcuts = new KeyboardShortcuts(scene);
         
         setOnCloseRequest(e -> {
-            if(!requestCloseApp()) {
-                e.consume();
-            }
+            if(!requestCloseApp()) e.consume();
         });
     }
     
@@ -111,16 +109,12 @@ public class MainWindow extends Stage {
         Log.i("Received close request");
     
         userData.save();
-        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)) {
-            return false;
-        }
+        if(!mainScreen.closeFile(!Main.settings.autoSave.getValue(), false)) return false;
         
         // At this point, it is sure the app will close.
         LockManager.onCloseApp();
         Main.window.close();
-        if(paintTab.galleryWindow != null) {
-            paintTab.galleryWindow.close();
-        }
+        if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
         AutoTipsManager.hideAll();
     
         Log.i("Sending Statistics...");
@@ -240,9 +234,7 @@ public class MainWindow extends Stage {
                 && mainScreen.document.getFile().getAbsolutePath().equals(docFileAbsolutePath);
         
         if(MainWindow.mainScreen.closeFile(true, false)){
-            if(paintTab.galleryWindow != null) {
-                paintTab.galleryWindow.close();
-            }
+            if(paintTab.galleryWindow != null) paintTab.galleryWindow.close();
             Main.params = new ArrayList<>();
             TR.updateLocale();
             close();
@@ -254,12 +246,8 @@ public class MainWindow extends Stage {
         
         setMaximized(Main.syncUserData.mainWindowMaximized);
         
-        if(Main.syncUserData.mainWindowX != -1) {
-            setX(Main.syncUserData.mainWindowX);
-        }
-        if(Main.syncUserData.mainWindowY != -1) {
-            setY(Main.syncUserData.mainWindowY);
-        }
+        if(Main.syncUserData.mainWindowX != -1) setX(Main.syncUserData.mainWindowX);
+        if(Main.syncUserData.mainWindowY != -1) setY(Main.syncUserData.mainWindowY);
         setWidth(Main.syncUserData.mainWindowWidth);
         setHeight(Main.syncUserData.mainWindowHeight);
         
@@ -268,9 +256,7 @@ public class MainWindow extends Stage {
     
     private boolean saveDimensionRunning;
     public void saveDimensions(){
-        if(saveDimensionRunning) {
-            return;
-        }
+        if(saveDimensionRunning) return;
         
         saveDimensionRunning = true;
         PlatformUtils.runLaterOnUIThread(1000, () -> {
@@ -309,35 +295,19 @@ public class MainWindow extends Stage {
         double maxY = bounds.getMaxY();
 
         // Check in top right coordinates and move window
-        if(x+w > maxX) {
-            x -= x+w - maxX;
-        }
-        if(y+h > maxY) {
-            y -= y+h - maxY;
-        }
+        if(x+w > maxX) x -= x+w - maxX;
+        if(y+h > maxY) y -= y+h - maxY;
 
         // Check in bottom right coordinates and move window
-        if(x < minX) {
-            x = minX;
-        }
-        if(y < minY) {
-            y = minY;
-        }
+        if(x < minX) x = minX;
+        if(y < minY) y = minY;
 
         // Check in top right coordinates and resize window
-        if(x+w > maxX) {
-            w -= x+w - maxX;
-        }
-        if(y+h > maxY) {
-            h -= y+h - maxY;
-        }
+        if(x+w > maxX) w -= x+w - maxX;
+        if(y+h > maxY) h -= y+h - maxY;
 
-        if(window.getMinWidth() > w) {
-            window.setMinWidth(w);
-        }
-        if(window.getMinHeight() > h) {
-            window.setMinHeight(h);
-        }
+        if(window.getMinWidth() > w) window.setMinWidth(w);
+        if(window.getMinHeight() > h) window.setMinHeight(h);
         window.setWidth(w);
         window.setHeight(h);
         window.setX(x);
@@ -349,14 +319,9 @@ public class MainWindow extends Stage {
     public static Screen getScreen(Window window){
         ObservableList<Screen> screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
         if(screens.isEmpty()){
-            if(window == Main.window) {
-                return Screen.getPrimary();
-            } else {
-                return getScreen();
-            }
-        }else {
-            return screens.get(0);
-        }
+            if(window == Main.window) return Screen.getPrimary();
+            else return getScreen();
+        }else return screens.get(0);
     }
     
     /*

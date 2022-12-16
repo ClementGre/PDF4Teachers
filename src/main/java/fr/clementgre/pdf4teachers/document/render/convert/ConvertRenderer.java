@@ -48,16 +48,12 @@ public class ConvertRenderer {
         
         String out = convertPane.outDir.getText();
         new File(out).mkdirs();
-        if(!out.endsWith(File.separator)) {
-            out += File.separator;
-        }
+        if(!out.endsWith(File.separator)) out += File.separator;
         
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
             for(File dir : Objects.requireNonNull(mainDir.listFiles())){
-                if(shouldStop) {
-                    break;
-                }
+                if(shouldStop) break;
                 
                 if(isValidDir(dir)){
                     documentCallBack.call(Map.entry(dir.getName() + ".pdf", -1d));
@@ -111,15 +107,12 @@ public class ConvertRenderer {
         double pageHeight = pageWidth / convertPane.widthFactor * convertPane.heightFactor;
         PDRectangle pageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
         PDRectangle defaultPageSize = new PDRectangle((float) pageWidth, (float) pageHeight);
-        if(convertPane.format.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage"))) {
+        if(convertPane.format.getEditor().getText().equals(TR.tr("convertWindow.options.format.fitToImage")))
             defaultPageSize = PDRectangle.A4;
-        }
         
         int index = 0;
         for(File file : files){
-            if(shouldStop) {
-                return;
-            }
+            if(shouldStop) return;
             
             documentCallBack.call(Map.entry(out.getName(), ((double) index) / files.length));
             index++;
@@ -205,9 +198,7 @@ public class ConvertRenderer {
     
     public static boolean isGoodFormat(File file){
         String ext = FilesUtils.getExtension(file);
-        if(!file.exists()) {
-            ext = "";
-        }
+        if(!file.exists()) ext = "";
         return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext) && !file.isHidden();
     }
     
@@ -216,9 +207,7 @@ public class ConvertRenderer {
     }
     
     private boolean isValidDir(File dir){
-        if(!dir.isDirectory() || dir.isHidden()) {
-            return false;
-        }
+        if(!dir.isDirectory() || dir.isHidden()) return false;
         if(!convertPane.convertVoidFiles.isSelected()){
             int compatibleFiles = (int) Arrays.stream(Objects.requireNonNull(dir.listFiles()))
                     .filter(this::isValidFile)
@@ -243,9 +232,7 @@ public class ConvertRenderer {
     public int getFilesLength(){
         if(convertPane.convertDirs){
             File mainDir = new File(convertPane.srcDir.getText());
-            if(mainDir.listFiles() == null) {
-                throw new RuntimeException("The input directory contains no files.");
-            }
+            if(mainDir.listFiles() == null) throw new RuntimeException("The input directory contains no files.");
             return (int) Arrays.stream(Objects.requireNonNull(mainDir.listFiles()))
                     .filter(dir -> isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected()))
                     .count();

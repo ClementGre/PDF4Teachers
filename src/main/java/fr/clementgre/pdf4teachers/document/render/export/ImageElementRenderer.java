@@ -44,9 +44,7 @@ public class ImageElementRenderer {
             int showHeight = dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
             
             javafx.scene.image.Image fxImage = element.renderImage(0, 0);
-            if(fxImage == null) {
-                return;
-            }
+            if(fxImage == null) return;
             image = SwingFXUtils.fromFXImage(fxImage, null);
             double imageRatio = ((double) image.getWidth()) / image.getHeight();
             
@@ -72,9 +70,7 @@ public class ImageElementRenderer {
                     dpiManager.getPixelsLength(element.getRealWidth() / Element.GRID_WIDTH * pageWidth),
                     dpiManager.getPixelsLength(element.getRealHeight() / Element.GRID_HEIGHT * pageHeight)
             );
-            if(fxImage == null) {
-                return;
-            }
+            if(fxImage == null) return;
             image = SwingFXUtils.fromFXImage(fxImage, null);
         }
         

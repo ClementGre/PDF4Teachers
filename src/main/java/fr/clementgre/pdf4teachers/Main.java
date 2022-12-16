@@ -107,9 +107,7 @@ public class Main extends Application {
     private void setup(){
         // Check double instance
         params = getParameters().getRaw();
-        if(LockManager.FAKE_OPEN_FILE) {
-            params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
-        }
+        if(LockManager.FAKE_OPEN_FILE) params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
     
         // Define important vars
         dataFolder = PlatformUtils.getDataFolder();

@@ -36,22 +36,15 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             
             if(target.exists()){
                 var result = new AlreadyExistDialogManager(false).showAndWait(target);
-                if(result == AlreadyExistDialogManager.ResultType.RENAME) {
-                    target = AlreadyExistDialogManager.rename(target);
-                }
-                if(result == AlreadyExistDialogManager.ResultType.STOP) {
-                    return;
-                }
+                if(result == AlreadyExistDialogManager.ResultType.RENAME) target = AlreadyExistDialogManager.rename(target);
+                if(result == AlreadyExistDialogManager.ResultType.STOP) return;
                 // ResultType.SKIP is never returned for non-recursive operations, and ResultType.OVERWRITE leads to nothing.
             }
             FilesUtils.copyFileUsingStream(document.getFile(), target);
         }
         
-        if(!makeBooklet) {
-            disassemble(document);
-        } else {
-            assemble(document);
-        }
+        if(!makeBooklet) disassemble(document);
+        else assemble(document);
     }
     
     private record MergedPage(PDPage newPage, PageRenderer left, PageRenderer right){}

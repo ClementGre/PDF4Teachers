@@ -238,9 +238,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
         String langText = "";
         
         for(String languageText : languagesTexts){
-            if(languageText.startsWith("# ")) {
-                languageText = languageText.replaceFirst(Pattern.quote("# "), "");
-            }
+            if(languageText.startsWith("# ")) languageText = languageText.replaceFirst(Pattern.quote("# "), "");
             final String langAcronym = languageText.substring(0, languageText.indexOf(' '));
             
             final String futureLanguageText = languageText.substring(languageText.indexOf("\r\n") + 2);
@@ -251,24 +249,18 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             }
         }
         
-        if(langText.isEmpty()) {
-            langText = englishText;
-        }
+        if(langText.isEmpty()) langText = englishText;
         
         boolean first = true;
         for(String line : langText.split(Pattern.quote("## \uD83C\uDF10"))[0].split(Pattern.quote("\r\n"))){
-            if(first && line.isBlank()) {
-                continue;
-            } else{
+            if(first && line.isBlank()) continue;
+            else{
                 
                 if(line.startsWith("##")){
                     Label label = new Label(line.replace("##", ""));
                     label.setWrapText(true);
-                    if(first) {
-                        label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
-                    } else {
-                        label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
-                    }
+                    if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
+                    else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
                     root.getChildren().add(label);
                 }else if(line.isEmpty()){
                     Region spacer = new Region();

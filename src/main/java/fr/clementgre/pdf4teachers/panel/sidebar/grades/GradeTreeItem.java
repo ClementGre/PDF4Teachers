@@ -69,21 +69,15 @@ public class GradeTreeItem extends TreeItem<String> {
         root.getChildren().add(panel);
         
         selectedListener = (observable, oldValue, newValue) -> {
-            if(isDeleted()) {
-                return;
-            }
+            if(isDeleted()) return;
             
             if(newValue && !oldValue){ // Devient selectionné
                 panel.onSelected();
-                if(outOfPanel != null) {
-                    outOfPanel.onSelected();
-                }
+                if(outOfPanel != null) outOfPanel.onSelected();
                 
             }else if(oldValue && !newValue){ // N'est plus selectionné
                 panel.onDeselected(isMouseOver);
-                if(outOfPanel != null) {
-                    outOfPanel.onDeselected(isMouseOver);
-                }
+                if(outOfPanel != null) outOfPanel.onDeselected(isMouseOver);
             }
         };
         
@@ -92,9 +86,8 @@ public class GradeTreeItem extends TreeItem<String> {
             panel.onMouseOver();
             
             if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-                if(cell.getTooltip() == null) {
+                if(cell.getTooltip() == null)
                     cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
-                }
             }else if(cell.getTooltip() != null){
                 cell.setTooltip(null);
             }
@@ -102,17 +95,13 @@ public class GradeTreeItem extends TreeItem<String> {
         mouseExitedEvent = event -> {
             isMouseOver = false;
             // Hide add button only if cell is not selected.
-            if(!cell.isSelected()) {
-                panel.onMouseOut();
-            }
+            if(!cell.isSelected()) panel.onMouseOut();
         };
         
     }
     
     public void updateCell(TreeCell<String> cell){
-        if(cell == null) {
-            return;
-        }
+        if(cell == null) return;
         if(core == null){
             Log.e("Trying to update a GradeTreeItem which should be deleted (core == null).");
             return;
@@ -146,17 +135,15 @@ public class GradeTreeItem extends TreeItem<String> {
         cell.pseudoClassStateChanged(PseudoClass.getPseudoClass("pressed"), false);
         
         if(MainWindow.gradeTab.isLockGradeScaleProperty().get()){
-            if(cell.getTooltip() == null) {
+            if(cell.getTooltip() == null)
                 cell.setTooltip(PaneUtils.genToolTip(TR.tr("gradeTab.lockGradeScale.unableToEditTooltip")));
-            }
         }else if(cell.getTooltip() != null){
             cell.setTooltip(null);
         }
         
         // DEBUG
-        if(Log.doDebug()) {
+        if(Log.doDebug())
             cell.setTooltip(PaneUtils.genToolTip(core.getParentPath() + " - n°" + (core.getIndex() + 1) + "\nPage n°" + core.getPageNumber()));
-        }
         
     }
     
@@ -193,9 +180,7 @@ public class GradeTreeItem extends TreeItem<String> {
         
         gradeField.setText(core.getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(core.getValue()));
         if(!isRoot() && getParent() != null){
-            if(((GradeTreeItem) getParent()).doExistTwice(core.getName())) {
-                core.setName(core.getName() + "(1)");
-            }
+            if(((GradeTreeItem) getParent()).doExistTwice(core.getName())) core.setName(core.getName() + "(1)");
         }
         
         if(hasSubGrade()){
@@ -261,9 +246,7 @@ public class GradeTreeItem extends TreeItem<String> {
             items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue + finalInterval), deep + 1));
             actualValue += finalInterval;
         }
-        if(includeEdges) {
-            items.add(getChooseValueMenuItem(max, max, max, deep + 1));
-        }
+        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, deep + 1));
         
         return items;
     }
@@ -296,15 +279,11 @@ public class GradeTreeItem extends TreeItem<String> {
     //////////////////////////////////////
     
     public GradeTreeItem getBeforeItem(){
-        if(isRoot()) {
-            return null;
-        }
+        if(isRoot()) return null;
         
         GradeTreeItem parent = (GradeTreeItem) getParent();
         
-        if(core.getIndex() == 0) {
-            return parent;
-        }
+        if(core.getIndex() == 0) return parent;
         
         // Descend le plus possible dans les enfants du parent pour retrouver le dernier
         GradeTreeItem newParent = (GradeTreeItem) parent.getChildren().get(core.getIndex() - 1);
@@ -315,12 +294,8 @@ public class GradeTreeItem extends TreeItem<String> {
     }
     public GradeTreeItem getAfterItem(){
         
-        if(hasSubGrade()) {
-            return (GradeTreeItem) getChildren().get(0);
-        }
-        if(isRoot()) {
-            return null;
-        }
+        if(hasSubGrade()) return (GradeTreeItem) getChildren().get(0);
+        if(isRoot()) return null;
         
         GradeTreeItem parent = (GradeTreeItem) getParent();
         GradeTreeItem children = this;
@@ -328,9 +303,7 @@ public class GradeTreeItem extends TreeItem<String> {
         // Remonte dans les parents jusqu'a trouver un parent qui as un élément après celui-ci
         while(children.getCore().getIndex() == parent.getChildren().size() - 1){
             children = parent;
-            if(parent.isRoot()) {
-                return null;
-            }
+            if(parent.isRoot()) return null;
             parent = (GradeTreeItem) parent.getParent();
         }
         return (GradeTreeItem) parent.getChildren().get(children.getCore().getIndex() + 1);
@@ -339,12 +312,8 @@ public class GradeTreeItem extends TreeItem<String> {
         GradeTreeItem beforeItem = getBeforeItem();
         while(beforeItem != null){
             GradeTreeItem beforeAfterItem = beforeItem.getBeforeItem();
-            if(!beforeItem.hasSubGrade()) {
-                return beforeItem;
-            }
-            if(beforeAfterItem == null) {
-                return null;
-            }
+            if(!beforeItem.hasSubGrade()) return beforeItem;
+            if(beforeAfterItem == null) return null;
             beforeItem = beforeAfterItem;
         }
         return null;
@@ -353,12 +322,8 @@ public class GradeTreeItem extends TreeItem<String> {
         GradeTreeItem afterItem = getAfterItem();
         while(afterItem != null){
             GradeTreeItem afterAfterItem = afterItem.getAfterItem();
-            if(!afterItem.hasSubGrade()) {
-                return afterItem;
-            }
-            if(afterAfterItem == null) {
-                return null;
-            }
+            if(!afterItem.hasSubGrade()) return afterItem;
+            if(afterAfterItem == null) return null;
             afterItem = afterAfterItem;
         }
         return null;
@@ -369,11 +334,8 @@ public class GradeTreeItem extends TreeItem<String> {
     ////////////////////////////////////////
     
     public void makeSum(boolean updateLocation){
-        if(!updateLocation) {
-            makeSum(-1, 0);
-        } else {
-            throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
-        }
+        if(!updateLocation) makeSum(-1, 0);
+        else throw new RuntimeException("use makeSum(int previousPage, int previousRealY) to update Location");
     }
     public void makeSum(int previousPage, int previousRealY){
         if(!deleted && !getChildren().isEmpty()){
@@ -397,15 +359,11 @@ public class GradeTreeItem extends TreeItem<String> {
             
             if(hasValue){
                 if(!core.isFilled() && previousPage != -1){ // Add core element to the page if needed
-                    if(previousPage != core.getPageNumber()) {
-                        core.switchPage(previousPage);
-                    }
+                    if(previousPage != core.getPageNumber()) core.switchPage(previousPage);
                     core.nextRealYToUse = previousRealY - core.getRealHeight();
                 }
                 core.setValue(value);
-            }else {
-                core.setValue(-1);
-            }
+            }else core.setValue(-1);
             
             core.setTotal(total);
         }
@@ -459,17 +417,13 @@ public class GradeTreeItem extends TreeItem<String> {
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
             children.getCore().setParentPath(path);
-            if(children.hasSubGrade()) {
-                children.resetParentPathChildren();
-            }
+            if(children.hasSubGrade()) children.resetParentPathChildren();
         }
         
     }
     
     public boolean doExistTwice(String name){
-        if(isRoot()) {
-            return false;
-        }
+        if(isRoot()) return false;
         int k = (int) getChildren()
                 .stream()
                 .map(stringTreeItem -> (GradeTreeItem) stringTreeItem)
@@ -486,9 +440,7 @@ public class GradeTreeItem extends TreeItem<String> {
         panel.delete();
         panel = null;
         
-        if(hasSubGrade()) {
-            deleteChildren(markAsUnsave, undoType);
-        }
+        if(hasSubGrade()) deleteChildren(markAsUnsave, undoType);
         if(removePageElement){
             getCore().delete(markAsUnsave, undoType);
         }

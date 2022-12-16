@@ -55,9 +55,7 @@ public class SyncUserData {
         try{
             new File(Main.dataFolder).mkdirs();
             File file = new File(Main.dataFolder + FILE_NAME);
-            if(file.createNewFile()) {
-                return; // Config does not exists
-            }
+            if(file.createNewFile()) return; // Config does not exists
             
             Config config = new Config(file);
             config.load();
@@ -67,29 +65,19 @@ public class SyncUserData {
                     try{
                         if(field.getType() == String.class){
                             String value = config.getString(field.getAnnotation(UserDataObject.class).path());
-                            if(!value.isEmpty()) {
-                                field.set(this, value);
-                            }
+                            if(!value.isEmpty()) field.set(this, value);
                         }else if(field.getType() == boolean.class){
                             Boolean value = config.getBooleanNull(field.getAnnotation(UserDataObject.class).path());
-                            if(value != null) {
-                                field.set(this, value);
-                            }
+                            if(value != null) field.set(this, value);
                         }else if(field.getType() == long.class){
                             Long value = config.getLongNull(field.getAnnotation(UserDataObject.class).path());
-                            if(value != null) {
-                                field.set(this, value);
-                            }
+                            if(value != null) field.set(this, value);
                         }else if(field.getType() == double.class){
                             Double value = config.getDoubleNull(field.getAnnotation(UserDataObject.class).path());
-                            if(value != null) {
-                                field.set(this, value);
-                            }
+                            if(value != null) field.set(this, value);
                         }else if(field.getType() == List.class){
                             List<Object> value = config.getListNull(field.getAnnotation(UserDataObject.class).path());
-                            if(value != null) {
-                                field.set(this, value);
-                            }
+                            if(value != null) field.set(this, value);
                         }else if(field.getType() == HashMap.class){
                             field.set(this, config.getSection(field.getAnnotation(UserDataObject.class).path()));
                         }else if(field.getType() == LinkedHashMap.class){

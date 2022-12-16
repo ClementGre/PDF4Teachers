@@ -48,11 +48,8 @@ public class GradeTreeItemPanel extends HBox {
         setAlignment(Pos.CENTER);
         setPrefHeight(18);
         
-        if(!outOfPanel) {
-            setStyle("-fx-padding: -6 -6 -6 -5;"); // top - right - bottom - left
-        } else {
-            setStyle("-fx-padding: -6 -6 6 -5;"); // top - right - bottom - left
-        }
+        if(!outOfPanel) setStyle("-fx-padding: -6 -6 -6 -5;"); // top - right - bottom - left
+        else setStyle("-fx-padding: -6 -6 6 -5;"); // top - right - bottom - left
         
         // TEXTS
         
@@ -63,30 +60,18 @@ public class GradeTreeItemPanel extends HBox {
         if(outOfPanel){
             name.setText(TR.tr("gradeTab.putGradeOutOf"));
             value.textProperty().bind(Bindings.createStringBinding(() -> {
-                if(treeItem.getCore() == null) {
-                    return "";
-                }
+                if(treeItem.getCore() == null) return "";
                 
-                if(treeItem.getCore().getValue() == -1) {
-                    return "?";
-                }
-                if(treeItem.getCore().getTotal() <= 0) {
-                    return "0";
-                }
-                if(treeItem.getCore().getOutOfTotal() <= 0) {
-                    return "?";
-                }
+                if(treeItem.getCore().getValue() == -1) return "?";
+                if(treeItem.getCore().getTotal() <= 0) return "0";
+                if(treeItem.getCore().getOutOfTotal() <= 0) return "?";
                 return MainWindow.twoDigFormat.format(treeItem.getCore().getValue() / treeItem.getCore().getTotal() * treeItem.getCore().getOutOfTotal());
             }, treeItem.getCore().valueProperty(), treeItem.getCore().totalProperty(), treeItem.getCore().outOfTotalProperty()));
             
             total.textProperty().bind(Bindings.createStringBinding(() -> {
-                if(treeItem.getCore() == null) {
-                    return "";
-                }
+                if(treeItem.getCore() == null) return "";
                 
-                if(treeItem.getCore().getOutOfTotal() <= 0) {
-                    return "?";
-                }
+                if(treeItem.getCore().getOutOfTotal() <= 0) return "?";
                 return MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal());
             }, treeItem.getCore().outOfTotalProperty()));
             
@@ -95,9 +80,7 @@ public class GradeTreeItemPanel extends HBox {
             name.textProperty().bind(treeItem.getCore().nameProperty());
             
             value.textProperty().bind(Bindings.createStringBinding(() -> {
-                if(treeItem.getCore() == null) {
-                    return "";
-                }
+                if(treeItem.getCore() == null) return "";
                 return treeItem.getCore().getValue() == -1 ? "?" : MainWindow.gradesDigFormat.format(treeItem.getCore().getValue());
             }, treeItem.getCore().valueProperty()));
             
@@ -160,11 +143,8 @@ public class GradeTreeItemPanel extends HBox {
                 totalField.setText(treeItem.getCore().getOutOfTotal() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getOutOfTotal()));
                 
                 if(treeItem.getCore().getOutOfTotal() == -1) // Select only if the real total panel has no important reason to request focus
-                {
-                    if(treeItem.hasSubGrade() || treeItem.getCore().getTotal() != 0 && treeItem.getCore().getValue() != -1) {
+                    if(treeItem.hasSubGrade() || treeItem.getCore().getTotal() != 0 && treeItem.getCore().getValue() != -1)
                         Platform.runLater(() -> totalField.requestFocus());
-                    }
-                }
             }
             return;
         }
@@ -174,9 +154,8 @@ public class GradeTreeItemPanel extends HBox {
         
         nameField.setText(treeItem.getCore().getName());
         if(!treeItem.isRoot() && treeItem.getParent() != null){
-            if(((GradeTreeItem) treeItem.getParent()).doExistTwice(treeItem.getCore().getName())) {
+            if(((GradeTreeItem) treeItem.getParent()).doExistTwice(treeItem.getCore().getName()))
                 treeItem.getCore().setName(treeItem.getCore().getName() + "(1)");
-            }
         }
         
         gradeField.setText(treeItem.getCore().getValue() == -1 ? "" : MainWindow.gradesDigFormat.format(treeItem.getCore().getValue()));
@@ -189,9 +168,7 @@ public class GradeTreeItemPanel extends HBox {
             }else{
                 getChildren().setAll(name, spacer, gradeField, slash, total, newGrade);
                 Platform.runLater(() -> {
-                    if(treeItem.isDeleted()) {
-                        return;
-                    }
+                    if(treeItem.isDeleted()) return;
                     gradeField.requestFocus();
                 });
             }
@@ -199,26 +176,17 @@ public class GradeTreeItemPanel extends HBox {
             if(treeItem.hasSubGrade()){
                 getChildren().setAll(nameField, spacer, value, slash, total, newGrade);
                 Platform.runLater(() -> {
-                    if(treeItem.isDeleted()) {
-                        return;
-                    }
-                    if(!treeItem.isRoot()) {
+                    if(treeItem.isDeleted()) return;
+                    if(!treeItem.isRoot())
                         nameField.requestFocus(); // If root, the "out of total" field should be focused instead
-                    }
                 });
             }else{
                 getChildren().setAll(nameField, spacer, gradeField, slash, totalField, newGrade);
                 Platform.runLater(() -> {
-                    if(treeItem.isDeleted()) {
-                        return;
-                    }
-                    if(name.getText().contains(TR.tr("gradeTab.gradeDefaultName"))) {
-                        nameField.requestFocus();
-                    } else if(total.getText().equals("0")) {
-                        totalField.requestFocus();
-                    } else {
-                        gradeField.requestFocus();
-                    }
+                    if(treeItem.isDeleted()) return;
+                    if(name.getText().contains(TR.tr("gradeTab.gradeDefaultName"))) nameField.requestFocus();
+                    else if(total.getText().equals("0")) totalField.requestFocus();
+                    else gradeField.requestFocus();
                 });
             }
         }

@@ -72,9 +72,7 @@ public class ImageUtils {
             imageView = new ImageView();
         }
         
-        if(effect != null) {
-            imageView.setEffect(effect);
-        }
+        if(effect != null) imageView.setEffect(effect);
         
         return getImageView(width, height, imageView);
     }
@@ -85,9 +83,7 @@ public class ImageUtils {
     }
     
     private static ImageView getImageView(int width, int height, ImageView imageView){
-        if(width == 0 && height == 0) {
-            return imageView;
-        }
+        if(width == 0 && height == 0) return imageView;
         
         if(width == 0){
             imageView.setFitHeight(height);
@@ -104,9 +100,7 @@ public class ImageUtils {
     
     // Angle could only be a multiple of 90
     public static Image rotateImage(Image image, int angle){
-        if(angle == 0) {
-            return image;
-        }
+        if(angle == 0) return image;
         
         return SwingFXUtils.toFXImage(
                 rotateImage(SwingFXUtils.fromFXImage(image, null), angle),
@@ -115,9 +109,7 @@ public class ImageUtils {
     
     // Angle could only be a multiple of 90
     public static BufferedImage rotateImage(BufferedImage image, int angle){
-        if(angle == 0) {
-            return image;
-        }
+        if(angle == 0) return image;
         
         int width = image.getWidth();
         int height = image.getHeight();

@@ -77,9 +77,7 @@ public class ZoomOperator {
             vScrollBar.setVisibleAmount(getMainScreenHeight() / (pane.getHeight() * getPaneScale()));
             
             // Update aimScale when not running : this is used in the zoom process
-            if(!timelineScale.getStatus().equals(Animation.Status.RUNNING)) {
-                aimScale = getPaneScale();
-            }
+            if(!timelineScale.getStatus().equals(Animation.Status.RUNNING)) aimScale = getPaneScale();
         });
         
         // Vérifie si pane peut rentrer entièrement dans MainScreen quand MainScreen est recardé.
@@ -135,16 +133,12 @@ public class ZoomOperator {
             }
             
             double translateY = -vScrollBar.getValue() * getScrollableHeight() + getPaneShiftY();
-            if(((int) translateY) != ((int) pane.getTranslateY())) {
-                setPaneY(translateY);
-            }
+            if(((int) translateY) != ((int) pane.getTranslateY())) setPaneY(translateY);
         });
         // Modifie translateX lorsque la valeur de la scrollBar est modifié.
         hScrollBar.valueProperty().addListener((observable) -> {
             double translateX = -hScrollBar.getValue() * getScrollableWidth() + getPaneShiftX();
-            if(((int) translateX) != ((int) pane.getTranslateX())) {
-                setPaneX(translateX);
-            }
+            if(((int) translateX) != ((int) pane.getTranslateX())) setPaneX(translateX);
         });
         
         // Modifie la valeur de la scrollBar lorsque translateY est modifié.
@@ -173,9 +167,7 @@ public class ZoomOperator {
         }else{
             vScrollBar.setVisible(true);
             double vValue = (-getPaneY() + getPaneShiftY()) / getScrollableHeight();
-            if(force) {
-                vScrollBar.setValue(Math.abs(vValue-.1));
-            }
+            if(force) vScrollBar.setValue(Math.abs(vValue-.1));
             if(vValue != vScrollBar.getValue()){
                 vScrollBar.setValue(MathUtils.clamp(vValue, 0, 1));
             }
@@ -188,9 +180,7 @@ public class ZoomOperator {
         }else{
             hScrollBar.setVisible(true);
             double hValue = (-getPaneX() + getPaneShiftX()) / getScrollableWidth();
-            if(force) {
-                hScrollBar.setValue(Math.abs(hValue-.1));
-            }
+            if(force) hScrollBar.setValue(Math.abs(hValue-.1));
             if(hValue != hScrollBar.getValue()){
                 hScrollBar.setValue(MathUtils.clamp(hValue, 0, 1));
             }
@@ -254,9 +244,7 @@ public class ZoomOperator {
         zoom(Math.min(5, Math.max(aimScale * factor, 0.1)), doRemoveZoomAnimations(factor, trackpad, removeTransitions));
     }
     public void zoom(double scale, boolean removeTransitions){
-        if(scale == getPaneScale()) {
-            return;
-        }
+        if(scale == getPaneScale()) return;
         
         // Get bounds relative to scene
         Bounds bounds = pane.localToScene(pane.getBoundsInLocal());
@@ -341,9 +329,7 @@ public class ZoomOperator {
             int pages = Math.max(2, (int) ((availableWidth-PageRenderer.getPageMargin()) / (1.1*PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin())));
             targetScale = (availableWidth-PageRenderer.getPageMargin()) / (pages*(PageRenderer.PAGE_WIDTH+PageRenderer.getPageMargin()));
             
-        }else {
-            targetScale = (availableWidth / pageWidth); // single page
-        }
+        }else targetScale = (availableWidth / pageWidth); // single page
         
         zoom(targetScale, removeTransition);
     }
@@ -369,12 +355,8 @@ public class ZoomOperator {
     public void scrollByTranslateY(int factor, boolean removeTransition, boolean trackpad){
 
         double newTranslateY = aimTranslateY - factor;
-        if(newTranslateY - getPaneShiftY() > 0) {
-            newTranslateY = getPaneShiftY();
-        }
-        if(newTranslateY - getPaneShiftY() < -getScrollableHeight()) {
-            newTranslateY = -getScrollableHeight() + getPaneShiftY();
-        }
+        if(newTranslateY - getPaneShiftY() > 0) newTranslateY = getPaneShiftY();
+        if(newTranslateY - getPaneShiftY() < -getScrollableHeight()) newTranslateY = -getScrollableHeight() + getPaneShiftY();
         
         scrollByTranslateY(newTranslateY, !doRemoveScrollAnimations(factor, trackpad, removeTransition));
     }
@@ -385,11 +367,8 @@ public class ZoomOperator {
     // WARNING: technical functions that must take in account the pane shift due to the scaling.
     public void scrollByTranslateY(double newTranslateY, boolean doAnimate){
         aimTranslateY = newTranslateY;
-        if(doAnimate) {
-            animateY(newTranslateY);
-        } else {
-            pane.setTranslateY(newTranslateY);
-        }
+        if(doAnimate) animateY(newTranslateY);
+        else pane.setTranslateY(newTranslateY);
     }
     public void scrollToPage(PageRenderer page){
         int toScroll = (int) ((getPaneY() - getPaneShiftY()) + (page.getTranslateY() - PageRenderer.getPageMargin() + 5) * getPaneScale());
@@ -407,12 +386,9 @@ public class ZoomOperator {
     public void scrollHorizontally(int factor, boolean removeTransition, boolean trackpad){
         
         double newTranslateX = aimTranslateX - factor;
-        if(newTranslateX - getPaneShiftX() > 0) {
-            newTranslateX = getPaneShiftX();
-        }
-        if(newTranslateX - getPaneShiftX() < -getScrollableWidth()) {
+        if(newTranslateX - getPaneShiftX() > 0) newTranslateX = getPaneShiftX();
+        if(newTranslateX - getPaneShiftX() < -getScrollableWidth())
             newTranslateX = -getScrollableWidth() + getPaneShiftX();
-        }
         
         aimTranslateX = newTranslateX;
         
@@ -448,25 +424,15 @@ public class ZoomOperator {
     // Renvoie les dimensions de MainScreen sans compter les scrolls bars, si elles sonts visibles.
     // Il est conseillé d'utiliser ces méthodes pour récupérer les dimensions de MainScreen.
     public double getMainScreenWidth(){
-        if(MainWindow.mainScreen == null) {
-            return 0;
-        }
-        if(!vScrollBar.isVisible()) {
-            return MainWindow.mainScreen.getWidth();
-        } else {
-            return MainWindow.mainScreen.getWidth() - vScrollBar.getWidth();
-        }
+        if(MainWindow.mainScreen == null) return 0;
+        if(!vScrollBar.isVisible()) return MainWindow.mainScreen.getWidth();
+        else return MainWindow.mainScreen.getWidth() - vScrollBar.getWidth();
     }
     
     public double getMainScreenHeight(){
-        if(MainWindow.mainScreen == null) {
-            return 0;
-        }
-        if(!hScrollBar.isVisible()) {
-            return MainWindow.mainScreen.getHeight();
-        } else {
-            return MainWindow.mainScreen.getHeight() - hScrollBar.getHeight();
-        }
+        if(MainWindow.mainScreen == null) return 0;
+        if(!hScrollBar.isVisible()) return MainWindow.mainScreen.getHeight();
+        else return MainWindow.mainScreen.getHeight() - hScrollBar.getHeight();
     }
     
     // Renvoie les dimensions de la partie visible de pane (multiplication par sa Scale pour avoir sa partie visible)

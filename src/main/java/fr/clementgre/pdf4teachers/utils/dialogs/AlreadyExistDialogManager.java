@@ -58,9 +58,7 @@ public class AlreadyExistDialogManager{
     }
 
     public ResultType showAndWait(File file){
-        if(memorizedResult != null) {
-            return memorizedResult;
-        }
+        if(memorizedResult != null) return memorizedResult;
 
         if(recursive){
             alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()) + "\n"
@@ -74,19 +72,13 @@ public class AlreadyExistDialogManager{
         ButtonType option = alert.getShowAndWait();
         if(option != null){
             if(option == skip){
-                if(memorize.isSelected()) {
-                    memorizedResult = ResultType.SKIP;
-                }
+                if(memorize.isSelected()) memorizedResult = ResultType.SKIP;
                 return ResultType.SKIP;
             }else if(option == overwrite){
-                if(memorize.isSelected()) {
-                    memorizedResult = ResultType.ERASE;
-                }
+                if(memorize.isSelected()) memorizedResult = ResultType.ERASE;
                 return ResultType.ERASE;
             }else if(option == rename){
-                if(memorize.isSelected()) {
-                    memorizedResult = ResultType.RENAME;
-                }
+                if(memorize.isSelected()) memorizedResult = ResultType.RENAME;
                 return ResultType.RENAME;
             }else{
                 return ResultType.STOP;

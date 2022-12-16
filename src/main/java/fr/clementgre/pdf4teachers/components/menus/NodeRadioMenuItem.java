@@ -37,11 +37,8 @@ public class NodeRadioMenuItem extends NodeMenuItem {
     private void setup(){
         
         selected.addListener((ObservableValue<? extends Boolean> observable, Boolean oldSelected, Boolean selected) -> {
-            if(selected) {
-                setLeftData(SELECTED_IMAGE);
-            } else {
-                setLeftData(NONSELECTED_IMAGE);
-            }
+            if(selected) setLeftData(SELECTED_IMAGE);
+            else setLeftData(NONSELECTED_IMAGE);
         });
         
         if(autoUpdate){
@@ -50,11 +47,8 @@ public class NodeRadioMenuItem extends NodeMenuItem {
             });
         }
         
-        if(isSelected()) {
-            setLeftData(SELECTED_IMAGE);
-        } else {
-            setLeftData(NONSELECTED_IMAGE);
-        }
+        if(isSelected()) setLeftData(SELECTED_IMAGE);
+        else setLeftData(NONSELECTED_IMAGE);
         
     }
     

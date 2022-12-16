@@ -29,9 +29,7 @@ public class ResizeUndoAction extends MoveUndoAction{
         if(this.element.get() instanceof GraphicElement element){
         
             // Quit edit mode if enabled
-            if(this.element.get() instanceof VectorElement vectorElement && vectorElement.isEditMode()) {
-                vectorElement.quitEditMode();
-            }
+            if(this.element.get() instanceof VectorElement vectorElement && vectorElement.isEditMode()) vectorElement.quitEditMode();
             
             int oldRealWidth = element.getRealWidth();
             int oldRealHeight = element.getRealHeight();
@@ -50,9 +48,7 @@ public class ResizeUndoAction extends MoveUndoAction{
     }
     
     public String toString(){
-        if(element.get() == null) {
-            return null;
-        }
+        if(element.get() == null) return null;
         
         return TR.tr("actions.resize") + " " + element.get().getElementName(false).toLowerCase();
     }

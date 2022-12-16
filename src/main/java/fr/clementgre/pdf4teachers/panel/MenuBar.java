@@ -69,11 +69,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     public static ColorAdjust colorAdjust = new ColorAdjust();
     
     static{
-        if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) {
-            colorAdjust.setBrightness(-0.5);
-        } else {
-            colorAdjust.setBrightness(-1);
-        }
+        if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
+        else colorAdjust.setBrightness(-1);
     }
     
     ////////// FILE //////////
@@ -205,9 +202,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     }
     
     public void setup(){
-        if(isSystemMenuBarSupported()) {
-            setUseSystemMenuBar(true);
-        }
+        if(isSystemMenuBarSupported()) setUseSystemMenuBar(true);
         
         ////////// FILE //////////
         
@@ -284,18 +279,14 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         });
         file8Export.setOnAction((ActionEvent actionEvent) -> {
             
-            if(!MainWindow.mainScreen.document.save(true)) {
-                return;
-            }
+            if(!MainWindow.mainScreen.document.save(true)) return;
             new ExportWindow(Collections.singletonList(MainWindow.mainScreen.document.getFile()));
             
         });
         file9ExportAll.setOnAction((ActionEvent actionEvent) -> {
             
             if(MainWindow.mainScreen.hasDocument(false)){
-                if(!MainWindow.mainScreen.document.save(true)) {
-                    return;
-                }
+                if(!MainWindow.mainScreen.document.save(true)) return;
             }
             new ExportWindow(MainWindow.filesTab.files.getItems());
             
@@ -320,9 +311,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             MainWindow.mainScreen.setIsEditPagesMode(true);
             if(MainWindow.mainScreen.document.getSelectedPages().isEmpty() || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
-            }else {
-                new SplitWindow(true);
-            }
+            }else new SplitWindow(true);
         });
         
         tools5DeleteAllEdits.setOnAction((ActionEvent e) -> {
@@ -343,24 +332,15 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
             float size;
             if(option == ButtonPosition.DEFAULT){
-                if(MainWindow.mainScreen.hasDocument(false)) {
-                    MainWindow.mainScreen.document.edition.clearEdit(false);
-                }
-                for(File file : MainWindow.filesTab.files.getItems()) {
-                    Edition.getEditFile(file).delete();
-                }
+                if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.edition.clearEdit(false);
+                for(File file : MainWindow.filesTab.files.getItems()) Edition.getEditFile(file).delete();
                 size = yesSize;
             }else if(option == ButtonPosition.OTHER_RIGHT){
-                if(MainWindow.mainScreen.hasDocument(false)) {
-                    MainWindow.mainScreen.document.edition.clearEdit(false);
-                }
-                for(File file : Objects.requireNonNull(new File(Main.dataFolder + "editions").listFiles())) {
+                if(MainWindow.mainScreen.hasDocument(false)) MainWindow.mainScreen.document.edition.clearEdit(false);
+                for(File file : Objects.requireNonNull(new File(Main.dataFolder + "editions").listFiles()))
                     file.delete();
-                }
                 size = yesButSize;
-            }else {
-                return;
-            }
+            }else return;
             
             new OKAlert(TR.tr("dialog.deleteEdits.completed.title"),
                     TR.tr("dialog.deleteEdits.completed.header"), TR.tr("dialog.deleteEdits.completed.details", String.valueOf(size))).show();
@@ -404,9 +384,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                                     }else{
                                         WrongAlert alert = new WrongAlert(TR.tr("dialog.loadSameNameEdit.fileNotFound.title"),
                                                 TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile())), true);
-                                        if(alert.execute()) {
-                                            return;
-                                        }
+                                        if(alert.execute()) return;
                                     }
                                 }
                             }
@@ -415,11 +393,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 });
                 i++;
             }
-            if(i == 0) {
-                tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
-            } else {
-                NodeMenuItem.setupMenu(tools6SameNameEditions);
-            }
+            if(i == 0) tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
+            else NodeMenuItem.setupMenu(tools6SameNameEditions);
         });
         
         tools7ExportEdition1All.setOnAction((e) -> EditionExporter.showExportDialog(false));
@@ -448,28 +423,16 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 nextUndo = MainWindow.mainScreen.getUndoEngineAuto().getUndoNextName();
                 nextRedo = MainWindow.mainScreen.getUndoEngineAuto().getRedoNextName();
             }
-            if(nextUndo != null) {
-                nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
-            } else {
-                nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
-            }
+            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
+            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
             
-            if(nextRedo != null) {
-                nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
-            } else {
-                nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
-            }
+            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
+            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
             
-            if(edit1Undo instanceof NodeMenuItem menu) {
-                menu.setName(nextUndo);
-            } else {
-                edit1Undo.setText(nextUndo);
-            }
-            if(edit2Redo instanceof NodeMenuItem menu) {
-                menu.setName(nextRedo);
-            } else {
-                edit2Redo.setText(nextRedo);
-            }
+            if(edit1Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
+            else edit1Undo.setText(nextUndo);
+            if(edit2Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
+            else edit2Redo.setText(nextRedo);
             
             
             String cut = TR.tr("actions.cut");
@@ -481,16 +444,10 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 cut = TR.tr("actions.cutElement");
                 copy = TR.tr("actions.copyElement");
             }
-            if(edit3Cut instanceof NodeMenuItem menu) {
-                menu.setName(cut);
-            } else {
-                edit3Cut.setText(cut);
-            }
-            if(edit4Copy instanceof NodeMenuItem menu) {
-                menu.setName(copy);
-            } else {
-                edit4Copy.setText(copy);
-            }
+            if(edit3Cut instanceof NodeMenuItem menu) menu.setName(cut);
+            else edit3Cut.setText(cut);
+            if(edit4Copy instanceof NodeMenuItem menu) menu.setName(copy);
+            else edit4Copy.setText(copy);
             
             if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
             
@@ -505,11 +462,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
                 paste = TR.tr("actions.paste") + " (" + Element.elementClipboard.getElementName(false) + ")";
             }
-            if(edit5Paste instanceof NodeMenuItem menu) {
-                menu.setName(paste);
-            } else {
-                edit5Paste.setText(paste);
-            }
+            if(edit5Paste instanceof NodeMenuItem menu) menu.setName(paste);
+            else edit5Paste.setText(paste);
         });
         
         edit1Undo.setOnAction(e -> MainWindow.mainScreen.undo());
@@ -565,9 +519,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 MenuItem quit = tk.createQuitMenuItem("");
                 quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
                 quit.setOnAction((e) -> {
-                    if(!MainWindow.requestCloseApp()) {
-                        e.consume();
-                    }
+                    if(!MainWindow.requestCloseApp()) e.consume();
                 });
                 
                 Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
@@ -607,9 +559,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                         for(int i = 50; i <= 500; i += 50){
                             PlatformUtils.runLaterOnUIThread(i, () -> {
                                 for(Menu m : getMenus()){
-                                    if(m.isShowing()) {
-                                        return;
-                                    }
+                                    if(m.isShowing()) return;
                                 }
                                 menu.show();
                             });
@@ -618,9 +568,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 }else{
                     menu.setOnShowing(null);
                 }
-            }else {
-                menu.setStyle("-fx-padding: 0;");
-            }
+            }else menu.setStyle("-fx-padding: 0;");
         }
     }
     
@@ -637,16 +585,13 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 if(image.length() >= 30){
                     ((NodeMenu) menu).setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) {
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
                         Log.e("MenuBar image " + image + " does not exist");
-                    } else {
+                    else
                         ((NodeMenu) menu).setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
-                    }
                 }
             }
-            if(toolTip != null && !toolTip.isBlank()) {
-                ((NodeMenu) menu).setToolTip(toolTip);
-            }
+            if(toolTip != null && !toolTip.isBlank()) ((NodeMenu) menu).setToolTip(toolTip);
         }
         
         if(disableIfNoDoc){
@@ -681,17 +626,14 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 if(image.length() >= 30){
                     menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
                 }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null) {
+                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
                         Log.e("MenuBar image " + image + " does not exist");
-                    } else {
+                    else
                         menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
-                    }
                 }
                 
             }
-            if(!toolTip.isBlank()) {
-                menuItem.setToolTip(toolTip);
-            }
+            if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
             
             return menuItem;
         }
@@ -704,9 +646,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
             if(keyCombinaison != null){
-                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) {
-                    menuItem.setAccelerator(keyCombinaison);
-                }
+                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
             }
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
@@ -718,19 +658,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         }else{
             NodeMenuItem menuItem = new NodeMenuItem(text, false);
             
-            if(image != null) {
-                menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
-            }
+            if(image != null) menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
             
-            if(keyCombinaison != null) {
-                menuItem.setKeyCombinaison(keyCombinaison);
-            }
-            if(toolTip != null && !toolTip.isBlank()) {
-                menuItem.setToolTip(toolTip);
-            }
-            if(leftMargin) {
-                menuItem.setFalseLeftData();
-            }
+            if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
+            if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);
+            if(leftMargin) menuItem.setFalseLeftData();
             
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));

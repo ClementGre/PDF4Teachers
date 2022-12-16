@@ -32,12 +32,8 @@ public class IconToggleButton extends ToggleButton {
         PaneUtils.setHBoxPosition(this, 30, 30, 0);
         setCursor(Cursor.HAND);
         setGraphic(SVGPathIcons.generateImage(svgPath, "black", 0, 0, ImageUtils.defaultDarkColorAdjust));
-        if(tooltip != null) {
-            setTooltip(PaneUtils.genWrappedToolTip(tooltip));
-        }
-        if(onAction != null) {
-            setOnAction(onAction);
-        }
+        if(tooltip != null) setTooltip(PaneUtils.genWrappedToolTip(tooltip));
+        if(onAction != null) setOnAction(onAction);
         
     }
     
@@ -51,18 +47,11 @@ public class IconToggleButton extends ToggleButton {
         this.svgPathNotSelected = svgPathNotSelected;
         this.size = big ? 24 : 20;
     
-        if(big) {
-            PaneUtils.setHBoxPosition(this, 40, 35, 0);
-        } else {
-            PaneUtils.setHBoxPosition(this, 30, 30, 0);
-        }
+        if(big) PaneUtils.setHBoxPosition(this, 40, 35, 0);
+        else PaneUtils.setHBoxPosition(this, 30, 30, 0);
         
-        if(tooltip != null) {
-            setTooltip(PaneUtils.genWrappedToolTip(tooltip));
-        }
-        if(onAction != null) {
-            setOnAction(onAction);
-        }
+        if(tooltip != null) setTooltip(PaneUtils.genWrappedToolTip(tooltip));
+        if(onAction != null) setOnAction(onAction);
     
         setCursor(Cursor.HAND);
         updateIcon();
@@ -70,11 +59,8 @@ public class IconToggleButton extends ToggleButton {
     }
     
     private void updateIcon(){
-        if(isSelected()) {
-            setGraphic(SVGPathIcons.generateImage(svgPathSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
-        } else {
-            setGraphic(SVGPathIcons.generateImage(svgPathNotSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
-        }
+        if(isSelected()) setGraphic(SVGPathIcons.generateImage(svgPathSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
+        else setGraphic(SVGPathIcons.generateImage(svgPathNotSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
     }
     
 }

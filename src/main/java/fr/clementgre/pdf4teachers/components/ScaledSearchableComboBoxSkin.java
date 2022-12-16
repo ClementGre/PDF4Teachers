@@ -120,11 +120,10 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         box.promptTextProperty().bind(getSkinnable().promptTextProperty());
         getSkinnable().showingProperty().addListener((obs, oldVal, newVal) ->
         {
-            if (newVal) {
+            if (newVal)
                 box.show();
-            } else {
+            else
                 box.hide();
-            }
         });
         
         // bidirectional bindings
@@ -166,11 +165,10 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         // but when the search field is focussed, the popup must still be shown
         searchField.focusedProperty().addListener((obs, oldVal, newVal) ->
         {
-            if (newVal) {
+            if (newVal)
                 filteredComboBox.show();
-            } else {
+            else
                 filteredComboBox.hide();
-            }
         });
     }
     
@@ -248,9 +246,8 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
         KeyCode code = e.getCode();
         if (code == KeyCode.ENTER || code == KeyCode.TAB) {
             // select the first item if no selection
-            if (filteredComboBox.getSelectionModel().isEmpty()) {
+            if (filteredComboBox.getSelectionModel().isEmpty())
                 filteredComboBox.getSelectionModel().selectFirst();
-            }
             getSkinnable().hide();
             if (code == KeyCode.ENTER) {
                 // otherwise the focus would be somewhere else

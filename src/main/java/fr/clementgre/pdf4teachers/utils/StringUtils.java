@@ -18,17 +18,11 @@ import java.util.Map.Entry;
 public class StringUtils {
     
     public static String removeBefore(String string, String rejex){
-        if(rejex.isEmpty()) {
-            return string;
-        }
+        if(rejex.isEmpty()) return string;
         int index = string.indexOf(rejex);
         
-        if(index == -1) {
-            return string;
-        }
-        if(index < string.length()) {
-            return string.substring(index + rejex.length());
-        }
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(index + rejex.length());
         
         return "";
     }
@@ -39,14 +33,10 @@ public class StringUtils {
         while(true){
             
             int index = string.indexOf(rejex, fromIndex);
-            if(index == -1) {
-                return string;
-            }
+            if(index == -1) return string;
             
             if(!string.startsWith("\\", index - 1)){
-                if(index < string.length()) {
-                    return string.substring(index + rejex.length());
-                }
+                if(index < string.length()) return string.substring(index + rejex.length());
                 return "";
             }else{
                 fromIndex = index + 1;
@@ -68,9 +58,7 @@ public class StringUtils {
             }
         }
         
-        if(result.toString().isEmpty()) {
-            return Map.entry(expression, -1);
-        }
+        if(result.toString().isEmpty()) return Map.entry(expression, -1);
         return Map.entry(stringResult, Integer.parseInt(result.reverse().toString()));
     }
     
@@ -114,56 +102,36 @@ public class StringUtils {
     }
     
     public static String removeBeforeLastOccurrence(String string, String match){
-        if(match.isEmpty()) {
-            return string;
-        }
+        if(match.isEmpty()) return string;
         int index = string.lastIndexOf(match);
         
-        if(index == -1) {
-            return string;
-        }
-        if(index < string.length()) {
-            return string.substring(index + match.length());
-        }
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(index + match.length());
         
         return "";
     }
     
     public static String removeAfterLastOccurrence(String string, String match){
-        if(match.isEmpty()) {
-            return string;
-        }
+        if(match.isEmpty()) return string;
         int index = string.lastIndexOf(match);
         
-        if(index == -1) {
-            return string;
-        }
-        if(index < string.length()) {
-            return string.substring(0, index);
-        }
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(0, index);
         
         return "";
     }
     
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String match){
-        if(match.isEmpty()) {
-            return string;
-        }
+        if(match.isEmpty()) return string;
         int index = string.toLowerCase().lastIndexOf(match.toLowerCase());
         
-        if(index == -1) {
-            return string;
-        }
-        if(index < string.length()) {
-            return string.substring(0, index);
-        }
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(0, index);
         
         return "";
     }
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String[] matches){
-        if(matches.length == 0) {
-            return string;
-        }
+        if(matches.length == 0) return string;
         
         HashMap<Integer, String> indices = new HashMap<>();
         for(String str : matches){
@@ -181,17 +149,11 @@ public class StringUtils {
     }
     
     public static String removeAfter(String string, String rejex){
-        if(rejex.isEmpty()) {
-            return "";
-        }
+        if(rejex.isEmpty()) return "";
         int index = string.indexOf(rejex);
         
-        if(index == -1) {
-            return string;
-        }
-        if(index < string.length()) {
-            return string.substring(0, index);
-        }
+        if(index == -1) return string;
+        if(index < string.length()) return string.substring(0, index);
         
         return "";
     }
@@ -199,9 +161,7 @@ public class StringUtils {
     
     public static List<Charset> getAvailableCharsets(){
         ArrayList<Charset> charsets = new ArrayList<>(Arrays.asList(StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII, StandardCharsets.UTF_16LE, StandardCharsets.UTF_16, StandardCharsets.UTF_16BE));
-        if(!charsets.contains(Charset.defaultCharset())) {
-            charsets.add(0, Charset.defaultCharset());
-        }
+        if(!charsets.contains(Charset.defaultCharset())) charsets.add(0, Charset.defaultCharset());
         return charsets;
     }
     
@@ -233,18 +193,12 @@ public class StringUtils {
 
     }
     public static boolean endsIn(final String[] array, String v, boolean kase){
-        if(!kase) {
-            v = v.toLowerCase();
-        }
+        if(!kase) v = v.toLowerCase();
         for(final String e : array){
             if(kase){
-                if(e != null && e.endsWith(v)) {
-                    return true;
-                }
+                if(e != null && e.endsWith(v)) return true;
             }else{
-                if(e != null && e.toLowerCase().endsWith(v)) {
-                    return true;
-                }
+                if(e != null && e.toLowerCase().endsWith(v)) return true;
             }
             
         }
@@ -253,31 +207,21 @@ public class StringUtils {
     public static boolean contains(final String[] array, final String v, boolean kase){
         for(final String e : array){
             if(kase){
-                if(e != null && e.endsWith(v)) {
-                    return true;
-                }
+                if(e != null && e.endsWith(v)) return true;
             }else{
-                if(e != null && e.equalsIgnoreCase(v)) {
-                    return true;
-                }
+                if(e != null && e.equalsIgnoreCase(v)) return true;
             }
         }
         return false;
     }
     
     public static boolean startsIn(String[] array, String v, boolean kase){
-        if(!kase) {
-            v = v.toLowerCase();
-        }
+        if(!kase) v = v.toLowerCase();
         for(final String e : array){
             if(kase){
-                if(e != null && e.startsWith(v)) {
-                    return true;
-                }
+                if(e != null && e.startsWith(v)) return true;
             }else{
-                if(e != null && e.toLowerCase().startsWith(v)) {
-                    return true;
-                }
+                if(e != null && e.toLowerCase().startsWith(v)) return true;
             }
             
         }
@@ -285,9 +229,7 @@ public class StringUtils {
     }
     
     public static String replaceSymbolsToDigitsIfFrenchLayout(String text){
-        if(!isAzertyLayout()) {
-            return text;
-        }
+        if(!isAzertyLayout()) return text;
         
         return text.replace("&", "1").replace("é", "2").replace("\"", "3").replace("'", "4").replace("(", "5")
                 .replace("-", "6").replace("è", "7").replace("_", "8").replace("ç", "9").replace("à", "0");
@@ -299,9 +241,7 @@ public class StringUtils {
     }
     
     public static char getCsvSeparator(){
-        if(TR.tr("chars.csvSeparator").charAt(0) == ';') {
-            return ';';
-        }
+        if(TR.tr("chars.csvSeparator").charAt(0) == ';') return ';';
         return ',';
     }
     

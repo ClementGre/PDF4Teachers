@@ -61,9 +61,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
                 list.addItems(DefaultFavoriteVectors.getDefaultFavoriteVectors().stream().map(VectorGridElement::new).toList());
             });
         }
-        else if(isLastVectors()) {
-            setEmptyMessage(TR.tr("paintTab.lastVectors.emptyList"));
-        }
+        else if(isLastVectors()) setEmptyMessage(TR.tr("paintTab.lastVectors.emptyList"));
         list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
     }
@@ -118,9 +116,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         VectorGridView list = new VectorGridView(new Slider(2, 6, 4), true, false);
         
         List<VectorGridElement> vectors = MainWindow.paintTab.favouriteVectors.getList().getAllItems();
-        if(vectors.isEmpty()) {
-            return null;
-        }
+        if(vectors.isEmpty()) return null;
         vectors.sort(VectorGridElement::compareUseWith);
         vectors = vectors.subList(0, Math.min(7, vectors.size()));
         vectors = vectors.stream().map(VectorGridElement::clone).toList();

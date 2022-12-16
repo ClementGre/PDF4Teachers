@@ -47,9 +47,7 @@ public class AutoCompletePopupSkin<T> implements Skin<AutoCompletePopup<T>> {
                         }else{
                             setText(displayConverter.toString(item));
                             setStyle("-fx-font-size: " + 12 * Main.settings.zoom.getValue());
-                            if(getHeight() > 0) {
-                                cellHeight.set(getHeight()+2);
-                            }
+                            if(getHeight() > 0) cellHeight.set(getHeight()+2);
                         }
                     }
                 };

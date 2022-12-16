@@ -55,9 +55,7 @@ public class SVGArrowsCreatorHandler extends SVGTransformHandler{
         
         // Calcul de l'angle de la ligne sur le plan
         double arrowAngle = -Math.atan(moveY / moveX);
-        if(moveX < 0) {
-            arrowAngle += Math.PI;
-        }
+        if(moveX < 0) arrowAngle += Math.PI;
         
         // Coordonnés du bout de la première branche
         double arX1 = x + arrowLength * Math.cos(angle + arrowAngle);

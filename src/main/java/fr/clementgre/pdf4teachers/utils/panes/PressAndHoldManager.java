@@ -24,9 +24,7 @@ public class PressAndHoldManager{
     
             new Thread(() -> {
                 while(pressed){
-                    if(startMillis + 500 < System.currentTimeMillis()) {
-                        Platform.runLater(handler::call);
-                    }
+                    if(startMillis + 500 < System.currentTimeMillis()) Platform.runLater(handler::call);
                     PlatformUtils.sleepThread(actionInterval);
                 }
             }, "pressAndHoldThread").start();

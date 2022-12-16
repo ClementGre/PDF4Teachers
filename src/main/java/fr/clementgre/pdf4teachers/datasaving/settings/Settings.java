@@ -169,19 +169,12 @@ public class Settings {
         loadSettings();
         
         textOnlyStart.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
-            if(MainWindow.textTab != null) {
-                TextTreeView.updateListsGraphic();
-            }
+            if(MainWindow.textTab != null) TextTreeView.updateListsGraphic();
         });
         textSmall.valueProperty().addListener((ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) -> {
-            if(MainWindow.textTab != null) {
-                TextTreeView.updateListsGraphic();
-            }
-            if(t1) {
-                MainWindow.textTab.txtArea.setStyle("-fx-font-size: 12");
-            } else {
-                MainWindow.textTab.txtArea.setStyle("-fx-font-size: 13");
-            }
+            if(MainWindow.textTab != null) TextTreeView.updateListsGraphic();
+            if(t1) MainWindow.textTab.txtArea.setStyle("-fx-font-size: 12");
+            else MainWindow.textTab.txtArea.setStyle("-fx-font-size: 13");
         });
         language.setGetEditPaneCallback(() -> {
             Button button = new Button(TR.tr("actions.choose"));
@@ -213,35 +206,25 @@ public class Settings {
                             if(field.getType() == StringSetting.class){
                                 StringSetting var = (StringSetting) field.get(this);
                                 String value = config.getString(var.getPath());
-                                if(!value.isEmpty()) {
-                                    var.setValue(value);
-                                }
+                                if(!value.isEmpty()) var.setValue(value);
                                 
                             }else if(field.getType() == BooleanSetting.class){
                                 BooleanSetting var = (BooleanSetting) field.get(this);
                                 Boolean value = config.getBooleanNull(var.getPath());
-                                if(value != null) {
-                                    var.setValue(value);
-                                }
+                                if(value != null) var.setValue(value);
                                 
                             }else if(field.getType() == IntSetting.class){
                                 IntSetting var = (IntSetting) field.get(this);
                                 Long value = config.getLongNull(var.getPath());
-                                if(value != null) {
-                                    var.setValue(Math.toIntExact(value));
-                                }
+                                if(value != null) var.setValue(Math.toIntExact(value));
                             }else if(field.getType() == DoubleSetting.class){
                                 DoubleSetting var = (DoubleSetting) field.get(this);
                                 Double value = config.getDoubleNull(var.getPath());
-                                if(value != null) {
-                                    var.setValue(value);
-                                }
+                                if(value != null) var.setValue(value);
                             }else if(field.getType() == ToggleGroupSetting.class){
                                 ToggleGroupSetting var = (ToggleGroupSetting) field.get(this);
                                 Long value = config.getLongNull(var.getPath());
-                                if(value != null) {
-                                    var.setValue(value.intValue());
-                                }
+                                if(value != null) var.setValue(value.intValue());
                             }
                         }catch(Exception e){
                             Log.eNotified(e);
@@ -249,9 +232,7 @@ public class Settings {
                     }
                 }
                 
-                if(settingsVersionID != Main.VERSION_ID) {
-                    saveSettings();
-                }
+                if(settingsVersionID != Main.VERSION_ID) saveSettings();
             }
         }catch(Exception e){
             Log.eNotified(e, "Unable to load settings.yml");

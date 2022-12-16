@@ -48,24 +48,16 @@ public class ImageElement extends GraphicElement {
         if(linkedImageData != null){
             this.linkedImageData = linkedImageData;
             realWidth.addListener((observable, oldValue, newValue) -> {
-                if(this.linkedImageData != null) {
-                    this.linkedImageData.setWidth(newValue.intValue());
-                }
+                if(this.linkedImageData != null) this.linkedImageData.setWidth(newValue.intValue());
             });
             realHeight.addListener((observable, oldValue, newValue) -> {
-                if(this.linkedImageData != null) {
-                    this.linkedImageData.setHeight(newValue.intValue());
-                }
+                if(this.linkedImageData != null) this.linkedImageData.setHeight(newValue.intValue());
             });
             this.repeatMode.addListener((observable, oldValue, newValue) -> {
-                if(this.linkedImageData != null) {
-                    this.linkedImageData.setRepeatMode(newValue);
-                }
+                if(this.linkedImageData != null) this.linkedImageData.setRepeatMode(newValue);
             });
             this.resizeMode.addListener((observable, oldValue, newValue) -> {
-                if(this.linkedImageData != null) {
-                    this.linkedImageData.setResizeMode(newValue);
-                }
+                if(this.linkedImageData != null) this.linkedImageData.setResizeMode(newValue);
             });
             this.imageId.addListener((observable, oldValue, newValue) -> {
                 this.linkedImageData = null;
@@ -185,9 +177,8 @@ public class ImageElement extends GraphicElement {
     
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         ImageElement element = readYAMLDataAndGive(data, true, page);
-        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber()) {
+        if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
-        }
     }
     
     public static ImageElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
@@ -217,9 +208,7 @@ public class ImageElement extends GraphicElement {
     @Override
     public double getRatio(){
         if(image == null){
-            if(linkedImageData != null) {
-                return ((double) linkedImageData.getWidth()) / linkedImageData.getHeight();
-            }
+            if(linkedImageData != null) return ((double) linkedImageData.getWidth()) / linkedImageData.getHeight();
             return ((double) getRealWidth()) / getRealHeight();
         }
         return image.getWidth() / image.getHeight();
@@ -264,14 +253,10 @@ public class ImageElement extends GraphicElement {
             BackgroundRepeat finalRepeat = repeat;
             BackgroundSize finalSize = size;
             PlatformUtils.runLaterOnUIThread(4000, () -> {
-                if(image == null) {
-                    return;
-                }
+                if(image == null) return;
                 setBackground(new Background(new BackgroundImage(image, finalRepeat, finalRepeat, position, finalSize)));
             });
-        }else {
-            setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
-        }
+        }else setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
         
         
     }
@@ -281,9 +266,7 @@ public class ImageElement extends GraphicElement {
             image = renderImage(0, 0);
             
             notFound = image == null;
-            if(notFound) {
-                image = getNotFoundImage();
-            }
+            if(notFound) image = getNotFoundImage();
             
             Platform.runLater(callBack::call);
         }, "ImageElement Renderer").start();
@@ -296,9 +279,7 @@ public class ImageElement extends GraphicElement {
         if(file.exists() && GalleryManager.isAcceptableImage(file.getName())){
             try{
                 Image image = new Image("file:///" + imageID, requestedWidth, requestedHeight == -1 ? 999999 : requestedHeight, requestedHeight == -1, true);
-                if(image.getWidth() == 0) {
-                    return null;
-                }
+                if(image.getWidth() == 0) return null;
                 
                 int rotate = new ExifUtils(new File(imageID)).getImageExifRotation().getRotateAngle();
                 return ImageUtils.rotateImage(image, rotate);
@@ -326,11 +307,8 @@ public class ImageElement extends GraphicElement {
         return getElementNameStatic(plural);
     }
     public static String getElementNameStatic(boolean plural){
-        if(plural) {
-            return TR.tr("elements.name.images");
-        } else {
-            return TR.tr("elements.name.image");
-        }
+        if(plural) return TR.tr("elements.name.images");
+        else return TR.tr("elements.name.image");
     }
     
     public String getImageId(){

@@ -30,18 +30,12 @@ public class GradeTreeItemField extends ShortcutsTextArea {
         setMaxHeight(29);
         setMinWidth(29);
         
-        if(type == GradeTreeItem.FieldType.GRADE) {
-            HBox.setMargin(this, new Insets(0, 0, 0, 5));
-        }
-        if(type == GradeTreeItem.FieldType.TOTAL || type == GradeTreeItem.FieldType.OUT_OF_TOTAL) {
+        if(type == GradeTreeItem.FieldType.GRADE) HBox.setMargin(this, new Insets(0, 0, 0, 5));
+        if(type == GradeTreeItem.FieldType.TOTAL || type == GradeTreeItem.FieldType.OUT_OF_TOTAL)
             HBox.setMargin(this, new Insets(0, 5, 0, 0));
-        }
         
-        if(contextMenu) {
-            setContextMenu(treeItem.getCore().menu);
-        } else {
-            setContextMenu(null);
-        }
+        if(contextMenu) setContextMenu(treeItem.getCore().menu);
+        else setContextMenu(null);
         
         
         // Select & deselect
@@ -52,9 +46,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
                         positionCaret(getText().length());
                         selectAll();
                     }
-                }else {
-                    deselect();
-                }
+                }else deselect();
             });
         });
         
@@ -67,21 +59,17 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             // ENTER PRESSED
             
             if(newValue.contains("\n")){ // Enter : Switch to the next grade
-                if(treeItem.getPageContextmenu() != null) {
-                    treeItem.getPageContextmenu().hide();
-                }
+                if(treeItem.getPageContextmenu() != null) treeItem.getPageContextmenu().hide();
                 
                 GradeTreeItem afterItem = treeItem.getAfterChildItem();
                 MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                if(afterItem != null) {
-                    Platform.runLater(() -> {
-                        switch(type){
-                            case NAME -> afterItem.getPanel().nameField.requestFocus();
-                            case GRADE -> afterItem.getPanel().gradeField.requestFocus();
-                            case TOTAL, OUT_OF_TOTAL -> afterItem.getPanel().totalField.requestFocus();
-                        }
-                    });
-                }
+                if(afterItem != null) Platform.runLater(() -> {
+                    switch(type){
+                        case NAME -> afterItem.getPanel().nameField.requestFocus();
+                        case GRADE -> afterItem.getPanel().gradeField.requestFocus();
+                        case TOTAL, OUT_OF_TOTAL -> afterItem.getPanel().totalField.requestFocus();
+                    }
+                });
                 setText(oldValue);
                 return;
             }
@@ -92,9 +80,8 @@ public class GradeTreeItemField extends ShortcutsTextArea {
                 if(type == GradeTreeItem.FieldType.OUT_OF_TOTAL){
                     GradeTreeItem afterItem = treeItem.getAfterChildItem();
                     MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);
-                    if(afterItem != null) {
+                    if(afterItem != null)
                         Platform.runLater(() -> afterItem.getPanel().totalField.requestFocus());
-                    }
                 }
                 
                 if(treeItem.getCore().getTotal() == 0){
@@ -117,9 +104,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             String newText;
             if(type == GradeTreeItem.FieldType.NAME){
                 newText = newValue.replaceAll("[^ -\\[\\]-~À-ÿ]", "");
-                if(newText.length() >= GRADE_NAME_MAX_CHARS) {
-                    newText = newText.substring(0, GRADE_NAME_MAX_CHARS);
-                }
+                if(newText.length() >= GRADE_NAME_MAX_CHARS) newText = newText.substring(0, GRADE_NAME_MAX_CHARS);
             }else{
                 newText = newValue.replaceAll("[^0123456789.,]", "");
                 String[] splitted = newText.split("[.,]");
@@ -127,11 +112,9 @@ public class GradeTreeItemField extends ShortcutsTextArea {
                 String decimals = splitted.length >= 2 ? splitted[1] : "";
                 
                 if(integers.length() > 4){
-                    if(splitted.length >= 2) {
+                    if(splitted.length >= 2)
                         newText = integers.substring(0, 4) + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + decimals;
-                    } else {
-                        newText = integers.substring(0, 4);
-                    }
+                    else newText = integers.substring(0, 4);
                 }
                 if(decimals.length() > 3){
                     newText = integers + MainWindow.gradesDigFormat.getDecimalFormatSymbols().getDecimalSeparator() + splitted[1].substring(0, 3);
@@ -144,9 +127,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             meter.setText(newText);
             setMaxWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             // Name field will never push others nodes
-            if(type != GradeTreeItem.FieldType.NAME) {
-                setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
-            }
+            if(type != GradeTreeItem.FieldType.NAME) setMinWidth(Math.max(meter.getLayoutBounds().getWidth() + 20, 29));
             
             // In case this is not the real grade field (in the right click context menu field)
             if(type == GradeTreeItem.FieldType.GRADE && this != panel.gradeField){
@@ -158,9 +139,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             switch(type){
                 case NAME -> {
                     treeItem.getCore().setName(newText);
-                    if(new Random().nextInt(10) == 0) {
-                        AutoTipsManager.showByAction("graderename");
-                    }
+                    if(new Random().nextInt(10) == 0) AutoTipsManager.showByAction("graderename");
                 }
                 case GRADE -> {
                     // dont accept a value higher than the total
@@ -169,9 +148,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
                         if(value > treeItem.getCore().getTotal() && !treeItem.hasSubGrade()){
                             setText(MainWindow.gradesDigFormat.format(treeItem.getCore().getTotal()));
                             panel.gradeField.setText(MainWindow.gradesDigFormat.format(treeItem.getCore().getTotal()));
-                        }else {
-                            treeItem.getCore().setValue(value);
-                        }
+                        }else treeItem.getCore().setValue(value);
                     }catch(NumberFormatException e){
                         treeItem.getCore().setValue(-1);
                     }

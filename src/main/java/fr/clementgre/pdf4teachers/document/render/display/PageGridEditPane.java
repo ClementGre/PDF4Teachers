@@ -45,9 +45,7 @@ public class PageGridEditPane extends Pane {
         page.getChildren().remove(this);
     }
     public void updateZoom(){
-        if(!getChildren().isEmpty() && getOpacity() != 0) {
-            show(false);
-        }
+        if(!getChildren().isEmpty() && getOpacity() != 0) show(false);
     }
     public void show(boolean fadeIn){
         
@@ -66,22 +64,15 @@ public class PageGridEditPane extends Pane {
         setupCorner(rectDim, factor, rightRect, rightIcon, true);
         
         getChildren().setAll(leftRect, rightRect, leftIcon, rightIcon);
-        if(!page.getChildren().contains(this)) {
-            page.getChildren().add(this);
-        }
+        if(!page.getChildren().contains(this)) page.getChildren().add(this);
         toFront();
-        if(fadeIn) {
-            fadeIn();
-        } else {
-            setOpacity(1);
-        }
+        if(fadeIn) fadeIn();
+        else setOpacity(1);
     }
     
     private void setupCorner(int rectDim, double factor, Region rect, Region icon, boolean right){
         rect.setCursor(Cursor.HAND);
-        if(right) {
-            rect.setLayoutX(PageRenderer.PAGE_WIDTH - rectDim);
-        }
+        if(right) rect.setLayoutX(PageRenderer.PAGE_WIDTH - rectDim);
         rect.setPrefWidth(rectDim);
         rect.setPrefHeight(rectDim);
         rect.setStyle("-fx-background-color: rgba(0, 0, 0, .5); -fx-background-radius: 0 0 " + (right ? 0 : 5/factor) + " " + (right ? 5/factor : 0) + ";");
@@ -120,14 +111,10 @@ public class PageGridEditPane extends Pane {
     }
     
     private void rotate(boolean right){
-        if(!MainWindow.mainScreen.hasDocument(false)) {
-            return;
-        }
+        if(!MainWindow.mainScreen.hasDocument(false)) return;
     
         Document doc = MainWindow.mainScreen.document;
-        if(!doc.isPageSelected(page)) {
-            doc.selectPage(page.getPage());
-        }
+        if(!doc.isPageSelected(page)) doc.selectPage(page.getPage());
         
         int i = 0;
         for(int page : doc.getSelectedPages()){
@@ -140,11 +127,10 @@ public class PageGridEditPane extends Pane {
         ContextMenu menu = new ContextMenu();
     
         NodeMenuItem delete;
-        if(MainWindow.mainScreen.document.getSelectedPages().size() == 1) {
+        if(MainWindow.mainScreen.document.getSelectedPages().size() == 1)
             delete = new NodeMenuItem(TR.tr("actions.delete"), false);
-        } else {
+        else
             delete = new NodeMenuItem(TR.tr("document.pageActions.deleteSelected.title"), false);
-        }
         
         
         delete.setKeyCombinaison(new KeyCodeCombination(KeyCode.DELETE));

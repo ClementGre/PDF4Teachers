@@ -79,27 +79,18 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
         setEffect(shadow);
     
         setOnMouseEntered((e) -> {
-            if(!getItem().isFake()) {
-                shadow.setColor(Color.web("#0078d7"));
-            } else{
-                if(Main.settings.darkTheme.getValue()) {
-                    setEffect(new ColorAdjust(0, 0, .3, 0));
-                } else {
-                    setEffect(new ColorAdjust(0, 0, -.3, 0));
-                }
+            if(!getItem().isFake()) shadow.setColor(Color.web("#0078d7"));
+            else{
+                if(Main.settings.darkTheme.getValue()) setEffect(new ColorAdjust(0, 0, .3, 0));
+                else setEffect(new ColorAdjust(0, 0, -.3, 0));
             }
         });
         setOnMouseExited((e) -> {
-            if(!getItem().isFake()) {
-                shadow.setColor(Color.TRANSPARENT);
-            } else {
-                setEffect(null);
-            }
+            if(!getItem().isFake()) shadow.setColor(Color.TRANSPARENT);
+            else setEffect(null);
         });
     
-        if(hasContextMenu) {
-            NodeMenuItem.setupMenu(menu);
-        }
+        if(hasContextMenu) NodeMenuItem.setupMenu(menu);
     }
     
     @Override
@@ -229,11 +220,8 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
         svgPath.setStrokeWidth(data.getStrokeWidth());
         svgPath.setStrokeLineCap(StrokeLineCap.ROUND);
         svgPath.setFillRule(FillRule.NON_ZERO);
-        if(data.isDoFill()) {
-            svgPath.setFill(data.getFill());
-        } else {
-            svgPath.setFill(null);
-        }
+        if(data.isDoFill()) svgPath.setFill(data.getFill());
+        else svgPath.setFill(null);
         
         // SNAPSHOT
         SnapshotParameters sn = new SnapshotParameters();
