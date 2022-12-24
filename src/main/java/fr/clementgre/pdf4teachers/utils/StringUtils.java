@@ -134,12 +134,9 @@ public class StringUtils {
     
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.toLowerCase().lastIndexOf(match.toLowerCase());
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
+        return index == -1 ? string : string.substring(0, index);
     }
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String[] matches){
         if(matches.length == 0) return string;
