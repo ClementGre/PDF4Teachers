@@ -32,17 +32,7 @@ public class StringUtils {
             "ç", "9",
             "à", "0"
     );
-    
-    public static String removeBefore(String string, String rejex){
-        if(rejex.isEmpty()) return string;
-        int index = string.indexOf(rejex);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(index + rejex.length());
-        
-        return "";
-    }
-    
+
     public static String removeBeforeNotEscaped(String string, String rejex){
         
         int fromIndex = 0;
@@ -146,16 +136,6 @@ public class StringUtils {
                 .map(index -> string.substring(0, index))
                 .orElse(string);
     }
-    
-    public static String removeAfter(String string, String rejex){
-        if(rejex.isEmpty()) return "";
-        int index = string.indexOf(rejex);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
-    }
 
     public static List<Charset> getAvailableCharsets() {
         var charsets = Set.of(StandardCharsets.UTF_8,
@@ -170,10 +150,6 @@ public class StringUtils {
 
     public static String[] cleanArray(String[] array){
         return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
-    }
-    
-    public static boolean getAlwaysBoolean(String text){
-        return "true".equalsIgnoreCase(text);
     }
 
     public static Boolean getBoolean(String text) {
@@ -201,13 +177,6 @@ public class StringUtils {
                 .anyMatch(e -> kase ? e.equals(v) : e.equalsIgnoreCase(v));
     }
 
-
-    public static boolean startsIn(String[] array, String v, boolean kase) {
-        var finalV = kase ? v : v.toLowerCase();
-        return Arrays.stream(array)
-                .filter(Objects::nonNull)
-                .anyMatch(e -> kase ? e.startsWith(finalV) : e.toLowerCase().startsWith(finalV));
-    }
 
     public static String replaceSymbolsToDigitsIfFrenchLayout(String text) {
 
