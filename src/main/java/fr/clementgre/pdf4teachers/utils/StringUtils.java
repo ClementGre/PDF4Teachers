@@ -202,18 +202,13 @@ public class StringUtils {
         return Arrays.stream(array).anyMatch(Predicate.isEqual(v));
     }
 
-    public static boolean endsIn(final String[] array, String v, boolean kase){
-        if(!kase) v = v.toLowerCase();
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.endsWith(v)) return true;
-            }else{
-                if(e != null && e.toLowerCase().endsWith(v)) return true;
-            }
-            
-        }
-        return false;
+    public static boolean endsIn(final String[] array, String v, boolean kase) {
+        var finalV = kase ? v : v.toLowerCase();
+        return Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .anyMatch(e -> kase ? e.endsWith(finalV) : e.toLowerCase().endsWith(finalV));
     }
+
     public static boolean contains(final String[] array, final String v, boolean kase) {
         return Arrays.stream(array)
                 .filter(Objects::nonNull)
