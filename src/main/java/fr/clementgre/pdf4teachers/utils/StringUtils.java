@@ -126,12 +126,10 @@ public class StringUtils {
     
     public static String removeAfterLastOccurrence(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.lastIndexOf(match);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
+        return index == -1 ? string : string.substring(0, index);
+
     }
     
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String match){
