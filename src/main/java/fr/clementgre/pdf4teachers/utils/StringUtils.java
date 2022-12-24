@@ -139,20 +139,11 @@ public class StringUtils {
         return index == -1 ? string : string.substring(0, index);
     }
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String[] matches){
-        if(matches.length == 0) return string;
-        
-        HashMap<Integer, String> indices = new HashMap<>();
-        for(String str : matches){
-            int index = string.toLowerCase().lastIndexOf(str.toLowerCase());
-            if(index < string.length() && index != -1){
-                indices.put(index, str);
-            }
-        }
-        
-        return indices.entrySet()
-                .stream()
-                .max(Comparator.comparingInt(Entry::getKey))
-                .map(optionalEntry -> string.substring(0, optionalEntry.getKey()))
+        return Arrays.stream(matches)
+                .map(match -> string.toLowerCase().lastIndexOf(match.toLowerCase()))
+                .filter(index -> index != -1)
+                .max(Comparator.naturalOrder())
+                .map(index -> string.substring(0, index))
                 .orElse(string);
     }
     
