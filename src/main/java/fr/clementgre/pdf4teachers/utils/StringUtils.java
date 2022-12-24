@@ -173,15 +173,18 @@ public class StringUtils {
         
         return "";
     }
-    
-    
-    public static List<Charset> getAvailableCharsets(){
-        ArrayList<Charset> charsets = new ArrayList<>(Arrays.asList(StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII, StandardCharsets.UTF_16LE, StandardCharsets.UTF_16, StandardCharsets.UTF_16BE));
-        if(!charsets.contains(Charset.defaultCharset())) charsets.add(0, Charset.defaultCharset());
-        return charsets;
+
+    public static List<Charset> getAvailableCharsets() {
+        var charsets = Set.of(StandardCharsets.UTF_8,
+                StandardCharsets.ISO_8859_1,
+                StandardCharsets.US_ASCII,
+                StandardCharsets.UTF_16LE,
+                StandardCharsets.UTF_16,
+                StandardCharsets.UTF_16BE,
+                Charset.defaultCharset());
+        return List.of(charsets.toArray(new Charset[0]));
     }
-    
-    
+
     public static String[] cleanArray(String[] array){
         return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
     }
