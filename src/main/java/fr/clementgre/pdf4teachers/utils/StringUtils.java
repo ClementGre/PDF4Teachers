@@ -14,8 +14,23 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 public class StringUtils {
+
+    private static final Pattern FRENCH_LAYOUT_CHARACTERS = Pattern.compile("[&é\"'(\\-è_çà]");
+    private static final Map<String, String> FRENCH_LAYOUT_CHARACTER_REPLACEMENT_MAP = Map.of(
+            "&", "1",
+            "é", "2",
+            "\"", "3",
+            "'", "4",
+            "(", "5",
+            "-", "6",
+            "è", "7",
+            "_", "8",
+            "ç", "9",
+            "à", "0"
+    );
     
     public static String removeBefore(String string, String rejex){
         if(rejex.isEmpty()) return string;
@@ -227,12 +242,18 @@ public class StringUtils {
         }
         return false;
     }
-    
-    public static String replaceSymbolsToDigitsIfFrenchLayout(String text){
+
+    public static String replaceSymbolsToDigitsIfFrenchLayout(String text) {
+
         if(!isAzertyLayout()) return text;
-        
-        return text.replace("&", "1").replace("é", "2").replace("\"", "3").replace("'", "4").replace("(", "5")
-                .replace("-", "6").replace("è", "7").replace("_", "8").replace("ç", "9").replace("à", "0");
+
+        var matcher = FRENCH_LAYOUT_CHARACTERS.matcher(text);
+        var sb = new StringBuilder();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, FRENCH_LAYOUT_CHARACTER_REPLACEMENT_MAP.get(matcher.group()));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
     
     public static boolean isAzertyLayout(){
