@@ -221,17 +221,11 @@ public class StringUtils {
     }
 
 
-    public static boolean startsIn(String[] array, String v, boolean kase){
-        if(!kase) v = v.toLowerCase();
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.startsWith(v)) return true;
-            }else{
-                if(e != null && e.toLowerCase().startsWith(v)) return true;
-            }
-            
-        }
-        return false;
+    public static boolean startsIn(String[] array, String v, boolean kase) {
+        var finalV = kase ? v : v.toLowerCase();
+        return Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .anyMatch(e -> kase ? e.startsWith(finalV) : e.toLowerCase().startsWith(finalV));
     }
 
     public static String replaceSymbolsToDigitsIfFrenchLayout(String text) {
