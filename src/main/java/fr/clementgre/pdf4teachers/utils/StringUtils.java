@@ -119,12 +119,9 @@ public class StringUtils {
     
     public static String removeBeforeLastOccurrence(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.lastIndexOf(match);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(index + match.length());
-        
-        return "";
+        return index == -1 ? string : string.substring(index + match.length());
     }
     
     public static String removeAfterLastOccurrence(String string, String match){
