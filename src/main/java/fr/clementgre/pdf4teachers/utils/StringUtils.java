@@ -214,17 +214,13 @@ public class StringUtils {
         }
         return false;
     }
-    public static boolean contains(final String[] array, final String v, boolean kase){
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.equals(v)) return true;
-            }else{
-                if(e != null && e.equalsIgnoreCase(v)) return true;
-            }
-        }
-        return false;
+    public static boolean contains(final String[] array, final String v, boolean kase) {
+        return Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .anyMatch(e -> kase ? e.equals(v) : e.equalsIgnoreCase(v));
     }
-    
+
+
     public static boolean startsIn(String[] array, String v, boolean kase){
         if(!kase) v = v.toLowerCase();
         for(final String e : array){
