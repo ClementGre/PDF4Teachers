@@ -217,7 +217,7 @@ public class StringUtils {
     public static boolean contains(final String[] array, final String v, boolean kase){
         for(final String e : array){
             if(kase){
-                if(e != null && e.endsWith(v)) return true;
+                if(e != null && e.equals(v)) return true;
             }else{
                 if(e != null && e.equalsIgnoreCase(v)) return true;
             }
