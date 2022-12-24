@@ -188,13 +188,11 @@ public class StringUtils {
     public static boolean getAlwaysBoolean(String text){
         return "true".equalsIgnoreCase(text);
     }
-    
-    public static Boolean getBoolean(String text){
-        if("true".equalsIgnoreCase(text)){
-            return true;
-        }else if("false".equalsIgnoreCase(text)){
-            return false;
-        }else{
+
+    public static Boolean getBoolean(String text) {
+        try {
+            return Boolean.parseBoolean(text.toLowerCase());
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
