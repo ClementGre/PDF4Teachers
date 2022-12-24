@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
 public class StringUtils {
@@ -196,15 +197,11 @@ public class StringUtils {
             return null;
         }
     }
-    
-    public static <T> boolean contains(final T[] array, final T v){
-        if(v == null){
-            return Arrays.stream(array).anyMatch(Objects::isNull);
-        }else{
-            return Arrays.stream(array).anyMatch(e -> e == v || v.equals(e));
-        }
 
+    public static <T> boolean contains(final T[] array, final T v) {
+        return Arrays.stream(array).anyMatch(Predicate.isEqual(v));
     }
+
     public static boolean endsIn(final String[] array, String v, boolean kase){
         if(!kase) v = v.toLowerCase();
         for(final String e : array){
