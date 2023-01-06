@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -250,7 +250,7 @@ public class GradeElement extends Element {
         
         menu.setOnShowing((e) -> {
             Platform.runLater(() -> {
-                MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu);
+                MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu, getPage());
                 
                 if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
                 else menu.getItems().set(0, menuItem);

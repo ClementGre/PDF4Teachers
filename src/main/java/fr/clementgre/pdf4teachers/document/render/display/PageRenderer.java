@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -78,6 +78,7 @@ public class PageRenderer extends Pane {
     
     private ProgressBar loader = new ProgressBar();
     private ContextMenu menu = new ContextMenu();
+    private ContextMenu gradeChooseValueMenu = new ContextMenu();
     
     private int lastShowStatus = 1; // default status is hide (1)
     private double renderedZoomFactor;
@@ -136,6 +137,8 @@ public class PageRenderer extends Pane {
         setEffect(ds);
         
         translateYProperty().addListener(translateYListener);
+
+        gradeChooseValueMenu.setOnHiding(e -> menu.hide());
         
         //////////////////////////////////////////////////////////////////////////////////////////
         ////////////////////////////////////////// ZOOM //////////////////////////////////////////
@@ -208,6 +211,7 @@ public class PageRenderer extends Pane {
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
                     if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    gradeChooseValueMenu.hide();
                     
                     if(TextTab.draggingElement == null){ // Add to document
                         TextTab.draggingElement = TextTab.draggingItem.addToDocument(false, this, toGridX(e.getX()), toGridY(e.getY()), true);
@@ -218,6 +222,7 @@ public class PageRenderer extends Pane {
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
                     if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    gradeChooseValueMenu.hide();
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument();
@@ -227,6 +232,7 @@ public class PageRenderer extends Pane {
                     e.acceptTransferModes(TransferMode.ANY);
                     e.consume();
                     if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
+                    gradeChooseValueMenu.hide();
                     
                     if(PaintTab.draggingElement == null){ // Add to document
                         PaintTab.draggingElement = item.addToDocument(false);
@@ -295,12 +301,14 @@ public class PageRenderer extends Pane {
             if(TextTab.TEXT_TREE_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
                 e.setDropCompleted(true);
                 menu.hide();
+                gradeChooseValueMenu.hide();
                 if(TextTab.draggingElement != null) TextTab.draggingElement.select();
                 TextTab.draggingItem = null;
                 TextTab.draggingElement = null;
             }else if(PaintTab.PAINT_ITEM_DRAG_KEY.equals(dragboard.getContent(Main.INTERNAL_FORMAT))){ // Set vars to null
                 e.setDropCompleted(true);
                 menu.hide();
+                gradeChooseValueMenu.hide();
                 if(PaintTab.draggingElement != null) PaintTab.draggingElement.select();
                 PaintTab.draggingItem = null;
                 PaintTab.draggingElement = null;
@@ -360,8 +368,10 @@ public class PageRenderer extends Pane {
         // Detect all mouse events, even ones of Elements because they don't consume the event.
         // (This is used to autoscroll when approaching the top/bottom of MainScreen)
         setOnMouseMoved(e -> {
-            mouseX = e.getX();
-            mouseY = e.getY();
+            if(!menu.isShowing() && !gradeChooseValueMenu.isShowing()){
+                mouseX = e.getX();
+                mouseY = e.getY();
+            }
     
             if(MainWindow.mainScreen.isEditPagesMode()) setCursor(PlatformUtils.CURSOR_MOVE);
             else if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
@@ -382,6 +392,7 @@ public class PageRenderer extends Pane {
             toFront();
             
             MainWindow.mainScreen.setSelected(null);
+            gradeChooseValueMenu.hide();
             menu.hide();
             menu.getItems().clear();
     
@@ -601,20 +612,26 @@ public class PageRenderer extends Pane {
         }
         
     }
+
+    public void showGradeChooseValueContextMenu(ArrayList<MenuItem> items, double screenX, double screenY){
+        gradeChooseValueMenu.getItems().setAll(items);
+        NodeMenuItem.setupMenu(gradeChooseValueMenu);
+        gradeChooseValueMenu.show(Main.window, screenX, screenY);
+    }
     
     public void showContextMenu(double pageY, double screenX, double screenY){
         if(!MainWindow.gradeTab.treeView.getRoot().getChildren().isEmpty()){
             GradeTreeView.defineNaNLocations();
             GradeTreeItem logicalNextGrade = GradeTreeView.getNextLogicGrade();
             if(logicalNextGrade != null){
-                MenuItem menuItem = logicalNextGrade.getEditMenuItem(menu);
+                MenuItem menuItem = logicalNextGrade.getEditMenuItem(menu, this);
                 menu.getItems().add(menuItem);
             }
             
             GradeElement documentNextGradeElement = GradeTreeView.getNextGrade(page, (int) pageY);
             GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
             if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
-                MenuItem menuItem = documentNextGrade.getEditMenuItem(menu);
+                MenuItem menuItem = documentNextGrade.getEditMenuItem(menu, this);
                 menu.getItems().add(0, menuItem);
             }
             
@@ -884,6 +901,7 @@ public class PageRenderer extends Pane {
         
         menu.getItems().clear();
         menu = null;
+        gradeChooseValueMenu = null;
     }
     
     public int getShowStatus(){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
@@ -1168,5 +1186,9 @@ public class PageRenderer extends Pane {
     
     public boolean isRemoved(){
         return removed;
+    }
+
+    public void hideGradeChooseValueMenu() {
+        gradeChooseValueMenu.hide();
     }
 }

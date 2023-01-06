@@ -1,16 +1,16 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
@@ -151,7 +151,7 @@ public class GradeTreeItem extends TreeItem<String> {
     /////////////// MENUS ///////////////
     /////////////////////////////////////
     
-    public MenuItem getEditMenuItem(ContextMenu menu){
+    public MenuItem getEditMenuItem(ContextMenu menu, PageRenderer page){
         
         HBox pane = new HBox();
         NodeMenuItem menuItem = new NodeMenuItem(pane, false);
@@ -204,11 +204,8 @@ public class GradeTreeItem extends TreeItem<String> {
                     panel.gradeField.setText(MainWindow.gradesDigFormat.format(core.getTotal()));
                     setChildrenValuesToMax();
                 }else{
-                    ContextMenu contextMenu = new ContextMenu();
-                    contextMenu.getItems().addAll(getChooseValueMenuItemsAuto());
-                    NodeMenuItem.setupMenu(contextMenu);
-                    
-                    contextMenu.show(Main.window, e.getScreenX(), e.getScreenY());
+                    e.consume();
+                    page.showGradeChooseValueContextMenu(getChooseValueMenuItemsAuto(), e.getScreenX(), e.getScreenY());
                 }
             });
         }
@@ -219,6 +216,7 @@ public class GradeTreeItem extends TreeItem<String> {
             total.textProperty().unbind();
             pane.setOnMouseEntered(null);
             pane.setOnMouseClicked(null);
+            page.hideGradeChooseValueMenu();
         });
         
         return menuItem;
@@ -226,7 +224,7 @@ public class GradeTreeItem extends TreeItem<String> {
     public ArrayList<MenuItem> getChooseValueMenuItemsAuto(){
         return getChooseValueMenuItems(0, getCore().getTotal(), 0, true);
     }
-    public ArrayList<MenuItem> getChooseValueMenuItems(double min, double max, int deep, boolean includeEdges){
+    public ArrayList<MenuItem> getChooseValueMenuItems(double min, double max, int depth, boolean includeEdges){
         ArrayList<MenuItem> items = new ArrayList<>();
         
         int maxDivisions = 11;
@@ -243,16 +241,16 @@ public class GradeTreeItem extends TreeItem<String> {
         
         double actualValue = min;
         while(actualValue < max){
-            items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue + finalInterval), deep + 1));
+            items.add(getChooseValueMenuItem(actualValue, actualValue, Math.min(max, actualValue + finalInterval), depth + 1));
             actualValue += finalInterval;
         }
-        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, deep + 1));
+        if(includeEdges) items.add(getChooseValueMenuItem(max, max, max, depth + 1));
         
         return items;
     }
-    private MenuItem getChooseValueMenuItem(double value, double min, double max, int deep){
+    private MenuItem getChooseValueMenuItem(double value, double min, double max, int depth){
         
-        if(max - min > .25 && deep < 3){
+        if(max - min > .25 && depth < 3){
             NodeMenu menuItem = new NodeMenu(new HBox());
             menuItem.setName(MainWindow.gradesDigFormat.format(value));
             menuItem.setOnAction(e -> {
@@ -262,7 +260,7 @@ public class GradeTreeItem extends TreeItem<String> {
             menuItem.setOnShown(e -> {
                 NodeMenuItem.setupMenuNow(menuItem);
             });
-            menuItem.getItems().addAll(getChooseValueMenuItems(min, max, deep, false));
+            menuItem.getItems().addAll(getChooseValueMenuItems(min, max, depth, false));
             return menuItem;
         }else{
             NodeMenuItem menuItem = new NodeMenuItem(new HBox(), false);

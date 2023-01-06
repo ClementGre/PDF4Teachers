@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -29,7 +29,6 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
