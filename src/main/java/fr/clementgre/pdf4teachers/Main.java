@@ -29,6 +29,7 @@ import javafx.scene.input.DataFormat;
 import javafx.stage.Stage;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -53,8 +54,8 @@ public class Main extends Application {
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
     
     /********** Version parameters **********/
-    public static final Mode mode = Mode.SNAPSHOT;
-    public static final int VERSION_ID = VersionIds.SN1_1_4_1;
+    public static final Mode mode = Mode.DEV;
+    public static final int VERSION_ID = VersionIds.DV1_1_4_1;
     public static final String VERSION = getVersionName("1.4.1", 1);
     public static LogLevel logLevel = getLogLevel();
     /****************************************/
@@ -73,6 +74,22 @@ public class Main extends Application {
     public static DecimalFormat oneDigENFormat = new DecimalFormat("0.#", baseDecimalFormatSymbols);
     
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
+    
+    
+    static {
+        /*if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
+            Desktop.getDesktop().setOpenFileHandler(event -> {
+                for (File file : event.getFiles()) {
+                    Log.d("Open file: " + file.getAbsolutePath());
+                }
+                
+                final String searchTerm = event.getSearchTerm();
+                if (searchTerm != null) {
+                    Log.d("Search term: " + searchTerm);
+                }
+            });
+        }*/
+    }
     
     public static void main(String[] args){
         LogsManager.copyLogs();
