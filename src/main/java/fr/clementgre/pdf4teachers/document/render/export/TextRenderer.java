@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -59,6 +60,7 @@ public class TextRenderer {
             try{
                 cs.showText(line);
             }catch(IllegalArgumentException e){
+                if(Log.doDebug()) Log.eNotified(e);
                 // A character isn't supported by the current font
                 
                 boolean cancel = PlatformUtils.runAndWait(() -> {

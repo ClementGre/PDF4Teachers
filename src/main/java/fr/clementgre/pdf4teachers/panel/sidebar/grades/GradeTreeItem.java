@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 
+import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.components.HBoxSpacer;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenu;
 import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
@@ -197,6 +198,14 @@ public class GradeTreeItem extends TreeItem<String> {
             gradeField.requestFocus();
             MainWindow.gradeTab.treeView.getSelectionModel().select(this);
         });
+    
+        menu.setOnHiding(event -> {
+            name.textProperty().unbind();
+            value.textProperty().unbind();
+            total.textProperty().unbind();
+            pane.setOnMouseEntered(null);
+            pane.setOnMouseClicked(null);
+        });
         
         if(!hasSubGrade()){
             pane.setOnMouseClicked((e) -> {
@@ -205,19 +214,25 @@ public class GradeTreeItem extends TreeItem<String> {
                     setChildrenValuesToMax();
                 }else{
                     e.consume();
-                    page.showGradeChooseValueContextMenu(getChooseValueMenuItemsAuto(), e.getScreenX(), e.getScreenY());
+    
+                    ContextMenu chooseValueMenu = new ContextMenu();
+                    chooseValueMenu.getItems().setAll(getChooseValueMenuItemsAuto());
+                    NodeMenuItem.setupMenu(chooseValueMenu);
+                    chooseValueMenu.show(Main.window, e.getScreenX(), e.getScreenY());
+                    
+                    chooseValueMenu.setOnHiding(event -> menu.hide());
+                    menu.setOnHiding(event -> {
+                        chooseValueMenu.hide();
+                        name.textProperty().unbind();
+                        value.textProperty().unbind();
+                        total.textProperty().unbind();
+                        pane.setOnMouseEntered(null);
+                        pane.setOnMouseClicked(null);
+                    });
+                    
                 }
             });
         }
-        
-        menu.setOnHiding((e) -> {
-            name.textProperty().unbind();
-            value.textProperty().unbind();
-            total.textProperty().unbind();
-            pane.setOnMouseEntered(null);
-            pane.setOnMouseClicked(null);
-            page.hideGradeChooseValueMenu();
-        });
         
         return menuItem;
     }
