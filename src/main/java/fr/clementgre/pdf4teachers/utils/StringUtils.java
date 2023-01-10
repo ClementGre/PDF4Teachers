@@ -50,22 +50,19 @@ public class StringUtils {
             
         }
     }
-    
-    public static Entry<String, Integer> getLastInt(String expression){
-        String stringResult = expression;
-        StringBuilder result = new StringBuilder();
-        
-        for(int i = expression.length() - 1; i >= 0; i--){
-            try{
-                result.append(Integer.parseInt(expression.substring(i, i + 1)));
-                stringResult = stringResult.substring(0, i);
-            }catch(NumberFormatException ignored){
+
+    public static Map.Entry<String, Integer> getLastInt(String expression) {
+        int start = expression.length();
+        for (int i = expression.length() - 1; i >= 0; i--) {
+            if (Character.isDigit(expression.charAt(i))) {
+                start = i;
+            } else {
                 break;
             }
         }
-        
-        if(result.toString().isEmpty()) return Map.entry(expression, -1);
-        return Map.entry(stringResult, Integer.parseInt(result.reverse().toString()));
+        if (start == expression.length()) return Map.entry(expression, -1);
+        int end = expression.length();
+        return Map.entry(expression.substring(0, start), Integer.parseInt(expression.substring(start, end)));
     }
     
     public static String incrementName(String name){
