@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 public class StringUtils {
 
     private static final Pattern FRENCH_LAYOUT_CHARACTERS = Pattern.compile("[&é\"'(\\-è_çà]");
+    private static final Pattern LETTERS = Pattern.compile("^[A-Ya-y]");
     private static final Map<String, String> FRENCH_LAYOUT_CHARACTER_REPLACEMENT_MAP = Map.of(
             "&", "1",
             "é", "2",
@@ -51,7 +52,7 @@ public class StringUtils {
         }
     }
 
-    public static Map.Entry<String, Integer> getLastInt(String expression) {
+    public static Entry<String, Integer> getLastInt(String expression) {
         int start = expression.length();
         for (int i = expression.length() - 1; i >= 0; i--) {
             if (Character.isDigit(expression.charAt(i))) {
@@ -64,24 +65,23 @@ public class StringUtils {
         int end = expression.length();
         return Map.entry(expression.substring(0, start), Integer.parseInt(expression.substring(start, end)));
     }
-    
-    public static String incrementName(String name){
-        
-        Entry<String, Integer> lastIntData = getLastInt(name);
-        
-        if(lastIntData.getValue() != -1){
+
+    public static String incrementName(String name) {
+
+        var lastIntData = getLastInt(name);
+
+        if (lastIntData.getValue() != -1) {
             return lastIntData.getKey() + (lastIntData.getValue() + 1);
         }
-        
-        if(name.length() == 1){
-            if(name.replaceAll("^[A-Ya-y]", "").isEmpty()){
+
+        if (name.length() == 1) {
+            if (LETTERS.matcher(name).replaceAll("").isEmpty()) {
                 return Character.toString(name.charAt(0) + 1);
             }
         }
-        
+
         return name;
     }
-    
     
     public static long countSpaces(String str){
         return str.codePoints().filter(c -> c == ' ').count();
