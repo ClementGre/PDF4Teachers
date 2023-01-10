@@ -54,6 +54,7 @@ public class StringUtils {
 
     public static Entry<String, Integer> getLastInt(String expression) {
         int start = expression.length();
+
         for (int i = expression.length() - 1; i >= 0; i--) {
             if (Character.isDigit(expression.charAt(i))) {
                 start = i;
@@ -61,7 +62,9 @@ public class StringUtils {
                 break;
             }
         }
+
         if (start == expression.length()) return Map.entry(expression, -1);
+
         int end = expression.length();
         return Map.entry(expression.substring(0, start), Integer.parseInt(expression.substring(start, end)));
     }
