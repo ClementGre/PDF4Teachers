@@ -192,8 +192,8 @@ public class StringUtils {
     }
     
     public static boolean isAzertyLayout(){
-        InputContext is = InputContext.getInstance();
-        return is.getLocale() != null && is.getLocale().getLanguage().equals("fr");
+        var instance = InputContext.getInstance();
+        return instance.getLocale() != null && instance.getLocale().getLanguage().equals("fr");
     }
     
     public static char getCsvSeparator(){
