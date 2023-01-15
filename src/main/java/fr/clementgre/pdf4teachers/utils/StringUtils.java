@@ -87,10 +87,14 @@ public class StringUtils {
     }
     
     public static long countSpaces(String str){
-        return str.codePoints().filter(c -> c == ' ').count();
+        return str.codePoints()
+                .filter(codePoint -> codePoint == ' ')
+                .count();
     }
     public static long count(String str, char toCount){
-        return str.codePoints().filter(c -> c == toCount).count();
+        return str.codePoints()
+                .filter(codePoint -> codePoint == toCount)
+                .count();
     }
     
     public static void editTextArea(TextArea area, String newText){
