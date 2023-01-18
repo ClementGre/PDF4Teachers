@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import static name.fraser.neil.plaintext.diff_match_patch.Operation.*;
 
-public class StringUtils {
+public final class StringUtils {
 
     private static final Pattern FRENCH_LAYOUT_CHARACTERS = Pattern.compile("[&é\"'(\\-è_çà]");
     private static final Pattern LETTERS = Pattern.compile("^[A-Ya-y]");
