@@ -96,16 +96,24 @@ public class StringUtils {
                 .filter(codePoint -> codePoint == toCount)
                 .count();
     }
-    
-    public static void editTextArea(TextArea area, String newText){
-        List<diff_match_patch.Diff> diffs = new diff_match_patch().diff_main(area.getText(), newText);
-        
+
+    public static void editTextArea(TextArea area, String newText) {
+
+        var diffs = new diff_match_patch().diff_main(area.getText(), newText);
         int index = 0;
-        for(diff_match_patch.Diff diff : diffs){
-            if(diff.operation == diff_match_patch.Operation.INSERT){
-                area.insertText(Math.min(index, area.getText().length()), diff.text);
-            }else if(diff.operation == diff_match_patch.Operation.DELETE){
-                area.deleteText(Math.min(index, area.getText().length()), Math.min(index + diff.text.length(), area.getText().length()));
+
+        for (var diff : diffs) {
+
+            if (diff.operation == diff_match_patch.Operation.INSERT) {
+
+                var indexToInsertTo = Math.min(index, area.getText().length());
+                area.insertText(indexToInsertTo, diff.text);
+
+            } else if (diff.operation == diff_match_patch.Operation.DELETE) {
+
+                var start = Math.min(index, area.getText().length());
+                var end = Math.min(index + diff.text.length(), area.getText().length());
+                area.deleteText(start, end);
             }
             index += diff.text.length();
         }
