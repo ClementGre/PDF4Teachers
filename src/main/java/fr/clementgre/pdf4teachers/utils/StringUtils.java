@@ -14,8 +14,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+
+import static name.fraser.neil.plaintext.diff_match_patch.Operation.*;
 
 public class StringUtils {
 
@@ -99,24 +102,27 @@ public class StringUtils {
 
     public static void editTextArea(TextArea area, String newText) {
 
+        var index = new AtomicInteger();
         var diffs = new diff_match_patch().diff_main(area.getText(), newText);
-        int index = 0;
 
-        for (var diff : diffs) {
+        diffs.stream()
+            .filter(diff -> diff.operation != EQUAL)
+            .forEach(diff -> {
 
-            if (diff.operation == diff_match_patch.Operation.INSERT) {
+                var textAreaLength = area.getText().length();
+                var start = Math.min(index.get(), textAreaLength);
 
-                var indexToInsertTo = Math.min(index, area.getText().length());
-                area.insertText(indexToInsertTo, diff.text);
+                if (diff.operation == INSERT) {
+                    area.insertText(start, diff.text);
+                } else if (diff.operation == DELETE) {
+                    var end = Math.min(index.get() + diff.text.length(), textAreaLength);
+                    area.deleteText(start, end);
+                }
 
-            } else if (diff.operation == diff_match_patch.Operation.DELETE) {
+                index.addAndGet(diff.text.length());
 
-                var start = Math.min(index, area.getText().length());
-                var end = Math.min(index + diff.text.length(), area.getText().length());
-                area.deleteText(start, end);
-            }
-            index += diff.text.length();
-        }
+            });
+
     }
     
     public static String removeBeforeLastOccurrence(String string, String match){
