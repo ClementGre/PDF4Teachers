@@ -13,6 +13,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -48,10 +49,17 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         
         // FONT
         // Entry: (Font family | weight and style)
-        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, element.getFont(), ps.width());
+        Map.Entry<String, String> fontEntry;
+        try{
+            fontEntry = textRenderer.setContentStreamFont(cs, element.getFont(), ps.width());
+        }catch (IOException e) {
+            e.printStackTrace();
+            throw new IOException("Can't load font file for: " + e.getMessage() + " try to change font, reinstall font or restart PDF4Teachers.", e);
+        }
         // DRAW TEXT
+        if(fontEntry == null) return false;
         return textRenderer.drawText(page, cs, fontEntry, textSpecs, ps);
-        
+
     }
     
 }

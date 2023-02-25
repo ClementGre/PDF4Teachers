@@ -122,7 +122,7 @@ public class FontUtils {
      * get a system/default font file.
      * This function shouldn't be called outside of this class, but the exporters classes need it to add the font file to the PDF.
      */
-    public static InputStream getFontFile(String family, boolean italic, boolean bold){
+    public static InputStream getFontFile(String family, boolean italic, boolean bold) throws FileNotFoundException {
         
         if(isDefaultFont(family)){
             InputStream font = getDefaultFontFile(family, italic, bold);
@@ -132,9 +132,7 @@ public class FontUtils {
             Log.e("Unable to load default font " + family + " italic: " + italic + " bold: " + bold + ". Returning system font or default font...");
         }
         if(isSystemFont(family)){
-            try{
-                return getSystemFontFiles(family, italic, bold);
-            }catch(FileNotFoundException e){Log.eNotified(e);}
+            return getSystemFontFiles(family, italic, bold);
         }
         
         return getDefaultFontFile("Open Sans", italic, bold);

@@ -7,6 +7,8 @@ package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import javafx.scene.paint.Color;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
