@@ -67,6 +67,7 @@ public abstract class Element extends Region {
     public static Element elementClipboard;
     
     boolean dragAlreadyDetected;
+    
     protected void setupGeneral(boolean setupEvents, Node... components){
         if(components != null) getChildren().setAll(components);
         
@@ -172,6 +173,7 @@ public abstract class Element extends Region {
         final Clipboard clipboard = Clipboard.getSystemClipboard();
         clipboard.setContent(clipboardContent);
     }
+    
     public static boolean paste(){
         if(!MainWindow.mainScreen.hasDocument(false)) return false;
         final Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -207,6 +209,7 @@ public abstract class Element extends Region {
     protected void onSelected(){
         setBorder(new Border(STROKE_DEFAULT));
     }
+    
     protected void onDeSelected(){
         setBorder(null);
         menu.hide();
@@ -217,29 +220,32 @@ public abstract class Element extends Region {
     public void checkLocation(boolean allowSwitchPage){
         checkLocation(getLayoutX(), getLayoutY(), allowSwitchPage);
     }
+    
     public void checkLocation(double itemX, double itemY, boolean allowSwitchPage){
         checkLocation(itemX, itemY, getWidth(), getHeight(), allowSwitchPage);
     }
+    
     public void checkLocation(double itemX, double itemY, double width, double height, boolean allowSwitchPage){
         
         // Negative Y
-        if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage) if(itemY < 0) itemY = 0;
+        if(getPageNumber() < MainWindow.mainScreen.getGridModePagesPerRow() || !allowSwitchPage)
+            if(itemY < 0) itemY = 0;
         // Positive Y
-        if(getPageNumber() >= MainWindow.mainScreen.document.numberOfPages -MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
+        if(getPageNumber() >= MainWindow.mainScreen.document.numberOfPages - MainWindow.mainScreen.getGridModePagesInLastRow() || !allowSwitchPage)
             if(itemY > getPage().getHeight() - height) itemY = getPage().getHeight() - height;
-            
+        
         // Negative X
         if(getPageNumber() % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
             if(itemX < 0) itemX = 0;
         // Positive X
-        if((getPageNumber() +1) % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
+        if((getPageNumber() + 1) % MainWindow.mainScreen.getGridModePagesPerRow() == 0 || !allowSwitchPage)
             if(itemX > getPage().getWidth() - width) itemX = getPage().getWidth() - width;
         
         realX.set(getPage().toGridX(itemX));
         realY.set(getPage().toGridY(itemY));
         
         if(this instanceof GraphicElement graphicElement){
-    
+            
             if(getHeight() != height){
                 int value = getPage().toGridY(height);
                 graphicElement.setRealHeight(MathUtils.clamp(value, 0, (int) Element.GRID_HEIGHT));
@@ -257,6 +263,7 @@ public abstract class Element extends Region {
     public abstract void select();
     
     public abstract void onDoubleClickAfterSelected();
+    
     public abstract void onDoubleClick();
     
     protected void selectPartial(){
@@ -274,6 +281,7 @@ public abstract class Element extends Region {
         layoutYProperty().unbind();
         MainWindow.mainScreen.selectedProperty().removeListener(mainScreenSelectedListener);
     }
+    
     // Called when element was restored (With Undo/Redo system)
     public void restoredToDocument(){
         layoutXProperty().bind(getPage().widthProperty().multiply(realX.divide(Element.GRID_WIDTH)));
@@ -297,6 +305,7 @@ public abstract class Element extends Region {
     public void centerOnCoordinatesY(){
         setRealY(getRealY() - getRealHeight() / 2);
     }
+    
     public void centerOnCoordinatesX(){
         setRealX(getRealX() - getRealWidth() / 2);
     }
@@ -315,11 +324,13 @@ public abstract class Element extends Region {
     // GETTERS AND SETTERS
     
     public abstract String getElementName(boolean plural);
+    
     public abstract float getBoundsHeight();
     
     public int getRealHeight(){
         return getPage().toGridY(getBoundsHeight());
     }
+    
     public int getRealWidth(){
         return getPage().toGridY(getWidth());
     }
@@ -372,9 +383,11 @@ public abstract class Element extends Region {
     public int getPageNumber(){
         return pageNumber;
     }
+    
     public void setPage(PageRenderer page){
         this.pageNumber = page.getPage();
     }
+    
     public void setPage(int pageNumber){
         this.pageNumber = pageNumber;
     }
@@ -390,5 +403,6 @@ public abstract class Element extends Region {
         element.getPage().addElement(element, true, UType.UNDO);
         element.select();
     }
+    
     public abstract void size(double scale);
 }

@@ -108,7 +108,9 @@ public class MainScreen extends Pane {
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){Log.eNotified(ex);}
+                }catch(InterruptedException ex){
+                    Log.eNotified(ex);
+                }
             }else if(dragNScrollFactorHorizontal != 0){
                 Platform.runLater(() -> {
                     if(dragNScrollFactorHorizontal < 0){
@@ -119,11 +121,15 @@ public class MainScreen extends Pane {
                 });
                 try{
                     Thread.sleep(20);
-                }catch(InterruptedException ex){Log.eNotified(ex);}
+                }catch(InterruptedException ex){
+                    Log.eNotified(ex);
+                }
             }else{
                 try{
                     Thread.sleep(200);
-                }catch(InterruptedException ex){Log.eNotified(ex);}
+                }catch(InterruptedException ex){
+                    Log.eNotified(ex);
+                }
             }
             
         }
@@ -190,11 +196,11 @@ public class MainScreen extends Pane {
         
         
         setBorder(Border.EMPTY);
-    
+        
         isGridView.bind(isMultiPagesMode.or(isEditPagesMode));
         
         // Pages Shadow
-       
+        
         notSelectedShadow.setColor(Color.BLACK);
         selectedShadow.setSpread(.90);
         selectedShadow.setColor(Color.web("#0078d7"));
@@ -203,7 +209,7 @@ public class MainScreen extends Pane {
         zoomProperty().addListener((observable, oldValue, newValue) -> {
             if(hasDocument(false) && document != null) document.updateSelectedPages();
         });
-    
+        
         updateTheme();
         Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> updateTheme());
         
@@ -227,7 +233,7 @@ public class MainScreen extends Pane {
         getChildren().add(infoLink);
         
         zoomOperator = new ZoomOperator(pane, this);
-    
+        
         // Update show status when scroll level change
         pane.translateYProperty().addListener((ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
             if(document != null && !document.getPages().isEmpty()){
@@ -238,7 +244,7 @@ public class MainScreen extends Pane {
         });
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null && !document.getPages().isEmpty()){
-    
+                
                 // Redraw pages when zooming while being in grid mode
                 if(isGridView()){
                     document.updatePagesPosition();
@@ -267,7 +273,7 @@ public class MainScreen extends Pane {
                     AutoTipsManager.showByAction("enterEditPagesMode");
                 }
                 document.clearSelectedPages();
-    
+                
                 if(newValue) zoomOperator.overviewWidth(true);
                 else zoomOperator.fitWidth(true, false);
                 
@@ -505,13 +511,13 @@ public class MainScreen extends Pane {
     public void onDragForScroll(MouseEvent e){
         double distY = e.getY() - dragStartY;
         double distX = e.getX() - dragStartX;
-    
+        
         if(distY > 0){
             zoomOperator.scrollUp((int) distY, true, false);
         }else if(distY < 0){
             zoomOperator.scrollDown((int) -distY, true, false);
         }
-    
+        
         if(distX > 0){
             zoomOperator.scrollLeft((int) distX, true, false);
         }else if(distX < 0){
@@ -528,14 +534,14 @@ public class MainScreen extends Pane {
         }
     }
     public void openFile(File file){
-        openFile(file,  false);
+        openFile(file, false);
     }
     public void openFile(File file, boolean resetScrollValue){
         
         if(!closeFile(!Main.settings.autoSave.getValue(), false)){
             return;
         }
-    
+        
         setIsMultiPagesMode(MainWindow.userData.multiPagesMode);
         setIsEditPagesMode(MainWindow.userData.editPagesMode);
         
@@ -550,7 +556,7 @@ public class MainScreen extends Pane {
         }
         status.set(Status.OPEN);
         MainWindow.filesTab.files.getSelectionModel().select(file);
-    
+        
         if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
         else zoomOperator.fitWidth(true, false);
         
@@ -611,7 +617,7 @@ public class MainScreen extends Pane {
                     return false;
                 }
             }else if(!forceNotToSave) document.edition.save(true);
-    
+            
             MainWindow.userData.multiPagesMode = isMultiPagesMode();
             MainWindow.userData.editPagesMode = isEditPagesMode();
             
@@ -679,7 +685,7 @@ public class MainScreen extends Pane {
             }else{ // Navigate to page
                 topPage = document.getPages().get(firstTopVisiblePage.getPage() - 1);
             }
-    
+            
             zoomOperator.scrollToPage(topPage);
         }
     }
@@ -826,12 +832,14 @@ public class MainScreen extends Pane {
     public <T> boolean isNextUndoActionProperty(Property<T> property){
         if(getUndoEngine() != null && getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
             return action.getObservableValue() == property;
-        } return false;
+        }
+        return false;
     }
     public <T> boolean isNextPageUndoActionProperty(Property<T> property){
         if(getPagesUndoEngine() != null && getPagesUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
             return action.getObservableValue() == property;
-        } return false;
+        }
+        return false;
     }
     
     public void registerNewAction(UndoAction action){
@@ -863,6 +871,7 @@ public class MainScreen extends Pane {
         }
     }
     
+    // True if isEditPageMode is true OR of isMultiPagesMode is true
     public boolean isGridView(){
         return isGridView.get();
     }
@@ -894,9 +903,11 @@ public class MainScreen extends Pane {
         return zoomOperator.getMainScreenWidth() / zoomOperator.getPaneScale();
     }
     public int getGridModePagesPerRow(){
+        if(!isGridView()) return 1;
         return Math.max(1, (int) ((getAvailableWidthInPaneContext() - PageRenderer.getPageMargin()) / (PAGE_WIDTH + PageRenderer.getPageMargin())));
     }
     public int getGridModePagesInLastRow(){
+        if(!isGridView()) return 1;
         int rest = document.getPagesNumber() % getGridModePagesPerRow();
         return rest == 0 ? getGridModePagesPerRow() : rest;
     }
