@@ -129,7 +129,7 @@ public class TextTreeItem extends TreeItem<String> {
         onMouseCLick = (MouseEvent e) -> {
             if(e.getButton().equals(MouseButton.PRIMARY)){
 
-                boolean shouldReplace = pane.isFocused() != e.isShortcutDown();
+                boolean shouldReplace = e.isShortcutDown();
                 if(shouldReplace && MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
                     oldElement.delete(true, UType.NO_COUNT);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);

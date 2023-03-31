@@ -65,7 +65,7 @@ Et en plus les résultats par défaut :
     NF pour "non fait" (touche F)
     NN pour "non noté" (touche N)
     NR pour "non rendu" (touche R)
-    
+
 
 ----- ÉLÈVES -----
 
@@ -88,20 +88,20 @@ Classe / Date / Nom de l'eval
 */
 
 public class SkillsTab extends SideTab {
-    
+
     private final ObjectProperty<SkillTableElement> skillTableElement = new SimpleObjectProperty<>(null);
-    
+
     private final ListProperty<SkillsAssessment> assessments = new SimpleListProperty<>(FXCollections.observableArrayList());
-    
+
     private final VBox pane = new VBox();
     private final HBox optionPane = new HBox();
     private final ScaledSearchableComboBox<SkillsAssessment> assessmentCombo = new ScaledSearchableComboBox<>(true);
     private final HBox studentPane = new HBox();
     private final ScaledSearchableComboBox<Student> studentCombo = new ScaledSearchableComboBox<>(true);
     private final Label supportModality = new Label();
-    
+
     private final ListView<Skill> listView = new ListView<>();
-    
+
     private final Button settings = new IconButton(SVGPathIcons.WRENCH, TR.tr("skillsTab.settings.tooltip"), e -> {
         if(getCurrentAssessment() != null) new SkillsAssessmentWindow(getCurrentAssessment());
     });
@@ -115,39 +115,39 @@ public class SkillsTab extends SideTab {
             }
         }
     });
-    private final Button newAssessment = new IconButton(SVGPathIcons.PLUS, TR.tr("skillsTab.export.tooltip"), e -> {
+    private final Button newAssessment = new IconButton(SVGPathIcons.PLUS, TR.tr("skillsTab.newAssessment.tooltip"), e -> {
         SkillsAssessment assessment = new SkillsAssessment();
         assessments.add(assessment);
         assessmentCombo.setValue(assessment);
         Platform.runLater(() -> new SkillsAssessmentWindow(assessment));
     });
-    
+
     public SkillsTab(){
         super("skills", SVGPathIcons.SKILLS_GRAPH, 26, 1);
-        
+
         SkillsAssessment.setup();
-        
+
         setup();
         setContent(pane);
     }
-    
+
     private void setup(){
-        
+
         optionPane.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         pane.getChildren().setAll(optionPane, listView);
         pane.setAlignment(Pos.TOP_CENTER);
-    
+
         MainWindow.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue.intValue() != MainScreen.Status.OPEN){
                 clearEditRelatedData();
             }
         });
-        
+
         /* OPTION PANE */
-        
+
         optionPane.setStyle("-fx-padding: 5;");
         optionPane.setSpacing(3);
-    
+
         PaneUtils.setHBoxPosition(assessmentCombo, -1, 30, 0);
         assessmentCombo.setConverter(new StringConverter<>() {
             @Override public String toString(SkillsAssessment assessment){
@@ -160,14 +160,14 @@ public class SkillsTab extends SideTab {
             @Override public SkillsAssessment fromString(String assessmentName){ return null; }
         });
         assessmentCombo.itemsProperty().bind(assessments);
-        
+
         settings.disableProperty().bind(assessmentCombo.valueProperty().isNull());
         deleteAssessment.disableProperty().bind(assessmentCombo.valueProperty().isNull());
-        
+
         optionPane.getChildren().addAll(assessmentCombo, settings, deleteAssessment, newAssessment);
-    
+
         /* STUDENT PANE */
-        
+
         studentPane.setStyle("-fx-padding: 0 5 5 5;");
         studentPane.setSpacing(5);
         studentPane.setAlignment(Pos.CENTER_LEFT);
@@ -175,7 +175,7 @@ public class SkillsTab extends SideTab {
         label.setMinWidth(Region.USE_PREF_SIZE);
         label.setStyle("-fx-font-size: 12; -fx-font-weight: 800;");
         studentPane.getChildren().addAll(label, studentCombo);
-    
+
         PaneUtils.setVBoxPosition(studentCombo, -1, 30, 0);
         studentCombo.setConverter(new StringConverter<>() {
             @Override public String toString(Student s){ return s == null ? "" : s.name(); }
@@ -185,28 +185,28 @@ public class SkillsTab extends SideTab {
             if(getCurrentAssessment() != null) return FXCollections.observableArrayList(getCurrentAssessment().getStudents());
             return FXCollections.observableArrayList();
         }, assessmentCombo.valueProperty()));
-    
+
         assessmentCombo.valueProperty().addListener(o -> {
             if(getCurrentAssessment() != null && !getCurrentAssessment().getStudents().isEmpty()){
                 pane.getChildren().setAll(optionPane, studentPane, listView);
             }else pane.getChildren().setAll(optionPane, listView);
             updateSupportModalityMessage();
         });
-        
+
         supportModality.setPadding(new Insets(5));
         supportModality.setTextAlignment(TextAlignment.CENTER);
         supportModality.setStyle("-fx-font-size: 14; -fx-font-weight: 800;");
         supportModality.setWrapText(true);
-        
-        
+
+
         /* LIST VIEW */
-    
+
         listView.disableProperty().bind(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN));
         listView.setBorder(null);
         listView.setPadding(new Insets(0));
         listView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         VBox.setVgrow(listView, Priority.SOMETIMES);
-    
+
         skillTableElement.addListener((observable, oldValue, newValue) -> listView.refresh());
         listView.setCellFactory(param -> new SkillListCell(assessmentCombo.valueProperty(), skillTableElement));
         listView.itemsProperty().bind(Bindings.createObjectBinding(() -> {
@@ -216,13 +216,13 @@ public class SkillsTab extends SideTab {
             }
             return FXCollections.observableArrayList();
         }, assessmentCombo.valueProperty()));
-        
+
         // Theme change update
         Main.settings.darkTheme.valueProperty().addListener((observable, oldValue, newValue) -> listView.refresh());
         Main.settings.zoom.valueProperty().addListener((observable, oldValue, newValue) -> listView.refresh());
-        
+
         /* LINK WITH SkillTableElement */
-    
+
         // Sync assessment id
         assessmentCombo.valueProperty().addListener(o -> {
             if(getSkillTableElement() != null){
@@ -237,7 +237,7 @@ public class SkillsTab extends SideTab {
                 if(getSkillTableElement().getStudentId() != getCurrentStudentIdOr0()){ // Needs update
                     getSkillTableElement().setStudentId(getCurrentStudentIdOr0());
                     getSkillTableElement().tryLoadFromStudent(oldValue);
-                    
+
                     Edition.setUnsave("Changed selected Student");
                 }
             }else if(getCurrentAssessment() != null){
@@ -245,7 +245,7 @@ public class SkillsTab extends SideTab {
             }
             updateSupportModalityMessage();
         });
-        
+
     }
     private void updateSupportModalityMessage(){
         if(getCurrentStudent() != null && !getCurrentStudent().supportModality().isBlank()){
@@ -256,7 +256,7 @@ public class SkillsTab extends SideTab {
             pane.getChildren().remove(supportModality);
         }
     }
-    
+
     private void switchSkillTableElementAssessment(long id){
         Edition.setUnsave("Changed selected Assessment");
         if(getSkillTableElement().getAssessmentId() != id){ // Needs update
@@ -270,7 +270,7 @@ public class SkillsTab extends SideTab {
             });
         }
     }
-    
+
     // When added to document from edition, select the right options
     public void registerSkillTableElement(SkillTableElement skillTableElement){
         this.skillTableElement.set(skillTableElement);
@@ -294,14 +294,14 @@ public class SkillsTab extends SideTab {
                 .findFirst()
                 .ifPresent(studentCombo::setValue);
     }
-    
+
     // Generate the element
     private void addSkillTableElement(){
         this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, 0.8, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
         MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), true, UType.NO_UNDO);
     }
-    
-    
+
+
     // Called when closing the SkillAssessmentWindow
     public void updateData(){
         // Update assessment name in the combo
@@ -311,14 +311,14 @@ public class SkillsTab extends SideTab {
         assessmentCombo.setValue(null);
         assessmentCombo.setValue(assessment);
         studentCombo.setValue(student); // Preserve the student
-        
+
         // Updating the list
         listView.refresh();
         // Updating the element
         getSkillTableElement().updateLayout();
     }
-    
-    
+
+
     public ObservableList<SkillsAssessment> getAssessments(){
         return assessments.get();
     }
@@ -343,7 +343,7 @@ public class SkillsTab extends SideTab {
     public long getCurrentStudentIdOr0(){
         return (assessmentCombo.getValue() == null || studentCombo.getValue() == null) ? 0 : studentCombo.getValue().id();
     }
-    
+
     public SkillTableElement getSkillTableElement(){
         return skillTableElement.get();
     }

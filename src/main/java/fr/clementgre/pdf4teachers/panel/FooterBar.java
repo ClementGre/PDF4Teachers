@@ -33,12 +33,12 @@ import javafx.scene.shape.Line;
 import javafx.util.Duration;
 
 public class FooterBar extends StackPane {
-    
+
     private final StackPane messagePane = new StackPane();
     private final Label message = new Label();
-    
+
     private final HBox root = new HBox();
-    
+
     private final HBox zoom = new HBox();
     private final SliderWithoutPopup zoomController = new SliderWithoutPopup(1, 20, 10);
     private final Label zoomPercent = new Label();
@@ -47,19 +47,19 @@ public class FooterBar extends StackPane {
     private final ToggleButton columnView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.SINGLE_PAGE, "white", 0, 25, lightGrayColorAdjust));
     private final ToggleButton gridView = new ToggleButton("", SVGPathIcons.generateImage(SVGPathIcons.MULTI_PAGE, "white", 0, 25, lightGrayColorAdjust));
     private final ToggleButton editPagesMode = new ToggleButton(TR.tr("footerBar.editPages"));
-    
+
     private final Label statsElements = new Label();
     private final Label statsTexts = new Label();
     private final Label statsGrades = new Label();
     private final Label statsGraphics = new Label();
     private final Label statsTotalGrade = new Label();
     private final Label status = new Label();
-    
+
     private final Region spacer = new Region();
-    
+
     private int oldWidth;
     private final int widthLimit = 1350;
-    
+
     public FooterBar(){
         StyleManager.putStyle(this, Style.ACCENT);
         getStyleClass().add("app-footer-bar");
@@ -69,7 +69,7 @@ public class FooterBar extends StackPane {
         setBorder(null);
         setup();
     }
-    
+
     public void setup(){
 
         // ZOOM INFO
@@ -78,14 +78,14 @@ public class FooterBar extends StackPane {
         zoom.setAlignment(Pos.CENTER_LEFT);
         zoomPercent.setMinWidth(40);
         zoom.setSpacing(5);
-        
+
         zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
         MainWindow.mainScreen.pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             zoomPercent.setText(((int) MainWindow.mainScreen.getZoomPercent()) + "%");
             if(zoomController.getValue() != newValue.doubleValue()){
                 double scale = newValue.doubleValue();
                 double val = 10;
-                
+
                 if(scale < 1){
                     val = scale * 10;
                 }else if(scale > 1){
@@ -107,7 +107,7 @@ public class FooterBar extends StackPane {
             }
             MainWindow.mainScreen.zoomOperator.zoom(scale, true);
         });
-    
+
         columnView.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.columnView")));
         gridView.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.gridView")));
         columnView.setToggleGroup(viewGroup);
@@ -117,9 +117,9 @@ public class FooterBar extends StackPane {
         ZoomOperator zoomOperator = MainWindow.mainScreen.zoomOperator;
         columnView.setOnAction(e -> zoomOperator.fitWidth(false, false));
         gridView.setOnAction(e -> zoomOperator.fitWidth(false, true));
-    
+
         columnView.setSelected(true);
-        
+
         viewGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null) viewGroup.selectToggle(oldValue);
             boolean gridView = viewGroup.getSelectedToggle() == this.gridView;
@@ -129,39 +129,39 @@ public class FooterBar extends StackPane {
             if(newValue && viewGroup.getSelectedToggle() != this.gridView) this.gridView.setSelected(true);
             if(!newValue && viewGroup.getSelectedToggle() != this.columnView) this.columnView.setSelected(true);
         });
-        
+
         editPagesMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.editPages.tooltip")));
         PaneUtils.setHBoxPosition(editPagesMode, -1, 19, new Insets(-2, 0, 0, 0));
         MainWindow.mainScreen.isEditPagesModeProperty().bindBidirectional(editPagesMode.selectedProperty());
-        
+
         columnView.disableProperty().bind(MainWindow.mainScreen.isEditPagesModeProperty().or(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN)));
         gridView.disableProperty().bind(MainWindow.mainScreen.isEditPagesModeProperty().or(MainWindow.mainScreen.statusProperty().isNotEqualTo(MainScreen.Status.OPEN)));
-        
+
         zoom.getChildren().addAll(zoomPercent, zoomController, getSpacerShape(), editPagesMode, getSpacerShape(), columnView, gridView);
-        
+
         HBox.setHgrow(spacer, Priority.ALWAYS);
-        
+
         MainWindow.mainScreen.statusProperty().addListener((observable, oldValue, newValue) -> updateStatus(newValue.intValue(), true));
         updateStatus(MainScreen.Status.CLOSED, true);
-        
+
         statsElements.setStyle("-fx-text-fill: #b2b2b2;");
         statsTexts.setStyle("-fx-text-fill: #b2b2b2;");
         statsGrades.setStyle("-fx-text-fill: #b2b2b2;");
         statsGraphics.setStyle("-fx-text-fill: #b2b2b2;");
         statsTotalGrade.setStyle("-fx-text-fill: #b2b2b2;");
-        
+
         root.setPadding(new Insets(0, 10, 0, 10));
         root.setSpacing(10);
         root.setAlignment(Pos.CENTER_LEFT);
         root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
         getChildren().add(root);
-        
+
         messagePane.getChildren().add(message);
         messagePane.setTranslateY(20);
         messagePane.prefWidthProperty().bind(widthProperty());
         messagePane.setPrefHeight(20);
         message.prefWidthProperty().bind(widthProperty());
-        
+
         widthProperty().addListener((observable, oldValue, newValue) -> {
             if(oldWidth > widthLimit && newValue.intValue() < widthLimit){
                 updateStatus(MainWindow.mainScreen.getStatus(), true);
@@ -189,14 +189,14 @@ public class FooterBar extends StackPane {
             getChildren().add(messagePane);
             messagePane.setTranslateY(20);
         }
-        
+
         messagePane.setBackground(new Background(new BackgroundFill(background, CornerRadii.EMPTY, Insets.EMPTY)));
         messagePane.setOpacity(0);
         message.setTextFill(messageColor);
         message.setText(text);
         message.setAlignment(Pos.CENTER);
         message.setStyle("-fx-font-weight: 800; -fx-font-family: Arial;");
-        
+
         Platform.runLater(() -> {
             Timeline timelineShow = new Timeline(60);
             timelineShow.getKeyFrames().addAll(
@@ -204,7 +204,7 @@ public class FooterBar extends StackPane {
                     new KeyFrame(Duration.millis(200), new KeyValue(messagePane.opacityProperty(), 1))
             );
             timelineShow.play();
-            
+
             PlatformUtils.runLaterOnUIThread(duration.duration, () -> {
                 Timeline timelineHide = new Timeline(60);
                 timelineHide.getKeyFrames().addAll(
@@ -216,23 +216,23 @@ public class FooterBar extends StackPane {
             });
         });
     }
-    
+
     private Pane getSpacerShape(){
         Line shape = new Line(0, 0, 0, 14);
         shape.setStroke(Color.web("#4B4B4B"));
         shape.setStrokeWidth(1);
-        
+
         StackPane pane = new StackPane();
         pane.getChildren().add(shape);
         pane.setPadding(new Insets(3));
-        
+
         return pane;
     }
-    
+
     public void updateCurrentPage(){
         updateStatus(MainWindow.mainScreen.getStatus(), false);
     }
-    
+
     public void updateStatus(int status, boolean hard){
         if(status == MainScreen.Status.OPEN){
             if(hard){
@@ -243,7 +243,7 @@ public class FooterBar extends StackPane {
                             statsElements, getSpacerShape(), statsTexts, getSpacerShape(), statsGrades, getSpacerShape(), statsGraphics, getSpacerShape(), statsTotalGrade, getSpacerShape(),
                             this.status);
                 }
-                
+
                 updateStats();
             }
             zoomController.setDisable(false);
@@ -253,7 +253,7 @@ public class FooterBar extends StackPane {
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + "?/" + MainWindow.mainScreen.document.numberOfPages);
             }else
                 this.status.setText(MainWindow.mainScreen.document.getFileName() + " - " + (MainWindow.mainScreen.document.getLastCursorOverPage() + 1) + "/" + MainWindow.mainScreen.document.numberOfPages);
-            
+
         }else{
             zoomController.setDisable(true);
             zoomPercent.setDisable(true);
@@ -261,7 +261,7 @@ public class FooterBar extends StackPane {
             if(hard){
                 root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
             }
-            
+
             if(status == MainScreen.Status.CLOSED){
                 this.status.setText(TR.tr("footerBar.documentStatus.noDocument"));
             }else if(status == MainScreen.Status.ERROR || status == MainScreen.Status.ERROR_EDITION){
@@ -269,7 +269,7 @@ public class FooterBar extends StackPane {
             }
         }
     }
-    
+
     public void updateStats(){
         if(MainWindow.mainScreen.hasDocument(false)){
             Platform.runLater(() -> {
@@ -279,21 +279,22 @@ public class FooterBar extends StackPane {
                 statsTexts.setText(count[1] + " " + TR.tr("elements.name.texts"));
                 statsGrades.setText(count[2] + " " + TR.tr("elements.name.grades"));
                 statsGraphics.setText(count[3] + " " + TR.tr("elements.name.paints"));
-                
+
                 if(GradeTreeView.getTotal() != null){
                     double grade = GradeTreeView.getTotal().getCore().getVisibleValue();
                     double total = GradeTreeView.getTotal().getCore().getVisibleTotal();
+
                     if(GradeTreeView.getTotal().getCore().getOutOfTotal() >= 0 && total != 0){
                         grade = grade * GradeTreeView.getTotal().getCore().getOutOfTotal() / total;
                         total = GradeTreeView.getTotal().getCore().getOutOfTotal();
                     }
-                    
+
                     statsTotalGrade.setText(MainWindow.twoDigFormat.format(grade) + "/" + MainWindow.twoDigFormat.format(total));
                 }
             });
         }
     }
-    
+
     public Node getEditPagesModeNode(){
         return editPagesMode;
     }
