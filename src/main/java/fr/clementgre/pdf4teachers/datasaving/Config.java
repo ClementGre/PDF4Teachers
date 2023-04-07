@@ -40,6 +40,9 @@ public class Config {
         setupYAML();
     }
     
+    static {
+        System.setProperty("yaml.max.aliases", "99999");
+    }
     private void setupYAML(){
         DumperOptions dumperOptions = new DumperOptions();
         dumperOptions.setWidth(120);

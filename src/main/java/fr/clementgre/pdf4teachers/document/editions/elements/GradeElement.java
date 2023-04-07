@@ -411,7 +411,7 @@ public class GradeElement extends Element {
         if(isRoot() && getOutOfTotal() > 0){
             outOfText = "\n=> ";
             if(getTotal() <= 0) outOfText += "0/";
-            else outOfText += MainWindow.twoDigFormat.format(getValue() / getTotal() * getOutOfTotal()) + "/";
+            else outOfText += (getValue() >= 0 ? MainWindow.twoDigFormat.format(getValue() / getTotal() * getOutOfTotal()) : '?') + "/";
             outOfText += MainWindow.twoDigFormat.format(getOutOfTotal());
         }
         
