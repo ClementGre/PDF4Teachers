@@ -14,6 +14,7 @@ import javafx.application.Platform;
 import javafx.scene.Cursor;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
@@ -117,7 +118,9 @@ public class PlatformUtils {
                 printHeapStatus();
                 try{
                     Thread.sleep(printIntervalMs);
-                }catch(InterruptedException e){Log.eNotified(e);}
+                }catch(InterruptedException e){
+                    Log.eNotified(e);
+                }
             }
         }, "Heap debugger").start();
     }
@@ -168,10 +171,34 @@ public class PlatformUtils {
         return !isWindows() && !isMac();
     }
     public static boolean isMacAArch64(){
-        return isMac() && System.getProperty("os.arch").toLowerCase().contains("aarch64");
+        // os.arch returns x86_64 even if it's AArch64 because it will be emulated.
+        // The trick is to check the processor brand name
+        String brand = getMacCpuBrand();
+        if(brand.equals("Unknown")) return isJDKMacAArch64(); // Fallback to JDK arch
+        return brand.contains("Apple");
+    }
+    public static String getMacCpuBrand(){
+        if(!isMac()) return "Unknown";
+        
+        ProcessBuilder pb = new ProcessBuilder("sysctl", "-n", "machdep.cpu.brand_string");
+        
+        try{
+            Process p = pb.start();
+            try(BufferedReader br = p.inputReader()){
+                String details = br.readLine();
+                int status = p.waitFor();
+                if(status == 0) return details;
+                
+            }catch(Exception x){
+                Log.e(x);
+            }
+        }catch(Exception x){
+            Log.e(x);
+        }
+        return "Unknown";
     }
     public static boolean isJDKMacAArch64(){
-        return isMac() && "true".equals(System.getProperty("fr.clementgre.pdf4teachers.isaarch64"));
+        return isMac() && System.getProperty("os.arch").toLowerCase().contains("aarch64");
     }
     
     public static String getDataFolder(){
@@ -182,12 +209,15 @@ public class PlatformUtils {
         }else if(isMac()){
             dataFolder = System.getProperty("user.home") + "/Library/Application Support/PDF4Teachers/";
             // Move data folder if needed
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists())
+                FilesUtils.moveDataFolder(dataFolder);
         }else{
-            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists()) dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
+            if(System.getenv("XDG_DATA_HOME") != null && new File(System.getenv("XDG_DATA_HOME")).exists())
+                dataFolder = System.getenv("XDG_DATA_HOME") + "/PDF4Teachers/";
             else dataFolder = System.getProperty("user.home") + "/.local/share/PDF4Teachers/";
             // Move data folder if needed
-            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists()) FilesUtils.moveDataFolder();
+            if(!new File(dataFolder).exists() && new File(System.getProperty("user.home") + "/.PDF4Teachers/").exists())
+                FilesUtils.moveDataFolder(dataFolder);
         }
         
         new File(dataFolder).mkdirs();

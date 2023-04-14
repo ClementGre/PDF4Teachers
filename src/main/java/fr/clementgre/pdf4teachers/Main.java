@@ -93,7 +93,10 @@ public class Main extends Application {
     public static void main(String[] args){
         LogsManager.copyLogs();
         
-        Log.i("Starting PDF4Teachers " + VERSION + " | Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + " on " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " (" + System.getProperty("os.arch") + ")");
+        String javaDetails = "Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + " (" + System.getProperty("os.arch") + ")";
+        String osDetails = System.getProperty("os.name") + " " + System.getProperty("os.version") + (PlatformUtils.isMac() ? (" (Cpu: " + PlatformUtils.getMacCpuBrand() + ")") : "");
+        Log.i("Starting PDF4Teachers " + VERSION + " | " + javaDetails + " on " + osDetails);
+        
         if(PlatformUtils.isMacAArch64() && !PlatformUtils.isJDKMacAArch64()){
             Log.w("You are using a build for amd64 on a AArch64 Mac. This will slow down the programm.");
         }

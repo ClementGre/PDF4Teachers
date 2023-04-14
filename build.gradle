@@ -147,7 +147,6 @@ run {
     if(os.macOsX){
         // The dock icon works only when app is in /Applications
         jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
-        if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
     }else if(os.windows){
         if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
     }
@@ -174,7 +173,7 @@ if(os.windows){
         doLast {
             exec {
                 workingDir './build'
-                commandLine 'bash', '-c', "rm -R ./AutoPackage ;" + 
+                commandLine 'bash', '-c', "rm -R ./AutoPackage ;" +
                         "mkdir -p ./AutoPackage/debian/DEBIAN ./AutoPackage/other/pdf4teachers ;" +
                         "dpkg-deb -x ./jpackage/pdf4teachers_" + version + "-1_amd64.deb ./AutoPackage/debian/ ;" +
                         "dpkg-deb -e ./jpackage/pdf4teachers_" + version + "-1_amd64.deb ./AutoPackage/debian/DEBIAN ;" +
@@ -227,7 +226,6 @@ if(os.windows){
         if(os.macOsX){
             // The dock icon works only when app is in /Applications
             jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
-            if(aarch64) jvmArgs += '-Dfr.clementgre.pdf4teachers.isaarch64=true'
         }else if(os.windows){
             if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
         }

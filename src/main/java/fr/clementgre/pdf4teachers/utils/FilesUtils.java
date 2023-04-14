@@ -120,16 +120,16 @@ public class FilesUtils {
     }
     
     // Moves from ~/.PDF4Teachers/ to Main.dataFolder
-    public static void moveDataFolder(){
+    public static void moveDataFolder(String newDataFolderPath){
         File oldDataFolder = new File(System.getProperty("user.home") + File.separator + ".PDF4Teachers" + File.separator);
-        Log.i("Moving data folder from " + oldDataFolder.getAbsolutePath() + " to " + Main.dataFolder);
+        Log.i("Moving data folder from " + oldDataFolder.getAbsolutePath() + " to " + newDataFolderPath);
         
-        if(oldDataFolder.getAbsolutePath().equals(Main.dataFolder)) return;
+        if(oldDataFolder.getAbsolutePath().equals(newDataFolderPath)) return;
         
-        FilesUtils.moveDir(oldDataFolder, new File(Main.dataFolder));
+        FilesUtils.moveDir(oldDataFolder, new File(newDataFolderPath));
         
         PlatformUtils.runLaterOnUIThread(5000, () -> {
-            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("moveDataFolderNotification", FilesUtils.getPathReplacingUserHome(Main.dataFolder)), 20);
+            MainWindow.showNotification(AlertIconType.INFORMATION, TR.tr("moveDataFolderNotification", FilesUtils.getPathReplacingUserHome(newDataFolderPath)), 20);
         });
     }
     
