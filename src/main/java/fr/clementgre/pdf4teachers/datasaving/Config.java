@@ -192,19 +192,19 @@ public class Config {
     }
     
     public static long getLong(HashMap<String, Object> base, String path){
-        return MathUtils.getAlwaysLong(getValue(base, path).toString());
+        return MathUtils.parseLongOrDefault(getValue(base, path).toString());
     }
     
     public static Long getLongNull(HashMap<String, Object> base, String path){
-        return MathUtils.getLong(getValue(base, path).toString());
+        return MathUtils.parseLongOrNull(getValue(base, path).toString());
     }
     
     public static double getDouble(HashMap<String, Object> base, String path){
-        return MathUtils.getAlwaysDouble(getValue(base, path).toString());
+        return MathUtils.parseDoubleOrDefault(getValue(base, path).toString());
     }
     
     public static Double getDoubleNull(HashMap<String, Object> base, String path){
-        return MathUtils.getDouble(getValue(base, path).toString());
+        return MathUtils.parseDoubleOrNull(getValue(base, path).toString());
     }
     
     public static Color getColor(HashMap<String, Object> base, String path){

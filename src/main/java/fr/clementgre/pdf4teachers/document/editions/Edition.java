@@ -238,7 +238,7 @@ public class Edition{
     // addCallBack : Key : Page | Value : Element Data
     private static void loadItemsInPage(Set<Map.Entry<String, Object>> data, CallBackArg<Map.Entry<Integer, HashMap<String, Object>>> addCallBack){
         for(Map.Entry<String, Object> pageData : data){
-            Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            Integer page = MathUtils.parseIntOrNull(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
 
             for(Object elementData : ((List<Object>) pageData.getValue())){
@@ -400,7 +400,7 @@ public class Edition{
     private static int countSection(HashMap<String, Object> sectionData){
         int count = 0;
         for(Map.Entry<String, Object> pageData : sectionData.entrySet()){
-            Integer page = MathUtils.getInt(pageData.getKey().replaceFirst("page", ""));
+            Integer page = MathUtils.parseIntOrNull(pageData.getKey().replaceFirst("page", ""));
             if(page == null || !(pageData.getValue() instanceof List)) break;
             count += ((List<Object>) pageData.getValue()).size();
         }
