@@ -74,7 +74,7 @@ public abstract class ShapesGridView<T> extends GridView<T>{
         addEventFilter(ZoomEvent.ZOOM, (ZoomEvent e) -> {
             e.consume();
             if(defineCellSizeAsRowNumber){
-                setZoomSliderValue((int) (getZoomSliderValue() - MathUtils.averageNegativeOrPositive(e.getZoomFactor()-1, -1, 1)) );
+                setZoomSliderValue((int) (getZoomSliderValue() - MathUtils.selectValueBasedOnSign(e.getZoomFactor()-1, -1, 1)) );
             }else{
                 setZoomSliderValue((int) (getZoomSliderValue() * e.getZoomFactor()));
             }

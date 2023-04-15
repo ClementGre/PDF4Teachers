@@ -8,7 +8,7 @@ package fr.clementgre.pdf4teachers.utils;
 public final class MathUtils {
 
     // Returns in function of the sign of val
-    public static double averageNegativeOrPositive(double val, double negative, double positive) {
+    public static double selectValueBasedOnSign(double val, double negative, double positive) {
         return val < 0 ? negative : positive;
     }
 
