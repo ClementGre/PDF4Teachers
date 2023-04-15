@@ -5,7 +5,7 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
-public class MathUtils {
+public final class MathUtils {
 
     // Returns in function of the sign of val
     public static double averageNegativeOrPositive(double val, double negative, double positive) {
