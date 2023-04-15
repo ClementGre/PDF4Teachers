@@ -13,20 +13,29 @@ import java.awt.im.InputContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
-public class StringUtils {
-    
-    public static String removeBefore(String string, String rejex){
-        if(rejex.isEmpty()) return string;
-        int index = string.indexOf(rejex);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(index + rejex.length());
-        
-        return "";
-    }
-    
+import static name.fraser.neil.plaintext.diff_match_patch.Operation.*;
+
+public final class StringUtils {
+
+    private static final Pattern FRENCH_LAYOUT_CHARACTERS = Pattern.compile("[&é\"'(\\-è_çà]");
+    private static final Pattern LETTERS = Pattern.compile("^[A-Ya-y]");
+    private static final Map<String, String> FRENCH_LAYOUT_CHARACTER_REPLACEMENT_MAP = Map.of(
+            "&", "1",
+            "é", "2",
+            "\"", "3",
+            "'", "4",
+            "(", "5",
+            "-", "6",
+            "è", "7",
+            "_", "8",
+            "ç", "9",
+            "à", "0"
+    );
+
     public static String removeBeforeNotEscaped(String string, String rejex){
         
         int fromIndex = 0;
@@ -44,200 +53,166 @@ public class StringUtils {
             
         }
     }
-    
-    public static Entry<String, Integer> getLastInt(String expression){
-        String stringResult = expression;
-        StringBuilder result = new StringBuilder();
-        
-        for(int i = expression.length() - 1; i >= 0; i--){
-            try{
-                result.append(Integer.parseInt(expression.substring(i, i + 1)));
-                stringResult = stringResult.substring(0, i);
-            }catch(NumberFormatException ignored){
-                break;
-            }
+
+    public static Map.Entry<String, Integer> getLastInt(String expression) {
+        int index = expression.length() - 1;
+        int lastInt = 0;
+        int multiplier = 1;
+        int lastIndexNonDigit = index;
+
+        while (index >= 0 && Character.isDigit(expression.charAt(index))) {
+            lastInt += Character.getNumericValue(expression.charAt(index)) * multiplier;
+            multiplier *= 10;
+            lastIndexNonDigit = index - 1;
+            index--;
         }
-        
-        if(result.toString().isEmpty()) return Map.entry(expression, -1);
-        return Map.entry(stringResult, Integer.parseInt(result.reverse().toString()));
+
+        if (lastIndexNonDigit == expression.length() - 1) {
+            return Map.entry(expression, -1);
+        }
+
+        var prefix = expression.substring(0, lastIndexNonDigit + 1);
+        return Map.entry(prefix, lastInt);
     }
-    
-    public static String incrementName(String name){
-        
-        Entry<String, Integer> lastIntData = getLastInt(name);
-        
-        if(lastIntData.getValue() != -1){
+
+    public static String incrementName(String name) {
+
+        var lastIntData = getLastInt(name);
+
+        if (lastIntData.getValue() != -1) {
             return lastIntData.getKey() + (lastIntData.getValue() + 1);
         }
-        
-        if(name.length() == 1){
-            if(name.replaceAll("^[A-Ya-y]", "").isEmpty()){
+
+        if (name.length() == 1) {
+            if (LETTERS.matcher(name).replaceAll("").isEmpty()) {
                 return Character.toString(name.charAt(0) + 1);
             }
         }
-        
+
         return name;
     }
-    
-    
-    public static long countSpaces(String str){
-        return str.codePoints().filter(c -> c == ' ').count();
+
+    public static long countSpaces(String str) {
+        return count(str, ' ');
     }
+
     public static long count(String str, char toCount){
-        return str.codePoints().filter(c -> c == toCount).count();
+        return str.codePoints()
+                .filter(codePoint -> codePoint == toCount)
+                .count();
     }
-    
-    public static void editTextArea(TextArea area, String newText){
-        List<diff_match_patch.Diff> diffs = new diff_match_patch().diff_main(area.getText(), newText);
-        
-        int index = 0;
-        for(diff_match_patch.Diff diff : diffs){
-            if(diff.operation == diff_match_patch.Operation.INSERT){
-                area.insertText(Math.min(index, area.getText().length()), diff.text);
-            }else if(diff.operation == diff_match_patch.Operation.DELETE){
-                area.deleteText(Math.min(index, area.getText().length()), Math.min(index + diff.text.length(), area.getText().length()));
-            }
-            index += diff.text.length();
-        }
+
+    public static void editTextArea(TextArea area, String newText) {
+
+        var index = new AtomicInteger();
+        var diffs = new diff_match_patch().diff_main(area.getText(), newText);
+
+        diffs.stream()
+            .filter(diff -> diff.operation != EQUAL)
+            .forEach(diff -> {
+
+                var textAreaLength = area.getText().length();
+                var start = Math.min(index.get(), textAreaLength);
+
+                if (diff.operation == INSERT) {
+                    area.insertText(start, diff.text);
+                } else if (diff.operation == DELETE) {
+                    var end = Math.min(index.get() + diff.text.length(), textAreaLength);
+                    area.deleteText(start, end);
+                }
+
+                index.addAndGet(diff.text.length());
+
+            });
+
     }
     
     public static String removeBeforeLastOccurrence(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.lastIndexOf(match);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(index + match.length());
-        
-        return "";
+        return index == -1 ? string : string.substring(index + match.length());
     }
     
     public static String removeAfterLastOccurrence(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.lastIndexOf(match);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
+        return index == -1 ? string : string.substring(0, index);
+
     }
     
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String match){
         if(match.isEmpty()) return string;
+
         int index = string.toLowerCase().lastIndexOf(match.toLowerCase());
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
+        return index == -1 ? string : string.substring(0, index);
     }
     public static String removeAfterLastOccurrenceIgnoringCase(String string, String[] matches){
-        if(matches.length == 0) return string;
-        
-        HashMap<Integer, String> indices = new HashMap<>();
-        for(String str : matches){
-            int index = string.toLowerCase().lastIndexOf(str.toLowerCase());
-            if(index < string.length() && index != -1){
-                indices.put(index, str);
-            }
-        }
-        
-        return indices.entrySet()
-                .stream()
-                .max(Comparator.comparingInt(Entry::getKey))
-                .map(optionalEntry -> string.substring(0, optionalEntry.getKey()))
+        return Arrays.stream(matches)
+                .map(match -> string.toLowerCase().lastIndexOf(match.toLowerCase()))
+                .filter(index -> index != -1)
+                .max(Comparator.naturalOrder())
+                .map(index -> string.substring(0, index))
                 .orElse(string);
     }
-    
-    public static String removeAfter(String string, String rejex){
-        if(rejex.isEmpty()) return "";
-        int index = string.indexOf(rejex);
-        
-        if(index == -1) return string;
-        if(index < string.length()) return string.substring(0, index);
-        
-        return "";
+
+    public static List<Charset> getAvailableCharsets() {
+        var charsets = Set.of(StandardCharsets.UTF_8,
+                StandardCharsets.ISO_8859_1,
+                StandardCharsets.US_ASCII,
+                StandardCharsets.UTF_16LE,
+                StandardCharsets.UTF_16,
+                StandardCharsets.UTF_16BE,
+                Charset.defaultCharset());
+        return List.of(charsets.toArray(new Charset[0]));
     }
-    
-    
-    public static List<Charset> getAvailableCharsets(){
-        ArrayList<Charset> charsets = new ArrayList<>(Arrays.asList(StandardCharsets.UTF_8, StandardCharsets.ISO_8859_1, StandardCharsets.US_ASCII, StandardCharsets.UTF_16LE, StandardCharsets.UTF_16, StandardCharsets.UTF_16BE));
-        if(!charsets.contains(Charset.defaultCharset())) charsets.add(0, Charset.defaultCharset());
-        return charsets;
+
+    public static String[] cleanArray(String[] array) {
+        return Arrays.stream(array).filter(Predicate.not(String::isBlank)).toArray(String[]::new);
     }
-    
-    
-    public static String[] cleanArray(String[] array){
-        return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
-    }
-    
-    public static boolean getAlwaysBoolean(String text){
-        return "true".equalsIgnoreCase(text);
-    }
-    
-    public static Boolean getBoolean(String text){
-        if("true".equalsIgnoreCase(text)){
-            return true;
-        }else if("false".equalsIgnoreCase(text)){
-            return false;
-        }else{
+
+    public static Boolean getBoolean(String text) {
+        try {
+            return Boolean.parseBoolean(text.toLowerCase());
+        } catch (IllegalArgumentException e) {
             return null;
         }
     }
-    
-    public static <T> boolean contains(final T[] array, final T v){
-        if(v == null){
-            return Arrays.stream(array).anyMatch(Objects::isNull);
-        }else{
-            return Arrays.stream(array).anyMatch(e -> e == v || v.equals(e));
-        }
 
+    public static boolean endsIn(final String[] array, String v, boolean caseSensitive) {
+        var finalV = caseSensitive ? v : v.toLowerCase();
+        return Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .anyMatch(e -> caseSensitive ? e.endsWith(finalV) : e.toLowerCase().endsWith(finalV));
     }
-    public static boolean endsIn(final String[] array, String v, boolean kase){
-        if(!kase) v = v.toLowerCase();
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.endsWith(v)) return true;
-            }else{
-                if(e != null && e.toLowerCase().endsWith(v)) return true;
-            }
-            
-        }
-        return false;
+
+    public static boolean contains(final String[] array, final String v) {
+        return contains(array, v, false);
     }
-    public static boolean contains(final String[] array, final String v, boolean kase){
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.endsWith(v)) return true;
-            }else{
-                if(e != null && e.equalsIgnoreCase(v)) return true;
-            }
-        }
-        return false;
+
+    public static boolean contains(final String[] array, final String v, boolean caseSensitive) {
+        return Arrays.stream(array)
+                .filter(Objects::nonNull)
+                .anyMatch(e -> caseSensitive ? e.equals(v) : e.equalsIgnoreCase(v));
     }
-    
-    public static boolean startsIn(String[] array, String v, boolean kase){
-        if(!kase) v = v.toLowerCase();
-        for(final String e : array){
-            if(kase){
-                if(e != null && e.startsWith(v)) return true;
-            }else{
-                if(e != null && e.toLowerCase().startsWith(v)) return true;
-            }
-            
-        }
-        return false;
-    }
-    
-    public static String replaceSymbolsToDigitsIfFrenchLayout(String text){
+
+    public static String replaceSymbolsToDigitsIfFrenchLayout(String text) {
+
         if(!isAzertyLayout()) return text;
-        
-        return text.replace("&", "1").replace("é", "2").replace("\"", "3").replace("'", "4").replace("(", "5")
-                .replace("-", "6").replace("è", "7").replace("_", "8").replace("ç", "9").replace("à", "0");
+
+        var matcher = FRENCH_LAYOUT_CHARACTERS.matcher(text);
+        var sb = new StringBuilder();
+        while (matcher.find()) {
+            matcher.appendReplacement(sb, FRENCH_LAYOUT_CHARACTER_REPLACEMENT_MAP.get(matcher.group()));
+        }
+        matcher.appendTail(sb);
+        return sb.toString();
     }
     
     public static boolean isAzertyLayout(){
-        InputContext is = InputContext.getInstance();
-        return is.getLocale() != null && is.getLocale().getLanguage().equals("fr");
+        var instance = InputContext.getInstance();
+        return instance.getLocale() != null && instance.getLocale().getLanguage().equals("fr");
     }
     
     public static char getCsvSeparator(){
