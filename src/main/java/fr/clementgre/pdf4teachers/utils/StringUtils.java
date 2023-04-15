@@ -13,7 +13,6 @@ import java.awt.im.InputContext;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -55,21 +54,25 @@ public final class StringUtils {
         }
     }
 
-    public static Entry<String, Integer> getLastInt(String expression) {
-        int start = expression.length();
+    public static Map.Entry<String, Integer> getLastInt(String expression) {
+        int index = expression.length() - 1;
+        int lastInt = 0;
+        int multiplier = 1;
+        int lastIndexNonDigit = index;
 
-        for (int i = expression.length() - 1; i >= 0; i--) {
-            if (Character.isDigit(expression.charAt(i))) {
-                start = i;
-            } else {
-                break;
-            }
+        while (index >= 0 && Character.isDigit(expression.charAt(index))) {
+            lastInt += Character.getNumericValue(expression.charAt(index)) * multiplier;
+            multiplier *= 10;
+            lastIndexNonDigit = index - 1;
+            index--;
         }
 
-        if (start == expression.length()) return Map.entry(expression, -1);
+        if (lastIndexNonDigit == expression.length() - 1) {
+            return Map.entry(expression, -1);
+        }
 
-        int end = expression.length();
-        return Map.entry(expression.substring(0, start), Integer.parseInt(expression.substring(start, end)));
+        var prefix = expression.substring(0, lastIndexNonDigit + 1);
+        return Map.entry(prefix, lastInt);
     }
 
     public static String incrementName(String name) {
@@ -88,12 +91,11 @@ public final class StringUtils {
 
         return name;
     }
-    
-    public static long countSpaces(String str){
-        return str.codePoints()
-                .filter(codePoint -> codePoint == ' ')
-                .count();
+
+    public static long countSpaces(String str) {
+        return count(str, ' ');
     }
+
     public static long count(String str, char toCount){
         return str.codePoints()
                 .filter(codePoint -> codePoint == toCount)
@@ -166,8 +168,8 @@ public final class StringUtils {
         return List.of(charsets.toArray(new Charset[0]));
     }
 
-    public static String[] cleanArray(String[] array){
-        return Arrays.stream(array).filter(x -> !x.isBlank()).toArray(String[]::new);
+    public static String[] cleanArray(String[] array) {
+        return Arrays.stream(array).filter(Predicate.not(String::isBlank)).toArray(String[]::new);
     }
 
     public static Boolean getBoolean(String text) {
@@ -178,23 +180,22 @@ public final class StringUtils {
         }
     }
 
-    public static <T> boolean contains(final T[] array, final T v) {
-        return Arrays.stream(array).anyMatch(Predicate.isEqual(v));
-    }
-
-    public static boolean endsIn(final String[] array, String v, boolean kase) {
-        var finalV = kase ? v : v.toLowerCase();
+    public static boolean endsIn(final String[] array, String v, boolean caseSensitive) {
+        var finalV = caseSensitive ? v : v.toLowerCase();
         return Arrays.stream(array)
                 .filter(Objects::nonNull)
-                .anyMatch(e -> kase ? e.endsWith(finalV) : e.toLowerCase().endsWith(finalV));
+                .anyMatch(e -> caseSensitive ? e.endsWith(finalV) : e.toLowerCase().endsWith(finalV));
     }
 
-    public static boolean contains(final String[] array, final String v, boolean kase) {
+    public static boolean contains(final String[] array, final String v) {
+        return contains(array, v, false);
+    }
+
+    public static boolean contains(final String[] array, final String v, boolean caseSensitive) {
         return Arrays.stream(array)
                 .filter(Objects::nonNull)
-                .anyMatch(e -> kase ? e.equals(v) : e.equalsIgnoreCase(v));
+                .anyMatch(e -> caseSensitive ? e.equals(v) : e.equalsIgnoreCase(v));
     }
-
 
     public static String replaceSymbolsToDigitsIfFrenchLayout(String text) {
 
