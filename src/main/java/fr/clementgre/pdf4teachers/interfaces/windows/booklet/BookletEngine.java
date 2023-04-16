@@ -40,7 +40,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
                 if(result == AlreadyExistDialogManager.ResultType.STOP) return;
                 // ResultType.SKIP is never returned for non-recursive operations, and ResultType.OVERWRITE leads to nothing.
             }
-            FilesUtils.copyFileUsingStream(document.getFile(), target);
+            FilesUtils.copyFileUsingStream(document.getFile().toPath(), target.toPath());
         }
         
         if(!makeBooklet) disassemble(document);

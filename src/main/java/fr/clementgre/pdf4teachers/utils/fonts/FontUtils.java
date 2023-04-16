@@ -222,8 +222,8 @@ public class FontUtils {
     public static FontPosture getFontPosture(Font font){
         String[] style = font.getStyle().split(" ");
         
-        if(StringUtils.contains(style, "Italic", false) || StringUtils.contains(style, "Oblique", false)
-                || StringUtils.contains(style, "Slanted", false) || StringUtils.endsIn(style, "Oblique", false)){
+        if(StringUtils.containsIgnoreCase(style, "Italic") || StringUtils.containsIgnoreCase(style, "Oblique")
+                || StringUtils.containsIgnoreCase(style, "Slanted") || StringUtils.endsIn(style, "Oblique", false)){
             return FontPosture.ITALIC;
         }
         return FontPosture.REGULAR;

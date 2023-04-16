@@ -111,7 +111,7 @@ public class SystemFontsMapper {
                     Font[] fonts = Font.loadFonts(new FileInputStream(file.getAbsolutePath()), -1);
                     if(fonts == null) continue;
                     if (Arrays.stream(fonts)
-                            .filter(font -> StringUtils.contains(systemFonts, font.getFamily()))
+                            .filter(font -> StringUtils.containsIgnoreCase(systemFonts, font.getFamily()))
                             .anyMatch(font -> !addFontToMap(font, file.getAbsolutePath()))) {
                         pdfBoxErrors++;
                     }

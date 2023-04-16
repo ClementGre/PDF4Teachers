@@ -188,8 +188,8 @@ public final class StringUtils {
                 .filter(Objects::nonNull)
                 .anyMatch(e -> caseSensitive ? e.endsWith(finalV) : e.toLowerCase().endsWith(finalV));
     }
-    
-    public static boolean contains(final String[] array, final String v){
+
+    public static boolean containsIgnoreCase(final String[] array, final String v){
         return contains(array, v, false);
     }
     
