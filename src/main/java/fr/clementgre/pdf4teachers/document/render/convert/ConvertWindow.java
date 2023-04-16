@@ -333,7 +333,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 definition.applyCss(); // Prevent the black text on black bg bug
                 
                 String data = StringUtils.removeAfterLastOccurrence(newValue, "Mp");
-                Double mp = MathUtils.getDouble(data);
+                Double mp = MathUtils.parseDoubleOrNull(data);
                 if(mp != null){
                     this.mp = mp;
                     updateWidthAndHeight();
@@ -345,8 +345,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
                 
                 String data = StringUtils.removeAfterLastOccurrence(newValue, " (");
                 if(data.split(":").length == 2){
-                    Integer widthFactor = MathUtils.getInt(data.split(":")[0]);
-                    Integer heightFactor = MathUtils.getInt(data.split(":")[1]);
+                    Integer widthFactor = MathUtils.parseIntOrNull(data.split(":")[0]);
+                    Integer heightFactor = MathUtils.parseIntOrNull(data.split(":")[1]);
                     if(widthFactor != null && heightFactor != null){
                         this.widthFactor = widthFactor;
                         this.heightFactor = heightFactor;
@@ -392,7 +392,7 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             if(definitions.contains(MainWindow.userData.lastConvertDefinition))
                 definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
             else{
-                Double mp = MathUtils.getDouble(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
+                Double mp = MathUtils.parseDoubleOrNull(StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertDefinition, "Mp"));
                 if(mp != null){
                     definition.getSelectionModel().select(MainWindow.userData.lastConvertDefinition);
                     
@@ -404,8 +404,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
             else{
                 String data = StringUtils.removeAfterLastOccurrence(MainWindow.userData.lastConvertFormat, " (");
                 if(data.split(":").length == 2){
-                    Integer widthFactor = MathUtils.getInt(data.split(":")[0]);
-                    Integer heightFactor = MathUtils.getInt(data.split(":")[1]);
+                    Integer widthFactor = MathUtils.parseIntOrNull(data.split(":")[0]);
+                    Integer heightFactor = MathUtils.parseIntOrNull(data.split(":")[1]);
                     if(widthFactor != null && heightFactor != null){
                         format.getSelectionModel().select(MainWindow.userData.lastConvertFormat);
                         

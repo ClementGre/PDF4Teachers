@@ -5,61 +5,61 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
-public class MathUtils {
-    
+public final class MathUtils {
+
     // Returns in function of the sign of val
-    public static double averageNegativeOrPositive(double val, double negative, double positive){
+    public static double selectValueBasedOnSign(double val, double negative, double positive) {
         return val < 0 ? negative : positive;
     }
-    
-    public static double clamp(double val, double min, double max){
+
+    public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
     }
-    public static float clamp(float val, float min, float max){
+
+    public static float clamp(float val, float min, float max) {
         return Math.max(min, Math.min(max, val));
     }
-    public static int clamp(int val, int min, int max){
+
+    public static int clamp(int val, int min, int max) {
         return Math.max(min, Math.min(max, val));
     }
-    public static Double getDouble(String text){
-        try{
+
+    public static Double parseDoubleOrNull(String text) {
+        try {
             return Double.parseDouble(text);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return null;
         }
     }
-    public static Integer getInt(String text){
-        try{
+
+    public static Integer parseIntOrNull(String text) {
+        try {
             return Integer.parseInt(text);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return null;
         }
     }
-    public static int getAlwaysInt(String text){
-        try{
-            return Integer.parseInt(text);
-        }catch(NumberFormatException e){
+
+    public static Long parseLongOrNull(String text) {
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public static long parseLongOrDefault(String text) {
+        try {
+            return Long.parseLong(text);
+        } catch (NumberFormatException e) {
             return 0;
         }
     }
-    public static Long getLong(String text){
-        try{
-            return Long.parseLong(text);
-        }catch(NumberFormatException e){
-            return null;
-        }
-    }
-    public static long getAlwaysLong(String text){
-        try{
-            return Long.parseLong(text);
-        }catch(NumberFormatException e){
-            return 0;
-        }
-    }
-    public static double getAlwaysDouble(String text){
-        try{
+
+    public static double parseDoubleOrDefault(String text) {
+        try {
             return Double.parseDouble(text);
-        }catch(NumberFormatException e){
+        } catch (NumberFormatException e) {
             return 0;
         }
     }
