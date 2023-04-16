@@ -561,7 +561,7 @@ public class PDFPagesEditor {
                                 ImageIO.write(image, "png", data.getKey());
                             }catch(IOException e){
                                 Log.e(e);
-                                boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey())), e.getMessage(), recursive).execute());
+                                boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey().toPath())), e.getMessage(), recursive).execute());
                                 if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                                 if(result) return TwoStepListAction.ProcessResult.STOP;
                                 else return TwoStepListAction.ProcessResult.SKIPPED;

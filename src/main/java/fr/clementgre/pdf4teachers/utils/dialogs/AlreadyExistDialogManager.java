@@ -62,10 +62,10 @@ public class AlreadyExistDialogManager{
 
         if(recursive){
             alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()) + "\n"
-                    + TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
+                    + TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile().toPath())));
         }else{
             alert.setHeaderText(TR.tr("dialog.file.alreadyExist.header", file.getName()));
-            alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile())));
+            alert.setContentText(TR.tr("dialog.file.alreadyExist.details", FilesUtils.getPathReplacingUserHome(file.getParentFile().toPath())));
         }
 
 

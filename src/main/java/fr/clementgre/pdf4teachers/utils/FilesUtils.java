@@ -5,7 +5,6 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
@@ -14,13 +13,13 @@ import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
-import java.util.stream.Stream;
 
 public final class FilesUtils {
-
-    public static File HOME_DIR = new File(System.getProperty("user.home"));
 
     public static long getSize(Path path) {
         try {
@@ -74,18 +73,17 @@ public final class FilesUtils {
         return fileName.substring(lastIndexOfDot + 1).toLowerCase();
     }
 
-    public static boolean isInSameDir(File file1, File file2) {
-        return file1.getParentFile().getAbsolutePath().equals(file2.getParentFile().getAbsolutePath());
+    public static boolean isInSameDir(Path firstPath, Path secondPath) {
+        return firstPath.getParent().equals(secondPath.getParent());
     }
 
-    public static String getPathReplacingUserHome(File file) {
-        return getPathReplacingUserHome(file.getAbsolutePath());
+    public static String getPathReplacingUserHome(Path path) {
+        return getPathReplacingUserHome(path.toString());
     }
 
-    public static String getPathReplacingUserHome(String path) {
-        if (path.startsWith(System.getProperty("user.home"))) {
-            return path.replaceFirst(Pattern.quote(System.getProperty("user.home")), "~");
-        } else return path;
+    public static String getPathReplacingUserHome(String pathString) {
+        String userHome = System.getProperty("user.home");
+        return pathString.startsWith(userHome) ? pathString.replaceFirst(Pattern.quote(userHome), "~") : pathString;
     }
 
     public static List<File> listFiles(File dir, String[] extensions, boolean recursive) {
