@@ -22,8 +22,8 @@ public class FilesUtils {
 
     public static File HOME_DIR = new File(System.getProperty("user.home"));
 
-    public static long getSize(File f) {
-        return getSize(f.toPath());
+    public static long getSize(File file) {
+        return getSize(file.toPath());
     }
 
     public static long getSize(Path path) {
