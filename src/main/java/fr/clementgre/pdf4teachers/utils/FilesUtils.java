@@ -18,7 +18,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class FilesUtils {
+public final class FilesUtils {
 
     public static File HOME_DIR = new File(System.getProperty("user.home"));
 
