@@ -12,26 +12,41 @@ import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.dialogs.AlertIconType;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class FilesUtils {
 
     public static File HOME_DIR = new File(System.getProperty("user.home"));
 
     public static long getSize(File f) {
-        if (f.isFile()) {
-            return (f.length());
+        return getSize(f.toPath());
+    }
+
+    public static long getSize(Path path) {
+        try {
+            if (Files.isRegularFile(path)) {
+                return Files.size(path);
+            }
+
+            try (Stream<Path> paths = Files.walk(path)) {
+                return paths
+                        .filter(Files::isRegularFile)
+                        .mapToLong(p -> {
+                            try {
+                                return Files.size(p);
+                            } catch (IOException e) {
+                                return 0;
+                            }
+                        })
+                        .sum();
+            }
+        } catch (IOException e) {
+            return 0;
         }
-
-        // DIR
-
-        File[] files = f.listFiles();
-        if (files == null) return 0;
-
-        return Arrays.stream(files)
-                .mapToLong(FilesUtils::getSize)
-                .sum();
     }
 
     public static float convertOctetToMo(long octet) {
