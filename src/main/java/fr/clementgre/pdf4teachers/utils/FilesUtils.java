@@ -28,7 +28,7 @@ public final class FilesUtils {
                 return Files.size(path);
             }
 
-            try (Stream<Path> paths = Files.walk(path)) {
+            try (var paths = Files.walk(path)) {
                 return paths
                         .filter(Files::isRegularFile)
                         .mapToLong(p -> {
@@ -51,19 +51,27 @@ public final class FilesUtils {
 
     }
 
-    public static String getExtension(File file) {
-        return getExtension(file.getName());
+    public static String getExtension(Path path) {
+        return getExtension(path.getFileName().toString());
     }
-    
-    public static String getNameWithoutExtension(File file){
-        return StringUtils.removeAfterLastOccurrence(file.getName(), "." + FilesUtils.getExtension(file));
+
+    public static String getNameWithoutExtension(Path path) {
+        var fileName = path.getFileName().toString();
+        int lastIndexOfDot = fileName.lastIndexOf('.');
+
+        if (lastIndexOfDot == -1) {
+            return fileName;
+        }
+
+        return fileName.substring(0, lastIndexOfDot);
     }
-    
+
+
     // Always return lower case extension without the dot.
     public static String getExtension(String fileName) {
-        String[] splitted = fileName.split(Pattern.quote("."));
-        if(splitted.length == 0 || splitted.length == 1) return "";
-        return splitted[splitted.length - 1].toLowerCase();
+        int lastIndexOfDot = fileName.lastIndexOf('.');
+        if (lastIndexOfDot == -1) return "";
+        return fileName.substring(lastIndexOfDot + 1).toLowerCase();
     }
 
     public static boolean isInSameDir(File file1, File file2) {

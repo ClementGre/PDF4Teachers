@@ -131,7 +131,7 @@ public class SkillsCSVWriter {
                 SkillTableElement skillTableElement = (SkillTableElement) Arrays.stream(elements).filter(e -> e instanceof SkillTableElement).findFirst().orElse(null);
     
                 if(skillTableElement != null && skillTableElement.getAssessmentId() == assessment.getId()){
-                    fileGrades.add(new EditionGrades(FilesUtils.getNameWithoutExtension(Edition.getFileFromEdit(edit)), skillTableElement.getEditionSkills()));
+                    fileGrades.add(new EditionGrades(FilesUtils.getNameWithoutExtension(Edition.getFileFromEdit(edit).toPath()), skillTableElement.getEditionSkills()));
                 }
                 
                 
