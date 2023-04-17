@@ -123,7 +123,7 @@ public class LockManager {
     public static List<File> getToOpenFiles(List<String> rawArgs){
         return rawArgs.stream()
                 .map(File::new)
-                .filter(file -> file.exists() && FilesUtils.getExtension(file).equals("pdf"))
+                .filter(file -> file.exists() && FilesUtils.getExtension(file.toPath()).equals("pdf"))
                 .collect(Collectors.toList());
     }
 }

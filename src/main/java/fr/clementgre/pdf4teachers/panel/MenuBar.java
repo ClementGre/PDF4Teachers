@@ -317,13 +317,13 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools5DeleteAllEdits.setOnAction((ActionEvent e) -> {
             CustomAlert dialog = new CustomAlert(Alert.AlertType.WARNING, TR.tr("dialog.deleteEdits.confirmation.title"), TR.tr("dialog.deleteEdits.confirmation.header"));
             
-            float yesButSize = FilesUtils.convertOctetToMo(FilesUtils.getSize(new File(Main.dataFolder + "editions")));
+            float yesButSize = FilesUtils.convertBytesToMegaBytes(FilesUtils.getSize(new File(Main.dataFolder + "editions").toPath()));
             float yesSize = 0L;
             for(File file : MainWindow.filesTab.files.getItems()){
                 File editFile = Edition.getEditFile(file);
-                yesSize += FilesUtils.getSize(editFile);
+                yesSize += FilesUtils.getSize(editFile.toPath());
             }
-            yesSize = FilesUtils.convertOctetToMo((long) yesSize);
+            yesSize = FilesUtils.convertBytesToMegaBytes((long) yesSize);
             
             dialog.addNoButton(ButtonPosition.CLOSE);
             dialog.addButton(TR.tr("actions.yes") + " (" + yesSize + "Mi" + TR.tr("data.byte") + ")", ButtonPosition.DEFAULT);
@@ -383,7 +383,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                                         Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
                                     }else{
                                         WrongAlert alert = new WrongAlert(TR.tr("dialog.loadSameNameEdit.fileNotFound.title"),
-                                                TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile())), true);
+                                                TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile().toPath())), true);
                                         if(alert.execute()) return;
                                     }
                                 }

@@ -93,7 +93,7 @@ public class ExifUtils {
         
     }
     public long getImageSize(){
-        return FilesUtils.getSize(file);
+        return FilesUtils.getSize(file.toPath());
     }
     
     public static ImageTransform convertOrientationToTransform(int orientationInt){

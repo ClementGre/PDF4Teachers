@@ -160,7 +160,7 @@ public class EditionExporter {
                             config.save();
                         }catch(IOException e){
                             Log.e(e);
-                            boolean result = new ErrorAlert(TR.tr("dialog.importEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getFile()), config.getName()), e.getMessage(), recursive).execute();
+                            boolean result = new ErrorAlert(TR.tr("dialog.importEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getFile().toPath()), config.getName()), e.getMessage(), recursive).execute();
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
                             else return TwoStepListAction.ProcessResult.SKIPPED;
@@ -248,7 +248,7 @@ public class EditionExporter {
             @SuppressWarnings("unchecked")
             @Override
             public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{
-                if(!FilesUtils.isInSameDir(pdfFile, MainWindow.mainScreen.document.getFile()))
+                if(!FilesUtils.isInSameDir(pdfFile.toPath(), MainWindow.mainScreen.document.getFile().toPath()))
                     return Map.entry(new Config(), 1); // Check same dir
                 
                 File editFile = Edition.getEditFile(pdfFile);
@@ -302,7 +302,7 @@ public class EditionExporter {
                     config.saveToDestFile();
                 }catch(IOException e){
                     Log.e(e);
-                    boolean result = new ErrorAlert(TR.tr("dialog.exportEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getDestFile()), config.getName()), e.getMessage(), recursive).execute();
+                    boolean result = new ErrorAlert(TR.tr("dialog.exportEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getDestFile().toPath()), config.getName()), e.getMessage(), recursive).execute();
                     if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     if(result) return TwoStepListAction.ProcessResult.STOP;
                     else return TwoStepListAction.ProcessResult.SKIPPED;
@@ -317,7 +317,7 @@ public class EditionExporter {
                         oneFileConfig.save();
                     }catch(IOException e){
                         Log.e(e);
-                        new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(oneFileConfig.getDestFile())), e.getMessage(), false).showAndWait();
+                        new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(oneFileConfig.getDestFile().toPath())), e.getMessage(), false).showAndWait();
                         return;
                     }
                 }

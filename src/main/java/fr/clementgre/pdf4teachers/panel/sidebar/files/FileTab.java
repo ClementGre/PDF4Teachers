@@ -339,8 +339,8 @@ public class FileTab extends SideTab {
     
     private void copyFileDialog(String header, String fieldText, File file, boolean move){
         TextInputAlert alert = new TextInputAlert(header, header, fieldText);
-        String extension = FilesUtils.getExtension(file);
-        String name = FilesUtils.getNameWithoutExtension(file);
+        String extension = FilesUtils.getExtension(file.toPath());
+        String name = FilesUtils.getNameWithoutExtension(file.toPath());
         alert.setText(name);
         if(alert.getShowAndWaitIsDefaultButton() && !alert.getText().isBlank() && !(alert.getText().equals(name) && move)){
             File newFile = new File(file.getParentFile().getAbsolutePath() + File.separator + alert.getText() + "." + extension);

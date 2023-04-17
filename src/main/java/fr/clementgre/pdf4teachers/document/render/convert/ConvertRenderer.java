@@ -197,7 +197,7 @@ public class ConvertRenderer {
     }
     
     public static boolean isGoodFormat(File file){
-        String ext = FilesUtils.getExtension(file);
+        String ext = FilesUtils.getExtension(file.toPath());
         if(!file.exists()) ext = "";
         return ImageUtils.ACCEPTED_EXTENSIONS.contains(ext) && !file.isHidden();
     }
