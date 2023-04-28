@@ -209,7 +209,7 @@ public class TextElement extends Element {
     }
     @Override
     public void size(double scale){
-        setFont(FontUtils.getFont(getFont().getFamily(), FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC, FontUtils.getFontWeight(getFont()) == FontWeight.BOLD, getFont().getSize()*scale));
+        setFont(FontUtils.getFont(getFont().getFamily(), FontUtils.getFontPosture(getFont()) == FontPosture.ITALIC, FontUtils.getFontWeight(getFont()) == FontWeight.BOLD, getFont().getSize() * scale));
         Platform.runLater(() -> checkLocation(getLayoutX(), getLayoutY(), false));
     }
     
@@ -575,3 +575,4 @@ public class TextElement extends Element {
     }
     
 }
+

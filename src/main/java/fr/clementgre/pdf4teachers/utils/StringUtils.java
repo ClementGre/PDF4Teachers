@@ -106,27 +106,24 @@ public final class StringUtils {
     
     public static void editTextArea(TextArea area, String newText){
         
-        var index = new AtomicInteger();
-        var diffs = new diff_match_patch().diff_main(area.getText(), newText);
-        
-        diffs.stream()
-                .filter(diff -> diff.operation != EQUAL)
-                .forEach(diff -> {
-                    
-                    var textAreaLength = area.getText().length();
-                    var start = Math.min(index.get(), textAreaLength);
-                    
-                    if(diff.operation == INSERT){
-                        area.insertText(start, diff.text);
-                    }else if(diff.operation == DELETE){
-                        var end = Math.min(index.get() + diff.text.length(), textAreaLength);
-                        area.deleteText(start, end);
-                    }
-                    
-                    index.addAndGet(diff.text.length());
-                    
-                });
-        
+        AtomicInteger index = new AtomicInteger();
+        LinkedList<diff_match_patch.Diff> diffs = new diff_match_patch().diff_main(area.getText(), newText);
+
+        diffs.forEach(diff -> {
+            if(diff.operation != EQUAL){
+                int textAreaLength = area.getText().length();
+                int start = Math.min(index.get(), textAreaLength);
+                
+                if(diff.operation == INSERT){
+                    area.insertText(start, diff.text);
+                }else if(diff.operation == DELETE){
+                    int end = Math.min(index.get() + diff.text.length(), textAreaLength);
+                    area.deleteText(start, end);
+                }
+            }
+            index.addAndGet(diff.text.length());
+
+        });
     }
     
     public static String removeBeforeLastOccurrence(String string, String match){
