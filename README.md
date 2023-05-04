@@ -16,7 +16,7 @@
   <a href="https://pdf4teachers.org">https://pdf4teachers.org</a>
 </h3>
 <p align="center">
-  <a href="#presentation">Presentation</a> | <a href="#features">Features</a> | <a href="#dependencies">Dependencies</a> | <a href="#code-organisation">Code organisation</a><br/>
+  <a href="#presentation">Presentation</a> | <a href="#features">Features</a> | <a href="#dependencies">Dependencies</a> | <a href="#code-organization">Code organization</a><br/>
   PDF editing software in large quantities designed for teachers.<br/><br/>
   <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/images/banner-flat.png" alt="Logo" width="690"/><br/>
 </p>
@@ -127,8 +127,8 @@ See [pdf4teachers.org/Contribute](https://pdf4teachers.org/Contribute/) for more
 ## Contribute to the code
 
 PDF4Teachers has now achieved all the main goals of the project, but is still maintained and improved. If you want to
-contribute, you will need a lot of time to deep dive into the code (see <a href="#code-organisation">Code
-organisation</a>), you can then open a pull request.
+contribute, you will need a lot of time to deep dive into the code (see <a href="#code-organization">Code
+organization</a>), you can then open a pull request.
 
 As detailed in the <a href="#dependencies">Dependencies</a> section, PDF4Teachers uses gradlew and the source code can
 be run with `gradlew run` with the JDK 17 in your ``JAVA_HOME`` environment variable.
