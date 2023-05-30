@@ -122,9 +122,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     
     private final MenuItem tools4PdfTools1Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
             TR.tr("bookletWindow.description"));
-    private final MenuItem tools4PdfTools2Split = createMenuItem(TR.tr("splitPdfWindow.title"), SVGPathIcons.CUT, null,
+    private final MenuItem tools4PdfTools2SplitInterval = createMenuItem(TR.tr("splitPdfWindow.interval.title"), SVGPathIcons.CUT, null,
             TR.tr("splitPdfWindow.description"));
-    private final MenuItem tools4PdfTools3SplitSelection = createMenuItem(TR.tr("splitPdfWindow.selection.title"), SVGPathIcons.CUT, null,
+    private final MenuItem tools4PdfTools3SplitColor = createMenuItem(TR.tr("splitPdfWindow.color.title"), SVGPathIcons.CUT, null,
+            TR.tr("splitPdfWindow.description"));
+    private final MenuItem tools4PdfTools4SplitSelection = createMenuItem(TR.tr("splitPdfWindow.selection.title"), SVGPathIcons.CUT, null,
             TR.tr("splitPdfWindow.selection.description"));
     
     private final MenuItem tools5DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
@@ -216,7 +218,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         ////////// TOOLS //////////
         
         tools3AddPages.getItems().add(new MenuItem(""));
-        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2Split, tools4PdfTools3SplitSelection);
+        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2SplitInterval, tools4PdfTools3SplitColor, tools4PdfTools4SplitSelection);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
         tools8Debug.getItems().add(tools8Debug1OpenConsole);
@@ -301,17 +303,21 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.numberOfPages, true, isSystemMenuBarSupported()));
             NodeMenuItem.setupMenu(tools3AddPages);
         });
-    
+        
         tools4PdfTools1Booklet.setOnAction(e -> new BookletWindow());
-        tools4PdfTools2Split.setOnAction(e -> {
+        tools4PdfTools2SplitInterval.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
-            new SplitWindow(false);
+            new SplitWindow(SplitWindow.SplitType.INTERVAL);
         });
-        tools4PdfTools3SplitSelection.setOnAction(e -> {
+        tools4PdfTools3SplitColor.setOnAction(e -> {
+            MainWindow.mainScreen.setIsEditPagesMode(true);
+            new SplitWindow(SplitWindow.SplitType.COLOR);
+        });
+        tools4PdfTools4SplitSelection.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
             if(MainWindow.mainScreen.document.getSelectedPages().isEmpty() || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();
-            }else new SplitWindow(true);
+            }else new SplitWindow(SplitWindow.SplitType.SELECTION);
         });
         
         tools5DeleteAllEdits.setOnAction((ActionEvent e) -> {
@@ -371,14 +377,14 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                         MainWindow.mainScreen.document.edition.clearEdit(false);
                         Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
                         MainWindow.mainScreen.document.loadEdition(false);
-
+                        
                         // Other documents of the same folder in the list
                         if(option == ButtonPosition.OTHER_RIGHT){
-    
+                            
                             for(File otherFileDest : MainWindow.filesTab.files.getItems()){
                                 if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
                                     File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
-            
+                                    
                                     if(fromEditFile.exists()){
                                         Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
                                     }else{
@@ -409,7 +415,11 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         tools8Debug3OpenEditionFile.setOnAction((e) -> {
             File file = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
             if(!file.exists()){
-                try{file.createNewFile();}catch(IOException ex){ Log.eNotified(ex); }
+                try{
+                    file.createNewFile();
+                }catch(IOException ex){
+                    Log.eNotified(ex);
+                }
             }
             PlatformUtils.openFile(file.getAbsolutePath());
         });
@@ -646,7 +656,8 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
             if(keyCombinaison != null){
-                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) menuItem.setAccelerator(keyCombinaison);
+                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11)))
+                    menuItem.setAccelerator(keyCombinaison);
             }
             if(disableIfNoDoc){
                 menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));

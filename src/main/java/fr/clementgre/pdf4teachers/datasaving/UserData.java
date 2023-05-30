@@ -171,6 +171,8 @@ public class UserData {
     public int splitSensibility = 50;
     @UserDataObject(path = "splitPdf.keepSelectedPages")
     public boolean splitPdfKeepSelectedPages;
+    @UserDataObject(path = "splitPdf.interval")
+    public int splitPdfInterval;
     
     // auto tips
     @UserDataObject(path = "AutoTipsValidated")

@@ -43,6 +43,8 @@ public class SplitEngine {
         out.mkdirs();
         
         boolean recursive = sectionsBounds.size() > 2;
+        
+        Log.d("Splitting PDF with bounds: " + sectionsBounds);
     
         AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(recursive);
         new TwoStepListAction<>(true, recursive, new TwoStepListInterface<ExportPart, ExportPart>() {
@@ -162,7 +164,22 @@ public class SplitEngine {
     public int countMatchPages(){
         int lastPage = MainWindow.mainScreen.document.numberOfPages - 1;
         
-        if(splitWindow.selection){
+        if(splitWindow.splitType == SplitWindow.SplitType.INTERVAL){
+            sectionsBounds.clear();
+            MainWindow.mainScreen.document.clearSelectedPages();
+            sectionsBounds.add(0);
+            MainWindow.mainScreen.document.addSelectedPage(0);
+            
+            int interval = splitWindow.getInterval();
+            for(int i = interval-1; i <= lastPage; i+=interval){
+                sectionsBounds.add(i); // Close section
+                if(i != lastPage){
+                    sectionsBounds.add(i+1); // Open next section
+                    MainWindow.mainScreen.document.addSelectedPage(i+1);
+                }
+            }
+        
+        }else if(splitWindow.splitType == SplitWindow.SplitType.SELECTION){
             sectionsBounds.clear();
             List<Integer> selected = MainWindow.mainScreen.document.getSelectedPages().stream().sorted().toList();
     
@@ -186,7 +203,7 @@ public class SplitEngine {
                 }
                 lastSelected = page;
             }
-        }else{
+        }else if(splitWindow.splitType == SplitWindow.SplitType.COLOR){
             if(colors.isEmpty()) return -1;
     
             Color match = splitWindow.getColor();
