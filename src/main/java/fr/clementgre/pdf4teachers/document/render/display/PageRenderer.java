@@ -221,7 +221,7 @@ public class PageRenderer extends Pane {
                     if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
-                        PaintTab.draggingElement = item.addToDocument();
+                        PaintTab.draggingElement = item.addToDocument(true);
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth() / 2, e.getY() - PaintTab.draggingElement.getHeight() / 2, false);
                     }
                 }else if(PaintTab.draggingItem instanceof VectorGridElement item){ // Drag VectorElement
@@ -230,7 +230,7 @@ public class PageRenderer extends Pane {
                     if(!PlatformUtils.isLinux()) menu.hide(); // On Linux, hiding the menu makes the drag cancelled
                     
                     if(PaintTab.draggingElement == null){ // Add to document
-                        PaintTab.draggingElement = item.addToDocument(false);
+                        PaintTab.draggingElement = item.addToDocument(false, true);
                         PaintTab.draggingElement.checkLocation(e.getX() - PaintTab.draggingElement.getWidth() / 2, e.getY() - PaintTab.draggingElement.getHeight() / 2, false);
                     }
                     

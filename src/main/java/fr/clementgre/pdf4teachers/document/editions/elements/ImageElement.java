@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -33,18 +33,18 @@ import java.util.LinkedHashMap;
 import java.util.Objects;
 
 public class ImageElement extends GraphicElement {
-    
+
     // imageId
-    
+
     private boolean notFound;
     private Image image;
     private final StringProperty imageId = new SimpleStringProperty();
     private ImageData linkedImageData;
-    
+
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId, ImageData linkedImageData){
         super(x, y, pageNumber, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
-        
+
         if(linkedImageData != null){
             this.linkedImageData = linkedImageData;
             realWidth.addListener((observable, oldValue, newValue) -> {
@@ -63,7 +63,7 @@ public class ImageElement extends GraphicElement {
                 this.linkedImageData = null;
             });
         }
-        
+
         if(hasPage && getPage() != null){
             updateImage(true);
             setupGeneral();
@@ -72,7 +72,7 @@ public class ImageElement extends GraphicElement {
     public ImageElement(int x, int y, int pageNumber, boolean hasPage, int width, int height, RepeatMode repeatMode, ResizeMode resizeMode, String imageId){
         super(x, y, pageNumber, width, height, repeatMode, resizeMode);
         this.imageId.set(imageId);
-        
+
         if(hasPage && getPage() != null){
             updateImage(true);
             setupGeneral();
@@ -85,20 +85,20 @@ public class ImageElement extends GraphicElement {
         checkLocation(x, y, false);
         updateImage(false);
     }
-    
+
     // SETUP / EVENT CALL BACK
-    
+
     @Override
     protected void setupBindings(){
         super.setupBindings();
         imageId.addListener((observable, oldValue, newValue) -> {
             updateImage(false);
             Edition.setUnsave("ImageElement changed");
-            
+
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
                     || !MainWindow.mainScreen.isNextUndoActionProperty(imageId)){
-                
+
                 MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.UNDO));
             }
         });
@@ -111,36 +111,36 @@ public class ImageElement extends GraphicElement {
             Edition.setUnsave("ImageElement changed");
             MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
         });
-        
+
     }
-    
+
     @Override
     protected void onMouseRelease(){
         super.onMouseRelease();
     }
     @Override
     public void onDoubleClick(){
-    
+
     }
-    
+
     @Override
     protected void setupMenu(){
         super.setupMenu();
-        
+
         NodeRadioMenuItem isFavoriteItem = new NodeRadioMenuItem(TR.tr("graphicElement.contextMenu.favorite"), true, true, false);
-        
+
         menu.getItems().addAll(isFavoriteItem);
         menu.setOnShowing(e -> {
             isFavoriteItem.setSelected(MainWindow.paintTab.favouriteImages.isFavoriteImage(this));
         });
-        
+
         isFavoriteItem.setOnAction((event) -> {
             linkedImageData = MainWindow.paintTab.favouriteImages.toggleFavoriteImage(this);
         });
     }
-    
+
     // ACTIONS
-    
+
     @Override
     public void select(){
         super.select();
@@ -148,9 +148,9 @@ public class ImageElement extends GraphicElement {
     }
     @Override
     public void addedToDocument(boolean markAsUnsave){
-    
+
     }
-    
+
     @Override
     public void removedFromDocument(boolean markAsUnsave){
         super.removedFromDocument(markAsUnsave);
@@ -164,47 +164,47 @@ public class ImageElement extends GraphicElement {
         super.restoredToDocument();
         updateImage(false);
     }
-    
+
     // READER AND WRITERS
-    
+
     @Override
     public LinkedHashMap<Object, Object> getYAMLData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
         data.put("imageId", getImageId());
-        
+
         return data;
     }
-    
+
     public static void readYAMLDataAndCreate(HashMap<String, Object> data, int page){
         ImageElement element = readYAMLDataAndGive(data, true, page);
         if(MainWindow.mainScreen.document.getPagesNumber() > element.getPageNumber())
             MainWindow.mainScreen.document.getPage(element.getPageNumber()).addElement(element, false, UType.NO_UNDO);
     }
-    
+
     public static ImageElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, int page){
-        
+
         int x = (int) Config.getLong(data, "x");
         int y = (int) Config.getLong(data, "y");
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
         String imageId = Config.getString(data, "imageId");
-        
+
         RepeatMode repeatMode = RepeatMode.valueOf(Config.getString(data, "repeatMode"));
         ResizeMode resizeMode = ResizeMode.valueOf(Config.getString(data, "resizeMode"));
-        
+
         return new ImageElement(x, y, page, hasPage, width, height, repeatMode, resizeMode, imageId);
     }
-    
+
     // SPECIFIC METHODS
-    
-    
+
+
     @Override
     public void incrementUsesAndLastUse(){
         if(getLinkedImageData() != null){
             getLinkedImageData().incrementUsesAndLastUse();
         }
     }
-    
+
     @Override
     public double getRatio(){
         if(image == null){
@@ -213,11 +213,11 @@ public class ImageElement extends GraphicElement {
         }
         return image.getWidth() / image.getHeight();
     }
-    
+
     public void updateImage(boolean checkAutoSize){
         renderImageAsync(() -> {
             updateBackground();
-            
+
             if(checkAutoSize && getRealWidth() == 0 && getRealHeight() == 0){
                 defineSizeAuto();
             }else{
@@ -226,29 +226,29 @@ public class ImageElement extends GraphicElement {
             }
         });
     }
-    
+
     @Override
     public void defineSizeAuto(){
         double imgWidth = image.getWidth();
         double imgHeight = image.getHeight();
         double width = Math.min(getPage().getWidth() / 3, imgWidth);
         double height = imgHeight * width / imgWidth;
-        
+
         checkLocation(getRealX() * getPage().getWidth() / GRID_WIDTH, getRealY() * getPage().getHeight() / GRID_HEIGHT,
                 width, height, false);
     }
-    
+
     public void updateBackground(){
         BackgroundRepeat repeat = getRepeatMode() == RepeatMode.MULTIPLY ? BackgroundRepeat.REPEAT : BackgroundRepeat.NO_REPEAT;
         BackgroundSize size = new BackgroundSize(1, 1, true, true,
                 getRepeatMode() == RepeatMode.MULTIPLY, getRepeatMode() == RepeatMode.CROP);
         BackgroundPosition position = BackgroundPosition.DEFAULT;
-        
+
         if(notFound){
             repeat = BackgroundRepeat.REPEAT;
             size = new BackgroundSize(1, 1, true, true, true, false);
         }
-        
+
         if(image == null){
             BackgroundRepeat finalRepeat = repeat;
             BackgroundSize finalSize = size;
@@ -257,17 +257,17 @@ public class ImageElement extends GraphicElement {
                 setBackground(new Background(new BackgroundImage(image, finalRepeat, finalRepeat, position, finalSize)));
             });
         }else setBackground(new Background(new BackgroundImage(image, repeat, repeat, position, size)));
-        
-        
+
+
     }
-    
+
     private void renderImageAsync(CallBack callBack){
         new Thread(() -> {
             image = renderImage(0, 0);
-            
+
             notFound = image == null;
             if(notFound) image = getNotFoundImage();
-            
+
             Platform.runLater(callBack::call);
         }, "ImageElement Renderer").start();
     }
@@ -280,7 +280,7 @@ public class ImageElement extends GraphicElement {
             try{
                 Image image = new Image("file:///" + imageID, requestedWidth, requestedHeight == -1 ? 999999 : requestedHeight, requestedHeight == -1, true);
                 if(image.getWidth() == 0) return null;
-                
+
                 int rotate = new ExifUtils(new File(imageID)).getImageExifRotation().getRotateAngle();
                 return ImageUtils.rotateImage(image, rotate);
             }catch(Exception e){
@@ -290,18 +290,18 @@ public class ImageElement extends GraphicElement {
         }
         return null;
     }
-    
+
     public static Image getNotFoundImage(){
         return new Image(Objects.requireNonNull(ImageElement.class.getResourceAsStream("/img/painttab/not_found.png")));
     }
-    
+
     @Override
     public Element clone(){
         return new ImageElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(), getImageId());
     }
-    
+
     // GETTER/SETTER
-    
+
     @Override
     public String getElementName(boolean plural){
         return getElementNameStatic(plural);
@@ -310,7 +310,7 @@ public class ImageElement extends GraphicElement {
         if(plural) return TR.tr("elements.name.images");
         else return TR.tr("elements.name.image");
     }
-    
+
     public String getImageId(){
         return imageId.get();
     }

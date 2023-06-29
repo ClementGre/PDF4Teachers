@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -98,7 +98,7 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
             setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
                     if(e.getClickCount() >= 2){
-                        item.addToDocument();
+                        item.addToDocument(false);
                         updateGalleryAndFavoritesSort();
                     }else if(e.getClickCount() == 1){
                         item.setAsToPlaceElement();

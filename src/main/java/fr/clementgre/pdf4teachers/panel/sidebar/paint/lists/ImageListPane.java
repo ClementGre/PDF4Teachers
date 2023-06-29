@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -32,19 +32,19 @@ import java.util.List;
 public class ImageListPane extends ListPane<ImageGridElement>{
 
     private final ImageGridView list = new ImageGridView(true, 300, zoomSlider, true);
-    
+
     public ImageListPane(){
         super(MainWindow.paintTab);
     }
-    
+
     @Override
     protected void setupGraphics(){
         super.setupGraphics();
         root.getChildren().add(list);
-        
+
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());
         VBox.setVgrow(list, Priority.ALWAYS);
-       
+
         if(isFavouriteImages()){
             list.setupSortManager(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
             setupMenu(list);
@@ -54,10 +54,10 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             openGallery.setPadding(new Insets(0, 4, 0, 4));
             PaneUtils.setHBoxPosition(openGallery, 0, 26, new Insets(0, 7, 0, 0));
             graphics.getChildren().add(2, openGallery);
-            
+
             openGallery.setOnAction((e) -> paintTab.openGallery());
         }
-    
+
         expandedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && !isLoaded()){
                 if(isGallery()){
@@ -69,13 +69,13 @@ public class ImageListPane extends ListPane<ImageGridElement>{
                 updateMessage();
             }
         });
-        
+
         if(isFavouriteImages()) setEmptyMessage(TR.tr("paintTab.favouriteImages.emptyList"));
         else if(isGallery()) setEmptyMessage(TR.tr("paintTab.gallery.emptyList"));
         list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
     }
-    
+
     private void updateMessage(){
         if(list.getAllItems().isEmpty()){
             list.setMaxHeight(0);
@@ -84,7 +84,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         }
         super.updateMessage(list.getAllItems().isEmpty());
     }
-    
+
     public void reloadGalleryImageList(){
         if(paintTab.galleryWindow != null){
             list.setItems(paintTab.galleryWindow.getListItems());
@@ -107,7 +107,7 @@ public class ImageListPane extends ListPane<ImageGridElement>{
             }
         }
         // Else, create new ImageGrid element
-        ImageData linkedImageData = new ImageData(element.getImageId(), element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(), 0, 0);
+        ImageData linkedImageData = new ImageData(element.getImageId(), element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(), 0, 0, null);
         MainWindow.paintTab.favouriteImages.getList().addItems(Collections.singletonList(new ImageGridElement(linkedImageData, MainWindow.paintTab.favouriteImages.getList())));
         return linkedImageData;
     }
@@ -117,28 +117,28 @@ public class ImageListPane extends ListPane<ImageGridElement>{
                 .stream()
                 .anyMatch(gridElement -> gridElement.getImageId().equals(element.getImageId()));
     }
-    
-    
+
+
     @Override
     public void updateGraphics(){
         list.getSortManager().updateGraphics();
     }
-    
+
     @Override
     public ImageGridView getList(){
         return list;
     }
-    
-    
+
+
     public static NodeMenuItem getPagesMenuItem(){
         ImageGridView list = new ImageGridView(true, 150, new Slider(2, 6, 4), false);
-        
+
         List<ImageGridElement> images = MainWindow.paintTab.favouriteImages.getList().getAllItems();
         if(images.isEmpty()) return null;
         images.sort(ImageGridElement::compareUseWith);
         images = images.subList(0, Math.min(8, images.size()));
         //images = images.stream().map(ImageGridElement::clone).toList();
-        
+
         HBox root = new HBox(list);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         // 12 is the default cell horizontal padding
@@ -148,21 +148,21 @@ public class ImageListPane extends ListPane<ImageGridElement>{
         HBox.setMargin(list, new Insets(0, 0, 0, 12));
         NodeMenuItem item = new NodeMenuItem(root, null, false);
         item.removePadding();
-        
+
         list.setOnMouseClicked((e) -> {
             if(item.getParentPopup() != null){
                 item.getParentPopup().hide();
             }
         });
-    
+
         // Necessary because of a bug in controlsfx GridView
         // https://github.com/controlsfx/controlsfx/issues/1400
         List<ImageGridElement> finalImages = images;
         Platform.runLater(() -> {
             list.addItems(finalImages);
         });
-        
+
         return item;
     }
-    
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,14 +11,14 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import java.io.File;
 import java.util.Objects;
 
-public class ImageLambdaData{ // 2 child : ImageGridElement & ImageData
+public class ImageLambdaData { // 2 child : ImageGridElement & ImageData
 
     protected String imageId;
-    
+
     public ImageLambdaData(String imageId){
         this.imageId = imageId;
     }
-    
+
     @Override
     public boolean equals(Object o){
         if(this == o) return true;
@@ -26,27 +26,27 @@ public class ImageLambdaData{ // 2 child : ImageGridElement & ImageData
         ImageLambdaData that = (ImageLambdaData) o;
         return Objects.equals(imageId, that.imageId);
     }
-    
+
     public ImageData toImageData(){
         if(this instanceof ImageData imageData){
             return imageData;
         }else{
-            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0);
+            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0, null);
         }
     }
-    
+
     @Override
     public int hashCode(){
         return Objects.hash(imageId);
     }
-    
+
     public String getImageId(){
         return imageId;
     }
     public void setImageId(String imageId){
         this.imageId = imageId;
     }
-    
+
     public String getImageIdDirectory(){
         return StringUtils.removeAfterLastOccurrence(getImageId(), File.separator);
     }

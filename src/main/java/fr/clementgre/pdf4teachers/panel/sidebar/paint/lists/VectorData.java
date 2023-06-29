@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -14,12 +14,13 @@ import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridCell;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallBack;
+import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.paint.Color;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class VectorData{
+public class VectorData {
     
     private int width;
     private int height;
@@ -35,13 +36,14 @@ public class VectorData{
     private int arrowLength;
     private long lastUse;
     private int useCount;
+    private KeyCodeCombination keyCodeCombination;
     
     private CallBack specsChangesCallback;
     private CallBack displayChangesCallback;
     
     public VectorData(int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode,
                       boolean doFill, Color fill, Color stroke, int strokeWidth,
-                      String path, boolean invertX, boolean invertY, int arrowLength, long lastUse, int useCount){
+                      String path, boolean invertX, boolean invertY, int arrowLength, long lastUse, int useCount, KeyCodeCombination keyCodeCombination){
         
         this.width = width;
         this.height = height;
@@ -57,6 +59,7 @@ public class VectorData{
         this.arrowLength = arrowLength;
         this.lastUse = lastUse;
         this.useCount = useCount;
+        this.keyCodeCombination = keyCodeCombination;
     }
     
     public boolean equals(VectorElement element){
@@ -64,14 +67,20 @@ public class VectorData{
                 && fill.toString().equals(element.getFill().toString()) && stroke.toString().equals(element.getStroke().toString()) && path.equals(element.getPath());
     }
     
-    public VectorElement addToDocument(boolean link){
+    public VectorElement addToDocument(boolean link, boolean centerOnCursor){
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-    
-        VectorElement element = new VectorElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+        
+        int x = page.getNewElementXOnGrid(true);
+        if(centerOnCursor) x = page.getNewElementXOnGrid(false);
+        
+        VectorElement element = new VectorElement(x, page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, link ? this : null);
         
         page.addElement(element, true, UType.UNDO);
+        
+        if(centerOnCursor) element.centerOnCoordinatesX();
         element.centerOnCoordinatesY();
+        
         MainWindow.mainScreen.setSelected(element);
         
         incrementUsesAndLastUse();
@@ -97,7 +106,7 @@ public class VectorData{
         data.put("height", height);
         data.put("repeatMode", getRepeatMode().name());
         data.put("resizeMode", getResizeMode().name());
-    
+        
         data.put("doFill", doFill);
         data.put("fill", fill.toString());
         data.put("stroke", stroke.toString());
@@ -111,6 +120,8 @@ public class VectorData{
         data.put("lastUse", lastUse);
         data.put("useCount", useCount);
         
+        data.put("keyCodeCombination", keyCodeCombination == null ? null : keyCodeCombination.toString());
+        
         return data;
     }
     
@@ -123,7 +134,7 @@ public class VectorData{
         String imageId = Config.getString(data, "imageId");
         int useCount = (int) Config.getLong(data, "useCount");
         long lastUse = Config.getLong(data, "lastUse");
-    
+        
         boolean doFill = Config.getBoolean(data, "doFill");
         Color fill = Color.DARKGRAY;
         Color stroke = Color.BLACK;
@@ -135,13 +146,22 @@ public class VectorData{
         }
         int strokeWidth = (int) Config.getLong(data, "strokeWidth");
         String path = Config.getString(data, "path");
-    
+        
         int arrowLength = (int) Config.getLong(data, "arrowLength");
         
         boolean invertX = Config.getBoolean(data, "invertX");
         boolean invertY = Config.getBoolean(data, "invertY");
         
-        return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, lastUse, useCount);
+        KeyCodeCombination keyCodeCombination = null;
+        if(data.get("keyCodeCombination") != null){
+            try{
+                keyCodeCombination = (KeyCodeCombination) KeyCodeCombination.valueOf(Config.getString(data, "keyCodeCombination"));
+            }catch(IllegalArgumentException e){
+                Log.e("Unable to parse VectorData keyCodeCombination: " + e.getMessage());
+            }
+        }
+        
+        return new VectorData(width, height, repeatMode, resizeMode, doFill, fill, stroke, strokeWidth, path, invertX, invertY, arrowLength, lastUse, useCount, keyCodeCombination);
     }
     
     public void resetUseData(){
@@ -260,10 +280,17 @@ public class VectorData{
         this.useCount = useCount;
     }
     
+    public KeyCodeCombination getKeyCodeCombination(){
+        return keyCodeCombination;
+    }
+    public void setKeyCodeCombination(KeyCodeCombination keyCodeCombination){
+        this.keyCodeCombination = keyCodeCombination;
+    }
+    
     @Override
     public VectorData clone(){
         return new VectorData(width, height, repeatMode, resizeMode,
                 doFill, fill, stroke, strokeWidth, path,
-                invertX, invertY, arrowLength, lastUse, useCount);
+                invertX, invertY, arrowLength, lastUse, useCount, keyCodeCombination);
     }
 }

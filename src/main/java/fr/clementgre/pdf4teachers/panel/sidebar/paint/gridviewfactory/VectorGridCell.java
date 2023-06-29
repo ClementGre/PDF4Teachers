@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -52,6 +52,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
     private final NodeMenuItem removeItem = new NodeMenuItem(TR.tr("actions.remove"), false);
     private final NodeMenuItem addToFavorites = new NodeMenuItem(TR.tr("elementMenu.addToFavouriteList"), false);
     private final NodeMenuItem addToLast = new NodeMenuItem(TR.tr("elementMenu.addToPreviousList"), false);
+    private final NodeMenuItem editShortcut = new NodeMenuItem(TR.tr("elementMenu.editShortcut"), false);
     
     public static final int PADDING = 2;
     
@@ -138,17 +139,18 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             if(hasContextMenu){
                 setContextMenu(menu);
                 if(favorite){
-                    menu.getItems().setAll(addNLink, removeItem, addToLast);
+                    menu.getItems().setAll(addNLink, removeItem, addToLast, editShortcut);
                 }else{
                     menu.getItems().setAll(addNLink, removeItem, addToFavorites);
                 }
                 menu.setOnShowing((e) -> {
                     addNLink.setDisable(!MainWindow.mainScreen.hasDocument(false));
-                    addNLink.setOnAction((event) -> item.addToDocument(true));
+                    addNLink.setOnAction((event) -> item.addToDocument(true, false));
         
                     removeItem.setOnAction((event) -> item.removeFromList((VectorGridView) getGridView()));
                     addToFavorites.setOnAction((event) -> item.addToFavorite((VectorGridView) getGridView()));
                     addToLast.setOnAction((event) -> item.addToLast((VectorGridView) getGridView()));
+                    editShortcut.setOnAction((event) -> item.editShortcut());
                 });
             }
             
@@ -160,7 +162,7 @@ public class VectorGridCell extends GridCell<VectorGridElement>{
             setOnMouseClicked((e) -> {
                 if(e.getButton() == MouseButton.PRIMARY){
                     if(e.getClickCount() >= 2){
-                        item.addToDocument(e.isShiftDown());
+                        item.addToDocument(e.isShiftDown(), false);
                         updateListsSort();
                     }else if(e.getClickCount() == 1){
                         item.setAsToPlaceElement(e.isShiftDown());

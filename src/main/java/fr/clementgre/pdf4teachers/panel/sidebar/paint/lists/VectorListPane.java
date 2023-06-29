@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -28,25 +28,25 @@ import java.util.Collections;
 import java.util.List;
 
 public class VectorListPane extends ListPane<VectorGridElement>{
-    
+
     private VectorGridView list;
     public VectorListPane(){
         super(MainWindow.paintTab);
     }
-    
-    
+
+
     @Override
     protected void setupGraphics(){
         super.setupGraphics();
-    
+
         list = new VectorGridView(zoomSlider, isFavouriteVectors(), true);
         setupMenu(list);
-        
+
         root.getChildren().add(list);
         list.cellSizeProperty().bindBidirectional(zoomSlider.valueProperty());
         VBox.setVgrow(list, Priority.ALWAYS);
         list.setupSortManager(sortPanel, ShapesGridView.SORT_USE, ShapesGridView.SORT_USE, ShapesGridView.SORT_LAST_USE);
-    
+
         expandedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue && !isLoaded()){
                 setLoaded(true);
@@ -54,7 +54,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
                 updateMessage();
             }
         });
-    
+
         if(isFavouriteVectors()){
             setEmptyMessage(TR.tr("paintTab.favouriteVectors.emptyList"));
             setEmptyLink(TR.tr("paintTab.favouriteVectors.loadDefaultVectors"), () -> {
@@ -65,7 +65,7 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         list.getItems().addListener((InvalidationListener) o -> updateMessage());
         updateMessage();
     }
-    
+
     private void updateMessage(){
         if(list.getAllItems().isEmpty()){
             list.setMaxHeight(0);
@@ -77,24 +77,24 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     public void loadVectorsList(ArrayList<VectorData> vectors, boolean updateVisual){
         list.setItems(vectors.stream().map(VectorGridElement::new).toList(), updateVisual);
     }
-    
+
     public static VectorData addFavoriteVector(VectorElement element){
         VectorData linkedVectorData = new VectorData(element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(),
                 element.isDoFill(), element.getFill(), element.getStroke(), element.getStrokeWidth(),
-                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0);
-    
+                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0, null);
+
         MainWindow.paintTab.favouriteVectors.getList().addItems(Collections.singletonList(new VectorGridElement(linkedVectorData)));
         return linkedVectorData;
     }
     public static VectorData addLastVector(VectorElement element){
         VectorData linkedVectorData = new VectorData(element.getRealWidth(), element.getRealHeight(), element.getRepeatMode(), element.getResizeMode(),
                 element.isDoFill(), element.getFill(), element.getStroke(), element.getStrokeWidth(),
-                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0);
-    
+                element.getPath(), element.isInvertX(), element.isInvertY(), element.getArrowLength(), 0, 0, null);
+
         MainWindow.paintTab.lastVectors.getList().addItems(Collections.singletonList(new VectorGridElement(linkedVectorData)));
         return linkedVectorData;
     }
-    
+
     public boolean isFavoriteVector(VectorElement element){
         return MainWindow.paintTab.favouriteVectors.getList()
                 .getAllItems()
@@ -106,21 +106,21 @@ public class VectorListPane extends ListPane<VectorGridElement>{
     public void updateGraphics(){
         list.getSortManager().updateGraphics();
     }
-    
+
     @Override
     public VectorGridView getList(){
         return list;
     }
-    
+
     public static NodeMenuItem getPagesMenuItem(){
         VectorGridView list = new VectorGridView(new Slider(2, 6, 4), true, false);
-        
+
         List<VectorGridElement> vectors = MainWindow.paintTab.favouriteVectors.getList().getAllItems();
         if(vectors.isEmpty()) return null;
         vectors.sort(VectorGridElement::compareUseWith);
         vectors = vectors.subList(0, Math.min(7, vectors.size()));
         vectors = vectors.stream().map(VectorGridElement::clone).toList();
-    
+
         HBox root = new HBox(list);
         root.getStyleClass().add(JMetroStyleClass.BACKGROUND);
         // 12 is the default cell horizontal padding
@@ -130,13 +130,13 @@ public class VectorListPane extends ListPane<VectorGridElement>{
         HBox.setMargin(list, new Insets(0, 0, 0, 12));
         NodeMenuItem item = new NodeMenuItem(root, null, false);
         item.removePadding();
-        
+
         list.setOnMouseClicked((e) -> {
             if(item.getParentPopup() != null){
                 item.getParentPopup().hide();
             }
         });
-    
+
         // Necessary because of a bug in controlsfx GridView
         // https://github.com/controlsfx/controlsfx/issues/1400
         List<VectorGridElement> finalVectors = vectors;
@@ -144,9 +144,9 @@ public class VectorListPane extends ListPane<VectorGridElement>{
             list.addItems(finalVectors);
             list.addItems(Collections.singletonList(new VectorGridElement(true)));
         });
-        
+
         return item;
     }
-    
-    
+
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -12,13 +12,15 @@ import fr.clementgre.pdf4teachers.document.editions.elements.ImageElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridCell;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import javafx.scene.input.KeyCodeCombination;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 
-public class ImageData extends ImageLambdaData{
+public class ImageData extends ImageLambdaData {
     
     private int width;
     private int height;
@@ -26,8 +28,10 @@ public class ImageData extends ImageLambdaData{
     private GraphicElement.ResizeMode resizeMode;
     private long lastUse;
     private int useCount;
+    private KeyCodeCombination keyCodeCombination;
     
-    public ImageData(String imageId, int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode, long lastUse, int useCount){
+    public ImageData(String imageId, int width, int height, GraphicElement.RepeatMode repeatMode, GraphicElement.ResizeMode resizeMode, long lastUse, int useCount, KeyCodeCombination keyCodeCombination)
+    {
         super(imageId);
         this.width = width;
         this.height = height;
@@ -35,17 +39,24 @@ public class ImageData extends ImageLambdaData{
         this.resizeMode = resizeMode;
         this.lastUse = lastUse;
         this.useCount = useCount;
+        this.keyCodeCombination = keyCodeCombination;
     }
     
-    public ImageElement addToDocument(boolean link){
+    public ImageElement addToDocument(boolean link, boolean centerOnCursor){
         ImageData linkedImage = link ? this : null;
         PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
         
-        ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
+        int x = page.getNewElementXOnGrid(true);
+        if(centerOnCursor) x = page.getNewElementXOnGrid(false);
+        
+        ImageElement element = new ImageElement(x, page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, imageId, linkedImage);
-    
+        
         page.addElement(element, true, UType.UNDO);
+        
+        if(centerOnCursor) element.centerOnCoordinatesX();
         element.centerOnCoordinatesY();
+        
         MainWindow.mainScreen.setSelected(element);
         Main.window.requestFocus();
         
@@ -78,12 +89,13 @@ public class ImageData extends ImageLambdaData{
         data.put("imageId", getImageId());
         data.put("lastUse", lastUse);
         data.put("useCount", useCount);
+        data.put("keyCodeCombination", keyCodeCombination == null ? null : keyCodeCombination.getName());
         
         return data;
     }
     
     public static ImageData readYAMLDataAndGive(HashMap<String, Object> data){
-
+        
         int width = (int) Config.getLong(data, "width");
         int height = (int) Config.getLong(data, "height");
         GraphicElement.RepeatMode repeatMode = GraphicElement.RepeatMode.valueOf(Config.getString(data, "repeatMode"));
@@ -92,7 +104,16 @@ public class ImageData extends ImageLambdaData{
         int useCount = (int) Config.getLong(data, "useCount");
         long lastUse = Config.getLong(data, "lastUse");
         
-        return new ImageData(imageId, width, height, repeatMode, resizeMode, lastUse, useCount);
+        KeyCodeCombination keyCodeCombination = null;
+        if(data.get("keyCodeCombination") != null){
+            try{
+                keyCodeCombination = (KeyCodeCombination) KeyCodeCombination.valueOf(Config.getString(data, "keyCodeCombination"));
+            }catch(IllegalArgumentException e){
+                Log.e("Unable to parse ImageData keyCodeCombination: " + e.getMessage());
+            }
+        }
+        
+        return new ImageData(imageId, width, height, repeatMode, resizeMode, lastUse, useCount, keyCodeCombination);
     }
     
     public int getWidth(){
@@ -138,6 +159,13 @@ public class ImageData extends ImageLambdaData{
     }
     public void setUseCount(int useCount){
         this.useCount = useCount;
+    }
+    
+    public KeyCodeCombination getKeyCodeCombination(){
+        return keyCodeCombination;
+    }
+    public void setKeyCodeCombination(KeyCodeCombination keyCodeCombination){
+        this.keyCodeCombination = keyCodeCombination;
     }
     
     public void resetUseData(){

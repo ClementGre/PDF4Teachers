@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -16,8 +16,7 @@ import jfxtras.styles.jmetro.Style;
 
 public class TextInputAlert extends CustomAlert{
     
-    private final Label beforeText = new Label();
-    private final TextField input = new TextField();
+    protected final TextField input = new TextField();
     
     public TextInputAlert(String title, String header, String details){
         super(AlertType.CONFIRMATION, title, header, null);
@@ -25,6 +24,7 @@ public class TextInputAlert extends CustomAlert{
         HBox box = new HBox();
         box.setPadding(new Insets(15));
         if(details != null){
+            Label beforeText = new Label();
             beforeText.setText(details);
             box.setSpacing(10);
             PaneUtils.setHBoxPosition(beforeText, 0, 25, 0);

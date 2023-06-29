@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -9,9 +9,11 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.editions.elements.GraphicElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.lists.VectorData;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.KeyCodeCombinaisonInputAlert;
 import fr.clementgre.pdf4teachers.utils.exceptions.PathParseException;
 import fr.clementgre.pdf4teachers.utils.style.StyleManager;
 import javafx.scene.shape.FillRule;
@@ -23,7 +25,7 @@ import javafx.scene.transform.Scale;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class VectorGridElement{
+public class VectorGridElement {
     
     private final SVGPath svgPath = new SVGPath();
     private final Scale svgScale = new Scale();
@@ -40,7 +42,8 @@ public class VectorGridElement{
         setup();
     }
     public VectorGridElement(boolean fake){
-        if(!fake) throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
+        if(!fake)
+            throw new IllegalArgumentException("You should use the (VectorData vectorData) constructor if this VectorGridElement isn't fake.");
         this.fake = true;
     }
     
@@ -52,7 +55,7 @@ public class VectorGridElement{
         vectorData.setDisplayChangesCallback(() -> {
             lastDisplayChangesTime.set(System.currentTimeMillis());
             PlatformUtils.runLaterOnUIThread(500, () -> {
-                if(lastDisplayChangesTime.get() < System.currentTimeMillis()-490){
+                if(lastDisplayChangesTime.get() < System.currentTimeMillis() - 490){
                     renderSvgPath();
                     layoutSVGPath(lastDisplayWidth);
                 }
@@ -74,8 +77,8 @@ public class VectorGridElement{
         gridView.removeItems(Collections.singletonList(this));
     }
     
-    public VectorElement addToDocument(boolean link){
-        if(MainWindow.mainScreen.hasDocument(false)) return vectorData.addToDocument(link);
+    public VectorElement addToDocument(boolean link, boolean centerOnCursor){
+        if(MainWindow.mainScreen.hasDocument(false)) return vectorData.addToDocument(link, centerOnCursor);
         return null;
     }
     public void setAsToPlaceElement(boolean link){
@@ -118,17 +121,17 @@ public class VectorGridElement{
         
         float padding = 0;
         float ratio = ((float) vectorData.getWidth()) / vectorData.getHeight();
-    
+        
         svgPath.getTransforms().setAll(svgScale);
         
         if(ratio > 1){
             width = RENDER_WIDTH;
-            height = Math.max(width/ratio, width/3);
+            height = Math.max(width / ratio, width / 3);
         }else{
             height = RENDER_WIDTH;
-            width = Math.max(height*ratio, height/3);
+            width = Math.max(height * ratio, height / 3);
         }
-
+        
         if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
             if(ratio > (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight())){ // Crop Y
                 width = RENDER_WIDTH * Math.min(ratio, 1);
@@ -138,7 +141,7 @@ public class VectorGridElement{
                 width = (float) (height * (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight()));
             }
         }
-
+        
         try{
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.MULTIPLY){
                 svgPath.setContent(VectorElement.getRepeatedPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
@@ -147,7 +150,7 @@ public class VectorGridElement{
                 svgPath.setContent(VectorElement.getScaledPath(vectorData.getPath(), noScaledSVGPath, width, height, padding,
                         vectorData.isInvertX(), vectorData.isInvertY(), vectorData.getArrowLength(), -1));
             }
-    
+            
             if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP){
                 if(ratio > (noScaledSVGPath.getLayoutBounds().getWidth() / noScaledSVGPath.getLayoutBounds().getHeight())){ // Crop Y
                     height = width / ratio;
@@ -155,7 +158,7 @@ public class VectorGridElement{
                     width = height * ratio;
                 }
             }
-    
+            
             updateSVGSpecs();
         }catch(PathParseException e){
             Log.e("PathParseException: " + e.getMessage() + " (List Item)");
@@ -165,37 +168,38 @@ public class VectorGridElement{
         lastDisplayWidth = displayWidth;
         if(svgPath.getContent().isEmpty()) renderSvgPath();
         updateSVGSpecs();
-    
-        double padding = 1 + vectorData.getStrokeWidth()/2f / RENDER_WIDTH * displayWidth;
+        
+        double padding = 1 + vectorData.getStrokeWidth() / 2f / RENDER_WIDTH * displayWidth;
         double clipPadding = 0;
-        if(vectorData.getArrowLength() != 0) clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
-        displayWidth = displayWidth - padding*2;
+        if(vectorData.getArrowLength() != 0)
+            clipPadding += ((double) vectorData.getArrowLength()) / RENDER_WIDTH * displayWidth;
+        displayWidth = displayWidth - padding * 2;
         
         // SCALE
         double scale = displayWidth / RENDER_WIDTH;
         svgScale.setX(scale);
         svgScale.setY(scale);
-    
+        
         // LAYOUT
         double svgWidth = Math.min(width, RENDER_WIDTH);
         double svgHeight = Math.min(height, RENDER_WIDTH);
         
-        double notRectShapeTransformX = (RENDER_WIDTH - svgWidth)/2 * scale;
-        double notRectShapeTransformY = (RENDER_WIDTH - svgHeight)/2 * scale;
+        double notRectShapeTransformX = (RENDER_WIDTH - svgWidth) / 2 * scale;
+        double notRectShapeTransformY = (RENDER_WIDTH - svgHeight) / 2 * scale;
         
         svgPath.setLayoutX(padding + notRectShapeTransformX);
         svgPath.setLayoutY(padding + notRectShapeTransformY);
         
         // CLIP
         Rectangle clip = new Rectangle(
-                (-padding+1)/scale -clipPadding,
-                (-padding+1)/scale -clipPadding,
-                svgWidth + (2*padding-2)/scale + 2*clipPadding,
-                svgHeight + (2*padding-2)/scale + 2*clipPadding
+                (-padding + 1) / scale - clipPadding,
+                (-padding + 1) / scale - clipPadding,
+                svgWidth + (2 * padding - 2) / scale + 2 * clipPadding,
+                svgHeight + (2 * padding - 2) / scale + 2 * clipPadding
         );
         svgPath.setClip(clip);
-    
-    
+        
+        
     }
     
     public void updateSVGSpecs(){
@@ -221,5 +225,17 @@ public class VectorGridElement{
     
     public boolean isFake(){
         return fake;
+    }
+    
+    public void editShortcut(){
+        KeyCodeCombinaisonInputAlert alert = new KeyCodeCombinaisonInputAlert(TR.tr("paintTab.elementShortcutDialog.title"), TR.tr("paintTab.elementShortcutDialog.title"),
+                vectorData.getKeyCodeCombination(), true, true);
+        KeyCodeCombinaisonInputAlert.Result result = alert.showAndWaitGetResult();
+        
+        if(result == KeyCodeCombinaisonInputAlert.Result.VALIDATE){
+            vectorData.setKeyCodeCombination(alert.getKeyCodeCombinaison());
+        }else if(result == KeyCodeCombinaisonInputAlert.Result.DELETE){
+            vectorData.setKeyCodeCombination(null);
+        }
     }
 }
