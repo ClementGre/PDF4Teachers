@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -470,7 +470,7 @@ public class MainScreen extends Pane {
             mouseX = e.getX();
         });
         setOnKeyPressed((e) -> {
-            MainWindow.keyboardShortcuts.reportKeyPressedForMultipleUsesKeys(e);
+            MainWindow.keyboardShortcuts.processLazyShortcuts(e);
         });
         pane.setOnMouseMoved(e -> {
             paneMouseY = e.getY();
