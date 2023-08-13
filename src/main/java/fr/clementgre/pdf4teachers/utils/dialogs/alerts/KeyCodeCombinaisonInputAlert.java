@@ -16,7 +16,6 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     private KeyCode keyCode = null;
     private boolean hasReleased = true;
     private final boolean requireShortcutKey;
-    private final boolean removeShortcutOption;
     
     public enum Result {
         CANCEL, DELETE, VALIDATE
@@ -25,7 +24,6 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     public KeyCodeCombinaisonInputAlert(String title, String header, KeyCodeCombination defaultCombinaison, boolean requireShortcutKey, boolean removeShortcutOption){
         super(title, header, TR.tr("dialogs.keyCodeCombinaisonInput.details"));
         this.requireShortcutKey = requireShortcutKey;
-        this.removeShortcutOption = removeShortcutOption;
         
         if(defaultCombinaison == null) this.combinaison = new KeyCharacterCombination("");
         else{
@@ -40,29 +38,33 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
             if(hasReleased){
                 // Reset the combinaison
                 hasReleased = false;
-                combinaison = new KeyCharacterCombination("");
-                keyCode = null;
-            }
-            switch(e.getCode()){
-                case SHIFT -> combinaison = new KeyCharacterCombination("", KeyCombination.ModifierValue.DOWN, combinaison.getControl(),
-                        combinaison.getAlt(), combinaison.getMeta(), combinaison.getShortcut());
-                
-                case CONTROL -> combinaison = new KeyCharacterCombination("", combinaison.getShift(), KeyCombination.ModifierValue.DOWN,
-                        combinaison.getAlt(), combinaison.getMeta(), combinaison.getShortcut());
-                
-                case ALT -> combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
-                        KeyCombination.ModifierValue.DOWN, combinaison.getMeta(), combinaison.getShortcut());
-                
-                case META -> combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
-                        combinaison.getAlt(), KeyCombination.ModifierValue.DOWN, combinaison.getShortcut());
-                
-                case SHORTCUT -> combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
-                        combinaison.getAlt(), combinaison.getMeta(), KeyCombination.ModifierValue.DOWN);
-                
-                default -> {
-                    if(e.getCode() != KeyCode.UNDEFINED)  keyCode = e.getCode();
+                if(e.getCode() != keyCode){ // Events repeats automatically
+                    combinaison = new KeyCharacterCombination("");
+                    keyCode = null;
                 }
             }
+            
+            
+            if(e.getCode() != KeyCode.UNDEFINED && e.getCode() != KeyCode.SHIFT && e.getCode() != KeyCode.CONTROL
+                    && e.getCode() != KeyCode.ALT && e.getCode() != KeyCode.META && e.getCode() != KeyCode.COMMAND && e.getCode() != KeyCode.SHORTCUT){
+                keyCode = e.getCode();
+            }else if(e.isShiftDown() && combinaison.getShift() != KeyCombination.ModifierValue.DOWN){
+                combinaison = new KeyCharacterCombination("", KeyCombination.ModifierValue.DOWN, combinaison.getControl(),
+                        combinaison.getAlt(), combinaison.getMeta(), combinaison.getShortcut());
+            }else if(e.isControlDown() && combinaison.getControl() != KeyCombination.ModifierValue.DOWN){
+                combinaison = new KeyCharacterCombination("", combinaison.getShift(), KeyCombination.ModifierValue.DOWN,
+                        combinaison.getAlt(), combinaison.getMeta(), combinaison.getShortcut());
+            }else if(e.isAltDown() && combinaison.getAlt() != KeyCombination.ModifierValue.DOWN){
+                combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
+                        KeyCombination.ModifierValue.DOWN, combinaison.getMeta(), combinaison.getShortcut());
+            }else if(e.isMetaDown() && combinaison.getMeta() != KeyCombination.ModifierValue.DOWN){
+                combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
+                        combinaison.getAlt(), KeyCombination.ModifierValue.DOWN, combinaison.getShortcut());
+            }else if(e.isShortcutDown() && combinaison.getShortcut() != KeyCombination.ModifierValue.DOWN){
+                combinaison = new KeyCharacterCombination("", combinaison.getShift(), combinaison.getControl(),
+                        combinaison.getAlt(), combinaison.getMeta(), KeyCombination.ModifierValue.DOWN);
+            }
+            
             updateText();
             e.consume();
         });
@@ -83,7 +85,7 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     }
     
     private void updateText(){
-        super.input.setText(combinaison.getDisplayText() + (keyCode == null ? "" : keyCode.getName()));
+        super.input.setText(combinaison.getDisplayText() + (keyCode == null ? "" : keyCode.getChar()));
         super.input.deselect();
         super.input.end();
     }

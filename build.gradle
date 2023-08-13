@@ -8,7 +8,7 @@ plugins {
     id 'org.beryx.jlink' version '2.24.4'
     id 'idea'
     // id 'com.dua3.javafxgradle7plugin' version '0.0.9' // 32 bits support (Anyway, JavaFX is into the JDK)
-    id 'org.openjfx.javafxplugin' version '0.0.13'
+    id 'org.openjfx.javafxplugin' version '0.0.14'
     id "de.jjohannes.extra-java-module-info" version "0.8"
 }
 repositories {
@@ -47,7 +47,7 @@ dependencies {
 
     implementation 'org.jetbrains:annotations:23.0.0'
 
-    // JAVA FX //
+    // JMetro
     implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.16') {
         exclude group: 'org.openjfx'
     }
@@ -113,7 +113,7 @@ def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 
 javafx {
-    version = '17'
+    version = '17' // Switch to JFX LTS 21 to fix keyboard layout issue on MacOS
     if(os.macOsX && aarch64) modules = []
     else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }

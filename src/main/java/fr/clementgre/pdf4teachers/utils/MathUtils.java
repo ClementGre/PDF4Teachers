@@ -5,6 +5,8 @@
 
 package fr.clementgre.pdf4teachers.utils;
 
+import javafx.scene.input.KeyEvent;
+
 public final class MathUtils {
 
     // Returns in function of the sign of val
@@ -62,5 +64,11 @@ public final class MathUtils {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+    
+    public static Integer parseIntFromKeyEventOrNull(KeyEvent e){
+        Integer first = parseIntOrNull(e.getCode().getChar());
+        Integer second = parseIntOrNull(e.getText());
+        return first != null ? first : second;
     }
 }

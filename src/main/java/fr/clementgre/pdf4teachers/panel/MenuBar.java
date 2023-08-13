@@ -659,12 +659,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11)))
                     menuItem.setAccelerator(keyCombinaison);
             }
-            if(disableIfNoDoc){
-                menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-            }
-            if(disableIfNoList){
-                menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
-            }
+            setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);
             return menuItem;
         }else{
             NodeMenuItem menuItem = new NodeMenuItem(text, false);
@@ -675,14 +670,16 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);
             if(leftMargin) menuItem.setFalseLeftData();
             
-            if(disableIfNoDoc){
-                menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-            }
-            if(disableIfNoList){
-                menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
-            }
-            
+            setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);
             return menuItem;
+        }
+    }
+    private static void setupAutomaticDisabling(boolean disableIfNoDoc, boolean disableIfNoList, MenuItem menuItem){
+        if(disableIfNoDoc){
+            menuItem.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
+        }
+        if(disableIfNoList){
+            menuItem.disableProperty().bind(Bindings.size(MainWindow.filesTab.getOpenedFiles()).isEqualTo(0));
         }
     }
     

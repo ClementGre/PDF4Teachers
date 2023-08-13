@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers;
 
+import com.fasterxml.jackson.core.PrettyPrinter;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -193,14 +194,18 @@ public class Main extends Application {
             case DEV -> version + "-dv" + id;
             case SNAPSHOT -> version + "-sn" + id;
             case PRE_RELEASE -> version + "-pre" + id;
-            default -> version;
+            case RELEASE -> {
+                if(id == 1){
+                    yield version;
+                }
+                yield version + '-' + id;
+            }
         };
     }
     private static LogLevel getLogLevel(){
         return switch (mode) {
             case DEV -> LogLevel.TRACE;
-            case SNAPSHOT -> LogLevel.DEBUG;
-            case PRE_RELEASE -> LogLevel.DEBUG;
+            case SNAPSHOT, PRE_RELEASE -> LogLevel.DEBUG;
             default -> LogLevel.INFO;
         };
     }
