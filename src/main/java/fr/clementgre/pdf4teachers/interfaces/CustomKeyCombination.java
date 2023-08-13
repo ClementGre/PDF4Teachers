@@ -1,9 +1,13 @@
+/*
+ * Copyright (c) 2023. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
+
 package fr.clementgre.pdf4teachers.interfaces;
 
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
 public class CustomKeyCombination extends KeyCombination {

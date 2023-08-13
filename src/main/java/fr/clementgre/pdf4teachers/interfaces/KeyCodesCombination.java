@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2023. Clément Grennerat
+ * All rights reserved. You must refer to the licence Apache 2.
+ */
 // This code comes in part from the JavaFX source code (javafx.scene.input.KeyCodeCombination)
 package fr.clementgre.pdf4teachers.interfaces;
 
@@ -6,7 +10,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
