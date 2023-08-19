@@ -3,7 +3,7 @@
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
-package fr.clementgre.pdf4teachers.interfaces;
+package fr.clementgre.pdf4teachers.utils.keyboard;
 
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;

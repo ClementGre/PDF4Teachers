@@ -3,7 +3,7 @@
  * All rights reserved. You must refer to the licence Apache 2.
  */
 // This code comes in part from the JavaFX source code (javafx.scene.input.KeyCodeCombination)
-package fr.clementgre.pdf4teachers.interfaces;
+package fr.clementgre.pdf4teachers.utils.keyboard;
 
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
 import javafx.scene.input.KeyCode;

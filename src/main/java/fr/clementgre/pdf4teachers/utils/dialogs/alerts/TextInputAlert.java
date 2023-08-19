@@ -16,21 +16,22 @@ import jfxtras.styles.jmetro.Style;
 
 public class TextInputAlert extends CustomAlert{
     
+    
     protected final TextField input = new TextField();
+    protected final HBox contentHBox = new HBox();
     
     public TextInputAlert(String title, String header, String details){
         super(AlertType.CONFIRMATION, title, header, null);
-    
-        HBox box = new HBox();
-        box.setPadding(new Insets(15));
+        
+        contentHBox.setPadding(new Insets(15, 0, 15, 0));
         if(details != null){
             Label beforeText = new Label();
             beforeText.setText(details);
-            box.setSpacing(10);
+            contentHBox.setSpacing(10);
             PaneUtils.setHBoxPosition(beforeText, 0, 25, 0);
-            box.getChildren().addAll(beforeText, input);
+            contentHBox.getChildren().addAll(beforeText, input);
         }else{
-            box.getChildren().addAll(input);
+            contentHBox.getChildren().addAll(input);
         }
     
         addOKButton(ButtonPosition.DEFAULT);
@@ -40,7 +41,7 @@ public class TextInputAlert extends CustomAlert{
         if(StyleManager.DEFAULT_STYLE == Style.LIGHT) StyleManager.putCustomStyle(getDialogPane(), "someDialogs-light.css");
         else StyleManager.putCustomStyle(getDialogPane(), "someDialogs-dark.css");
         
-        getDialogPane().setContent(box);
+        getDialogPane().setContent(contentHBox);
     
         Platform.runLater(input::requestFocus);
     }

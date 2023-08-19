@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -603,10 +603,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             }
             if(toolTip != null && !toolTip.isBlank()) ((NodeMenu) menu).setToolTip(toolTip);
         }
-        
-        if(disableIfNoDoc){
-            menu.disableProperty().bind(Bindings.createBooleanBinding(() -> MainWindow.mainScreen.statusProperty().get() != MainScreen.Status.OPEN, MainWindow.mainScreen.statusProperty()));
-        }
+        setupAutomaticDisabling(disableIfNoDoc, false, menu);
         return menu;
     }
     
@@ -652,11 +649,12 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     }
     
     public static MenuItem createMenuItem(String text, String image, KeyCombination keyCombinaison, String toolTip, boolean disableIfNoDoc, boolean disableIfNoList, boolean leftMargin){
+        if(keyCombinaison != null) MainWindow.keyboardShortcuts.registerMenuBarShortcut(keyCombinaison, text);
         if(isSystemMenuBarSupported()){
             MenuItem menuItem = new MenuItem(text);
             //if(imgName != null) menuItem.setGraphic(ImageUtils.buildImage(getClass().getResource("/img/MenuBar/"+ imgName + ".png")+"", 0, 0));
             if(keyCombinaison != null){
-                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11)))
+                if(!PlatformUtils.isMac() || !keyCombinaison.equals(new KeyCodeCombination(KeyCode.F11))) // Exclude the F11 combinaison on Mac OS
                     menuItem.setAccelerator(keyCombinaison);
             }
             setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);

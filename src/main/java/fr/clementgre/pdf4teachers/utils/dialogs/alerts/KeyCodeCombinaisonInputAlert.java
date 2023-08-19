@@ -5,17 +5,25 @@
 
 package fr.clementgre.pdf4teachers.utils.dialogs.alerts;
 
+import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.geometry.Insets;
+import javafx.scene.control.Label;
 import javafx.scene.input.*;
+import javafx.scene.layout.VBox;
 
 public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     
     private KeyCharacterCombination combinaison;
+    private final KeyCodeCombination defaultCombinaison;
     private KeyCode keyCode = null;
     private boolean hasReleased = true;
     private final boolean requireShortcutKey;
+    
+    private final Label warningLabel = new Label();
     
     public enum Result {
         CANCEL, DELETE, VALIDATE
@@ -23,6 +31,7 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     
     public KeyCodeCombinaisonInputAlert(String title, String header, KeyCodeCombination defaultCombinaison, boolean requireShortcutKey, boolean removeShortcutOption){
         super(title, header, TR.tr("dialogs.keyCodeCombinaisonInput.details"));
+        this.defaultCombinaison = defaultCombinaison;
         this.requireShortcutKey = requireShortcutKey;
         
         if(defaultCombinaison == null) this.combinaison = new KeyCharacterCombination("");
@@ -31,6 +40,13 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
             this.combinaison = new KeyCharacterCombination("", defaultCombinaison.getShift(), defaultCombinaison.getControl(),
                     defaultCombinaison.getAlt(), defaultCombinaison.getMeta(), defaultCombinaison.getShortcut());
         }
+        warningLabel.setWrapText(true);
+        PaneUtils.setVBoxPosition(warningLabel, 0, 75, new Insets(0, 0, 5, 0));
+        
+        VBox contentVBox = new VBox();
+        contentVBox.getChildren().setAll(super.contentHBox, warningLabel);
+        
+        getDialogPane().setContent(contentVBox);
         
         updateText();
         
@@ -73,6 +89,13 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
             e.consume();
         });
         super.input.addEventFilter(KeyEvent.KEY_TYPED, Event::consume);
+        super.input.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!oldValue.isEmpty() && newValue.isEmpty()){
+                keyCode = null;
+                combinaison = new KeyCharacterCombination("");
+            }
+            updateText();
+        });
         
         if(removeShortcutOption){
             addButton(TR.tr("dialogs.keyCodeCombinaisonInput.deleteCombinaison"), ButtonPosition.OTHER_LEFT);
@@ -88,9 +111,22 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
         super.input.setText(combinaison.getDisplayText() + (keyCode == null ? "" : keyCode.getChar()));
         super.input.deselect();
         super.input.end();
+        
+        KeyCodeCombination combination = getKeyCodeCombinaison();
+        if(combination != null){
+            String alreadyExistingShortcutName = MainWindow.keyboardShortcuts.getShortcutNameIfExists(combination);
+            if(!combination.equals(defaultCombinaison) && alreadyExistingShortcutName != null){
+                warningLabel.setStyle("-fx-text-fill: #f83c3c;");
+                warningLabel.setText(TR.tr("shortcuts.dialog.alreadyExistingCombinaison", alreadyExistingShortcutName));
+                return;
+            }
+        }
+        warningLabel.setStyle("");
+        warningLabel.setText(TR.tr("dialogs.keyCodeCombinaisonInput.info"));
     }
     
     public KeyCodeCombination getKeyCodeCombinaison(){
+        if(keyCode == null) return null;
         return new KeyCodeCombination(keyCode, combinaison.getShift(), combinaison.getControl(),
                 combinaison.getAlt(), combinaison.getMeta(), combinaison.getShortcut());
     }
@@ -102,7 +138,7 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     public Result showAndWaitGetResult(){
         ButtonPosition button = super.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
         if(button == ButtonPosition.DEFAULT){
-            if(keyCode == null || (requireShortcutKey && !isCombinaisonContainingAnyShortcutKey())){
+            if(keyCode != null && (requireShortcutKey && !isCombinaisonContainingAnyShortcutKey())){
                 new WrongAlert(TR.tr("dialogs.keyCodeCombinaisonInput.error.noCombinaison.header"),
                         TR.tr("dialogs.keyCodeCombinaisonInput.error.noCombinaison.details"), false).showAndWait();
                 return showAndWaitGetResult();

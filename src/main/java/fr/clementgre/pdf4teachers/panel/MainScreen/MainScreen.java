@@ -245,10 +245,16 @@ public class MainScreen extends Pane {
         pane.scaleXProperty().addListener((observable, oldValue, newValue) -> {
             if(document != null && !document.getPages().isEmpty()){
                 
+                // Disable edit pages mode if zoom is higher than 100%
+                if(isEditPagesMode() && newValue.doubleValue() >= 1){
+                    setIsEditPagesMode(false);
+                }
+                
                 // Redraw pages when zooming while being in grid mode
                 if(isGridView()){
                     document.updatePagesPosition();
                 }
+                
                 
                 // Execute action only when it is the last zoom update from 100ms
                 lastScaleChangedMs = System.currentTimeMillis();

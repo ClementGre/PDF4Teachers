@@ -13,7 +13,7 @@ import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.TextElement;
 import fr.clementgre.pdf4teachers.document.editions.elements.VectorElement;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
+import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeItem;
 import fr.clementgre.pdf4teachers.panel.sidebar.grades.GradeTreeView;
@@ -21,6 +21,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.ImageGridE
 import fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory.VectorGridElement;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TextTreeItem;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
+import fr.clementgre.pdf4teachers.utils.keyboard.CustomKeyCombination;
+import fr.clementgre.pdf4teachers.utils.keyboard.KeyCodesCombination;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -29,44 +31,58 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class KeyboardShortcuts {
     
     // Shortcuts are checked on the scene event filter. They have the higher priority in the whole app.
-    private final LinkedHashMap<KeyCombination, Consumer<KeyEvent>> shortcuts = new LinkedHashMap<>();
-    // Lazy shortcuts are checked on the scene event handler, or in the scene event filter if no lazy shortcuts have been fired
+    private final ArrayList<ShortcutRecord> shortcuts = new ArrayList<>();
+    // Lazy shortcuts are checked on the scene event handler, or in the scene event filter if no classic shortcuts have been fired
     // and the target element is a SideBar, Slider, Button OR is not a Control, Element, KeyableHBox
-    // These shortcuts might be used and consumed by other elements, or not containing any modifier key.
-    private final LinkedHashMap<KeyCombination, Consumer<KeyEvent>> lazyShortcuts = new LinkedHashMap<>();
+    // These shortcuts might be used and consumed by other elements, and might not contain any modifier key.
+    private final ArrayList<ShortcutRecord> lazyShortcuts = new ArrayList<>();
+    // List of menu bar shortcuts used to detect conflicts
+    private final ArrayList<ShortcutRecord> menuBarShortcuts = new ArrayList<>();
     
     public KeyboardShortcuts(Scene main){
+        
+        /*******************************/
+        /* Graphics elements shortcuts */
+        /*******************************/
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.customGraphicsElements"),
+                new CustomKeyCombination(e -> {
+                    return matchVectorShortcut(e).isPresent() || matchImageShortcut(e).isPresent();
+                }, KeyCodeCombination.SHORTCUT_DOWN), this::firePaintElementsShortcut));
         
         /******************************/
         /***** Elements shortcuts *****/
         /******************************/
-        shortcuts.put(new KeyCodeCombination(KeyCode.T, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.newText"),
+                new KeyCodeCombination(KeyCode.T, KeyCodeCombination.SHORTCUT_DOWN, KeyCodesCombination.SHIFT_ANY), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
             SideBar.selectTab(MainWindow.textTab);
             TextElement element = MainWindow.textTab.newTextElement(!e.isShiftDown());
             element.setRealX(element.getPage().getNewElementXOnGrid(false));
             e.consume();
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.D, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.newVectorDrawing"),
+                new KeyCodeCombination(KeyCode.D, KeyCodeCombination.SHORTCUT_DOWN, KeyCodesCombination.SHIFT_ANY), e -> {
             SideBar.selectTab(MainWindow.paintTab);
             MainWindow.paintTab.newVectorDrawing(e.isShiftDown());
             e.consume();
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.N, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.selectNextGrade"),
+                new KeyCodeCombination(KeyCode.N, KeyCodeCombination.SHORTCUT_DOWN), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
             SideBar.selectTab(MainWindow.gradeTab);
             MainWindow.gradeTab.treeView.getSelectionModel().select(GradeTreeView.getNextLogicGradeNonNull());
             e.consume();
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.G, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.createSameLevelGrade"),
+                new KeyCodeCombination(KeyCode.G, KeyCodeCombination.SHORTCUT_DOWN), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
             if(!MainWindow.gradeTab.isSelected()) MainWindow.gradeTab.select();
             
@@ -83,109 +99,183 @@ public class KeyboardShortcuts {
                 element.select();
             }
             e.consume();
-        });
+        }));
         
         /******************************/
         /**** Navigation shortcuts ****/
         /******************************/
         //  +/- or arrows with shortcut for zoom and reset zoom
-        shortcuts.put(new CustomKeyCombination(e -> {
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.zoomLess"),
+                new CustomKeyCombination(e -> {
             return e.getCode() == KeyCode.MINUS || e.getCode() == KeyCode.SUBTRACT || "-".equals(e.getText());
         }, KeyCodeCombination.SHORTCUT_DOWN), e -> {
             MainWindow.mainScreen.zoomLess();
             e.consume();
-        });
-        shortcuts.put(new CustomKeyCombination(e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.zoomMore"),
+                new CustomKeyCombination(e -> {
             return e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP || e.getCode() == KeyCode.PLUS
                     || e.getCode() == KeyCode.ADD || "+".equals(e.getText()) || e.getCode() == KeyCode.EQUALS;
         }, KeyCodeCombination.SHORTCUT_DOWN), e -> {
             MainWindow.mainScreen.zoomMore();
             e.consume();
-        });
-        shortcuts.put(new KeyCodesCombination(KeyCode.DOWN, KeyCode.KP_DOWN, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.fitWidth"),
+                new KeyCodesCombination(KeyCode.DOWN, KeyCode.KP_DOWN, KeyCodeCombination.SHORTCUT_DOWN), e -> {
             if(!MainWindow.mainScreen.hasDocument(false)) return;
             MainWindow.mainScreen.zoomOperator.fitWidth(false, false);
             e.consume();
-        });
+        }));
         // Arrows with ALT
-        shortcuts.put(new KeyCodesCombination(KeyCode.UP, KeyCode.KP_UP,
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.pageUp"),
+                new KeyCodesCombination(KeyCode.UP, KeyCode.KP_UP,
                 KeyCodesCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             MainWindow.mainScreen.pageUp();
             e.consume();
-        });
-        shortcuts.put(new KeyCodesCombination(KeyCode.DOWN, KeyCode.KP_DOWN,
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.pageDown"),
+                new KeyCodesCombination(KeyCode.DOWN, KeyCode.KP_DOWN,
                 KeyCodesCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             MainWindow.mainScreen.pageDown();
             e.consume();
-        });
-        shortcuts.put(new KeyCodesCombination(KeyCode.LEFT, KeyCode.KP_LEFT,
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.previousFile"),
+                new KeyCodesCombination(KeyCode.LEFT, KeyCode.KP_LEFT,
                 KeyCodesCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             MainWindow.filesTab.loadPreviousFile();
             e.consume();
-        });
-        shortcuts.put(new KeyCodesCombination(KeyCode.RIGHT, KeyCode.KP_RIGHT,
-                KeyCodesCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.nextFile"),
+                new KeyCodesCombination(KeyCode.RIGHT, KeyCode.KP_RIGHT, KeyCodesCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             MainWindow.filesTab.loadNextFile();
             e.consume();
-        });
+        }));
         // Begin/End and Page Up/Page Down
-        shortcuts.put(new KeyCodesCombination(KeyCode.BEGIN, KeyCode.HOME), e -> {
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.begin"),
+                new KeyCodesCombination(KeyCode.BEGIN, KeyCode.HOME), e -> {
             if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field or a spinner is focused.
                 e.consume();
                 MainWindow.mainScreen.navigateBegin();
             }
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.END), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.end"),
+                new KeyCodeCombination(KeyCode.END), e -> {
             if(!canBeginEndOnNode(Main.window.getScene().getFocusOwner())){ // Do not execute custom actions if a text field or a spinner is focused.
                 e.consume();
                 MainWindow.mainScreen.navigateEnd();
             }
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.PAGE_UP), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.pageUp"),
+                new KeyCodeCombination(KeyCode.PAGE_UP), e -> {
             MainWindow.mainScreen.pageUp();
             e.consume();
-        });
-        shortcuts.put(new KeyCodeCombination(KeyCode.PAGE_DOWN), e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.navigation.pageDown"),
+                new KeyCodeCombination(KeyCode.PAGE_DOWN), e -> {
             MainWindow.mainScreen.pageDown();
             e.consume();
-        });
+        }));
         
         /******************************/
         /****** Number shortcuts ******/
         /******************************/
-        shortcuts.put(new CustomKeyCombination(e -> {
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.numbers"),
+                new CustomKeyCombination(e -> {
             return MathUtils.parseIntFromKeyEventOrNull(e) != null;
         }, KeyCodeCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_ANY), e -> {
             if(!numberPressed(MathUtils.parseIntFromKeyEventOrNull(e), e.isAltDown())) return;
             e.consume();
-        });
+        }));
         
         /******************************/
         /**** Elements color/size *****/
         /******************************/
-        shortcuts.put(new CustomKeyCombination(e -> {
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.decrementSize"),
+                new CustomKeyCombination(e -> {
             return e.getCode() == KeyCode.MINUS || e.getCode() == KeyCode.SUBTRACT || "-".equals(e.getText()) || "—".equals(e.getText());
         }, KeyCodeCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             if(MainWindow.mainScreen.getSelected() instanceof TextElement){
                 MainWindow.textTab.sizeSpinner.decrement();
                 e.consume();
+            }else if(MainWindow.mainScreen.getSelected() instanceof VectorElement){
+                MainWindow.paintTab.vectorStrokeWidth.decrement();
+                e.consume();
             }
-        });
-        shortcuts.put(new CustomKeyCombination(e -> {
+        }));
+        shortcuts.add(new ShortcutRecord(TR.tr("shortcuts.elements.incrementSize"),
+                new CustomKeyCombination(e -> {
             return e.getCode() == KeyCode.PLUS || e.getCode() == KeyCode.ADD || "+".equals(e.getText()) || e.getCode() == KeyCode.EQUALS;
         }, KeyCodeCombination.SHORTCUT_DOWN, KeyCodesCombination.ALT_DOWN), e -> {
             if(MainWindow.mainScreen.getSelected() instanceof TextElement){
                 MainWindow.textTab.sizeSpinner.increment();
                 e.consume();
+            }else if(MainWindow.mainScreen.getSelected() instanceof VectorElement){
+                MainWindow.paintTab.vectorStrokeWidth.increment();
+                e.consume();
             }
-        });
+        }));
+        
         
         /*******************************/
-        /* Graphics elements shortcuts */
+        /********** LAZY: TAB **********/
         /*******************************/
-        shortcuts.put(new CustomKeyCombination(e -> {
-            return matchVectorShortcut(e).isPresent() || matchImageShortcut(e).isPresent();
-        }, KeyCodeCombination.SHORTCUT_DOWN), this::firePaintElementsShortcut);
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodeCombination(KeyCode.TAB), e -> {
+            if(!MainWindow.textTab.isSelected()){
+                MainWindow.textTab.select();
+                e.consume();
+            }else if(!MainWindow.paintTab.isSelected()){
+                MainWindow.paintTab.select();
+                e.consume();
+            }
+        }));
+        
+        /*******************************/
+        /*** LAZY: Pages Navigation ****/
+        /*******************************/
+        // Pages navigation
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodesCombination(KeyCode.UP, KeyCode.KP_UP), e -> {
+            if(!MainWindow.mainScreen.hasDocument(false)) return;
+            MainWindow.mainScreen.navigateUp();
+            e.consume();
+        }));
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodesCombination(KeyCode.DOWN, KeyCode.KP_DOWN), e -> {
+            if(!MainWindow.mainScreen.hasDocument(false)) return;
+            MainWindow.mainScreen.navigateDown();
+            e.consume();
+        }));
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodesCombination(KeyCode.LEFT, KeyCode.KP_LEFT), e -> {
+            if(!MainWindow.mainScreen.hasDocument(false)) return;
+            MainWindow.mainScreen.navigateLeft();
+            e.consume();
+        }));
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodesCombination(KeyCode.RIGHT, KeyCode.KP_RIGHT), e -> {
+            if(!MainWindow.mainScreen.hasDocument(false)) return;
+            MainWindow.mainScreen.navigateRight();
+            e.consume();
+        }));
+        
+        /*******************************/
+        /**** LAZY: Edit pages mode ****/
+        /*******************************/
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodeCombination(KeyCode.DELETE), e -> {
+            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.isEditPagesMode()){
+                MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages();
+                e.consume();
+            }
+        }));
+        lazyShortcuts.add(new ShortcutRecord("",
+                new KeyCodeCombination(KeyCode.A, KeyCodeCombination.SHORTCUT_DOWN), e -> {
+            if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.isEditPagesMode()){
+                MainWindow.mainScreen.document.selectAll();
+                e.consume();
+            }
+        }));
         
         
         /******************************/
@@ -193,11 +283,10 @@ public class KeyboardShortcuts {
         /******************************/
         
         main.addEventFilter(KeyEvent.KEY_PRESSED, e -> {
-            Log.t("KeyPressed: " + e.getCode().getName() + " Text: " + e.getText() + " Char: " + e.getCharacter());
-            Optional<Map.Entry<KeyCombination, Consumer<KeyEvent>>> first = shortcuts.entrySet().stream()
-                    .filter(entry -> entry.getKey().match(e))
+            Optional<ShortcutRecord> first = shortcuts.stream()
+                    .filter(entry -> entry.getCombination().match(e))
                     .filter(entry -> {
-                        entry.getValue().accept(e);
+                        entry.getAction().accept(e);
                         return e.isConsumed();
                     }).findFirst();
             
@@ -217,49 +306,30 @@ public class KeyboardShortcuts {
         main.setOnKeyPressed(this::processLazyShortcuts);
         
     }
-    
     public void processLazyShortcuts(KeyEvent e){
-        Optional<Map.Entry<KeyCombination, Consumer<KeyEvent>>> firstLazy = lazyShortcuts.entrySet().stream()
-                .filter(entry -> entry.getKey().match(e))
+        Optional<ShortcutRecord> first = lazyShortcuts.stream()
+                .filter(entry -> entry.getCombination().match(e))
                 .filter(entry -> {
-                    entry.getValue().accept(e);
+                    entry.getAction().accept(e);
                     return e.isConsumed();
                 }).findFirst();
         
-        if(!e.isShortcutDown()){ // NO SHORTCUT PRESSED
-            
-            if(e.getCode() == KeyCode.TAB){
-                
-                if(!MainWindow.textTab.isSelected()){
-                    MainWindow.textTab.select();
-                    e.consume();
-                }else if(!MainWindow.paintTab.isSelected()){
-                    MainWindow.paintTab.select();
-                    e.consume();
-                }
-                
-            }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.KP_UP){
-                e.consume();
-                MainWindow.mainScreen.navigateUp();
-            }else if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.KP_DOWN){
-                e.consume();
-                MainWindow.mainScreen.navigateDown();
-            }else if(e.getCode() == KeyCode.LEFT || e.getCode() == KeyCode.KP_LEFT){
-                e.consume();
-                MainWindow.mainScreen.navigateLeft();
-            }else if(e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.KP_RIGHT){
-                e.consume();
-                MainWindow.mainScreen.navigateRight();
-            }else if(MainWindow.mainScreen.isEditPagesMode() && e.getCode() == KeyCode.DELETE){
-                e.consume();
-                MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages();
-            }
-        }else{ // SHORTCUT PRESSED
-            if(MainWindow.mainScreen.isEditPagesMode() && e.getCode() == KeyCode.A){
-                e.consume();
-                MainWindow.mainScreen.document.selectAll();
-            }
-        }
+    }
+    // Returns String if used, null otherwise
+    public String getShortcutNameIfExists(KeyCodeCombination combination){
+        if(combination == null) return null;
+        // KeyCombination::equals could be used, but it would not work for CustomKeyCombination that require events
+        KeyEvent event = new KeyEvent(KeyEvent.KEY_PRESSED,
+                combination.getCode().getChar(), combination.getCode().getChar(), combination.getCode(),
+                combination.getShift() == KeyCombination.ModifierValue.DOWN,
+                combination.getControl() == KeyCombination.ModifierValue.DOWN,
+                combination.getAlt() == KeyCombination.ModifierValue.DOWN,
+                combination.getMeta() == KeyCombination.ModifierValue.DOWN);
+        
+        Optional<ShortcutRecord> first = Stream.concat(shortcuts.stream(), menuBarShortcuts.stream())
+                .filter(s -> s.combination.match(event) && !s.getName().isEmpty())
+                .findFirst();
+        return first.map(ShortcutRecord::getName).orElse(null);
     }
     
     // Paint elements shortcuts
@@ -326,5 +396,32 @@ public class KeyboardShortcuts {
         }
         return false;
     }
-    
+    public void registerMenuBarShortcut(KeyCombination combination, String name){
+        menuBarShortcuts.add(new ShortcutRecord(name, combination));
+    }
+
+    private static class ShortcutRecord {
+        private final String name;
+        
+        private final KeyCombination combination;
+        private Consumer<KeyEvent> action = null;
+        public ShortcutRecord(String name, KeyCombination combination, Consumer<KeyEvent> action){
+            this.name = name;
+            this.combination = combination;
+            this.action = action;
+        }
+        public ShortcutRecord(String name, KeyCombination combination){
+            this.name = name;
+            this.combination = combination;
+        }
+        public String getName(){
+            return name;
+        }
+        public KeyCombination getCombination(){
+            return combination;
+        }
+        public Consumer<KeyEvent> getAction(){
+            return action;
+        }
+    }
 }
