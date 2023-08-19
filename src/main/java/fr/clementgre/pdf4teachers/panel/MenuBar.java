@@ -106,6 +106,20 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem file10Exit = createMenuItem(TR.tr("menuBar.file.exit"), SVGPathIcons.EXIT, new KeyCodeCombination(KeyCode.Q, KeyCombination.SHORTCUT_DOWN),
             null, false, false, false);
     
+    ////////// EDIT //////////
+    
+    public final Menu edit = new Menu(TR.tr("menuBar.edit"));
+    public final MenuItem edit3Cut = createMenuItem(TR.tr("actions.cut"), SVGPathIcons.CUT, CopyPasteManager.KEY_COMB_CUT,
+            null, true, false, false);
+    public final MenuItem edit4Copy = createMenuItem(TR.tr("actions.copy"), SVGPathIcons.COPY, CopyPasteManager.KEY_COMB_COPY,
+            null, true, false, false);
+    public final MenuItem edit5Paste = createMenuItem(TR.tr("actions.paste"), SVGPathIcons.PASTE, CopyPasteManager.KEY_COMB_PASTE,
+            null, true, false, false);
+    private final MenuItem edit1Undo = createMenuItem(TR.tr("actions.undo"), SVGPathIcons.UNDO, UndoEngine.KEY_COMB_UNDO,
+            TR.tr("menuBar.edit.undo.tooltip"), true, false, false);
+    private final MenuItem edit2Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, UndoEngine.KEY_COMB_REDO,
+            TR.tr("menuBar.edit.redo.tooltip"), true, false, false);
+    
     
     ////////// TOOLS //////////
     
@@ -162,25 +176,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final MenuItem tools8Debug3OpenEditionFile = createMenuItem(TR.tr("menuBar.tools.debug.openCurrentEditFile"), null, null,
             TR.tr("menuBar.tools.debug.openCurrentEditFile.tooltip"), true, false, false);
     
-    ////////// EDIT //////////
-    
-    public final Menu edit = new Menu(TR.tr("menuBar.edit"));
-    
-    private final MenuItem edit1Undo = createMenuItem(TR.tr("actions.undo"), SVGPathIcons.UNDO, UndoEngine.KEY_COMB_UNDO,
-            TR.tr("menuBar.edit.undo.tooltip"), true, false, false);
-    
-    private final MenuItem edit2Redo = createMenuItem(TR.tr("actions.redo"), SVGPathIcons.REDO, UndoEngine.KEY_COMB_REDO,
-            TR.tr("menuBar.edit.redo.tooltip"), true, false, false);
-    
-    public final MenuItem edit3Cut = createMenuItem(TR.tr("actions.cut"), SVGPathIcons.CUT, CopyPasteManager.KEY_COMB_CUT,
-            null, true, false, false);
-    
-    public final MenuItem edit4Copy = createMenuItem(TR.tr("actions.copy"), SVGPathIcons.COPY, CopyPasteManager.KEY_COMB_COPY,
-            null, true, false, false);
-    
-    public final MenuItem edit5Paste = createMenuItem(TR.tr("actions.paste"), SVGPathIcons.PASTE, CopyPasteManager.KEY_COMB_PASTE,
-            null, true, false, false);
-    
     ////////// HELP //////////
     
     private final Menu help = new Menu(TR.tr("menuBar.help"));
@@ -202,7 +197,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     public static boolean isSystemMenuBarSupported(){
         return PlatformUtils.isMac();
     }
-    
     public void setup(){
         if(isSystemMenuBarSupported()) setUseSystemMenuBar(true);
         
@@ -214,6 +208,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             file.getItems().addAll(file1Open, file2OpenDir, file3Clear, new SeparatorMenuItem(), file4Save, file5Rename, file6Delete, file7Close, new SeparatorMenuItem(), file8Export, file9ExportAll, new SeparatorMenuItem(), file10Exit);
         }
         
+        ////////// EDIT //////////
+        
+        edit.getItems().addAll(edit1Undo, edit2Redo, new SeparatorMenuItem(), edit3Cut, edit4Copy, edit5Paste);
         
         ////////// TOOLS //////////
         
@@ -228,10 +225,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 new SeparatorMenuItem(), tools5DeleteAllEdits, tools6SameNameEditions, tools6ExportImportEdition,
                 new SeparatorMenuItem(), tools8FullScreen,
                 new SeparatorMenuItem(), tools8Debug);
-        
-        ////////// EDIT //////////
-        
-        edit.getItems().addAll(edit1Undo, edit2Redo, new SeparatorMenuItem(), edit3Cut, edit4Copy, edit5Paste);
         
         ////////// HELP //////////
         
@@ -294,6 +287,65 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
         });
         file10Exit.setOnAction(e -> MainWindow.requestCloseApp());
+        
+        ////////// EDIT //////////
+        
+        edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
+            String nextUndo = null;
+            String nextRedo = null;
+            if(MainWindow.mainScreen.getUndoEngineAuto() != null){
+                nextUndo = MainWindow.mainScreen.getUndoEngineAuto().getUndoNextName();
+                nextRedo = MainWindow.mainScreen.getUndoEngineAuto().getRedoNextName();
+            }
+            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
+            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
+            
+            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
+            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
+            
+            if(edit1Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
+            else edit1Undo.setText(nextUndo);
+            if(edit2Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
+            else edit2Redo.setText(nextRedo);
+            
+            
+            String cut = TR.tr("actions.cut");
+            String copy = TR.tr("actions.copy");
+            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.COPY)){
+                cut = TR.tr("actions.cutSelectedText");
+                copy = TR.tr("actions.copySelectedText");
+            }else if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
+                cut = TR.tr("actions.cutElement");
+                copy = TR.tr("actions.copyElement");
+            }
+            if(edit3Cut instanceof NodeMenuItem menu) menu.setName(cut);
+            else edit3Cut.setText(cut);
+            if(edit4Copy instanceof NodeMenuItem menu) menu.setName(copy);
+            else edit4Copy.setText(copy);
+            
+            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
+            
+            }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
+            
+            }
+            
+            
+            String paste = TR.tr("actions.paste");
+            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
+                paste = TR.tr("actions.pasteClipboardString");
+            }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
+                paste = TR.tr("actions.paste") + " (" + Element.elementClipboard.getElementName(false) + ")";
+            }
+            if(edit5Paste instanceof NodeMenuItem menu) menu.setName(paste);
+            else edit5Paste.setText(paste);
+        });
+        
+        edit1Undo.setOnAction(e -> MainWindow.mainScreen.undo());
+        edit2Redo.setOnAction(e -> MainWindow.mainScreen.redo());
+        
+        edit3Cut.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.CUT));
+        edit4Copy.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.COPY));
+        edit5Paste.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.PASTE));
         
         ////////// TOOLS //////////
         
@@ -424,65 +476,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             PlatformUtils.openFile(file.getAbsolutePath());
         });
         
-        ////////// EDIT //////////
-        
-        edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
-            String nextUndo = null;
-            String nextRedo = null;
-            if(MainWindow.mainScreen.getUndoEngineAuto() != null){
-                nextUndo = MainWindow.mainScreen.getUndoEngineAuto().getUndoNextName();
-                nextRedo = MainWindow.mainScreen.getUndoEngineAuto().getRedoNextName();
-            }
-            if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
-            else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
-            
-            if(nextRedo != null) nextRedo = TR.tr("actions.redo") + " \"" + nextRedo + "\"";
-            else nextRedo = TR.tr("actions.redo") + " (" + TR.tr("actions.redo.nothingToRedo") + ")";
-            
-            if(edit1Undo instanceof NodeMenuItem menu) menu.setName(nextUndo);
-            else edit1Undo.setText(nextUndo);
-            if(edit2Redo instanceof NodeMenuItem menu) menu.setName(nextRedo);
-            else edit2Redo.setText(nextRedo);
-            
-            
-            String cut = TR.tr("actions.cut");
-            String copy = TR.tr("actions.copy");
-            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.COPY)){
-                cut = TR.tr("actions.cutSelectedText");
-                copy = TR.tr("actions.copySelectedText");
-            }else if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
-                cut = TR.tr("actions.cutElement");
-                copy = TR.tr("actions.copyElement");
-            }
-            if(edit3Cut instanceof NodeMenuItem menu) menu.setName(cut);
-            else edit3Cut.setText(cut);
-            if(edit4Copy instanceof NodeMenuItem menu) menu.setName(copy);
-            else edit4Copy.setText(copy);
-            
-            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
-            
-            }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
-            
-            }
-            
-            
-            String paste = TR.tr("actions.paste");
-            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
-                paste = TR.tr("actions.pasteClipboardString");
-            }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
-                paste = TR.tr("actions.paste") + " (" + Element.elementClipboard.getElementName(false) + ")";
-            }
-            if(edit5Paste instanceof NodeMenuItem menu) menu.setName(paste);
-            else edit5Paste.setText(paste);
-        });
-        
-        edit1Undo.setOnAction(e -> MainWindow.mainScreen.undo());
-        edit2Redo.setOnAction(e -> MainWindow.mainScreen.redo());
-        
-        edit3Cut.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.CUT));
-        edit4Copy.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.COPY));
-        edit5Paste.setOnAction(e -> CopyPasteManager.execute(CopyPasteManager.CopyPasteType.PASTE));
-        
         ////////// ABOUT / HELP //////////
         
         help1LoadDoc.setOnAction((ActionEvent actionEvent) -> MainWindow.mainScreen.openFile(TR.getDocFile()));
@@ -505,7 +498,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         if(isSystemMenuBarSupported()){
             
             if(PlatformUtils.isMac()){
-                getMenus().addAll(file, tools, edit, help);
+                getMenus().addAll(file, edit, tools, help);
                 
                 MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
                 
@@ -550,7 +543,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             // edit is edited dynamic
             NodeMenuItem.setupDynamicMenu(edit);
             
-            getMenus().addAll(file, tools, edit, help, settings, about);
+            getMenus().addAll(file, edit, tools, help, settings, about);
             
             setupMenus();
             Main.settings.menuForceOpen.valueProperty().addListener((observable, oldValue, newValue) -> {
