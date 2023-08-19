@@ -143,34 +143,32 @@ The application was developed with JavaFX framework, in Java SE 17 (1.4.0).
 ### Java dependencies
 
 - **[JavaFX 17](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
-- **[Apache PDF BOX 2.0.26](https://pdfbox.apache.org/)** : used to all the interactions with PDF : it generates images
-  from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, **
-  Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.
+- **[Apache PDF BOX 2.0.26](https://pdfbox.apache.org/)** : used for all the interactions with PDFs: it generates images
+  from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, *
+  *Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.
 - **[JMetro 11.6.15](https://pixelduke.com/java-javafx-theme-jmetro/)** : JavaFX theme. It offers you a nicer interface,
   including the dark mode.
 - **[ControlsFX 11.1.0](https://controlsfx.github.io/)** : JavaFX new inputs and custom panes
-- **[Writer2Latex 1.6.1](http://writer2latex.sourceforge.net/)** : used to convert StarMath (or LibreOffice Math)
+- **[Writer2Latex 1.6.1](http://writer2latex.sourceforge.net/)** : Used to convert StarMath (or LibreOffice Math)
   language in LaTeX for rendering.
-  **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : used to generate images from LaTeX expressions. (
-  LaTeX text elements feature in 1.2.0)
-- **[SnakeYAML 1.30](https://bitbucket.org/asomov/snakeyaml/src/master/)** : lets read YAML files easier (edits + user
+- **[JLatexMath 1.0.7](https://github.com/opencollab/jlatexmath)** : Used to generate images from LaTeX expressions for
+  exportation.
+- **[SnakeYAML 1.30](https://bitbucket.org/asomov/snakeyaml/src/master/)** : Lets read YAML files easier (edits + user
   datas) : it converts the YAML into ``HashMap<String, Object>`` and vice versa.
 - **[Opencsv 5.6](http://opencsv.sourceforge.net/)** : used to read/write CSV files (when importing SACoche assessment)
 - **[Jackson Streaming API 2.13.3](https://github.com/FasterXML/jackson-core)** : lets read the JSON format. Used to
-  send requests to GitHub to check if a new release is available.
+  parse GitHub responses when checking if updates are available, and used for automatic update of translations.
 - **[Metadata-Extractor 2.18.0](https://drewnoakes.com/code/exif/)** : Used to read the images EXIF data, so
   PDF4Teachers can take in account the rotation of images
 - **[Batik Parser 1.14](https://xmlgraphics.apache.org/batik/using/parsers.html)** : Allow me to parse SVG easily, with
-  custom handlers.
+  custom handlers for SVG importation.
 - **[PdfBox Graphics2D 0.40](https://github.com/rototor/pdfbox-graphics2d)** : Used to write SVG to a PDF, using PDFBox.
 - **[Google Diff-Match-Patch 0.1](https://github.com/google/diff-match-patch)** : Allow me to perform some actions on
-  strings..
-- **[Unique4J 1.4](https://github.com/prat-man/unique4j)** : used to set up a single instance of the app when opening
-  files
-  from system.
-- **[jSystemThemeDetector 3.8](https://github.com/Dansoftowner/jSystemThemeDetector)** : used to set up a single
-  instance of the app when opening files
-  from system.
+  strings for undo/redo on text inputs.
+- **[Unique4J 1.4](https://github.com/prat-man/unique4j)** : Used to set up a single instance of the app when opening
+  files from system.
+- **[jSystemThemeDetector 3.8](https://github.com/Dansoftowner/jSystemThemeDetector)** : Used to synchronize the app
+  theme with the system theme (light or dark).
 
 ### Gradle plugins
 
