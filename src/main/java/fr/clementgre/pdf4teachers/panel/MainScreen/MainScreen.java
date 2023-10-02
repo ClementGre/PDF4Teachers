@@ -544,56 +544,68 @@ public class MainScreen extends Pane {
     }
     public void openFile(File file, boolean resetScrollValue){
         
+        boolean hadOpenedFile = status.get() == Status.OPEN;
+        double oldPaneScale = zoomOperator.getPaneScale();
         if(!closeFile(!Main.settings.autoSave.getValue(), false)){
             return;
         }
         
-        setIsMultiPagesMode(MainWindow.userData.multiPagesMode);
-        setIsEditPagesMode(MainWindow.userData.editPagesMode);
-        
-        repaint();
-        
-        try{
-            document = new Document(file);
-        }catch(IOException e){
-            Log.eNotified(e);
-            failOpen();
-            return;
-        }
-        status.set(Status.OPEN);
-        MainWindow.filesTab.files.getSelectionModel().select(file);
-        
-        if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
-        else zoomOperator.fitWidth(true, false);
-        
-        zoomOperator.vScrollBar.setValue(0);
-        document.showPages();
-        try{
-            document.loadEdition(!resetScrollValue);
-        }catch(Exception e){
-            Log.eNotified(e, "Unable to load the edit file.");
-            closeFile(false, true);
+        Platform.runLater(() -> {
+            setIsMultiPagesMode(MainWindow.userData.multiPagesMode);
+            setIsEditPagesMode(MainWindow.userData.editPagesMode);
             
-            failedEditFile = Edition.getEditFile(file).getAbsolutePath();
-            status.set(Status.ERROR_EDITION);
             repaint();
             
-            return;
-        }
-        
-        repaint();
-        isRotating = false; // In case of a bug, it stayed to true
-        
-        if(MainWindow.userData.editPagesMode){
-            zoomOperator.overviewWidth(true);
-            Platform.runLater(() -> zoomOperator.updatePaneDimensions(0, 0.5));
-        }else{
-            double scrollValue = zoomOperator.vScrollBar.getValue();
-            zoomOperator.fitWidth(true, false);
-            Platform.runLater(() -> zoomOperator.updatePaneDimensions(scrollValue, 0.5));
-        }
-        
-        AutoTipsManager.showByAction("opendocument");
+            try{
+                document = new Document(file);
+            }catch(IOException e){
+                Log.eNotified(e);
+                failOpen();
+                return;
+            }
+            status.set(Status.OPEN);
+            MainWindow.filesTab.files.getSelectionModel().select(file);
+            
+            // Zoom #1. If had opened file, keep same zoom factor (must be done before document.loadEdition that puts the right scrollVValue).
+            if(!hadOpenedFile){
+                if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
+                else zoomOperator.fitWidth(true, false);
+            }else zoomOperator.zoom(oldPaneScale, true);
+            
+            zoomOperator.vScrollBar.setValue(0);
+            document.showPages();
+            try{
+                document.loadEdition(!resetScrollValue);
+            }catch(Exception e){
+                Log.eNotified(e, "Unable to load the edit file.");
+                closeFile(false, true);
+                
+                failedEditFile = Edition.getEditFile(file).getAbsolutePath();
+                status.set(Status.ERROR_EDITION);
+                repaint();
+                
+                return;
+            }
+            
+            repaint();
+            isRotating = false; // Can sometimes be kept to true
+            
+            // Zoom #2. If had opened file, keep same zoom factor.
+            if(!hadOpenedFile){
+                if(MainWindow.userData.editPagesMode) zoomOperator.overviewWidth(true);
+                else zoomOperator.fitWidth(true, false);
+            }else zoomOperator.zoom(oldPaneScale, true);
+            
+            // Scroll position
+            if(MainWindow.userData.editPagesMode){
+                PlatformUtils.runLaterOnUIThread(500, () -> zoomOperator.updatePaneDimensions(0, 0.5));
+            }else{
+                double scrollValue = zoomOperator.vScrollBar.getValue(); // This value has been set when loading the edition
+                zoomOperator.updatePaneDimensions(scrollValue, 0.5);
+            }
+            
+            AutoTipsManager.showByAction("opendocument");
+        });
     }
     
     public boolean openFiles(List<File> toOpenFiles, boolean openDocument){

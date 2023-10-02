@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -166,10 +166,10 @@ public class ZoomOperator {
             setPaneY(centerTranslationY());
         }else{
             vScrollBar.setVisible(true);
-            double vValue = (-getPaneY() + getPaneShiftY()) / getScrollableHeight();
+            double vValue = MathUtils.clamp((-getPaneY() + getPaneShiftY()) / getScrollableHeight(), 0, 1);
             if(force) vScrollBar.setValue(Math.abs(vValue-.1));
             if(vValue != vScrollBar.getValue()){
-                vScrollBar.setValue(MathUtils.clamp(vValue, 0, 1));
+                vScrollBar.setValue(vValue);
             }
         }
     }
