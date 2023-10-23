@@ -5,7 +5,6 @@
 
 package fr.clementgre.pdf4teachers;
 
-import com.fasterxml.jackson.core.PrettyPrinter;
 import fr.clementgre.pdf4teachers.datasaving.SyncUserData;
 import fr.clementgre.pdf4teachers.datasaving.settings.Settings;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
@@ -54,8 +53,8 @@ public class Main extends Application {
     public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
     
     /********** Version parameters **********/
-    public static final Mode mode = Mode.DEV;
-    public static final int VERSION_ID = VersionIds.DV1_1_4_1;
+    public static final Mode mode = Mode.RELEASE;
+    public static final int VERSION_ID = VersionIds.RL1_1_4_1;
     public static final String VERSION = getVersionName("1.4.1", 1);
     public static LogLevel logLevel = getLogLevel();
     /****************************************/

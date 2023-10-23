@@ -8,7 +8,7 @@ body:
     attributes:
       label: Prérequis
       options:
-        - label: J'ai vérifié que le bug n'a pas déjà été rapporté [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.0%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
+        - label: J'ai vérifié que le bug n'a pas déjà été rapporté [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+milestone%3A%22Release+1.4.1%22+-label%3A%22user+Issue%22+-label%3Aduplicate+-label%3Adocumentation+-label%3Aenhancement+-label%3A%22good+first+issue%22+-label%3A%22help+wanted%22+-label%3Aquestion)
           required: true
         - label: J'ai vérifié que le bug n'est pas un problème utilisateur courant [ici](https://github.com/clementgre/PDF4Teachers/issues?q=is%3Aissue+label%3A%22user+issue%22+)
           required: true
@@ -24,7 +24,7 @@ body:
           1. 
           2. 
           3. 
-          4. 
+        4.
   - type: textarea
     attributes:
       label: Vérifiez la console
@@ -32,7 +32,7 @@ body:
                 Vous pouvez ouvrir la fenêtre de la console en pressant Ctrl/Cmd + Alt + C avec la fenêtre principale de PDF4Teachers sélectionnée.
                 Envoyez une capture d'écran de la console si elle n'est pas vide.
       placeholder: |
-                03:20:57.959 INFO    Main main() Starting PDF4Teachers 1.4.0 | Java 17.0.5 on JFX 17.0.5+1+b01 on Mac OS X 13.0.1 (aarch64)
+        03:20:57.959 INFO    Main main() Starting PDF4Teachers 1.4.1 | Java 17.0.5 on JFX 17.0.5+1+b01 on Mac OS X 13.0.1 (aarch64)
                 03:20:57.964 INFO    Main main() Run mode: release | Log level: info
                 [...]
       render: java

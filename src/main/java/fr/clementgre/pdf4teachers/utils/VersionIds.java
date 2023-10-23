@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -16,4 +16,5 @@ public class VersionIds {
     public static final int RL_1_4_0 = 7;
     public static final int SN1_1_4_1 = 8;
     public static final int DV1_1_4_1 = 9;
+    public static final int RL1_1_4_1 = 10;
 }
