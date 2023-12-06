@@ -244,23 +244,30 @@ public class GradeElement extends Element {
         item3.disableProperty().bind(MainWindow.gradeTab.isLockGradeScaleProperty());
         NodeMenuItem item4 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.set0"), false);
         item4.setToolTip(TR.tr("gradeTab.gradeMenu.set0.tooltip"));
-        NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
-        item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilled.tooltip"));
+        NodeMenuItem item5 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades"), false);
+        item5.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades.tooltip"));
+        NodeMenuItem item6 = new NodeMenuItem(TR.tr("gradeTab.gradeMenu.hideUnfilled"), false);
+        item6.setToolTip(TR.tr("gradeTab.gradeMenu.hideUnfilledSubGrades.tooltip"));
         
         
         menu.setOnShowing((e) -> {
             Platform.runLater(() -> {
-                MenuItem menuItem = getGradeTreeItem().getEditMenuItem(menu, getPage());
+                GradeTreeItem treeItem = getGradeTreeItem();
+                MenuItem menuItem = treeItem.getEditMenuItem(menu, getPage());
                 
-                if(menu.getItems().size() == 4) menu.getItems().add(0, menuItem);
-                else menu.getItems().set(0, menuItem);
+                menu.getItems().clear();
+                menu.getItems().addAll(menuItem, item1, item4, item2, item3);
+                if(treeItem.doContainsChildrenUnfilledAndAlwaysVisible()){
+                    if(treeItem.hasSubGrade()) menu.getItems().add(item5);
+                    else menu.getItems().add(item6);
+                }
+                
                 NodeMenuItem.setupMenuNow(menu);
             });
             
         });
         
-        menu.getItems().addAll(item1, item4, item2, item3);
-        if(isAlwaysVisible() && getValue() == -1) menu.getItems().add(item5);
+        menu.getItems().addAll(item1, item4, item2, item3, item5, item6);
         
         item1.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();

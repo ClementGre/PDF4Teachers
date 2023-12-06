@@ -419,6 +419,15 @@ public class GradeTreeItem extends TreeItem<String> {
             children.getCore().setAlwaysVisible(visible, registerUndo);
         }
     }
+    public boolean doContainsChildrenUnfilledAndAlwaysVisible(){
+        if(getCore().isAlwaysVisible() && getCore().getValue() == -1) return true;
+        
+        for(int i = 0; i < getChildren().size(); i++){
+            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
+            if(children.doContainsChildrenUnfilledAndAlwaysVisible()) return true;
+        }
+        return false;
+    }
     public void reIndexChildren(){
         for(int i = 0; i < getChildren().size(); i++){
             GradeTreeItem children = (GradeTreeItem) getChildren().get(i);

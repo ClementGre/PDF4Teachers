@@ -17,4 +17,5 @@ public class VersionIds {
     public static final int SN1_1_4_1 = 8;
     public static final int DV1_1_4_1 = 9;
     public static final int RL1_1_4_1 = 10;
+    public static final int DV1_1_4_2 = 11;
 }
