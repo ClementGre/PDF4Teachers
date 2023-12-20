@@ -46,8 +46,6 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
     public LanguageWindow(CallBackArg<String> callBack){
         super(new ListView<>(), StageWidth.NORMAL, TR.tr("language.chooseLanguageWindow.title"), TR.tr("language.chooseLanguageWindow.title"));
         this.callBack = callBack;
-        
-        if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
     }
     
     @Override
