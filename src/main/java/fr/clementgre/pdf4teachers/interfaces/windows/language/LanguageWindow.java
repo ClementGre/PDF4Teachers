@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2023. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -21,10 +21,20 @@ import java.util.Objects;
 
 public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
     
+    private final boolean firstStartBehaviour;
+    
+    private final CallBackArg<String> callBack;
+    public LanguageWindow(boolean firstStartBehaviour, CallBackArg<String> callBack){
+        super(new ListView<>(), StageWidth.NORMAL, TR.tr("language.chooseLanguageWindow.title"), TR.tr("language.chooseLanguageWindow.title"));
+        this.firstStartBehaviour = firstStartBehaviour;
+        this.callBack = callBack;
+        
+        if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
+    }
     public static void showLanguageWindow(boolean firstStartBehaviour){
     
         new LanguagesUpdater().update((downloaded) -> {
-            new LanguageWindow(selectedLanguage -> {
+            new LanguageWindow(firstStartBehaviour, selectedLanguage -> {
                 if(!selectedLanguage.isEmpty() && !selectedLanguage.equals(Main.settings.language.getValue())){
                     String oldDocPath = TR.getDocFile().getAbsolutePath();
         
@@ -33,23 +43,16 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
         
                     if(!firstStartBehaviour){
                         Main.window.restart(true, oldDocPath);
-                    }else{
-                        TR.updateLocale();
-                        Main.startMainWindowAuto();
+                        return;
                     }
                 }
-            });
+                if(firstStartBehaviour){
+                    TR.updateLocale();
+                    Main.startMainWindowAuto();
+                }
+            }).requestFocus();
         }, false, false);
     }
-    
-    private final CallBackArg<String> callBack;
-    public LanguageWindow(CallBackArg<String> callBack){
-        super(new ListView<>(), StageWidth.NORMAL, TR.tr("language.chooseLanguageWindow.title"), TR.tr("language.chooseLanguageWindow.title"));
-        this.callBack = callBack;
-        
-        if(Main.settings.language.getValue().isEmpty()) Main.settings.language.setValue("en_us");
-    }
-    
     @Override
     public void setupSubClass(){
         setSubHeaderText(TR.tr("language.chooseLanguageWindow.header"));
@@ -65,24 +68,30 @@ public class LanguageWindow extends AlternativeWindow<ListView<LanguagePane>> {
         // (Therefore, there is no scroll with the Alternative Window scrollPane.)
         scrollPane.setFitToHeight(true);
         
-        setupLanguages();
+        setOnCloseRequest((e) -> {
+            // User requested close without clicking on a scene button: save selected language only if first start.
+            if(firstStartBehaviour) callBack.call(root.getSelectionModel().getSelectedItem().getShortName());
+        });
         
+        setupLanguages();
         setupButtons();
     }
     private void setupButtons(){
         Button contribute = new Button(TR.tr("language.chooseLanguageWindow.contributeButton"));
-        Button cancel = new Button(TR.tr("actions.cancel"));
         Button apply = new Button(Main.window == null ? TR.tr("actions.apply") : TR.tr("actions.applyAndRestart"));
         
         contribute.setOnAction((ActionEvent event) -> Main.hostServices.showDocument("https://pdf4teachers.org/Contribute/"));
-        cancel.setOnAction((e) -> close());
         apply.setOnAction((ActionEvent event) -> {
             TR.updateLocale();
             close();
             callBack.call(root.getSelectionModel().getSelectedItem().getShortName());
         });
         
-        setButtons(cancel, apply);
+        if(!firstStartBehaviour){
+            Button cancel = new Button(TR.tr("actions.cancel"));
+            cancel.setOnAction((e) -> close());
+            setButtons(cancel, apply);
+        }else setButtons(apply);
         setLeftButtons(contribute);
     }
     @Override
