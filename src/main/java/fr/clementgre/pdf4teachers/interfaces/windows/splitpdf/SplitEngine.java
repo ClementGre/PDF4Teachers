@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -217,7 +217,7 @@ public class SplitEngine {
             for(Color color : colors){
         
                 double diff = getColorDiff(color, match);
-                if(diff < sensibility){ // Matched
+                if(diff <= sensibility){ // Matched
                     if(!hasLastPageMatched){
                         sectionsBounds.add(i-1); // End of section
                         // Reopen a new section right after closing the last one (including the selected page in the next section).
