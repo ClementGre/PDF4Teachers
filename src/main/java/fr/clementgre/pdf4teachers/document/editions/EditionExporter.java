@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -100,7 +100,7 @@ public class EditionExporter {
                     
                     @Override
                     @SuppressWarnings("unchecked")
-                    public Map.Entry<Config, Integer> sortData(String fileName, boolean recursive) throws Exception{
+                    public Map.Entry<Config, Integer> filterData(String fileName, boolean recursive) throws Exception{
                         
                         if(!recursive){
                             File editFile = Edition.getEditFile(MainWindow.mainScreen.document.getFile());
@@ -247,7 +247,7 @@ public class EditionExporter {
             
             @SuppressWarnings("unchecked")
             @Override
-            public Map.Entry<Config, Integer> sortData(File pdfFile, boolean recursive) throws Exception{
+            public Map.Entry<Config, Integer> filterData(File pdfFile, boolean recursive) throws Exception{
                 if(!FilesUtils.isInSameDir(pdfFile.toPath(), MainWindow.mainScreen.document.getFile().toPath()))
                     return Map.entry(new Config(), 1); // Check same dir
                 

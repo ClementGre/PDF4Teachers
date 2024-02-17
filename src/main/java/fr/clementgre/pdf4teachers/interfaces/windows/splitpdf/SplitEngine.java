@@ -62,7 +62,7 @@ public class SplitEngine {
             }
         
             @Override
-            public Map.Entry<ExportPart, Integer> sortData(ExportPart exportPart, boolean recursive){
+            public Map.Entry<ExportPart, Integer> filterData(ExportPart exportPart, boolean recursive){
                 
                 if(exportPart.output.exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(exportPart.output);

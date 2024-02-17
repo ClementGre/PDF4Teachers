@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -17,6 +17,7 @@ import javafx.application.Platform;
 import org.apache.pdfbox.cos.COSDictionary;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.multipdf.LayerUtility;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.form.PDFormXObject;
@@ -105,10 +106,19 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
         int oldNumPages = editor.getDocument().getNumberOfPages();
         for(int i = 0; i < oldNumPages; i+=2){
             // Create output PDF frame
-            PDRectangle leftFrame = editor.getDocument().getPage(i).getCropBox();
-            PDRectangle rightFrame = editor.getDocument().getPage(i+1).getCropBox();
+            PDPage leftPage = editor.getDocument().getPage(i);
+            PDPage rightPage = editor.getDocument().getPage(i + 1);
+            
+            PDRectangle leftFrame = leftPage.getCropBox();
+            PDRectangle rightFrame = rightPage.getCropBox();
+            
+            if(leftPage.getRotation() == 90 || leftPage.getRotation() == 270)
+                leftFrame = new PDRectangle(leftFrame.getLowerLeftY(), leftFrame.getLowerLeftX(), leftFrame.getHeight(), leftFrame.getWidth());
+            if(rightPage.getRotation() == 90 || rightPage.getRotation() == 270)
+                rightFrame = new PDRectangle(rightFrame.getLowerLeftY(), rightFrame.getLowerLeftX(), rightFrame.getHeight(), rightFrame.getWidth());
+            
             PDRectangle outPdfFrame = new PDRectangle(leftFrame.getWidth()+rightFrame.getWidth(), Math.max(leftFrame.getHeight(), rightFrame.getHeight()));
-    
+            
             // Create output page with calculated frame and add it to the document
             COSDictionary dict = new COSDictionary();
             dict.setItem(COSName.TYPE, COSName.PAGE);
@@ -120,16 +130,12 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             
             // Source PDF pages has to be imported as form XObjects to be able to insert them at a specific point in the output page
             LayerUtility layerUtility = new LayerUtility(editor.getDocument());
-            PDFormXObject formPdf1 = layerUtility.importPageAsForm(editor.getDocument(), i);
-            PDFormXObject formPdf2 = layerUtility.importPageAsForm(editor.getDocument(), i+1);
             
+            PDFormXObject formPdf1 = generatePageForm(layerUtility, editor.getDocument(), leftPage, leftFrame, 0, outPdfFrame.getHeight());
+            PDFormXObject formPdf2 = generatePageForm(layerUtility, editor.getDocument(), rightPage, rightFrame, leftFrame.getWidth(), outPdfFrame.getHeight());
             
-            // Add form objects to output page
-            AffineTransform afLeft = AffineTransform.getTranslateInstance(leftFrame.getLowerLeftX(), 0);
-            AffineTransform afRight = AffineTransform.getTranslateInstance(leftFrame.getWidth() + rightFrame.getLowerLeftX(), 0);
-            layerUtility.appendFormAsLayer(newPage, formPdf1, afLeft, "left-" + 2*i + "-" + new Random().nextInt(99999));
-            layerUtility.appendFormAsLayer(newPage, formPdf2, afRight, "right-" + (2*i+1) + "-" + new Random().nextInt(99999));
-            
+            layerUtility.appendFormAsLayer(newPage, formPdf1, new AffineTransform(), "left-" + 2 * i + "-" + new Random().nextInt(99999));
+            layerUtility.appendFormAsLayer(newPage, formPdf2, new AffineTransform(), "right-" + (2 * i + 1) + "-" + new Random().nextInt(99999));
             
             newPages.add(new MergedPage(newPage, document.getPage(i), document.getPage(i+1)));
         }
@@ -182,6 +188,53 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
         document.edition.save(false);
     }
     
+    private PDFormXObject generatePageForm(LayerUtility layerUtility, PDDocument doc, PDPage page, PDRectangle rotatedCB, double trx, double availableHeight) throws IOException{
+        PDFormXObject form = layerUtility.importPageAsForm(doc, page);
+        int rotation = page.getRotation();
+        
+        AffineTransform at = new AffineTransform();
+        at.translate(trx, (availableHeight - rotatedCB.getHeight()) / 2d);
+        switch(rotation){
+            case 90:
+                at.translate(-rotatedCB.getLowerLeftX(), rotatedCB.getLowerLeftY());
+                at.translate(0, rotatedCB.getHeight());
+                at.rotate(-Math.PI / 2.0);
+                break;
+            case 180:
+                at.translate(rotatedCB.getLowerLeftX(), rotatedCB.getLowerLeftY());
+                at.translate(rotatedCB.getWidth(), rotatedCB.getHeight());
+                at.rotate(-Math.PI);
+                break;
+            case 270:
+                at.translate(rotatedCB.getLowerLeftX(), -rotatedCB.getLowerLeftY());
+                at.translate(rotatedCB.getWidth(), 0);
+                at.rotate(-Math.PI * 1.5);
+                break;
+            default:
+                at.translate(-rotatedCB.getLowerLeftX(), -rotatedCB.getLowerLeftY());
+        }
+        form.setMatrix(at);
+        
+        return form;
+    }
+    
+    private void cropPage(PDPage page, boolean leftPage){
+        PDRectangle bounds = page.getCropBox();
+        if(page.getRotation() == 90 || page.getRotation() == 270){
+            leftPage = !leftPage;
+        }
+        if(page.getRotation() == 0 || page.getRotation() == 180){
+            // Cut the page vertically because there is no rotation
+            if(leftPage) bounds.setUpperRightX(bounds.getUpperRightX() - bounds.getWidth() / 2);
+            else bounds.setLowerLeftX(bounds.getLowerLeftX() + bounds.getWidth() / 2);
+        }else{
+            // Cut the page horizontally because there is a rotation
+            if(leftPage) bounds.setLowerLeftY(bounds.getLowerLeftY() + bounds.getHeight() / 2);
+            else bounds.setUpperRightY(bounds.getUpperRightY() - bounds.getHeight() / 2);
+        }
+        page.setCropBox(bounds);
+    }
+    
     public void disassemble(Document document){
     
         /// SCINDER / délivreter
@@ -215,14 +268,9 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             PDPage oldPage = editor.getDocument().getPage(i);
             COSDictionary newPageDict = new COSDictionary(oldPage.getCOSObject());
             PDPage page = new PDPage(newPageDict);
-    
-            PDRectangle bounds = oldPage.getCropBox();
-            bounds.setUpperRightX(bounds.getUpperRightX() - bounds.getWidth() / 2);
-            oldPage.setCropBox(bounds);
-    
-            bounds = page.getCropBox();
-            bounds.setLowerLeftX(bounds.getLowerLeftX() + bounds.getWidth() / 2);
-            page.setCropBox(bounds);
+            
+            cropPage(oldPage, true);
+            cropPage(page, false);
     
             PageRenderer pageRenderer = new PageRenderer(document.numberOfPages);
             editor.getDocument().addPage(page);
@@ -293,7 +341,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
                                                                     (a, b) -> b,
                                                                     LinkedHashMap::new));
         }
-        // Really move pages
+        // Actually move pages
         for(Map.Entry<PageRenderer, Integer> toMove : pagesToMove.entrySet()){
             editor.movePageByIndex(toMove.getKey(), toMove.getValue());
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -259,7 +259,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             }
             
             @Override
-            public Map.Entry<Map.Entry<File, File>, Integer> sortData(File pdfFile, boolean recursive){
+            public Map.Entry<Map.Entry<File, File>, Integer> filterData(File pdfFile, boolean recursive){
                 
                 if(onlyEdited){ // Check only edited export
                     if(!Edition.getEditFile(pdfFile).exists()){

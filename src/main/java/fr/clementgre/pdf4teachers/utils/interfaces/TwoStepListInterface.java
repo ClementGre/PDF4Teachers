@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -13,7 +13,7 @@ public interface TwoStepListInterface<T, D>{
     
     List<T> prepare(boolean recursive);
     
-    Entry<D, Integer> sortData(T data, boolean recursive) throws Exception;
+    Entry<D, Integer> filterData(T data, boolean recursive) throws Exception;
     
     String getSortedDataName(D data, boolean recursive);
     

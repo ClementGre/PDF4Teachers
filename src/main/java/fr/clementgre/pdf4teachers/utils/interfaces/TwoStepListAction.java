@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -43,7 +43,7 @@ public class TwoStepListAction<T, D>{
         this.recursive = recursive;
         this.data = caller.prepare(isRecursive());
         
-        if(sortData(caller)){
+        if(filterData(caller)){
             if(async){
                 processDataAsync(caller, () -> {
                     caller.finish(data.size(), sortedData.size(), completedSize, excludedReasons, isRecursive());
@@ -58,10 +58,10 @@ public class TwoStepListAction<T, D>{
         
     }
     
-    public boolean sortData(TwoStepListInterface<T, D> caller){
+    public boolean filterData(TwoStepListInterface<T, D> caller){
         for(T value : data){
             try{
-                Entry<D, Integer> result = caller.sortData(value, isRecursive());
+                Entry<D, Integer> result = caller.filterData(value, isRecursive());
                 if(result != null){
                     if(result.getValue() == 0){
                         sortedData.add(result.getKey());

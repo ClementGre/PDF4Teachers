@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -513,7 +513,7 @@ public class PDFPagesEditor {
                 }
                 
                 @Override
-                public Map.Entry<Map.Entry<File, Integer>, Integer> sortData(Integer pageIndex, boolean recursive){
+                public Map.Entry<Map.Entry<File, Integer>, Integer> filterData(Integer pageIndex, boolean recursive){
                     File file;
                     if(!recursive){
                         if(buttonPos == ButtonPosition.DEFAULT){
