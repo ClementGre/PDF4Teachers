@@ -59,7 +59,7 @@ public class AboutWindow extends Stage {
         
         getIcons().add(new Image(getClass().getResource("/logo.png") + ""));
         setTitle(TR.tr("aboutWindow.title"));
-        setResizable(false);
+        setResizable(Main.settings.zoom.getValue() != 1);
         setScene(scene);
         setOnCloseRequest(e -> close());
         StyleManager.putStyle(scrollPane, Style.DEFAULT);
@@ -67,7 +67,6 @@ public class AboutWindow extends Stage {
         PaneUtils.setupScaling(scrollPane, true, false);
         scene.setFill(Color.web("#252525"));
     
-        
         
         setOnShown((e) -> {
             setMinWidth(400);

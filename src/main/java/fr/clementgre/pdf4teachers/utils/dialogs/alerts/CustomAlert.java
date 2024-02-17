@@ -52,6 +52,7 @@ public class CustomAlert extends Alert {
         // SCALING
         if(Main.settings.zoom.getValue() != 1){
             getDialogPane().getScene().setFill(Color.web("#252525"));
+            setResizable(true);
             
             // Alert is only scaled the first time it shows up
             final boolean[] alreadyShown = {false};
