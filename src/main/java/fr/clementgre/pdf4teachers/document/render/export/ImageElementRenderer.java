@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -31,7 +31,7 @@ public class ImageElementRenderer {
         dpiManager = new DPIManager(dpi);
     }
     
-    public void renderElement(ImageElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws IOException{
+    public void renderElement(ImageElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float startX, float startY) throws IOException{
         
         dpiManager.initOneCmWidthFromA4Width(pageWidth);
         
@@ -79,10 +79,9 @@ public class ImageElementRenderer {
         
         PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, element.getImageId());
         
-        float bottomMargin = pageRealHeight - pageHeight - startY;
         contentStream.drawImage(pdImage,
                 startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
-                bottomMargin + pageRealHeight - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - element.getRealY() / Element.GRID_HEIGHT * pageHeight,
+                pageHeight - startY - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - element.getRealY() / Element.GRID_HEIGHT * pageHeight,
                 element.getRealWidth() / Element.GRID_WIDTH * pageWidth,
                 element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
         

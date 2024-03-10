@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -20,7 +20,7 @@ public record GradeElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         
         if(!element.isShouldVisibleOnExport()) return true;
         
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.getYTopOrigin(),
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.height(),
                 element.getBaseLineY(), (float) element.getRealX(), (float) element.getRealY(), element.getText(), element.getAwtColor(), false, (float) element.getFont().getSize());
         
         // FONT

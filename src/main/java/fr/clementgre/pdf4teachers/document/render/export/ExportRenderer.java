@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,8 +7,6 @@ package fr.clementgre.pdf4teachers.document.render.export;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
-import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
 import javafx.scene.paint.Color;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -59,37 +57,33 @@ public class ExportRenderer {
             PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND, true, true);
             page.setBleedBox(page.getCropBox());
             
-            float startX = page.getBleedBox().getLowerLeftX();
-            float startY = page.getBleedBox().getLowerLeftY();
-            float pageRealHeight = page.getBleedBox().getHeight();
-            float pageRealWidth = page.getBleedBox().getWidth();
+            float startX = page.getCropBox().getLowerLeftX();
+            float startY = page.getCropBox().getLowerLeftY();
             float pageHeight = page.getCropBox().getHeight();
             float pageWidth = page.getCropBox().getWidth();
+            float pageRealHeight = page.getCropBox().getHeight();
+            float pageRealWidth = page.getCropBox().getWidth();
             // ROTATE PAGES ADAPT
             if(page.getRotation() == 90 || page.getRotation() == 270){
-                startY = page.getBleedBox().getLowerLeftX();
-                startX = page.getBleedBox().getLowerLeftY();
-                
-                pageRealHeight = page.getBleedBox().getWidth();
-                pageRealWidth = page.getBleedBox().getHeight();
+                startY = page.getCropBox().getLowerLeftX();
+                startX = page.getCropBox().getLowerLeftY();
                 
                 pageHeight = page.getCropBox().getWidth();
                 pageWidth = page.getCropBox().getHeight();
+                pageRealHeight = page.getCropBox().getWidth();
+                pageRealWidth = page.getCropBox().getHeight();
             }
-    
-            
             
             // ROTATE PAGES ADAPT
-            Matrix rotation = Matrix.getRotateInstance(0, 0, 0);
-            if(page.getRotation() % 90 == 0){
-                switch((page.getRotation() / 90) % 4){
-                    case 1 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealHeight, 0);
-                    case 2 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), pageRealWidth, pageRealHeight);
-                    case 3 -> rotation = Matrix.getRotateInstance(Math.toRadians(page.getRotation()), 0, pageRealWidth);
-                }
-            }
-            contentStream.transform(rotation);
-            PageSpecs pageSpecs = new PageSpecs(pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY, rotation);
+            Matrix csTransform = switch(page.getRotation()){
+                case 90 -> Matrix.getRotateInstance(Math.PI / 2.0, startY + pageHeight, startX);
+                case 180 -> Matrix.getRotateInstance(Math.PI, pageWidth + startX, pageHeight + startY);
+                case 270 -> Matrix.getRotateInstance(Math.PI * 1.5, startY, startX + pageWidth);
+                default -> Matrix.getTranslateInstance(startX, startY);
+            };
+            
+            contentStream.transform(csTransform);
+            PageSpecs pageSpecs = new PageSpecs(pageRealWidth, pageRealHeight, csTransform);
             
             for(Element element : elements){
                 
@@ -107,10 +101,10 @@ public class ExportRenderer {
                         }
                 }else if(element instanceof ImageElement gElement){
                     if(drawElements)
-                        imageElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                        imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight, 0, 0);
                 }else if(element instanceof VectorElement gElement){
                     if(drawElements)
-                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageWidth, pageHeight, pageRealWidth, pageRealHeight, startX, startY);
+                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight, 0, 0);
                 }else if(element instanceof SkillTableElement gElement){
                     if(skillElements)
                         if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){

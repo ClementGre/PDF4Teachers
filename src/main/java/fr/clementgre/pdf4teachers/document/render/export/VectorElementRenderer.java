@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -27,7 +27,7 @@ public class VectorElementRenderer{
         this.doc = doc;
     }
     
-    public void renderElement(VectorElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float pageRealWidth, float pageRealHeight, float startX, float startY) throws Exception{
+    public void renderElement(VectorElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float startX, float startY) throws Exception{
     
         float elementWidth = element.getRealWidth() / Element.GRID_WIDTH * pageWidth;
         float elementHeight = element.getRealHeight() / Element.GRID_HEIGHT * pageHeight;
@@ -79,10 +79,9 @@ public class VectorElementRenderer{
     
         PDFormXObject xForm = g.getXFormObject();
     
-        float bottomMargin = pageRealHeight - pageHeight - startY;
         AffineTransform transform = AffineTransform.getTranslateInstance(
                 startX + (element.getRealX() / Element.GRID_WIDTH * pageWidth) - element.getClipPaddingScaled(pageWidth),
-                bottomMargin + pageRealHeight - xForm.getBBox().getHeight() + element.getClipPaddingScaled(pageWidth) - (element.getRealY() / Element.GRID_HEIGHT * pageHeight));
+                pageHeight - startY - xForm.getBBox().getHeight() + element.getClipPaddingScaled(pageWidth) - (element.getRealY() / Element.GRID_HEIGHT * pageHeight));
         xForm.setMatrix(transform);
         
         contentStream.drawForm(xForm);

@@ -1,11 +1,10 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
 package fr.clementgre.pdf4teachers.document.render.export;
 
-import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.utils.PlatformUtils;
@@ -39,9 +38,6 @@ public class TextRenderer {
     public TextRenderer(PDDocument doc){
         this.doc = doc;
     }
-    
-    public record TextSpecs(float boundsHeight, float boundsWidth, float getYTopOrigin, float baseLineY,
-                            float realX, float realY, String text, Color color, boolean isURL, float fontSize) {}
     
     // Returns false if the user cancelled the export process.
     public boolean drawText(PDPage page, PDPageContentStream cs, Map.Entry<String, String> fontEntry, TextSpecs ts, PageSpecs ps) throws IOException{
@@ -114,7 +110,7 @@ public class TextRenderer {
                 position.setUpperRightX(ps.realXToPDCoo(ts.realX() + ps.layoutXToReal(ts.boundsWidth())));
                 position.setUpperRightY(ps.realYToPDCoo(ts.realY() + ps.layoutYToReal(i*lineHeight)));
                 underlines.add(position);
-                position = ExportRenderer.transformRectangle(position, ps.rotation());
+                position = ExportRenderer.transformRectangle(position, ps.csTransform());
                 
                 // Action (link)
                 PDActionURI action = new PDActionURI();
@@ -145,6 +141,9 @@ public class TextRenderer {
         
         return true;
     }
+    
+    public record TextSpecs(float boundsHeight, float boundsWidth, float YTopOrigin, float baseLineY,
+                            float realX, float realY, String text, Color color, boolean isURL, float fontSize) {}
     
     // Entry: (Font family | weight and style)
     public Map.Entry<String, String> setContentStreamFont(PDPageContentStream contentStream, Font font, float pageWidth) throws IOException{

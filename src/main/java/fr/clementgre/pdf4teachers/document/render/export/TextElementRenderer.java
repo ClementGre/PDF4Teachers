@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -13,7 +13,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 
@@ -44,7 +43,7 @@ public record TextElementRenderer(PDDocument doc, TextRenderer textRenderer) {
         ////////// TEXT RENDER
         
         element.updateText();
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.getYTopOrigin(),
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs(element.getBoundsHeight(), element.getBoundsWidth(), ps.height(),
                 element.getBaseLineY(), element.getRealX(), element.getRealY(), element.getTextNodeText(), element.getAwtColor(), element.isURL(), (float) element.getFont().getSize());
         
         // FONT

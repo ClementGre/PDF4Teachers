@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -60,8 +60,8 @@ public class SkillTableElementRenderer{
         this.cs = cs;
         this.page = page;
         this.ps = ps;
-    
-        dpiManager.initOneCmWidthFromA4Width(ps.realWidth());
+        
+        dpiManager.initOneCmWidthFromA4Width(ps.width());
         
         // Find assessment
         SkillsAssessment assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == element.getAssessmentId()).findAny().orElse(null);
@@ -194,11 +194,11 @@ public class SkillTableElementRenderer{
         textText.setBoundsType(TextBoundsType.LOGICAL);
         textText.setTextOrigin(VPos.TOP);
         textText.setFont(font);
-    
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs((float) textText.getLayoutBounds().getHeight() * getScale(), (float) textText.getLayoutBounds().getWidth() * getScale(), ps.bottomMargin(),
+        
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs((float) textText.getLayoutBounds().getHeight() * getScale(), (float) textText.getLayoutBounds().getWidth() * getScale(), ps.height(),
                 (float) textText.getBaselineOffset() * getScale(), element.getRealX() + ps.layoutXToReal(x * getScale()), element.getRealY() + ps.layoutYToReal(y * getScale()), text, Color.BLACK, false, 11 * getScale());
         
-        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, bold, 11 * getScale()), ps.realWidth());
+        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, bold, 11 * getScale()), ps.width());
         
         if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) return -1;
         return (float) (y + textText.getLayoutBounds().getHeight());
@@ -212,10 +212,10 @@ public class SkillTableElementRenderer{
     // Font: 9pt (For the legend)
     private float drawTextAt(float x, float y, String text) throws IOException{
         Text textText = getText(text, false, 9);
-        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs((float) textText.getLayoutBounds().getHeight() * getScale(), (float) textText.getLayoutBounds().getWidth() * getScale(), ps.bottomMargin(),
+        TextRenderer.TextSpecs textSpecs = new TextRenderer.TextSpecs((float) textText.getLayoutBounds().getHeight() * getScale(), (float) textText.getLayoutBounds().getWidth() * getScale(), ps.height(),
                 (float) textText.getBaselineOffset() * getScale(), element.getRealX() + ps.layoutXToReal(x * getScale()), element.getRealY() + ps.layoutYToReal(y * getScale()), text, Color.BLACK, false, 9 * getScale());
         
-        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, false, 9 * getScale()), ps.realWidth());
+        Map.Entry<String, String> fontEntry = textRenderer.setContentStreamFont(cs, FontUtils.getDefaultFont(false, false, 9 * getScale()), ps.width());
         
         if(!textRenderer.drawText(page, cs, fontEntry, textSpecs, ps)) return -1;
         return (float) (x + textText.getLayoutBounds().getWidth());

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -205,7 +205,7 @@ public class UserData {
                         }
                     });
                 }
-                if(MainWindow.userData.foregroundTime % (60) == 0){
+                if(MainWindow.userData.foregroundTime % 60 == 0){
                     LanguagesUpdater.backgroundStats();
                 }
             }
