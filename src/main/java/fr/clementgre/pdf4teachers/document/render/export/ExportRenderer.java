@@ -101,10 +101,10 @@ public class ExportRenderer {
                         }
                 }else if(element instanceof ImageElement gElement){
                     if(drawElements)
-                        imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight, 0, 0);
+                        imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
                 }else if(element instanceof VectorElement gElement){
                     if(drawElements)
-                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight, 0, 0);
+                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
                 }else if(element instanceof SkillTableElement gElement){
                     if(skillElements)
                         if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){

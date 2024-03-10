@@ -31,7 +31,7 @@ public class ImageElementRenderer {
         dpiManager = new DPIManager(dpi);
     }
     
-    public void renderElement(ImageElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight, float startX, float startY) throws IOException{
+    public void renderElement(ImageElement element, PDPageContentStream contentStream, PDPage page, float pageWidth, float pageHeight) throws IOException{
         
         dpiManager.initOneCmWidthFromA4Width(pageWidth);
         
@@ -80,8 +80,8 @@ public class ImageElementRenderer {
         PDImageXObject pdImage = PDImageXObject.createFromByteArray(doc, data, element.getImageId());
         
         contentStream.drawImage(pdImage,
-                startX + element.getRealX() / Element.GRID_WIDTH * pageWidth,
-                pageHeight - startY - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - element.getRealY() / Element.GRID_HEIGHT * pageHeight,
+                element.getRealX() / Element.GRID_WIDTH * pageWidth,
+                pageHeight - (element.getRealHeight() / Element.GRID_HEIGHT * pageHeight) - element.getRealY() / Element.GRID_HEIGHT * pageHeight,
                 element.getRealWidth() / Element.GRID_WIDTH * pageWidth,
                 element.getRealHeight() / Element.GRID_HEIGHT * pageHeight);
         
