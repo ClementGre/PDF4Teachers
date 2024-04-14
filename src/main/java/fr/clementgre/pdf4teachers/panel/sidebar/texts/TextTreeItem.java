@@ -14,7 +14,6 @@ import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.panel.sidebar.texts.TreeViewSections.TextTreeSection;
 import fr.clementgre.pdf4teachers.utils.TextWrapper;
 import fr.clementgre.pdf4teachers.utils.fonts.FontUtils;
@@ -50,7 +49,9 @@ import javafx.scene.text.Text;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class TextTreeItem extends TreeItem<String> {
 
@@ -79,12 +80,8 @@ public class TextTreeItem extends TreeItem<String> {
         setText(newValue);
         updateGraphic(true);
     };
-    private final ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> {
-        setColor((Color) newValue);
-    };
-    private final ChangeListener<Number> defaultMathChangeListener = (observable, oldValue, newValue) -> {
-        updateGraphic(false);
-    };
+    private final ChangeListener<Paint> colorChangeListener = (ObservableValue<? extends Paint> observable, Paint oldValue, Paint newValue) -> setColor((Color) newValue);
+    private final ChangeListener<Number> defaultMathChangeListener = (observable, oldValue, newValue) -> updateGraphic(false);
 
 
     public TextTreeItem(Font font, String text, Color color, double maxWidth, int type, long uses, long creationDate){
@@ -152,9 +149,7 @@ public class TextTreeItem extends TreeItem<String> {
             }
         };
         name.setFill(StyleManager.shiftColorWithTheme(color.get()));
-        colorProperty().addListener((observable, oldValue, newValue) -> {
-            name.setFill(StyleManager.shiftColorWithTheme(newValue));
-        });
+        colorProperty().addListener((observable, oldValue, newValue) -> name.setFill(StyleManager.shiftColorWithTheme(newValue)));
 
         name.fontProperty().bind(Bindings.createObjectBinding(this::getListFont, fontProperty(), Main.settings.textSmall.valueProperty()));
 
@@ -177,12 +172,12 @@ public class TextTreeItem extends TreeItem<String> {
             if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT){
                 e.consume();
                 if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else lastKeyPressTime = System.currentTimeMillis();
+                lastKeyPressTime = System.currentTimeMillis();
                 MainWindow.textTab.treeView.selectNextInSelection();
             }else if(e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
                 e.consume();
                 if(lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else lastKeyPressTime = System.currentTimeMillis();
+                lastKeyPressTime = System.currentTimeMillis();
                 MainWindow.textTab.treeView.selectPreviousInSelection();
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
@@ -208,12 +203,12 @@ public class TextTreeItem extends TreeItem<String> {
             }
         });
         pane.setOnKeyTyped((e) -> {
-            if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+            if(Stream.of(KeyCode.DOWN, KeyCode.RIGHT, KeyCode.UP, KeyCode.LEFT).anyMatch(keyCode -> e.getCode() == keyCode)){
                 e.consume();
             }
         });
         pane.setOnKeyReleased((e) -> {
-            if(e.getCode() == KeyCode.DOWN || e.getCode() == KeyCode.RIGHT || e.getCode() == KeyCode.UP || e.getCode() == KeyCode.LEFT){
+            if(Stream.of(KeyCode.DOWN, KeyCode.RIGHT, KeyCode.UP, KeyCode.LEFT).anyMatch(keyCode -> e.getCode() == keyCode)){
                 e.consume();
             }
         });
@@ -253,34 +248,34 @@ public class TextTreeItem extends TreeItem<String> {
         if(maxWidth < 0) return;
 
         Font font = getListFont();
-        String wrappedText = "";
+        var wrappedText = new StringBuilder();
         final String[] splitText = TextElement.invertMathIfNeeded(getText()).split(Pattern.quote("\n"));
 
         if(splitText.length != 0){
             if(Main.settings.textOnlyStart.getValue()){
 
                 String text = splitText[0];
-                wrappedText += new TextWrapper(text, font, maxWidth).wrapFirstLine();
-                text = text.replaceFirst(Pattern.quote(wrappedText), "");
+                wrappedText.append(new TextWrapper(text, font, maxWidth).wrapFirstLine());
+                text = text.replaceFirst(Pattern.quote(wrappedText.toString()), "");
 
                 // SECOND LINE
                 if(!text.isBlank()){
                     String wrapped = new TextWrapper(text, font, maxWidth - 13).wrapFirstLine();
-                    wrappedText += "\n" + wrapped;
-                    if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+                    wrappedText.append('\n').append(wrapped);
+                    if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText.append("...");
                 }else if(splitText.length > 1){
                     String wrapped = new TextWrapper(splitText[1], font, maxWidth - 13).wrapFirstLine();
-                    wrappedText += "\n" + wrapped;
-                    if(!splitText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
+                    wrappedText.append('\n').append(wrapped);
+                    if(!splitText[1].replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText.append("...");
                 }
             }else{
                 for(String text : splitText){
-                    wrappedText += wrappedText.isEmpty() ? new TextWrapper(text, font, maxWidth).wrap() : "\n" + new TextWrapper(text, font, maxWidth).wrap();
+                    wrappedText.append((wrappedText.isEmpty()) ? new TextWrapper(text, font, maxWidth).wrap() : '\n' + new TextWrapper(text, font, maxWidth).wrap());
                 }
             }
         }
 
-        name.setText(wrappedText);
+        name.setText(wrappedText.toString());
         name.setFill(StyleManager.shiftColorWithTheme(color.get()));
 
         // VARS DEFINED
@@ -350,7 +345,7 @@ public class TextTreeItem extends TreeItem<String> {
         cell.setContextMenu(menu);
         cell.setOnMouseClicked(onMouseCLick);
 
-        if(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem() == this) pane.requestFocus();
+        if(Objects.equals(MainWindow.textTab.treeView.getSelectionModel().getSelectedItem(), this)) pane.requestFocus();
     }
 
     private Font getListFont(){
