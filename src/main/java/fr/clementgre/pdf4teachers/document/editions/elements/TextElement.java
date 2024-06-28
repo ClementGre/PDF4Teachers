@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -565,6 +565,10 @@ public class TextElement extends Element {
     public Element clone(){
         AutoTipsManager.showByAction("textclone");
         return new TextElement(getRealX(), getRealY(), pageNumber, true, getText(), (Color) textNode.getFill(), textNode.getFont(), getTextMaxWidth());
+    }
+    @Override
+    public Element cloneHeadless(){
+        return new TextElement(getRealX(), getRealY(), pageNumber, false, getText(), (Color) textNode.getFill(), textNode.getFont(), getTextMaxWidth());
     }
     
     public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -14,8 +14,8 @@ import fr.clementgre.pdf4teachers.panel.sidebar.SideBar;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.EditionSkill;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.SkillsAssessment;
 import fr.clementgre.pdf4teachers.panel.sidebar.skills.data.Student;
-import fr.clementgre.pdf4teachers.utils.interfaces.CallsBuffer;
 import fr.clementgre.pdf4teachers.utils.MathUtils;
+import fr.clementgre.pdf4teachers.utils.interfaces.CallsBuffer;
 import fr.clementgre.pdf4teachers.utils.interfaces.CallsBufferMemory;
 import javafx.application.Platform;
 import javafx.beans.property.ListProperty;
@@ -28,7 +28,10 @@ import javafx.scene.Cursor;
 import javafx.scene.paint.Color;
 import javafx.scene.transform.Scale;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -306,6 +309,11 @@ public class SkillTableElement extends GraphicElement{
     @Override
     public Element clone(){
         throw new RuntimeException("SkillTableElement can't be cloned.");
+    }
+    @Override
+    public Element cloneHeadless(){
+        return new SkillTableElement(getRealX(), getRealY(), getPageNumber(), false, getRealWidth(), getRealHeight(),
+                getScale(), getAssessmentId(), getStudentId(), new ArrayList<>(getEditionSkills()));
     }
     
     @Override

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -41,6 +41,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     private final Slider slider = new Slider(0, 100, MainWindow.userData.splitSensibility);
     
     private final CheckBox doKeepSelectedPages = new CheckBox(TR.tr("splitWindow.checkbox.keepSelectedPages"));
+    private final CheckBox doPreserveEdition = new CheckBox(TR.tr("splitWindow.checkbox.preserveEdition"));
     
     private final Button ok = new Button(TR.tr("actions.generate"));
     
@@ -123,11 +124,16 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         
         if(splitType != SplitType.INTERVAL){
             doKeepSelectedPages.setSelected(MainWindow.userData.splitPdfKeepSelectedPages);
+            doPreserveEdition.setSelected(MainWindow.userData.splitPdfPreserveEdition);
+            
             doKeepSelectedPages.selectedProperty().addListener((observable, oldValue, newValue) -> {
                 updateStatus();
                 MainWindow.userData.splitPdfKeepSelectedPages = newValue;
             });
-            root.getChildren().addAll(generateInfo(TR.tr("options.title"), true), doKeepSelectedPages);
+            doPreserveEdition.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                MainWindow.userData.splitPdfPreserveEdition = newValue;
+            });
+            root.getChildren().addAll(generateInfo(TR.tr("options.title"), true), doKeepSelectedPages, doPreserveEdition);
         }
         
         // Buttons
@@ -200,6 +206,9 @@ public class SplitWindow extends AlternativeWindow<VBox> {
     
     public boolean doKeepSelectedPages(){
         return doKeepSelectedPages.isSelected();
+    }
+    public boolean doPreserveEdition(){
+        return doPreserveEdition.isSelected();
     }
     public int getInterval(){
         return intervalSpinner.getValue();

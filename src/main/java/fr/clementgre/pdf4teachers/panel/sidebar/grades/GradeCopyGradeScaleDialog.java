@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -162,9 +162,8 @@ public class GradeCopyGradeScaleDialog {
                 
             }
             
-            otherElements = GradeElement.sortGradesBetweenNormalElements(otherElements);
-            
-            Edition.simpleSave(editFile, otherElements.toArray(new Element[0]));
+            ArrayList<Element> sortedElements = GradeElement.sortGradesAlongElements(otherElements);
+            Edition.simpleSave(editFile, sortedElements.toArray(new Element[0]));
             return 0;
             
         }catch(Exception e){

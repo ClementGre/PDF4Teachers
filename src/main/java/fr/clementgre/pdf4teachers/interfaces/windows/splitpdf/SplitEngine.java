@@ -5,6 +5,10 @@
 
 package fr.clementgre.pdf4teachers.interfaces.windows.splitpdf;
 
+import fr.clementgre.pdf4teachers.document.editions.Edition;
+import fr.clementgre.pdf4teachers.document.editions.elements.Element;
+import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
+import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
 import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -125,6 +129,29 @@ public class SplitEngine {
         PDDocument extracted = MainWindow.mainScreen.document.pdfPagesRender.editor.extractPages(exportPart.startIndex, exportPart.endIndex);
         extracted.save(exportPart.output);
         extracted.close();
+        
+        if(splitWindow.doPreserveEdition()){
+            ArrayList<Element> elements = new ArrayList<>();
+            for(Element element : MainWindow.mainScreen.document.getElements()){
+                boolean inRange = element.isInPageRange(exportPart.startIndex, exportPart.endIndex);
+                int maxPage = exportPart.endIndex - exportPart.startIndex;
+                int newPage = element.getPageNumber() > exportPart.endIndex ? maxPage : element.getPageNumber() < exportPart.startIndex ? 0 : element.getPageNumber() - exportPart.startIndex;
+                
+                element = element.cloneHeadless();
+                element.setPage(newPage);
+                if(element instanceof GradeElement ge){
+                    if(!inRange){
+                        ge.setValue(-1);
+                    }
+                }else if(!(inRange || element instanceof SkillTableElement)){
+                    continue;
+                }
+                elements.add(element);
+            }
+            ArrayList<Element> sortedElements = GradeElement.sortGradesAlongElements(elements);
+            Edition.simpleSave(Edition.getEditFile(exportPart.output), sortedElements.toArray(new Element[0]));
+        }
+        
         Platform.runLater(() -> {
             MainWindow.filesTab.openFiles(new File[]{exportPart.output});
         });

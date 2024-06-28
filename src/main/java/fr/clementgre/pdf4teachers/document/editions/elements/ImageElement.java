@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -299,6 +299,11 @@ public class ImageElement extends GraphicElement {
     public Element clone(){
         return new ImageElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(), getImageId());
     }
+    @Override
+    public Element cloneHeadless(){
+        return new ImageElement(getRealX(), getRealY(), getPageNumber(), false, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(), getImageId());
+    }
+    
 
     // GETTER/SETTER
 

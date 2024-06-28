@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -392,9 +392,14 @@ public abstract class Element extends Region {
         this.pageNumber = pageNumber;
     }
     
+    public boolean isInPageRange(int minPage, int maxPage){
+        return getPageNumber() >= minPage && getPageNumber() <= maxPage;
+    }
+    
     // TRANSFORMATIONS
     
     public abstract Element clone();
+    public abstract Element cloneHeadless(); // hasPage = false
     
     public void cloneOnDocument(){
         Element element = clone();

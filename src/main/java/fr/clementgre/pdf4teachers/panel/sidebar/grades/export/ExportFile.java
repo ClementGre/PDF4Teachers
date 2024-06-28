@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -23,7 +23,7 @@ public class ExportFile {
     
     public File file;
     
-    public List<GradeElement> grades = new ArrayList<>();
+    public ArrayList<GradeElement> grades = new ArrayList<>();
     public List<TextElement> comments;
     
     public ExportFile(File file, int exportTier, boolean comments) throws Exception{
@@ -54,7 +54,7 @@ public class ExportFile {
         if(grade.isRoot()) return 0;
         
         int index = (int) (-grade.getIndex() * Math.pow(10, parentPath.length));
-
+        
         // parent is direct parent of grade
         index += grades.stream()
                 .filter(parent -> (parent.getParentPath() + "\\" + parent.getName()).equals(grade.getParentPath()))
@@ -83,9 +83,6 @@ public class ExportFile {
     }
     
     public boolean isCompleted(){
-
-        return grades.stream()
-                .noneMatch(grade -> grade.getValue() == -1);
-        
+        return grades.stream().noneMatch(grade -> grade.getValue() == -1);
     }
 }

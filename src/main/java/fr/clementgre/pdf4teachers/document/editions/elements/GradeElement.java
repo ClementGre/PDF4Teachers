@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -635,6 +635,14 @@ public class GradeElement extends Element {
     public Element clone(){
         return new GradeElement(getRealX(), getRealY(), pageNumber, true, value.getValue(), total.getValue(), outOfTotal.getValue(), index, parentPath, name.getValue(), alwaysVisible.get());
     }
+    /**
+     * Sort the grades so each grade appears after its parents.
+     */
+    public static ArrayList<GradeElement> sortGrades(List<GradeElement> grades){
+        ArrayList<GradeElement> gradesOutput = new ArrayList<>(grades);
+        gradesOutput.sort((grade1, grade2) -> grade1.compareStructureTo(grade2));
+        return gradesOutput;
+    }
     
     public GradeRating toGradeRating(){
         return new GradeRating(value.get(), total.get(), outOfTotal.get(), name.get(), index, parentPath, isAlwaysVisible(), getRealX(), getRealY(), pageNumber);
@@ -645,68 +653,25 @@ public class GradeElement extends Element {
     }
     
     // SORTING
-    
-    public static ArrayList<GradeElement> sortGrades(List<GradeElement> grades){
+    public static ArrayList<Element> sortGradesAlongElements(List<Element> elements){
         
-        ArrayList<GradeElement> gradesOutput = new ArrayList<>(grades.size());
-        gradesOutput.addAll(grades);
-        
-        gradesOutput.sort((grade1, grade2) -> grade1.compareTo(grade2, grades));
-        return gradesOutput;
-    }
-    
-    public static List<Element> sortGradesBetweenNormalElements(List<Element> elements){
+        ArrayList<Element> otherElements = elements.stream()
+                .filter(element -> !(element instanceof GradeElement)).collect(Collectors.toCollection(ArrayList::new));
         
         List<GradeElement> gradeElements = elements.stream()
                 .filter(element -> element instanceof GradeElement)
                 .map(element -> (GradeElement) element)
                 .collect(Collectors.toList());
         
-        List<Element> otherElements = elements.stream()
-                .filter(element -> !(element instanceof GradeElement))
-                .collect(Collectors.toList());
-        
-        
-        gradeElements = sortGrades(gradeElements);
-        
-        otherElements.addAll(gradeElements);
+        otherElements.addAll(sortGrades(gradeElements));
         return otherElements;
     }
-    
-    public int compareTo(GradeElement grade, List<GradeElement> grades){
-        
-        // grade1 is the parent of grade2 ?
-        if(getParentPathArray().length < grade.getParentPathArray().length){
-            if(grade.getParentPath().contains(getPath())){
-                return -1;
-            }
-        }
-        
-        // grade2 is the parent of grade1 ?
-        if(grade.getParentPathArray().length < getParentPathArray().length){
-            if(getParentPath().contains(grade.getPath())){
-                return 1;
-            }
-        }
-        
-        GradeElement grade1Parent = this;
-        GradeElement grade2Parent = grade;
-        
-        // while grades are at the same level
-        while(!grade1Parent.getParentPath().equals(grade2Parent.getParentPath())){
-            if(grade1Parent.getParentPathArray().length < grade2Parent.getParentPathArray().length){ // grade1Parent is at a higher level
-                for(GradeElement parent : grades){
-                    if((parent.getPath()).equals(grade2Parent.getParentPath()))
-                        grade2Parent = parent; // get the parent of grade2Parent
-                }
-            }else{
-                for(GradeElement parent : grades){
-                    if((parent.getPath()).equals(grade1Parent.getParentPath()))
-                        grade1Parent = parent; // get the parent of grade1Parent
-                }
-            }
-        }
-        return grade1Parent.getIndex() - grade2Parent.getIndex();
+    @Override
+    public Element cloneHeadless(){
+        return new GradeElement(getRealX(), getRealY(), pageNumber, false, value.getValue(), total.getValue(), outOfTotal.getValue(), index, parentPath, name.getValue(), alwaysVisible.get());
+    }
+    public int compareStructureTo(GradeElement grade){
+        return (getParentPath() + "\\" + getName()).compareTo(grade.getParentPath() + "\\" + grade.getName());
     }
     
 }

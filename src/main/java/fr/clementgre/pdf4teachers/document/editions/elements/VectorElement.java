@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -617,6 +617,11 @@ public class VectorElement extends GraphicElement{
     @Override
     public Element clone(){
         return new VectorElement(getRealX(), getRealY(), getPageNumber(), true, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(),
+                isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY(), getArrowLength());
+    }
+    @Override
+    public Element cloneHeadless(){
+        return new VectorElement(getRealX(), getRealY(), getPageNumber(), false, getRealWidth(), getRealHeight(), getRepeatMode(), getResizeMode(),
                 isDoFill(), getFill(), getStroke(), getStrokeWidth(), getPath(), isInvertX(), isInvertY(), getArrowLength());
     }
 
