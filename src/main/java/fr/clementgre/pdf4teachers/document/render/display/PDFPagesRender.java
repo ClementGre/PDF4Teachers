@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -44,7 +44,7 @@ public class PDFPagesRender {
     private boolean shouldClose;
     private boolean isClosed;
     
-    public PDFPagesRender(File file) throws IOException{
+    public PDFPagesRender(File file) throws IOException {
         this.file = file;
         
         document = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
