@@ -17,7 +17,6 @@ repositories {
     maven { url 'https://jitpack.io' }
     flatDir { dirs 'locallibs' }
 }
-
 extraJavaModuleInfo {
     failOnMissingModuleInfo.set(false)
 
