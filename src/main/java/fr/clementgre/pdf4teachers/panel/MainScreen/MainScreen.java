@@ -659,7 +659,6 @@ public class MainScreen extends Pane {
         repaint();
         
         System.gc(); // clear unused element in RAM
-        System.runFinalization();
         return true;
     }
     

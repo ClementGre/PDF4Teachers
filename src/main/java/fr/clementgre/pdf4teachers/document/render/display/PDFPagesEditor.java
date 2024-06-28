@@ -47,7 +47,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
-import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
+import org.apache.pdfbox.io.RandomAccessStreamCacheImpl;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.multipdf.PageExtractor;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -310,7 +312,7 @@ public class PDFPagesEditor {
         if(file != null){
             if(file.getParentFile().exists()) MainWindow.userData.lastOpenDir = file.getParentFile().getAbsolutePath();
             try{
-                PDDocument fileDoc = PDDocument.load(file);
+                PDDocument fileDoc = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
                 addPdfDocument(fileDoc, index);
             }catch(IOException e){
                 Log.eNotified(e);
@@ -328,7 +330,7 @@ public class PDFPagesEditor {
         int addedPages = toAddDoc.getNumberOfPages();
         try{
             merger.appendDocument(this.document, toAddDoc);
-            merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+            merger.mergeDocuments(RandomAccessStreamCacheImpl::new);
         }catch(IOException e){
             Log.eNotified(e);
         }
@@ -438,7 +440,7 @@ public class PDFPagesEditor {
             if(output == null) output = documents.get(index);
             else{
                 merger.appendDocument(output, documents.get(index));
-                merger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+                merger.mergeDocuments(RandomAccessStreamCacheImpl::new);
                 documents.get(index).close();
             }
         }

@@ -14,6 +14,8 @@ import fr.clementgre.pdf4teachers.utils.interfaces.CallBackArg;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
@@ -45,7 +47,8 @@ public class PDFPagesRender {
     public PDFPagesRender(File file) throws IOException{
         this.file = file;
         
-        document = PDDocument.load(file);
+        document = Loader.loadPDF(new RandomAccessReadBufferedFile(file));
+        
         pdfRenderer = new PDFRenderer(document);
         editor = new PDFPagesEditor(document, file);
         
@@ -136,11 +139,11 @@ public class PDFPagesRender {
         graphics.setBackground(Color.WHITE);
         
         try{
-            PDDocument document = PDDocument.load(file);
-            PDFRenderer pdfRenderer = new PDFRenderer(document);
+//            PDDocument document = PDDocument.load(file);
+//            PDFRenderer pdfRenderer = new PDFRenderer(document);
             pdfRenderer.renderPageToGraphics(pageNumber, graphics, width / pageSize.getWidth(), width / pageSize.getWidth(), RenderDestination.VIEW);
             scale(pdfRenderer.renderImage(pageNumber, 3, ImageType.RGB), 1800);
-            document.close();
+//            document.close();
             graphics.dispose();
             
             return renderImage;

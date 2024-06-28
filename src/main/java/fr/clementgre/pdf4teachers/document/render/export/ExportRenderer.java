@@ -8,7 +8,9 @@ package fr.clementgre.pdf4teachers.document.render.export;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import javafx.scene.paint.Color;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.io.RandomAccessReadBufferedFile;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -29,7 +31,7 @@ public class ExportRenderer {
         
         File editFile = Edition.getEditFile(pdfFile);
         
-        PDDocument doc = PDDocument.load(pdfFile);
+        PDDocument doc = Loader.loadPDF(new RandomAccessReadBufferedFile(pdfFile));
         
         if(doc.isEncrypted()){
             try{
