@@ -152,6 +152,20 @@ public class UserData {
     @UserDataObject(path = "convert.settings.convertVoidFile")
     public boolean settingsConvertVoidFiles = true;
     
+    // Margin params
+    @UserDataObject(path = "margin.isKindAbsolute")
+    public boolean marginKindAbsolute;
+    @UserDataObject(path = "margin.top")
+    public double marginTop = 0;
+    @UserDataObject(path = "margin.right")
+    public double marginRight = 0;
+    @UserDataObject(path = "margin.bottom")
+    public double marginBottom = 0;
+    @UserDataObject(path = "margin.left")
+    public double marginLeft = 20;
+    @UserDataObject(path = "margin.isMarginOnSelectedPages")
+    public boolean marginIsMarginOnSelectedPages = true;
+    
     // Booklet params
     @UserDataObject(path = "booklet.doMakeBooklet")
     public boolean bookletDoMakeBooklet;

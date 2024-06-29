@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -11,15 +11,22 @@ import javafx.util.StringConverter;
 public class StringToDoubleConverter extends StringConverter<Double>{
     
     private double lastValue;
+    private final boolean twoDecimals;
     
     public StringToDoubleConverter(double defaultValue){
-        lastValue = defaultValue;
+        this.lastValue = defaultValue;
+        this.twoDecimals = false;
+    }
+    public StringToDoubleConverter(double defaultValue, boolean twoDecimals){
+        this.lastValue = defaultValue;
+        this.twoDecimals = twoDecimals;
     }
     
     @Override
     public String toString(Double value){
         lastValue = value;
-        return MainWindow.fourDigFormat.format(value);
+        if(twoDecimals) return MainWindow.twoDigFormat.format(value);
+        else return MainWindow.fourDigFormat.format(value);
     }
     
     @Override

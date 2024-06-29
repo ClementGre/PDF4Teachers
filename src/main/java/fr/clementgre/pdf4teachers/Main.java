@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -50,7 +50,20 @@ public class Main extends Application {
     public static final String APP_NAME = "PDF4Teachers";
     public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
-    public enum Mode { DEV, SNAPSHOT, PRE_RELEASE, RELEASE }
+    static{
+        /*if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
+            Desktop.getDesktop().setOpenFileHandler(event -> {
+                for (File file : event.getFiles()) {
+                    Log.d("Open file: " + file.getAbsolutePath());
+                }
+                
+                final String searchTerm = event.getSearchTerm();
+                if (searchTerm != null) {
+                    Log.d("Search term: " + searchTerm);
+                }
+            });
+        }*/
+    }
     
     /********** Version parameters **********/
     public static final Mode mode = Mode.DEV;
@@ -69,25 +82,17 @@ public class Main extends Application {
     static{
         baseDecimalFormatSymbols.setDecimalSeparator('.');
     }
+    
     public static DecimalFormat fourDigENFormat = new DecimalFormat("0.####", baseDecimalFormatSymbols);
     public static DecimalFormat oneDigENFormat = new DecimalFormat("0.#", baseDecimalFormatSymbols);
     
     public static final DataFormat INTERNAL_FORMAT = new DataFormat("application/pdf4teachers-internal-format; class=java.lang.String");
-    
-    
-    static {
-        /*if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
-            Desktop.getDesktop().setOpenFileHandler(event -> {
-                for (File file : event.getFiles()) {
-                    Log.d("Open file: " + file.getAbsolutePath());
-                }
-                
-                final String searchTerm = event.getSearchTerm();
-                if (searchTerm != null) {
-                    Log.d("Search term: " + searchTerm);
-                }
-            });
-        }*/
+    public static void showAboutWindow(){
+        try{
+            FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/fxml/AboutWindow.fxml")));
+        }catch(IOException e){
+            Log.eNotified(e);
+        }
     }
     
     public static void main(String[] args){
@@ -122,40 +127,18 @@ public class Main extends Application {
         }
         
     }
-    
-    private void setup(){
-        // Check double instance
-        params = getParameters().getRaw();
-        if(LockManager.FAKE_OPEN_FILE) params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
-    
-        // Define important vars
-        dataFolder = PlatformUtils.getDataFolder();
-        firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
-        hostServices = getHostServices();
-    
-        // Read params
-        if(!getParameters().getRaw().isEmpty() || !getParameters().getNamed().isEmpty()){
-            Log.d("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
-                    + "\n Unnamed: " + getParameters().getUnnamed().toString()
-                    + "\n Named: " + getParameters().getNamed().toString());
-        }
-    
-        // Data loading
-        settings = new Settings();
-        syncUserData = new SyncUserData();
-    
-        // Setups
-        TR.setup();
-        StyleManager.setup();
-        AutoTipsManager.setup();
-        ImageUtils.setupListeners();
-        FontUtils.setup();
-        AppFontsLoader.loadAppFonts();
-        
-        // Show app
-        if(languageAsk()){
-            startMainWindowAuto();
-        }
+    private static String getVersionName(String version, int id){
+        return switch(mode){
+            case DEV -> version + "-dv" + id;
+            case SNAPSHOT -> version + "-sn" + id;
+            case PRE_RELEASE -> version + "-pre" + id;
+            case RELEASE -> {
+                if(id == 1){
+                    yield version;
+                }
+                yield version + '-' + id;
+            }
+        };
     }
     
     public boolean languageAsk(){
@@ -172,11 +155,12 @@ public class Main extends Application {
         }
         return true;
     }
-    
-    public static void showAboutWindow(){
-        try{
-            FXMLLoader.load(Objects.requireNonNull(Main.class.getResource("/fxml/AboutWindow.fxml")));
-        }catch(IOException e){Log.eNotified(e);}
+    private static LogLevel getLogLevel(){
+        return switch(mode){
+            case DEV -> LogLevel.TRACE;
+            case SNAPSHOT, PRE_RELEASE -> LogLevel.DEBUG;
+            default -> LogLevel.INFO;
+        };
     }
     
     public static void startMainWindow(boolean openDocumentation){
@@ -187,26 +171,40 @@ public class Main extends Application {
         window = new MainWindow();
         window.setup(firstLaunch || settings.hasVersionChanged());
     }
-    
-    private static String getVersionName(String version, int id){
-        return switch (mode) {
-            case DEV -> version + "-dv" + id;
-            case SNAPSHOT -> version + "-sn" + id;
-            case PRE_RELEASE -> version + "-pre" + id;
-            case RELEASE -> {
-                if(id == 1){
-                    yield version;
-                }
-                yield version + '-' + id;
-            }
-        };
+    private void setup(){
+        // Check double instance
+        params = getParameters().getRaw();
+        if(LockManager.FAKE_OPEN_FILE) params = List.of("C:\\Users\\Clement\\Documents\\PDF\\Kev.pdf");
+        
+        // Define important vars
+        dataFolder = PlatformUtils.getDataFolder();
+        firstLaunch = !new File(dataFolder + File.separator + "settings.yml").exists();
+        hostServices = getHostServices();
+        
+        // Log params
+        if(!getParameters().getRaw().isEmpty() || !getParameters().getNamed().isEmpty()){
+            Log.d("Starting with parameters: \nRaw: " + getParameters().getRaw().toString()
+                    + "\n Unnamed: " + getParameters().getUnnamed().toString()
+                    + "\n Named: " + getParameters().getNamed().toString());
+        }
+        
+        // Data loading
+        settings = new Settings();
+        syncUserData = new SyncUserData();
+        
+        // Setups
+        TR.setup();
+        StyleManager.setup();
+        AutoTipsManager.setup();
+        ImageUtils.setupListeners();
+        FontUtils.setup();
+        AppFontsLoader.loadAppFonts();
+        
+        // Show app
+        if(languageAsk()){
+            startMainWindowAuto();
+        }
     }
-    private static LogLevel getLogLevel(){
-        return switch (mode) {
-            case DEV -> LogLevel.TRACE;
-            case SNAPSHOT, PRE_RELEASE -> LogLevel.DEBUG;
-            default -> LogLevel.INFO;
-        };
-    }
+    public enum Mode {DEV, SNAPSHOT, PRE_RELEASE, RELEASE}
     
 }

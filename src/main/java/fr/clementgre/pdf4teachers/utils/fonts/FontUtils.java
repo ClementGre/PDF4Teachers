@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -38,6 +38,7 @@ public class FontUtils {
     private static boolean loaded;
     
     public static void setup(){
+        // This is not needed since system fonts are always loaded and available.
         //systemFontsMapper.loadFontsFromSystemFiles();
     }
     

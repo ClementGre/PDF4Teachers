@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -25,12 +25,16 @@ public class UndoEngine{
     public static boolean isUndoingThings;
     private static boolean isLocked;
     
-    private static final boolean VERBOSE = false;
+    private static final boolean VERBOSE = true;
     
     // When false, only NO_COUNT actions before the classic undo action will be processed.
     // If true, the NO_COUNT actions that are after the classic undo action, will be processed at the same time
     // This boolean is false for Pages UndoEngine
     private final boolean doProcessNoCountRightAndLeft;
+    // TODO: Keep a single instance for both pages and elements, and specify pages with uType
+    //  PAGES, PAGES_NO_COUNT and PAGES_ELEMENTS that require synchronisation between pages and elements
+    //  - In page mode, undoing PAGES, PAGES_NO_COUNT, PAGES_ELEMENTS, PAGES_ELEMENTS_NO_COUNT
+    //  - In element mode, undoing ELEMENTS, ELEMENTS_NO_COUNT, PAGES_ELEMENTS, PAGES_ELEMENTS_NO_COUNT
     public UndoEngine(boolean doProcessNoCountRightAndLeft){
         this.doProcessNoCountRightAndLeft = doProcessNoCountRightAndLeft;
     }
@@ -81,22 +85,22 @@ public class UndoEngine{
     private boolean undoLastAction(){
         if(undoList.isEmpty()) return true;
         
-        UndoAction action = undoList.get(0);
+        UndoAction action = undoList.getFirst();
         if(VERBOSE) Log.t("Undoing: " + action + " [" + action.getUndoType() + "]");
-        undoList.remove(0);
+        undoList.removeFirst();
         boolean completed = action.undoAndInvert();
-        redoList.add(0, action);
+        redoList.addFirst(action);
     
         return completed && action.getUndoType() == UType.UNDO;
     }
     private boolean redoLastAction(){
         if(redoList.isEmpty()) return true;
-    
-        UndoAction action = redoList.get(0);
+        
+        UndoAction action = redoList.getFirst();
         if(VERBOSE) Log.t("Redoing: " + action + " [" + action.getUndoType() + "]");
-        redoList.remove(0);
+        redoList.removeFirst();
         boolean completed = action.undoAndInvert();
-        undoList.add(0, action);
+        undoList.addFirst(action);
     
         return completed && action.getUndoType() == UType.UNDO;
     }
@@ -106,28 +110,28 @@ public class UndoEngine{
     private boolean computeAction(ArrayList<UndoAction> redoList, ArrayList<UndoAction> undoList){
         if(redoList.isEmpty()) return true;
         
-        UndoAction action = redoList.get(0);
+        UndoAction action = redoList.getFirst();
         boolean completed = action.undoAndInvert();
-        undoList.add(0, action);
-        redoList.remove(0);
+        undoList.addFirst(action);
+        redoList.removeFirst();
         
         return completed && action.getUndoType() == UType.UNDO;
     }
     public UndoAction getUndoNextAction(){
         if(!undoList.isEmpty()){
-            return undoList.get(0);
+            return undoList.getFirst();
         }
         return null;
     }
     public String getUndoNextName(){
         if(!undoList.isEmpty()){
-            return undoList.get(0).toString();
+            return undoList.getFirst().toString();
         }
         return null;
     }
     public String getRedoNextName(){
         if(!redoList.isEmpty()){
-            return redoList.get(0).toString();
+            return redoList.getFirst().toString();
         }
         return null;
     }

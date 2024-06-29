@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -24,6 +24,7 @@ import fr.clementgre.pdf4teachers.interfaces.windows.booklet.BookletWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.LogWindow;
+import fr.clementgre.pdf4teachers.interfaces.windows.margin.MarginWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.settings.SettingsWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.splitpdf.SplitWindow;
 import fr.clementgre.pdf4teachers.panel.MainScreen.MainScreen;
@@ -61,7 +62,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-@SuppressWarnings("serial")
 public class MenuBar extends javafx.scene.control.MenuBar {
     
     ////////// ICONS COLOR //////////
@@ -69,7 +69,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     public static ColorAdjust colorAdjust = new ColorAdjust();
     
     static{
-        if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.5);
+        if(StyleManager.ACCENT_STYLE == jfxtras.styles.jmetro.Style.DARK) colorAdjust.setBrightness(-0.15);
         else colorAdjust.setBrightness(-1);
     }
     
@@ -134,13 +134,15 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final Menu tools4PdfTools = createSubMenu(TR.tr("menuBar.tools.pdfTools"), SVGPathIcons.WRENCH,
             TR.tr("menuBar.tools.addPages.tooltip"), true);
     
-    private final MenuItem tools4PdfTools1Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
+    private final MenuItem tools4PdfTools1Margin = createMenuItem(TR.tr("marginWindow.title"), SVGPathIcons.FULL_SCREEN, null,
+            TR.tr("marginWindow.description"));
+    private final MenuItem tools4PdfTools2Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
             TR.tr("bookletWindow.description"));
-    private final MenuItem tools4PdfTools2SplitInterval = createMenuItem(TR.tr("splitPdfWindow.interval.title"), SVGPathIcons.CUT, null,
-            TR.tr("splitPdfWindow.description"));
-    private final MenuItem tools4PdfTools3SplitColor = createMenuItem(TR.tr("splitPdfWindow.color.title"), SVGPathIcons.CUT, null,
-            TR.tr("splitPdfWindow.description"));
-    private final MenuItem tools4PdfTools4SplitSelection = createMenuItem(TR.tr("splitPdfWindow.selection.title"), SVGPathIcons.CUT, null,
+    private final MenuItem tools4PdfTools3SplitInterval = createMenuItem(TR.tr("splitPdfWindow.interval.title"), SVGPathIcons.CUT, null,
+            TR.tr("splitPdfWindow.interval.description"));
+    private final MenuItem tools4PdfTools4SplitColor = createMenuItem(TR.tr("splitPdfWindow.color.title"), SVGPathIcons.CUT, null,
+            TR.tr("splitPdfWindow.color.description"));
+    private final MenuItem tools4PdfTools5SplitSelection = createMenuItem(TR.tr("splitPdfWindow.selection.title"), SVGPathIcons.CUT, null,
             TR.tr("splitPdfWindow.selection.description"));
     
     private final MenuItem tools5DeleteAllEdits = createMenuItem(TR.tr("menuBar.tools.deleteAllEdits"), SVGPathIcons.TRASH, null,
@@ -215,7 +217,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         ////////// TOOLS //////////
         
         tools3AddPages.getItems().add(new MenuItem(""));
-        tools4PdfTools.getItems().addAll(tools4PdfTools1Booklet, tools4PdfTools2SplitInterval, tools4PdfTools3SplitColor, tools4PdfTools4SplitSelection);
+        tools4PdfTools.getItems().addAll(tools4PdfTools1Margin, tools4PdfTools2Booklet, tools4PdfTools3SplitInterval, tools4PdfTools4SplitColor, tools4PdfTools5SplitSelection);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
         tools8Debug.getItems().add(tools8Debug1OpenConsole);
@@ -356,16 +358,17 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             NodeMenuItem.setupMenu(tools3AddPages);
         });
         
-        tools4PdfTools1Booklet.setOnAction(e -> new BookletWindow());
-        tools4PdfTools2SplitInterval.setOnAction(e -> {
+        tools4PdfTools2Booklet.setOnAction(e -> new BookletWindow());
+        tools4PdfTools1Margin.setOnAction(e -> new MarginWindow());
+        tools4PdfTools3SplitInterval.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
             new SplitWindow(SplitWindow.SplitType.INTERVAL);
         });
-        tools4PdfTools3SplitColor.setOnAction(e -> {
+        tools4PdfTools4SplitColor.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
             new SplitWindow(SplitWindow.SplitType.COLOR);
         });
-        tools4PdfTools4SplitSelection.setOnAction(e -> {
+        tools4PdfTools5SplitSelection.setOnAction(e -> {
             MainWindow.mainScreen.setIsEditPagesMode(true);
             if(MainWindow.mainScreen.document.getSelectedPages().isEmpty() || MainWindow.mainScreen.document.getSelectedPages().size() == MainWindow.mainScreen.document.numberOfPages){
                 new WrongAlert(TR.tr("splitPdfWindow.error.noSelectedPages.header"), TR.tr("splitPdfWindow.error.noSelectedPages.description"), false).execute();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -670,7 +670,7 @@ public class PageRenderer extends Pane {
     public void updatePosition(int totalHeight, int maxHeight, int totalWidth, int maxWidth, int rowCount, boolean animated){
         if(totalHeight == -1) totalHeight = (int) getTranslateY();
         
-        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageSize(page);
+        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageCropBox(page);
         final double ratio = pageSize.getHeight() / pageSize.getWidth();
         
         setWidth(MainWindow.mainScreen.getPageWidth());

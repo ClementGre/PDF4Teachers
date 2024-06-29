@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -43,7 +43,7 @@ public class BookletWindow extends AlternativeWindow<VBox> {
     }
     @Override
     public void setupSubClass(){
-    
+        
         HBox convertKind = new HBox();
         ToggleGroup convertKindGroup = new ToggleGroup();
         convertKindGroup.getToggles().addAll(convertKindMake, convertKindDisassemble);
@@ -51,7 +51,8 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         convertKindGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue == null){
                 // Select a toggle that is not the one disabled
-                if(convertKindGroup.getToggles().get(0) != oldValue) convertKindGroup.getToggles().get(0).setSelected(true);
+                if(convertKindGroup.getToggles().get(0) != oldValue)
+                    convertKindGroup.getToggles().get(0).setSelected(true);
                 else convertKindGroup.getToggles().get(1).setSelected(true);
             }
         });
@@ -75,10 +76,10 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         doTookPages4by4.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoTookPages4by4 = newValue);
         doReverseOrder.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoReverseOrder = newValue);
         doCopyOriginal.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.bookletDoCopyOriginal = newValue);
-    
+        
         doReverseOrder.visibleProperty().bind(convertKindDisassemble.selectedProperty());
         doTookPages4by4.disableProperty().bind(doNotReorderPages.selectedProperty());
-    
+        
         PaneUtils.setVBoxPosition(convertKind, 0, 0, new Insets(0, 0, 10, 0));
         PaneUtils.setVBoxPosition(doNotReorderPages, 0, 0, 2.5, 0);
         PaneUtils.setVBoxPosition(doTookPages4by4, 0, 0, 2.5, 0);
@@ -88,15 +89,13 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         
         root.setSpacing(5);
         root.getChildren().addAll(convertKind, generateInfo(TR.tr("options.title"), false), doNotReorderPages, doTookPages4by4, doCopyOriginal, doReverseOrder);
-    
-    
-    
+        
         Button cancel = new Button(TR.tr("actions.cancel"));
         cancel.setOnAction(event -> close());
-    
+        
         setButtons(cancel, convert);
         updateStatus();
-    
+        
         convert.setOnAction((e) -> {
             if(MainWindow.mainScreen.hasDocument(true) && MainWindow.mainScreen.document.save(false) && Edition.isSave()){
                 try{
