@@ -131,18 +131,18 @@ contribute, you will need a lot of time to deep dive into the code (see <a href=
 organization</a>), you can then open a pull request.
 
 As detailed in the <a href="#dependencies">Dependencies</a> section, PDF4Teachers uses gradlew and the source code can
-be run with `gradlew run` with the JDK 17 in your ``JAVA_HOME`` environment variable.
+be run with `gradlew run` with the JDK 21 in your ``JAVA_HOME`` environment variable.
 
 See [ClementGre/PDF4Teachers-Website](https://github.com/ClementGre/PDF4Teachers-Website) for the PDF4Teachers' website
 repository.
 
 # Dependencies
 
-The application was developed with JavaFX framework, in Java SE 17.
+The application was developed with JavaFX framework, in Java SE 21.
 
 ### Java dependencies
 
-- **[JavaFX 17](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
+- **[JavaFX 21](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
 - **[Apache PDF BOX 2.0.26](https://pdfbox.apache.org/)** : used for all the interactions with PDFs: it generates images
   from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, *
   *Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.

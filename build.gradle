@@ -239,12 +239,11 @@ if(os.windows){
 
     }else{
         if(os.windows){
-            if(win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.2-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-17-Full
-            else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-17.0.1.12-hotspot')
-        }
-        else if(os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-17.0.5')
-        else if(os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-17.jdk/Contents/Home')
-        else if(os.linux) javaHome.set('/opt/jdk-17')
+            if (win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-21-Full
+            else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
+        } else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.5')
+        else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
+        else if (os.linux) javaHome.set('/opt/jdk-21')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
     }
 
