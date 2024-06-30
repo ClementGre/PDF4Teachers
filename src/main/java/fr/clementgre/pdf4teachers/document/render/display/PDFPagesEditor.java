@@ -8,10 +8,8 @@ package fr.clementgre.pdf4teachers.document.render.display;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
-import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
-import fr.clementgre.pdf4teachers.document.editions.elements.SkillTableElement;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
+import fr.clementgre.pdf4teachers.document.editions.elements.*;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.*;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageAddRemoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageMoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageRotateUndoAction;
@@ -29,6 +27,7 @@ import fr.clementgre.pdf4teachers.utils.dialogs.FilesChooserManager;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ButtonPosition;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ComboBoxDialog;
 import fr.clementgre.pdf4teachers.utils.dialogs.alerts.ErrorAlert;
+import fr.clementgre.pdf4teachers.utils.dialogs.alerts.WrongAlert;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListAction;
 import fr.clementgre.pdf4teachers.utils.interfaces.TwoStepListInterface;
 import fr.clementgre.pdf4teachers.utils.objects.PositionDimensions;
@@ -46,6 +45,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import org.apache.pdfbox.Loader;
@@ -117,16 +117,11 @@ public class PDFPagesEditor {
     }
     // When the crop box is bigger than the media box, the media box is increased.
     private static @NotNull PDRectangle correctMediaBoxForCropBox(PDRectangle cropBox, PDRectangle mediaBox){
-        float remainingX = cropBox.getLowerLeftX() < 0 ? -cropBox.getLowerLeftX() : 0;
-        float remainingY = cropBox.getLowerLeftY() < 0 ? -cropBox.getLowerLeftY() : 0;
-        float remainingWidth = cropBox.getWidth() > mediaBox.getWidth() ? cropBox.getWidth() - mediaBox.getWidth() : 0;
-        float remainingHeight = cropBox.getHeight() > mediaBox.getHeight() ? cropBox.getHeight() - mediaBox.getHeight() : 0;
-        return new PDRectangle(
-                mediaBox.getLowerLeftX() - remainingX,
-                mediaBox.getLowerLeftY() - remainingY,
-                mediaBox.getWidth() + remainingWidth,
-                mediaBox.getHeight() + remainingHeight
-        );
+        float leftX = Math.min(cropBox.getLowerLeftX(), mediaBox.getLowerLeftX());
+        float leftY = Math.min(cropBox.getLowerLeftY(), mediaBox.getLowerLeftY());
+        float rightX = Math.max(cropBox.getUpperRightX(), mediaBox.getUpperRightX());
+        float rightY = Math.max(cropBox.getUpperRightY(), mediaBox.getUpperRightY());
+        return new PDRectangle(leftX, leftY, rightX - leftX, rightY - leftY);
     }
     
     public void rotatePage(PageRenderer page, boolean right, UType uType, boolean animated){
@@ -306,7 +301,7 @@ public class PDFPagesEditor {
         Platform.runLater(page::updateRender);
     }
     public void newBlankPage(int originalPage, int index){
-        addPage(new PDPage(MainWindow.mainScreen.document.pdfPagesRender.getPageCropBox(originalPage)), index);
+        addPage(new PDPage(MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(originalPage)), index);
     }
     
     public void newPdfPage(int index){
@@ -329,7 +324,7 @@ public class PDFPagesEditor {
         
     }
     public void newConvertPage(int originalPage, int index){
-        new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageCropBox(originalPage), (convertedFiles) -> {
+        new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(originalPage), (convertedFiles) -> {
             if(convertedFiles.isEmpty()) return;
             ConvertedFile file = convertedFiles.get(0);
             addPdfDocument(file.document, index);
@@ -386,49 +381,90 @@ public class PDFPagesEditor {
         // update current page
         document.setCurrentPage(index);
     }
-    public void setPageMargin(int page, float marginTop, float marginRight, float marginBottom, float marginLeft,
+    public boolean setPageMargin(int page, float marginTop, float marginRight, float marginBottom, float marginLeft,
                               boolean updateUI, boolean absolute, UType uType){
         
         PDRectangle currentBox = this.document.getPage(page).getCropBox();
-        float width = currentBox.getWidth();
-        
+        int rotation = this.document.getPage(page).getRotation();
         if(!absolute){
+            float width = currentBox.getWidth();
+            if(rotation == 90 || rotation == 270) width = currentBox.getHeight();
+            
             marginTop = marginTop * width / 100f;
             marginRight = marginRight * width / 100f;
             marginBottom = marginBottom * width / 100f;
             marginLeft = marginLeft * width / 100f;
         }
-        PDRectangle newBox;
-        if(this.document.getPage(page).getRotation() == 90){
-            newBox = new PDRectangle(
-                    currentBox.getLowerLeftX() - marginBottom,
+        
+        if(marginBottom + marginTop <= -currentBox.getHeight() || marginLeft + marginRight <= -currentBox.getWidth()){
+            new WrongAlert(TR.tr("pageCropping.tooMuchCrop.title"), TR.tr("pageCropping.tooMuchCrop.description"), false).show();
+            Document document = MainWindow.mainScreen.document;
+            document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
+            document.updateShowsStatus();
+            document.updateBackgrounds();
+            return false;
+        }
+        
+        PDRectangle newBox = switch(rotation){
+            case 90 -> new PDRectangle(
+                    currentBox.getLowerLeftX() - marginTop,
                     currentBox.getLowerLeftY() - marginLeft,
-                    Math.max(1, currentBox.getWidth() + marginTop + marginBottom),
-                    Math.max(1, currentBox.getHeight() + marginLeft + marginRight)
+                    Math.max(5, currentBox.getWidth() + marginTop + marginBottom),
+                    Math.max(5, currentBox.getHeight() + marginLeft + marginRight)
             );
-        }else if(this.document.getPage(page).getRotation() == 180){
-            newBox = new PDRectangle(
+            case 180 -> new PDRectangle(
                     currentBox.getLowerLeftX() - marginRight,
                     currentBox.getLowerLeftY() - marginTop,
-                    Math.max(1, currentBox.getWidth() + marginLeft + marginRight),
-                    Math.max(1, currentBox.getHeight() + marginTop + marginBottom)
+                    Math.max(5, currentBox.getWidth() + marginLeft + marginRight),
+                    Math.max(5, currentBox.getHeight() + marginTop + marginBottom)
             );
-        }else if(this.document.getPage(page).getRotation() == 270){
-            newBox = new PDRectangle(
-                    currentBox.getLowerLeftX() - marginTop,
+            case 270 -> new PDRectangle(
+                    currentBox.getLowerLeftX() - marginBottom,
                     currentBox.getLowerLeftY() - marginRight,
-                    Math.max(1, currentBox.getWidth() + marginTop + marginBottom),
-                    Math.max(1, currentBox.getHeight() + marginLeft + marginRight)
+                    Math.max(5, currentBox.getWidth() + marginTop + marginBottom),
+                    Math.max(5, currentBox.getHeight() + marginLeft + marginRight)
             );
-        }else{
-            newBox = new PDRectangle(
+            default -> new PDRectangle(
                     currentBox.getLowerLeftX() - marginLeft,
                     currentBox.getLowerLeftY() - marginBottom,
-                    Math.max(1, currentBox.getWidth() + marginLeft + marginRight),
-                    Math.max(1, currentBox.getHeight() + marginTop + marginBottom)
+                    Math.max(5, currentBox.getWidth() + marginLeft + marginRight),
+                    Math.max(5, currentBox.getHeight() + marginTop + marginBottom)
             );
+        };
+        
+        
+        // Moving elements
+        double newWidth = rotation == 90 || rotation == 270 ? newBox.getHeight() : newBox.getWidth();
+        double newHeight = rotation == 90 || rotation == 270 ? newBox.getWidth() : newBox.getHeight();
+        double oldWidth = rotation == 90 || rotation == 270 ? currentBox.getHeight() : currentBox.getWidth();
+        double oldHeight = rotation == 90 || rotation == 270 ? currentBox.getWidth() : currentBox.getHeight();
+        
+        for(Element el : MainWindow.mainScreen.document.getPage(page).getElements()){
+            MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.NO_COUNT, el));
+            
+            // New element coordinates in Page user space
+            double newX = marginLeft + el.getRealX() * oldWidth / Element.GRID_WIDTH;
+            double newY = marginTop + el.getRealY() * oldHeight / Element.GRID_HEIGHT;
+            double hScaleFactor = newWidth / oldWidth;
+            double vScaleFactor = newHeight / oldHeight;
+            
+            el.setRealX((int) (newX * Element.GRID_WIDTH / newWidth));
+            el.setRealY((int) (newY * Element.GRID_HEIGHT / newHeight));
+            if(el instanceof GraphicElement ge){
+                MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, ge));
+                ge.setRealWidth((int) (ge.getRealWidth() / hScaleFactor));
+                ge.setRealHeight((int) (ge.getRealHeight() / vScaleFactor));
+            }
+            
+            if(el instanceof TextElement te){
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(te, te.fontProperty(), te.getFont(), UType.NO_COUNT));
+                te.setFont(new Font(te.getFont().getName(), te.getFont().getSize() / hScaleFactor));
+            }
+            el.checkLocation(false);
         }
+        
         setPageCropBoxAllowingMargin(page, newBox, updateUI, uType);
+        return true;
     }
     public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI, UType uType){
         PDRectangle mediaBox = this.document.getPage(pageNumber).getMediaBox();
@@ -437,13 +473,11 @@ public class PDFPagesEditor {
         PDRectangle newMediaBox = correctMediaBoxForCropBox(box, mediaBox);
         
         MainWindow.mainScreen.registerNewPageAction(new PagesCropUndoAction(uType, new WeakReference<>(MainWindow.mainScreen.document.getPage(pageNumber)),
-                page.getCropBox(), box, page.getMediaBox(), newMediaBox));
+                page.getCropBox(), page.getMediaBox()));
         
         page.setCropBox(box);
         page.setMediaBox(newMediaBox);
         edited = true;
-        
-        // TODO: Move elements properly
         
         // update coordinates & rerender pages
         if(updateUI){

@@ -157,7 +157,7 @@ public class MarginWindow extends AlternativeWindow<VBox> {
             if(!MainWindow.mainScreen.document.getSelectedPages().isEmpty()){
                 firstIndex = MainWindow.mainScreen.document.getSelectedPages().stream().sorted().findFirst().orElse(0);
             }
-            return MainWindow.mainScreen.document.pdfPagesRender.getPageCropBox(firstIndex);
+            return MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(firstIndex);
         }
         return new PDRectangle();
     }

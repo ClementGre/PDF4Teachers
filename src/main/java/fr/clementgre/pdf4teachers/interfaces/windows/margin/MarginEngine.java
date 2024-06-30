@@ -18,18 +18,20 @@ public record MarginEngine(double marginTop, double marginRight, double marginBo
             int i = 0;
             for(int page : MainWindow.mainScreen.document.getSelectedPages()){
                 i++;
-                applyOnPage(page, i == 1, i == count);
+                boolean res = applyOnPage(page, i == 1, i == count);
+                if(!res) break;
             }
         }else{
             int count = MainWindow.mainScreen.document.getPages().size();
             for(PageRenderer page : MainWindow.mainScreen.document.getPages()){
-                applyOnPage(page.getPage(), page.getPage() == 0, page.getPage() == count - 1);
+                boolean res = applyOnPage(page.getPage(), page.getPage() == 0, page.getPage() == count - 1);
+                if(!res) break;
             }
         }
     }
     
-    private void applyOnPage(int page, boolean isFirstCall, boolean latest){
-        MainWindow.mainScreen.document.pdfPagesRender.editor.setPageMargin(page,
+    private boolean applyOnPage(int page, boolean isFirstCall, boolean latest){
+        return MainWindow.mainScreen.document.pdfPagesRender.editor.setPageMargin(page,
                 (float) marginTop, (float) marginRight, (float) marginBottom, (float) marginLeft, latest, isMarginKindAbsolute,
                 isFirstCall ? UType.UNDO : UType.NO_COUNT);
     }

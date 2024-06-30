@@ -96,7 +96,7 @@ public class PDFPagesRender {
     }
     
     private void renderPage(RenderPending renderPending){
-        PDRectangle pageSize = getPageCropBox(renderPending.page.getPage());
+        PDRectangle pageSize = getPageRotatedCropBox(renderPending.page.getPage());
         
         BufferedImage renderImage = new BufferedImage(Math.max(1, renderPending.width), (int) Math.max(1, pageSize.getHeight() / pageSize.getWidth() * ((double) renderPending.width)), BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = renderImage.createGraphics();
@@ -132,7 +132,7 @@ public class PDFPagesRender {
     
     public BufferedImage renderPageBasic(int pageNumber, int width, int height){
         
-        PDRectangle pageSize = getPageCropBox(pageNumber);
+        PDRectangle pageSize = getPageRotatedCropBox(pageNumber);
         
         BufferedImage renderImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D graphics = renderImage.createGraphics();
@@ -180,7 +180,7 @@ public class PDFPagesRender {
         return document.getNumberOfPages();
     }
     
-    public PDRectangle getPageCropBox(int pageNumber){
+    public PDRectangle getPageRotatedCropBox(int pageNumber){
         PDPage page = document.getPage(pageNumber);
         PDRectangle pageSize;
         if(page.getRotation() == 90 || page.getRotation() == 270)

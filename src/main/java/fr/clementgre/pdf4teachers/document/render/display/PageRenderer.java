@@ -670,7 +670,7 @@ public class PageRenderer extends Pane {
     public void updatePosition(int totalHeight, int maxHeight, int totalWidth, int maxWidth, int rowCount, boolean animated){
         if(totalHeight == -1) totalHeight = (int) getTranslateY();
         
-        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageCropBox(page);
+        PDRectangle pageSize = MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(page);
         final double ratio = pageSize.getHeight() / pageSize.getWidth();
         
         setWidth(MainWindow.mainScreen.getPageWidth());

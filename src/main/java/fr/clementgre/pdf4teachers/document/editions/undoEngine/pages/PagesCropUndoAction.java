@@ -21,19 +21,15 @@ public class PagesCropUndoAction extends UndoAction {
     private final WeakReference<PageRenderer> page;
     
     private PDRectangle oldCropBox;
-    private PDRectangle newCropBox;
     private PDRectangle oldMediaBox;
-    private PDRectangle newMediaBox;
     
     private boolean isInverted = false;
     
-    public PagesCropUndoAction(UType undoType, WeakReference<PageRenderer> page, PDRectangle oldCropBox, PDRectangle newCropBox, PDRectangle oldMediaBox, PDRectangle newMediaBox){
+    public PagesCropUndoAction(UType undoType, WeakReference<PageRenderer> page, PDRectangle oldCropBox, PDRectangle oldMediaBox){
         super(undoType);
         this.page = page;
         this.oldCropBox = oldCropBox;
-        this.newCropBox = newCropBox;
         this.oldMediaBox = oldMediaBox;
-        this.newMediaBox = newMediaBox;
     }
     
     @Override
@@ -43,6 +39,10 @@ public class PagesCropUndoAction extends UndoAction {
         if(pageRenderer != null && MainWindow.mainScreen.hasDocument(false)){
             Document document = MainWindow.mainScreen.document;
             PDPage page = document.pdfPagesRender.getDocument().getPage(pageRenderer.getPage());
+            
+            PDRectangle currentCropBox = page.getCropBox();
+            PDRectangle currentMediaBox = page.getCropBox();
+            
             if(isInverted){
                 page.setCropBox(oldCropBox);
                 page.setMediaBox(oldMediaBox);
@@ -59,12 +59,8 @@ public class PagesCropUndoAction extends UndoAction {
             // TODO: Move elements properly
             
             // invert
-            PDRectangle temp = oldCropBox;
-            oldCropBox = newCropBox;
-            newCropBox = temp;
-            temp = oldMediaBox;
-            oldMediaBox = newMediaBox;
-            newMediaBox = temp;
+            oldCropBox = currentCropBox;
+            oldMediaBox = currentMediaBox;
             
             isInverted = !isInverted;
             
