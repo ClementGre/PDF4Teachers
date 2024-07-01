@@ -113,8 +113,7 @@ def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 javafx {
     version = '21' // Switch to JFX LTS 21 to fix keyboard layout issue on MacOS
-    if(os.macOsX && aarch64) modules = []
-    else modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
+    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 
 version = "1.4.1"
