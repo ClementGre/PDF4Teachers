@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -98,7 +98,7 @@ public class GradeTab extends SideTab {
         GradeElement current = new GradeElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, -1, 0, -1, parent.getChildren().size(), GradeTreeView.getElementPath(parent), name, false);
         
-        page.addElement(current, true, UType.UNDO);
+        page.addElement(current, true, UType.ELEMENT);
         current.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(current);
         

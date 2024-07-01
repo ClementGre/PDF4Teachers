@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -44,7 +44,7 @@ public class CopyPasteManager {
             case CUT, COPY -> {
                 if(MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.getSelected() != null){
                     Element.copy(MainWindow.mainScreen.getSelected());
-                    if(type == CopyPasteType.CUT) MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
+                    if(type == CopyPasteType.CUT) MainWindow.mainScreen.getSelected().delete(true, UType.ELEMENT);
                 }
             }
             case PASTE -> {

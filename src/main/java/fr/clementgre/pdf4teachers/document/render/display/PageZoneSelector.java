@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2021. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -60,7 +60,7 @@ public class PageZoneSelector extends Pane {
         setOnMousePressed((e) -> {
             e.consume();
             if(e.getButton() != MouseButton.PRIMARY){
-                end();
+                end(false);
             }else{
                 startX = e.getX();
                 startY = e.getY();
@@ -78,14 +78,18 @@ public class PageZoneSelector extends Pane {
             if(e.getCode() == KeyCode.ESCAPE){
                 e.consume();
                 this.callBack = null; // so the callback won't be called, considered as exited.
-                end();
+                end(false);
             }
         });
         
         setOnMouseReleased((e) -> {
             e.consume();
             updateSelectionPositionDimensions(e);
-            end();
+            end(true);
+        });
+        
+        focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue) end(false);
         });
         
     }
@@ -124,8 +128,8 @@ public class PageZoneSelector extends Pane {
         return new PositionDimensions(selectionZone.getWidth() - 2, selectionZone.getHeight() - 2, selectionZone.getLayoutX() + 1, selectionZone.getLayoutY() + 1);
     }
     
-    private void end(){
-        if(selectionZone.getWidth() > 10 && selectionZone.getHeight() > 10 && callBack != null){
+    private void end(boolean callCallBack){
+        if(callCallBack && selectionZone.getWidth() > 10 && selectionZone.getHeight() > 10 && callBack != null){
             callBack.call(getSelectionPositionDimensions());
         }
         setOnMousePressed(null);

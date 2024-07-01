@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2022. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -31,7 +31,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -293,7 +292,7 @@ public class TextTreeView extends TreeView<String> {
         });
         item2.setOnAction((e) -> {
             if(element.getType() == TextTreeSection.ONFILE_TYPE){
-                element.getCore().delete(true, UType.UNDO);
+                element.getCore().delete(true, UType.ELEMENT);
             }else{
                 removeSavedElement(element);
             }

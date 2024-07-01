@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2023. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -462,6 +462,7 @@ public class GradeTreeItem extends TreeItem<String> {
         panel.delete();
         panel = null;
         
+        // The childrens are deleted before the parent, then, the children UType is ELEMENT_NO_COUNT_AFTER
         if(hasSubGrade()) deleteChildren(markAsUnsave, undoType);
         if(removePageElement){
             getCore().delete(markAsUnsave, undoType);
@@ -481,10 +482,10 @@ public class GradeTreeItem extends TreeItem<String> {
     }
     // This method delete add children of this TreeItem, including pageElements
     public void deleteChildren(boolean markAsUnsave, UType undoType){
-        undoType = (undoType == UType.NO_UNDO) ? UType.NO_UNDO : UType.NO_COUNT;
+        undoType = (undoType == UType.NO_UNDO) ? UType.NO_UNDO : UType.ELEMENT_NO_COUNT_AFTER;
         while(hasSubGrade()){
             // Since we start the delete from here, the children have to has removePageElement = true.
-            ((GradeTreeItem) getChildren().get(0)).delete(true, markAsUnsave, undoType);
+            ((GradeTreeItem) getChildren().getFirst()).delete(true, markAsUnsave, undoType);
         }
     }
     public boolean isDeleted(){

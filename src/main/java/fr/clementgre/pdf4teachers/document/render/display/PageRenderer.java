@@ -150,7 +150,6 @@ public class PageRenderer extends Pane {
         
         setOnDragDetected(e -> {
             if(MainWindow.mainScreen.isEditPagesMode() && !isPageZoneSelectorActive()){
-                MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, this, getPage()));
                 hasDragged = true;
             }else if(e.getButton() != MouseButton.SECONDARY){
                 if(placingElement == null){
@@ -340,7 +339,10 @@ public class PageRenderer extends Pane {
                 setCursor(PlatformUtils.CURSOR_MOVE);
                 
                 if(pageGridEditPane == null) pageGridEditPane = new PageGridEditPane(this);
-                pageGridEditPane.show(true);
+                if(pageZoneSelector == null || !pageZoneSelector.isActive()){
+                    pageGridEditPane.show(true);
+                }
+                
             }else{
                 if(MainWindow.mainScreen.hasToPlace()) setCursor(Cursor.CROSSHAIR);
                 else setCursor(Cursor.DEFAULT);
@@ -409,7 +411,7 @@ public class PageRenderer extends Pane {
                     placingElement.centerOnCoordinatesY();
                 }
                 
-                addElement(placingElement, true, UType.UNDO);
+                addElement(placingElement, true, UType.ELEMENT);
                 placingElement.select();
                 placingElement.incrementUsesAndLastUse();
                 
@@ -495,12 +497,12 @@ public class PageRenderer extends Pane {
             double rotate = e.getTotalAngle() * 2;
             if(rotate < -45){
                 setVisibleRotate(-90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, false, UType.UNDO, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, false, UType.PAGE, false);
                     setRotate(0);
                 });
             }else if(rotate > 45){
                 setVisibleRotate(90, true, () -> {
-                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, true, UType.UNDO, false);
+                    MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(this, true, UType.PAGE, false);
                     setRotate(0);
                 });
             }else{
@@ -598,9 +600,11 @@ public class PageRenderer extends Pane {
         // invert order, the pages needs to be moved in a certain order.
         if(index > 0) pages = pages.stream().collect(ArrayList::new, (ps, p) -> ps.add(0, p), (list1, list2) -> list1.addAll(0, list2));
         
+        int i = 0;
         for(PageRenderer page : pages){
-            MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.NO_COUNT, page, page.getPage()));
+            MainWindow.mainScreen.registerNewAction(new PageMoveUndoAction(i == 0 ? UType.PAGE : UType.PAGE_NO_COUNT_BEFORE, page, page.getPage()));
             MainWindow.mainScreen.document.pdfPagesRender.editor.movePage(page, index);
+            i++;
         }
         
     }

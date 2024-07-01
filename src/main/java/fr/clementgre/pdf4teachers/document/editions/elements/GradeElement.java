@@ -136,7 +136,7 @@ public class GradeElement extends Element {
                 if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
                         || !MainWindow.mainScreen.isNextUndoActionProperty(nameProperty())){
                     
-                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, nameProperty(), oldValue.trim(), UType.UNDO));
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, nameProperty(), oldValue.trim(), UType.ELEMENT));
                 }
             }
         });
@@ -178,7 +178,7 @@ public class GradeElement extends Element {
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined value so otherwise, this is useless
                 // This is the first registration of this action/property.
                 if(!MainWindow.mainScreen.isNextUndoActionProperty(valueProperty())){
-                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, valueProperty(), oldValue, UType.UNDO));
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, valueProperty(), oldValue, UType.ELEMENT));
                 }
             }
         });
@@ -199,7 +199,7 @@ public class GradeElement extends Element {
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined total so otherwise, this is useless
                 // This is the first registration of this action/property.
                 if(!MainWindow.mainScreen.isNextUndoActionProperty(totalProperty())){
-                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, totalProperty(), oldValue, UType.UNDO));
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, totalProperty(), oldValue, UType.ELEMENT));
                 }
             }
         });
@@ -217,7 +217,7 @@ public class GradeElement extends Element {
             }else{
                 // This is the first registration of this action/property.
                 if(!MainWindow.mainScreen.isNextUndoActionProperty(outOfTotalProperty())){
-                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, outOfTotalProperty(), oldValue, UType.UNDO));
+                    MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, outOfTotalProperty(), oldValue, UType.ELEMENT));
                 }
             }
         });
@@ -283,7 +283,7 @@ public class GradeElement extends Element {
             if((GradeTreeView.getTotal()).getCore().equals(this)){
                 // Regenerate Root if this is Root
                 MainWindow.gradeTab.treeView.clearElements(true, true);
-            }else delete(true, UType.UNDO);
+            }else delete(true, UType.ELEMENT);
         });
         item4.setOnAction(e -> {
             GradeTreeItem treeItemElement = getGradeTreeItem();
@@ -581,7 +581,7 @@ public class GradeElement extends Element {
     
     public void setAlwaysVisible(boolean alwaysVisible, boolean registerUndo){
         if(registerUndo)
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.alwaysVisible, this.alwaysVisible.get(), UType.UNDO));
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.alwaysVisible, this.alwaysVisible.get(), UType.ELEMENT));
         this.alwaysVisible.set(alwaysVisible);
     }
     

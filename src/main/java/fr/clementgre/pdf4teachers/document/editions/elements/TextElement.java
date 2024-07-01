@@ -107,17 +107,17 @@ public class TextElement extends Element {
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
                     || !MainWindow.mainScreen.isNextUndoActionProperty(textProperty())){
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, textProperty(), oldValue.trim(), UType.UNDO));
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, textProperty(), oldValue.trim(), UType.ELEMENT));
             }
             
         });
         this.textNode.fillProperty().addListener((observable, oldValue, newValue) -> {
             updateText();
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fillProperty(), oldValue, UType.UNDO));
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fillProperty(), oldValue, UType.ELEMENT));
         });
         this.textNode.fontProperty().addListener((observable, oldValue, newValue) -> {
             updateText();
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fontProperty(), oldValue, UType.UNDO));
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, this.textNode.fontProperty(), oldValue, UType.ELEMENT));
         });
         widthProperty().addListener((observable, oldValue, newValue) -> {
             checkLocation(getLayoutX(), getLayoutY(), false);
@@ -151,7 +151,7 @@ public class TextElement extends Element {
         menu.getItems().addAll(item1, item2, item4, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete(true, UType.UNDO));
+        item1.setOnAction(e -> delete(true, UType.ELEMENT));
         item2.setOnAction(e -> cloneOnDocument());
         item3.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.LAST_TYPE, true)));
         item4.setOnAction(e -> TextTreeView.addSavedElement(this.toNoDisplayTextElement(TextTreeSection.FAVORITE_TYPE, true)));

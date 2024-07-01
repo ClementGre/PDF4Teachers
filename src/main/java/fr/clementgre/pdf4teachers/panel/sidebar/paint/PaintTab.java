@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -289,7 +289,7 @@ public class PaintTab extends SideTab {
             ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                     page.toGridX(100), page.toGridY(100), GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, "");
             
-            page.addElement(element, true, UType.UNDO);
+            page.addElement(element, true, UType.ELEMENT);
             element.centerOnCoordinatesY();
             MainWindow.mainScreen.setSelected(element);
         });
@@ -317,7 +317,7 @@ public class PaintTab extends SideTab {
                     "", false, false, 0);
             
             MainWindow.mainScreen.setSelected(element);
-            page.addElement(element, true, UType.UNDO);
+            page.addElement(element, true, UType.ELEMENT);
             element.centerOnCoordinatesY();
             element.setLinkedVectorData(VectorListPane.addLastVector(element));
         });
@@ -385,7 +385,7 @@ public class PaintTab extends SideTab {
                 "", false, false, 0);
         
         
-        page.addElement(element, true, UType.UNDO);
+        page.addElement(element, true, UType.ELEMENT);
         element.centerOnCoordinatesX();
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
@@ -401,7 +401,7 @@ public class PaintTab extends SideTab {
     private void deleteSelected(){
         Element element = MainWindow.mainScreen.getSelected();
         if(element != null){
-            element.delete(true, UType.UNDO);
+            element.delete(true, UType.ELEMENT);
         }
     }
     
@@ -411,7 +411,7 @@ public class PaintTab extends SideTab {
         ImageElement element = new ImageElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(), true,
                 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, path);
         
-        page.addElement(element, true, UType.UNDO);
+        page.addElement(element, true, UType.ELEMENT);
         element.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(element);
         
@@ -460,7 +460,7 @@ public class PaintTab extends SideTab {
                         fillColor != null, fillColor == null ? MainWindow.userData.vectorsLastFill : fillColor, strokeColor == null ? MainWindow.userData.vectorsLastStroke : strokeColor, strokeWidth,
                         parser.getPath(), false, false, 0);
                 
-                page.addElement(element, true, UType.UNDO);
+                page.addElement(element, true, UType.ELEMENT);
                 element.centerOnCoordinatesY();
                 MainWindow.mainScreen.setSelected(element);
                 element.setLinkedVectorData(VectorListPane.addLastVector(element));

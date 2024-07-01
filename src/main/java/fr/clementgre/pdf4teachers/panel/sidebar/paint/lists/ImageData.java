@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -52,7 +52,7 @@ public class ImageData extends ImageLambdaData {
         ImageElement element = new ImageElement(x, page.getNewElementYOnGrid(), page.getPage(), true,
                 width, height, repeatMode, resizeMode, imageId, linkedImage);
         
-        page.addElement(element, true, UType.UNDO);
+        page.addElement(element, true, UType.ELEMENT);
         
         if(centerOnCursor) element.centerOnCoordinatesX();
         element.centerOnCoordinatesY();

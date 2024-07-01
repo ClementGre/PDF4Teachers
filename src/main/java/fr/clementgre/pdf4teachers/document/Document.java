@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -117,7 +117,7 @@ public class Document {
         this.edition = new Edition(file, this);
         if(edition.load(updateScrollValue)){
             if(!documentSaver.isAlive()) documentSaver.start();
-            this.undoEngine = new UndoEngine(true);
+            this.undoEngine = new UndoEngine();
             return true;
         }
         return false;
@@ -156,7 +156,7 @@ public class Document {
         MainWindow.skillsTab.clearEditRelatedData();
         MainWindow.gradeTab.treeView.clearElements(false, false);
         this.edition.load(false);
-        this.undoEngine = new UndoEngine(true);
+        this.undoEngine = new UndoEngine();
     }
     
     public void close(){

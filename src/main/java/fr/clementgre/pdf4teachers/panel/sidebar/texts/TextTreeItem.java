@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -132,8 +132,8 @@ public class TextTreeItem extends TreeItem<String> {
 
                 boolean shouldReplace = e.isShortcutDown();
                 if(shouldReplace && MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
-                    oldElement.delete(true, UType.NO_COUNT);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
+                    oldElement.delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
                 }else{
                     addToDocument(e.isShiftDown(), true);
                 }
@@ -188,8 +188,8 @@ public class TextTreeItem extends TreeItem<String> {
             }else if(e.getCode() == KeyCode.ENTER){
                 e.consume();
                 if(MainWindow.mainScreen.getSelected() instanceof TextElement oldElement){
-                    oldElement.delete(true, UType.NO_COUNT);
                     addToDocument(e.isShiftDown(), oldElement.getPage(), oldElement.getRealX(), oldElement.getRealY(), false);
+                    oldElement.delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
                 }else{
                     addToDocument(e.isShiftDown(), true);
                     MainWindow.textTab.selectItem();
@@ -442,8 +442,8 @@ public class TextTreeItem extends TreeItem<String> {
                 core = realElement;
                 setup();
             }
-
-            page.addElement(realElement, true, UType.UNDO);
+            
+            page.addElement(realElement, true, UType.ELEMENT);
             if(centerOnY) realElement.centerOnCoordinatesY();
             MainWindow.mainScreen.selectedProperty().setValue(realElement);
             return realElement;

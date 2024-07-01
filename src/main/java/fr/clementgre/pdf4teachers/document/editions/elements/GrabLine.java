@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -76,7 +76,7 @@ public class GrabLine extends Region {
             if(wasInEditPagesModeWhenMousePressed) return;
             
             if(!dragAlreadyDetected){
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(element, element.textMaxWidthProperty(), element.getTextMaxWidth(), UType.UNDO));
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(element, element.textMaxWidthProperty(), element.getTextMaxWidth(), UType.ELEMENT));
                 dragAlreadyDetected = true;
             }
             

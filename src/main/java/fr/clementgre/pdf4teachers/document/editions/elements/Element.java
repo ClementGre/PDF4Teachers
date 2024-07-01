@@ -68,6 +68,38 @@ public abstract class Element extends Region {
     
     boolean dragAlreadyDetected;
     
+    public static boolean paste(){
+        if(!MainWindow.mainScreen.hasDocument(false)) return false;
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        
+        if(ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && elementClipboard != null){
+            if(elementClipboard.getPage() != null){
+                Element element = elementClipboard.clone();
+                
+                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
+                element.setPage(page);
+                page.addElement(element, true, UType.ELEMENT);
+                element.checkLocation(page.getMouseX(), page.getMouseY(), false);
+                element.centerOnCoordinatesY();
+                if(element instanceof GraphicElement) element.centerOnCoordinatesX();
+                element.select();
+                
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public static void copy(Element element){
+        if(element instanceof GradeElement || element instanceof SkillTableElement) return;
+        
+        final ClipboardContent clipboardContent = new ClipboardContent();
+        clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);
+        elementClipboard = element;
+        
+        final Clipboard clipboard = Clipboard.getSystemClipboard();
+        clipboard.setContent(clipboardContent);
+    }
     protected void setupGeneral(boolean setupEvents, Node... components){
         if(components != null) getChildren().setAll(components);
         
@@ -121,7 +153,7 @@ public abstract class Element extends Region {
                 if(wasInEditPagesModeWhenMousePressed || e.getButton() != MouseButton.PRIMARY) return;
                 
                 if(!dragAlreadyDetected){
-                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
+                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.ELEMENT, this));
                     dragAlreadyDetected = true;
                 }
                 
@@ -161,39 +193,6 @@ public abstract class Element extends Region {
         
         setupBindings();
         setupMenu();
-    }
-    
-    public static void copy(Element element){
-        if(element instanceof GradeElement || element instanceof SkillTableElement) return;
-        
-        final ClipboardContent clipboardContent = new ClipboardContent();
-        clipboardContent.put(Main.INTERNAL_FORMAT, ELEMENT_CLIPBOARD_KEY);
-        elementClipboard = element;
-        
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        clipboard.setContent(clipboardContent);
-    }
-    
-    public static boolean paste(){
-        if(!MainWindow.mainScreen.hasDocument(false)) return false;
-        final Clipboard clipboard = Clipboard.getSystemClipboard();
-        
-        if(ELEMENT_CLIPBOARD_KEY.equals(clipboard.getContent(Main.INTERNAL_FORMAT)) && elementClipboard != null){
-            if(elementClipboard.getPage() != null){
-                Element element = elementClipboard.clone();
-                
-                PageRenderer page = MainWindow.mainScreen.document.getLastCursorOverPageObject();
-                element.setPage(page);
-                page.addElement(element, true, UType.UNDO);
-                element.checkLocation(page.getMouseX(), page.getMouseY(), false);
-                element.centerOnCoordinatesY();
-                if(element instanceof GraphicElement) element.centerOnCoordinatesX();
-                element.select();
-                
-                return true;
-            }
-        }
-        return false;
     }
     
     public boolean isSelected(){
@@ -400,12 +399,11 @@ public abstract class Element extends Region {
     
     public abstract Element clone();
     public abstract Element cloneHeadless(); // hasPage = false
-    
     public void cloneOnDocument(){
         Element element = clone();
         element.setRealX((int) (getRealX() + (10 / getPage().getWidth() * GRID_WIDTH)));
         element.setRealY((int) (getRealY() + (10 / getPage().getHeight() * GRID_HEIGHT)));
-        element.getPage().addElement(element, true, UType.UNDO);
+        element.getPage().addElement(element, true, UType.ELEMENT);
         element.select();
     }
     

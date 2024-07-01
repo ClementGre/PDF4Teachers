@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -9,6 +9,7 @@ import fr.clementgre.pdf4teachers.components.menus.NodeMenuItem;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
+import fr.clementgre.pdf4teachers.interfaces.windows.margin.MarginWindow;
 import fr.clementgre.pdf4teachers.utils.panes.PaneUtils;
 import fr.clementgre.pdf4teachers.utils.svg.SVGPathIcons;
 import javafx.scene.Cursor;
@@ -29,6 +30,7 @@ public class PageEditPane extends VBox {
     private final Button deleteButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.delete.tooltip"), 45);
     private final Button newButton = getCustomButton(SVGPathIcons.PLUS, TR.tr("document.pageActions.addPages.tooltip"));
     private final Button captureButton = getCustomButton(SVGPathIcons.FULL_SCREEN, TR.tr("document.pageActions.capture.tooltip"));
+    private final Button cropButton = getCustomButton(SVGPathIcons.CROP, TR.tr("document.pageActions.crop.tooltip"));
     
     private ContextMenu menu = new ContextMenu();
     
@@ -41,9 +43,9 @@ public class PageEditPane extends VBox {
         
         descendButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.descendPage(page));
         
-        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, false, UType.UNDO, true));
+        rotateLeftButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, false, UType.PAGE, true));
         
-        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, true, UType.UNDO, true));
+        rotateRightButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.rotatePage(page, true, UType.PAGE, true));
         
         deleteButton.setOnAction((e) -> MainWindow.mainScreen.document.pdfPagesRender.editor.deletePage(page));
         
@@ -63,7 +65,15 @@ public class PageEditPane extends VBox {
             menu.show(captureButton, e.getScreenX(), e.getScreenY());
         });
         
-        getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, captureButton);
+        cropButton.setOnMouseClicked((e) -> {
+            menu.hide();
+            menu.getItems().clear();
+            menu.getItems().addAll(getCropMenu(page, false));
+            NodeMenuItem.setupMenu(menu);
+            menu.show(cropButton, e.getScreenX(), e.getScreenY());
+        });
+        
+        getChildren().addAll(ascendButton, descendButton, rotateLeftButton, rotateRightButton, deleteButton, newButton, cropButton, captureButton);
         
         updateVisibility();
         updatePosition();
@@ -141,6 +151,51 @@ public class PageEditPane extends VBox {
         
         return menus;
     }
+    public static ArrayList<MenuItem> getCropMenu(PageRenderer page, boolean vanillaMenu){
+        ArrayList<MenuItem> menus = new ArrayList<>();
+        
+        MenuItem cropPage = getMenuItem(TR.tr("document.pageActions.crop.crop"), vanillaMenu);
+        menus.add(cropPage);
+        cropPage.setOnAction(ignored -> {
+            page.quitVectorEditMode();
+            PageZoneSelector recorder = page.getPageZoneSelector();
+            recorder.setSelectionZoneType(PageZoneSelector.SelectionZoneType.PDF_ON_DARK);
+            recorder.setupSelectionZoneOnce(positionDimensions -> {
+                float marginLeft = -(float) (positionDimensions.getX() * 100d / page.getWidth());
+                float marginTop = -(float) (positionDimensions.getY() * 100d / page.getWidth());
+                float marginRight = -(float) ((page.getWidth() - positionDimensions.getX() - positionDimensions.getWidth()) * 100d / page.getWidth());
+                float marginBottom = -(float) ((page.getHeight() - positionDimensions.getY() - positionDimensions.getHeight()) * 100d / page.getWidth());
+                MainWindow.mainScreen.document.pdfPagesRender.editor.setPageMargin(page.getPage(),
+                        marginTop, marginRight, marginBottom, marginLeft,
+                        true, false, UType.PAGE);
+            });
+            recorder.setDoShow(true);
+        });
+        
+        MenuItem marginPage = getMenuItem(TR.tr("document.pageActions.crop.marginPage"), vanillaMenu);
+        menus.add(marginPage);
+        marginPage.setOnAction(ignored -> {
+            page.quitVectorEditMode();
+            new MarginWindow(page.getPage());
+        });
+        if(MainWindow.mainScreen.document.numberOfPages != 1){
+            
+            boolean selectionCapture = MainWindow.mainScreen.isEditPagesMode() && MainWindow.mainScreen.hasDocument(false) && MainWindow.mainScreen.document.getSelectedPages().size() > 1;
+            
+            MenuItem captureDocument = getMenuItem(selectionCapture ? TR.tr("document.pageActions.crop.marginSelected") : TR.tr("document.pageActions.crop.marginAll"), vanillaMenu);
+            menus.add(captureDocument);
+            
+            captureDocument.setOnAction(ignored -> {
+                page.quitVectorEditMode();
+                if(selectionCapture)
+                    new MarginWindow(MainWindow.mainScreen.document.getSelectedPages().stream().sorted().toArray(Integer[]::new));
+                else
+                    new MarginWindow(MainWindow.mainScreen.document.getPages().stream().map(PageRenderer::getPage).toArray(Integer[]::new));
+            });
+        }
+        
+        return menus;
+    }
     
     private static MenuItem getMenuItem(String title, boolean vanillaItem){
         if(vanillaItem) return new MenuItem(title);
@@ -164,7 +219,7 @@ public class PageEditPane extends VBox {
     public void updatePosition(){
         if(this.page == null) return;
         
-        int buttonNumber = 7;
+        int buttonNumber = 8;
         double factor = .7 / MainWindow.mainScreen.getZoomFactor();
         double height = (30 * buttonNumber) * (factor - 1);
         double width = 30 * (factor - 1);
@@ -186,6 +241,7 @@ public class PageEditPane extends VBox {
         rotateRightButton.setOnAction(null);
         deleteButton.setOnAction(null);
         newButton.setOnMouseClicked(null);
+        cropButton.setOnMouseClicked(null);
         captureButton.setOnMouseClicked(null);
         
     }

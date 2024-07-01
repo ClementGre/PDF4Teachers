@@ -9,7 +9,10 @@ import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.*;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
+import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageAddRemoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageMoveUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageRotateUndoAction;
@@ -74,8 +77,6 @@ public class PDFPagesEditor {
     private final File file;
     private boolean edited;
     
-    private final UndoEngine undoEngine = new UndoEngine(false);
-    
     public PDFPagesEditor(PDDocument document, File file){
         this.document = document;
         this.file = file;
@@ -104,11 +105,11 @@ public class PDFPagesEditor {
     // ascendPage and descendPage are registering an UndoAction,
     // but it is not the case of the others moving functions.
     public void ascendPage(PageRenderer page){
-        MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, page, page.getPage()));
+        MainWindow.mainScreen.registerNewAction(new PageMoveUndoAction(UType.PAGE, page, page.getPage()));
         movePage(page, -1);
     }
     public void descendPage(PageRenderer page){
-        MainWindow.mainScreen.registerNewPageAction(new PageMoveUndoAction(UType.UNDO, page, page.getPage()));
+        MainWindow.mainScreen.registerNewAction(new PageMoveUndoAction(UType.PAGE, page, page.getPage()));
         movePage(page, 1);
     }
     public void movePage(PageRenderer page, int pagesToPass){
@@ -130,7 +131,7 @@ public class PDFPagesEditor {
         document.getPage(page.getPage()).setRotation(document.getPage(page.getPage()).getRotation() + angle);
         edited = true;
         
-        MainWindow.mainScreen.registerNewPageAction(new PageRotateUndoAction(uType, page, right));
+        MainWindow.mainScreen.registerNewAction(new PageRotateUndoAction(uType, page, right));
         
         if(!animated){
             // If grid mode, one need to update all the pages.
@@ -202,7 +203,7 @@ public class PDFPagesEditor {
         if(MainWindow.mainScreen.document.save(true) && Edition.isSave()){
             
             List<PageRenderer> savedSelectedPages = saveSelectedPages();
-            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
+            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, document.getPage(page.getPage()), true));
             
             deletePageUtil(page);
             restoreSelectedPages(savedSelectedPages);
@@ -257,9 +258,9 @@ public class PDFPagesEditor {
                 if(MainWindow.mainScreen.document.getPages().size() == 1) return;
                 
                 if(i == 0)
-                    MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, page.getPage(), page, document.getPage(page.getPage()), true));
+                    MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, page.getPage(), page, document.getPage(page.getPage()), true));
                 else
-                    MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, page.getPage(), page, document.getPage(page.getPage()), true));
+                    MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, page.getPage(), page, document.getPage(page.getPage()), true));
                 i++;
                 
                 page.quitVectorEditMode();
@@ -269,7 +270,7 @@ public class PDFPagesEditor {
         }
     }
     public void addPage(PDPage docPage, int index){
-        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, docPage, false));
+        MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, index, null, docPage, false));
         List<PageRenderer> savedSelectedPages = saveSelectedPages();
         
         PageRenderer page = new PageRenderer(index);
@@ -360,11 +361,11 @@ public class PDFPagesEditor {
             for(int k = 0; k < document.numberOfPages; k++) document.getPage(k).setPage(k);
         }
         
-        MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.UNDO, index, null, this.document.getPage(index), false));
+        MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE, index, null, this.document.getPage(index), false));
         document.addSelectedPage(index);
-        // For each page, the index is equals to index because when we remove a page, the index will not change
+        // For each page, the index is the same because when undoing, each page will be removed with the same index.
         for(int j = index + 1; j < index + addedPages; j++){
-            MainWindow.mainScreen.registerNewPageAction(new PageAddRemoveUndoAction(UType.NO_COUNT, index, null, this.document.getPage(j), false));
+            MainWindow.mainScreen.registerNewAction(new PageAddRemoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, index, null, this.document.getPage(j), false));
             document.addSelectedPage(j);
         }
         
@@ -381,14 +382,16 @@ public class PDFPagesEditor {
         // update current page
         document.setCurrentPage(index);
     }
-    public boolean setPageMargin(int page, float marginTop, float marginRight, float marginBottom, float marginLeft,
+    public boolean setPageMargin(int pageNumber, float marginTop, float marginRight, float marginBottom, float marginLeft,
                               boolean updateUI, boolean absolute, UType uType){
+        PDPage page = this.document.getPage(pageNumber);
+        PDRectangle oldMediaBox = page.getCropBox();
+        PDRectangle oldCropBox = page.getCropBox();
+        int rotation = page.getRotation();
         
-        PDRectangle currentBox = this.document.getPage(page).getCropBox();
-        int rotation = this.document.getPage(page).getRotation();
         if(!absolute){
-            float width = currentBox.getWidth();
-            if(rotation == 90 || rotation == 270) width = currentBox.getHeight();
+            float width = oldCropBox.getWidth();
+            if(rotation == 90 || rotation == 270) width = oldCropBox.getHeight();
             
             marginTop = marginTop * width / 100f;
             marginRight = marginRight * width / 100f;
@@ -396,7 +399,14 @@ public class PDFPagesEditor {
             marginLeft = marginLeft * width / 100f;
         }
         
-        if(marginBottom + marginTop <= -currentBox.getHeight() || marginLeft + marginRight <= -currentBox.getWidth()){
+        boolean excessiveCrop = false;
+        if(rotation == 90 || rotation == 270){
+            excessiveCrop = marginLeft + marginRight <= -oldCropBox.getHeight() || marginBottom + marginTop <= -oldCropBox.getWidth();
+        }else{
+            excessiveCrop = marginBottom + marginTop <= -oldCropBox.getHeight() || marginLeft + marginRight <= -oldCropBox.getWidth();
+        }
+        
+        if(excessiveCrop){
             new WrongAlert(TR.tr("pageCropping.tooMuchCrop.title"), TR.tr("pageCropping.tooMuchCrop.description"), false).show();
             Document document = MainWindow.mainScreen.document;
             document.getPage(0).updatePosition(PageRenderer.getPageMargin(), true);
@@ -405,42 +415,44 @@ public class PDFPagesEditor {
             return false;
         }
         
-        PDRectangle newBox = switch(rotation){
+        PDRectangle newCropBox = switch(rotation){
             case 90 -> new PDRectangle(
-                    currentBox.getLowerLeftX() - marginTop,
-                    currentBox.getLowerLeftY() - marginLeft,
-                    Math.max(5, currentBox.getWidth() + marginTop + marginBottom),
-                    Math.max(5, currentBox.getHeight() + marginLeft + marginRight)
+                    oldCropBox.getLowerLeftX() - marginTop,
+                    oldCropBox.getLowerLeftY() - marginLeft,
+                    Math.max(5, oldCropBox.getWidth() + marginTop + marginBottom),
+                    Math.max(5, oldCropBox.getHeight() + marginLeft + marginRight)
             );
             case 180 -> new PDRectangle(
-                    currentBox.getLowerLeftX() - marginRight,
-                    currentBox.getLowerLeftY() - marginTop,
-                    Math.max(5, currentBox.getWidth() + marginLeft + marginRight),
-                    Math.max(5, currentBox.getHeight() + marginTop + marginBottom)
+                    oldCropBox.getLowerLeftX() - marginRight,
+                    oldCropBox.getLowerLeftY() - marginTop,
+                    Math.max(5, oldCropBox.getWidth() + marginLeft + marginRight),
+                    Math.max(5, oldCropBox.getHeight() + marginTop + marginBottom)
             );
             case 270 -> new PDRectangle(
-                    currentBox.getLowerLeftX() - marginBottom,
-                    currentBox.getLowerLeftY() - marginRight,
-                    Math.max(5, currentBox.getWidth() + marginTop + marginBottom),
-                    Math.max(5, currentBox.getHeight() + marginLeft + marginRight)
+                    oldCropBox.getLowerLeftX() - marginBottom,
+                    oldCropBox.getLowerLeftY() - marginRight,
+                    Math.max(5, oldCropBox.getWidth() + marginTop + marginBottom),
+                    Math.max(5, oldCropBox.getHeight() + marginLeft + marginRight)
             );
             default -> new PDRectangle(
-                    currentBox.getLowerLeftX() - marginLeft,
-                    currentBox.getLowerLeftY() - marginBottom,
-                    Math.max(5, currentBox.getWidth() + marginLeft + marginRight),
-                    Math.max(5, currentBox.getHeight() + marginTop + marginBottom)
+                    oldCropBox.getLowerLeftX() - marginLeft,
+                    oldCropBox.getLowerLeftY() - marginBottom,
+                    Math.max(5, oldCropBox.getWidth() + marginLeft + marginRight),
+                    Math.max(5, oldCropBox.getHeight() + marginTop + marginBottom)
             );
         };
         
+        MainWindow.mainScreen.registerNewAction(new PagesCropUndoAction(uType,
+                new WeakReference<>(MainWindow.mainScreen.document.getPage(pageNumber)), oldCropBox, oldMediaBox));
         
         // Moving elements
-        double newWidth = rotation == 90 || rotation == 270 ? newBox.getHeight() : newBox.getWidth();
-        double newHeight = rotation == 90 || rotation == 270 ? newBox.getWidth() : newBox.getHeight();
-        double oldWidth = rotation == 90 || rotation == 270 ? currentBox.getHeight() : currentBox.getWidth();
-        double oldHeight = rotation == 90 || rotation == 270 ? currentBox.getWidth() : currentBox.getHeight();
+        double newWidth = rotation == 90 || rotation == 270 ? newCropBox.getHeight() : newCropBox.getWidth();
+        double newHeight = rotation == 90 || rotation == 270 ? newCropBox.getWidth() : newCropBox.getHeight();
+        double oldWidth = rotation == 90 || rotation == 270 ? oldCropBox.getHeight() : oldCropBox.getWidth();
+        double oldHeight = rotation == 90 || rotation == 270 ? oldCropBox.getWidth() : oldCropBox.getHeight();
         
-        for(Element el : MainWindow.mainScreen.document.getPage(page).getElements()){
-            MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.NO_COUNT, el));
+        for(Element el : MainWindow.mainScreen.document.getPage(pageNumber).getElements()){
+            MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, el));
             
             // New element coordinates in Page user space
             double newX = marginLeft + el.getRealX() * oldWidth / Element.GRID_WIDTH;
@@ -451,29 +463,26 @@ public class PDFPagesEditor {
             el.setRealX((int) (newX * Element.GRID_WIDTH / newWidth));
             el.setRealY((int) (newY * Element.GRID_HEIGHT / newHeight));
             if(el instanceof GraphicElement ge){
-                MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, ge));
+                MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.PAGE_NO_COUNT_BEFORE, ge));
                 ge.setRealWidth((int) (ge.getRealWidth() / hScaleFactor));
                 ge.setRealHeight((int) (ge.getRealHeight() / vScaleFactor));
             }
             
             if(el instanceof TextElement te){
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(te, te.fontProperty(), te.getFont(), UType.NO_COUNT));
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(te, te.fontProperty(), te.getFont(), UType.PAGE_NO_COUNT_BEFORE));
                 te.setFont(new Font(te.getFont().getName(), te.getFont().getSize() / hScaleFactor));
             }
             el.checkLocation(false);
         }
         
-        setPageCropBoxAllowingMargin(page, newBox, updateUI, uType);
+        setPageCropBoxAllowingMargin(pageNumber, newCropBox, updateUI);
         return true;
     }
-    public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI, UType uType){
+    public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI){
         PDRectangle mediaBox = this.document.getPage(pageNumber).getMediaBox();
         PDPage page = this.document.getPage(pageNumber);
         
         PDRectangle newMediaBox = correctMediaBoxForCropBox(box, mediaBox);
-        
-        MainWindow.mainScreen.registerNewPageAction(new PagesCropUndoAction(uType, new WeakReference<>(MainWindow.mainScreen.document.getPage(pageNumber)),
-                page.getCropBox(), page.getMediaBox()));
         
         page.setCropBox(box);
         page.setMediaBox(newMediaBox);
@@ -783,9 +792,6 @@ public class PDFPagesEditor {
     }
     public void markAsEdited(){
         edited = true;
-    }
-    public UndoEngine getUndoEngine(){
-        return undoEngine;
     }
     public PDDocument getDocument(){
         return document;

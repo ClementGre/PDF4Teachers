@@ -5,6 +5,7 @@
 
 package fr.clementgre.pdf4teachers.interfaces.windows.margin;
 
+import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -37,15 +38,22 @@ public class MarginWindow extends AlternativeWindow<VBox> {
     
     VBox marginInfo = new VBox();
     
+    private Integer[] forcePages;
+    
     public MarginWindow(){
         super(new VBox(), StageWidth.LARGE, TR.tr("marginWindow.title"), TR.tr("marginWindow.title"), TR.tr("marginWindow.description"));
+        forcePages = new Integer[0];
+    }
+    public MarginWindow(Integer... forcePages){
+        super(new VBox(), StageWidth.LARGE, TR.tr("marginWindow.title"), TR.tr("marginWindow.title"), TR.tr("marginWindow.description"));
+        this.forcePages = forcePages;
     }
     @Override
     public void setupSubClass(){
         
         // Root Pane
         root.setSpacing(5);
-        root.getChildren().addAll(marginKind, marginInfo, marginPane, generateInfo(TR.tr("options.title"), true), isMarginOnSelectedPages);
+        root.getChildren().addAll(marginKind, marginInfo, marginPane);
         
         // Kind
         
@@ -54,7 +62,7 @@ public class MarginWindow extends AlternativeWindow<VBox> {
         marginKindGroup.getToggles().addAll(marginKindRelative, marginKindAbsolute);
         
         marginKindGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if(MainWindow.userData.marginKindAbsolute){
+            if(newValue == marginKindAbsolute){
                 PDRectangle cropBox = getFirstSelectedPageCropBox();
                 if(MainWindow.mainScreen.document.getSelectedPages().isEmpty())
                     marginInfo = generateInfo(TR.tr("marginWindow.marginAbsolute", Integer.toString((int) cropBox.getWidth()), Integer.toString((int) cropBox.getHeight())), false);
@@ -95,13 +103,18 @@ public class MarginWindow extends AlternativeWindow<VBox> {
         marginLeft.valueProperty().addListener(o -> MainWindow.userData.marginLeft = marginLeft.getValue());
         
         // Options
-        if(MainWindow.mainScreen.document.getSelectedPages().isEmpty()){
-            isMarginOnSelectedPages.setDisable(true);
-        }else{
-            isMarginOnSelectedPages.setSelected(MainWindow.userData.marginIsMarginOnSelectedPages);
-            isMarginOnSelectedPages.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.marginIsMarginOnSelectedPages = newValue);
+        if(forcePages.length == 0){
+            
+            if(MainWindow.mainScreen.document.getSelectedPages().isEmpty()){
+                isMarginOnSelectedPages.setDisable(true);
+            }else{
+                isMarginOnSelectedPages.setSelected(MainWindow.userData.marginIsMarginOnSelectedPages);
+                isMarginOnSelectedPages.selectedProperty().addListener((observable, oldValue, newValue) -> MainWindow.userData.marginIsMarginOnSelectedPages = newValue);
+            }
+            PaneUtils.setVBoxPosition(isMarginOnSelectedPages, 0, 0, 2.5, 0);
+            
+            root.getChildren().addAll(generateInfo(TR.tr("options.title"), true), isMarginOnSelectedPages);
         }
-        PaneUtils.setVBoxPosition(isMarginOnSelectedPages, 0, 0, 2.5, 0);
         
         // Buttons
         Button apply = new Button(TR.tr("actions.apply"));
@@ -133,8 +146,19 @@ public class MarginWindow extends AlternativeWindow<VBox> {
     
     private void apply(ActionEvent e){
         if(MainWindow.mainScreen.hasDocument(true)){
-            new MarginEngine(marginTop.getValue(), marginRight.getValue(), marginBottom.getValue(), marginLeft.getValue(),
-                    isMarginOnSelectedPages.isSelected(), marginKindAbsolute.isSelected()).apply();
+            if(forcePages.length == 0){
+                if(isMarginOnSelectedPages.isSelected()){
+                    forcePages = MainWindow.mainScreen.document.getSelectedPages().toArray(new Integer[0]);
+                }else{
+                    forcePages = MainWindow.mainScreen.document.getPages().stream().map(PageRenderer::getPage).toArray(Integer[]::new);
+                }
+            }
+            
+            new MarginEngine(
+                    marginTop.getValue(), marginRight.getValue(), marginBottom.getValue(), marginLeft.getValue(),
+                    marginKindAbsolute.isSelected(),
+                    forcePages
+            ).apply();
         }
         close();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -178,7 +178,7 @@ public class TextTab extends SideTab {
                 current.fontProperty().unbind();
 
                 if(((TextElement) oldElement).hasEmptyText()){
-                    oldElement.delete(true, UType.NO_COUNT);
+                    oldElement.delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
                 }
 
                 if(!(newElement instanceof TextElement)) txtArea.clear();
@@ -233,7 +233,7 @@ public class TextTab extends SideTab {
                     Element element = MainWindow.mainScreen.getSelected();
                     if(element != null){
                         MainWindow.mainScreen.setSelected(null);
-                        element.delete(true, UType.UNDO);
+                        element.delete(true, UType.ELEMENT);
                     }
                 }
             }else if(e.getCode() == KeyCode.TAB){
@@ -268,7 +268,7 @@ public class TextTab extends SideTab {
         });
         newBtn.setOnAction(e -> newTextElement(true));
         deleteBtn.setOnAction(e -> {
-            MainWindow.mainScreen.getSelected().delete(true, UType.UNDO);
+            MainWindow.mainScreen.getSelected().delete(true, UType.ELEMENT);
             MainWindow.mainScreen.setSelected(null);
         });
     }
@@ -286,8 +286,8 @@ public class TextTab extends SideTab {
 
         TextElement current = new TextElement(page.getNewElementXOnGrid(true), page.getNewElementYOnGrid(), page.getPage(),
                 true, "", colorPicker.getValue(), getFont(), 0);
-
-        page.addElement(current, true, UType.UNDO);
+        
+        page.addElement(current, true, UType.ELEMENT);
         current.centerOnCoordinatesY();
         MainWindow.mainScreen.setSelected(current);
         isNew = true;

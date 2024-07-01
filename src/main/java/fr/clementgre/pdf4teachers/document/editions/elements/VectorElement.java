@@ -106,92 +106,14 @@ public class VectorElement extends GraphicElement{
     // SETUP / EVENT CALL BACK
     
     
-    @Override
-    protected void setupBindings(){
-        super.setupBindings();
-        
-        path.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setPath(newValue);
-            noScaledSvgPath.setContent(getPath());
-            svgPath.setContent(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-    
-            // New move added OR this is the first registration of this action/property.
-            if(StringUtils.count(oldValue.toLowerCase(), 'm') != StringUtils.count(newValue.toLowerCase(), 'm')
-                    || !MainWindow.mainScreen.isNextUndoActionProperty(path)){
-        
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), isPathScaledToPage ? UType.NO_COUNT : UType.UNDO));
-            }
-        });
-        
-        fill.addListener((observable, oldValue, newValue) ->{
-            if(linkedVectorData != null) linkedVectorData.setFill(newValue);
-            updateFill();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, fill, oldValue, UType.UNDO));
-        });
-        doFill.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
-            updateFill();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, doFill, oldValue, UType.UNDO));
-        });
-        
-        stroke.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
-            updateStroke();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, stroke, oldValue, UType.UNDO));
-        });
-        strokeWidth.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
-            updateStroke();
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, strokeWidth, oldValue, UType.UNDO));
-        });
-    
-        repeatModeProperty().addListener((o, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.UNDO));
-        });
-        resizeModeProperty().addListener((o, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
-        });
-        
-        invertXProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-        });
-        invertYProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-        });
-        
-        realWidthProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
-            Edition.setUnsave("VectorElement changed");
-        });
-        realHeightProperty().addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
-            Edition.setUnsave("VectorElement changed");
-        });
-        
-        arrowLength.addListener((observable, oldValue, newValue) -> {
-            if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
-            onSizeChanged();
-            Edition.setUnsave("VectorElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, arrowLength, oldValue, UType.UNDO));
-        });
-    }
+    /**
+     *  {@link #noScaledSvgPath} is just used to measure the actual size of the svg path, so we can scale it into {@link #svgPath}.
+     *  The SvgPath of {@link VectorElementPageDrawer} is also bound to {@link #noScaledSvgPath}.
+     *  This function makes sure the coordinates of {@link #noScaledSvgPath} and {@link #path} are relative to the page coordinate space.
+     *  The path is scaled to have a width getWidth() and a height getHeight(), which are the JavaFX region dimensions.
+     *  Since the UndoAction must be a {@link UType#ELEMENT_NO_COUNT_AFTER}, {@link #isPathScaledToPage} is set to {@code true}
+     */
+    private boolean isPathScaledToPage;
     
     private void updateFill(){
         svgPath.setFill(isDoFill() ? getFill() : null);
@@ -390,22 +312,91 @@ public class VectorElement extends GraphicElement{
         SideBar.selectTab(MainWindow.paintTab);
     }
     @Override
-    protected void onDeSelected(){
-        super.onDeSelected();
-        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
-        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
-            // Element is not anymore selected so it will not be done automatically.
-            drawer.quitEditMode();
-            
-            getPage().getVectorElementPageDrawer().quitEditMode();
-            if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
-            else requestFocus();
-            MainWindow.paintTab.vectorEditMode.setSelected(false);
-        }
+    protected void setupBindings(){
+        super.setupBindings();
         
-        if(getPath().isBlank()){
-            delete(false, UType.NO_COUNT);
-        }
+        path.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setPath(newValue);
+            noScaledSvgPath.setContent(getPath());
+            svgPath.setContent(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+    
+            // New move added OR this is the first registration of this action/property.
+            if(StringUtils.count(oldValue.toLowerCase(), 'm') != StringUtils.count(newValue.toLowerCase(), 'm')
+                    || !MainWindow.mainScreen.isNextUndoActionProperty(path)){
+                // ELEMENT_NO_COUNT_BEFORE because this action should be undone before undoing the following action that
+                // has no link with it, but that comes before. If it is a page action, it will consume an action.
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, path, oldValue.trim(), isPathScaledToPage ? UType.ELEMENT_NO_COUNT_BEFORE : UType.ELEMENT));
+            }
+        });
+        
+        fill.addListener((observable, oldValue, newValue) ->{
+            if(linkedVectorData != null) linkedVectorData.setFill(newValue);
+            updateFill();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, fill, oldValue, UType.ELEMENT));
+        });
+        doFill.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setDoFill(newValue);
+            updateFill();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, doFill, oldValue, UType.ELEMENT));
+        });
+        
+        stroke.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setStroke(newValue);
+            updateStroke();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, stroke, oldValue, UType.ELEMENT));
+        });
+        strokeWidth.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setStrokeWidth(newValue.intValue());
+            updateStroke();
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, strokeWidth, oldValue, UType.ELEMENT));
+        });
+    
+        repeatModeProperty().addListener((o, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setRepeatMode(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.ELEMENT));
+        });
+        resizeModeProperty().addListener((o, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setResizeMode(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.ELEMENT));
+        });
+        
+        invertXProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setInvertX(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+        });
+        invertYProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setInvertY(newValue);
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+        });
+        
+        realWidthProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setWidth(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
+        });
+        realHeightProperty().addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setHeight(newValue.intValue());
+            Edition.setUnsave("VectorElement changed");
+        });
+        
+        arrowLength.addListener((observable, oldValue, newValue) -> {
+            if(linkedVectorData != null) linkedVectorData.setArrowLength(newValue.intValue());
+            onSizeChanged();
+            Edition.setUnsave("VectorElement changed");
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, arrowLength, oldValue, UType.ELEMENT));
+        });
     }
     
     @Override
@@ -479,12 +470,28 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().enterEditMode(this);
             Platform.runLater(() -> AutoTipsManager.showByAction("enterVectorEditMode"));
-    
-            // ElementPageDrawer is resizing and moving the element when exiting
-            // MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.NO_COUNT, this));
-            // This is not necessary since the function formatNoScaledSvgPathToPage() called when undoing path changes,
-            // gets the job done by moving/resizing the element.
         }
+    }
+    @Override
+    protected void onDeSelected(){
+        super.onDeSelected();
+        VectorElementPageDrawer drawer = getPage().getVectorElementPageDrawerNull();
+        if(drawer != null && drawer.isEditMode() && drawer.getVectorElement() == this){
+            // Element is not anymore selected so it will not be done automatically.
+            drawer.quitEditMode();
+            
+            getPage().getVectorElementPageDrawer().quitEditMode();
+            if(path.isEmpty().get()) delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
+            else requestFocus();
+            MainWindow.paintTab.vectorEditMode.setSelected(false);
+        }
+        
+        if(getPath().isBlank()){
+            delete(false, UType.ELEMENT_NO_COUNT_BEFORE);
+        }
+    }
+    public boolean isEditMode(){
+        return getPage().isVectorEditMode() && getPage().getVectorElementPageDrawer().getVectorElement() == this;
     }
     public void quitEditMode(){
         // In case button is still selected in PaintTab, we de-select it, and then, this method will be re-called.
@@ -493,21 +500,9 @@ public class VectorElement extends GraphicElement{
         }else{
             getPage().getVectorElementPageDrawer().quitEditMode();
         }
-        if(path.isEmpty().get()) delete(true, UType.NO_COUNT);
+        if(path.isEmpty().get()) delete(true, UType.ELEMENT_NO_COUNT_BEFORE);
         else requestFocus();
     }
-    public boolean isEditMode(){
-        return getPage().isVectorEditMode() && getPage().getVectorElementPageDrawer().getVectorElement() == this;
-    }
-    
-    /**
-     *  {@link #noScaledSvgPath} is just used to measure the actual size of the svg path, so we can scale it into {@link #svgPath}.
-     *  The SvgPath of {@link VectorElementPageDrawer} is also bound to {@link #noScaledSvgPath}.
-     *  This function makes sure the coordinates of {@link #noScaledSvgPath} and {@link #path} are relative to the page coordinate space.
-     *  The path is scaled to have a width getWidth() and a height getHeight(), which are the JavaFX region dimensions.
-     *  Since the UndoAction must be a {@link UType#NO_COUNT}, {@link #isPathScaledToPage} is set to {@code true}
-     */
-    private boolean isPathScaledToPage;
     public void formatNoScaledSvgPathToPage(){
         float padding = (float) getSVGPadding();
         float width = (float) getWidth();

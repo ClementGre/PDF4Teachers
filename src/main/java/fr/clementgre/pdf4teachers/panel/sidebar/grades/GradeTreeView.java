@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2022. Clément Grennerat
+ * Copyright (c) 2020-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -8,7 +8,6 @@ package fr.clementgre.pdf4teachers.panel.sidebar.grades;
 import fr.clementgre.pdf4teachers.document.editions.elements.Element;
 import fr.clementgre.pdf4teachers.document.editions.elements.GradeElement;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.document.render.display.PageRenderer;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
@@ -17,7 +16,6 @@ import fr.clementgre.pdf4teachers.utils.StringUtils;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Orientation;
-import javafx.scene.Node;
 import javafx.scene.control.ScrollBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TreeCell;
@@ -95,7 +93,7 @@ public class GradeTreeView extends TreeView<String> {
     // Clear elements in tree and in page
     public void clearElements(boolean regenerateRoot, boolean markAsUnsave){
         if(getRoot() != null){
-            getRootTreeItem().delete(true, markAsUnsave, markAsUnsave ? UType.UNDO : UType.NO_UNDO);
+            getRootTreeItem().delete(true, markAsUnsave, markAsUnsave ? UType.ELEMENT : UType.NO_UNDO);
         }
         if(regenerateRoot) generateRoot(false);
         else setRoot(null);
@@ -124,15 +122,15 @@ public class GradeTreeView extends TreeView<String> {
         }
     }
     
-    // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> THIS (We cut here with the isDeleted())
-    // When the deletion start from a GradeElement : GradeElement --> THIS --> GradeTreeItem (We cut here with the removePageElement arg)
+    // When the deletion start from a GradeTreeItem : GradeTreeItem --> GradeElement --> THIS (We end the loop here with the isDeleted())
+    // When the deletion start from a GradeElement : GradeElement --> THIS --> GradeTreeItem (We end the loop here with the removePageElement arg)
     // GradeElement must always be before this in the stack. That's why this method is only called by GradeElement
     public void removeElement(GradeElement element, boolean markAsUnsave){
         
         if(element.getParentPath().isEmpty()){ // ROOT
             
             // Delete only if it wasn't already deleted (See comment above).
-            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.UNDO);
+            if(!getRootTreeItem().isDeleted()) getRootTreeItem().delete(false, markAsUnsave, UType.ELEMENT);
             // Remove the item from its parent
             setRoot(null);
             
@@ -140,7 +138,7 @@ public class GradeTreeView extends TreeView<String> {
             GradeTreeItem treeElement = getGradeTreeItem((GradeTreeItem) getRoot(), element);
             if(treeElement == null) return;
             // Delete only if it wasn't already deleted (See comment above).
-            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.UNDO);
+            if(!treeElement.isDeleted()) treeElement.delete(false, markAsUnsave, UType.ELEMENT);
             
             // Remove the item from its parent
             GradeTreeItem parent = (GradeTreeItem) treeElement.getParent();

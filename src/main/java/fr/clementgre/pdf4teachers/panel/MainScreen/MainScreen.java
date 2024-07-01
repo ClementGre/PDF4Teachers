@@ -836,24 +836,12 @@ public class MainScreen extends Pane {
         if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
         return null;
     }
-    // The UndoEngine of the PDF pages editor
-    public UndoEngine getPagesUndoEngine(){
-        if(hasDocument(false)) return document.pdfPagesRender.editor.getUndoEngine();
-        return null;
-    }
     public UndoEngine getUndoEngineAuto(){
-        if(isEditPagesMode()) return getPagesUndoEngine();
-        else return getUndoEngine();
+        return getUndoEngine();
     }
     
     public <T> boolean isNextUndoActionProperty(Property<T> property){
         if(getUndoEngine() != null && getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
-            return action.getObservableValue() == property;
-        }
-        return false;
-    }
-    public <T> boolean isNextPageUndoActionProperty(Property<T> property){
-        if(getPagesUndoEngine() != null && getPagesUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){
             return action.getObservableValue() == property;
         }
         return false;
@@ -865,27 +853,11 @@ public class MainScreen extends Pane {
             getUndoEngine().registerNewAction(action);
         }
     }
-    // The UndoEngine of the PDF pages editor
-    public void registerNewPageAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO) return;
-        if(getPagesUndoEngine() != null){
-            getPagesUndoEngine().registerNewAction(action);
-        }
-    }
     public void undo(){
-        if(isEditPagesMode()){
-            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().undo();
-        }else{
-            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
-        }
-        
+        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().undo();
     }
     public void redo(){
-        if(isEditPagesMode()){
-            if(getPagesUndoEngine() != null && Main.window.isFocused()) getPagesUndoEngine().redo();
-        }else{
-            if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
-        }
+        if(getUndoEngine() != null && Main.window.isFocused()) getUndoEngine().redo();
     }
     
     // True if isEditPageMode is true OR of isMultiPagesMode is true

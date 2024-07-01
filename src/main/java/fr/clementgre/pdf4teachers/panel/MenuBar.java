@@ -134,7 +134,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     private final Menu tools4PdfTools = createSubMenu(TR.tr("menuBar.tools.pdfTools"), SVGPathIcons.WRENCH,
             TR.tr("menuBar.tools.addPages.tooltip"), true);
     
-    private final MenuItem tools4PdfTools1Margin = createMenuItem(TR.tr("marginWindow.title"), SVGPathIcons.FULL_SCREEN, null,
+    private final MenuItem tools4PdfTools1Margin = createMenuItem(TR.tr("marginWindow.title"), SVGPathIcons.CROP, null,
             TR.tr("marginWindow.description"));
     private final MenuItem tools4PdfTools2Booklet = createMenuItem(TR.tr("bookletWindow.title"), SVGPathIcons.BOOK, null,
             TR.tr("bookletWindow.description"));

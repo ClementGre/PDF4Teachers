@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -120,7 +120,7 @@ public class SkillListCell extends ListCell<Skill> {
         
         resetItem.setOnAction(e -> {
             if(editionSkill != null && editionSkill.getNotationId() != 0){
-                MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), editionSkill.getSkillId(), editionSkill.getNotationId()));
+                MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.ELEMENT, getSkillAssessment().getId(), editionSkill.getSkillId(), editionSkill.getNotationId()));
                 editionSkill.setNotationId(0);
                 MainWindow.skillsTab.refreshListView();
                 getSkillTableElement().updateSkillsNotation();
@@ -136,7 +136,7 @@ public class SkillListCell extends ListCell<Skill> {
                     // null, this one, or already the same notation
                     if(editionSkill == null || editionSkill == this.editionSkill || editionSkill.getNotationId() == this.editionSkill.getNotationId()) return;
                     
-                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(i.getAndIncrement() == 0 ? UType.UNDO : UType.NO_COUNT, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
+                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(i.getAndIncrement() == 0 ? UType.ELEMENT : UType.ELEMENT_NO_COUNT_BEFORE, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
                     editionSkill.setNotationId(this.editionSkill.getNotationId());
                 });
                 if(i.get() != 0){
@@ -222,7 +222,7 @@ public class SkillListCell extends ListCell<Skill> {
             comboBox.setOnAction(e -> {
                 long newId = comboBox.getValue() == null ? 0 : comboBox.getValue().getId();
                 if(editionSkill != null && editionSkill.getNotationId() != newId){
-                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.UNDO, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
+                    MainWindow.mainScreen.getUndoEngine().registerNewAction(new SkillUndoAction(UType.ELEMENT, getSkillAssessment().getId(), skill.getId(), editionSkill.getNotationId()));
                     editionSkill.setNotationId(newId);
                     getSkillTableElement().updateSkillsNotation();
                     Edition.setUnsave("SkillListCell ComboBox notation changed");

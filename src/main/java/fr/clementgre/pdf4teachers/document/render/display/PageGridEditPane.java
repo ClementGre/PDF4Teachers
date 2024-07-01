@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -118,7 +118,7 @@ public class PageGridEditPane extends Pane {
         
         int i = 0;
         for(int page : doc.getSelectedPages()){
-            doc.pdfPagesRender.editor.rotatePage(doc.getPage(page), right, i == 0 ? UType.UNDO : UType.NO_COUNT, true);
+            doc.pdfPagesRender.editor.rotatePage(doc.getPage(page), right, i == 0 ? UType.PAGE : UType.PAGE_NO_COUNT_BEFORE, true);
             i++;
         }
     }
@@ -136,10 +136,13 @@ public class PageGridEditPane extends Pane {
         delete.setKeyCombinaison(new KeyCodeCombination(KeyCode.DELETE));
         delete.setOnAction(event -> MainWindow.mainScreen.document.pdfPagesRender.editor.deleteSelectedPages());
         
+        Menu crop = new NodeMenu(TR.tr("document.pageActions.crop.title"));
+        crop.getItems().addAll(PageEditPane.getCropMenu(page, false));
+        
         Menu capture = new NodeMenu(TR.tr("document.pageActions.capture.title"));
         capture.getItems().addAll(PageEditPane.getCaptureMenu(page, false));
         
-        menu.getItems().addAll(delete, capture);
+        menu.getItems().addAll(delete, crop, capture);
         
         NodeMenuItem.setupMenu(menu);
         menu.show(Main.window, e.getScreenX(), e.getScreenY());

@@ -98,18 +98,18 @@ public class ImageElement extends GraphicElement {
             // New word added OR this is the first registration of this action/property.
             if(StringUtils.countSpaces(oldValue) != StringUtils.countSpaces(newValue)
                     || !MainWindow.mainScreen.isNextUndoActionProperty(imageId)){
-
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.UNDO));
+                
+                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, imageId, oldValue.trim(), UType.ELEMENT));
             }
         });
         repeatMode.addListener((observable, oldValue, newValue) -> {
             updateBackground();
             Edition.setUnsave("ImageElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.UNDO));
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, repeatMode, oldValue, UType.ELEMENT));
         });
         resizeMode.addListener((observable, oldValue, newValue) -> {
             Edition.setUnsave("ImageElement changed");
-            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.UNDO));
+            MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(this, resizeMode, oldValue, UType.ELEMENT));
         });
 
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -43,8 +43,8 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
                 MainWindow.mainScreen.setSelected(null);
             }else if(element.get() instanceof VectorElement element && observable.get() == element.pathProperty()){ // VectorElement path
                 vectorElementBeforeBounds = element.getNoScaledSvgPath().getLayoutBounds();
-                //  When element scale to page is performed, UndoType is UType.NO_COUNT => We need to quit the edit mode
-                if(element.isEditMode() && getUndoType() == UType.NO_COUNT){
+                //  When element scale to page is performed, UndoType is UType.ELEMENT_NO_COUNT_BEFORE => We need to quit the edit mode
+                if(element.isEditMode() && getUndoType() == UType.ELEMENT_NO_COUNT_BEFORE){
                     element.quitEditMode();
                 }
             }
@@ -57,8 +57,9 @@ public class ObservableChangedUndoAction<T> extends UndoAction{
                 MainWindow.mainScreen.setSelected(selected);
             }else if(element.get() instanceof VectorElement element && observable.get() == element.pathProperty()){ // VectorElement path
                 // Dimensions must not be corrected if element is in edit mode
-                // When element scale to page is performed, UndoType is UType.NO_COUNT. And in this case, dimensions must not be corrected.
-                if(vectorElementBeforeBounds != null && !element.isEditMode() && getUndoType() == UType.UNDO) element.correctDimensions(vectorElementBeforeBounds);
+                // When element scale to page is performed, UndoType is UType.ELEMENT_NO_COUNT_AFTER. And in this case, dimensions must not be corrected.
+                if(vectorElementBeforeBounds != null && !element.isEditMode() && getUndoType() == UType.ELEMENT)
+                    element.correctDimensions(vectorElementBeforeBounds);
             }
     
             Edition.setUnsave("ObservableChangedUndoAction");

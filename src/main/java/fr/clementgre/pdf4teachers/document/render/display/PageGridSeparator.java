@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022. Clément Grennerat
+ * Copyright (c) 2022-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -105,7 +105,6 @@ public class PageGridSeparator extends Pane {
         plus.setMouseTransparent(true);
     
         getChildren().addAll(line, circle, plus);
-        requestFocus();
         toFront();
     
         circle.setOnMouseEntered(e -> {

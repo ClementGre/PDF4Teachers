@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -106,9 +106,8 @@ public abstract class GraphicElement extends Element {
         Platform.runLater(() -> checkLocation(false));
         
         setOnKeyPressed(e -> {
-            
             if(e.getCode() == KeyCode.DELETE || (e.getCode() == KeyCode.BACK_SPACE && e.isShortcutDown())){
-                delete(true, UType.UNDO);
+                delete(true, UType.ELEMENT);
                 e.consume();
             }else if(this instanceof VectorElement element){
                 if(e.getCode() == KeyCode.ENTER){
@@ -163,7 +162,7 @@ public abstract class GraphicElement extends Element {
             
             if(dragType == PlatformUtils.CURSOR_MOVE){
                 if(!dragAlreadyDetected){ // UNDO system
-                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.UNDO, this));
+                    MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.ELEMENT, this));
                     dragAlreadyDetected = true;
                 }
                 
@@ -172,7 +171,7 @@ public abstract class GraphicElement extends Element {
                 checkLocation(itemX, itemY, true);
             }else{
                 if(!dragAlreadyDetected){ // UNDO system
-                    MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.UNDO, this));
+                    MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.ELEMENT, this));
                     dragAlreadyDetected = true;
                 }
                 
@@ -593,7 +592,7 @@ public abstract class GraphicElement extends Element {
         menu.getItems().addAll(item1, item2, item3);
         NodeMenuItem.setupMenu(menu);
         
-        item1.setOnAction(e -> delete(true, UType.UNDO));
+        item1.setOnAction(e -> delete(true, UType.ELEMENT));
         item2.setOnAction(e -> cloneOnDocument());
     }
     
