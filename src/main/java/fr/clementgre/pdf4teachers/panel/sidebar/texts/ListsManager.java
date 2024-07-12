@@ -86,7 +86,7 @@ public class ListsManager {
         //menu.setMinWidth(400);
         //menu.setPrefWidth(400);
         
-        if(TextTreeSection.lists.size() >= 1){
+        if(!TextTreeSection.lists.isEmpty()){
             for(Map.Entry<String, ArrayList<TextListItem>> list : TextTreeSection.lists.entrySet()){
                 NodeMenuItem menuItem = new NodeMenuItem(list.getKey(), false);
                 loadListBtn.getItems().add(menuItem);
