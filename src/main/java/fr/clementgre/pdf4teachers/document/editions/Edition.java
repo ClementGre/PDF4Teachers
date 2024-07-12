@@ -191,7 +191,7 @@ public class Edition{
                 .filter(acceptedElements::isInstance)
                 .map(Element::getYAMLData)
                 .collect(Collectors.toCollection(ArrayList::new));
-        if(pageData.size() >= 1) return pageData;
+        if(!pageData.isEmpty()) return pageData;
         else return null;
     }
     

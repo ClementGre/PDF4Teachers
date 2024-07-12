@@ -101,7 +101,7 @@ public class GradeCopyGradeScaleDialog {
                 else otherElements.add(element);
             }
             
-            if(gradeElements.size() >= 1 && !ignoreAlreadyExist){
+            if(!gradeElements.isEmpty() && !ignoreAlreadyExist){
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.title"),
                         TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.header", file.getName()), TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScale.details"));
                 
@@ -138,7 +138,7 @@ public class GradeCopyGradeScaleDialog {
                 }
             }
             
-            if(gradeElements.size() >= 1 && !ignoreErase){
+            if(!gradeElements.isEmpty() && !ignoreErase){
                 String grades = "";
                 for(GradeElement grade : gradeElements){
                     grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.gradesDigFormat.format(grade.getTotal()) + ")";

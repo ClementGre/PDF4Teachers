@@ -188,7 +188,7 @@ public class GradeExportRenderer {
         
         content += TR.tr("gradeTab.gradeExportWindow.csv.titles.comments");
         
-        if(file.comments.size() >= 1){
+        if(!file.comments.isEmpty()){
             
             // Sort text elements (top to bottom)
             file.comments.sort((e1, e2) -> e2.compareTo(e1));
