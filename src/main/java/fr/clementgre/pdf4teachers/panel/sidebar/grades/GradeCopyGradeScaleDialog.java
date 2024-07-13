@@ -139,13 +139,13 @@ public class GradeCopyGradeScaleDialog {
             }
             
             if(!gradeElements.isEmpty() && !ignoreErase){
-                String grades = "";
+                StringBuilder grades = new StringBuilder();
                 for(GradeElement grade : gradeElements){
-                    grades += "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" + MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?") + "/" + MainWindow.gradesDigFormat.format(grade.getTotal()) + ")";
+                    grades.append("\n").append(grade.getParentPath().replaceAll(Pattern.quote("\\"), "/")).append("/").append(grade.getName()).append("  (").append(MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?")).append("/").append(MainWindow.gradesDigFormat.format(grade.getTotal())).append(")");
                 }
                 
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"),
-                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
+                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades.toString(), file.getName()));
                 
                 ButtonType ignore = alert.getButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.DEFAULT);
                 ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);
