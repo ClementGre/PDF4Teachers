@@ -598,7 +598,7 @@ public class PageRenderer extends Pane {
     
         List<PageRenderer> pages = MainWindow.mainScreen.document.getSelectedPages().stream().map(i -> MainWindow.mainScreen.document.getPage(i)).toList();
         // invert order, the pages needs to be moved in a certain order.
-        if(index > 0) pages = pages.stream().collect(ArrayList::new, (ps, p) -> ps.add(0, p), (list1, list2) -> list1.addAll(0, list2));
+        if(index > 0) pages = pages.stream().collect(ArrayList::new, (ps, p) -> ps.addFirst(p), (list1, list2) -> list1.addAll(0, list2));
         
         int i = 0;
         for(PageRenderer page : pages){
@@ -622,7 +622,7 @@ public class PageRenderer extends Pane {
             GradeTreeItem documentNextGrade = documentNextGradeElement == null ? null : documentNextGradeElement.getGradeTreeItem();
             if(documentNextGrade != null && logicalNextGrade != documentNextGrade){
                 MenuItem menuItem = documentNextGrade.getEditMenuItem(menu, this);
-                menu.getItems().add(0, menuItem);
+                menu.getItems().addFirst(menuItem);
             }
             
         }
@@ -1156,7 +1156,7 @@ public class PageRenderer extends Pane {
     }
     
     public Image getRenderedImage(){
-        return hasRenderedImage() ? getBackground().getImages().get(0).getImage() : new WritableImage((int) getWidth(), (int) getHeight());
+        return hasRenderedImage() ? getBackground().getImages().getFirst().getImage() : new WritableImage((int) getWidth(), (int) getHeight());
     }
     public boolean hasRenderedImage(){
         if(getBackground() != null && getBackground().getImages() != null){

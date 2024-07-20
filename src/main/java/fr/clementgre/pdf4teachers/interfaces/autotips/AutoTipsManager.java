@@ -202,24 +202,18 @@ public class AutoTipsManager {
         return showRandom(Main.window);
     }
     public static boolean showRandom(Stage stage){
-        for(AutoTipTooltip uiTip : uiTips.values()){
-            if(uiTip.getActionKey().isEmpty()){
-                if(showByObject(uiTip, stage)) return true;
-            }
-        }
-        return false;
+        return uiTips.values().stream()
+                .filter(uiTip -> uiTip.getActionKey().isEmpty())
+                .anyMatch(uiTip -> showByObject(uiTip, stage));
     }
     
     public static boolean showByAction(String actionKey){
         return showByAction(actionKey, Main.window);
     }
     public static boolean showByAction(String actionKey, Stage stage){
-        for(AutoTipTooltip uiTip : uiTips.values()){
-            if(uiTip.getActionKey().equalsIgnoreCase(actionKey)){
-                if(showByObject(uiTip, stage)) return true;
-            }
-        }
-        return false;
+        return uiTips.values().stream()
+                .filter(uiTip -> uiTip.getActionKey().equalsIgnoreCase(actionKey))
+                .anyMatch(uiTip -> showByObject(uiTip, stage));
     }
     
     public static boolean showByName(String name){

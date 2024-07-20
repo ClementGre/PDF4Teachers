@@ -207,12 +207,12 @@ public class GradeExportRenderer {
                 int minY = lastGrade.getRealY();
                 
                 // For each element of this document, if they are after the grade, add them to the ArrayList
-                TextElement element = !file.comments.isEmpty() ? file.comments.get(0) : null;
+                TextElement element = !file.comments.isEmpty() ? file.comments.getFirst() : null;
                 while(element != null){
                     if(element.getPageNumber() == minPage && element.getRealY() > minY || element.getPageNumber() > minPage){
                         comments.add(element.getText());
-                        file.comments.remove(0);
-                        element = !file.comments.isEmpty() ? file.comments.get(0) : null;
+                        file.comments.removeFirst();
+                        element = !file.comments.isEmpty() ? file.comments.getFirst() : null;
                     }else{
                         element = null;
                     }
@@ -220,8 +220,8 @@ public class GradeExportRenderer {
             }
             // Adding all others comments
             while(!file.comments.isEmpty() && lastGrade != null){
-                matches.get(lastGrade).add(file.comments.get(0).getText());
-                file.comments.remove(0);
+                matches.get(lastGrade).add(file.comments.getFirst().getText());
+                file.comments.removeFirst();
             }
             
             // At this point, the HashMap is sorted by the grades position in the document.
@@ -254,9 +254,11 @@ public class GradeExportRenderer {
             }
             
             // Filling rows
-            for(String line : rows){
-                content.append(hasOutOfColumn ? separator : "").append(line).append("\n");
-            }
+            content.append(
+                    rows.stream()
+                            .map(line -> (hasOutOfColumn ? separator : "") + line + "\n")
+                            .collect(Collectors.joining())
+            );
         }else content.append("\n");
     }
     

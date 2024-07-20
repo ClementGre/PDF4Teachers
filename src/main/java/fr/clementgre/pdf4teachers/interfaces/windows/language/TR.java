@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
@@ -40,7 +41,7 @@ public class TR {
         }
         
         // Delete Old files
-        if(Main.settings.getSettingsVersionCode().startsWith("1.2") || Main.settings.getSettingsVersionCode().startsWith("1.1") || Main.settings.getSettingsVersionCode().startsWith("1.0")){
+        if(Stream.of("1.2", "1.1", "1.0").anyMatch(s -> Main.settings.getSettingsVersionCode().startsWith(s))){
             for(File file : Objects.requireNonNull(new File(Main.dataFolder + "translations").listFiles()))
                 file.delete();
         }

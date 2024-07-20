@@ -211,7 +211,7 @@ public class SplitEngine {
             List<Integer> selected = MainWindow.mainScreen.document.getSelectedPages().stream().sorted().toList();
     
             if(splitWindow.doKeepSelectedPages()) sectionsBounds.add(0);
-            else if(selected.get(0) != 0) sectionsBounds.add(0);
+            else if(selected.getFirst() != 0) sectionsBounds.add(0);
     
             int lastSelected = -1;
             for(Integer page : selected){

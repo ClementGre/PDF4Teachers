@@ -62,7 +62,7 @@ public class FilesChooserManager{
             if(listFiles.isEmpty()) return null;
             File[] files = new File[listFiles.size()];
             files = listFiles.toArray(files);
-            setPathFromSyncVar(syncVar, listFiles.get(0).getParentFile().getAbsolutePath());
+            setPathFromSyncVar(syncVar, listFiles.getFirst().getParentFile().getAbsolutePath());
 
             return files;
         }
@@ -126,7 +126,7 @@ public class FilesChooserManager{
         // On MacOS, the os save dialog removes the extension -> we add it back
         File finalFile = file;
         if(Arrays.stream(extensions).noneMatch(ext -> finalFile.getName().endsWith(ext))){
-            file = new File(file.getAbsolutePath() + chooser.getSelectedExtensionFilter().getExtensions().get(0));
+            file = new File(file.getAbsolutePath() + chooser.getSelectedExtensionFilter().getExtensions().getFirst());
         }
         return file;
     }

@@ -22,6 +22,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class GradeCopyGradeScaleDialog {
     
@@ -139,13 +140,14 @@ public class GradeCopyGradeScaleDialog {
             }
             
             if(!gradeElements.isEmpty() && !ignoreErase){
-                StringBuilder grades = new StringBuilder();
-                for(GradeElement grade : gradeElements){
-                    grades.append("\n").append(grade.getParentPath().replaceAll(Pattern.quote("\\"), "/")).append("/").append(grade.getName()).append("  (").append(MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?")).append("/").append(MainWindow.gradesDigFormat.format(grade.getTotal())).append(")");
-                }
+                String grades = gradeElements.stream()
+                        .map(grade -> "\n" + grade.getParentPath().replaceAll(Pattern.quote("\\"), "/") + "/" + grade.getName() + "  (" +
+                                MainWindow.gradesDigFormat.format(grade.getValue()).replaceAll("-1", "?") + "/" +
+                                MainWindow.gradesDigFormat.format(grade.getTotal()) + ")")
+                        .collect(Collectors.joining());
                 
                 CustomAlert alert = new CustomAlert(Alert.AlertType.WARNING, TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.title"),
-                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades.toString(), file.getName()));
+                        TR.tr("gradeTab.copyGradeScaleDialog.error.alreadyGradeScaleErase.header", grades, file.getName()));
                 
                 ButtonType ignore = alert.getButton(TR.tr("dialog.actionError.overwrite"), ButtonPosition.DEFAULT);
                 ButtonType ignoreAll = alert.getButton(TR.tr("dialog.actionError.overwriteAlways"), ButtonPosition.OTHER_RIGHT);

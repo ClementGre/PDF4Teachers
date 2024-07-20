@@ -127,7 +127,7 @@ public class SACocheWriter {
         if(!editDir.exists()) return List.of();
     
         HashMap<String, ArrayList<String>> doubleAffectation = new HashMap<>();
-        ArrayList<String> aloneStudents = new ArrayList<>();
+        ArrayList<String> aloneStudents;
         ArrayList<String> aloneDocuments = new ArrayList<>();
         
         
@@ -162,15 +162,17 @@ public class SACocheWriter {
                 }
             }
         }
-        assessment.getStudents().forEach(s -> {
-            if(studentGrades.stream().noneMatch(sg -> sg.studentId() == s.id())) aloneStudents.add(s.name());
-        });
+        aloneStudents = assessment.getStudents()
+                .stream()
+                .filter(s -> studentGrades.stream().noneMatch(sg -> sg.studentId() == s.id()))
+                .map(Student::name)
+                .collect(Collectors.toCollection(ArrayList::new));
     
         StringBuilder details = new StringBuilder();
         if(!doubleAffectation.isEmpty()){
             details.append(TR.tr("skillsSettingsWindow.export.cohesionError.details.doubleAffectation")).append("\n");
             doubleAffectation.forEach((studentName, files) -> {
-                String lastFile = files.get(files.size() - 1);
+                String lastFile = files.getLast();
                 files.remove(lastFile);
                 
                 details.append("  - ")

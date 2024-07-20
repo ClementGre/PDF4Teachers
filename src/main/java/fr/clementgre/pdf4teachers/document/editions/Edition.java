@@ -36,6 +36,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @SuppressWarnings("unchecked")
 public class Edition{
@@ -317,7 +318,7 @@ public class Edition{
             Config config = new Config(editFile);
             config.load();
             
-            int count = countSection(config.getSection("texts")) + countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
+            int count = Stream.of("texts", "images", "vectors").mapToInt(s -> countSection(config.getSection(s))).sum();
 
             count += config.getList("grades")
                     .stream()

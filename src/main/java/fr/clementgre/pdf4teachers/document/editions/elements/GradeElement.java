@@ -640,7 +640,7 @@ public class GradeElement extends Element {
      */
     public static ArrayList<GradeElement> sortGrades(List<GradeElement> grades){
         ArrayList<GradeElement> gradesOutput = new ArrayList<>(grades);
-        gradesOutput.sort((grade1, grade2) -> grade1.compareStructureTo(grade2));
+        gradesOutput.sort(GradeElement::compareStructureTo);
         return gradesOutput;
     }
     

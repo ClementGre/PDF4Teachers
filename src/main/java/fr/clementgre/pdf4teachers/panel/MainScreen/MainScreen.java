@@ -611,8 +611,8 @@ public class MainScreen extends Pane {
     public boolean openFiles(List<File> toOpenFiles, boolean openDocument){
         MainWindow.filesTab.openFiles(toOpenFiles);
         if(openDocument && toOpenFiles.size() == 1){
-            if(FilesUtils.getExtension(toOpenFiles.get(0).getName()).equalsIgnoreCase("pdf")){
-                Platform.runLater(() -> openFile(toOpenFiles.get(0)));
+            if(FilesUtils.getExtension(toOpenFiles.getFirst().getName()).equalsIgnoreCase("pdf")){
+                Platform.runLater(() -> openFile(toOpenFiles.getFirst()));
                 return true;
             }
         }

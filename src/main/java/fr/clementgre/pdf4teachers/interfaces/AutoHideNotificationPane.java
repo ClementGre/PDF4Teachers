@@ -72,23 +72,23 @@ public class AutoHideNotificationPane extends NotificationPane {
     }
     
     public void showNow(String text, AlertIconType iconType, int autoHideTime){
-        pendingList.add(0, new Notification(text, iconType, autoHideTime));
+        pendingList.addFirst(new Notification(text, iconType, autoHideTime));
         if(isShowing()) hide();
         else checkPending();
     }
     
     public void showNow(String text, AlertIconType iconType, TextField input){
-        pendingList.add(0, new Notification(text, iconType, input));
+        pendingList.addFirst(new Notification(text, iconType, input));
         if(isShowing()) hide();
         else checkPending();
     }
     
     private void checkPending(){
         if(!pendingList.isEmpty() && !isShowing()){
-            Notification notif = pendingList.get(0);
+            Notification notif = pendingList.getFirst();
             if(notif.input == null) show(notif.text, notif.iconType, notif.autoHideTime);
             else showWithInput(notif.text, notif.input, notif.iconType, notif.autoHideTime);
-            pendingList.remove(0);
+            pendingList.removeFirst();
         }
     }
     

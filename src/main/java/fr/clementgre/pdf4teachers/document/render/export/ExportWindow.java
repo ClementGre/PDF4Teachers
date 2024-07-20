@@ -73,7 +73,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
             
             final DirectoryChooser chooser = new DirectoryChooser();
             chooser.setTitle(TR.tr("dialog.file.selectFolder.title"));
-            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.get(0).getParentFile().getPath())));
+            chooser.setInitialDirectory((new File(filePath.getText()).exists() ? new File(filePath.getText()) : new File(files.getFirst().getParentFile().getPath())));
             
             File file = chooser.showDialog(Main.window);
             if(file != null){
@@ -112,7 +112,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
         setSubHeaderText(TR.tr("exportWindow.oneFile.header"));
         
         HBox name = new HBox();
-        TextField fileName = new TextField(files.get(0).getName());
+        TextField fileName = new TextField(files.getFirst().getName());
         fileName.setPromptText(TR.tr("file.documentName"));
         fileName.setMinWidth(1);
         HBox.setHgrow(fileName, Priority.ALWAYS);

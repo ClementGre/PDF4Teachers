@@ -175,8 +175,8 @@ public class GalleryWindow extends Stage {
         String selected = filter.getSelectionModel().getSelectedItem();
         List<String> items = GalleryManager.getSavePaths();
         items.sort(String::compareTo);
-        items.add(0, TR.tr("galleryWindow.filterAndEditCombo.favourites"));
-        items.add(0, TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
+        items.addFirst(TR.tr("galleryWindow.filterAndEditCombo.favourites"));
+        items.addFirst(TR.tr("galleryWindow.filterAndEditCombo.everywhere"));
         items.add(TR.tr("galleryWindow.filterAndEditCombo.addDirectoryButton"));
         filter.getItems().setAll(items);
         if(filter.getItems().contains(selected)) filter.getSelectionModel().select(selected);
