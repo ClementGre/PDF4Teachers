@@ -206,7 +206,7 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
             return;
         }
         if(!bottomBarContainer.getChildren().contains(infoBox)){
-            bottomBarContainer.getChildren().add(0, infoBox);
+            bottomBarContainer.getChildren().addFirst(infoBox);
         }
         
         Label info = new Label(text);
@@ -228,9 +228,9 @@ public abstract class AlternativeWindow<R extends Node> extends Stage {
     
     // Must be called after setButtons(), only once
     public void setLeftButtons(Button... buttons){
-        buttonsBox.getChildren().add(0, new HBoxSpacer());
+        buttonsBox.getChildren().addFirst(new HBoxSpacer());
         for(int i = buttons.length-1; i >= 0; i--)
-            buttonsBox.getChildren().add(0, buttons[i]);
+            buttonsBox.getChildren().addFirst(buttons[i]);
     }
     // Should be called only once
     public void setButtons(Button... buttons){

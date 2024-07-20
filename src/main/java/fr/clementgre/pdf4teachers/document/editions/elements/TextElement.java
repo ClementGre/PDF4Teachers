@@ -54,6 +54,7 @@ import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 public class TextElement extends Element {
     
@@ -274,7 +275,7 @@ public class TextElement extends Element {
     }
     
     public boolean isURL(){
-        return getText().startsWith("http://") || getText().startsWith("https://") || getText().startsWith("www.");
+        return Stream.of("http://", "https://", "www.").anyMatch(s -> getText().startsWith(s));
     }
     
     public boolean isMath(){

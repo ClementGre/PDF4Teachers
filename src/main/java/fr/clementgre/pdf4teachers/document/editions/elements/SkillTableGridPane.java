@@ -42,8 +42,8 @@ public class SkillTableGridPane extends GridPane {
         
         setMouseTransparent(true);
         getColumnConstraints().setAll(new ColumnConstraints(), new ColumnConstraints(80));
-        getColumnConstraints().get(0).setHgrow(Priority.ALWAYS);
-        getColumnConstraints().get(0).setFillWidth(true);
+        getColumnConstraints().getFirst().setHgrow(Priority.ALWAYS);
+        getColumnConstraints().getFirst().setFillWidth(true);
         setMaxHeight(Double.MAX_VALUE);
         
     }
@@ -106,7 +106,7 @@ public class SkillTableGridPane extends GridPane {
         this.notations = notations;
     }
     private void layoutLegend(){
-        notationsLegend.get(0).regen(); // We need to regen at least one child to update cell height visually while dragging.
+        notationsLegend.getFirst().regen(); // We need to regen at least one child to update cell height visually while dragging.
     
         AtomicInteger x = new AtomicInteger(H_PADDING);
         AtomicInteger y = new AtomicInteger(V_PADDING);

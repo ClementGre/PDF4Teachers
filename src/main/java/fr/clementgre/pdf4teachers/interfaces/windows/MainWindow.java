@@ -321,7 +321,7 @@ public class MainWindow extends Stage {
         if(screens.isEmpty()){
             if(window == Main.window) return Screen.getPrimary();
             else return getScreen();
-        }else return screens.get(0);
+        }else return screens.getFirst();
     }
     
     /*

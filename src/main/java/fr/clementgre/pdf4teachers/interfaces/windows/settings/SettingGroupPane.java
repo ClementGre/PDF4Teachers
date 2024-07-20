@@ -84,7 +84,7 @@ public class SettingGroupPane extends VBox {
             tooltip.setShowDuration(Duration.INDEFINITE);
             Tooltip.install(iconContainer, tooltip);
             
-            box.getChildren().add(0, iconContainer);
+            box.getChildren().addFirst(iconContainer);
         }
         
         return box;

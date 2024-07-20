@@ -124,7 +124,7 @@ public class Notation {
         result = 31 * result + name.hashCode();
         result = 31 * result + keyboardChar.hashCode();
         result = 31 * result + data.hashCode();
-        result = 31 * result + (int) (id ^ (id >>> 32));
+        result = 31 * result + Long.hashCode(id);
         return result;
     }
     

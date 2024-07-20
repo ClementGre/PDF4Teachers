@@ -189,7 +189,7 @@ public class SideBar extends TabPane {
                 // Right width must be updated to stay the same
                 double rightWidth = MainWindow.rightBar.getWidthByDivider();
                 
-                MainWindow.mainPane.getItems().add(0, this);
+                MainWindow.mainPane.getItems().addFirst(this);
                 
                 MainWindow.rightBar.setWidthByEditingDivider(rightWidth);
             }else MainWindow.mainPane.getItems().add(this);

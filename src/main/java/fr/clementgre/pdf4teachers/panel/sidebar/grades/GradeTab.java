@@ -90,7 +90,7 @@ public class GradeTab extends SideTab {
         
         String name = TR.tr("gradeTab.gradeDefaultName");
         if(!parent.getChildren().isEmpty()){
-            String lastName = ((GradeTreeItem) parent.getChildren().get(parent.getChildren().size() - 1)).getCore().getName();
+            String lastName = ((GradeTreeItem) parent.getChildren().getLast()).getCore().getName();
             String newName = StringUtils.incrementName(lastName);
             if(!lastName.equals(newName)) name = newName;
         }

@@ -60,9 +60,9 @@ public class PDFPagesRender {
             
             while(!shouldClose){ // not closed
                 
-                if(!rendersPending.isEmpty() && !rendersPending.get(0).page.isRemoved()){ // Render
-                    renderPage(rendersPending.get(0));
-                    rendersPending.remove(0);
+                if(!rendersPending.isEmpty() && !rendersPending.getFirst().page.isRemoved()){ // Render
+                    renderPage(rendersPending.getFirst());
+                    rendersPending.removeFirst();
                     
                 }else{ // Wait
                     PlatformUtils.sleepThread(100);

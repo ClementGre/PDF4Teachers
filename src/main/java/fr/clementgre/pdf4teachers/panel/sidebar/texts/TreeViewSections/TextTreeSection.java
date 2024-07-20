@@ -66,10 +66,10 @@ public abstract class TextTreeSection extends TreeItem<String> {
         
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
-                getChildren().add(0, sortCell);
+                getChildren().addFirst(sortCell);
                 setExpanded(true);
             }else{
-                getChildren().remove(0);
+                getChildren().removeFirst();
             }
         });
         

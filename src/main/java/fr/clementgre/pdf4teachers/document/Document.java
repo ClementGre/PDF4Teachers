@@ -312,14 +312,14 @@ public class Document {
         return page < pages.size() ? pages.get(page) : null;
     }
     public PageRenderer getPageNonNull(int page){
-        return page < pages.size() ? pages.get(page) : pages.get(0);
+        return page < pages.size() ? pages.get(page) : pages.getFirst();
     }
     public WeakReference<PageRenderer> getPageWeakReference(int page){
         return new WeakReference<>(getPageNonNull(page));
     }
     
     public PageRenderer getLastCursorOverPageObject(){
-        return (getLastCursorOverPage() != -1) ? pages.get(getLastCursorOverPage()) : pages.get(0);
+        return (getLastCursorOverPage() != -1) ? pages.get(getLastCursorOverPage()) : pages.getFirst();
     }
     public WeakReference<PageRenderer> getLastCursorOverPageWeakReference(){
         return (getLastCursorOverPage() != -1) ? getPageWeakReference(getLastCursorOverPage()) : getPageWeakReference(0);

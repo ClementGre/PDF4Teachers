@@ -9,6 +9,8 @@ import javafx.scene.control.Slider;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
+import java.util.stream.Stream;
+
 public class SliderWithoutPopup extends Slider {
     
     public SliderWithoutPopup(){
@@ -25,7 +27,7 @@ public class SliderWithoutPopup extends Slider {
         
         // Prevent sliders (footer slider) to move while using these specials keys.
         addEventFilter(KeyEvent.KEY_RELEASED, e -> {
-            if(e.getCode() == KeyCode.BEGIN || e.getCode() == KeyCode.HOME || e.getCode() == KeyCode.END){
+            if(Stream.of(KeyCode.BEGIN, KeyCode.HOME, KeyCode.END).anyMatch(keyCode -> e.getCode() == keyCode)){
                 e.consume();
             }
         });

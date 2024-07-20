@@ -15,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.VBox;
 
+import java.util.stream.Stream;
+
 public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     
     private KeyCharacterCombination combinaison;
@@ -61,8 +63,7 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
             }
             
             
-            if(e.getCode() != KeyCode.UNDEFINED && e.getCode() != KeyCode.SHIFT && e.getCode() != KeyCode.CONTROL
-                    && e.getCode() != KeyCode.ALT && e.getCode() != KeyCode.META && e.getCode() != KeyCode.COMMAND && e.getCode() != KeyCode.SHORTCUT){
+            if(Stream.of(KeyCode.UNDEFINED, KeyCode.SHIFT, KeyCode.CONTROL, KeyCode.ALT, KeyCode.META, KeyCode.COMMAND, KeyCode.SHORTCUT).allMatch(code -> e.getCode() != code)){
                 keyCode = e.getCode();
             }else if(e.isShiftDown() && combinaison.getShift() != KeyCombination.ModifierValue.DOWN){
                 combinaison = new KeyCharacterCombination("", KeyCombination.ModifierValue.DOWN, combinaison.getControl(),

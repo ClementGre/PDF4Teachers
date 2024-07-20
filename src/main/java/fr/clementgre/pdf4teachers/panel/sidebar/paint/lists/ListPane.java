@@ -71,11 +71,11 @@ public abstract class ListPane<T> extends TitledPane{
         sortToggleBtn.selectedProperty().addListener((observable, oldValue, newValue) -> {
             if(newValue){
                 sortToggleBtn.setStyle("");
-                root.getChildren().add(0, sortPanel);
+                root.getChildren().addFirst(sortPanel);
                 setExpanded(true);
             }else{
                 sortToggleBtn.setStyle("-fx-background-color: null;");
-                root.getChildren().remove(0);
+                root.getChildren().removeFirst();
             }
         });
         

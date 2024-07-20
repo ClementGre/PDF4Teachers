@@ -290,7 +290,7 @@ public class FileTab extends SideTab {
                 return MainWindow.mainScreen.document.getFile().getParentFile();
             }
         }
-        if(!files.getItems().isEmpty()) return files.getItems().get(0).getParentFile();
+        if(!files.getItems().isEmpty()) return files.getItems().getFirst().getParentFile();
         return null;
     }
     public File getCurrentDirAlways(){

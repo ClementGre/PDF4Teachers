@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SkillTableElement extends GraphicElement{
     
@@ -132,10 +133,10 @@ public class SkillTableElement extends GraphicElement{
                     newHeight = getHeight() * newValue.doubleValue() / oldValue.doubleValue();
                     
                     // If the user is currently dragging the element, update the origin height & originY.
-                    if(getCursor() == Cursor.S_RESIZE || getCursor() == Cursor.SE_RESIZE || getCursor() == Cursor.SW_RESIZE){
+                    if(Stream.of(Cursor.S_RESIZE, Cursor.SE_RESIZE, Cursor.SW_RESIZE).anyMatch(cursor -> getCursor() == cursor)){
                         originHeight += newHeight - getHeight();
                         newLayoutY = originY -= newHeight - getHeight();
-                    }else if(getCursor() == Cursor.N_RESIZE || getCursor() == Cursor.NE_RESIZE || getCursor() == Cursor.NW_RESIZE || getCursor() == Cursor.E_RESIZE || getCursor() == Cursor.W_RESIZE){
+                    }else if(Stream.of(Cursor.N_RESIZE, Cursor.NE_RESIZE, Cursor.NW_RESIZE, Cursor.E_RESIZE, Cursor.W_RESIZE).anyMatch(cursor -> getCursor() == cursor)){
                         originHeight += newHeight - getHeight();
                     }
                 }
@@ -282,16 +283,17 @@ public class SkillTableElement extends GraphicElement{
         if(student.editionSkills().isEmpty()) return;
         
         AtomicInteger loaded = new AtomicInteger();
-        student.editionSkills().forEach(s -> {
-            if(s.getNotationId() != 0 && editionSkills.get().stream().noneMatch(es ->
-                    es.getNotationId() != 0 && es.getSkillId() == s.getSkillId() // Same skill and notation not null
-                            && SkillsAssessment.getById(getAssessmentId()).getNotationsWithDefaults().stream() // Notation exists
-                            .anyMatch(n -> n.getId() == es.getNotationId()))){
-                editionSkills.get().removeIf(es -> es.getSkillId() == s.getSkillId()); // Remove old one
-                editionSkills.get().add(new EditionSkill(s.getSkillId(), s.getNotationId()));
-                loaded.incrementAndGet();
-            }
-        });
+        student.editionSkills().stream()
+                .filter(s -> s.getNotationId() != 0 && editionSkills.get().stream().noneMatch(es ->
+                        es.getNotationId() != 0 && es.getSkillId() == s.getSkillId() && // Same skill and notation not null
+                                SkillsAssessment.getById(getAssessmentId()).getNotationsWithDefaults().stream() // Notation exists
+                                        .anyMatch(n -> n.getId() == es.getNotationId())))
+                .forEach(s -> {
+                    editionSkills.get().removeIf(es -> es.getSkillId() == s.getSkillId()); // Remove old one
+                    editionSkills.get().add(new EditionSkill(s.getSkillId(), s.getNotationId()));
+                    loaded.incrementAndGet();
+                });
+
         
         MainWindow.footerBar.showToast(Color.CORNFLOWERBLUE, Color.WHITE, FooterBar.ToastDuration.MEDIUM,
                 TR.tr("skillsTab.student.copiedFromSACocheImport", String.valueOf(loaded), String.valueOf(student.editionSkills().size()), student.name()));

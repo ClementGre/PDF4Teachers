@@ -14,6 +14,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
+import java.util.stream.Stream;
 
 public class ErrorAlert extends WrongAlert {
     
@@ -30,7 +31,7 @@ public class ErrorAlert extends WrongAlert {
         expContent.add(new Label(TR.tr("convertWindow.dialog.error.details")), 0, 0);
         expContent.add(textArea, 0, 1);
         
-        if(error != null && (error.endsWith("(Access is denied.)") || error.endsWith("(Accès refusé)") || error.endsWith("(Permission denied)"))){
+        if(error != null && (Stream.of("(Access is denied.)", "(Accès refusé)", "(Permission denied)").anyMatch(error::endsWith))){
             setContentText(TR.tr("dialog.error.accessDenied.details", StringUtils.removeAfterLastOccurrence(error, File.separator)));
         }
         

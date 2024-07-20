@@ -301,13 +301,13 @@ public class GradeTreeItem extends TreeItem<String> {
         // Descend le plus possible dans les enfants du parent pour retrouver le dernier
         GradeTreeItem newParent = (GradeTreeItem) parent.getChildren().get(core.getIndex() - 1);
         while(newParent.hasSubGrade()){
-            newParent = (GradeTreeItem) newParent.getChildren().get(newParent.getChildren().size() - 1);
+            newParent = (GradeTreeItem) newParent.getChildren().getLast();
         }
         return newParent;
     }
     public GradeTreeItem getAfterItem(){
         
-        if(hasSubGrade()) return (GradeTreeItem) getChildren().get(0);
+        if(hasSubGrade()) return (GradeTreeItem) getChildren().getFirst();
         if(isRoot()) return null;
         
         GradeTreeItem parent = (GradeTreeItem) getParent();
@@ -422,11 +422,9 @@ public class GradeTreeItem extends TreeItem<String> {
     public boolean doContainsChildrenUnfilledAndAlwaysVisible(){
         if(getCore().isAlwaysVisible() && getCore().getValue() == -1) return true;
         
-        for(int i = 0; i < getChildren().size(); i++){
-            GradeTreeItem children = (GradeTreeItem) getChildren().get(i);
-            if(children.doContainsChildrenUnfilledAndAlwaysVisible()) return true;
-        }
-        return false;
+        return getChildren().stream()
+                .map(stringTreeItem -> (GradeTreeItem) stringTreeItem)
+                .anyMatch(GradeTreeItem::doContainsChildrenUnfilledAndAlwaysVisible);
     }
     public void reIndexChildren(){
         for(int i = 0; i < getChildren().size(); i++){

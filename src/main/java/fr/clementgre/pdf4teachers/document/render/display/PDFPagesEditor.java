@@ -219,13 +219,13 @@ public class PDFPagesEditor {
         
         // remove page elements
         while(!page.getElements().isEmpty()){
-            if(page.getElements().get(0) instanceof GradeElement grade){
+            if(page.getElements().getFirst() instanceof GradeElement grade){
                 grade.setValue(-1);
                 grade.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
-            }else if(page.getElements().get(0) instanceof SkillTableElement skillTable){
+            }else if(page.getElements().getFirst() instanceof SkillTableElement skillTable){
                 skillTable.switchPage(pageNumber == 0 ? 1 : pageNumber - 1);
             }else{
-                page.getElements().get(0).delete(true, UType.NO_UNDO);
+                page.getElements().getFirst().delete(true, UType.NO_UNDO);
             }
         }
         Document document = MainWindow.mainScreen.document;
@@ -327,7 +327,7 @@ public class PDFPagesEditor {
     public void newConvertPage(int originalPage, int index){
         new ConvertWindow(MainWindow.mainScreen.document.pdfPagesRender.getPageRotatedCropBox(originalPage), (convertedFiles) -> {
             if(convertedFiles.isEmpty()) return;
-            ConvertedFile file = convertedFiles.get(0);
+            ConvertedFile file = convertedFiles.getFirst();
             addPdfDocument(file.document, index);
         });
     }
@@ -587,7 +587,7 @@ public class PDFPagesEditor {
         if(allPages){
             page = MainWindow.mainScreen.document.getPage(0);
         }else if(selection){
-            page = saveSelectedPages().get(0);
+            page = saveSelectedPages().getFirst();
         }else{
             page = MainWindow.mainScreen.document.getPage(pageIndex);
         }
@@ -600,9 +600,9 @@ public class PDFPagesEditor {
         
         ComboBoxDialog<String> alert = new ComboBoxDialog<>(TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.title"), TR.tr("document.pageActions.capture.dialog.details"));
         alert.setItems(FXCollections.observableList(definitions));
-        alert.setSelected(definitions.get(0));
+        alert.setSelected(definitions.getFirst());
         
-        ImageView graphic = new ImageView(images.get(0));
+        ImageView graphic = new ImageView(images.getFirst());
         graphic.setPreserveRatio(true);
         graphic.setFitWidth(600);
         graphic.setFitHeight(250);

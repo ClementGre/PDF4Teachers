@@ -22,7 +22,7 @@ public record LockMessage(LockMessageType type, List<String> args) {
     }
     
     public static LockMessage fromList(List<String> list){
-        LockMessageType type = LockMessageType.valueOf(list.get(0));
+        LockMessageType type = LockMessageType.valueOf(list.getFirst());
         List<String> args = list.subList(1, list.size());
         return new LockMessage(type, args);
     }

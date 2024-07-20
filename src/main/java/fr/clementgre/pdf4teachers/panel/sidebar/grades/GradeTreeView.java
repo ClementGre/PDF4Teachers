@@ -259,7 +259,7 @@ public class GradeTreeView extends TreeView<String> {
         for(GradeTreeItem grade : items){
             if(!grade.hasSubGrade()) return grade;
         }
-        return items.get(0);
+        return items.getFirst();
     }
     
     public static void defineNaNLocations(){

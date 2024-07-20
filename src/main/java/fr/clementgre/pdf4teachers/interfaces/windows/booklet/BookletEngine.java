@@ -151,7 +151,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
             
             // Move elements to new page
             while(!pages.left.getElements().isEmpty()){
-                Element element = pages.left.getElements().get(0);
+                Element element = pages.left.getElements().getFirst();
                 element.switchPage(pageRenderer.getPage());
                 element.setRealX(element.getRealX()/2);
                 Platform.runLater(() -> {
@@ -161,7 +161,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
     
             }
             while(!pages.right.getElements().isEmpty()){
-                Element element = pages.right.getElements().get(0);
+                Element element = pages.right.getElements().getFirst();
                 element.switchPage(pageRenderer.getPage());
                 element.setRealX((int) (Element.GRID_WIDTH/2d + element.getRealX()/2d));
                 Platform.runLater(() -> {
