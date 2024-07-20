@@ -53,24 +53,17 @@ public class SplitEngine {
         AlreadyExistDialogManager alreadyExistDialogManager = new AlreadyExistDialogManager(recursive);
         new TwoStepListAction<>(true, recursive, new TwoStepListInterface<ExportPart, ExportPart>() {
             @Override
-            public List<ExportPart> prepare(boolean recursive) {
-                List<ExportPart> exportParts = new ArrayList<>();
+            public List<ExportPart> prepare(boolean recursive){
                 
-                for(int i = 0; i < sectionsBounds.size(); i += 2) {
-                    StringBuilder pathBuilder = new StringBuilder()
-                            .append(out.getAbsolutePath())
-                            .append(File.separator)
-                            .append(splitWindow.getNames()[i / 2]);
+                ArrayList<ExportPart> exportParts = new ArrayList<>();
+                for(int i = 0; i < sectionsBounds.size(); i+=2){
+                    String path = out.getAbsolutePath() + File.separator + splitWindow.getNames()[i/2];
+                    if(!path.toLowerCase().endsWith(".pdf")) path += ".pdf";
                     
-                    if(!pathBuilder.toString().toLowerCase().endsWith(".pdf")) pathBuilder.append(".pdf");
-                    
-                    String path = pathBuilder.toString();
-                    exportParts.add(new ExportPart(new File(path), sectionsBounds.get(i), sectionsBounds.get(i + 1)));
+                    exportParts.add(new ExportPart(new File(path), sectionsBounds.get(i), sectionsBounds.get(i+1)));
                 }
-                
                 return exportParts;
             }
-
         
             @Override
             public Map.Entry<ExportPart, Integer> filterData(ExportPart exportPart, boolean recursive){
