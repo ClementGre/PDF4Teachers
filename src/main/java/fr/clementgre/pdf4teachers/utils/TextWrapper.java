@@ -128,14 +128,14 @@ public class TextWrapper {
     private String[] fillLineWithWord(String text){
         
         String[] splitted = text.split(" ", -1);
-        String line = splitted[0];
+        StringBuilder line = new StringBuilder(splitted[0]);
         
         for(int i = 1; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
             
-            String lastLine = line;
-            line += " " + splitted[i];
+            String lastLine = String.valueOf(line);
+            line.append(" ").append(splitted[i]);
             
-            if(!test(line)){
+            if(!test(String.valueOf(line))){
                 StringBuilder remaining = new StringBuilder(splitted[i]);
                 for(i++; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
                     remaining.append(" ").append(splitted[i]);
@@ -144,7 +144,7 @@ public class TextWrapper {
             }
         }
         
-        return new String[]{line, ""};
+        return new String[]{String.valueOf(line), ""};
     }
     
     private String[] fillLineWithChar(String word){
