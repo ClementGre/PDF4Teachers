@@ -43,7 +43,7 @@ public class TextWrapper {
     }
 
     private boolean exceedsMaxWidth(String line) {
-        var toTest = new Text(line);
+        var toTest = new ScratchText(line);
         toTest.setFont(font);
         return toTest.getBoundsInParent().getWidth() >= maxWidth;
     }
