@@ -38,10 +38,6 @@ public class TextWrapper {
         }
     }
 
-    private String getWrappedLine() {
-        return wrappedLine.toString();
-    }
-
     private boolean exceedsMaxWidth(String line) {
         var toTest = new ScratchText(line);
         toTest.setFont(font);
@@ -53,7 +49,7 @@ public class TextWrapper {
                 Arrays.asList(text.split(" ", -1)) :
                 text.chars().mapToObj(Character::toString).collect(Collectors.toList());
 
-        var line = new StringBuilder(parts.get(0));
+        var line = new StringBuilder(parts.getFirst());
 
         for (int i = 1; i < parts.size(); i++) {
             String lastLine = line.toString();
@@ -87,88 +83,8 @@ public class TextWrapper {
         return getWrappedLine();
     }
     
-    public static String wrapFirstLineWithEllipsis(String text, Font font, int maxWidth){
-        
-        String wrappedText = new TextWrapper(text, font, (int) (maxWidth - font.getSize() * 1.1)).wrapFirstLine();
-        text = text.replaceFirst(Pattern.quote(wrappedText), "");
-        
-        // SECOND LINE
-        if(!text.isBlank()){
-            return wrappedText.trim() + "...";
-        }
-        return wrappedText.trim();
-    }
-    
-    public static String wrapTwoFirstLinesWithEllipsis(String text, Font font, int maxWidth){
-    
-        String wrappedText = new TextWrapper(text, font, maxWidth).wrapFirstLine();
-        text = text.replaceFirst(Pattern.quote(wrappedText), "");
-    
-        // SECOND LINE
-        if(!text.isBlank()){
-            String wrapped = new TextWrapper(text, font, (int) (maxWidth - font.getSize() * 1.1)).wrapFirstLine();
-            wrappedText = wrappedText.trim() + "\n" + wrapped.trim();
-            if(!text.replaceFirst(Pattern.quote(wrapped), "").isBlank()) wrappedText += "...";
-        }
-        
-        return wrappedText.trim();
-    }
-    
-    public boolean doHasWrapped(){
-        return hasWrapped;
-    }
-    
-    private void appendLine(String text){
-        if(wrappedLine == null) wrappedLine = text;
-        else wrappedLine += "\n" + text;
-    }
     private String getWrappedLine(){
-        return wrappedLine == null ? "" : wrappedLine;
-    }
-    
-    private boolean test(String line){
-        ScratchText toTest = new ScratchText(line);
-        toTest.setFont(font);
-        return toTest.getBoundsInParent().getWidth() < maxWidth;
-    }
-    
-    private String[] fillLineWithWord(String text){
-        
-        String[] splitted = text.split(" ", -1);
-        StringBuilder line = new StringBuilder(splitted[0]);
-        
-        for(int i = 1; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
-            
-            String lastLine = String.valueOf(line);
-            line.append(" ").append(splitted[i]);
-            
-            if(!test(String.valueOf(line))){
-                StringBuilder remaining = new StringBuilder(splitted[i]);
-                for(i++; i < splitted.length; i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
-                    remaining.append(" ").append(splitted[i]);
-                }
-                return new String[]{lastLine, remaining.toString()};
-            }
-        }
-        
-        return new String[]{String.valueOf(line), ""};
-    }
-    
-    private String[] fillLineWithChar(String word){
-        
-        if(word.isEmpty()) return new String[]{"", ""};
-        String line = word.substring(0, 1);
-        
-        for(int i = 1; i < word.length(); i++){ // Remplis la ligne avec le maximum de mots puis renvoie la ligne
-            String lastLine = line;
-            line = word.substring(0, i + 1);
-            
-            if(!test(line)){
-                return new String[]{lastLine, word.substring(i)};
-            }
-        }
-        return new String[]{line, ""};
-        
+        return wrappedLine.isEmpty() ? "" : wrappedLine.toString();
     }
     
     private String[] wrapTextLineByWordsOrChars(String text) {
