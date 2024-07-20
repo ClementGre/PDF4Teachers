@@ -416,7 +416,7 @@ public class TextElement extends Element {
         TextWrapper wrapper = new TextWrapper(getText(), getFont(), maxWidth);
         
         String wrapped = wrapper.wrap();
-        isTextWrapped.set(wrapper.doHasWrapped());
+        isTextWrapped.set(wrapper.hasWrapped());
         
         return wrapped;
     }
