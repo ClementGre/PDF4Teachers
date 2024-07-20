@@ -189,7 +189,7 @@ public class LanguagesUpdater {
                 int indentLevel = 0;
                 JsonToken token; // Current Token (START_OBJECT, END_OBJECT, VALUE_STRING, FIELD_NAME)
                 while((token = jParser.nextToken()) != null){
-                    String jsonField = jParser.getCurrentName(); // Current json Object or Field
+                    String jsonField = jParser.currentName(); // Current json Object or Field
                     //jParser.getText(); jParser.getIntValue()  // Current value of Field or Object ({, }, [, ])
                     
                     if(indentLevel == 1 && token == JsonToken.FIELD_NAME){

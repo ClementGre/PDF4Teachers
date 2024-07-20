@@ -126,8 +126,8 @@ public class FooterBar extends StackPane {
             if(MainWindow.mainScreen.isMultiPagesMode() != gridView) MainWindow.mainScreen.setIsMultiPagesMode(gridView);
         });
         MainWindow.mainScreen.isMultiPagesModeProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue && viewGroup.getSelectedToggle() != this.gridView) this.gridView.setSelected(true);
-            if(!newValue && viewGroup.getSelectedToggle() != this.columnView) this.columnView.setSelected(true);
+            if(newValue && viewGroup.getSelectedToggle() != gridView) gridView.setSelected(true);
+            if(!newValue && viewGroup.getSelectedToggle() != columnView) columnView.setSelected(true);
         });
 
         editPagesMode.setTooltip(PaneUtils.genWrappedToolTip(TR.tr("footerBar.editPages.tooltip")));
@@ -153,7 +153,7 @@ public class FooterBar extends StackPane {
         root.setPadding(new Insets(0, 10, 0, 10));
         root.setSpacing(10);
         root.setAlignment(Pos.CENTER_LEFT);
-        root.getChildren().setAll(zoom, spacer, getSpacerShape(), this.status);
+        root.getChildren().setAll(zoom, spacer, getSpacerShape(), status);
         getChildren().add(root);
 
         messagePane.getChildren().add(message);

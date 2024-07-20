@@ -117,9 +117,11 @@ public class GradeCopyGradeScaleDialog {
                 ButtonType option = alert.getShowAndWait();
                 if(option == stop){
                     return 1;
-                }else if(option == stopAll){
+                }
+                if(option == stopAll){
                     return 2;
-                }else if(option == ignoreAll){
+                }
+                if(option == ignoreAll){
                     ignoreAlreadyExist = true;
                 }
             }
@@ -159,8 +161,8 @@ public class GradeCopyGradeScaleDialog {
                 
                 ButtonType option = alert.getShowAndWait();
                 if(option == stop) return 1;
-                else if(option == stopAll) return 2;
-                else if(option == ignoreAll) ignoreErase = true;
+                if(option == stopAll) return 2;
+                if(option == ignoreAll) ignoreErase = true;
                 
             }
             

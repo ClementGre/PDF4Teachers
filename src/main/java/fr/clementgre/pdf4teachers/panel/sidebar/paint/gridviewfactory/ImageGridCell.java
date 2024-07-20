@@ -183,9 +183,8 @@ public class ImageGridCell extends GridCell<ImageGridElement>{
         if(w > h){
             int sideMargin = (w - h) / 2;
             return image.getSubimage(sideMargin, 0, h, h);
-        }else{
-            int sideMargin = (h - w) / 2;
-            return image.getSubimage(0, sideMargin, w, w);
         }
+        int sideMargin = (h - w) / 2;
+        return image.getSubimage(0, sideMargin, w, w);
     }
 }

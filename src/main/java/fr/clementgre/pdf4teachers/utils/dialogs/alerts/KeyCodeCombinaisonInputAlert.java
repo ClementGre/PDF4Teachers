@@ -21,7 +21,7 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
     
     private KeyCharacterCombination combinaison;
     private final KeyCodeCombination defaultCombinaison;
-    private KeyCode keyCode = null;
+    private KeyCode keyCode;
     private boolean hasReleased = true;
     private final boolean requireShortcutKey;
     
@@ -36,10 +36,10 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
         this.defaultCombinaison = defaultCombinaison;
         this.requireShortcutKey = requireShortcutKey;
         
-        if(defaultCombinaison == null) this.combinaison = new KeyCharacterCombination("");
+        if(defaultCombinaison == null) combinaison = new KeyCharacterCombination("");
         else{
-            this.keyCode = defaultCombinaison.getCode();
-            this.combinaison = new KeyCharacterCombination("", defaultCombinaison.getShift(), defaultCombinaison.getControl(),
+            keyCode = defaultCombinaison.getCode();
+            combinaison = new KeyCharacterCombination("", defaultCombinaison.getShift(), defaultCombinaison.getControl(),
                     defaultCombinaison.getAlt(), defaultCombinaison.getMeta(), defaultCombinaison.getShortcut());
         }
         warningLabel.setWrapText(true);
@@ -145,7 +145,8 @@ public class KeyCodeCombinaisonInputAlert extends TextInputAlert {
                 return showAndWaitGetResult();
             }
             return Result.VALIDATE;
-        }else if(button == ButtonPosition.OTHER_LEFT){
+        }
+        if(button == ButtonPosition.OTHER_LEFT){
             return Result.DELETE;
         }
         return Result.CANCEL;

@@ -25,7 +25,7 @@ public abstract class SimpleConfig {
     
     private final String filename;
     public SimpleConfig(String fileName){
-        this.filename = fileName;
+        filename = fileName;
     }
     
     protected abstract void manageLoadedData(Config config);

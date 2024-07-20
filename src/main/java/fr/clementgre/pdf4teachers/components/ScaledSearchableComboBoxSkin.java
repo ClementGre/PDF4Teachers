@@ -227,17 +227,16 @@ public class ScaledSearchableComboBoxSkin<T> extends SkinBase<ComboBox<T>> {
      */
     private void preventDefaultComboBoxKeyListener() {
         filteredComboBox.skinProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal instanceof ComboBoxListViewSkin) {
-                ComboBoxListViewSkin cblwSkin = (ComboBoxListViewSkin)newVal;
-                if(cblwSkin.getPopupContent() instanceof ListView) {
-                    final ListView<T> listView = (ListView<T>) cblwSkin.getPopupContent();
-                    if (listView != null) {
-                        listView.setOnKeyPressed(this::checkApplyAndCancel);
-                    }
+            if (newVal instanceof ComboBoxListViewSkin<?> cblwSkin) {
+                if (cblwSkin.getPopupContent() instanceof ListView<?> listView) {
+                    @SuppressWarnings("unchecked")
+                    ListView<T> typedListView = (ListView<T>) listView;
+                    typedListView.setOnKeyPressed(this::checkApplyAndCancel);
                 }
             }
         });
     }
+
     
     /**
      * Used to alter the behaviour. React on Enter, Tab and ESC.

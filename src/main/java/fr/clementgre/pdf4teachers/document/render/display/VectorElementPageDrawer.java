@@ -233,7 +233,7 @@ public class VectorElementPageDrawer extends Pane{
     }
     
     public void delete(){
-        this.page = null;
+        page = null;
     
         prefWidthProperty().unbind();
         prefHeightProperty().unbind();
@@ -301,7 +301,7 @@ public class VectorElementPageDrawer extends Pane{
         svgPath.strokeWidthProperty().unbind();
         svgPath.strokeMiterLimitProperty().unbind();
         
-        this.vector = null;
+        vector = null;
     }
     
     private String lastAction = "";

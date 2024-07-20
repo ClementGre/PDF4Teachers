@@ -345,7 +345,7 @@ public abstract class Element extends Region {
     }
     
     public void setRealX(int x){
-        this.realX.set(x);
+        realX.set(x);
     }
     
     public int getRealY(){
@@ -357,16 +357,15 @@ public abstract class Element extends Region {
     }
     
     public void setRealY(int y){
-        this.realY.set(y);
+        realY.set(y);
     }
     
     // compare pages and coordinates
     public int compareTo(Element element){
         if(getPageNumber() != element.getPageNumber()){
             return getPageNumber() - element.getPageNumber();
-        }else{
-            return getRealY() - element.getRealY();
         }
+        return getRealY() - element.getRealY();
     }
     
     // PAGE GETTERS AND SETTERS
@@ -384,7 +383,7 @@ public abstract class Element extends Region {
     }
     
     public void setPage(PageRenderer page){
-        this.pageNumber = page.getPage();
+        pageNumber = page.getPage();
     }
     
     public void setPage(int pageNumber){
@@ -397,6 +396,7 @@ public abstract class Element extends Region {
     
     // TRANSFORMATIONS
     
+    @Override
     public abstract Element clone();
     public abstract Element cloneHeadless(); // hasPage = false
     public void cloneOnDocument(){

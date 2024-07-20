@@ -365,8 +365,8 @@ public class ConvertWindow extends AlternativeWindow<TabPane> {
         }
         
         private void updateWidthAndHeight(){
-            this.width = (int) Math.sqrt((mp * 1000000) / (heightFactor / ((double) widthFactor)));
-            this.height = (int) (width * (heightFactor / ((double) widthFactor)));
+            width = (int) Math.sqrt((mp * 1000000) / (heightFactor / ((double) widthFactor)));
+            height = (int) (width * (heightFactor / ((double) widthFactor)));
         }
         
         // unused since the width and height can't be changed by the user

@@ -82,7 +82,7 @@ public class SkillTableGridPane extends GridPane {
     
     private ArrayList<NotationLegend> notationsLegend;
     void updateLegend(boolean forceUpdate){
-        if(this.legend == null) return;
+        if(legend == null) return;
         SkillsAssessment assessment = MainWindow.skillsTab.getCurrentAssessment();
     
         ArrayList<Notation> notations = new ArrayList<>();
@@ -186,7 +186,7 @@ public class SkillTableGridPane extends GridPane {
         }
         public void regen(){
             legendPane.getChildren().remove(text);
-            this.text = getText(notation.getName(), false, 9, 0, 0);
+            text = getText(notation.getName(), false, 9, 0, 0);
             legendPane.getChildren().addAll(text);
         }
         /* @return the new x position or minus the opposite value (negative) if a new row has been started. */

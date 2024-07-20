@@ -13,6 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 
 public class LogsOutputStream extends OutputStream {
     
@@ -28,11 +29,13 @@ public class LogsOutputStream extends OutputStream {
         this.errorStream = errorStream;
     }
     
+    @Override
     public void write(int i) throws IOException{
         buffer.append(i);
     }
-    public void write(byte @NotNull [] bytes, int i, int i1) throws IOException{
-        buffer.append(new String(bytes, i, i1));
+    @Override
+    public void write(byte @NotNull [] bytes, int i, int i1){
+        buffer.append(new String(bytes, i, i1, StandardCharsets.UTF_8));
     }
     
     @Override
@@ -61,7 +64,7 @@ public class LogsOutputStream extends OutputStream {
     
     private String getColorization(){
         if(errorStream) return ConsoleColors.RED;
-        else return "";
+        return "";
     }
     
 }

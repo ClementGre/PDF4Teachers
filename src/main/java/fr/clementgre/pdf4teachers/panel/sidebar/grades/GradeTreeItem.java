@@ -277,14 +277,13 @@ public class GradeTreeItem extends TreeItem<String> {
             });
             menuItem.getItems().addAll(getChooseValueMenuItems(min, max, depth, false));
             return menuItem;
-        }else{
-            NodeMenuItem menuItem = new NodeMenuItem(new HBox(), false);
-            menuItem.setName(MainWindow.gradesDigFormat.format(value));
-            menuItem.setOnAction(e -> {
-                panel.gradeField.setText(MainWindow.gradesDigFormat.format(value));
-            });
-            return menuItem;
         }
+        NodeMenuItem menuItem = new NodeMenuItem(new HBox(), false);
+        menuItem.setName(MainWindow.gradesDigFormat.format(value));
+        menuItem.setOnAction(e -> {
+            panel.gradeField.setText(MainWindow.gradesDigFormat.format(value));
+        });
+        return menuItem;
     }
     
     //////////////////////////////////////

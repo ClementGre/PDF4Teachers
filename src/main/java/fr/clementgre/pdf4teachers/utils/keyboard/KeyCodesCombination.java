@@ -118,7 +118,7 @@ public class KeyCodesCombination extends KeyCombination {
             return false;
         }
         
-        return (this.getCodes().equals(((KeyCodesCombination) obj).getCodes()))
+        return (getCodes().equals(((KeyCodesCombination) obj).getCodes()))
                 && super.equals(obj);
     }
     
@@ -130,15 +130,15 @@ public class KeyCodesCombination extends KeyCombination {
     private static char getSingleChar(KeyCode code){
         switch(code){
             case ENTER:
-                return '\u21B5';
+                return '↵';
             case LEFT:
-                return '\u2190';
+                return '←';
             case UP:
-                return '\u2191';
+                return '↑';
             case RIGHT:
-                return '\u2192';
+                return '→';
             case DOWN:
-                return '\u2193';
+                return '↓';
             case COMMA:
                 return ',';
             case MINUS:
@@ -192,7 +192,7 @@ public class KeyCodesCombination extends KeyCombination {
             case DOLLAR:
                 return '$';
             case EURO_SIGN:
-                return '\u20AC';
+                return '€';
             case EXCLAMATION_MARK:
                 return '!';
             case LEFT_PARENTHESIS:
@@ -236,11 +236,11 @@ public class KeyCodesCombination extends KeyCombination {
         if(PlatformUtils.isMac()){
             switch(code){
                 case BACK_SPACE:
-                    return '\u232B';
+                    return '⌫';
                 case ESCAPE:
-                    return '\u238B';
+                    return '⎋';
                 case DELETE:
-                    return '\u2326';
+                    return '⌦';
                 default:
                     break;
             }

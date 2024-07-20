@@ -149,7 +149,7 @@ public class SkillTableElement extends GraphicElement{
     
     public void updateGridPaneScale(){
         // If gridPane dimensions are not fully setup yet, use the last saved scale.
-        if(gridPane.areDimensionsSetup) this.scale = MathUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
+        if(gridPane.areDimensionsSetup) scale = MathUtils.clamp(getHeight() / gridPane.getHeight(), MIN_SCALE, MAX_SCALE);
         updateGridPaneScale(scale);
     }
     private void updateGridPaneScale(double scale){
@@ -305,7 +305,7 @@ public class SkillTableElement extends GraphicElement{
     @Override
     public String getElementName(boolean plural){
         if(plural) return TR.tr("elements.name.skills");
-        else return TR.tr("elements.name.name.skill");
+        return TR.tr("elements.name.name.skill");
     }
     
     @Override

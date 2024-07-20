@@ -67,12 +67,12 @@ public class FontUtils {
         if(isDefaultFont(family)){
             if(!isFontAlreadyLoaded(family)) loadFont(family);
             return initFont(family, italic, bold, size);
-        }else if(isSystemFont(family)){
+        }
+        if(isSystemFont(family)){
             AutoTipsManager.showByAction("useSystemFont");
             return initFont(family, italic, bold, size);
-        }else{
-            return getDefaultFont(italic, bold, size);
         }
+        return getDefaultFont(italic, bold, size);
     }
     public static Font getDefaultFont(boolean italic, boolean bold, double size){
         return getFont("Open Sans", italic, bold, size);
@@ -214,7 +214,7 @@ public class FontUtils {
             FontWeight fontWeight = FontWeight.findByName(name);
             if(fontWeight != null && fontWeight != FontWeight.NORMAL){
                 if(onlyOneBold) return FontWeight.BOLD;
-                else return fontWeight;
+                return fontWeight;
             }
         }
         return FontWeight.NORMAL;

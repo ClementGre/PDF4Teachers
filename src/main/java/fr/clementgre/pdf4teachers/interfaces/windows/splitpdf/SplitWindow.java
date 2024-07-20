@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
 public class SplitWindow extends AlternativeWindow<VBox> {
@@ -189,7 +190,7 @@ public class SplitWindow extends AlternativeWindow<VBox> {
         if(!file.exists()) return;
         
         try{
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8));
             String line = reader.readLine();
             
             while(line != null){

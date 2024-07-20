@@ -87,31 +87,30 @@ public class ExportRenderer {
             contentStream.transform(csTransform);
             PageSpecs pageSpecs = new PageSpecs(pageRealWidth, pageRealHeight, csTransform);
             
-            for(Element element : elements){
+            for (Element element : elements) {
+                if (element.getPageNumber() != pageNumber) continue;
                 
-                if(element.getPageNumber() != pageNumber) continue;
+                boolean renderSuccess = switch (element) {
+                    case TextElement tElement when textElements ->
+                            textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs);
+                    case GradeElement gElement when gradesElements ->
+                            gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs);
+                    case ImageElement iElement when drawElements -> {
+                        imageElementRenderer.renderElement(iElement, contentStream, page, pageRealWidth, pageRealHeight);
+                        yield true;
+                    }
+                    case VectorElement vElement when drawElements -> {
+                        vectorElementRenderer.renderElement(vElement, contentStream, page, pageRealWidth, pageRealHeight);
+                        yield true;
+                    }
+                    case SkillTableElement sElement when skillElements ->
+                            skillTableElementRenderer.renderElement(sElement, contentStream, page, pageSpecs);
+                    default -> true;
+                };
                 
-                if(element instanceof TextElement tElement){
-                    if(textElements)
-                        if(!textElementRenderer.renderElement(tElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
-                }else if(element instanceof GradeElement gElement){
-                    if(gradesElements)
-                        if(!gradeElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
-                }else if(element instanceof ImageElement gElement){
-                    if(drawElements)
-                        imageElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
-                }else if(element instanceof VectorElement gElement){
-                    if(drawElements)
-                        vectorElementRenderer.renderElement(gElement, contentStream, page, pageRealWidth, pageRealHeight);
-                }else if(element instanceof SkillTableElement gElement){
-                    if(skillElements)
-                        if(!skillTableElementRenderer.renderElement(gElement, contentStream, page, pageSpecs)){
-                            doc.close(); return false;
-                        }
+                if (!renderSuccess) {
+                    doc.close();
+                    return false;
                 }
             }
             

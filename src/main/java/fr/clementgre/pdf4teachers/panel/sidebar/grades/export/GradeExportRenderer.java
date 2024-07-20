@@ -19,6 +19,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.*;
@@ -327,13 +328,13 @@ public class GradeExportRenderer {
         if(file.exists()){
             AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(file);
             if(result == AlreadyExistDialogManager.ResultType.SKIP) return true;
-            else if(result == AlreadyExistDialogManager.ResultType.STOP) return false;
-            else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+            if(result == AlreadyExistDialogManager.ResultType.STOP) return false;
+            if(result == AlreadyExistDialogManager.ResultType.RENAME)
                 file = AlreadyExistDialogManager.rename(file);
         }
         
         file.createNewFile();
-        BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
+        BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8, false));
         
         writer.write(String.valueOf(content));
         

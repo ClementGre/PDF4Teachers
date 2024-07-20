@@ -464,20 +464,22 @@ public abstract class GraphicElement extends Element {
             if(x < grabSize){ // Left Side
                 if(y < grabSize){ // Top Left
                     return Cursor.NW_RESIZE;
-                }else if(y > getHeight() - grabSize){ // Bottom Left
-                    return Cursor.SW_RESIZE;
-                }else{ // Left only
-                    return Cursor.W_RESIZE;
                 }
+                if(y > getHeight() - grabSize){ // Bottom Left
+                    return Cursor.SW_RESIZE;
+                }
+                // Left only
+                return Cursor.W_RESIZE;
             }
             if(x > getWidth() - grabSize){ // Right Side
                 if(y < grabSize){ // Top Right
                     return Cursor.NE_RESIZE;
-                }else if(y > getHeight() - grabSize){ // Bottom Right
-                    return Cursor.SE_RESIZE;
-                }else{ // Right only
-                    return Cursor.E_RESIZE;
                 }
+                if(y > getHeight() - grabSize){ // Bottom Right
+                    return Cursor.SE_RESIZE;
+                }
+                // Right only
+                return Cursor.E_RESIZE;
             }
             
             if(y < grabSize){ // Top only
@@ -659,6 +661,7 @@ public abstract class GraphicElement extends Element {
     
     // READERS AND WRITERS
     
+    @Override
     protected LinkedHashMap<Object, Object> getYAMLPartialData(){
         LinkedHashMap<Object, Object> data = super.getYAMLPartialData();
         data.put("width", getRealWidth());
@@ -673,14 +676,15 @@ public abstract class GraphicElement extends Element {
     
     public boolean doKeepRatio(boolean shift, boolean angle){
         if(getRepeatMode() == RepeatMode.AUTO) return angle != shift;
-        else if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !shift;
-        else return shift;
+        if(getRepeatMode() == RepeatMode.KEEP_RATIO) return !shift;
+        return shift;
     }
     
     @Override
     public float getBoundsHeight(){
         throw new RuntimeException("Unable to getAlwaysHeight on GraphicElement, use getRealHeight instead.");
     }
+    @Override
     public int getRealWidth(){
         return realWidth.get();
     }

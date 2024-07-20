@@ -190,7 +190,8 @@ public class GradeTreeView extends TreeView<String> {
             GradeTreeItem children = (GradeTreeItem) parent.getChildren().get(i);
             if(element.equals(children.getCore())){
                 return children;
-            }else if(children.hasSubGrade()){
+            }
+            if(children.hasSubGrade()){
                 // Si l'élément a des enfants, on refait le test sur ses enfants
                 GradeTreeItem testChildren = getGradeTreeItem(children, element);
                 if(testChildren != null) return testChildren;

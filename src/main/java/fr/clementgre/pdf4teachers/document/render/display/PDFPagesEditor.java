@@ -384,7 +384,7 @@ public class PDFPagesEditor {
     }
     public boolean setPageMargin(int pageNumber, float marginTop, float marginRight, float marginBottom, float marginLeft,
                               boolean updateUI, boolean absolute, UType uType){
-        PDPage page = this.document.getPage(pageNumber);
+        PDPage page = document.getPage(pageNumber);
         PDRectangle oldMediaBox = page.getCropBox();
         PDRectangle oldCropBox = page.getCropBox();
         int rotation = page.getRotation();
@@ -479,8 +479,8 @@ public class PDFPagesEditor {
         return true;
     }
     public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI){
-        PDRectangle mediaBox = this.document.getPage(pageNumber).getMediaBox();
-        PDPage page = this.document.getPage(pageNumber);
+        PDRectangle mediaBox = document.getPage(pageNumber).getMediaBox();
+        PDPage page = document.getPage(pageNumber);
         
         PDRectangle newMediaBox = correctMediaBoxForCropBox(box, mediaBox);
         
@@ -630,11 +630,11 @@ public class PDFPagesEditor {
                 public List<Integer> prepare(boolean recursive){
                     if(allPages){
                         return MainWindow.mainScreen.document.getPages().stream().map(PageRenderer::getPage).collect(Collectors.toList());
-                    }else if(finalSelection){
-                        return new ArrayList<>(MainWindow.mainScreen.document.getSelectedPages());
-                    }else{
-                        return Collections.singletonList(finalPageIndex);
                     }
+                    if(finalSelection){
+                        return new ArrayList<>(MainWindow.mainScreen.document.getSelectedPages());
+                    }
+                    return Collections.singletonList(finalPageIndex);
                 }
                 
                 @Override
@@ -689,7 +689,7 @@ public class PDFPagesEditor {
                                 boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("dialog.file.saveError.header", FilesUtils.getPathReplacingUserHome(data.getKey().toPath())), e.getMessage(), recursive).execute());
                                 if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                                 if(result) return TwoStepListAction.ProcessResult.STOP;
-                                else return TwoStepListAction.ProcessResult.SKIPPED;
+                                return TwoStepListAction.ProcessResult.SKIPPED;
                             }
                         }else{ // clipboard copy
                             Image image = capturePageInFXImage(page, dimensions, definition);
@@ -708,7 +708,7 @@ public class PDFPagesEditor {
                         boolean result = PlatformUtils.runAndWait(() -> new ErrorAlert(null, e.getMessage(), recursive).execute());
                         if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                         if(result) return TwoStepListAction.ProcessResult.STOP;
-                        else return TwoStepListAction.ProcessResult.SKIPPED;
+                        return TwoStepListAction.ProcessResult.SKIPPED;
                     }
                     return TwoStepListAction.ProcessResult.OK;
                 }
@@ -735,18 +735,17 @@ public class PDFPagesEditor {
             return SwingFXUtils.toFXImage(capturePage(page, dimensions, 200000), null);
         if(dimensions == null){
             return page.getRenderedImage();
-        }else{
-            Image image = page.getRenderedImage();
-            double factor = image.getHeight() / page.getHeight();
-            
-            int subX = (int) (dimensions.getX() * factor);
-            int subY = (int) (dimensions.getY() * factor);
-            int subWidth = (int) (dimensions.getWidth() * factor);
-            int subHeight = (int) (dimensions.getHeight() * factor);
-            
-            return new WritableImage(image.getPixelReader(),
-                    subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
         }
+        Image image = page.getRenderedImage();
+        double factor = image.getHeight() / page.getHeight();
+        
+        int subX = (int) (dimensions.getX() * factor);
+        int subY = (int) (dimensions.getY() * factor);
+        int subWidth = (int) (dimensions.getWidth() * factor);
+        int subHeight = (int) (dimensions.getHeight() * factor);
+        
+        return new WritableImage(image.getPixelReader(),
+                subX, subY, (int) (subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth), (int) (subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight));
     }
     private BufferedImage capturePage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
         
@@ -757,14 +756,13 @@ public class PDFPagesEditor {
         
         if(dimensions == null){
             return image;
-        }else{
-            double factor = image.getHeight() / page.getHeight();
-            int subX = (int) (dimensions.getX() * factor);
-            int subY = (int) (dimensions.getY() * factor);
-            int subWidth = (int) (dimensions.getWidth() * factor);
-            int subHeight = (int) (dimensions.getHeight() * factor);
-            return image.getSubimage(subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX - 1 : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY - 1 : subHeight);
         }
+        double factor = image.getHeight() / page.getHeight();
+        int subX = (int) (dimensions.getX() * factor);
+        int subY = (int) (dimensions.getY() * factor);
+        int subWidth = (int) (dimensions.getWidth() * factor);
+        int subHeight = (int) (dimensions.getHeight() * factor);
+        return image.getSubimage(subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX - 1 : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY - 1 : subHeight);
     }
     private Image capturePageInFXImage(PageRenderer page, PositionDimensions dimensions, int pixels){ // A4 : 594 : 841
         
@@ -775,16 +773,15 @@ public class PDFPagesEditor {
         
         if(dimensions == null){
             return SwingFXUtils.toFXImage(image, null);
-        }else{
-            Image fxImage = SwingFXUtils.toFXImage(image, null);
-            double factor = image.getHeight() / page.getHeight();
-            int subX = (int) (dimensions.getX() * factor);
-            int subY = (int) (dimensions.getY() * factor);
-            int subWidth = (int) (dimensions.getWidth() * factor);
-            int subHeight = (int) (dimensions.getHeight() * factor);
-            return new WritableImage(fxImage.getPixelReader(),
-                    subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight);
         }
+        Image fxImage = SwingFXUtils.toFXImage(image, null);
+        double factor = image.getHeight() / page.getHeight();
+        int subX = (int) (dimensions.getX() * factor);
+        int subY = (int) (dimensions.getY() * factor);
+        int subWidth = (int) (dimensions.getWidth() * factor);
+        int subHeight = (int) (dimensions.getHeight() * factor);
+        return new WritableImage(fxImage.getPixelReader(),
+                subX, subY, subWidth + subX > image.getWidth() ? image.getWidth() - subX : subWidth, subHeight + subY > image.getHeight() ? image.getHeight() - subY : subHeight);
     }
     
     public boolean isEdited(){

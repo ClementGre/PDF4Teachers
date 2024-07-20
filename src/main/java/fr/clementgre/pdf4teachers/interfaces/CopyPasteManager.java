@@ -94,7 +94,8 @@ public class CopyPasteManager {
         if(node instanceof TextInputControl field){
             return field.getSelection().getLength() != 0;
             
-        }else if(node instanceof Spinner<?> spinner){
+        }
+        if(node instanceof Spinner<?> spinner){
             if(!spinner.isEditable()) return true;
             return spinner.getEditor().getSelection().getLength() != 0;
         }

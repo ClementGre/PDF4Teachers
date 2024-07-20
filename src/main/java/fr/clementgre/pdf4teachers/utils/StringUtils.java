@@ -49,9 +49,8 @@ public final class StringUtils {
             if(!string.startsWith("\\", index - 1)){
                 if(index < string.length()) return string.substring(index + rejex.length());
                 return "";
-            }else{
-                fromIndex = index + 1;
             }
+            fromIndex = index + 1;
             
         }
     }

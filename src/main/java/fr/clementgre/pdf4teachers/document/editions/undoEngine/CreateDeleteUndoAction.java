@@ -75,12 +75,12 @@ public class CreateDeleteUndoAction extends UndoAction{
         
     }
     
+    @Override
     public String toString(){
         if(originallyDeleted){
             return TR.tr("actions.delete") + " " + element.getElementName(false).toLowerCase();
-        }else{
-            return TR.tr("actions.create") + " " + element.getElementName(false).toLowerCase();
         }
+        return TR.tr("actions.create") + " " + element.getElementName(false).toLowerCase();
         
     }
     

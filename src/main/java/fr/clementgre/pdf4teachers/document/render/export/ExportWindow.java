@@ -283,9 +283,9 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(toFile);
                     if(result == AlreadyExistDialogManager.ResultType.SKIP)
                         return Map.entry(Map.entry(new File(""), new File("")), 2);
-                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
+                    if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(Map.entry(new File(""), new File("")), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                    if(result == AlreadyExistDialogManager.ResultType.RENAME)
                         toFile = AlreadyExistDialogManager.rename(toFile);
                 }
                 
@@ -302,7 +302,7 @@ public class ExportWindow extends AlternativeWindow<VBox> {
                 try{
                     boolean ok = new ExportRenderer().exportFile(data.getKey(), data.getValue(), imagesDPI, textElements, gradesElements, drawElements, skillElements);
                     if(ok) return TwoStepListAction.ProcessResult.OK;
-                    else return TwoStepListAction.ProcessResult.SKIPPED;
+                    return TwoStepListAction.ProcessResult.SKIPPED;
                 }catch(Exception e){
                     Log.e(e);
                     if(PlatformUtils.runAndWait(() -> new ErrorAlert(TR.tr("exportWindow.dialogs.exportError.header", data.getKey().getName()), e.getMessage(), recursive).execute())){

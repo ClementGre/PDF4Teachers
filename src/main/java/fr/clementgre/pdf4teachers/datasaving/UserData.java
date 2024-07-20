@@ -156,11 +156,11 @@ public class UserData {
     @UserDataObject(path = "margin.isKindAbsolute")
     public boolean marginKindAbsolute;
     @UserDataObject(path = "margin.top")
-    public double marginTop = 0;
+    public double marginTop;
     @UserDataObject(path = "margin.right")
-    public double marginRight = 0;
+    public double marginRight;
     @UserDataObject(path = "margin.bottom")
-    public double marginBottom = 0;
+    public double marginBottom;
     @UserDataObject(path = "margin.left")
     public double marginLeft = 20;
     @UserDataObject(path = "margin.isMarginOnSelectedPages")

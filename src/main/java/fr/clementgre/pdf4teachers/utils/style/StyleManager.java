@@ -147,23 +147,23 @@ public class StyleManager {
     public static String getHexAccentColor(){
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             return "#484848";
-        }else{
-            return "#cccccc";
         }
+        return "#cccccc";
     }
     
     public static Color invertColorWithTheme(Color color){
         if(DEFAULT_STYLE == jfxtras.styles.jmetro.Style.DARK){
             if(color.getBrightness() <= 0.4){
                 return Color.WHITE;
-            }else return color;
-        }else{
-            double targetBrightness = 0.8;
-            
-            if(color.getBrightness() >= 0.9){
-                return Color.BLACK;
-            }else return color;
+            }
+            return color;
         }
+        double targetBrightness = 0.8;
+        
+        if(color.getBrightness() >= 0.9){
+            return Color.BLACK;
+        }
+        return color;
     }
     
     static int i;

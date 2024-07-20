@@ -74,15 +74,16 @@ public class AlreadyExistDialogManager{
             if(option == skip){
                 if(memorize.isSelected()) memorizedResult = ResultType.SKIP;
                 return ResultType.SKIP;
-            }else if(option == overwrite){
+            }
+            if(option == overwrite){
                 if(memorize.isSelected()) memorizedResult = ResultType.ERASE;
                 return ResultType.ERASE;
-            }else if(option == rename){
+            }
+            if(option == rename){
                 if(memorize.isSelected()) memorizedResult = ResultType.RENAME;
                 return ResultType.RENAME;
-            }else{
-                return ResultType.STOP;
             }
+            return ResultType.STOP;
         }
         return ResultType.SKIP;
     }

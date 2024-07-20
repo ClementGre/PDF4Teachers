@@ -191,7 +191,7 @@ public class SkillListCell extends ListCell<Skill> {
         }
         private Notation.NotationType getNotationType(Notation notation){
             if(notation.isDefaultNotation()) return Notation.NotationType.CHAR; // Negative ids are reserved for default not editable notations.
-            else return skillAssessment.get().getNotationType();
+            return skillAssessment.get().getNotationType();
         }
     }
     

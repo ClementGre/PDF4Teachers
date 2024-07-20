@@ -50,14 +50,16 @@ public class SystemFontsMapper {
             result[1] = System.getenv("LOCALAPPDATA") + File.separator + "Microsoft\\Windows\\Fonts";
             return result;
             
-        }else if(PlatformUtils.isMac()){
+        }
+        if(PlatformUtils.isMac()){
             result = new String[3];
             result[0] = System.getProperty("user.home") + File.separator + "Library/Fonts";
             result[1] = "/Library/Fonts";
             result[2] = "/System/Library/Fonts";
             return result;
             
-        }else if(PlatformUtils.isLinux()){
+        }
+        if(PlatformUtils.isLinux()){
             String[] pathsToCheck = {
                     System.getProperty("user.home") + File.separator + ".fonts",
                     "/usr/share/fonts/truetype",

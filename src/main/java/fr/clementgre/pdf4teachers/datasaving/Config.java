@@ -131,9 +131,9 @@ public class Config {
             if(section.containsKey(key)){ // Key exist
                 Object value = section.get(key);
                 if(value == null) return "";
-                else if(i == 1) return value; // Value is a value or this is the last iteration : return value
-                else if(!(section.get(key) instanceof Map)) return "";
-                else section = (HashMap<String, Object>) value; // Continue loop
+                if(i == 1) return value; // Value is a value or this is the last iteration : return value
+                if(!(section.get(key) instanceof Map)) return "";
+                section = (HashMap<String, Object>) value; // Continue loop
                 i--;
             }else{
                 return "";
@@ -345,9 +345,10 @@ public class Config {
         for(String key : splitedPath){
             if(!section.containsKey(key) || !(section.get(key) instanceof Map)){ // section does not exist
                 return false;
-            }else{ // use existing section to continue loop
-                section = (HashMap<String, Object>) section.get(key);
             }
+            
+            // use existing section to continue loop
+            section = (HashMap<String, Object>) section.get(key);
         }
         return true;
     }

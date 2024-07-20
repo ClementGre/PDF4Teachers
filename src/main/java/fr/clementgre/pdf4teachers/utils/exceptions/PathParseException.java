@@ -20,6 +20,7 @@ public class PathParseException extends Exception{
         return batikException;
     }
     
+    @Override
     public String getMessage(){
         return "Unable to parse vector path [Error message: " + batikException.getMessage() + "]";
     }

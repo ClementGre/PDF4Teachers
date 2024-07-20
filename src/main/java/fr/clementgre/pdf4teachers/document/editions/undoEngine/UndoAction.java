@@ -16,6 +16,7 @@ public abstract class UndoAction{
     // Return false if undo is impossible (link with the value was loss for example).
     public abstract boolean undoAndInvert();
     
+    @Override
     public abstract String toString();
     
     

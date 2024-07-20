@@ -112,15 +112,15 @@ public class FileTab extends SideTab {
         
         sortManager = new SortManager((sortType, order) -> {
             if(sortType.equals(TR.tr("sorting.sortType.name"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByName(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.folder"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByDir(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.edit"))){
-                List<File> toSort = files.getItems().stream().collect(Collectors.toList());
+                List<File> toSort = new ArrayList<>(files.getItems());
                 files.getItems().clear();
                 files.getItems().addAll(Sorter.sortFilesByEdit(toSort, order));
             }else if(sortType.equals(TR.tr("sorting.sortType.addDate"))){
@@ -260,11 +260,11 @@ public class FileTab extends SideTab {
     public void replaceFile(File oldFile, File newFile){
         files.getItems().replaceAll(testFile -> {
             if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
-            else return testFile;
+            return testFile;
         });
         originalFiles.replaceAll(testFile -> {
             if(testFile.getAbsolutePath().equals(oldFile.getAbsolutePath())) return newFile;
-            else return testFile;
+            return testFile;
         });
         sortManager.simulateCall();
     }

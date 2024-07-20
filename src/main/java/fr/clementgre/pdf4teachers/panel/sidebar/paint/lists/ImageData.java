@@ -141,9 +141,11 @@ public class ImageData extends ImageLambdaData {
     public void setResizeMode(GraphicElement.ResizeMode resizeMode){
         this.resizeMode = resizeMode;
     }
+    @Override
     public String getImageId(){
         return imageId;
     }
+    @Override
     public void setImageId(String imageId){
         this.imageId = imageId;
     }

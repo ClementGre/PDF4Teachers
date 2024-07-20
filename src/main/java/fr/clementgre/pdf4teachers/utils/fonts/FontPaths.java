@@ -43,18 +43,18 @@ public class FontPaths{
     public FontPath getPath(FontWeight weight, boolean italic){
         if(weight == FontWeight.BOLD && italic){
             if(boldItalic != null) return boldItalic;
-            else return getPath(FontWeight.NORMAL, false);
+            return getPath(FontWeight.NORMAL, false);
         }
         if(weight == FontWeight.BOLD){
             if(bold != null) return bold;
-            else return getPath(FontWeight.NORMAL, false);
+            return getPath(FontWeight.NORMAL, false);
         }
         if(italic && weight == FontWeight.NORMAL){
             if(this.italic != null) return this.italic;
-            else return getPath(FontWeight.NORMAL, false);
+            return getPath(FontWeight.NORMAL, false);
         }
         if(weight == FontWeight.NORMAL){
-            return this.regular;
+            return regular;
         }
         return otherStyles.stream()
                 .filter(fontPath -> fontPath.isItalic() == italic && fontPath.getWeight().equals(weight))
@@ -69,7 +69,7 @@ public class FontPaths{
                 .orElse(null);
     }
     public void addOtherStyles(FontPath path){
-        this.otherStyles.add(path);
+        otherStyles.add(path);
     }
     
     

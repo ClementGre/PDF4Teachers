@@ -158,13 +158,16 @@ public abstract class ListPane<T> extends TitledPane{
     private String getTitle(){
         if(isFavouriteVectors()){
             return TR.tr("paintTab.favouriteVectors");
-        }else if(isFavouriteImages()){
-            return TR.tr("paintTab.favouriteImages");
-        }else if(isLastVectors()){
-            return TR.tr("paintTab.lastsVectors");
-        }else{ // Gallery
-            return TR.tr("paintTab.gallery");
         }
+        if(isFavouriteImages()){
+            return TR.tr("paintTab.favouriteImages");
+        }
+        if(isLastVectors()){
+            return TR.tr("paintTab.lastsVectors");
+        }
+        
+        // Gallery
+        return TR.tr("paintTab.gallery");
     }
     
     public IntegerProperty typeProperty(){
@@ -174,14 +177,16 @@ public abstract class ListPane<T> extends TitledPane{
         this.type.set(type);
     }
     public int getType(){
-        return this.type.get();
+        return type.get();
     }
     public ListPane<?> getFromType(int type){
-        if(type == 0) return paintTab.favouriteVectors;
-        if(type == 1) return paintTab.favouriteImages;
-        if(type == 2) return paintTab.lastVectors;
-        if(type == 3) return paintTab.gallery;
-        throw new IllegalArgumentException("type " + type + " is not between 0 and 3");
+        return switch(type){
+            case 0 -> paintTab.favouriteVectors;
+            case 1 -> paintTab.favouriteImages;
+            case 2 -> paintTab.lastVectors;
+            case 3 -> paintTab.gallery;
+            default -> throw new IllegalArgumentException("type " + type + " is not between 0 and 3");
+        };
     }
     public boolean isFavouriteVectors(){
         return getType() == 0;
@@ -199,6 +204,6 @@ public abstract class ListPane<T> extends TitledPane{
         return isLoaded;
     }
     protected void setLoaded(boolean loaded){
-        this.isLoaded = loaded;
+        isLoaded = loaded;
     }
 }

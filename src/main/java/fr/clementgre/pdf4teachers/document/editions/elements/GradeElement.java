@@ -76,7 +76,7 @@ public class GradeElement extends Element {
                     this.pageNumber = MainWindow.mainScreen.document.getPagesNumber() - 1;
                 else return;
             }
-            setupGeneral(true, this.text);
+            setupGeneral(true, text);
         }
         
         setOnKeyPressed(e -> {
@@ -379,7 +379,7 @@ public class GradeElement extends Element {
         
         if(StringUtils.cleanArray(parentPath.split(Pattern.quote("\\"))).length == 0)
             return new double[]{value, total};
-        else return new double[]{value};
+        return new double[]{value};
     }
     
     public static GradeElement readYAMLDataAndGive(HashMap<String, Object> data, boolean hasPage, boolean upscaleGrid){
@@ -494,7 +494,7 @@ public class GradeElement extends Element {
     }
     public static String getElementNameStatic(boolean plural){
         if(plural) return TR.tr("elements.name.grades");
-        else return TR.tr("elements.name.grade");
+        return TR.tr("elements.name.grade");
     }
     
     public String getName(){

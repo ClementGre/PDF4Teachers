@@ -282,7 +282,7 @@ public class SkillsTab extends SideTab {
         trySelectStudent();
     }
     public void clearEditRelatedData(){
-        this.skillTableElement.set(null);
+        skillTableElement.set(null);
         assessmentCombo.setValue(null);
     }
     private void trySelectStudent(){
@@ -297,7 +297,7 @@ public class SkillsTab extends SideTab {
 
     // Generate the element
     private void addSkillTableElement(){
-        this.skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, 0.8, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
+        skillTableElement.set(new SkillTableElement(0, 0, 0, true, 0, 0, 0.8, getCurrentAssessmentIdOr0(), getCurrentStudentIdOr0(), new ArrayList<>()));
         MainWindow.mainScreen.document.getPage(0).addElement(getSkillTableElement(), true, UType.NO_UNDO);
     }
 

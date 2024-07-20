@@ -96,6 +96,7 @@ public class VectorElement extends GraphicElement{
         }
     }
     
+    @Override
     public void initializePage(int pageNumber, double x, double y){
         this.pageNumber = pageNumber;
         
@@ -200,9 +201,8 @@ public class VectorElement extends GraphicElement{
         
         if(arrowLength > 0){
             return SVGUtils.addArrowsToPath(scaledPath, arrowLength, decimals);
-        }else{
-            return scaledPath;
         }
+        return scaledPath;
     }
     public record ScaledVectorInfo(String path, Bounds withoutArrowBounds){}
     
@@ -274,35 +274,32 @@ public class VectorElement extends GraphicElement{
     public double getClipPadding(){
         if(getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY){
             return 0;
-        }else{
-            double padding = getStrokeWidth();
-            if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
-                padding += getArrowLength();
-            }
-            return padding;
         }
+        double padding = getStrokeWidth();
+        if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+            padding += getArrowLength();
+        }
+        return padding;
     }
     public static double getClipPadding(VectorData vectorData){
         if(vectorData.getRepeatMode() == GraphicElement.RepeatMode.CROP || vectorData.getRepeatMode() == RepeatMode.MULTIPLY){
             return 0;
-        }else{
-            double padding = vectorData.getStrokeWidth();
-            if(vectorData.getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
-                padding += vectorData.getArrowLength();
-            }
-            return padding;
         }
+        double padding = vectorData.getStrokeWidth();
+        if(vectorData.getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+            padding += vectorData.getArrowLength();
+        }
+        return padding;
     }
     public double getClipPaddingScaled(double pageWidth){
         if(getRepeatMode() == GraphicElement.RepeatMode.CROP || getRepeatMode() == RepeatMode.MULTIPLY){
             return 0;
-        }else{
-            double padding = getStrokeWidthScaled(pageWidth);
-            if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
-                padding += getArrowLengthScaled(pageWidth);
-            }
-            return padding;
         }
+        double padding = getStrokeWidthScaled(pageWidth);
+        if(getArrowLength() != 0){ // Arrows need special clip padding since the forks can overflow the element region.
+            padding += getArrowLengthScaled(pageWidth);
+        }
+        return padding;
     }
     
     // ACTIONS
@@ -621,7 +618,7 @@ public class VectorElement extends GraphicElement{
     }
 
     public void setLinkedVectorData(VectorData vectorData){
-        this.linkedVectorData = vectorData;
+        linkedVectorData = vectorData;
     }
     
     // GETTER / SETTER
@@ -633,7 +630,7 @@ public class VectorElement extends GraphicElement{
     }
     public static String getElementNameStatic(boolean plural){
         if(plural) return TR.tr("elements.name.vectors");
-        else return TR.tr("elements.name.vector");
+        return TR.tr("elements.name.vector");
     }
     
     public SVGPath getSvgPath(){

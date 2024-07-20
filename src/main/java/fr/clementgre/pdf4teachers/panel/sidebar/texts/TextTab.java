@@ -206,8 +206,8 @@ public class TextTab extends SideTab {
 
         txtArea.textProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
 
-            if(newValue.contains("\u0009")){ // TAB
-                txtArea.setText(newValue.replaceAll(Pattern.quote("\u0009"), ""));
+            if(newValue.contains("\t")){ // TAB
+                txtArea.setText(newValue.replaceAll(Pattern.quote("\t"), ""));
                 return;
             }
 
@@ -243,7 +243,7 @@ public class TextTab extends SideTab {
             }else if(e.getCode() == KeyCode.DOWN && txtArea.getText().split("\n").length == 1){
                 e.consume();
                 if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectNextInSelection()){
                     txtArea.requestFocus();
@@ -251,7 +251,7 @@ public class TextTab extends SideTab {
             }else if(e.getCode() == KeyCode.UP && txtArea.getText().split("\n").length == 1){
                 e.consume();
                 if(TextTreeItem.lastKeyPressTime > System.currentTimeMillis() - 100) return;
-                else TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
+                TextTreeItem.lastKeyPressTime = System.currentTimeMillis();
                 pane.requestFocus();
                 if(!treeView.selectPreviousInSelection()){
                     txtArea.requestFocus();

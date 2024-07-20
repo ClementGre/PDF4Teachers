@@ -17,8 +17,8 @@ public class ResizeUndoAction extends MoveUndoAction{
     
     public ResizeUndoAction(UType undoType, GraphicElement element){
         super(undoType, element);
-        this.realWidth = element.getRealWidth();
-        this.realHeight = element.getRealHeight();
+        realWidth = element.getRealWidth();
+        realHeight = element.getRealHeight();
     }
     
     @Override
@@ -47,6 +47,7 @@ public class ResizeUndoAction extends MoveUndoAction{
         return false;
     }
     
+    @Override
     public String toString(){
         if(element.get() == null) return null;
         

@@ -87,9 +87,8 @@ public class SkillsCSVWriter {
             
             // Notations keyboard chat legend
             csvWriter.writeNext(new String[]{});
-            assessment.getNotationsWithDefaults().stream().forEach(n -> {
-                csvWriter.writeNext(new String[]{n.getName(), n.getKeyboardChar()});
-            });
+            assessment.getNotationsWithDefaults()
+                    .forEach(n -> csvWriter.writeNext(new String[]{n.getName(), n.getKeyboardChar()}));
             
             csvWriter.close();
             writer.close();

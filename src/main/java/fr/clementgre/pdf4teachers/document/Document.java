@@ -114,10 +114,10 @@ public class Document {
     }
     
     public boolean loadEdition(boolean updateScrollValue){
-        this.edition = new Edition(file, this);
+        edition = new Edition(file, this);
         if(edition.load(updateScrollValue)){
             if(!documentSaver.isAlive()) documentSaver.start();
-            this.undoEngine = new UndoEngine();
+            undoEngine = new UndoEngine();
             return true;
         }
         return false;
@@ -165,7 +165,7 @@ public class Document {
             if(pages.size() > i) pages.get(i).remove();
         }
         pages.clear();
-        this.undoEngine = null;
+        undoEngine = null;
     }
     /**
      * Save the edition of this document
@@ -197,20 +197,21 @@ public class Document {
             edition.save(true);
             return true;
             
-        }else if(option.getButtonData().isCancelButton()){ // cancel button
-            return false;
-            
-        }else{ // Ignore button or OS close
-            if(option == ignore && doShowIgnoreWarning){
-                boolean exportAnyway = new WarningAlert(TR.tr("dialog.unsavedEdit.title"),
-                        TR.tr("dialog.unsavedEdit.ignoreWarningDialog.header"),
-                        TR.tr("dialog.unsavedEdit.ignoreWarningDialog.details"))
-                        .execute();
-                if(!exportAnyway) return false;
-            }
-            edition.saveLastScrollValue();
-            return true;
         }
+        if(option.getButtonData().isCancelButton()){ // cancel button
+            return false;
+        }
+        
+        // Ignore button or OS close
+        if(option == ignore && doShowIgnoreWarning){
+            boolean exportAnyway = new WarningAlert(TR.tr("dialog.unsavedEdit.title"),
+                    TR.tr("dialog.unsavedEdit.ignoreWarningDialog.header"),
+                    TR.tr("dialog.unsavedEdit.ignoreWarningDialog.details"))
+                    .execute();
+            if(!exportAnyway) return false;
+        }
+        edition.saveLastScrollValue();
+        return true;
         
     }
     
@@ -330,7 +331,8 @@ public class Document {
         for(PageRenderer page : pages){
             if(MainWindow.mainScreen.mouseY < page.getBottomY()){
                 match = page; break;
-            }else match = page;
+            }
+            match = page;
         }
         
         if(MainWindow.mainScreen.isGridView() && match != null){
@@ -340,7 +342,8 @@ public class Document {
                 PageRenderer page = MainWindow.mainScreen.document.getPage(i);
                 if(MainWindow.mainScreen.mouseX < page.getRightX()){
                     match = page; break;
-                }else match = page;
+                }
+                match = page;
             }
         }
         

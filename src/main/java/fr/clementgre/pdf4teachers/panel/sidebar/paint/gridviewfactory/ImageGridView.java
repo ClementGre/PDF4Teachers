@@ -8,7 +8,6 @@ package fr.clementgre.pdf4teachers.panel.sidebar.paint.gridviewfactory;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
 import javafx.scene.control.Slider;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,11 +51,11 @@ public class ImageGridView extends ShapesGridView<ImageGridElement>{
     protected List<ImageGridElement> filter(List<ImageGridElement> items){
         if(TR.tr("galleryWindow.filterAndEditCombo.everywhere").equals(filterType)){
             return items;
-        }else if(TR.tr("galleryWindow.filterAndEditCombo.favourites").equals(filterType)){
-            return items.stream().filter(ImageGridElement::isFavorite).collect(Collectors.toList());
-        }else{
-            return items.stream().filter((e) -> e.getImageIdDirectory().equals(filterType)).collect(Collectors.toList());
         }
+        if(TR.tr("galleryWindow.filterAndEditCombo.favourites").equals(filterType)){
+            return items.stream().filter(ImageGridElement::isFavorite).collect(Collectors.toList());
+        }
+        return items.stream().filter((e) -> e.getImageIdDirectory().equals(filterType)).collect(Collectors.toList());
     }
     
     public void editImages(List<ImageGridElement> newImagesList){

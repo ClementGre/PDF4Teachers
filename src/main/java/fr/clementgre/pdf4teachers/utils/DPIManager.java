@@ -21,10 +21,10 @@ public class DPIManager{
         this.oneCmWidth = oneCmWidth;
     }
     public void initOneCmWidth(double width, double cmWidth){
-        this.oneCmWidth = width / cmWidth;
+        oneCmWidth = width / cmWidth;
     }
     public void initOneCmWidthFromA4Width(double width){
-        this.oneCmWidth = width / 21; // A4 width = 21cm
+        oneCmWidth = width / 21; // A4 width = 21cm
     }
     
     public int getPixelsLength(double width){
