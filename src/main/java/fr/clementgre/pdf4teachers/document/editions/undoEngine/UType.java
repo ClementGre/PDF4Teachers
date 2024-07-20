@@ -32,18 +32,18 @@ public enum UType{
     }
     
     public UType toNoCountBefore(){
-        if(this.isElement()) return ELEMENT_NO_COUNT_BEFORE;
-        if(this.isPage()) return PAGE_NO_COUNT_BEFORE;
+        if(isElement()) return ELEMENT_NO_COUNT_BEFORE;
+        if(isPage()) return PAGE_NO_COUNT_BEFORE;
         return NO_UNDO;
     }
     public UType toNoCountAfter(){
-        if(this.isElement()) return ELEMENT_NO_COUNT_AFTER;
-        if(this.isPage()) return PAGE_NO_COUNT_AFTER;
+        if(isElement()) return ELEMENT_NO_COUNT_AFTER;
+        if(isPage()) return PAGE_NO_COUNT_AFTER;
         return NO_UNDO;
     }
     public UType toRegular(){
-        if(this.isElement()) return ELEMENT;
-        if(this.isPage()) return PAGE;
+        if(isElement()) return ELEMENT;
+        if(isPage()) return PAGE;
         return NO_UNDO;
     }
 }

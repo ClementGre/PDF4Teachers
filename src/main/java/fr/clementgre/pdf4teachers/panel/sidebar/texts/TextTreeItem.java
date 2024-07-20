@@ -369,6 +369,7 @@ public class TextTreeItem extends TreeItem<String> {
         return false;
     }
 
+    @Override
     public TextTreeItem clone(){
         return new TextTreeItem(font.get(), text, color.get(), getMaxWidth(), type, uses, creationDate);
     }

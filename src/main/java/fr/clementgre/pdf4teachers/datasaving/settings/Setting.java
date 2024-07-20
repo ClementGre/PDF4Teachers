@@ -29,8 +29,8 @@ public abstract class Setting<T> {
     protected abstract HBox getDefaultEditPane();
     public HBox getCustomEditPane(){
         if(hasEditPane) return getDefaultEditPane();
-        else if(getEditPaneCallback != null) return getEditPaneCallback.call();
-        else return new HBox();
+        if(getEditPaneCallback != null) return getEditPaneCallback.call();
+        return new HBox();
     }
     
     public abstract T getValue();

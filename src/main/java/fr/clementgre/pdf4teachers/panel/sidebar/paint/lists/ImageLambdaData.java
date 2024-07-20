@@ -30,9 +30,8 @@ public class ImageLambdaData { // 2 child : ImageGridElement & ImageData
     public ImageData toImageData(){
         if(this instanceof ImageData imageData){
             return imageData;
-        }else{
-            return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0, null);
         }
+        return new ImageData(imageId, 0, 0, GraphicElement.RepeatMode.AUTO, GraphicElement.ResizeMode.CORNERS, 0, 0, null);
     }
 
     @Override

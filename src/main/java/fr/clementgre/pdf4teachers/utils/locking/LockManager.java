@@ -16,7 +16,6 @@ import tk.pratanumandal.unique4j.Unique4jList;
 import tk.pratanumandal.unique4j.exception.Unique4jException;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -89,10 +88,9 @@ public class LockManager {
                 Log.d("Instance locked: " + locked);
                 return true;
                 
-            }else{
-                Log.d("Instance locked: " + locked);
-                return locked; // If non-locked: the files has been opened on the locked instance.
             }
+            Log.d("Instance locked: " + locked);
+            return locked; // If non-locked: the files has been opened on the locked instance.
             
         }catch(Unique4jException e){
             Log.eNotified(e);

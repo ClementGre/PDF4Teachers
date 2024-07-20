@@ -162,7 +162,7 @@ public class PageZoneSelector extends Pane {
     }
     
     public void setSelectionZoneType(SelectionZoneType type){
-        this.selectionZoneType = type;
+        selectionZoneType = type;
         
         if(type == SelectionZoneType.LIGHT_ON_DARK){
             selectionZone.setBackground(new Background(new BackgroundFill(Color.rgb(255, 255, 255, 0.5), CornerRadii.EMPTY, Insets.EMPTY)));

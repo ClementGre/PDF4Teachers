@@ -33,9 +33,8 @@ public class WrongAlert extends CustomAlert {
     public boolean execute(){
         if(continueAsk){
             return getShowAndWaitIsCancelButton();
-        }else{
-            show();
-            return false;
         }
+        show();
+        return false;
     }
 }

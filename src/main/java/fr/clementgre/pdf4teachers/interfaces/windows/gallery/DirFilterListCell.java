@@ -27,7 +27,7 @@ public class DirFilterListCell extends ListCell<String> {
     
     private final GalleryWindow gallery;
     public DirFilterListCell(GalleryWindow galleryWindow){
-        this.gallery = galleryWindow;
+        gallery = galleryWindow;
     }
     
     @Override

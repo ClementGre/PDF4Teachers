@@ -35,13 +35,11 @@ public class AppFontsLoader{
             if(font == null){
                 Log.w("Font " + "/appFonts/" + name + " is null...");
                 return Font.font(size);
-            }else{
-                loadedFonts.put(name, font.getFamily());
-                return font;
             }
-        }else{
-            return Font.font(loadedFonts.get(name), size);
+            loadedFonts.put(name, font.getFamily());
+            return font;
         }
+        return Font.font(loadedFonts.get(name), size);
     }
     public static Font getFontPath(String path, double size){
         if(!loadedFonts.containsKey(path)){
@@ -49,13 +47,11 @@ public class AppFontsLoader{
             if(font == null){
                 Log.w("Font " + path + " is null...");
                 return Font.font(size);
-            }else{
-                loadedFonts.put(path, font.getFamily());
-                return font;
             }
-        }else{
-            return Font.font(loadedFonts.get(path), size);
+            loadedFonts.put(path, font.getFamily());
+            return font;
         }
+        return Font.font(loadedFonts.get(path), size);
     }
     
     public static void loadFont(String name){

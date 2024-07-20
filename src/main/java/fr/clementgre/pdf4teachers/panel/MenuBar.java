@@ -622,24 +622,23 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             
             return menuItem;
             
-        }else{
-            NodeRadioMenuItem menuItem = new NodeRadioMenuItem(text + "      ", autoUpdate, true);
-            
-            if(image != null){
-                if(image.length() >= 30){
-                    menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
-                }else{
-                    if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
-                        Log.e("MenuBar image " + image + " does not exist");
-                    else
-                        menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
-                }
-                
-            }
-            if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
-            
-            return menuItem;
         }
+        NodeRadioMenuItem menuItem = new NodeRadioMenuItem(text + "      ", autoUpdate, true);
+        
+        if(image != null){
+            if(image.length() >= 30){
+                menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
+            }else{
+                if(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") == null)
+                    Log.e("MenuBar image " + image + " does not exist");
+                else
+                    menuItem.setImage(ImageUtils.buildImage(MenuBar.class.getResource("/img/MenuBar/" + image + ".png") + "", 0, 0, colorAdjust));
+            }
+            
+        }
+        if(!toolTip.isBlank()) menuItem.setToolTip(toolTip);
+        
+        return menuItem;
         
         
     }
@@ -655,18 +654,17 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             }
             setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);
             return menuItem;
-        }else{
-            NodeMenuItem menuItem = new NodeMenuItem(text, false);
-            
-            if(image != null) menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
-            
-            if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
-            if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);
-            if(leftMargin) menuItem.setFalseLeftData();
-            
-            setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);
-            return menuItem;
         }
+        NodeMenuItem menuItem = new NodeMenuItem(text, false);
+        
+        if(image != null) menuItem.setImage(SVGPathIcons.generateImage(image, "white", 0, 16, colorAdjust));
+        
+        if(keyCombinaison != null) menuItem.setKeyCombinaison(keyCombinaison);
+        if(toolTip != null && !toolTip.isBlank()) menuItem.setToolTip(toolTip);
+        if(leftMargin) menuItem.setFalseLeftData();
+        
+        setupAutomaticDisabling(disableIfNoDoc, disableIfNoList, menuItem);
+        return menuItem;
     }
     private static void setupAutomaticDisabling(boolean disableIfNoDoc, boolean disableIfNoList, MenuItem menuItem){
         if(disableIfNoDoc){

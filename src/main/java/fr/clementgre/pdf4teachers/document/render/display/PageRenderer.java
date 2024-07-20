@@ -598,7 +598,7 @@ public class PageRenderer extends Pane {
     
         List<PageRenderer> pages = MainWindow.mainScreen.document.getSelectedPages().stream().map(i -> MainWindow.mainScreen.document.getPage(i)).toList();
         // invert order, the pages needs to be moved in a certain order.
-        if(index > 0) pages = pages.stream().collect(ArrayList::new, (ps, p) -> ps.addFirst(p), (list1, list2) -> list1.addAll(0, list2));
+        if(index > 0) pages = pages.stream().collect(ArrayList::new, ArrayList::addFirst, (list1, list2) -> list1.addAll(0, list2));
         
         int i = 0;
         for(PageRenderer page : pages){
@@ -902,11 +902,10 @@ public class PageRenderer extends Pane {
         //if((upDistance + pageHeight) > 0 && (downDistance - pageHeight) < MainWindow.mainScreen.getHeight()){ // one page of space
         if((upDistance) > 0 && (downDistance) < MainWindow.mainScreen.getHeight()){ // pil poil
             return 0;
-        }else{
-            if((upDistance + pageHeight * 10) < 0 || (downDistance - pageHeight * 10) > MainWindow.mainScreen.getHeight())
-                return 2;
-            return 1;
         }
+        if((upDistance + pageHeight * 10) < 0 || (downDistance - pageHeight * 10) > MainWindow.mainScreen.getHeight())
+            return 2;
+        return 1;
     }
     
     private void switchVisibleStatus(int showStatus){ // 0 : Visible | 1 : Hide | 2 : Hard Hide
@@ -945,9 +944,8 @@ public class PageRenderer extends Pane {
     private double getRenderingZoomFactor(){
         if(Main.settings.renderWithZoom.getValue()){
             return Math.min(MainWindow.mainScreen.getZoomFactor(), 3) * Main.settings.renderZoom.getValue();
-        }else{
-            return 1.5 * Main.settings.renderZoom.getValue();
         }
+        return 1.5 * Main.settings.renderZoom.getValue();
         
     }
     
@@ -1171,7 +1169,7 @@ public class PageRenderer extends Pane {
     
     public static int getPageMargin(){
         if(MainWindow.mainScreen.isEditPagesMode()) return PAGE_MARGIN_GRID;
-        else return PAGE_MARGIN;
+        return PAGE_MARGIN;
     }
     
     public boolean isRemoved(){

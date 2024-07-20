@@ -138,7 +138,7 @@ public class PageGridSeparator extends Pane {
     
     private int getIndex(){
         if(before) return page.getPage();
-        else return page.getPage() + 1;
+        return page.getPage() + 1;
     }
     public void triggerMenu(double x, double y){
         menu.hide();

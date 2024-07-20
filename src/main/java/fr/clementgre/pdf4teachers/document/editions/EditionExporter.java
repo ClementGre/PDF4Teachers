@@ -25,11 +25,7 @@ import javafx.scene.control.CheckBox;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class EditionExporter {
     
@@ -93,9 +89,8 @@ public class EditionExporter {
                     public List<String> prepare(boolean recursive){
                         if(!recursive){
                             return Collections.singletonList(MainWindow.mainScreen.document.getFile().getName());
-                        }else{
-                            return loadedConfig.base.keySet().stream().collect(Collectors.toList());
                         }
+                        return new ArrayList<>(loadedConfig.base.keySet());
                     }
                     
                     @Override
@@ -120,33 +115,32 @@ public class EditionExporter {
                             loadedConfig.setName(fileName);
                             
                             return Map.entry(loadedConfig, TwoStepListAction.CODE_OK);
-                        }else{
-                            File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
-                            
-                            if(pdfFile.exists()){
-                                if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
-                                    MainWindow.mainScreen.document.edition.clearEdit(false);
-                                }
-                                
-                                Config config = new Config(Edition.getEditFile(pdfFile));
-                                config.setName(fileName);
-                                
-                                HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
-                                if(onlyGrades){
-                                    config.load();
-                                    config.set("grades", Config.getList(data, "grades"));
-                                }else{
-                                    config.base = data;
-                                }
-                                
-                                return Map.entry(config, TwoStepListAction.CODE_OK);
-                            }else{
-                                boolean result = new WrongAlert(TR.tr("dialog.importEdit.errorNoMatch.header", fileName), TR.tr("dialog.importEdit.errorNoMatch.details"), true).execute();
-                                if(result)
-                                    return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
-                                else return Map.entry(new Config(), 2); // No match
-                            }
                         }
+                        File pdfFile = new File(MainWindow.mainScreen.document.getFile().getParent() + File.separator + fileName);
+                        
+                        if(pdfFile.exists()){
+                            if(MainWindow.mainScreen.document.getFile().getAbsolutePath().equals(pdfFile.getAbsolutePath())){ // clear edit if doc is opened
+                                MainWindow.mainScreen.document.edition.clearEdit(false);
+                            }
+                            
+                            Config config = new Config(Edition.getEditFile(pdfFile));
+                            config.setName(fileName);
+                            
+                            HashMap<String, Object> data = (HashMap<String, Object>) loadedConfig.base.get(pdfFile.getName());
+                            if(onlyGrades){
+                                config.load();
+                                config.set("grades", Config.getList(data, "grades"));
+                            }else{
+                                config.base = data;
+                            }
+                            
+                            return Map.entry(config, TwoStepListAction.CODE_OK);
+                        }
+                        boolean result = new WrongAlert(TR.tr("dialog.importEdit.errorNoMatch.header", fileName), TR.tr("dialog.importEdit.errorNoMatch.details"), true).execute();
+                        if(result)
+                            return Map.entry(new Config(), TwoStepListAction.CODE_STOP); // No match > Stop all
+                        
+                        return Map.entry(new Config(), 2); // No match
                     }
                     
                     @Override
@@ -163,7 +157,7 @@ public class EditionExporter {
                             boolean result = new ErrorAlert(TR.tr("dialog.importEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getFile().toPath()), config.getName()), e.getMessage(), recursive).execute();
                             if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                             if(result) return TwoStepListAction.ProcessResult.STOP;
-                            else return TwoStepListAction.ProcessResult.SKIPPED;
+                            return TwoStepListAction.ProcessResult.SKIPPED;
                         }
                         if(Edition.getEditFile(MainWindow.mainScreen.document.getFile()).getAbsolutePath().equals(config.getFile().getAbsolutePath())){
                             MainWindow.mainScreen.document.loadEdition(false);
@@ -240,9 +234,8 @@ public class EditionExporter {
             public List<File> prepare(boolean recursive){
                 if(recursive){
                     return MainWindow.filesTab.getOpenedFiles();
-                }else{
-                    return Collections.singletonList(MainWindow.mainScreen.document.getFile());
                 }
+                return Collections.singletonList(MainWindow.mainScreen.document.getFile());
             }
             
             @SuppressWarnings("unchecked")
@@ -280,9 +273,9 @@ public class EditionExporter {
                 if(config.getDestFile().exists()){ // Check Already Exist
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(config.getDestFile());
                     if(result == AlreadyExistDialogManager.ResultType.SKIP) return Map.entry(new Config(), 3);
-                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
+                    if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(new Config(), TwoStepListAction.CODE_STOP);
-                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                    if(result == AlreadyExistDialogManager.ResultType.RENAME)
                         config.setDestFile(AlreadyExistDialogManager.rename(config.getDestFile()));
                 }
                 
@@ -305,7 +298,7 @@ public class EditionExporter {
                     boolean result = new ErrorAlert(TR.tr("dialog.exportEdit.ioError.header", FilesUtils.getPathReplacingUserHome(config.getDestFile().toPath()), config.getName()), e.getMessage(), recursive).execute();
                     if(!recursive) return TwoStepListAction.ProcessResult.STOP_WITHOUT_ALERT;
                     if(result) return TwoStepListAction.ProcessResult.STOP;
-                    else return TwoStepListAction.ProcessResult.SKIPPED;
+                    return TwoStepListAction.ProcessResult.SKIPPED;
                 }
                 return TwoStepListAction.ProcessResult.OK;
             }

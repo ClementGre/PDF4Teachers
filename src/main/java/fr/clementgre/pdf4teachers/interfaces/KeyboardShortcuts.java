@@ -391,7 +391,7 @@ public class KeyboardShortcuts {
     
     private boolean canBeginEndOnNode(Node node){
         if(node instanceof TextInputControl) return true;
-        else if(node instanceof Spinner<?> spinner){
+        if(node instanceof Spinner<?> spinner){
             return spinner.isEditable();
         }
         return false;
@@ -404,7 +404,7 @@ public class KeyboardShortcuts {
         private final String name;
         
         private final KeyCombination combination;
-        private Consumer<KeyEvent> action = null;
+        private Consumer<KeyEvent> action;
         public ShortcutRecord(String name, KeyCombination combination, Consumer<KeyEvent> action){
             this.name = name;
             this.combination = combination;

@@ -120,9 +120,8 @@ public class PageAddRemoveUndoAction extends UndoAction {
     public String toString(){
         if(originallyDeleted){
             return TR.tr("actions.deletePage", pageIndex+1);
-        }else{
-            return TR.tr("actions.addPage", pageIndex+1);
         }
+        return TR.tr("actions.addPage", pageIndex+1);
         
     }
 }

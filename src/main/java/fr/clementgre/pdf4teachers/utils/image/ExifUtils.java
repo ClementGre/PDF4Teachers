@@ -87,9 +87,8 @@ public class ExifUtils {
         BasicFileAttributes attr = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
         if(attr != null && attr.lastModifiedTime() != null){
             return new Date(attr.lastModifiedTime().toMillis());
-        }else{
-            return new Date(0);
         }
+        return new Date(0);
         
     }
     public long getImageSize(){
@@ -152,9 +151,9 @@ public class ExifUtils {
         public BasicExifData(File file){
             try{
                 ExifUtils utils = new ExifUtils(file);
-                this.size = utils.getImageSize();
-                this.editDate = utils.getImageExifEditDate();
-                this.rotation = utils.getImageExifRotation();
+                size = utils.getImageSize();
+                editDate = utils.getImageExifEditDate();
+                rotation = utils.getImageExifRotation();
             }catch(ImageProcessingException | IOException | MetadataException e){
                 Log.eNotified(e);
             }

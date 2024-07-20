@@ -72,9 +72,9 @@ public class SplitEngine {
                     AlreadyExistDialogManager.ResultType result = alreadyExistDialogManager.showAndWait(exportPart.output);
                     if(result == AlreadyExistDialogManager.ResultType.SKIP)
                         return Map.entry(exportPart, TwoStepListAction.CODE_SKIP_2); // SKIP
-                    else if(result == AlreadyExistDialogManager.ResultType.STOP)
+                    if(result == AlreadyExistDialogManager.ResultType.STOP)
                         return Map.entry(exportPart, TwoStepListAction.CODE_STOP); // STOP
-                    else if(result == AlreadyExistDialogManager.ResultType.RENAME)
+                    if(result == AlreadyExistDialogManager.ResultType.RENAME)
                         exportPart = new ExportPart(AlreadyExistDialogManager.rename(exportPart.output), exportPart.startIndex, exportPart.endIndex());
                 }
             

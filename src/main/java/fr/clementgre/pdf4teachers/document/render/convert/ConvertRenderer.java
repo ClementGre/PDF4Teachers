@@ -236,9 +236,8 @@ public class ConvertRenderer {
             return (int) Arrays.stream(Objects.requireNonNull(mainDir.listFiles()))
                     .filter(dir -> isValidDir(dir) || (isValidFile(dir) && convertPane.convertAloneFiles.isSelected()))
                     .count();
-        }else{
-            return 1;
         }
+        return 1;
     }
     
     private boolean shouldStop;

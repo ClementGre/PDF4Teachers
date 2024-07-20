@@ -193,7 +193,7 @@ public class Edition{
                 .map(Element::getYAMLData)
                 .collect(Collectors.toCollection(ArrayList::new));
         if(!pageData.isEmpty()) return pageData;
-        else return null;
+        return null;
     }
     
     ///////////////////////////////////////////////////////////////////
@@ -204,35 +204,36 @@ public class Edition{
         
         if(!editFile.exists()){ //file does not exist
             return new Element[0];
-        }else{ // file exist
-            Config config = new Config(editFile);
-            config.load();
-            int versionID = (int) config.getLong("versionID");
-            
-            boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
-            
-            ArrayList<Element> elements = new ArrayList<>();
-    
-            loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
-                elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
-            });
-            loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
-                elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
-            });
-            loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
-                elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
-            });
-            
-            for(Object data : config.getList("grades")){
-                if(data instanceof Map)
-                    elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
-            }
-    
-            // There is only one SkillTableElement (the grid) that contains all the skills
-            elements.add(SkillTableElement.readYAMLDataAndGive(config.getSection("skills"), false));
-            
-            return elements.toArray(new Element[0]);
         }
+        
+        // file exist
+        Config config = new Config(editFile);
+        config.load();
+        int versionID = (int) config.getLong("versionID");
+        
+        boolean upscaleGrid = versionID == 0; // Between 1.2.1 and 1.3.0, the grid size was multiplied by 100
+        
+        ArrayList<Element> elements = new ArrayList<>();
+        
+        loadItemsInPage(config.getSection("vectors").entrySet(), elementData -> {
+            elements.add(VectorElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+        });
+        loadItemsInPage(config.getSection("images").entrySet(), elementData -> {
+            elements.add(ImageElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey()));
+        });
+        loadItemsInPage(config.getSection("texts").entrySet(), elementData -> {
+            elements.add(TextElement.readYAMLDataAndGive(elementData.getValue(), false, elementData.getKey(), upscaleGrid));
+        });
+        
+        for(Object data : config.getList("grades")){
+            if(data instanceof Map)
+                elements.add(GradeElement.readYAMLDataAndGive((HashMap<String, Object>) data, false, upscaleGrid));
+        }
+        
+        // There is only one SkillTableElement (the grid) that contains all the skills
+        elements.add(SkillTableElement.readYAMLDataAndGive(config.getSection("skills"), false));
+        
+        return elements.toArray(new Element[0]);
     }
     
     // For each element of a page map, call the callback.
@@ -314,23 +315,24 @@ public class Edition{
         
         if(!editFile.exists()){ //file does not exist
             return 0;
-        }else{ // file already exist
-            Config config = new Config(editFile);
-            config.load();
-            
-            int count = Stream.of("texts", "images", "vectors").mapToInt(s -> countSection(config.getSection(s))).sum();
-
-            count += config.getList("grades")
-                    .stream()
-                    .filter(data -> data instanceof HashMap)
-                    .map(data -> GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class)))
-                    .filter(stats -> stats[0] != -1)
-                    .count();
-            long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
-            if(assessmentId != 0) count++;
-            
-            return count;
         }
+        
+        // file already exist
+        Config config = new Config(editFile);
+        config.load();
+        
+        int count = Stream.of("texts", "images", "vectors").mapToInt(s -> countSection(config.getSection(s))).sum();
+        
+        count += config.getList("grades")
+                .stream()
+                .filter(data -> data instanceof HashMap)
+                .map(data -> GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class)))
+                .filter(stats -> stats[0] != -1)
+                .count();
+        long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
+        if(assessmentId != 0) count++;
+        
+        return count;
     }
     
     public static EditionStats getEditionStats(File editFile) throws Exception{
@@ -338,54 +340,55 @@ public class Edition{
         if(!editFile.exists()){ //file does not exist
             return null;
             
-        }else{ // file already exist
-            Config config = new Config(editFile);
-            config.load();
-            
-            int texts = countSection(config.getSection("texts"));
-            int graphics = countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
-    
-            double[] totalGrade = {-1, 0}; // Root grade value and total
-            int grades = 0; // All grade element count
-            int filledGrades = 0; // All entered grade
-            
-            for(Object data : config.getList("grades")){
-                if(data instanceof HashMap){
-                    double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
-                    if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
-                    if(stats[0] != -1) filledGrades++;
-                    grades++;
-                }
+        }
+        
+        // file already exist
+        Config config = new Config(editFile);
+        config.load();
+        
+        int texts = countSection(config.getSection("texts"));
+        int graphics = countSection(config.getSection("images")) + countSection(config.getSection("vectors"));
+        
+        double[] totalGrade = {-1, 0}; // Root grade value and total
+        int grades = 0; // All grade element count
+        int filledGrades = 0; // All entered grade
+        
+        for(Object data : config.getList("grades")){
+            if(data instanceof HashMap){
+                double[] stats = GradeElement.getYAMLDataStats(convertInstanceOfObject(data, HashMap.class));
+                if(stats.length == 2) totalGrade = stats; // get the root grade value and the root grade total
+                if(stats[0] != -1) filledGrades++;
+                grades++;
             }
-            
-            int totalCount = texts + graphics + filledGrades;
-    
-            long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
-            int skills = 0;
-            int filledNotations = 0;
-            SkillsAssessment assessment = null;
-            if(assessmentId != 0){
-                assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId).findFirst().orElse(null);
-                if(assessment != null){
-                    skills = assessment.getSkills().size();
-                    ArrayList<Object> notationsData = Config.getList(config.getSection("skills"), "list");
-                    for(Object notationData : notationsData){
-                        if(notationData instanceof HashMap){
-                            long skillId = Config.getLong((HashMap<String, Object>) notationData, "skillId");
-                            long notationId = Config.getLong((HashMap<String, Object>) notationData, "notationId");
-                            if(Skill.getById(assessment, skillId) != null){ // Check the skill does not belong to another assessment
-                                if(notationId < 0 || Notation.getById(assessment, notationId) != null){  // Check the notation belongs to the assessment
-                                    filledNotations++;
-                                }
+        }
+        
+        int totalCount = texts + graphics + filledGrades;
+        
+        long assessmentId = Config.getLong(config.getSection("skills"), "assessmentId");
+        int skills = 0;
+        int filledNotations = 0;
+        SkillsAssessment assessment = null;
+        if(assessmentId != 0){
+            assessment = MainWindow.skillsTab.getAssessments().stream().filter(a -> a.getId() == assessmentId).findFirst().orElse(null);
+            if(assessment != null){
+                skills = assessment.getSkills().size();
+                ArrayList<Object> notationsData = Config.getList(config.getSection("skills"), "list");
+                for(Object notationData : notationsData){
+                    if(notationData instanceof HashMap){
+                        long skillId = Config.getLong((HashMap<String, Object>) notationData, "skillId");
+                        long notationId = Config.getLong((HashMap<String, Object>) notationData, "notationId");
+                        if(Skill.getById(assessment, skillId) != null){ // Check the skill does not belong to another assessment
+                            if(notationId < 0 || Notation.getById(assessment, notationId) != null){  // Check the notation belongs to the assessment
+                                filledNotations++;
                             }
                         }
                     }
                 }
             }
-            if(filledNotations > 0) totalCount++;
-            
-            return new EditionStats(totalCount, texts, graphics, grades, filledGrades, totalGrade[0], totalGrade[1], assessment, skills, filledNotations);
         }
+        if(filledNotations > 0) totalCount++;
+        
+        return new EditionStats(totalCount, texts, graphics, grades, filledGrades, totalGrade[0], totalGrade[1], assessment, skills, filledNotations);
     }
     
     public record EditionStats(int totalElements, int texts, int graphics, int grades, int filledGrades, double totalGradeValue, double totalGradeOutOf, SkillsAssessment assessment, int skills, int filledNotations){}

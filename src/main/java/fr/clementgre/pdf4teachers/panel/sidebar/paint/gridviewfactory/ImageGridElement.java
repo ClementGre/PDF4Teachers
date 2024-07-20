@@ -119,11 +119,11 @@ public class ImageGridElement extends ImageLambdaData{
     public ImageData getImageData(){
         if(hasLinkedImageData()){
             return linkedImageData;
-        }else if(isFavorite()){
-            return MainWindow.paintTab.favouriteImages.getList().getAllItems().get(MainWindow.paintTab.favouriteImages.getList().getAllItems().indexOf(this)).linkedImageData;
-        }else{
-            return toImageData();
         }
+        if(isFavorite()){
+            return MainWindow.paintTab.favouriteImages.getList().getAllItems().get(MainWindow.paintTab.favouriteImages.getList().getAllItems().indexOf(this)).linkedImageData;
+        }
+        return toImageData();
     }
 
     // SORTER

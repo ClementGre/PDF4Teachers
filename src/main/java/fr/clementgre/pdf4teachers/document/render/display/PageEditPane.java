@@ -199,7 +199,7 @@ public class PageEditPane extends VBox {
     
     private static MenuItem getMenuItem(String title, boolean vanillaItem){
         if(vanillaItem) return new MenuItem(title);
-        else return new NodeMenuItem(title, false);
+        return new NodeMenuItem(title, false);
     }
     
     private Button getCustomButton(String path, String text){
@@ -217,7 +217,7 @@ public class PageEditPane extends VBox {
     }
     
     public void updatePosition(){
-        if(this.page == null) return;
+        if(page == null) return;
         
         int buttonNumber = 8;
         double factor = .7 / MainWindow.mainScreen.getZoomFactor();
@@ -232,8 +232,8 @@ public class PageEditPane extends VBox {
     }
     
     public void delete(){
-        this.page = null;
-        this.menu = null;
+        page = null;
+        menu = null;
         
         ascendButton.setOnAction(null);
         descendButton.setOnAction(null);

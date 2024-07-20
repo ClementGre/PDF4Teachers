@@ -426,13 +426,13 @@ public class ZoomOperator {
     public double getMainScreenWidth(){
         if(MainWindow.mainScreen == null) return 0;
         if(!vScrollBar.isVisible()) return MainWindow.mainScreen.getWidth();
-        else return MainWindow.mainScreen.getWidth() - vScrollBar.getWidth();
+        return MainWindow.mainScreen.getWidth() - vScrollBar.getWidth();
     }
     
     public double getMainScreenHeight(){
         if(MainWindow.mainScreen == null) return 0;
         if(!hScrollBar.isVisible()) return MainWindow.mainScreen.getHeight();
-        else return MainWindow.mainScreen.getHeight() - hScrollBar.getHeight();
+        return MainWindow.mainScreen.getHeight() - hScrollBar.getHeight();
     }
     
     // Renvoie les dimensions de la partie visible de pane (multiplication par sa Scale pour avoir sa partie visible)

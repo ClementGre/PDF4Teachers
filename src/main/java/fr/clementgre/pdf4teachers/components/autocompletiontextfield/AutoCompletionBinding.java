@@ -297,12 +297,10 @@ public abstract class AutoCompletionBinding<T> {
      * Selects the first suggestion (if any), so the user can choose it
      * by pressing enter immediately.
      */
-    private void selectFirstSuggestion(AutoCompletePopup<?> autoCompletionPopup){
+    private void selectFirstSuggestion(AutoCompletePopup<?> autoCompletionPopup) {
         Skin<?> skin = autoCompletionPopup.getSkin();
-        if(skin instanceof AutoCompletePopupSkin){
-            AutoCompletePopupSkin<?> au = (AutoCompletePopupSkin<?>)skin;
-            ListView<?> li = (ListView<?>)au.getNode();
-            if(li.getItems() != null && !li.getItems().isEmpty()){
+        if (skin instanceof AutoCompletePopupSkin<?> au) {
+            if (au.getNode() instanceof ListView<?> li && li.getItems() != null && !li.getItems().isEmpty()) {
                 li.getSelectionModel().select(0);
             }
         }
@@ -312,7 +310,7 @@ public abstract class AutoCompletionBinding<T> {
      * Occurs when the user text has changed and the suggestions require an update
      * @param userText
      */
-    private final void onUserInputChanged(final String userText){
+    private void onUserInputChanged(final String userText){
         synchronized (suggestionsTaskLock) {
             if(suggestionsTask != null && suggestionsTask.isRunning()){
                 // cancel the current running task

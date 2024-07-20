@@ -8,8 +8,6 @@ package fr.clementgre.pdf4teachers.utils.dialogs;
 import fr.clementgre.pdf4teachers.Main;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
-import fr.clementgre.pdf4teachers.interfaces.windows.log.Log;
-import fr.clementgre.pdf4teachers.utils.FilesUtils;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -142,8 +140,8 @@ public class FilesChooserManager{
     }
     public static String getPathFromSyncVar(SyncVar syncVar){
         if(syncVar == SyncVar.LAST_OPEN_DIR) return MainWindow.userData.lastOpenDir;
-        else if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) return MainWindow.userData.lastConvertSrcDir;
-        else if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) return MainWindow.userData.galleryLastOpenPath;
+        if(syncVar == SyncVar.LAST_CONVERT_SRC_DIR) return MainWindow.userData.lastConvertSrcDir;
+        if(syncVar == SyncVar.LAST_GALLERY_OPEN_DIR) return MainWindow.userData.galleryLastOpenPath;
         return null;
     }
     public static void setPathFromSyncVar(SyncVar syncVar, String value){

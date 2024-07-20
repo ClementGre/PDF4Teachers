@@ -291,7 +291,8 @@ public class TextElement extends Element {
     public static @NotNull String invertMathIfNeeded(@NotNull String value){
         if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_LATEX){
             return invertLatex(value);
-        }else if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_STARMATH){
+        }
+        if(Main.settings.defaultTextMode.getValue() == Settings.TEXT_MODE_STARMATH){
             return invertStarMath(value);
         }
         return value;
@@ -307,11 +308,11 @@ public class TextElement extends Element {
     public static String invertBySettings(String text, int defaultTextMode){
         if(defaultTextMode == Settings.TEXT_MODE_LATEX){
             return invertLatex(text);
-        }else if(defaultTextMode == Settings.TEXT_MODE_STARMATH){
-            return invertStarMath(text);
-        }else{
-            return text;
         }
+        if(defaultTextMode == Settings.TEXT_MODE_STARMATH){
+            return invertStarMath(text);
+        }
+        return text;
     }
     
     public String getLaTeXText(){
@@ -474,11 +475,11 @@ public class TextElement extends Element {
             if(ex.getMessage().contains("Unknown symbol or command or predefined TeXFormula: ")){
                 return renderLatex(formatLatexText(TR.tr("textTab.Latex.unknownError") + "\\" +
                         ex.getMessage().replaceAll(Pattern.quote("Unknown symbol or command or predefined TeXFormula:"), "")), color, family, type, size, calls + 1);
-            }else if(text.startsWith(TR.tr("dialog.error.presentative") + "\\")){
-                return renderLatex(formatLatexText(TR.tr("textTab.Latex.unableToParse")), color, family, type, size, calls + 1);
-            }else{
-                return renderLatex(formatLatexText(TR.tr("dialog.error.presentative") + "\\" + ex.getMessage()), color, family, type, size, calls + 1);
             }
+            if(text.startsWith(TR.tr("dialog.error.presentative") + "\\")){
+                return renderLatex(formatLatexText(TR.tr("textTab.Latex.unableToParse")), color, family, type, size, calls + 1);
+            }
+            return renderLatex(formatLatexText(TR.tr("dialog.error.presentative") + "\\" + ex.getMessage()), color, family, type, size, calls + 1);
         }
     }
     
@@ -504,7 +505,7 @@ public class TextElement extends Element {
     }
     public static String getElementNameStatic(boolean plural){
         if(plural) return TR.tr("elements.name.texts");
-        else return TR.tr("elements.name.text");
+        return TR.tr("elements.name.text");
     }
     
     public String getText(){
@@ -575,8 +576,7 @@ public class TextElement extends Element {
     public TextTreeItem toNoDisplayTextElement(int type, boolean hasCore){
         if(hasCore)
             return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000, this);
-        else
-            return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
+        return new TextTreeItem(textNode.getFont(), getText(), (Color) textNode.getFill(), getTextMaxWidth(), type, 0, System.currentTimeMillis() / 1000);
     }
     
 }

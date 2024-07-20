@@ -46,7 +46,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             
             JsonToken token;
             while((token = jParser.nextToken()) != null){
-                String key = jParser.getCurrentName();
+                String key = jParser.currentName();
                 
                 if("name".equals(key)){
                     jParser.nextToken();
@@ -83,7 +83,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             
             JsonToken token;
             while((token = jParser.nextToken()) != null){
-                String fieldname = jParser.getCurrentName();
+                String fieldname = jParser.currentName();
                 
                 if("prerelease".equals(fieldname)){
                     jParser.nextToken();
@@ -132,7 +132,7 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
             
             JsonToken token;
             while((token = jParser.nextToken()) != null){
-                String fieldname = jParser.getCurrentName();
+                String fieldname = jParser.currentName();
                 
                 if("tag_name".equals(fieldname)){
                     jParser.nextToken();
@@ -254,30 +254,28 @@ public class UpdateWindow extends AlternativeWindow<VBox> {
         boolean first = true;
         for(String line : langText.split(Pattern.quote("## \uD83C\uDF10"))[0].split(Pattern.quote("\r\n"))){
             if(first && line.isBlank()) continue;
-            else{
+            
+            if(line.startsWith("##")){
+                Label label = new Label(line.replace("##", ""));
+                label.setWrapText(true);
+                if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
+                else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
+                root.getChildren().add(label);
+            }else if(line.isEmpty()){
+                Region spacer = new Region();
+                spacer.setPrefHeight(5);
+                root.getChildren().add(spacer);
+            }else{
+                Label label = new Label(line.replace("##", ""));
+                label.setWrapText(true);
                 
-                if(line.startsWith("##")){
-                    Label label = new Label(line.replace("##", ""));
-                    label.setWrapText(true);
-                    if(first) label.setStyle("-fx-padding: 0; -fx-font-size: 16; -fx-font-weight: 700;");
-                    else label.setStyle("-fx-padding: 10 0 0 0; -fx-font-size: 16; -fx-font-weight: 700;");
-                    root.getChildren().add(label);
-                }else if(line.isEmpty()){
-                    Region spacer = new Region();
-                    spacer.setPrefHeight(5);
-                    root.getChildren().add(spacer);
+                if(line.startsWith("- ")){
+                    label.setStyle("-fx-padding: 0 0 0 30;");
                 }else{
-                    Label label = new Label(line.replace("##", ""));
-                    label.setWrapText(true);
-                    
-                    if(line.startsWith("- ")){
-                        label.setStyle("-fx-padding: 0 0 0 30;");
-                    }else{
-                        label.setStyle("-fx-padding: 0 0 0 15;");
-                    }
-                    
-                    root.getChildren().add(label);
+                    label.setStyle("-fx-padding: 0 0 0 15;");
                 }
+                
+                root.getChildren().add(label);
             }
             first = false;
         }

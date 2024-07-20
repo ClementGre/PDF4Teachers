@@ -320,8 +320,9 @@ public class MainWindow extends Stage {
         ObservableList<Screen> screens = Screen.getScreensForRectangle(window.getX(), window.getY(), window.getWidth(), window.getHeight());
         if(screens.isEmpty()){
             if(window == Main.window) return Screen.getPrimary();
-            else return getScreen();
-        }else return screens.getFirst();
+            return getScreen();
+        }
+        return screens.getFirst();
     }
     
     /*

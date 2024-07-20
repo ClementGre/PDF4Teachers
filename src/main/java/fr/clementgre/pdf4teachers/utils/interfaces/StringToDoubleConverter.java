@@ -26,7 +26,7 @@ public class StringToDoubleConverter extends StringConverter<Double>{
     public String toString(Double value){
         lastValue = value;
         if(twoDecimals) return MainWindow.twoDigFormat.format(value);
-        else return MainWindow.fourDigFormat.format(value);
+        return MainWindow.fourDigFormat.format(value);
     }
     
     @Override

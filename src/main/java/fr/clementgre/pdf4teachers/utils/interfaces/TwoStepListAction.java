@@ -68,12 +68,11 @@ public class TwoStepListAction<T, D>{
                     }
                     if(result.getValue() == -1){
                         return false;
+                    }
+                    if(excludedReasons.containsKey(result.getValue())){
+                        excludedReasons.put(result.getValue(), excludedReasons.get(result.getValue()) + 1);
                     }else{
-                        if(excludedReasons.containsKey(result.getValue())){
-                            excludedReasons.put(result.getValue(), excludedReasons.get(result.getValue()) + 1);
-                        }else{
-                            excludedReasons.put(result.getValue(), 1);
-                        }
+                        excludedReasons.put(result.getValue(), 1);
                     }
                 }
             }catch(Exception e){

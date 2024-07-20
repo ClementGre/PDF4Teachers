@@ -165,13 +165,12 @@ public class SkillTableElementRenderer{
             
             return -newX - NotationLegend.BLOCK_SPACING; // New row => negative new x
             
-        }else{
-            newX = drawTextAt(x+graphSize+gTSpacing, y+2, notation.getName());
-            if(newX == -1) return Float.MIN_VALUE;
-            drawImage(graph, x, y+1, graphSize, graphSize);
-            
-            return newX + NotationLegend.BLOCK_SPACING;
         }
+        newX = drawTextAt(x+graphSize+gTSpacing, y+2, notation.getName());
+        if(newX == -1) return Float.MIN_VALUE;
+        drawImage(graph, x, y+1, graphSize, graphSize);
+        
+        return newX + NotationLegend.BLOCK_SPACING;
     }
     
     private void drawImage(Image image, float x, float y, float width, float height) throws IOException{

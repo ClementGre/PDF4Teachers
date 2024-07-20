@@ -23,7 +23,7 @@ public class PagesCropUndoAction extends UndoAction {
     private PDRectangle oldCropBox;
     private PDRectangle oldMediaBox;
     
-    private boolean isInverted = false;
+    private boolean isInverted;
     
     public PagesCropUndoAction(UType undoType, WeakReference<PageRenderer> page, PDRectangle oldCropBox, PDRectangle oldMediaBox){
         super(undoType);
@@ -34,7 +34,7 @@ public class PagesCropUndoAction extends UndoAction {
     
     @Override
     public boolean undoAndInvert(){
-        PageRenderer pageRenderer = this.page.get();
+        PageRenderer pageRenderer = page.get();
         
         if(pageRenderer != null && MainWindow.mainScreen.hasDocument(false)){
             Document document = MainWindow.mainScreen.document;

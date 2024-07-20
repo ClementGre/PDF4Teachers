@@ -50,10 +50,10 @@ public class TR {
         
         // Load locales
         
-        ENLocale = new Locale("en", "us");
+        ENLocale = Locale.of("en", "us");
         ENBundle = getBundleByLocale(ENLocale);
         
-        locale = new Locale(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
+        locale = Locale.of(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
         bundle = getBundleByLocale(locale);
         
     }
@@ -61,15 +61,14 @@ public class TR {
     public static ResourceBundle getBundleByLocale(Locale locale){
         if(Main.TRANSLATIONS_IN_CODE){ // Load the locale from ressource
             return getBundleByLocaleInCode(locale);
-        }else{
-            try{ // Load the locale from user files
-                Log.d("Loading locale " + locale.toString() + " from user files...");
-                FileInputStream fis = new FileInputStream(getLocaleFile(locale));
-                return new PropertyResourceBundle(fis);
-            }catch(Exception e){
-                Log.eNotified(e, "Unable to load translation in user files, trying to load from ressource...");
-                return getBundleByLocaleInCode(locale);
-            }
+        }
+        try{ // Load the locale from user files
+            Log.d("Loading locale " + locale.toString() + " from user files...");
+            FileInputStream fis = new FileInputStream(getLocaleFile(locale));
+            return new PropertyResourceBundle(fis);
+        }catch(Exception e){
+            Log.eNotified(e, "Unable to load translation in user files, trying to load from ressource...");
+            return getBundleByLocaleInCode(locale);
         }
     }
     
@@ -83,19 +82,18 @@ public class TR {
             if(locale != ENLocale){ // Load the EN locale
                 Log.e("Trying to load the English locale from user files...");
                 return getBundleByLocale(ENLocale);
-            }else{
-                Log.e("Return empty ressourceBundle...");
-                return new ResourceBundle() {
-                    @Override
-                    protected Object handleGetObject(String key){
-                        return null;
-                    }
-                    @Override
-                    public Enumeration<String> getKeys(){
-                        return Collections.emptyEnumeration();
-                    }
-                };
             }
+            Log.e("Return empty ressourceBundle...");
+            return new ResourceBundle() {
+                @Override
+                protected Object handleGetObject(String key){
+                    return null;
+                }
+                @Override
+                public Enumeration<String> getKeys(){
+                    return Collections.emptyEnumeration();
+                }
+            };
         }
     }
     
@@ -106,8 +104,8 @@ public class TR {
             case "fr" -> {return "fr_fr";}
             case "en" -> {return "en_us";}
             case "it" -> {return "it_it";}
+            default -> {return null;}
         }
-        return null;
     }
     
     public static String getSettingsLocaleLanguage(){
@@ -135,7 +133,7 @@ public class TR {
     
     
     public static void updateLocale(){
-        locale = new Locale(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
+        locale = Locale.of(getSettingsLocaleLanguage(), getSettingsLocaleCountry());
         bundle = getBundleByLocale(locale);
     }
     
@@ -143,7 +141,7 @@ public class TR {
     public static String tr(String key, ResourceBundle bundle, boolean trEn){
         if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
             if(trEn) return tr(key, ENBundle, false);
-            else return key;
+            return key;
         }
         return bundle.getString(key);
     }
@@ -152,7 +150,7 @@ public class TR {
         if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
             if(!bundle.containsKey(key) || bundle.getString(key).isBlank()){
                 if(trEn) return tr(key, ENBundle, false, args);
-                else return key + " {" + String.join(", ", args) + "}";
+                return key + " {" + String.join(", ", args) + "}";
             }
         }
         MessageFormat formatter = new MessageFormat("");

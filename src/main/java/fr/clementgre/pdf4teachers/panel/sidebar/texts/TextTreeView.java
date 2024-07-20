@@ -347,17 +347,23 @@ public class TextTreeView extends TreeView<String> {
         
         if(sortType.equals(TR.tr("sorting.sortType.addDate.short"))){
             return Sorter.sortElementsByDate(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.name"))){
+        }
+        if(sortType.equals(TR.tr("sorting.sortType.name"))){
             return Sorter.sortElementsByName(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.use"))){
+        }
+        if(sortType.equals(TR.tr("sorting.sortType.use"))){
             return Sorter.sortElementsByUtils(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.fontFamily"))){
+        }
+        if(sortType.equals(TR.tr("sorting.sortType.fontFamily"))){
             return Sorter.sortElementsByPolice(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.fontSize"))){
+        }
+        if(sortType.equals(TR.tr("sorting.sortType.fontSize"))){
             return Sorter.sortElementsBySize(toSort, order);
-        }else if(sortType.equals(TR.tr("string.color"))){
+        }
+        if(sortType.equals(TR.tr("string.color"))){
             return Sorter.sortElementsByColor(toSort, order);
-        }else if(sortType.equals(TR.tr("sorting.sortType.location"))){
+        }
+        if(sortType.equals(TR.tr("sorting.sortType.location"))){
             return Sorter.sortElementsByCorePosition(toSort, order);
         }
         return toSort;

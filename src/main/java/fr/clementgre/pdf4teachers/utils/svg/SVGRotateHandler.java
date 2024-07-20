@@ -27,9 +27,11 @@ public class SVGRotateHandler extends SVGTransformHandler{
     }
     
     
+    @Override
     protected float manageX(float x, float y, boolean rel){
         return x * cosA + y * -sinA;
     }
+    @Override
     protected float manageY(float y, float x, boolean rel){
         return x * sinA + y * cosA;
     }

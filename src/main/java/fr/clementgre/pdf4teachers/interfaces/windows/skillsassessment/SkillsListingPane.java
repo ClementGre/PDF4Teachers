@@ -65,7 +65,7 @@ public class SkillsListingPane extends Tab {
         acronymCol.setMaxWidth(150);
         
         tableView.setRowFactory(getRowFactory());
-        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tableView.setOnKeyPressed(e -> {
             if(e.getCode().equals(KeyCode.DELETE)){
                 tableView.getItems().remove(tableView.getSelectionModel().getSelectedItem());

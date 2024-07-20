@@ -313,7 +313,7 @@ public class ImageElement extends GraphicElement {
     }
     public static String getElementNameStatic(boolean plural){
         if(plural) return TR.tr("elements.name.images");
-        else return TR.tr("elements.name.image");
+        return TR.tr("elements.name.image");
     }
 
     public String getImageId(){

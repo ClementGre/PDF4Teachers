@@ -76,7 +76,7 @@ public class GradeTreeItemField extends ShortcutsTextArea {
             
             // TAB PRESSED
             
-            if(newValue.contains("\u0009")){
+            if(newValue.contains("\t")){
                 if(type == GradeTreeItem.FieldType.OUT_OF_TOTAL){
                     GradeTreeItem afterItem = treeItem.getAfterChildItem();
                     MainWindow.gradeTab.treeView.getSelectionModel().select(afterItem);

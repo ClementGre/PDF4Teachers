@@ -85,9 +85,9 @@ public class AutoCompletePopup<T> extends PopupControl {
      * Creates a new AutoCompletePopup
      */
     public AutoCompletePopup(){
-        this.setAutoFix(true);
-        this.setAutoHide(true);
-        this.setHideOnEscape(true);
+        setAutoFix(true);
+        setAutoHide(true);
+        setHideOnEscape(true);
         
         getStyleClass().add(DEFAULT_STYLE_CLASS);
     }
@@ -128,7 +128,7 @@ public class AutoCompletePopup<T> extends PopupControl {
         } else {
             setAnchorLocation(AnchorLocation.CONTENT_TOP_LEFT);
         }
-        this.show(parent,node.localToScreen(0, 0).getX(),
+        show(parent,node.localToScreen(0, 0).getX(),
                 node.localToScreen(0, 0).getY() + (node.getBoundsInParent().getHeight() * Main.settings.zoom.getValue()));
         
     }

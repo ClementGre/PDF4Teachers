@@ -784,7 +784,7 @@ public class MainScreen extends Pane {
         return status;
     }
     public int getStatus(){
-        return this.status.get();
+        return status.get();
     }
     
     public double getZoomFactor(){

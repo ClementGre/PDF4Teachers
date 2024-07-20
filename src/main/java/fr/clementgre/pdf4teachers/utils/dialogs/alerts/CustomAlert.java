@@ -75,56 +75,65 @@ public class CustomAlert extends Alert {
     }
     
     public ButtonType getShowAndWait(){
-        Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return null;
-        else return result.get();
+        return showAndWait().orElse(null);
     }
     public ButtonPosition getShowAndWaitGetButtonPosition(ButtonPosition defaultPosition){
         Optional<ButtonType> result = showAndWait();
         if(result.isEmpty()) return defaultPosition;
         ButtonPosition pos = buttonDataToPosition(result.get().getButtonData(), true);
         if(pos == null) return defaultPosition;
-        else return pos;
+        return pos;
     }
     // LINUX: NO - YES - BACK
     // WINDOWS: BACK - YES - NO
     // OSX: NO - YES - APPLY
-    public ButtonPosition buttonDataToPosition(ButtonBar.ButtonData data, boolean acceptNull){
-        if(data == ButtonBar.ButtonData.YES) return ButtonPosition.DEFAULT;
-        else if(data == ButtonBar.ButtonData.NO) return ButtonPosition.CLOSE;
-        else if(data == ButtonBar.ButtonData.LEFT) return ButtonPosition.OTHER_LEFT;
-        else{
-            if(!acceptNull) return ButtonPosition.OTHER_RIGHT;
-            else if(PlatformUtils.isMac() && data == ButtonBar.ButtonData.APPLY) return ButtonPosition.OTHER_RIGHT;
-            else if(data == ButtonData.BACK_PREVIOUS) return ButtonPosition.OTHER_RIGHT;
-        }
-        return null;
+    public ButtonPosition buttonDataToPosition(ButtonBar.ButtonData data, boolean acceptNull) {
+        return switch (data) {
+            case YES -> ButtonPosition.DEFAULT;
+            case NO -> ButtonPosition.CLOSE;
+            case LEFT -> ButtonPosition.OTHER_LEFT;
+            case APPLY -> {
+                if (!acceptNull) {
+                    yield ButtonPosition.OTHER_RIGHT;
+                }
+                if (PlatformUtils.isMac()) {
+                    yield ButtonPosition.OTHER_RIGHT;
+                }
+                yield null;
+            }
+            case BACK_PREVIOUS -> acceptNull ? null : ButtonPosition.OTHER_RIGHT;
+            default -> acceptNull ? null : ButtonPosition.OTHER_RIGHT;
+        };
     }
-    public ButtonData buttonPositionToData(ButtonPosition pos){
-        if(pos == ButtonPosition.DEFAULT) return ButtonBar.ButtonData.YES;
-        else if(pos == ButtonPosition.CLOSE) return ButtonBar.ButtonData.NO;
-        else if(pos == ButtonPosition.OTHER_LEFT) return ButtonBar.ButtonData.LEFT;
-        else{ // OTHER_RIGHT
-            if(PlatformUtils.isMac()) return ButtonBar.ButtonData.APPLY;
-            else return ButtonData.BACK_PREVIOUS;
-        }
+    
+    public ButtonBar.ButtonData buttonPositionToData(ButtonPosition pos) {
+        return switch (pos) {
+            case DEFAULT -> ButtonBar.ButtonData.YES;
+            case CLOSE -> ButtonBar.ButtonData.NO;
+            case OTHER_LEFT -> ButtonBar.ButtonData.LEFT;
+            case OTHER_RIGHT -> {
+                if (PlatformUtils.isMac()) {
+                    yield ButtonBar.ButtonData.APPLY;
+                }
+                yield ButtonData.BACK_PREVIOUS;
+            }
+        };
     }
     
     public boolean getShowAndWaitIsDefaultButton(){
-        Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return false;
-        else return result.get().getButtonData().isDefaultButton();
+        return showAndWait()
+                .map(buttonType -> buttonType.getButtonData().isDefaultButton())
+                .orElse(false);
     }
     public boolean getShowAndWaitIsCancelCloseButton(){
-        Optional<ButtonType> result = showAndWait();
-        if(result.isEmpty()) return true;
-        else return result.get().getButtonData().isCancelButton();
+        return showAndWait()
+                .map(buttonType -> buttonType.getButtonData().isCancelButton())
+                .orElse(true);
     }
     public boolean getShowAndWaitIsCancelButton(){
-        Optional<ButtonType> result = showAndWait();
-        
-        if(result.isEmpty()) return false;
-        else return result.get().getButtonData().isCancelButton();
+        return showAndWait()
+                .map(buttonType -> buttonType.getButtonData().isCancelButton())
+                .orElse(false);
     }
     public void callBackShow(CallBackArg<ButtonType> callback){
         new Thread(() -> callback.call(getShowAndWait()), "CustomAlertThread").start();

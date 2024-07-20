@@ -59,8 +59,8 @@ public class IconToggleButton extends ToggleButton {
     }
     
     private void updateIcon(){
-        if(isSelected()) setGraphic(SVGPathIcons.generateImage(svgPathSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
-        else setGraphic(SVGPathIcons.generateImage(svgPathNotSelected, "black", 0, this.size, ImageUtils.defaultDarkColorAdjust));
+        if(isSelected()) setGraphic(SVGPathIcons.generateImage(svgPathSelected, "black", 0, size, ImageUtils.defaultDarkColorAdjust));
+        else setGraphic(SVGPathIcons.generateImage(svgPathNotSelected, "black", 0, size, ImageUtils.defaultDarkColorAdjust));
     }
     
 }

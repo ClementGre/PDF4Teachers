@@ -11,6 +11,7 @@ public class CallsBufferMemory<T> extends CallsBuffer<T>{
     
     private long lastCallDate;
     private T olderArg;
+    @Override
     public void call(T arg){
         if(Math.abs(System.nanoTime() - lastCallDate) > waitTimeNs){ // First call
             olderArg = arg;
