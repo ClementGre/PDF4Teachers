@@ -10,7 +10,6 @@ import fr.clementgre.pdf4teachers.document.Document;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.elements.*;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.MoveUndoAction;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ResizeUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.pages.PageAddRemoveUndoAction;
@@ -399,7 +398,7 @@ public class PDFPagesEditor {
             marginLeft = marginLeft * width / 100f;
         }
         
-        boolean excessiveCrop = false;
+        boolean excessiveCrop;
         if(rotation == 90 || rotation == 270){
             excessiveCrop = marginLeft + marginRight <= -oldCropBox.getHeight() || marginBottom + marginTop <= -oldCropBox.getWidth();
         }else{
@@ -451,31 +450,35 @@ public class PDFPagesEditor {
         double oldWidth = rotation == 90 || rotation == 270 ? oldCropBox.getHeight() : oldCropBox.getWidth();
         double oldHeight = rotation == 90 || rotation == 270 ? oldCropBox.getWidth() : oldCropBox.getHeight();
         
-        for(Element el : MainWindow.mainScreen.document.getPage(pageNumber).getElements()){
-            MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, el));
-            
-            // New element coordinates in Page user space
-            double newX = marginLeft + el.getRealX() * oldWidth / Element.GRID_WIDTH;
-            double newY = marginTop + el.getRealY() * oldHeight / Element.GRID_HEIGHT;
-            double hScaleFactor = newWidth / oldWidth;
-            double vScaleFactor = newHeight / oldHeight;
-            
-            el.setRealX((int) (newX * Element.GRID_WIDTH / newWidth));
-            el.setRealY((int) (newY * Element.GRID_HEIGHT / newHeight));
-            if(el instanceof GraphicElement ge){
-                MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.PAGE_NO_COUNT_BEFORE, ge));
-                ge.setRealWidth((int) (ge.getRealWidth() / hScaleFactor));
-                ge.setRealHeight((int) (ge.getRealHeight() / vScaleFactor));
+        MainWindow.mainScreen.getUndoEngine().setOverrideUndoType(UType.PAGE_NO_COUNT_BEFORE);
+        try{
+            for(Element el : MainWindow.mainScreen.document.getPage(pageNumber).getElements()){
+                MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, el));
+                
+                // New element coordinates in Page user space
+                double newX = marginLeft + el.getRealX() * oldWidth / Element.GRID_WIDTH;
+                double newY = marginTop + el.getRealY() * oldHeight / Element.GRID_HEIGHT;
+                double hScaleFactor = newWidth / oldWidth;
+                double vScaleFactor = newHeight / oldHeight;
+                
+                el.setRealX((int) (newX * Element.GRID_WIDTH / newWidth));
+                el.setRealY((int) (newY * Element.GRID_HEIGHT / newHeight));
+                if(el instanceof GraphicElement ge){
+                    MainWindow.mainScreen.registerNewAction(new ResizeUndoAction(UType.PAGE_NO_COUNT_BEFORE, ge));
+                    ge.setRealWidth((int) (ge.getRealWidth() / hScaleFactor));
+                    ge.setRealHeight((int) (ge.getRealHeight() / vScaleFactor));
+                }
+                
+                if(el instanceof TextElement te){
+                    // Undo action automatically added in font listener
+                    te.setFont(new Font(te.getFont().getName(), te.getFont().getSize() / hScaleFactor));
+                }
+                el.checkLocation(false);
             }
-            
-            if(el instanceof TextElement te){
-                MainWindow.mainScreen.registerNewAction(new ObservableChangedUndoAction<>(te, te.fontProperty(), te.getFont(), UType.PAGE_NO_COUNT_BEFORE));
-                te.setFont(new Font(te.getFont().getName(), te.getFont().getSize() / hScaleFactor));
-            }
-            el.checkLocation(false);
+            setPageCropBoxAllowingMargin(pageNumber, newCropBox, updateUI);
+        }finally{
+            MainWindow.mainScreen.getUndoEngine().setOverrideUndoType(null);
         }
-        
-        setPageCropBoxAllowingMargin(pageNumber, newCropBox, updateUI);
         return true;
     }
     public void setPageCropBoxAllowingMargin(int pageNumber, PDRectangle box, boolean updateUI){

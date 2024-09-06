@@ -56,7 +56,7 @@ public class PagesCropUndoAction extends UndoAction {
             document.updateShowsStatus();
             document.updateBackgrounds();
             
-            // TODO: Move elements properly
+            // Elements will be moved and resized by NO_COUNT_BEFORE actions
             
             // invert
             oldCropBox = currentCropBox;

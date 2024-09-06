@@ -11,7 +11,6 @@ import fr.clementgre.pdf4teachers.datasaving.Config;
 import fr.clementgre.pdf4teachers.document.editions.Edition;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.ObservableChangedUndoAction;
 import fr.clementgre.pdf4teachers.document.editions.undoEngine.UType;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.autotips.AutoTipsManager;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -126,7 +125,7 @@ public class GradeElement extends Element {
             }
             
             // When this is called due to a undo action, need to update GradeTreeItem
-            if(UndoEngine.isUndoingThings){
+            if(MainWindow.mainScreen.getUndoEngine().isUndoingThings()){
                 GradeTreeItem treeItem = getGradeTreeItem();
                 if(treeItem != null){
                     treeItem.getPanel().nameField.setText(newValue);
@@ -173,7 +172,7 @@ public class GradeElement extends Element {
                 ((GradeTreeItem) treeItem.getParent()).makeSum(getPageNumber(), getRealY());
             
             // When this is called due to a undo action, need to update GradeTreeItem
-            if(UndoEngine.isUndoingThings){
+            if(MainWindow.mainScreen.getUndoEngine().isUndoingThings()){
                 treeItem.getPanel().gradeField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));
             }else if(!getGradeTreeItem().hasSubGrade()){ // Parents have an auto-defined value so otherwise, this is useless
                 // This is the first registration of this action/property.
@@ -191,7 +190,7 @@ public class GradeElement extends Element {
             
             
             // When this is called due to an undo action, need to update GradeTreeItem
-            if(UndoEngine.isUndoingThings){
+            if(MainWindow.mainScreen.getUndoEngine().isUndoingThings()){
                 GradeTreeItem treeItem = getGradeTreeItem();
                 if(treeItem != null)
                     treeItem.getPanel().totalField.setText(MainWindow.gradesDigFormat.format(newValue));
@@ -209,7 +208,7 @@ public class GradeElement extends Element {
             updateText();
             
             // When this is called due to an undo action, need to update GradeTreeItem
-            if(UndoEngine.isUndoingThings){
+            if(MainWindow.mainScreen.getUndoEngine().isUndoingThings()){
                 GradeTreeItem treeItem = getGradeTreeItem();
                 if(treeItem != null && treeItem.hasOutOfPanel())
                     treeItem.getOutOfPanel().totalField.setText(newValue.doubleValue() == -1 ? "" : MainWindow.gradesDigFormat.format(newValue));

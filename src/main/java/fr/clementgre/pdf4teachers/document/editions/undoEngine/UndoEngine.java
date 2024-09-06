@@ -21,15 +21,17 @@ public class UndoEngine {
     private ArrayList<UndoAction> undoList = new ArrayList<>();
     private ArrayList<UndoAction> redoList = new ArrayList<>();
     
+    private static final boolean VERBOSE = false;
     // Prevent adding actions while reversing an action.
-    public static boolean isUndoingThings;
-    private static boolean isLocked;
-    
-    private static final boolean VERBOSE = true;
-    
-    
+    private boolean isUndoingThings;
+    private UType overrideUndoType = null;
     public void registerNewAction(UndoAction action){
-        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings || isLocked) return;
+        if(overrideUndoType != null){
+            if(VERBOSE && overrideUndoType != action.getUndoType())
+                Log.t("Replacing action " + action + " UType from " + action.getUndoType() + " to " + overrideUndoType);
+            action.setUndoType(overrideUndoType);
+        }
+        if(action.getUndoType() == UType.NO_UNDO || isUndoingThings) return;
         
         if(VERBOSE) Log.t("Adding action to undo stack: " + action + " [" + action.getUndoType() + "]");
         undoList.addFirst(action);
@@ -141,15 +143,22 @@ public class UndoEngine {
             redoList = new ArrayList<>(redoList.stream().limit(MAX_STACK_LENGTH).toList());
         }
     }
-    
-    
-    public static void lock(){
-        isLocked = true;
+    public UType getOverrideUndoType(){
+        return overrideUndoType;
     }
-    public static void unlock(){
-        isLocked = false;
+    public void setOverrideUndoType(UType overrideUndoType){
+        this.overrideUndoType = overrideUndoType;
     }
-    public static boolean isLocked(){
-        return isLocked;
+    public boolean isUndoingThings(){
+        return isUndoingThings;
+    }
+    public void lock(){
+        setOverrideUndoType(UType.NO_UNDO);
+    }
+    public void unlock(){
+        setOverrideUndoType(null);
+    }
+    public boolean isLocked(){
+        return getOverrideUndoType() == UType.NO_UNDO;
     }
 }

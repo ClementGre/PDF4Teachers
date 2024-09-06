@@ -9,10 +9,10 @@ public enum UType{
     // Regular actions are undone one by one, but can be followed/preceded by NO_COUNT actions.
     ELEMENT,
     PAGE,
-    // NO_COUNT actions are executed BEFORE a regular action.
+    // NO_COUNT actions executed BEFORE a regular action.
     ELEMENT_NO_COUNT_BEFORE,
     PAGE_NO_COUNT_BEFORE,
-    // NO_COUNT_AFTER actions are executed AFTER a regular action.
+    // NO_COUNT_AFTER actions executed AFTER a regular action.
     ELEMENT_NO_COUNT_AFTER,
     PAGE_NO_COUNT_AFTER,
     // Ignored action that will not even exist in the undo stack.

@@ -295,9 +295,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         edit.addEventHandler(Menu.ON_SHOWING, (e) -> {
             String nextUndo = null;
             String nextRedo = null;
-            if(MainWindow.mainScreen.getUndoEngineAuto() != null){
-                nextUndo = MainWindow.mainScreen.getUndoEngineAuto().getUndoNextName();
-                nextRedo = MainWindow.mainScreen.getUndoEngineAuto().getRedoNextName();
+            if(MainWindow.mainScreen.getUndoEngine() != null){
+                nextUndo = MainWindow.mainScreen.getUndoEngine().getUndoNextName();
+                nextRedo = MainWindow.mainScreen.getUndoEngine().getRedoNextName();
             }
             if(nextUndo != null) nextUndo = TR.tr("actions.undo") + " \"" + nextUndo + "\"";
             else nextUndo = TR.tr("actions.undo") + " (" + TR.tr("actions.undo.nothingToUndo") + ")";
@@ -324,12 +324,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             else edit3Cut.setText(cut);
             if(edit4Copy instanceof NodeMenuItem menu) menu.setName(copy);
             else edit4Copy.setText(copy);
-            
-            if(CopyPasteManager.doNodeCanPerformAction(Main.window.getScene().getFocusOwner(), CopyPasteManager.CopyPasteType.PASTE)){
-            
-            }else if(Element.ELEMENT_CLIPBOARD_KEY.equals(Clipboard.getSystemClipboard().getContent(Main.INTERNAL_FORMAT)) && Element.elementClipboard != null){
-            
-            }
             
             
             String paste = TR.tr("actions.paste");

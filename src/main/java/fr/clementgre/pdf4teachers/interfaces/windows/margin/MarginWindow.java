@@ -56,7 +56,6 @@ public class MarginWindow extends AlternativeWindow<VBox> {
         root.getChildren().addAll(marginKind, marginInfo, marginPane);
         
         // Kind
-        
         marginKind.getChildren().addAll(marginKindRelative, marginKindAbsolute);
         ToggleGroup marginKindGroup = new ToggleGroup();
         marginKindGroup.getToggles().addAll(marginKindRelative, marginKindAbsolute);

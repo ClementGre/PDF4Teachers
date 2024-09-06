@@ -6,7 +6,6 @@
 package fr.clementgre.pdf4teachers.interfaces.windows.booklet;
 
 import fr.clementgre.pdf4teachers.document.editions.Edition;
-import fr.clementgre.pdf4teachers.document.editions.undoEngine.UndoEngine;
 import fr.clementgre.pdf4teachers.interfaces.windows.AlternativeWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.MainWindow;
 import fr.clementgre.pdf4teachers.interfaces.windows.language.TR;
@@ -99,13 +98,13 @@ public class BookletWindow extends AlternativeWindow<VBox> {
         convert.setOnAction((e) -> {
             if(MainWindow.mainScreen.hasDocument(true) && MainWindow.mainScreen.document.save(false) && Edition.isSave()){
                 try{
-                    UndoEngine.lock();
+                    MainWindow.mainScreen.getUndoEngine().lock();
                     new BookletEngine(convertKindMake.isSelected(), !doNotReorderPages.isSelected(), doTookPages4by4.isSelected(), doReverseOrder.isSelected(), doCopyOriginal.isSelected() ? copyName : null).convert(MainWindow.mainScreen.document);
                     close();
                 }catch(IOException ex){
                     Log.eAlerted(ex);
                 }finally{
-                    Platform.runLater(UndoEngine::unlock);
+                    Platform.runLater(MainWindow.mainScreen.getUndoEngine()::unlock);
                 }
             }
         });

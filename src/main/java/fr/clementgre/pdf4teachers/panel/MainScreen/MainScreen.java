@@ -836,9 +836,6 @@ public class MainScreen extends Pane {
         if(hasDocument(false) && document.hasUndoEngine()) return document.getUndoEngine();
         return null;
     }
-    public UndoEngine getUndoEngineAuto(){
-        return getUndoEngine();
-    }
     
     public <T> boolean isNextUndoActionProperty(Property<T> property){
         if(getUndoEngine() != null && getUndoEngine().getUndoNextAction() instanceof ObservableChangedUndoAction action){

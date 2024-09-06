@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Clément Grennerat
+ * Copyright (c) 2021-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -7,7 +7,7 @@ package fr.clementgre.pdf4teachers.document.editions.undoEngine;
 
 public abstract class UndoAction{
     
-    private final UType undoType;
+    private UType undoType;
     
     public UndoAction(UType undoType){
         this.undoType = undoType;
@@ -22,4 +22,9 @@ public abstract class UndoAction{
     public UType getUndoType(){
         return undoType;
     }
+    
+    public void setUndoType(UType undoType){
+        this.undoType = undoType;
+    }
+    
 }
