@@ -50,22 +50,8 @@ public class Main extends Application {
     public static final String APP_NAME = "PDF4Teachers";
     public static final String APP_ID = "fr.clementgre.pdf4teachers.applicationid";
     
-    static{
-        /*if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.APP_OPEN_FILE)) {
-            Desktop.getDesktop().setOpenFileHandler(event -> {
-                for (File file : event.getFiles()) {
-                    Log.d("Open file: " + file.getAbsolutePath());
-                }
-                
-                final String searchTerm = event.getSearchTerm();
-                if (searchTerm != null) {
-                    Log.d("Search term: " + searchTerm);
-                }
-            });
-        }*/
-    }
-    
     /********** Version parameters **********/
+    public enum Mode {DEV, SNAPSHOT, PRE_RELEASE, RELEASE}
     public static final Mode mode = Mode.DEV;
     public static final int VERSION_ID = VersionIds.DV1_1_4_2;
     public static final String VERSION = getVersionName("1.4.2", 1);
@@ -205,6 +191,5 @@ public class Main extends Application {
             startMainWindowAuto();
         }
     }
-    public enum Mode {DEV, SNAPSHOT, PRE_RELEASE, RELEASE}
     
 }

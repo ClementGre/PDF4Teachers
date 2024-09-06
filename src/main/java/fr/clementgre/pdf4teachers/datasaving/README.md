@@ -1,30 +1,38 @@
 ## fr.clementgre.pdf4teachers.datasaving
 
-Theses classes are used to store all data excluding Languages and Editions. It uses the files userdata.yml, settings.yml
-and textelements.yml.
+These classes are used to store all data excluding Languages and Editions. It uses the
+files `userdata.yml`, `sync_userdata.yml`, `settings.yml`
+and all `simpleconfigs` files.
 
-The data is loaded/saved with SnakeYAML who transform YAML to HashMap<String, Object> and vice versa. Config is an "
-utils" used to edit theses HashMap easierly.
+The data is loaded/saved with SnakeYAML which transform YAML to HashMap<String, Object> and vice versa. Config is a
+utility used to edit the HashMap structures more easily.
 
 #### Reflection
 
-UserData.java and Settings.java uses reflection to store and load vars automaticaly. They use Annotations UserDataObject
-and SettingObject.
+`UserData.java`, `SyncUserData.java`, and `Settings.java` uses reflection to store and load variables automatically.
+They use Annotations `UserDataObject`
+or `SettingObject`.
 
-- UserDataObject is storing the path of the var in the yaml and the type of the var is detected with reflection.
-- For the Settings, there is BooleanSetting, StringSetting etc. who extens Setting. Setting is storing the path in the
-  YAML hierarchy, but also a title, description, an image etc. because almost all Setting is showed in the MenuBar (
-  .panel.MenuBar).
+- `UserDataObject` is storing the path of the variable in the yaml and the type of the variable is detected with
+  reflection.
+- For the `Settings`, there is `BooleanSetting`, `StringSetting` etc. who extends `Setting`. `Setting` is storing the
+  path in the
+  YAML hierarchy, but also a title, description, an image etc. because almost every `Setting` is shown in
+  the `MenuBar` (`.panel.MenuBar`).
 
-TextElementsData does not use reflexion since it is storing only the previous, favorite and lists elements.
+Classes that extends `SimpleConfig` in `.datasaving.simpleconfigs` do not use reflexion.
+When a simple config is loaded, the data is directly loaded onto the app ui.
+When the data is saved, the data is directly taken from the app ui.
 
 #### Async ?
 
-Settings load on the JavaFX Thread by Main.java, and they are saved everytime one is changed. Therefore, the Settings
+Settings load on the JavaFX Thread by `Main.java`, and they are saved everytime one is changed. Therefore, the Settings
 are always accessible.
+`SyncUserData` is loaded on the main thread like `Settings` in order to be available when the app starts. But it is
+saved the same way as `UserData`.
 
-UserData and TextElements load and save asyncly. It save only when closing MainWindow or every minute. Because they are
-loading data asyncly, we never get vars, it is UserData or TextElementsData who copy the loaded data into vars of
-anothers Class when load. When saving, he is copying back the vars.
+`UserData` and `SimpleConfig` load and save async. They are saved along with `SyncUserData` only when
+closing `MainWindow` or every minute. Because they are
+loaded async.
 
 
