@@ -83,6 +83,7 @@ public class Main extends Application {
     }
     
     public static void main(String[] args){
+        
         LogsManager.copyLogs();
         
         String javaDetails = "Java " + System.getProperty("java.version") + " on JFX " + System.getProperty("javafx.runtime.version") + " (" + System.getProperty("os.arch") + ")";

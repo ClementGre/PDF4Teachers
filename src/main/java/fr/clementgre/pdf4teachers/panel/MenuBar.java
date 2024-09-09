@@ -57,6 +57,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -216,7 +217,9 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         ////////// TOOLS //////////
         
-        tools3AddPages.getItems().add(new MenuItem(""));
+        ArrayList<MenuItem> tools3AddPagesItems = PageEditPane.getNewPageMenu(0, 0, Integer.MAX_VALUE, true, isSystemMenuBarSupported());
+        tools3AddPages.getItems().setAll(tools3AddPagesItems);
+        if(!isSystemMenuBarSupported()) NodeMenuItem.setupMenu(tools3AddPages);
         tools4PdfTools.getItems().addAll(tools4PdfTools1Margin, tools4PdfTools2Booklet, tools4PdfTools3SplitInterval, tools4PdfTools4SplitColor, tools4PdfTools5SplitSelection);
         tools6ExportImportEdition.getItems().addAll(tools7ExportEdition1All, tools7ExportEdition2Grades, tools7ImportEdition1All, tools7ImportEdition2Grades);
         tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
@@ -347,11 +350,6 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         
         tools1Convert.setOnAction(e -> new ConvertDocument());
         
-        tools3AddPages.setOnShowing(e -> {
-            tools3AddPages.getItems().setAll(PageEditPane.getNewPageMenu(0, 0, MainWindow.mainScreen.document.numberOfPages, true, isSystemMenuBarSupported()));
-            NodeMenuItem.setupMenu(tools3AddPages);
-        });
-        
         tools4PdfTools2Booklet.setOnAction(e -> new BookletWindow());
         tools4PdfTools1Margin.setOnAction(e -> new MarginWindow());
         tools4PdfTools3SplitInterval.setOnAction(e -> {
@@ -401,55 +399,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                     TR.tr("dialog.deleteEdits.completed.header"), TR.tr("dialog.deleteEdits.completed.details", String.valueOf(size))).show();
         });
         tools6SameNameEditions.setOnShowing((Event event) -> {
-            tools6SameNameEditions.getItems().clear();
-            int i = 0;
-            for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
-                
-                MenuItem item = createMenuItem(files.getValue().getAbsolutePath(), null);
-                if(files.getValue().getParentFile() != null){
-                    item.setText(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
-                }
-                
-                
-                tools6SameNameEditions.getItems().add(item);
-                item.setOnAction((ActionEvent actionEvent) -> {
-                    CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"), TR.tr("dialog.loadSameNameEdit.confirmation.header"));
-                    
-                    dialog.addNoButton(ButtonPosition.CLOSE);
-                    dialog.addYesButton(ButtonPosition.DEFAULT);
-                    dialog.addButton(TR.tr("dialog.loadSameNameEdit.confirmation.buttons.yesForAllSameFolder"), ButtonPosition.OTHER_RIGHT);
-                    
-                    ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
-                    if((option == ButtonPosition.DEFAULT || option == ButtonPosition.OTHER_RIGHT) && MainWindow.mainScreen.hasDocument(true)){
-                        
-                        // Opened document
-                        MainWindow.mainScreen.document.edition.clearEdit(false);
-                        Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
-                        MainWindow.mainScreen.document.loadEdition(false);
-                        
-                        // Other documents of the same folder in the list
-                        if(option == ButtonPosition.OTHER_RIGHT){
-                            
-                            for(File otherFileDest : MainWindow.filesTab.files.getItems()){
-                                if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
-                                    File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
-                                    
-                                    if(fromEditFile.exists()){
-                                        Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
-                                    }else{
-                                        WrongAlert alert = new WrongAlert(TR.tr("dialog.loadSameNameEdit.fileNotFound.title"),
-                                                TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile().toPath())), true);
-                                        if(alert.execute()) return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                });
-                i++;
-            }
-            if(i == 0) tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
-            else NodeMenuItem.setupMenu(tools6SameNameEditions);
+            if(!isSystemMenuBarSupported()) updateSameNameEditionsMenu();
         });
         
         tools7ExportEdition1All.setOnAction((e) -> EditionExporter.showExportDialog(false));
@@ -493,41 +443,37 @@ public class MenuBar extends javafx.scene.control.MenuBar {
         StyleManager.putStyle(this, Style.ACCENT);
         
         if(isSystemMenuBarSupported()){
+            getMenus().addAll(file, edit, tools, help);
             
-            if(PlatformUtils.isMac()){
-                getMenus().addAll(file, edit, tools, help);
-                
-                MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
-                
-                MenuItem about = tk.createAboutMenuItem("");
-                about.setText(TR.tr("menuBar.osx.about", Main.APP_NAME));
-                about.setOnAction((e) -> Main.showAboutWindow());
-                
-                MenuItem settings = tk.createAboutMenuItem("", (e) -> new SettingsWindow());
-                settings.setText(TR.tr("menuBar.settings"));
-                settings.setAccelerator(new KeyCodeCombination(KeyCode.COMMA, KeyCombination.META_DOWN));
-                
-                MenuItem hide = tk.createHideMenuItem("");
-                hide.setText(TR.tr("menuBar.osx.hide", Main.APP_NAME));
-                
-                MenuItem hideOthers = tk.createHideOthersMenuItem();
-                hideOthers.setText(TR.tr("menuBar.osx.hideOthers"));
-                
-                MenuItem unhideAll = tk.createUnhideAllMenuItem();
-                unhideAll.setText(TR.tr("menuBar.osx.unhideAll"));
-                
-                MenuItem quit = tk.createQuitMenuItem("");
-                quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
-                quit.setOnAction((e) -> {
-                    if(!MainWindow.requestCloseApp()) e.consume();
-                });
-                
-                Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
-                        about, new SeparatorMenuItem(), settings, new SeparatorMenuItem(),
-                        hide, hideOthers, unhideAll, new SeparatorMenuItem(), quit);
-                tk.setApplicationMenu(defaultApplicationMenu);
-            }
+            MenuToolkit tk = MenuToolkit.toolkit(TR.locale);
             
+            MenuItem about = tk.createAboutMenuItem("");
+            about.setText(TR.tr("menuBar.osx.about", Main.APP_NAME));
+            about.setOnAction((e) -> Main.showAboutWindow());
+            
+            MenuItem settings = tk.createAboutMenuItem("", (e) -> new SettingsWindow());
+            settings.setText(TR.tr("menuBar.settings"));
+            settings.setAccelerator(new KeyCodeCombination(KeyCode.COMMA, KeyCombination.META_DOWN));
+            
+            MenuItem hide = tk.createHideMenuItem("");
+            hide.setText(TR.tr("menuBar.osx.hide", Main.APP_NAME));
+            
+            MenuItem hideOthers = tk.createHideOthersMenuItem();
+            hideOthers.setText(TR.tr("menuBar.osx.hideOthers"));
+            
+            MenuItem unhideAll = tk.createUnhideAllMenuItem();
+            unhideAll.setText(TR.tr("menuBar.osx.unhideAll"));
+            
+            MenuItem quit = tk.createQuitMenuItem("");
+            quit.setText(TR.tr("menuBar.osx.quit", Main.APP_NAME));
+            quit.setOnAction((e) -> {
+                if(!MainWindow.requestCloseApp()) e.consume();
+            });
+            
+            Menu defaultApplicationMenu = new Menu(Main.APP_NAME, null,
+                    about, new SeparatorMenuItem(), settings, new SeparatorMenuItem(),
+                    hide, hideOthers, unhideAll, new SeparatorMenuItem(), quit);
+            tk.setApplicationMenu(defaultApplicationMenu);
         }else{
             settings.setOnClick(e -> new SettingsWindow());
             about.setOnClick(e -> Main.showAboutWindow());
@@ -537,7 +483,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             NodeMenuItem.setupMenu(tools6ExportImportEdition);
             NodeMenuItem.setupMenu(tools8Debug);
             NodeMenuItem.setupMenu(help);
-            // edit is edited dynamic
+            // edit is edited dynamically
             NodeMenuItem.setupDynamicMenu(edit);
             
             getMenus().addAll(file, edit, tools, help, settings, about);
@@ -548,6 +494,57 @@ public class MenuBar extends javafx.scene.control.MenuBar {
             });
         }
         
+    }
+    public void updateSameNameEditionsMenu(){
+        tools6SameNameEditions.getItems().clear();
+        int i = 0;
+        for(Map.Entry<File, File> files : Edition.getEditFilesWithSameName(MainWindow.mainScreen.document.getFile()).entrySet()){
+            
+            MenuItem item = createMenuItem(files.getValue().getAbsolutePath(), null);
+            if(files.getValue().getParentFile() != null){
+                item.setText(files.getValue().getParentFile().getAbsolutePath().replace(System.getProperty("user.home"), "~") + File.separator);
+            }
+            
+            tools6SameNameEditions.getItems().add(item);
+            item.setOnAction((ActionEvent actionEvent) -> {
+                CustomAlert dialog = new CustomAlert(Alert.AlertType.CONFIRMATION, TR.tr("dialog.importEdit.confirm.title"), TR.tr("dialog.loadSameNameEdit.confirmation.header"));
+                
+                dialog.addNoButton(ButtonPosition.CLOSE);
+                dialog.addYesButton(ButtonPosition.DEFAULT);
+                dialog.addButton(TR.tr("dialog.loadSameNameEdit.confirmation.buttons.yesForAllSameFolder"), ButtonPosition.OTHER_RIGHT);
+                
+                ButtonPosition option = dialog.getShowAndWaitGetButtonPosition(ButtonPosition.CLOSE);
+                if((option == ButtonPosition.DEFAULT || option == ButtonPosition.OTHER_RIGHT) && MainWindow.mainScreen.hasDocument(true)){
+                    
+                    // Opened document
+                    MainWindow.mainScreen.document.edition.clearEdit(false);
+                    Edition.mergeEditFileWithEditFile(files.getKey(), Edition.getEditFile(MainWindow.mainScreen.document.getFile()));
+                    MainWindow.mainScreen.document.loadEdition(false);
+                    
+                    // Other documents of the same folder in the list
+                    if(option == ButtonPosition.OTHER_RIGHT){
+                        
+                        for(File otherFileDest : MainWindow.filesTab.files.getItems()){
+                            if(otherFileDest.getParentFile().getAbsolutePath().equals(MainWindow.mainScreen.document.getFile().getParentFile().getAbsolutePath()) && !otherFileDest.equals(MainWindow.mainScreen.document.getFile())){
+                                File fromEditFile = Edition.getEditFile(new File(files.getValue().getParentFile().getAbsolutePath() + "/" + otherFileDest.getName()));
+                                
+                                if(fromEditFile.exists()){
+                                    Edition.mergeEditFileWithEditFile(fromEditFile, Edition.getEditFile(otherFileDest));
+                                }else{
+                                    WrongAlert alert = new WrongAlert(TR.tr("dialog.loadSameNameEdit.fileNotFound.title"),
+                                            TR.tr("dialog.loadSameNameEdit.fileNotFound.header", otherFileDest.getName(), FilesUtils.getPathReplacingUserHome(files.getValue().getParentFile().toPath())), true);
+                                    if(alert.execute()) return;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            i++;
+        }
+        if(i == 0) tools6SameNameEditions.getItems().add(tools6SameNameEditionsNull);
+        else if(!isSystemMenuBarSupported()) NodeMenuItem.setupMenu(tools6SameNameEditions);
+        forceUpdateMenu();
     }
     
     public void setupMenus(){
@@ -680,5 +677,14 @@ public class MenuBar extends javafx.scene.control.MenuBar {
     }
     public static MenuItem createMenuItem(String text, String imgName){
         return createMenuItem(text, imgName, null, "", false, false, false);
+    }
+    
+    /**
+     * Force the update of the menu bar on Mac OS
+     */
+    private void forceUpdateMenu(){
+        if(isSystemMenuBarSupported()){
+            getMenus().setAll(getMenus().stream().toList());
+        }
     }
 }

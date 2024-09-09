@@ -422,7 +422,7 @@ public class PageRenderer extends Pane {
                 placingElement.simulateDragToResize(e.getX() - placingElement.getLayoutX(), e.getY() - placingElement.getLayoutY(), e.isShiftDown());
                 
                 Platform.runLater(() -> {
-                    placingElement.select();
+                    if(placingElement != null) placingElement.select();
                 });
                 
                 setCursor(Cursor.CROSSHAIR);

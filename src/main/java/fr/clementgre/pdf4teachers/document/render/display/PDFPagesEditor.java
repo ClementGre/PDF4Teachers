@@ -790,6 +790,11 @@ public class PDFPagesEditor {
         }
     }
     
+    public int clampAddPageIndex(int index){
+        if(index < 0) return 0;
+        return Math.min(index, document.getNumberOfPages());
+    }
+    
     public boolean isEdited(){
         return edited;
     }

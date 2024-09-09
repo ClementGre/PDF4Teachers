@@ -105,9 +105,9 @@ public class PageEditPane extends VBox {
         menus.add(addConvert);
         menus.add(addTopPdf);
         
-        addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, indexAfter));
-        addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, indexAfter));
-        addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(indexAfter));
+        addBlank.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newBlankPage(page, MainWindow.mainScreen.document.pdfPagesRender.editor.clampAddPageIndex(indexAfter)));
+        addConvert.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newConvertPage(page, MainWindow.mainScreen.document.pdfPagesRender.editor.clampAddPageIndex(indexAfter)));
+        addTopPdf.setOnAction(ignored -> MainWindow.mainScreen.document.pdfPagesRender.editor.newPdfPage(MainWindow.mainScreen.document.pdfPagesRender.editor.clampAddPageIndex(indexAfter)));
         
         return menus;
     }

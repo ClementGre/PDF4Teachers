@@ -604,6 +604,9 @@ public class MainScreen extends Pane {
                 zoomOperator.updatePaneDimensions(scrollValue, 0.5);
             }
             
+            // Update menu bar
+            MainWindow.menuBar.updateSameNameEditionsMenu();
+            
             AutoTipsManager.showByAction("opendocument");
         });
     }
