@@ -5,11 +5,11 @@
 
 plugins {
     id 'application'
-    id 'org.beryx.jlink' version '2.24.4'
+    id 'org.beryx.jlink' version '3.0.1'
     id 'idea'
     // id 'com.dua3.javafxgradle7plugin' version '0.0.9' // 32 bits support (Anyway, JavaFX is into the JDK)
-    id 'org.openjfx.javafxplugin' version '0.0.14'
-    id "de.jjohannes.extra-java-module-info" version "0.8"
+    id 'org.openjfx.javafxplugin' version '0.1.0'
+    id 'org.javamodularity.moduleplugin' version '1.8.12'
 }
 repositories {
     mavenCentral()
@@ -17,85 +17,46 @@ repositories {
     maven { url 'https://jitpack.io' }
     flatDir { dirs 'locallibs' }
 }
-extraJavaModuleInfo {
-    failOnMissingModuleInfo.set(false)
-
-    automaticModule("jlatexmath-1.0.7.jar", "jlatexmath")
-    automaticModule("writer2latex.jar", "writertolatex")
-
-    automaticModule("jlatexmath-font-greek-1.0.7.jar", "jlatexmath.font.greek")
-    automaticModule("jlatexmath-font-cyrillic-1.0.7.jar", "jlatexmath.font.cyrillic")
-
-    automaticModule("xmpcore-6.0.6.jar", "xmpcore")
-
-    automaticModule("metadata-extractor-2.18.0.jar", "metadata.extractor")
-
-    automaticModule("commons-logging-1.2.jar", "commons.logging")
-
-    automaticModule("jai-imageio-core-1.4.0.jar", "imageio.core")
-    automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
-
-    automaticModule("batik-parser-1.14.jar", "batik.parser")
-
-    automaticModule("google-diff-match-patch-0.1.jar", "google.diffmatchpatch")
-    automaticModule("unique4j-1.4.jar", "uniqueforj")
-
-}
-
 dependencies {
-
     implementation 'org.jetbrains:annotations:23.0.0'
-
     // JMetro
     implementation(group: 'org.jfxtras', name: 'jmetro', version: '11.6.16') {
         exclude group: 'org.openjfx'
     }
     // ControlsFX
     implementation group: 'org.controlsfx', name: 'controlsfx', version: '11.2.1'
-
     // Support special images format when render a PDF
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-core', version: '1.4.0'
     implementation group: 'com.github.jai-imageio', name: 'jai-imageio-jpeg2000', version: '1.4.0'
     implementation group: 'org.apache.pdfbox', name: 'jbig2-imageio', version: '3.0.4'
-
     // Signing and encrypting pdf (not used)
     //compile group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.53'
-
     // Image IO - EXIF
     implementation group: 'com.drewnoakes', name: 'metadata-extractor', version: '2.19.0'
-
     // YAML & JSON & CSV
     implementation group: 'org.yaml', name: 'snakeyaml', version: '2.2'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.17.1'
     implementation group: 'com.opencsv', name: 'opencsv', version: '5.9'
-
     // LaTeX
     implementation 'org.scilab.forge:jlatexmath:1.0.7'
     implementation(name: 'writer2latex', ext: 'jar')
-
     // OSX
     implementation ('de.jangassen:nsmenufx:3.1.0'){
         exclude group: 'net.java.dev.jna'
     }
-
     // SVG
     implementation group: 'org.apache.xmlgraphics', name: 'batik-parser', version: '1.17'
     implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '3.0.2'
-
     // PDF Box
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.2'
-
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
-
     // Unique4J
     implementation 'tk.pratanumandal:unique4j:1.4'
-
     // OS Theme detector
     implementation ('com.github.Dansoftowner:jSystemThemeDetector:3.9.1'){
         exclude group: 'net.java.dev.jna'
     }
-
     // Add transitive dependency JNA that must exist only under -jpms (for modular projects)
     implementation 'net.java.dev.jna:jna:5.12.1'
     implementation 'net.java.dev.jna:jna-platform:5.12.1'
@@ -105,16 +66,10 @@ dependencies {
 def os = org.gradle.internal.os.OperatingSystem.current()
 // PDF4Teachers can be compiled in 32bits from a 64bits host, just set win32 = true.
 // On 32bits, JDK must include JavaFX (the default JavaFX is 64bits)
-// set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32
-// $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-17.0.2-bell-full-win32"
+// set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-21.0.2-bell-full-win32
+// $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-21.0.2-bell-full-win32"
 def win32 = false
 def aarch64 = System.getProperty("os.arch") == "aarch64"
-
-
-javafx {
-    version = '21' // Switch to JFX LTS 21 to fix keyboard layout issue on MacOS
-    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
-}
 
 version = "1.4.1"
 description = "PDF students assessments editor"
@@ -122,8 +77,17 @@ description = "PDF students assessments editor"
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
-mainClassName = "fr.clementgre.pdf4teachers/fr.clementgre.pdf4teachers.Main"
 
+java {
+    modularity.inferModulePath.set(false)
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+javafx {
+    version = '21' // Switch to JFX LTS 21 to fix keyboard layout issue on MacOS
+    modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
+}
 application {
     mainModule.set('fr.clementgre.pdf4teachers')
     mainClass.set('fr.clementgre.pdf4teachers.Main')
@@ -149,7 +113,6 @@ run {
         if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
     }
 }
-
 
 if(os.windows){
     task autoPackage {
@@ -205,8 +168,7 @@ if(os.windows){
     }
 }
 
-
-    jlink {
+jlink {
 
     options = [
             '--strip-debug',
@@ -240,7 +202,7 @@ if(os.windows){
         if(os.windows){
             if (win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-21-Full
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
-        } else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.5')
+        } else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
         else if (os.linux) javaHome.set('/opt/jdk-21')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
@@ -281,7 +243,7 @@ if(os.windows){
                     '--linux-shortcut',
                     //'--file-associations', 'distribution/linux/association-lin.properties'
             ]
-            if (installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@free.fr']
+            if (installerType == 'deb') installerOptions += ['--linux-deb-maintainer', 'clement.grennerat@clgr.io']
             else if (installerType == 'rpm') installerOptions += ['--linux-rpm-license-type', 'Apache-2.0']
         }
     }

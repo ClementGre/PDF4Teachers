@@ -17,11 +17,11 @@ open module fr.clementgre.pdf4teachers {
     requires org.apache.pdfbox;
     requires org.apache.fontbox;
     requires org.apache.commons.logging;
-    requires imageio.core;
+    //    requires com.github.jaiimageio;
     uses javax.imageio.spi.ImageInputStreamSpi;
     uses javax.imageio.spi.ImageOutputStreamSpi;
     uses javax.imageio.spi.ImageWriterSpi;
-    requires jai.imageio.jpeg2000;
+    //    requires jai.imageio.jpeg2000;
     requires org.apache.pdfbox.jbig2;
     uses javax.imageio.spi.ImageReaderSpi;
     
@@ -33,11 +33,11 @@ open module fr.clementgre.pdf4teachers {
     requires org.yaml.snakeyaml;
     requires com.fasterxml.jackson.core;
     requires com.opencsv;
-    requires metadata.extractor; // EXIF READER
+    //    requires metadata.extractor; // EXIF READER
     
     // Latex & StarMath
-    requires jlatexmath;
-    requires writertolatex;
+    //    requires jlatexmath;
+    //    requires writer2latex;
     
     // OSX
     requires nsmenufx;
@@ -49,12 +49,12 @@ open module fr.clementgre.pdf4teachers {
     requires javafx.swing;
     
     // SVG
-    requires batik.parser;
+    //    requires batik.parser;
     requires de.rototor.pdfbox.graphics2d;
     
     // Utils
-    requires google.diffmatchpatch;
-    requires uniqueforj;
+    //    requires google.diffmatchpatch;
+    //    requires uniqueforj;
     
     // Os Theme Detector
     requires com.jthemedetector;
