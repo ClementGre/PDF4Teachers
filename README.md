@@ -144,7 +144,7 @@ The application was developed with JavaFX framework, in Java SE 21.
 
 ### Java dependencies
 
-- **[JavaFX 21](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
+- **[JavaFX 22](https://openjfx.io/)** : The java API to create windows (GUI), and all the interfaces with the user.
 - **[Apache PDFBOX 3.0.2](https://pdfbox.apache.org/)** : used for all the interactions with PDFs: it generates images
   from PDF file, add it add the texts/images of the editing on the PDF document while exporting. **Commons Logging**, *
   *Font BOX**, **JAI ImageIO** and **jbig2-imageio**, are dependencies of PDF Box.

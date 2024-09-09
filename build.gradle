@@ -5,17 +5,42 @@
 
 plugins {
     id 'application'
-    id 'org.beryx.jlink' version '3.0.1'
     id 'idea'
     // id 'com.dua3.javafxgradle7plugin' version '0.0.9' // 32 bits support (Anyway, JavaFX is into the JDK)
     id 'org.openjfx.javafxplugin' version '0.1.0'
-    id 'org.javamodularity.moduleplugin' version '1.8.12'
+    id 'org.gradlex.extra-java-module-info' version '1.8'
+    id 'org.beryx.jlink' version '3.0.1'
 }
 repositories {
     mavenCentral()
     maven { url "https://clojars.org/repo" }
     maven { url 'https://jitpack.io' }
     flatDir { dirs 'locallibs' }
+}
+extraJavaModuleInfo {
+    failOnMissingModuleInfo.set(false)
+
+
+    automaticModule("jlatexmath-1.0.7.jar", "jlatexmath")
+    automaticModule("writer2latex.jar", "writertolatex")
+
+    automaticModule("jlatexmath-font-greek-1.0.7.jar", "jlatexmath.font.greek")
+    automaticModule("jlatexmath-font-cyrillic-1.0.7.jar", "jlatexmath.font.cyrillic")
+
+    automaticModule("xmpcore-6.0.6.jar", "xmpcore")
+
+    automaticModule("metadata-extractor-2.19.0.jar", "metadata.extractor")
+
+    automaticModule("jai-imageio-core-1.4.0.jar", "jai.imageio.core")
+    automaticModule("jai-imageio-jpeg2000-1.4.0.jar", "jai.imageio.jpeg2000")
+
+    automaticModule("batik-parser-1.17.jar", "batik.parser")
+
+    automaticModule("google-diff-match-patch-0.1.jar", "google.diff.match.patch")
+    automaticModule("unique4j-1.4.jar", "uniqueforj")
+
+    // Used by JThemeDetector
+    automaticModule("versioncompare-1.4.1.jar", "versioncompare")
 }
 dependencies {
     implementation 'org.jetbrains:annotations:23.0.0'
@@ -49,6 +74,9 @@ dependencies {
     implementation group: 'de.rototor.pdfbox', name: 'graphics2d', version: '3.0.2'
     // PDF Box
     implementation group: 'org.apache.pdfbox', name: 'pdfbox', version: '3.0.2'
+    implementation group: 'commons-logging', name: 'commons-logging', version: '1.2'
+
+
     // Text Google diff / match / patch
     implementation group: 'google-diff-match-patch', name: 'google-diff-match-patch', version: '0.1'
     // Unique4J
@@ -79,13 +107,13 @@ compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
 
 java {
-    modularity.inferModulePath.set(false)
+    modularity.inferModulePath.set(true)
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
 }
 javafx {
-    version = '21' // Switch to JFX LTS 21 to fix keyboard layout issue on MacOS
+    version = '22'
     modules = ['javafx.controls', 'javafx.swing', 'javafx.fxml']
 }
 application {
@@ -169,7 +197,6 @@ if(os.windows){
 }
 
 jlink {
-
     options = [
             '--strip-debug',
             '--no-header-files',
@@ -180,7 +207,9 @@ jlink {
         jvmArgs = [
                 '--add-exports=javafx.graphics/com.sun.javafx.scene=org.controlsfx.controls',
                 '--add-exports=javafx.graphics/com.sun.javafx.scene.traversal=org.controlsfx.controls',
-                '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls'
+                '--add-exports=javafx.base/com.sun.javafx.event=org.controlsfx.controls',
+                '--add-reads=PDF4Teachers.merged.module=org.apache.commons.logging',
+                '--add-exports=org.apache.commons.logging/org.apache.commons.logging=PDF4Teachers.merged.module'
         ]
         if(os.macOsX){
             // The dock icon works only when app is in /Applications
@@ -247,18 +276,19 @@ jlink {
         }
     }
 
-    mergedModule{
+    mergedModule {
+//        requires 'org.apache.commons.logging';
 
         // JBig2
-        //uses "org.apache.pdfbox.jbig2.util.log.LoggerBridge"
         uses "org.apache.pdfbox.jbig2.util.cache.CacheBridge"
 
-        // Generated automatically by gradle
         requires 'java.logging'
         requires 'jdk.xml.dom'
+        requires 'java.scripting'
         requires 'java.sql'
         requires 'java.xml'
-        requires 'java.desktop' // needed for jbig2 LoggerBridge
+        requires 'java.desktop'
+        requires 'java.datatransfer'
         uses 'javax.imageio.spi.ImageWriterSpi'
         provides 'org.apache.xmlgraphics.image.loader.spi.ImageConverter' with 'org.apache.xmlgraphics.image.loader.impl.ImageConverterBitmap2G2D',
                 'org.apache.xmlgraphics.image.loader.impl.ImageConverterBuffered2Rendered',
@@ -270,6 +300,14 @@ jlink {
                 'org.apache.xmlgraphics.image.writer.imageio.ImageIOTIFFImageWriter',
                 'org.apache.xmlgraphics.image.writer.internal.PNGImageWriter',
                 'org.apache.xmlgraphics.image.writer.internal.TIFFImageWriter'
+        provides 'org.apache.xmlgraphics.image.loader.spi.ImagePreloader' with 'org.apache.xmlgraphics.image.loader.impl.PreloaderBMP',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderEMF',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderEPS',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderGIF',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderJPEG',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderRawPNG',
+                'org.apache.xmlgraphics.image.loader.impl.PreloaderTIFF',
+                'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO'
         provides 'javax.imageio.spi.ImageReaderSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageReaderSpi',
                 'com.github.jaiimageio.impl.plugins.pcx.PCXImageReaderSpi',
                 'com.github.jaiimageio.impl.plugins.pnm.PNMImageReaderSpi',
@@ -284,17 +322,8 @@ jlink {
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRaw',
                 'org.apache.xmlgraphics.image.loader.impl.ImageLoaderFactoryRawCCITTFax',
                 'org.apache.xmlgraphics.image.loader.impl.imageio.ImageLoaderFactoryImageIO'
-        provides 'org.apache.xmlgraphics.image.loader.spi.ImagePreloader' with 'org.apache.xmlgraphics.image.loader.impl.PreloaderBMP',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderEMF',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderEPS',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderGIF',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderJPEG',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderRawPNG',
-                'org.apache.xmlgraphics.image.loader.impl.PreloaderTIFF',
-                'org.apache.xmlgraphics.image.loader.impl.imageio.PreloaderImageIO'
         provides 'javax.imageio.spi.ImageInputStreamSpi' with 'com.github.jaiimageio.impl.stream.ChannelImageInputStreamSpi'
         provides 'javax.xml.transform.URIResolver' with 'org.apache.xmlgraphics.util.uri.DataURIResolver'
-        //provides 'org.apache.pdfbox.jbig2.util.log.LoggerBridge' with 'org.apache.pdfbox.jbig2.util.log.JDKLoggerBridge'
         provides 'javax.imageio.spi.ImageWriterSpi' with 'com.github.jaiimageio.impl.plugins.bmp.BMPImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.gif.GIFImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.pcx.PCXImageWriterSpi',
@@ -303,7 +332,6 @@ jlink {
                 'com.github.jaiimageio.impl.plugins.tiff.TIFFImageWriterSpi',
                 'com.github.jaiimageio.impl.plugins.wbmp.WBMPImageWriterSpi',
                 'com.github.jaiimageio.jpeg2000.impl.J2KImageWriterSpi'
-        provides 'org.apache.pdfbox.jbig2.util.cache.CacheBridge' with 'org.apache.pdfbox.jbig2.util.cache.SoftReferenceCacheBridge'
     }
 }
 
