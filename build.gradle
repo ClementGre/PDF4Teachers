@@ -164,8 +164,8 @@ if(os.windows){
                 workingDir './build'
                 commandLine 'bash', '-c', "rm -R ./AutoPackage ;" +
                         "mkdir -p ./AutoPackage/debian/DEBIAN ./AutoPackage/other/pdf4teachers ;" +
-                        "dpkg-deb -x ./jpackage/pdf4teachers_" + version + "-1_amd64.deb ./AutoPackage/debian/ ;" +
-                        "dpkg-deb -e ./jpackage/pdf4teachers_" + version + "-1_amd64.deb ./AutoPackage/debian/DEBIAN ;" +
+                        "dpkg-deb -x ./jpackage/pdf4teachers_" + version + "_amd64.deb ./AutoPackage/debian/ ;" +
+                        "dpkg-deb -e ./jpackage/pdf4teachers_" + version + "_amd64.deb ./AutoPackage/debian/DEBIAN ;" +
                         "cp ../distribution/linux/PDF4Teachers.png ./AutoPackage/debian/opt/pdf4teachers/lib/PDF4Teachers.png ;" +
                         "cp ../distribution/linux/pdf4teachers.desktop ./AutoPackage/debian/opt/pdf4teachers/lib/pdf4teachers-PDF4Teachers.desktop ;" +
                         "dpkg-deb -Z xz -b ./AutoPackage/debian/ ./AutoPackage/PDF4Teachers-Linux-" + version + ".deb ;" +
@@ -232,7 +232,7 @@ jlink {
             else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
         } else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
-        else if (os.linux) javaHome.set('/opt/jdk-21')
+        else if (os.linux) javaHome.set('/home/clement/.jdks/corretto-21.0.4')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
     }
 

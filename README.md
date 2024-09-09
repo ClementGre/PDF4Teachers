@@ -9,7 +9,6 @@
 [![GitHubFolowers](https://img.shields.io/github/followers/clementgre?label=Follow%20Clément%20Grennerat&style=social)](https://github.com/clementgre)
 [![TwitterFolowers](https://img.shields.io/twitter/follow/Pdf4Teachers?style=social)](https://twitter.com/Pdf4Teachers)
 
-
 <h3 align="center">
   <img src="https://raw.githubusercontent.com/ClementGre/PDF4Teachers/master/src/main/resources/logo.png" alt="Logo" width="120" height="120"><br>
   PDF4Teachers<br>
