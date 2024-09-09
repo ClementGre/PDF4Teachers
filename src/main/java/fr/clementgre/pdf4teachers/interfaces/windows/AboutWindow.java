@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2021. Clément Grennerat
+ * Copyright (c) 2019-2024. Clément Grennerat
  * All rights reserved. You must refer to the licence Apache 2.
  */
 
@@ -107,7 +107,7 @@ public class AboutWindow extends Stage {
         
         developerLabel.setText(TR.tr("aboutWindow.info.developer") + " ");
         designerLabel.setText(TR.tr("aboutWindow.info.designer") + " ");
-        if(!TR.tr("aboutWindow.info.translator").equals("Traducteur : <Votre nom>")){
+        if(!TR.tr("aboutWindow.info.translator").equals("Traducteur : <Votre nom>")){
             translatorText.setText(TR.tr("aboutWindow.info.translator"));
         }else root.getChildren().remove(translatorText);
         

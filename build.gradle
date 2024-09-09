@@ -71,7 +71,7 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 def win32 = false
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
-version = "1.4.1"
+version = "1.4.2"
 description = "PDF students assessments editor"
 //frenchDescription="Éditeur de copies PDF"
 
@@ -172,7 +172,6 @@ jlink {
 
     options = [
             '--strip-debug',
-            '--compress', '2',
             '--no-header-files',
             '--no-man-pages'
     ] as List<String>

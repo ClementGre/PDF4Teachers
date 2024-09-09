@@ -483,7 +483,7 @@ public class MenuBar extends javafx.scene.control.MenuBar {
                 Log.eNotified(e);
             }
         });
-        help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://twitter.com/PDF4Teachers"));
+        help3Twitter.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://x.com/PDF4Teachers"));
         help4Website.setOnAction((ActionEvent t) -> Main.hostServices.showDocument("https://pdf4teachers.org"));
         
         ////////// END PROCESS - OSX ADAPTION & MENU //////////
