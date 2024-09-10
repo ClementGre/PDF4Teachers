@@ -6,7 +6,6 @@
 plugins {
     id 'application'
     id 'idea'
-    // id 'com.dua3.javafxgradle7plugin' version '0.0.9' // 32 bits support (Anyway, JavaFX is into the JDK)
     id 'org.openjfx.javafxplugin' version '0.1.0'
     id 'org.gradlex.extra-java-module-info' version '1.8'
     id 'org.beryx.jlink' version '3.0.1'
@@ -92,11 +91,6 @@ dependencies {
 }
 
 def os = org.gradle.internal.os.OperatingSystem.current()
-// PDF4Teachers can be compiled in 32bits from a 64bits host, just set win32 = true.
-// On 32bits, JDK must include JavaFX (the default JavaFX is 64bits)
-// set JAVA_HOME=C:\Program Files\AdoptOpenJDK\jdk-21.0.2-bell-full-win32
-// $Env:JAVA_HOME = "C:\Program Files\AdoptOpenJDK\jdk-21.0.2-bell-full-win32"
-def win32 = false
 def aarch64 = System.getProperty("os.arch") == "aarch64"
 
 version = "1.4.2"
@@ -138,7 +132,7 @@ run {
         // The dock icon works only when app is in /Applications
         jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
     }else if(os.windows){
-        if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
+
     }
 }
 
@@ -215,22 +209,20 @@ jlink {
             // The dock icon works only when app is in /Applications
             jvmArgs += '-Xdock:icon=/Applications/PDF4Teachers.app/contents/Resources/logo.icns'
         }else if(os.windows){
-            if(win32) jvmArgs += '-Dfr.clementgre.pdf4teachers.iswin32=true'
+
         }
     }
 
     String jdkPath = project.findProperty('jdkPath')
-    String platform = os.windows ? (win32 ? 'win32' : 'win') : (os.macOsX ? 'mac' : 'lin')
+    String platform = os.windows ? 'win' : (os.macOsX ? 'mac' : 'lin')
 
     if(jdkPath != null){ // Use ./gradlew jpackage -PjdkPath=xxx
         project.logger.info("Using JDK passed in property: ".concat(jdkPath))
         javaHome.set(jdkPath)
 
     }else{
-        if(os.windows){
-            if (win32) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1-bell-full-win32')// C:\Program Files\BellSoft\LibericaJDK-21-Full
-            else javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
-        } else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
+        if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
+        else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
         else if (os.linux) javaHome.set('/home/clement/.jdks/corretto-21.0.4')
         project.logger.info("Using JDK: ".concat(javaHome.get()))
