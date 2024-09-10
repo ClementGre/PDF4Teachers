@@ -221,7 +221,7 @@ jlink {
         javaHome.set(jdkPath)
 
     }else{
-        if (os.windows) javaHome.set('C:\\Program Files\\AdoptOpenJDK\\jdk-21.0.1.12-hotspot')
+        if (os.windows) javaHome.set('C:\\Program Files\\Eclipse Adoptium\\jdk-21.0.3.9-hotspot')
         else if (os.macOsX && aarch64) javaHome.set('/Users/clement/Library/Java/JavaVirtualMachines/liberica-21.0.3')
         else if (os.macOsX) javaHome.set('/Library/Java/JavaVirtualMachines/temurin-21.jdk/Contents/Home')
         else if (os.linux) javaHome.set('/home/clement/.jdks/corretto-21.0.4')
