@@ -533,6 +533,12 @@ public class TextElement extends Element {
     public Color getColor(){
         return (Color) textNode.getFill();
     }
+    /**
+     * Changed the font of this element.
+     * This will throw an error if called while the element is selected as the font is bound to the controls.
+     *
+     * @param font The font to set.
+     */
     public void setFont(Font font){
         textNode.setFont(font);
     }

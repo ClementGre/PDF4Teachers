@@ -66,6 +66,7 @@ public record BookletEngine(boolean makeBooklet, boolean reorganisePages, boolea
          * 4 | 5        * 3 | 4
          */
         
+        MainWindow.mainScreen.setSelected(null); // Text elements can't be font-edited if selected.
         PDFPagesEditor editor = document.pdfPagesRender.editor;
         document.clearSelectedPages();
         

@@ -452,6 +452,8 @@ public class PDFPagesEditor {
         
         MainWindow.mainScreen.getUndoEngine().setOverrideUndoType(UType.PAGE_NO_COUNT_BEFORE);
         try{
+            // We can't edit a text element font size if it is selected: Unselecting current element
+            MainWindow.mainScreen.setSelected(null);
             for(Element el : MainWindow.mainScreen.document.getPage(pageNumber).getElements()){
                 MainWindow.mainScreen.registerNewAction(new MoveUndoAction(UType.PAGE_NO_COUNT_BEFORE, el));
                 
